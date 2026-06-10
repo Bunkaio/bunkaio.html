@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bunkaio — Studio</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap');
+
+  :root {
+    --black: #0a0a0c;
+    --white: #ffffff;
+    --grey: #76717f;
+    --line: rgba(20, 10, 40, 0.09);
+    --violet: #f1ecfa;
+    --violet-deep: #e6def5;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-luxe: cubic-bezier(0.65, 0, 0.35, 1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: linear-gradient(175deg, #ffffff 0%, #fdfcff 35%, #f6f1fc 70%, var(--violet) 100%);
+    background-attachment: fixed;
+    color: var(--black);
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  ::selection { background: var(--black); color: var(--white); }
+
+  /* ─── AMBIENT ORBS (atmosphère luxe) ─── */
+  .orb {
+    position: fixed; border-radius: 50%;
+    filter: blur(90px); pointer-events: none; z-index: 0;
+    opacity: 0.5;
+    animation: orbFloat 18s ease-in-out infinite alternate;
+  }
+  .orb-1 { width: 480px; height: 480px; background: radial-gradient(circle, #ece2fb, transparent 70%); top: -10%; right: -8%; }
+  .orb-2 { width: 380px; height: 380px; background: radial-gradient(circle, #f3edfc, transparent 70%); bottom: -6%; left: -6%; animation-delay: -9s; }
+  @keyframes orbFloat {
+    from { transform: translate(0, 0) scale(1); }
+    to   { transform: translate(-40px, 30px) scale(1.08); }
+  }
+
+  /* ─── PAGE TRANSITION VEIL ─── */
+  .veil {
+    position: fixed; inset: 0; z-index: 900;
+    background: var(--black);
+    transform: scaleY(0); transform-origin: bottom;
+    pointer-events: none;
+  }
+  .veil.sweep { animation: veilSweep 0.9s var(--ease-luxe) forwards; }
+  @keyframes veilSweep {
+    0%   { transform: scaleY(0); transform-origin: bottom; }
+    45%  { transform: scaleY(1); transform-origin: bottom; }
+    55%  { transform: scaleY(1); transform-origin: top; }
+    100% { transform: scaleY(0); transform-origin: top; }
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 300;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 22px 48px;
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(18px) saturate(1.4);
+    -webkit-backdrop-filter: blur(18px) saturate(1.4);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-brand { cursor: pointer; line-height: 1.2; padding: 2px 0; }
+  .nav-logo { font-size: 17px; font-weight: 700; letter-spacing: -0.02em; }
+  .nav-sub {
+    font-size: 10px; font-weight: 500; letter-spacing: 0.28em;
+    text-transform: uppercase; color: var(--grey); margin-top: 1px;
+  }
+  .nav-links { display: flex; gap: 36px; align-items: center; }
+  .nav-link {
+    font-size: 12px; font-weight: 500; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--black);
+    cursor: pointer; position: relative; padding: 6px 0;
+    background: none; border: none; font-family: inherit;
+    overflow: visible;
+  }
+  .nav-link::after {
+    content: ''; position: absolute; bottom: 0; left: 0;
+    width: 0; height: 1px; background: var(--black);
+    transition: width 0.45s var(--ease);
+  }
+  .nav-link:hover::after, .nav-link.active::after { width: 100%; }
+
+  /* ─── VIEWS ─── */
+  .view { display: none; position: relative; z-index: 1; }
+  .view.active { display: block; animation: viewIn 0.8s var(--ease) both; }
+  @keyframes viewIn {
+    from { opacity: 0; transform: translateY(26px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── HOME / HERO ─── */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center;
+    padding: 140px 28px 100px;
+    position: relative;
+  }
+  .hero-kicker {
+    font-size: 11px; font-weight: 500; letter-spacing: 0.34em;
+    text-transform: uppercase; color: var(--grey);
+    margin-bottom: 30px; padding: 0 10px;
+    opacity: 0; animation: riseIn 1s var(--ease) 0.2s forwards;
+  }
+  .hero-title {
+    font-size: clamp(30px, 4.6vw, 56px);
+    font-weight: 700; letter-spacing: -0.03em; line-height: 1.15;
+    padding: 0 12px 6px;
+    overflow: visible;
+  }
+  .hero-title .word {
+    display: inline-block;
+    opacity: 0; transform: translateY(34px);
+    animation: wordUp 1s var(--ease-luxe) forwards;
+  }
+  @keyframes wordUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .hero-line {
+    width: 1px; height: 60px; background: linear-gradient(to bottom, var(--black), transparent);
+    margin: 46px 0;
+    transform: scaleY(0); transform-origin: top;
+    animation: lineGrow 1s var(--ease-luxe) 1.1s forwards;
+  }
+  .hero-start {
+    font-size: 12px; font-weight: 600; letter-spacing: 0.22em;
+    text-transform: uppercase;
+    border: 1px solid var(--black);
+    background: transparent; color: var(--black);
+    padding: 19px 50px; cursor: pointer;
+    font-family: inherit;
+    position: relative; overflow: hidden;
+    transition: color 0.45s var(--ease);
+    opacity: 0; animation: riseIn 1s var(--ease) 1.35s forwards;
+  }
+  .hero-start span { position: relative; z-index: 1; }
+  .hero-start::before {
+    content: ''; position: absolute; inset: 0;
+    background: var(--black);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 0.5s var(--ease-luxe);
+  }
+  .hero-start:hover { color: var(--white); }
+  .hero-start:hover::before { transform: scaleX(1); }
+  @keyframes riseIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes lineGrow { to { transform: scaleY(1); } }
+
+  /* ─── SCROLL REVEAL ─── */
+  .rv {
+    opacity: 0; transform: translateY(28px);
+    transition: opacity 0.9s var(--ease), transform 0.9s var(--ease);
+  }
+  .rv.in { opacity: 1; transform: translateY(0); }
+
+  /* ─── QUIZ ─── */
+  .quiz-wrap {
+    max-width: 760px; margin: 0 auto;
+    padding: 160px 32px 130px;
+    position: relative; z-index: 1;
+  }
+  .progress-track {
+    position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 400;
+  }
+  .progress-fill {
+    height: 100%; width: 0%;
+    background: linear-gradient(to right, var(--black), #6d5a9e);
+    transition: width 0.7s var(--ease-luxe);
+  }
+
+  .qstep { display: none; }
+  .qstep.active { display: block; }
+  .qstep.active .stagger {
+    opacity: 0; transform: translateY(22px);
+    animation: stagUp 0.8s var(--ease-luxe) forwards;
+  }
+  @keyframes stagUp { to { opacity: 1; transform: translateY(0); } }
+
+  .qstep-meta {
+    font-size: 11px; font-weight: 500; letter-spacing: 0.3em;
+    text-transform: uppercase; color: var(--grey); margin-bottom: 20px;
+    padding: 2px 0;
+  }
+  .qstep-title {
+    font-size: clamp(26px, 3.8vw, 42px);
+    font-weight: 700; letter-spacing: -0.025em; line-height: 1.2;
+    margin-bottom: 12px; padding-bottom: 4px;
+    overflow: visible;
+  }
+  .qstep-sub {
+    font-size: 14px; color: var(--grey); line-height: 1.75;
+    margin-bottom: 54px; padding-right: 12px;
+  }
+
+  /* Categories */
+  .cat-list { display: flex; flex-direction: column; }
+  .cat-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 28px 10px;
+    border-bottom: 1px solid var(--line);
+    cursor: pointer;
+    position: relative;
+    transition: padding 0.45s var(--ease);
+  }
+  .cat-item:first-child { border-top: 1px solid var(--line); }
+  .cat-item::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(to right, rgba(240, 234, 250, 0.0), rgba(240, 234, 250, 0.65));
+    opacity: 0; transition: opacity 0.45s var(--ease);
+    pointer-events: none;
+  }
+  .cat-item:hover { padding-left: 26px; }
+  .cat-item:hover::before { opacity: 1; }
+  .cat-name {
+    font-size: 19px; font-weight: 600; letter-spacing: -0.015em;
+    line-height: 1.4; position: relative; z-index: 1;
+  }
+  .cat-tag {
+    font-size: 11px; font-weight: 500; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--grey);
+    line-height: 1.6; text-align: right;
+    position: relative; z-index: 1;
+  }
+  .cat-arrow {
+    width: 28px; height: 1px; background: var(--black);
+    position: relative; opacity: 0; transform: translateX(-10px);
+    transition: all 0.45s var(--ease); flex-shrink: 0; z-index: 1;
+  }
+  .cat-arrow::after {
+    content: ''; position: absolute; right: 0; top: -3.5px;
+    width: 7px; height: 7px;
+    border-top: 1px solid var(--black); border-right: 1px solid var(--black);
+    transform: rotate(45deg);
+  }
+  .cat-item:hover .cat-arrow { opacity: 1; transform: translateX(0); }
+  .cat-right { display: flex; align-items: center; gap: 22px; }
+
+  /* Tiers */
+  .tier-list { display: flex; flex-direction: column; gap: 16px; }
+  .tier-card {
+    border: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(8px);
+    padding: 32px 34px;
+    cursor: pointer;
+    position: relative; overflow: hidden;
+    transition: border-color 0.4s var(--ease), transform 0.45s var(--ease), box-shadow 0.45s var(--ease);
+  }
+  .tier-card::after {
+    content: ''; position: absolute; top: 0; left: -80%;
+    width: 60%; height: 100%;
+    background: linear-gradient(100deg, transparent, rgba(255,255,255,0.85), transparent);
+    transform: skewX(-18deg);
+    transition: left 0.85s var(--ease-luxe);
+    pointer-events: none;
+  }
+  .tier-card:hover {
+    border-color: var(--black);
+    transform: translateY(-4px);
+    box-shadow: 0 24px 50px -28px rgba(40, 20, 80, 0.28);
+  }
+  .tier-card:hover::after { left: 120%; }
+  .tier-head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 12px; gap: 14px; flex-wrap: wrap;
+  }
+  .tier-name { font-size: 17px; font-weight: 700; letter-spacing: -0.01em; line-height: 1.4; }
+  .tier-price { font-size: 17px; font-weight: 700; letter-spacing: -0.01em; white-space: nowrap; }
+  .tier-price small { font-size: 11px; font-weight: 500; color: var(--grey); margin-left: 4px; }
+  .tier-detail { font-size: 13px; line-height: 1.85; color: var(--grey); padding-right: 6px; }
+  .tier-badge {
+    display: inline-block;
+    font-size: 9px; font-weight: 600; letter-spacing: 0.22em;
+    text-transform: uppercase;
+    border: 1px solid var(--black);
+    padding: 5px 12px; margin-bottom: 16px;
+    line-height: 1.4;
+  }
+
+  /* Recap + options */
+  .recap-box {
+    border: 1px solid var(--black);
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(8px);
+    padding: 34px;
+    margin-bottom: 52px;
+    position: relative; overflow: hidden;
+  }
+  .recap-box::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(to right, var(--black), #8a72c0);
+  }
+  .recap-label {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.26em;
+    text-transform: uppercase; color: var(--grey); margin-bottom: 16px;
+  }
+  .recap-title {
+    font-size: 20px; font-weight: 700; letter-spacing: -0.015em;
+    margin-bottom: 20px; line-height: 1.45;
+    display: flex; justify-content: space-between; align-items: baseline; gap: 18px; flex-wrap: wrap;
+  }
+  .recap-items { list-style: none; }
+  .recap-items li {
+    font-size: 13.5px; color: #3a3544; line-height: 1.7;
+    padding: 10px 0 10px 24px;
+    border-bottom: 1px solid var(--line);
+    position: relative;
+  }
+  .recap-items li:last-child { border-bottom: none; }
+  .recap-items li::before {
+    content: ''; position: absolute; left: 2px; top: 19px;
+    width: 9px; height: 1px; background: var(--black);
+  }
+  .recap-delivery {
+    margin-top: 18px; font-size: 12px; color: var(--grey);
+    letter-spacing: 0.05em; line-height: 1.6;
+  }
+
+  .opt-section-label {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.26em;
+    text-transform: uppercase; color: var(--grey); margin-bottom: 24px;
+  }
+  .opt-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 54px; }
+  .opt-item {
+    display: flex; align-items: center; gap: 18px;
+    border: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.5);
+    padding: 21px 26px;
+    cursor: pointer;
+    transition: border-color 0.35s var(--ease), background 0.4s var(--ease), transform 0.35s var(--ease);
+  }
+  .opt-item:hover { border-color: var(--black); transform: translateX(4px); }
+  .opt-item.selected { border-color: var(--black); background: var(--black); color: var(--white); transform: translateX(0); }
+  .opt-check {
+    width: 17px; height: 17px; flex-shrink: 0;
+    border: 1px solid var(--black);
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.35s var(--ease);
+  }
+  .opt-item.selected .opt-check { background: var(--white); border-color: var(--white); }
+  .opt-item.selected .opt-check::after {
+    content: ''; width: 8px; height: 4px;
+    border-left: 1.5px solid var(--black); border-bottom: 1.5px solid var(--black);
+    transform: rotate(-45deg) translateY(-1px);
+  }
+  .opt-body { flex: 1; min-width: 0; }
+  .opt-name { font-size: 14px; font-weight: 600; margin-bottom: 3px; line-height: 1.5; }
+  .opt-note { font-size: 12px; color: var(--grey); line-height: 1.6; }
+  .opt-item.selected .opt-note { color: rgba(255,255,255,0.65); }
+  .opt-price { font-size: 13px; font-weight: 700; white-space: nowrap; }
+
+  /* Form */
+  .fgroup { margin-bottom: 26px; }
+  .fgroup label {
+    display: block;
+    font-size: 10px; font-weight: 600; letter-spacing: 0.24em;
+    text-transform: uppercase; color: var(--grey); margin-bottom: 11px;
+    line-height: 1.5;
+  }
+  .fgroup input, .fgroup textarea {
+    width: 100%;
+    border: none; border-bottom: 1px solid var(--line);
+    padding: 13px 2px;
+    font-family: inherit; font-size: 16px; color: var(--black);
+    outline: none; background: transparent;
+    transition: border-color 0.35s var(--ease);
+    border-radius: 0;
+    line-height: 1.5;
+  }
+  .fgroup input:focus, .fgroup textarea:focus { border-bottom-color: var(--black); }
+  .fgroup textarea { resize: vertical; min-height: 96px; }
+
+  /* Buttons */
+  .btn-row { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; margin-top: 50px; }
+  .btn {
+    font-family: inherit;
+    font-size: 12px; font-weight: 600; letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 18px 42px;
+    cursor: pointer;
+    border: 1px solid var(--black);
+    position: relative; overflow: hidden;
+    transition: color 0.45s var(--ease);
+    line-height: 1.4;
+  }
+  .btn span { position: relative; z-index: 1; }
+  .btn-solid { background: var(--black); color: var(--white); }
+  .btn-solid::before {
+    content: ''; position: absolute; inset: 0;
+    background: var(--white);
+    transform: scaleX(0); transform-origin: right;
+    transition: transform 0.5s var(--ease-luxe);
+  }
+  .btn-solid:hover:not(:disabled) { color: var(--black); }
+  .btn-solid:hover:not(:disabled)::before { transform: scaleX(1); transform-origin: left; }
+  .btn-solid:disabled { opacity: 0.25; cursor: not-allowed; }
+  .btn-ghost { background: transparent; color: var(--black); border-color: var(--line); }
+  .btn-ghost::before {
+    content: ''; position: absolute; inset: 0;
+    background: var(--black);
+    transform: scaleX(0); transform-origin: right;
+    transition: transform 0.5s var(--ease-luxe);
+  }
+  .btn-ghost:hover { color: var(--white); border-color: var(--black); }
+  .btn-ghost:hover::before { transform: scaleX(1); transform-origin: left; }
+
+  /* ─── DEVIS ─── */
+  .devis-head {
+    border-bottom: 1px solid var(--black);
+    padding-bottom: 38px; margin-bottom: 46px;
+  }
+  .devis-kicker {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.3em;
+    text-transform: uppercase; color: var(--grey); margin-bottom: 18px;
+  }
+  .devis-name {
+    font-size: clamp(30px, 4.6vw, 50px);
+    font-weight: 700; letter-spacing: -0.03em; line-height: 1.15;
+    padding-bottom: 4px; word-break: break-word;
+  }
+  .devis-cat { font-size: 14px; color: var(--grey); margin-top: 12px; line-height: 1.6; }
+
+  .dv-block { margin-bottom: 42px; }
+  .dv-label {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.26em;
+    text-transform: uppercase; color: var(--grey);
+    padding-bottom: 13px; border-bottom: 1px solid var(--line);
+    margin-bottom: 6px;
+  }
+  .dv-line {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 14px 0; border-bottom: 1px solid var(--line);
+    font-size: 14.5px; gap: 18px; line-height: 1.6;
+  }
+  .dv-line span:last-child { font-weight: 700; white-space: nowrap; }
+  .dv-includes { font-size: 12.5px; color: var(--grey); line-height: 1.9; padding: 15px 0 5px; }
+
+  .dv-total {
+    display: flex; justify-content: space-between; align-items: center;
+    background: var(--black); color: var(--white);
+    padding: 36px 38px;
+    margin: 46px 0;
+    flex-wrap: wrap; gap: 18px;
+    position: relative; overflow: hidden;
+  }
+  .dv-total::after {
+    content: ''; position: absolute; top: 0; left: -80%;
+    width: 50%; height: 100%;
+    background: linear-gradient(100deg, transparent, rgba(255,255,255,0.12), transparent);
+    transform: skewX(-18deg);
+    animation: totalShine 4s var(--ease-luxe) infinite;
+  }
+  @keyframes totalShine {
+    0%, 60% { left: -80%; }
+    100% { left: 140%; }
+  }
+  .dv-total-label {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.24em; text-transform: uppercase;
+    line-height: 1.5;
+  }
+  .dv-total-note { font-size: 11.5px; opacity: 0.6; margin-top: 6px; line-height: 1.5; }
+  .dv-total-amount {
+    font-size: 48px; font-weight: 700; letter-spacing: -0.03em;
+    line-height: 1.1; padding: 4px 0;
+  }
+  .dv-total-amount small { font-size: 14px; font-weight: 500; opacity: 0.7; }
+
+  .dv-disclaimer {
+    font-size: 12.5px; line-height: 2; color: var(--grey);
+    border: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.45);
+    padding: 26px;
+  }
+
+  /* ─── PORTFOLIO PREVIEW ─── */
+  .pf-preview { margin-top: 96px; }
+  .pf-preview-head { text-align: center; margin-bottom: 52px; }
+  .pf-divider {
+    width: 44px; height: 1px;
+    background: linear-gradient(to right, transparent, var(--black), transparent);
+    margin: 0 auto 42px;
+  }
+  .pf-preview-title {
+    font-size: clamp(24px, 3.2vw, 36px);
+    font-weight: 700; letter-spacing: -0.025em; margin-bottom: 12px;
+    line-height: 1.3; padding: 0 14px;
+  }
+  .pf-preview-sub { font-size: 14px; color: var(--grey); line-height: 1.6; padding: 0 14px; }
+
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  .ph {
+    background: #efeaf6;
+    overflow: hidden;
+    position: relative;
+  }
+  .ph img {
+    width: 100%; height: 100%;
+    object-fit: cover; display: block;
+    filter: grayscale(25%);
+    transform: scale(1.06);
+    transition: transform 1.1s var(--ease-luxe), filter 0.7s var(--ease);
+  }
+  .ph:hover img { transform: scale(1); filter: grayscale(0%); }
+  .ph::after {
+    content: ''; position: absolute; inset: 0;
+    background: var(--violet-deep);
+    transform: scaleY(1); transform-origin: top;
+    transition: transform 1s var(--ease-luxe);
+  }
+  .ph.revealed::after { transform: scaleY(0); }
+  .ph-tall { grid-row: span 2; }
+
+  /* ─── PORTFOLIO PAGE ─── */
+  .pf-page { max-width: 1180px; margin: 0 auto; padding: 160px 32px 130px; position: relative; z-index: 1; }
+  .pf-page-title {
+    font-size: clamp(32px, 5.2vw, 58px);
+    font-weight: 700; letter-spacing: -0.03em;
+    margin-bottom: 16px; line-height: 1.15; padding-bottom: 4px;
+  }
+  .pf-page-sub {
+    font-size: 14px; color: var(--grey); margin-bottom: 58px;
+    max-width: 500px; line-height: 1.8;
+  }
+  .pf-cats {
+    display: flex; flex-wrap: wrap; gap: 4px 34px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 50px;
+  }
+  .pf-cat-tab {
+    font-family: inherit;
+    font-size: 12px; font-weight: 600; letter-spacing: 0.16em;
+    text-transform: uppercase;
+    background: none; border: none; cursor: pointer;
+    padding: 4px 0 18px; color: var(--grey);
+    position: relative;
+    transition: color 0.35s var(--ease);
+    line-height: 1.5;
+  }
+  .pf-cat-tab::after {
+    content: ''; position: absolute; bottom: -1px; left: 0;
+    width: 0; height: 2px; background: var(--black);
+    transition: width 0.45s var(--ease);
+  }
+  .pf-cat-tab.active { color: var(--black); }
+  .pf-cat-tab.active::after { width: 100%; }
+  .pf-cat-tab:hover { color: var(--black); }
+
+  .pf-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+  .pf-grid .ph { aspect-ratio: 3/4; }
+  .pf-grid .ph.wide { grid-column: span 2; aspect-ratio: auto; }
+
+  /* ─── CONTACT ─── */
+  .ct-page {
+    max-width: 1080px; margin: 0 auto;
+    padding: 160px 32px 130px;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 88px;
+    position: relative; z-index: 1;
+  }
+  .ct-title {
+    font-size: clamp(32px, 5.2vw, 58px);
+    font-weight: 700; letter-spacing: -0.03em;
+    margin-bottom: 18px; line-height: 1.15; padding-bottom: 4px;
+  }
+  .ct-sub {
+    font-size: 14px; color: var(--grey); line-height: 1.85;
+    margin-bottom: 52px; max-width: 400px;
+  }
+
+  .ct-info-block { margin-bottom: 40px; }
+  .ct-info-label {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.26em;
+    text-transform: uppercase; color: var(--grey); margin-bottom: 12px;
+    line-height: 1.5;
+  }
+  .ct-info-value { font-size: 15px; font-weight: 500; line-height: 1.8; }
+  .ct-info-value a {
+    color: var(--black); text-decoration: none;
+    border-bottom: 1px solid var(--line);
+    transition: border-color 0.3s; padding-bottom: 1px;
+  }
+  .ct-info-value a:hover { border-color: var(--black); }
+
+  .ct-follow {
+    display: inline-flex; align-items: center; gap: 12px;
+    font-size: 12px; font-weight: 600; letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--black); text-decoration: none;
+    border: 1px solid var(--black);
+    padding: 16px 34px;
+    position: relative; overflow: hidden;
+    transition: color 0.45s var(--ease);
+    line-height: 1.4;
+  }
+  .ct-follow span { position: relative; z-index: 1; }
+  .ct-follow::before {
+    content: ''; position: absolute; inset: 0;
+    background: var(--black);
+    transform: scaleX(0); transform-origin: right;
+    transition: transform 0.5s var(--ease-luxe);
+  }
+  .ct-follow:hover { color: var(--white); }
+  .ct-follow:hover::before { transform: scaleX(1); transform-origin: left; }
+
+  .ct-form-success {
+    display: none;
+    border: 1px solid var(--black);
+    background: rgba(255, 255, 255, 0.6);
+    padding: 34px;
+    font-size: 14px;
+    line-height: 1.9;
+  }
+
+  /* ─── FOOTER ─── */
+  footer {
+    border-top: 1px solid var(--line);
+    padding: 46px 48px;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 18px;
+    position: relative; z-index: 1;
+    background: rgba(255, 255, 255, 0.35);
+    backdrop-filter: blur(6px);
+  }
+  .ft-logo { font-size: 14px; font-weight: 700; line-height: 1.5; }
+  .ft-tag { font-size: 11px; color: var(--grey); letter-spacing: 0.06em; line-height: 1.7; }
+
+  /* ─── MOBILE ─── */
+  @media (max-width: 820px) {
+    nav { padding: 16px 22px; }
+    .nav-links { gap: 18px; }
+    .nav-link { font-size: 11px; letter-spacing: 0.1em; }
+    .hero { padding: 130px 22px 90px; }
+    .quiz-wrap, .pf-page { padding: 130px 22px 100px; }
+    .ct-page { grid-template-columns: 1fr; gap: 56px; padding: 130px 22px 100px; }
+    .pf-grid { grid-template-columns: repeat(2, 1fr); }
+    .gallery { grid-template-columns: repeat(2, 1fr); }
+    .dv-total { padding: 28px 24px; }
+    .dv-total-amount { font-size: 38px; }
+    footer { padding: 34px 22px; }
+    .btn { width: 100%; text-align: center; }
+    .cat-tag { display: none; }
+    .tier-card { padding: 26px 24px; }
+    .recap-box { padding: 26px 22px; }
+    .orb-1 { width: 300px; height: 300px; }
+    .orb-2 { width: 260px; height: 260px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="veil" id="veil"></div>
+<div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand" onclick="goView('home')">
+    <div class="nav-logo">bunkaio</div>
+    <div class="nav-sub">Studio</div>
+  </div>
+  <div class="nav-links">
+    <button class="nav-link" data-view="quiz" onclick="goView('quiz')">Estimer</button>
+    <button class="nav-link" data-view="portfolio" onclick="goView('portfolio')">Portfolio</button>
+    <button class="nav-link" data-view="contact" onclick="goView('contact')">Contact</button>
+  </div>
+</nav>
+
+<!-- ════════ HOME ════════ -->
+<div class="view active" id="view-home">
+  <section class="hero">
+    <div class="hero-kicker">Photographie · Vidéo · Drone</div>
+    <h1 class="hero-title">
+      <span class="word" style="animation-delay:0.45s">Estimez</span>
+      <span class="word" style="animation-delay:0.6s">votre</span>
+      <span class="word" style="animation-delay:0.75s">projet</span>
+    </h1>
+    <div class="hero-line"></div>
+    <button class="hero-start" onclick="goView('quiz')"><span>Commencer</span></button>
+  </section>
+</div>
+
+<!-- ════════ QUIZ ════════ -->
+<div class="view" id="view-quiz">
+  <div class="quiz-wrap">
+
+    <!-- Step 1 -->
+    <div class="qstep active" id="qs-1">
+      <div class="qstep-meta stagger" style="animation-delay:0.05s">01 — Catégorie</div>
+      <h2 class="qstep-title stagger" style="animation-delay:0.12s">Quel est votre domaine&nbsp;?</h2>
+      <p class="qstep-sub stagger" style="animation-delay:0.2s">Sélectionnez l'univers de votre projet.</p>
+      <div class="cat-list" id="catList"></div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="qstep" id="qs-2">
+      <div class="qstep-meta stagger" style="animation-delay:0.05s">02 — Prestation</div>
+      <h2 class="qstep-title stagger" style="animation-delay:0.12s">Quel niveau de prestation&nbsp;?</h2>
+      <p class="qstep-sub stagger" style="animation-delay:0.2s" id="tierSub">Trois niveaux de couverture.</p>
+      <div class="tier-list" id="tierList"></div>
+      <div class="btn-row stagger" style="animation-delay:0.55s">
+        <button class="btn btn-ghost" onclick="quizStep(1)"><span>← Retour</span></button>
+      </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="qstep" id="qs-3">
+      <div class="qstep-meta stagger" style="animation-delay:0.05s">03 — Votre prestation</div>
+      <h2 class="qstep-title stagger" style="animation-delay:0.12s">Ce qui est inclus</h2>
+      <p class="qstep-sub stagger" style="animation-delay:0.2s">Le détail de votre prestation, et les options pour aller plus loin.</p>
+
+      <div class="recap-box stagger" style="animation-delay:0.28s" id="recapBox"></div>
+
+      <div class="opt-section-label stagger" style="animation-delay:0.36s">Options supplémentaires</div>
+      <div class="opt-list" id="optList"></div>
+
+      <div class="btn-row stagger" style="animation-delay:0.6s">
+        <button class="btn btn-ghost" onclick="quizStep(2)"><span>← Retour</span></button>
+        <button class="btn btn-solid" onclick="quizStep(4)"><span>Continuer</span></button>
+      </div>
+    </div>
+
+    <!-- Step 4 -->
+    <div class="qstep" id="qs-4">
+      <div class="qstep-meta stagger" style="animation-delay:0.05s">04 — Coordonnées</div>
+      <h2 class="qstep-title stagger" style="animation-delay:0.12s">Vos coordonnées</h2>
+      <p class="qstep-sub stagger" style="animation-delay:0.2s">Pour recevoir votre estimation détaillée sous 24h.</p>
+      <div class="fgroup stagger" style="animation-delay:0.26s">
+        <label>Nom / Société</label>
+        <input type="text" id="qName" placeholder="Votre nom ou société" oninput="checkQuizForm()">
+      </div>
+      <div class="fgroup stagger" style="animation-delay:0.32s">
+        <label>Email</label>
+        <input type="email" id="qEmail" placeholder="vous@societe.fr" oninput="checkQuizForm()">
+      </div>
+      <div class="fgroup stagger" style="animation-delay:0.38s">
+        <label>Téléphone — optionnel</label>
+        <input type="tel" id="qPhone" placeholder="06 00 00 00 00">
+      </div>
+      <div class="fgroup stagger" style="animation-delay:0.44s">
+        <label>Votre projet — optionnel</label>
+        <textarea id="qProject" placeholder="Parlez-nous de votre projet en quelques mots…"></textarea>
+      </div>
+      <div class="btn-row stagger" style="animation-delay:0.5s">
+        <button class="btn btn-ghost" onclick="quizStep(3)"><span>← Retour</span></button>
+        <button class="btn btn-solid" id="qSubmit" onclick="showDevis()" disabled><span>Voir mon estimation</span></button>
+      </div>
+    </div>
+
+    <!-- Step 5 : Devis -->
+    <div class="qstep" id="qs-5">
+      <div class="devis-head stagger" style="animation-delay:0.05s">
+        <div class="devis-kicker">Votre estimation</div>
+        <div class="devis-name" id="dvName">—</div>
+        <div class="devis-cat" id="dvCat">—</div>
+      </div>
+
+      <div class="dv-block stagger" style="animation-delay:0.18s">
+        <div class="dv-label">Prestation</div>
+        <div id="dvMain"></div>
+      </div>
+
+      <div class="dv-block stagger" style="animation-delay:0.26s" id="dvOptBlock" style="display:none">
+        <div class="dv-label">Options</div>
+        <div id="dvOpts"></div>
+      </div>
+
+      <div class="dv-total stagger" style="animation-delay:0.34s">
+        <div>
+          <div class="dv-total-label">Montant estimé</div>
+          <div class="dv-total-note">Devis détaillé envoyé sous 24h</div>
+        </div>
+        <div class="dv-total-amount"><span id="dvTotal">0</span>€ <small>HT</small></div>
+      </div>
+
+      <div class="dv-disclaimer stagger" style="animation-delay:0.42s">
+        Cette estimation est établie à partir de vos réponses. Un devis complet et personnalisé vous sera transmis sous 24h après étude de votre projet. Chaque demande est examinée afin d'assurer sa cohérence avec l'univers éditorial du studio.
+      </div>
+
+      <div class="pf-preview">
+        <div class="pf-preview-head rv">
+          <div class="pf-divider"></div>
+          <div class="pf-preview-title" id="pfPrevTitle">Nos réalisations</div>
+          <div class="pf-preview-sub" id="pfPrevSub">Dans votre domaine.</div>
+        </div>
+        <div class="gallery" id="pfPrevGallery"></div>
+        <div class="btn-row rv" style="justify-content:center">
+          <button class="btn btn-ghost" onclick="goView('portfolio')"><span>Voir tout le portfolio</span></button>
+          <a class="btn btn-solid" id="dvMailto" style="text-decoration:none"><span>Confirmer ma demande</span></a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════ PORTFOLIO ════════ -->
+<div class="view" id="view-portfolio">
+  <div class="pf-page">
+    <h1 class="pf-page-title">Portfolio</h1>
+    <p class="pf-page-sub">Une sélection de projets réalisés par le studio, classés par univers.</p>
+    <div class="pf-cats" id="pfTabs"></div>
+    <div class="pf-grid" id="pfGrid"></div>
+  </div>
+</div>
+
+<!-- ════════ CONTACT ════════ -->
+<div class="view" id="view-contact">
+  <div class="ct-page">
+    <div>
+      <h1 class="ct-title">Contact</h1>
+      <p class="ct-sub">Une question, un projet, une collaboration&nbsp;? Écrivez-nous — nous répondons sous 24h.</p>
+
+      <div class="ct-info-block">
+        <div class="ct-info-label">Email</div>
+        <div class="ct-info-value"><a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a></div>
+      </div>
+      <div class="ct-info-block">
+        <div class="ct-info-label">Téléphone</div>
+        <div class="ct-info-value"><a href="tel:+33758573161">07 58 57 31 61</a></div>
+      </div>
+      <div class="ct-info-block">
+        <div class="ct-info-label">Entreprise</div>
+        <div class="ct-info-value">
+          BUNKAIO — Entreprise Individuelle<br>
+          SIRET : [À COMPLÉTER]<br>
+          Béziers, France
+        </div>
+      </div>
+      <div class="ct-info-block">
+        <div class="ct-info-label">Suivez-nous</div>
+        <a class="ct-follow" href="https://instagram.com/bunkaio" target="_blank" rel="noopener">
+          <span>Instagram — @bunkaio</span>
+        </a>
+      </div>
+    </div>
+
+    <div>
+      <form id="ctForm" onsubmit="sendContact(event)">
+        <div class="fgroup">
+          <label>Nom / Société</label>
+          <input type="text" id="ctName" required placeholder="Votre nom ou société">
+        </div>
+        <div class="fgroup">
+          <label>Email</label>
+          <input type="email" id="ctEmail" required placeholder="vous@societe.fr">
+        </div>
+        <div class="fgroup">
+          <label>Téléphone — optionnel</label>
+          <input type="tel" id="ctPhone" placeholder="06 00 00 00 00">
+        </div>
+        <div class="fgroup">
+          <label>Message</label>
+          <textarea id="ctMsg" required placeholder="Votre message…" style="min-height:140px"></textarea>
+        </div>
+        <div class="btn-row" style="margin-top:34px">
+          <button type="submit" class="btn btn-solid"><span>Nous contacter</span></button>
+        </div>
+      </form>
+      <div class="ct-form-success" id="ctSuccess">
+        <strong>Message prêt à l'envoi.</strong><br><br>
+        Votre client mail vient de s'ouvrir avec votre message pré-rempli. Il ne vous reste qu'à cliquer sur envoyer. À très vite.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="ft-logo">bunkaio</div>
+    <div class="ft-tag">Nous révélons ce qui rend vos projets uniques.</div>
+  </div>
+  <div class="ft-tag">© 2026 Bunkaio — Béziers, France</div>
+</footer>
+
+<script>
+/* ───────── DATA ───────── */
+const CATS = [
+  { id:'immobilier', name:'Immobilier prestige', tag:'Vente · Location · Promotion',
+    tiers:{
+      sig:{ price:990, delay:'5 jours ouvrés', items:['25 photos HD retouchées','Cadrage et lumière travaillés pièce par pièce','Galerie privée de téléchargement'] },
+      prem:{ price:1490, delay:'5 jours ouvrés', items:['30 photos HD retouchées','10 photos aériennes par drone certifié','Mise en valeur du bien et de son environnement','Galerie privée de téléchargement'] },
+      edit:{ price:2290, delay:'10 jours ouvrés', items:['30 photos HD retouchées','10 photos aériennes par drone certifié','1 film principal (60 à 90 secondes)','1 Reel vertical pour les réseaux','Valorisation éditoriale du bien','Publication sur les supports Bunkaio'] }
+    }},
+  { id:'archi', name:'Architecture & Design', tag:'Architectes · Intérieurs · Agenceurs',
+    tiers:{
+      sig:{ price:1290, delay:'5 jours ouvrés', items:['30 photos HD retouchées','Lecture architecturale du lieu : volumes, lignes, matériaux','Galerie privée de téléchargement'] },
+      prem:{ price:1990, delay:'7 jours ouvrés', items:['35 photos HD retouchées','1 film principal (90 secondes)','1 Reel vertical pour les réseaux','Galerie privée de téléchargement'] },
+      edit:{ price:2990, delay:'10 jours ouvrés', items:['40 photos HD retouchées','12 photos aériennes par drone certifié','1 film principal (2 minutes)','2 Reels verticaux','Storytelling complet du projet','Publication sur les supports Bunkaio'] }
+    }},
+  { id:'cuisine', name:'Cuisines haut de gamme', tag:'Cuisinistes · Showrooms',
+    tiers:{
+      sig:{ price:990, delay:'5 jours ouvrés', items:['25 photos HD retouchées','Mise en valeur des matériaux et finitions','Galerie privée de téléchargement'] },
+      prem:{ price:1690, delay:'7 jours ouvrés', items:['30 photos HD retouchées','1 film principal','1 Reel vertical pour les réseaux','Galerie privée de téléchargement'] },
+      edit:{ price:2490, delay:'10 jours ouvrés', items:['35 photos HD retouchées','1 film principal (90 secondes)','2 Reels verticaux','Storytelling de la réalisation','Publication sur les supports Bunkaio'] }
+    }},
+  { id:'piscine', name:'Piscines & Extérieurs', tag:'Piscinistes · Paysagistes',
+    tiers:{
+      sig:{ price:990, delay:'5 jours ouvrés', items:['25 photos HD retouchées','Travail de la lumière naturelle et des reflets','Galerie privée de téléchargement'] },
+      prem:{ price:1690, delay:'7 jours ouvrés', items:['30 photos HD retouchées','8 photos aériennes par drone certifié','1 film principal','1 Reel vertical'] },
+      edit:{ price:2490, delay:'10 jours ouvrés', items:['35 photos HD retouchées','10 photos aériennes par drone certifié','1 film principal (90 secondes)','2 Reels verticaux','Storytelling de la réalisation','Publication sur les supports Bunkaio'] }
+    }},
+  { id:'artisan', name:'Artisanat d\'art', tag:'Ébénistes · Marbriers · Créateurs',
+    tiers:{
+      sig:{ price:890, delay:'5 jours ouvrés', items:['20 photos HD retouchées','Mise en lumière du geste et de la matière','Galerie privée de téléchargement'] },
+      prem:{ price:1490, delay:'7 jours ouvrés', items:['30 photos HD retouchées','1 Reel vertical pour les réseaux','Galerie privée de téléchargement'] },
+      edit:{ price:2290, delay:'10 jours ouvrés', items:['35 photos HD retouchées','1 film principal','2 Reels verticaux','Storytelling de l\'atelier et du savoir-faire','Publication sur les supports Bunkaio'] }
+    }},
+  { id:'mode', name:'Mode & Lifestyle', tag:'Marques · Collections · E-commerce',
+    tiers:{
+      sig:{ price:1290, delay:'7 jours ouvrés', items:['Lookbook — 35 photos HD retouchées','1 Reel vertical pour les réseaux','Direction artistique incluse'] },
+      prem:{ price:1990, delay:'7 jours ouvrés', items:['Lookbook — 60 photos HD retouchées','1 film principal','2 Reels verticaux','Direction artistique incluse'] },
+      edit:{ price:2990, delay:'10 jours ouvrés', items:['Campagne — 80 photos HD retouchées','1 film publicitaire (2 minutes)','3 Reels verticaux','Storytelling de marque','Publication sur les supports Bunkaio'] }
+    }},
+  { id:'event', name:'Événementiel', tag:'Domaines · Entreprises · Réceptions',
+    tiers:{
+      sig:{ price:890, delay:'5 jours ouvrés', items:['60 photos HD retouchées','Couverture des moments clés','Galerie privée de téléchargement'] },
+      prem:{ price:1490, delay:'5 jours ouvrés', items:['120 photos HD retouchées','Couverture complète de l\'événement','Galerie privée de téléchargement'] },
+      edit:{ price:2490, delay:'10 jours ouvrés', items:['120 photos HD retouchées','1 aftermovie (2 minutes)','2 Reels verticaux','Mise en lumière éditoriale de l\'événement','Publication sur les supports Bunkaio'] }
+    }}
+];
+
+const TIERS = [
+  { id:'sig', name:'Signature', badge:null },
+  { id:'prem', name:'Premium', badge:'Le plus choisi' },
+  { id:'edit', name:'Éditorial Bunkaio', badge:'Expérience complète' }
+];
+
+const OPTIONS = [
+  { id:'drone', name:'Prises de vue drone additionnelles', note:'Perspectives aériennes supplémentaires — pilote certifié', price:250 },
+  { id:'video', name:'Film additionnel', note:'Un deuxième montage avec un angle différent', price:300 },
+  { id:'social', name:'Pack réseaux renforcé', note:'Déclinaisons supplémentaires Instagram & LinkedIn', price:200 },
+  { id:'express', name:'Livraison express 72h', note:'Vos livrables prioritaires sous 72 heures', price:'+20%' }
+];
+
+const PF_CATS = [
+  { id:'immobilier', label:'Immobilier' },
+  { id:'archi', label:'Architecture' },
+  { id:'cuisine', label:'Cuisines' },
+  { id:'piscine', label:'Piscines' },
+  { id:'artisan', label:'Artisanat' },
+  { id:'mode', label:'Mode' },
+  { id:'event', label:'Événementiel' }
+];
+
+/* ───────── STATE ───────── */
+const S = { cat:null, tier:null, opts:[], name:'', email:'', phone:'', project:'' };
+
+/* ───────── SCROLL REVEAL ───────── */
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('in');
+      if (e.target.classList.contains('ph')) {
+        setTimeout(() => e.target.classList.add('revealed'), 80);
+      }
+      io.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12 });
+
+function observe(el){ io.observe(el); }
+document.querySelectorAll('.rv').forEach(observe);
+
+/* ───────── VIEWS + VEIL TRANSITION ───────── */
+function goView(v){
+  const veil = document.getElementById('veil');
+  veil.classList.remove('sweep');
+  void veil.offsetWidth;
+  veil.classList.add('sweep');
+
+  setTimeout(() => {
+    document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+    document.getElementById('view-' + v).classList.add('active');
+    document.querySelectorAll('.nav-link').forEach(l => l.classList.toggle('active', l.dataset.view === v));
+    window.scrollTo({ top:0, behavior:'instant' });
+    if (v !== 'quiz') setProgress(0);
+    else setProgress(currentStep / 5 * 100);
+    if (v === 'portfolio' && !pfLoaded) { renderPfTabs(); selectPfTab(PF_CATS[0].id); pfLoaded = true; }
+  }, 420);
+}
+
+/* ───────── QUIZ ───────── */
+let currentStep = 1;
+function setProgress(p){ document.getElementById('progressFill').style.width = p + '%'; }
+
+function quizStep(n){
+  currentStep = n;
+  document.querySelectorAll('.qstep').forEach(s => s.classList.remove('active'));
+  const step = document.getElementById('qs-' + n);
+  step.classList.add('active');
+  setProgress(n / 5 * 100);
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+function renderCats(){
+  const el = document.getElementById('catList');
+  el.innerHTML = '';
+  CATS.forEach((c, i) => {
+    const d = document.createElement('div');
+    d.className = 'cat-item stagger';
+    d.style.animationDelay = (0.28 + i * 0.07) + 's';
+    d.innerHTML = `
+      <div><div class="cat-name">${c.name}</div></div>
+      <div class="cat-right">
+        <div class="cat-tag">${c.tag}</div>
+        <div class="cat-arrow"></div>
+      </div>`;
+    d.onclick = () => {
+      S.cat = c.id; S.tier = null;
+      renderTiers();
+      quizStep(2);
+    };
+    el.appendChild(d);
+  });
+}
+
+function renderTiers(){
+  const cat = CATS.find(c => c.id === S.cat);
+  document.getElementById('tierSub').textContent = cat.name + ' — trois niveaux de couverture, du reportage essentiel à l\'expérience éditoriale complète.';
+  const el = document.getElementById('tierList');
+  el.innerHTML = '';
+  TIERS.forEach((t, i) => {
+    const td = cat.tiers[t.id];
+    const d = document.createElement('div');
+    d.className = 'tier-card stagger';
+    d.style.animationDelay = (0.28 + i * 0.12) + 's';
+    d.innerHTML = `
+      ${t.badge ? `<div class="tier-badge">${t.badge}</div>` : ''}
+      <div class="tier-head">
+        <div class="tier-name">${t.name}</div>
+        <div class="tier-price">${td.price.toLocaleString('fr-FR')}€<small>HT</small></div>
+      </div>
+      <div class="tier-detail">${td.items.join(' · ')}</div>`;
+    d.onclick = () => {
+      S.tier = t.id;
+      renderRecap();
+      renderOptions();
+      quizStep(3);
+    };
+    el.appendChild(d);
+  });
+}
+
+function renderRecap(){
+  const cat = CATS.find(c => c.id === S.cat);
+  const tier = TIERS.find(t => t.id === S.tier);
+  const td = cat.tiers[S.tier];
+  document.getElementById('recapBox').innerHTML = `
+    <div class="recap-label">Votre sélection</div>
+    <div class="recap-title">
+      <span>${cat.name} — ${tier.name}</span>
+      <span>${td.price.toLocaleString('fr-FR')}€ HT</span>
+    </div>
+    <ul class="recap-items">
+      ${td.items.map(i => `<li>${i}</li>`).join('')}
+    </ul>
+    <div class="recap-delivery">Livraison : ${td.delay}</div>`;
+}
+
+function renderOptions(){
+  const el = document.getElementById('optList');
+  el.innerHTML = '';
+  S.opts = [];
+  OPTIONS.forEach((o, i) => {
+    const d = document.createElement('div');
+    d.className = 'opt-item stagger';
+    d.style.animationDelay = (0.42 + i * 0.08) + 's';
+    d.innerHTML = `
+      <div class="opt-check"></div>
+      <div class="opt-body">
+        <div class="opt-name">${o.name}</div>
+        <div class="opt-note">${o.note}</div>
+      </div>
+      <div class="opt-price">${typeof o.price === 'number' ? '+' + o.price + '€' : o.price}</div>`;
+    d.onclick = () => {
+      d.classList.toggle('selected');
+      if (d.classList.contains('selected')) S.opts.push(o.id);
+      else S.opts = S.opts.filter(x => x !== o.id);
+    };
+    el.appendChild(d);
+  });
+}
+
+function checkQuizForm(){
+  S.name = document.getElementById('qName').value.trim();
+  S.email = document.getElementById('qEmail').value.trim();
+  document.getElementById('qSubmit').disabled = !(S.name && S.email && S.email.includes('@'));
+}
+
+function computeTotal(){
+  const cat = CATS.find(c => c.id === S.cat);
+  let total = cat.tiers[S.tier].price;
+  let express = false;
+  S.opts.forEach(id => {
+    const o = OPTIONS.find(x => x.id === id);
+    if (typeof o.price === 'number') total += o.price;
+    else if (o.id === 'express') express = true;
+  });
+  if (express) total = Math.round(total * 1.2);
+  return total;
+}
+
+/* Count-up animation pour le total */
+function animateTotal(target){
+  const el = document.getElementById('dvTotal');
+  const duration = 1400;
+  const start = performance.now();
+  function frame(now){
+    const p = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - p, 4);
+    el.textContent = Math.round(target * eased).toLocaleString('fr-FR');
+    if (p < 1) requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+
+function showDevis(){
+  S.phone = document.getElementById('qPhone').value;
+  S.project = document.getElementById('qProject').value;
+
+  const cat = CATS.find(c => c.id === S.cat);
+  const tier = TIERS.find(t => t.id === S.tier);
+  const td = cat.tiers[S.tier];
+  const total = computeTotal();
+
+  document.getElementById('dvName').textContent = S.name;
+  document.getElementById('dvCat').textContent = cat.name + ' — ' + tier.name;
+
+  document.getElementById('dvMain').innerHTML = `
+    <div class="dv-line"><span>${cat.name} — ${tier.name}</span><span>${td.price.toLocaleString('fr-FR')}€</span></div>
+    <div class="dv-includes">${td.items.join(' · ')} — Livraison ${td.delay}</div>`;
+
+  const optBlock = document.getElementById('dvOptBlock');
+  if (S.opts.length){
+    optBlock.style.display = 'block';
+    document.getElementById('dvOpts').innerHTML = S.opts.map(id => {
+      const o = OPTIONS.find(x => x.id === id);
+      return `<div class="dv-line"><span>${o.name}</span><span>${typeof o.price === 'number' ? '+' + o.price + '€' : o.price}</span></div>`;
+    }).join('');
+  } else optBlock.style.display = 'none';
+
+  /* Portfolio preview */
+  document.getElementById('pfPrevTitle').textContent = 'Réalisations — ' + cat.name;
+  document.getElementById('pfPrevSub').textContent = 'Un aperçu de notre travail dans votre univers.';
+  const g = document.getElementById('pfPrevGallery');
+  g.innerHTML = '';
+  for (let i = 0; i < 6; i++){
+    const ph = document.createElement('div');
+    ph.className = 'ph rv' + (i === 0 ? ' ph-tall' : '');
+    ph.style.aspectRatio = i === 0 ? 'auto' : '4/3';
+    ph.innerHTML = `<img loading="lazy" src="https://picsum.photos/seed/${S.cat}${i}/800/600?grayscale" alt="Réalisation ${cat.name}">`;
+    g.appendChild(ph);
+    observe(ph);
+  }
+  document.querySelectorAll('#qs-5 .rv:not(.ph)').forEach(el => { el.classList.remove('in'); observe(el); });
+
+  const body = encodeURIComponent(
+`Nom : ${S.name}
+Email : ${S.email}
+Téléphone : ${S.phone || '—'}
+Catégorie : ${cat.name}
+Prestation : ${tier.name}
+Options : ${S.opts.length ? S.opts.map(id => OPTIONS.find(o=>o.id===id).name).join(', ') : 'Aucune'}
+Estimation : ${total}€ HT
+
+Projet :
+${S.project || '—'}`);
+  document.getElementById('dvMailto').href =
+    `mailto:contact@bunkaio.com?subject=${encodeURIComponent('Demande de devis — ' + cat.name)}&body=${body}`;
+
+  quizStep(5);
+  setProgress(100);
+  setTimeout(() => animateTotal(total), 500);
+}
+
+/* ───────── PORTFOLIO ───────── */
+let pfLoaded = false;
+
+function renderPfTabs(){
+  const el = document.getElementById('pfTabs');
+  el.innerHTML = '';
+  PF_CATS.forEach(c => {
+    const b = document.createElement('button');
+    b.className = 'pf-cat-tab';
+    b.textContent = c.label;
+    b.dataset.cat = c.id;
+    b.onclick = () => selectPfTab(c.id);
+    el.appendChild(b);
+  });
+}
+
+function selectPfTab(id){
+  document.querySelectorAll('.pf-cat-tab').forEach(t => t.classList.toggle('active', t.dataset.cat === id));
+  const grid = document.getElementById('pfGrid');
+  grid.innerHTML = '';
+  for (let i = 0; i < 40; i++){
+    const wide = i % 7 === 3;
+    const ph = document.createElement('div');
+    ph.className = 'ph rv' + (wide ? ' wide' : '');
+    ph.innerHTML = `<img loading="lazy" src="https://picsum.photos/seed/${id}-${i}/700/${wide ? 500 : 900}?grayscale" alt="Projet ${i+1}">`;
+    grid.appendChild(ph);
+    observe(ph);
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ───────── CONTACT ───────── */
+function sendContact(e){
+  e.preventDefault();
+  const n = document.getElementById('ctName').value.trim();
+  const em = document.getElementById('ctEmail').value.trim();
+  const ph = document.getElementById('ctPhone').value.trim();
+  const msg = document.getElementById('ctMsg').value.trim();
+  const body = encodeURIComponent(`Nom : ${n}\nEmail : ${em}\nTéléphone : ${ph || '—'}\n\n${msg}`);
+  window.location.href = `mailto:contact@bunkaio.com?subject=${encodeURIComponent('Contact — ' + n)}&body=${body}`;
+  document.getElementById('ctForm').style.display = 'none';
+  document.getElementById('ctSuccess').style.display = 'block';
+}
+
+/* ───────── INIT ───────── */
+renderCats();
+</script>
+
+</body>
+</html>
