@@ -118,7 +118,7 @@
     <div class="qstep" id="qs-5">
       <div class="qstep-meta stagger" style="animation-delay:0.05s" data-lang="step-coords">05 — Coordonnées</div>
       <h2 class="qstep-title stagger" style="animation-delay:0.12s" data-lang="q-coords">Vos coordonnées</h2>
-      <p class="qstep-sub stagger" style="animation-delay:0.2s" data-lang="q-coords-sub">Pour recevoir votre estimation détaillée.</p>
+      <p class="qstep-sub stagger" style="animation-delay:0.2s" data-lang="q-coords-sub">Nous étudions chaque demande personnellement. Réponse assurée sous 48h.</p>
       <div class="fgroup stagger" style="animation-delay:0.26s">
         <label data-lang="name-label">Nom / Société *</label>
         <input type="text" id="qName" placeholder="Votre nom ou société" oninput="checkQuizForm()">
@@ -135,10 +135,14 @@
         <label data-lang="project-label">Votre projet *</label>
         <textarea id="qProject" placeholder="Décrivez votre projet en quelques mots…" oninput="checkQuizForm()"></textarea>
       </div>
-      <div class="btn-row stagger" style="animation-delay:0.5s">
+      <div class="quiz-reassurance stagger" style="animation-delay:0.48s">
+        <p class="quiz-reassurance-text">Votre demande est examinée personnellement — jamais traitée en masse.<br>Nous vous répondons sous 48 heures avec une proposition adaptée à votre projet.</p>
+      </div>
+      <div class="btn-row stagger" style="animation-delay:0.52s">
         <button class="btn btn-ghost" onclick="quizStep(4)"><span data-lang="back">← Retour</span></button>
         <button class="btn btn-solid" id="qSubmit" onclick="submitQuiz(event)" disabled><span data-lang="submit">Confirmez ma demande de devis</span></button>
       </div>
+      <div class="quiz-microcopy stagger" style="animation-delay:0.58s">Sans engagement · Réponse personnalisée sous 48h</div>
     </div>
 
     <div class="qstep" id="qs-6">
