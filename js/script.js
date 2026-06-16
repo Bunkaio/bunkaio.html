@@ -1,125 +1,7 @@
 /* ═══════════════ FORMSPREE → contact@bunkaio.com ═══════════════ */
 const FORMSPREE_URL = 'https://formspree.io/f/mnjybndv';
 
-/* ════════════════════════════════════════════════════════════════
-   🖼  CONFIG IMAGES — Modifie les URLs ici pour changer les images
-   ════════════════════════════════════════════════════════════════ */
-/* ═══════════════════════════════════════════════════════════════
-   📸  IMAGES — Modifie uniquement les URLs dans ce bloc
-   ───────────────────────────────────────────────────────────────
-   Comment remplacer une image :
-     1. Upload le fichier dans GitHub (ex: images/accueil.jpg)
-     2. Remplace l'URL ci-dessous par le chemin : 'images/accueil.jpg'
-   Pour désactiver un fond : mets null à la place de l'URL
-   ═══════════════════════════════════════════════════════════════ */
-const IMG = {
-
-  /* ── Fond de page (image en arrière-plan, opacité 6%)
-        Une image par rubrique — ambiance, format paysage recommandé ── */
-  home:      'https://picsum.photos/seed/bk-home/1920/1080',   // Accueil
-  quiz:      'https://picsum.photos/seed/bk-quiz/1920/1080',   // Questionnaire
-  services:  'https://picsum.photos/seed/bk-serv/1920/1080',   // Services
-  drone:     'https://picsum.photos/seed/bk-drone/1920/1080',  // 4K Drone
-  portfolio: 'https://picsum.photos/seed/bk-pf-bg/1920/1080', // Portfolio
-  contact:   'https://picsum.photos/seed/bk-contact/1920/1080',// Contact
-  partners:  'https://picsum.photos/seed/bk-part/1920/1080',   // Partenaires
-  login:     'https://picsum.photos/seed/bk-login/1920/1080',  // Connexion
-  account:   'https://picsum.photos/seed/bk-account/1920/1080',// Espace client
-
-  /* ── Bande d'images défilante — accueil (8 images, portrait)
-        Format recommandé : ~600×800px ── */
-  marquee: [
-    'https://picsum.photos/seed/bk-mq1/600/750', // Image 1 — remplace par la tienne
-    'https://picsum.photos/seed/bk-mq2/600/750', // Image 2
-    'https://picsum.photos/seed/bk-mq3/600/750', // Image 3
-    'https://picsum.photos/seed/bk-mq4/600/750', // Image 4
-    'https://picsum.photos/seed/bk-mq5/600/750', // Image 5
-    'https://picsum.photos/seed/bk-mq6/600/750', // Image 6
-    'https://picsum.photos/seed/bk-mq7/600/750', // Image 7
-    'https://picsum.photos/seed/bk-mq8/600/750', // Image 8
-  ],
-
-  /* ── Illustration latérale — section Devis & déroulé ── */
-  devis: 'https://picsum.photos/seed/bk-devis/900/700',
-
-  /* ── Portfolio quiz (fin du parcours) — seed de base pour les placeholders ── */
-  portfolioSeed: 'bk-pf',
-
-  /* ═══════════════════════════════════════════════════════════
-     🖼  CARROUSEL HERO — tableau d'images par rubrique (format 21/9)
-     ═══════════════════════════════════════════════════════════
-     Ajoute autant d'images que tu veux dans chaque tableau.
-     Le carrousel défile automatiquement toutes les 5 secondes.
-     Format recommandé : ~1920×820px
-     ① Accueil ② Questionnaire ③ Services ④ 4K Drone
-     ⑤ Portfolio ⑥ Contact ⑦ Partenaires ⑧ Connexion ⑨ Compte
-  ═══════════════════════════════════════════════════════════ */
-  heroImages: {
-    home: [                                                         // ① Accueil
-      'https://picsum.photos/seed/bk-hero-home-a/1920/820',
-      'https://picsum.photos/seed/bk-hero-home-b/1920/820',
-      'https://picsum.photos/seed/bk-hero-home-c/1920/820',
-    ],
-    quiz: [                                                         // ② Questionnaire
-      'https://picsum.photos/seed/bk-hero-quiz-a/1920/820',
-      'https://picsum.photos/seed/bk-hero-quiz-b/1920/820',
-    ],
-    services: [                                                     // ③ Services
-      'https://picsum.photos/seed/bk-hero-svc-a/1920/820',
-      'https://picsum.photos/seed/bk-hero-svc-b/1920/820',
-      'https://picsum.photos/seed/bk-hero-svc-c/1920/820',
-    ],
-    drone: [                                                        // ④ 4K Drone
-      'https://picsum.photos/seed/bk-hero-drone-a/1920/820',
-      'https://picsum.photos/seed/bk-hero-drone-b/1920/820',
-    ],
-    portfolio: [                                                    // ⑤ Portfolio
-      'https://picsum.photos/seed/bk-hero-pf-a/1920/820',
-      'https://picsum.photos/seed/bk-hero-pf-b/1920/820',
-      'https://picsum.photos/seed/bk-hero-pf-c/1920/820',
-    ],
-    contact: [                                                      // ⑥ Contact
-      'https://picsum.photos/seed/bk-hero-ct-a/1920/820',
-      'https://picsum.photos/seed/bk-hero-ct-b/1920/820',
-    ],
-    partners: [                                                     // ⑦ Partenaires
-      'https://picsum.photos/seed/bk-hero-pt-a/1920/820',
-      'https://picsum.photos/seed/bk-hero-pt-b/1920/820',
-    ],
-    login: [                                                        // ⑧ Connexion
-      'https://picsum.photos/seed/bk-hero-login-a/1920/820',
-    ],
-    account: [                                                      // ⑨ Espace compte
-      'https://picsum.photos/seed/bk-hero-acc-a/1920/820',
-    ],
-  },
-
-  /* ═══════════════════════════════════════════════════════════
-     🖼  PHOTOS SERVICES — une image par catégorie
-         (apparaît dans la grille services quand une catégorie est filtrée)
-     ═══════════════════════════════════════════════════════════
-     ① Immobilier prestige → immobilier
-     ② Architecture        → archi
-     ③ Cuisines haut gamme → cuisine
-     ④ Piscines & ext.     → piscine
-     ⑤ Artisanat d'art     → artisan
-     ⑥ Séance particuliers → photo-part
-     ⑦ Mode & créateurs    → mode
-     ⑧ Événementiel        → event
-  ═══════════════════════════════════════════════════════════ */
-  servicePhotos: {
-    immobilier: 'https://picsum.photos/seed/svc-immo/900/1200',      // ① Immobilier
-    archi:      'https://picsum.photos/seed/svc-archi/900/1200',     // ② Architecture
-    cuisine:    'https://picsum.photos/seed/svc-cuisine/900/1200',   // ③ Cuisines
-    piscine:    'https://picsum.photos/seed/svc-piscine/900/1200',   // ④ Piscines
-    artisan:    'https://picsum.photos/seed/svc-artisan/900/1200',   // ⑤ Artisanat
-    'photo-part':'https://picsum.photos/seed/svc-photo/900/1200',    // ⑥ Séance photo
-    mode:       'https://picsum.photos/seed/svc-mode/900/1200',      // ⑦ Mode
-    event:      'https://picsum.photos/seed/svc-event/900/1200',     // ⑧ Événementiel
-  },
-};
-
-/* VIDEO config removed — hero images used instead */
+/* IMG et DRONE_MEDIA sont définis dans config/media.js — chargé avant ce fichier */
 
 /* ═══════════════ LANGUE ═══════════════ */
 let LANG = 'fr';
@@ -699,52 +581,50 @@ const PF_CATS = [
   { id:'event',       label:{fr:'Événementiel',en:'Events'} }
 ];
 
-const SAMPLE_VIDEO = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4';
-
 const DRONE_CATS = [
   { id:'immo', name:{fr:'Immobilier & architecture', en:'Real estate & architecture'},
     projects:[
       { title:{fr:'Villa contemporaine — Hérault', en:'Contemporary villa — Hérault'},
         desc:{fr:'Mise en valeur aérienne d\'une villa d\'architecte : travelling, révélation progressive de la piscine à débordement et lecture du dialogue entre le bâti et le paysage.',
               en:'Aerial showcase of an architect-designed villa: a tracking approach, the gradual reveal of the infinity pool, and the dialogue between the building and its landscape.'},
-        thumb:'https://picsum.photos/seed/dr-immo1/640/400', video:SAMPLE_VIDEO },
+        thumb:DRONE_MEDIA.immo[0].thumb, video:DRONE_MEDIA.immo[0].video },
       { title:{fr:'Domaine viticole — vente prestige', en:'Wine estate — premium sale'},
         desc:{fr:'Film aérien pour la mise en vente d\'un domaine : vue d\'ensemble du terrain, des dépendances et des vignes, montage rythmé pour les plateformes haut de gamme.',
               en:'Aerial film for the sale of an estate: overview of the grounds, outbuildings and vineyards, edited with pace for premium real estate platforms.'},
-        thumb:'https://picsum.photos/seed/dr-immo2/640/400', video:SAMPLE_VIDEO }
+        thumb:DRONE_MEDIA.immo[1].thumb, video:DRONE_MEDIA.immo[1].video }
     ]},
   { id:'outdoor', name:{fr:'Piscines & paysages', en:'Pools & landscapes'},
     projects:[
       { title:{fr:'Piscine miroir — réalisation pisciniste', en:'Mirror pool — pool builder showcase'},
         desc:{fr:'Captation au lever du soleil pour saisir les reflets parfaits du bassin. Plans aériens combinés à des plans au sol Sony Alpha pour un rendu éditorial complet.',
               en:'Captured at sunrise to seize the pool\'s perfect reflections. Aerial shots combined with Sony Alpha ground footage for a complete editorial result.'},
-        thumb:'https://picsum.photos/seed/dr-out1/640/400', video:SAMPLE_VIDEO },
+        thumb:DRONE_MEDIA.outdoor[0].thumb, video:DRONE_MEDIA.outdoor[0].video },
       { title:{fr:'Jardin paysager méditerranéen', en:'Mediterranean landscaped garden'},
         desc:{fr:'Documentation d\'un projet paysager : structure des terrasses, jeux d\'ombres des oliviers et intégration dans l\'environnement naturel.',
               en:'Documentation of a landscaping project: terraced structure, olive trees\' play of shadows, and integration into the natural surroundings.'},
-        thumb:'https://picsum.photos/seed/dr-out2/640/400', video:SAMPLE_VIDEO }
+        thumb:DRONE_MEDIA.outdoor[1].thumb, video:DRONE_MEDIA.outdoor[1].video }
     ]},
   { id:'event', name:{fr:'Événementiel', en:'Events'},
     projects:[
       { title:{fr:'Réception privée — domaine de caractère', en:'Private reception — characterful estate'},
         desc:{fr:'Aftermovie mêlant plans aériens du domaine au crépuscule et instants captés au sol : l\'arrivée des invités, les lumières, l\'atmosphère.',
               en:'An aftermovie blending aerial shots of the estate at dusk with ground-level moments: guests arriving, the lights, the atmosphere.'},
-        thumb:'https://picsum.photos/seed/dr-ev1/640/400', video:SAMPLE_VIDEO },
+        thumb:DRONE_MEDIA.event[0].thumb, video:DRONE_MEDIA.event[0].video },
       { title:{fr:'Événement d\'entreprise — lancement produit', en:'Corporate event — product launch'},
         desc:{fr:'Couverture vidéo complète : plans aériens du site, interviews, moments clés. Livré en format long et en déclinaisons réseaux.',
               en:'Full video coverage: aerial establishing shots, interviews, key moments. Delivered as long-form film plus social media cuts.'},
-        thumb:'https://picsum.photos/seed/dr-ev2/640/400', video:SAMPLE_VIDEO }
+        thumb:DRONE_MEDIA.event[1].thumb, video:DRONE_MEDIA.event[1].video }
     ]},
   { id:'brand', name:{fr:'Marques & lifestyle', en:'Brands & lifestyle'},
     projects:[
       { title:{fr:'Film de marque — maison artisanale', en:'Brand film — artisan house'},
         desc:{fr:'Récit visuel d\'une maison artisanale : l\'atelier filmé au Sony Alpha, le territoire saisi par drone. Deux échelles qui racontent ensemble l\'ancrage et le savoir-faire.',
               en:'The visual story of an artisan house: the workshop on Sony Alpha, the land captured by drone. Two scales that together convey heritage and craftsmanship.'},
-        thumb:'https://picsum.photos/seed/dr-br1/640/400', video:SAMPLE_VIDEO },
+        thumb:DRONE_MEDIA.brand[0].thumb, video:DRONE_MEDIA.brand[0].video },
       { title:{fr:'Campagne lifestyle — collection été', en:'Lifestyle campaign — summer collection'},
         desc:{fr:'Production complète : direction artistique, captation photo et vidéo, plans aériens des lieux de shooting. Cohérence visuelle sur tous les supports.',
               en:'Full production: art direction, photo and video capture, aerial shots of the locations. Visual consistency across every medium.'},
-        thumb:'https://picsum.photos/seed/dr-br2/640/400', video:SAMPLE_VIDEO }
+        thumb:DRONE_MEDIA.brand[1].thumb, video:DRONE_MEDIA.brand[1].video }
     ]}
 ];
 
