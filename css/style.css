@@ -1312,6 +1312,49 @@
   }
   .ph.revealed::after { transform: scaleY(0); }
 
+  /* ─── CTA BAND — FIN DE PORTFOLIO ─── */
+  .pf-cta-band {
+    background: var(--black); color: var(--white);
+    padding: 46px 48px; margin-top: 60px;
+    display: flex; align-items: center;
+    justify-content: space-between; gap: 32px;
+    position: relative; overflow: hidden; cursor: pointer;
+  }
+  .pf-cta-band::after {
+    content: ''; position: absolute; top: 0; left: -80%;
+    width: 50%; height: 100%;
+    background: linear-gradient(100deg, transparent, rgba(255,255,255,0.07), transparent);
+    transform: skewX(-18deg);
+    animation: subShine 5s var(--ease-luxe) infinite;
+  }
+  .pf-cta-left { flex: 1; position: relative; z-index: 1; }
+  .pf-cta-kicker {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.28em;
+    text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 10px;
+  }
+  .pf-cta-title {
+    font-size: 22px; font-weight: 700; color: var(--white);
+    line-height: 1.25; margin-bottom: 10px;
+  }
+  .pf-cta-sub {
+    font-size: 13.5px; line-height: 1.65; color: rgba(255,255,255,0.52);
+  }
+  .pf-cta-right { flex-shrink: 0; position: relative; z-index: 1; }
+  .pf-cta-btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11.5px; font-weight: 600; letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--black); background: var(--white);
+    border: none; padding: 16px 30px; border-radius: 2px;
+    cursor: pointer;
+    transition: transform 0.4s var(--ease), box-shadow 0.4s var(--ease);
+    white-space: nowrap;
+  }
+  .pf-cta-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+  .pf-cta-arrow { transition: transform 0.35s var(--ease); display: inline-block; }
+  .pf-cta-btn:hover .pf-cta-arrow { transform: translateX(5px); }
+
   /* ─── MARQUEE D'IMAGES (accueil) ─── */
   .marquee {
     overflow: hidden;
@@ -1576,6 +1619,8 @@
     .ct-page { grid-template-columns: 1fr; gap: 56px; padding: 102px 22px 100px; }
     .qstep-title, .page-title, .ct-title { scroll-margin-top: 150px; }
     .pf-grid { grid-template-columns: repeat(2, 1fr); }
+    .pf-cta-band { flex-direction: column; text-align: center; padding: 32px 24px; gap: 20px; }
+    .pf-cta-btn { width: 100%; justify-content: center; }
     .gallery { grid-template-columns: repeat(2, 1fr); }
     .prof-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
     .drone-project { grid-template-columns: 1fr; gap: 0; }
