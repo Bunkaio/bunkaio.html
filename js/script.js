@@ -285,16 +285,16 @@ const CATS = [
     tag:{fr:'Vente · location · promotion', en:'Sales · rentals · development'},
     icon:'promo',
     tiers:{
-      deco:{ price:490, delay:{fr:'3 jours ouvrés',en:'3 working days'}, items:{
+      deco:{ price:390, delay:{fr:'3 jours ouvrés',en:'3 working days'}, items:{
         fr:['8 photos HD retouchées','Pièces principales + extérieurs','Galerie privée de téléchargement'],
         en:['8 retouched HD photos','Main rooms + exteriors','Private download gallery'] } },
-      sig:{ price:990, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
+      sig:{ price:790, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
         fr:['15 photos HD retouchées','Cadrage et lumière travaillés pièce par pièce','Galerie privée de téléchargement'],
         en:['15 retouched HD photos','Framing and lighting refined room by room','Private download gallery'] } },
-      prem:{ price:1490, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
+      prem:{ price:1190, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
         fr:['30 photos HD retouchées','10 photos aériennes par drone certifié','Mise en valeur du bien et de son environnement','Galerie privée de téléchargement'],
         en:['30 retouched HD photos','10 aerial photos by certified drone','Property and surroundings showcased','Private download gallery'] } },
-      edit:{ price:2290, delay:{fr:'10 jours ouvrés',en:'10 working days'}, items:{
+      edit:{ price:1890, delay:{fr:'10 jours ouvrés',en:'10 working days'}, items:{
         fr:['35 photos HD retouchées','10 photos aériennes par drone certifié','1 film principal (60–90 secondes)','1 Reel vertical pour les réseaux','Valorisation éditoriale du bien','Publication sur les supports Bunkaio'],
         en:['35 retouched HD photos','10 aerial photos by certified drone','1 main film (60–90 seconds)','1 vertical Reel for social media','Editorial storytelling of the property','Featured on Bunkaio channels'] } }
     }},
@@ -303,16 +303,16 @@ const CATS = [
     tag:{fr:'Architectes · intérieurs · agenceurs', en:'Architects · interiors · fitters'},
     icon:'agency',
     tiers:{
-      deco:{ price:590, delay:{fr:'3 jours ouvrés',en:'3 working days'}, items:{
+      deco:{ price:490, delay:{fr:'3 jours ouvrés',en:'3 working days'}, items:{
         fr:['8 photos HD retouchées','Lecture d\'un espace signature','Galerie privée de téléchargement'],
         en:['8 retouched HD photos','A reading of one signature space','Private download gallery'] } },
-      sig:{ price:1290, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
+      sig:{ price:990, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
         fr:['15 photos HD retouchées','Lecture architecturale complète : volumes, lignes, matériaux','Galerie privée de téléchargement'],
         en:['15 retouched HD photos','Full architectural reading: volumes, lines, materials','Private download gallery'] } },
-      prem:{ price:1990, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
+      prem:{ price:1590, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
         fr:['30 photos HD retouchées','1 film principal (90 secondes)','1 Reel vertical pour les réseaux','Galerie privée de téléchargement'],
         en:['30 retouched HD photos','1 main film (90 seconds)','1 vertical Reel for social media','Private download gallery'] } },
-      edit:{ price:2990, delay:{fr:'10 jours ouvrés',en:'10 working days'}, items:{
+      edit:{ price:2390, delay:{fr:'10 jours ouvrés',en:'10 working days'}, items:{
         fr:['35 photos HD retouchées','12 photos aériennes par drone certifié','1 film principal (2 minutes)','2 Reels verticaux','Storytelling complet du projet','Publication sur les supports Bunkaio'],
         en:['35 retouched HD photos','12 aerial photos by certified drone','1 main film (2 minutes)','2 vertical Reels','Complete project storytelling','Featured on Bunkaio channels'] } }
     }},
@@ -321,16 +321,16 @@ const CATS = [
     tag:{fr:'Cuisinistes · showrooms', en:'Kitchen makers · showrooms'},
     icon:'gastro',
     tiers:{
-      deco:{ price:450, delay:{fr:'3 jours ouvrés',en:'3 working days'}, items:{
+      deco:{ price:390, delay:{fr:'3 jours ouvrés',en:'3 working days'}, items:{
         fr:['8 photos HD retouchées','Une réalisation ou un espace showroom','Galerie privée de téléchargement'],
         en:['8 retouched HD photos','One project or one showroom space','Private download gallery'] } },
-      sig:{ price:990, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
+      sig:{ price:790, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
         fr:['15 photos HD retouchées','Mise en valeur des matériaux et finitions','Galerie privée de téléchargement'],
         en:['15 retouched HD photos','Showcasing materials and finishes','Private download gallery'] } },
-      prem:{ price:1690, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
+      prem:{ price:1290, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
         fr:['30 photos HD retouchées','1 film principal','1 Reel vertical pour les réseaux','Galerie privée de téléchargement'],
         en:['30 retouched HD photos','1 main film','1 vertical Reel for social media','Private download gallery'] } },
-      edit:{ price:2490, delay:{fr:'10 jours ouvrés',en:'10 working days'}, items:{
+      edit:{ price:1990, delay:{fr:'10 jours ouvrés',en:'10 working days'}, items:{
         fr:['35 photos HD retouchées','1 film principal (90 secondes)','2 Reels verticaux','Storytelling de la réalisation','Publication sur les supports Bunkaio'],
         en:['35 retouched HD photos','1 main film (90 seconds)','2 vertical Reels','Project storytelling','Featured on Bunkaio channels'] } }
     }},
@@ -339,16 +339,16 @@ const CATS = [
     tag:{fr:'Piscinistes · paysagistes', en:'Pool builders · landscapers'},
     icon:'paysage',
     tiers:{
-      deco:{ price:450, delay:{fr:'3 jours ouvrés',en:'3 working days'}, items:{
+      deco:{ price:390, delay:{fr:'3 jours ouvrés',en:'3 working days'}, items:{
         fr:['8 photos HD retouchées','Une réalisation au meilleur moment de la journée','Galerie privée de téléchargement'],
         en:['8 retouched HD photos','One project at the best moment of the day','Private download gallery'] } },
-      sig:{ price:990, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
+      sig:{ price:790, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
         fr:['15 photos HD retouchées','Travail de la lumière naturelle et des reflets','Galerie privée de téléchargement'],
         en:['15 retouched HD photos','Natural light and reflections carefully crafted','Private download gallery'] } },
-      prem:{ price:1690, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
+      prem:{ price:1290, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
         fr:['30 photos HD retouchées','8 photos aériennes par drone certifié','1 film principal','1 Reel vertical'],
         en:['30 retouched HD photos','8 aerial photos by certified drone','1 main film','1 vertical Reel'] } },
-      edit:{ price:2490, delay:{fr:'10 jours ouvrés',en:'10 working days'}, items:{
+      edit:{ price:1990, delay:{fr:'10 jours ouvrés',en:'10 working days'}, items:{
         fr:['35 photos HD retouchées','10 photos aériennes par drone certifié','1 film principal (90 secondes)','2 Reels verticaux','Storytelling de la réalisation','Publication sur les supports Bunkaio'],
         en:['35 retouched HD photos','10 aerial photos by certified drone','1 main film (90 seconds)','2 vertical Reels','Project storytelling','Featured on Bunkaio channels'] } }
     }},
@@ -357,16 +357,16 @@ const CATS = [
     tag:{fr:'Ébénistes · marbriers · créateurs', en:'Cabinetmakers · marble workers · makers'},
     icon:'artisan',
     tiers:{
-      deco:{ price:390, delay:{fr:'3 jours ouvrés',en:'3 working days'}, items:{
+      deco:{ price:290, delay:{fr:'3 jours ouvrés',en:'3 working days'}, items:{
         fr:['8 photos HD retouchées','Une série atelier ou produits','Galerie privée de téléchargement'],
         en:['8 retouched HD photos','One workshop or product series','Private download gallery'] } },
-      sig:{ price:890, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
+      sig:{ price:690, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
         fr:['15 photos HD retouchées','Mise en lumière du geste et de la matière','Galerie privée de téléchargement'],
         en:['15 retouched HD photos','Highlighting the craft and the material','Private download gallery'] } },
-      prem:{ price:1490, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
+      prem:{ price:1090, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
         fr:['30 photos HD retouchées','1 Reel vertical pour les réseaux','Galerie privée de téléchargement'],
         en:['30 retouched HD photos','1 vertical Reel for social media','Private download gallery'] } },
-      edit:{ price:2290, delay:{fr:'10 jours ouvrés',en:'10 working days'}, items:{
+      edit:{ price:1690, delay:{fr:'10 jours ouvrés',en:'10 working days'}, items:{
         fr:['35 photos HD retouchées','1 film principal','2 Reels verticaux','Storytelling de l\'atelier et du savoir-faire','Publication sur les supports Bunkaio'],
         en:['35 retouched HD photos','1 main film','2 vertical Reels','Workshop and craftsmanship storytelling','Featured on Bunkaio channels'] } }
     }},
@@ -375,16 +375,16 @@ const CATS = [
     tag:{fr:'Extérieur · studio · solo · couple · groupe', en:'Outdoor · studio · solo · couple · group'},
     icon:'autre',
     tiers:{
-      deco:{ price:280, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
+      deco:{ price:230, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
         fr:['1h de séance — extérieur ou studio (+60€)','8 photos HD retouchées','Sélection guidée incluse','Galerie privée de téléchargement'],
         en:['1h session — outdoor or studio (+€60)','8 retouched HD photos','Guided selection included','Private download gallery'] } },
-      sig:{ price:490, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
+      sig:{ price:390, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
         fr:['2h de séance','15 photos HD retouchées','Direction de pose incluse','Galerie privée de téléchargement'],
         en:['2h session','15 retouched HD photos','Posing guidance included','Private download gallery'] } },
-      prem:{ price:790, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
+      prem:{ price:590, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
         fr:['Demi-journée (4h) — jusqu\'à 2 ambiances','20 photos HD retouchées','2 tenues différentes','Direction artistique complète','Galerie privée de téléchargement'],
         en:['Half-day (4h) — up to 2 moods','20 retouched HD photos','2 different outfits','Full art direction','Private download gallery'] } },
-      edit:{ price:1290, delay:{fr:'10 jours ouvrés',en:'10 working days'}, items:{
+      edit:{ price:990, delay:{fr:'10 jours ouvrés',en:'10 working days'}, items:{
         fr:['Journée complète — 4 lieux différents','4 tenues différentes','30 photos HD retouchées','1 film court (30 secondes)','Direction artistique & stylisme','Publication sur les supports Bunkaio'],
         en:['Full day — 4 different locations','4 different outfits','30 retouched HD photos','1 short film (30 seconds)','Art direction & styling','Featured on Bunkaio channels'] } }
     }},
@@ -393,16 +393,16 @@ const CATS = [
     tag:{fr:'Marques · agences · e-commerce · lookbook', en:'Brands · agencies · e-commerce · lookbook'},
     icon:'marque',
     tiers:{
-      deco:{ price:590, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
+      deco:{ price:490, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
         fr:['Mini-série — 8 photos HD retouchées','Un produit ou une silhouette','Direction artistique incluse'],
         en:['Mini series — 8 retouched HD photos','One product or one look','Art direction included'] } },
-      sig:{ price:1290, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
+      sig:{ price:990, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
         fr:['Lookbook — 15 photos HD retouchées','1 Reel vertical pour les réseaux','Direction artistique incluse'],
         en:['Lookbook — 15 retouched HD photos','1 vertical Reel for social media','Art direction included'] } },
-      prem:{ price:1990, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
+      prem:{ price:1590, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
         fr:['Lookbook — 30 photos HD retouchées','1 film principal','2 Reels verticaux','Direction artistique incluse'],
         en:['Lookbook — 30 retouched HD photos','1 main film','2 vertical Reels','Art direction included'] } },
-      edit:{ price:2990, delay:{fr:'10 jours ouvrés',en:'10 working days'}, items:{
+      edit:{ price:2390, delay:{fr:'10 jours ouvrés',en:'10 working days'}, items:{
         fr:['Campagne — 35 photos HD retouchées','1 film publicitaire (2 minutes)','3 Reels verticaux','Storytelling de marque','Publication sur les supports Bunkaio'],
         en:['Campaign — 35 retouched HD photos','1 commercial film (2 minutes)','3 vertical Reels','Brand storytelling','Featured on Bunkaio channels'] } }
     }},
@@ -411,16 +411,16 @@ const CATS = [
     tag:{fr:'Domaines · entreprises · réceptions', en:'Estates · corporate · receptions'},
     icon:'event',
     tiers:{
-      deco:{ price:490, delay:{fr:'3 jours ouvrés',en:'3 working days'}, items:{
+      deco:{ price:390, delay:{fr:'3 jours ouvrés',en:'3 working days'}, items:{
         fr:['20 photos HD retouchées','Couverture de 2 heures — les moments essentiels','Galerie privée de téléchargement'],
         en:['20 retouched HD photos','2-hour coverage — the essential moments','Private download gallery'] } },
-      sig:{ price:890, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
+      sig:{ price:690, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
         fr:['60 photos HD retouchées','Couverture des moments clés','Galerie privée de téléchargement'],
         en:['60 retouched HD photos','Coverage of the key moments','Private download gallery'] } },
-      prem:{ price:1490, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
+      prem:{ price:1190, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
         fr:['120 photos HD retouchées','Couverture complète de l\'événement','Galerie privée de téléchargement'],
         en:['120 retouched HD photos','Full event coverage','Private download gallery'] } },
-      edit:{ price:2490, delay:{fr:'10 jours ouvrés',en:'10 working days'}, items:{
+      edit:{ price:1990, delay:{fr:'10 jours ouvrés',en:'10 working days'}, items:{
         fr:['120 photos HD retouchées','1 aftermovie (2 minutes)','2 Reels verticaux','Mise en lumière éditoriale de l\'événement','Publication sur les supports Bunkaio'],
         en:['120 retouched HD photos','1 aftermovie (2 minutes)','2 vertical Reels','Editorial spotlight on the event','Featured on Bunkaio channels'] } }
     }}
@@ -432,28 +432,28 @@ const CATS = [
    ════════════════════════════════════════════════════════════════ */
 const SUBS = {
   immobilier: {
-    price: 650,
+    price: 550,
     name:{fr:'Studio Continu — Immobilier', en:'Studio Continu — Real Estate'},
     items:{
       fr:['1 reportage photo par mois (jusqu\'à 25 photos HD, 1 ou 2 biens)','1 Reel vertical par mois (annonces + réseaux)','Priorité planning 48h — vos biens en avant-première','Options supplémentaires au tarif partenaire (-20%)'],
       en:['1 photo shoot per month (up to 25 HD photos, 1 or 2 properties)','1 vertical Reel per month (listings + social)','48-hour priority scheduling on every new listing','All add-ons at partner rate (-20%)'] }
   },
   cuisine: {
-    price: 550,
+    price: 490,
     name:{fr:'Studio Continu — Cuisines', en:'Studio Continu — Kitchens'},
     items:{
       fr:['1 réalisation documentée par mois (jusqu\'à 20 photos HD)','1 Reel vertical + Stories prêts à publier','Cohérence visuelle mensuelle pour vos réseaux et showroom','Options supplémentaires au tarif partenaire (-20%)'],
       en:['1 project documented per month (up to 20 HD photos)','1 vertical Reel + Stories ready to publish','Monthly visual consistency for social and showroom','All add-ons at partner rate (-20%)'] }
   },
   artisan: {
-    price: 420,
+    price: 350,
     name:{fr:'Studio Continu — Atelier', en:'Studio Continu — Workshop'},
     items:{
       fr:['1 session atelier par mois (jusqu\'à 15 photos HD)','1 Reel storytelling : le geste, la matière, la pièce','Votre fil Instagram devient un carnet de création vivant','Options supplémentaires au tarif partenaire (-20%)'],
       en:['1 workshop session per month (up to 15 HD photos)','1 storytelling Reel: the craft, the material, the piece','Your Instagram feed becomes a living creative journal','All add-ons at partner rate (-20%)'] }
   },
   mode: {
-    price: 850,
+    price: 750,
     name:{fr:'Studio Continu — Marque', en:'Studio Continu — Brand'},
     items:{
       fr:['1 session lifestyle ou lookbook par mois (jusqu\'à 25 photos HD)','2 Reels verticaux par mois, prêts pour vos campagnes','Direction artistique continue — cohérence visuelle toute l\'année','Options supplémentaires au tarif partenaire (-20%)'],
@@ -463,32 +463,31 @@ const SUBS = {
 
 /* ════════════════════════════════════════════════════════════════
    🔧  OPTIONS — disponibles pour toutes les catégories pro
-       Prix : Sur devis sauf Livraison express (+20%)
    ════════════════════════════════════════════════════════════════ */
 const OPTIONS = [
   { id:'photo', icon:'📷',
     price: null,
     name:{fr:'Photographies additionnelles', en:'Additional photographs'},
-    note:{fr:'Complétez votre reportage avec des visuels supplémentaires. Devis personnalisé selon le volume.',
-          en:'Complement your shoot with extra visuals. Custom quote based on volume.'},
+    note:{fr:'Complétez votre reportage avec des visuels supplémentaires.',
+          en:'Complement your shoot with extra visuals.'},
     packs:[
-      { id:'p1',  label:{fr:'1 photo à l\'unité',            en:'1 photo (unit price)'},   price:40 },
-      { id:'p10', label:{fr:'Pack 10 photos supplémentaires', en:'Pack of 10 extra photos'}, price:350 },
-      { id:'p15', label:{fr:'Pack 15 photos supplémentaires', en:'Pack of 15 extra photos'}, price:525 },
-      { id:'p20', label:{fr:'Pack 20 photos supplémentaires', en:'Pack of 20 extra photos'}, price:700 },
+      { id:'p1',  label:{fr:'1 photo à l\'unité',            en:'1 photo (unit price)'},   price:35 },
+      { id:'p10', label:{fr:'Pack 10 photos supplémentaires', en:'Pack of 10 extra photos'}, price:300 },
+      { id:'p15', label:{fr:'Pack 15 photos supplémentaires', en:'Pack of 15 extra photos'}, price:420 },
+      { id:'p20', label:{fr:'Pack 20 photos supplémentaires', en:'Pack of 20 extra photos'}, price:520 },
     ]},
-  { id:'drone', icon:'🚁', price:'Sur devis',
+  { id:'drone', icon:'🚁', price:'À partir de 390€',
     name:{fr:'Prises de vue drone additionnelles', en:'Additional drone footage'},
-    note:{fr:'Perspectives aériennes supplémentaires par pilote certifié A1/A3 & A2. Devis sur mesure.',
-          en:'Additional aerial perspectives by A1/A3 & A2 certified pilot. Custom quote.'} },
-  { id:'video', icon:'🎬', price:'Sur devis',
+    note:{fr:'Perspectives aériennes supplémentaires par pilote certifié A1/A3 & A2. Précisez le volume souhaité dans votre message.',
+          en:'Additional aerial perspectives by A1/A3 & A2 certified pilot. Specify the volume needed in your message.'} },
+  { id:'video', icon:'🎬', price:'À partir de 190€',
     name:{fr:'Film additionnel', en:'Additional film'},
-    note:{fr:'Devis selon le format, la durée et les spécificités de montage souhaitées.',
-          en:'Quote based on format, duration and edit requirements.'} },
-  { id:'social', icon:'📱', price:'Sur devis',
+    note:{fr:'Reel vertical 60s à partir de 190€ · Film court 60-90s à partir de 390€ · Film principal 2min à partir de 690€. Précisez le format souhaité.',
+          en:'Vertical Reel 60s from €190 · Short film 60-90s from €390 · Main film 2min from €690. Specify the format needed.'} },
+  { id:'social', icon:'📱', price:'190€',
     name:{fr:'Pack réseaux renforcé', en:'Enhanced social media pack'},
-    note:{fr:'Déclinaisons optimisées pour Instagram, TikTok et LinkedIn. Devis selon le volume.',
-          en:'Cuts optimised for Instagram, TikTok and LinkedIn. Quote based on volume.'} },
+    note:{fr:'Déclinaisons optimisées pour Instagram, TikTok et LinkedIn — 3 formats × 3 réseaux.',
+          en:'Cuts optimised for Instagram, TikTok and LinkedIn — 3 formats × 3 platforms.'} },
   { id:'express', icon:'⚡', price:'+20%',
     name:{fr:'Livraison express 72h', en:'72-hour express delivery'},
     note:{fr:'Vos livrables passent en priorité absolue et vous sont remis sous 72 heures.',
