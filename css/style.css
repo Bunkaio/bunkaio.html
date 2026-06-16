@@ -1348,6 +1348,22 @@
     font-size: 12px; color: var(--grey);
     text-align: center; margin: 8px 0 56px; line-height: 1.6;
   }
+  .drone-jump-btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    margin: 28px 0 64px;
+    font-family: inherit; font-size: 13px; font-weight: 600;
+    letter-spacing: 0.06em;
+    color: var(--black); background: transparent;
+    border: 1px solid rgba(10,10,12,0.2);
+    padding: 13px 24px; cursor: pointer;
+    transition: all 0.25s var(--ease);
+  }
+  .drone-jump-btn:hover { background: var(--black); color: var(--white); border-color: var(--black); }
+  .drone-jump-arrow {
+    display: inline-block;
+    transition: transform 0.3s var(--ease);
+  }
+  .drone-jump-btn:hover .drone-jump-arrow { transform: translateY(3px); }
 
   .video-modal {
     display: none;

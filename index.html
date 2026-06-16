@@ -274,6 +274,7 @@
   <div class="drone-page">
     <h1 class="page-title" data-lang="drone-title">4K Drone & vidéo</h1>
     <p class="drone-intro" data-lang="drone-intro">Derrière chaque image aérienne, il y a une formation, des certifications et un matériel choisi avec exigence. Voici ce qui garantit la qualité — et la légalité — de chacune de nos productions.</p>
+    <button class="drone-jump-btn" onclick="document.getElementById('drone-pricing').scrollIntoView({behavior:'smooth'})">Voir les formules & tarifs <span class="drone-jump-arrow">↓</span></button>
 
     <div class="cred-section-label" data-lang="cred-label">Formation, certifications & matériel</div>
     <div class="cred-grid">
@@ -307,7 +308,7 @@
       <div class="gear-pill" data-lang="gear-cert">Certifié A1/A3 · A2</div>
     </div>
 
-    <div class="cred-section-label">Nos formules drone</div>
+    <div class="cred-section-label" id="drone-pricing">Nos formules drone</div>
     <div class="drone-pricing-grid">
 
       <div class="drone-price-card rv">
