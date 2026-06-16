@@ -1414,6 +1414,49 @@
     max-width: 620px; margin: 0 auto;
   }
 
+  /* ─── TÉMOIGNAGES (accueil) ─── */
+  .testimonials-section {
+    padding: 0 48px 90px;
+    position: relative; z-index: 1;
+    max-width: 1200px; margin: 0 auto;
+  }
+  .testimonials-label {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.28em;
+    text-transform: uppercase; color: var(--grey);
+    margin-bottom: 44px; padding-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+  }
+  .testimonials-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+  }
+  .testi-card {
+    padding: 36px 30px 32px;
+    border: 1px solid rgba(10,10,12,0.07);
+    background: rgba(255,255,255,0.55);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    position: relative;
+  }
+  .testi-mark {
+    display: block; font-size: 52px; font-weight: 700; line-height: 0.9;
+    color: var(--violet-deep);
+    font-family: Georgia, 'Times New Roman', serif;
+    margin-bottom: 14px; user-select: none;
+  }
+  .testi-text {
+    font-size: 13.5px; line-height: 1.85;
+    color: var(--black); margin-bottom: 26px; font-style: italic;
+  }
+  .testi-sep { width: 28px; height: 1px; background: var(--line); margin-bottom: 16px; }
+  .testi-name {
+    font-size: 12px; font-weight: 700;
+    letter-spacing: 0.05em; color: var(--black); margin-bottom: 4px;
+  }
+  .testi-role {
+    font-size: 10px; font-weight: 500;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--grey); line-height: 1.6;
+  }
+
   .side-img {
     aspect-ratio: 4/3;
     border-radius: 8px;
@@ -1515,6 +1558,38 @@
     position: relative; z-index: 1;
   }
   .partner-cta-btn:hover { transform: translateY(-3px); }
+
+  /* ─── CTA FOOTER ─── */
+  .footer-cta-row {
+    display: flex; align-items: center;
+    justify-content: space-between; gap: 24px; flex-wrap: wrap;
+    max-width: 1200px; margin: 0 auto 46px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid var(--line);
+  }
+  .footer-cta-headline {
+    font-size: clamp(17px, 2vw, 22px);
+    font-weight: 700; letter-spacing: -0.02em; color: var(--black);
+  }
+  .footer-cta-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: inherit;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--white); background: var(--black);
+    border: none; padding: 13px 26px; border-radius: 2px;
+    cursor: pointer; white-space: nowrap;
+    position: relative; overflow: hidden;
+    transition: transform 0.35s var(--ease), box-shadow 0.35s var(--ease);
+  }
+  .footer-cta-btn::before {
+    content: ''; position: absolute; inset: 0;
+    background: rgba(255,255,255,0.12);
+    transform: scaleX(0); transform-origin: right;
+    transition: transform 0.45s var(--ease-luxe);
+  }
+  .footer-cta-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(10,10,12,0.18); }
+  .footer-cta-btn:hover::before { transform: scaleX(1); transform-origin: left; }
 
   footer {
     border-top: 1px solid var(--line);
@@ -1641,6 +1716,10 @@
     .drone-project { grid-template-columns: 1fr; gap: 0; }
     .drone-project-body { padding: 26px; }
     .video-modal-close { top: -40px; }
+    .testimonials-section { padding: 0 22px 70px; }
+    .testimonials-grid { grid-template-columns: 1fr; gap: 14px; }
+    .footer-cta-row { flex-direction: column; align-items: flex-start; gap: 18px; }
+    .footer-cta-btn { width: 100%; justify-content: center; }
     footer { padding: 40px 22px 30px; }
     .footer-grid { grid-template-columns: 1fr; gap: 30px; }
     .footer-cols-right { grid-template-columns: 1fr 1fr; gap: 20px; }
