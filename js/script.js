@@ -5,7 +5,7 @@ const FORMSPREE_URL = 'https://formspree.io/f/mnjybndv';
    À remplacer par l'URL réelle après déploiement du Worker (voir server/README.md).
    Tant que cette URL n'est pas configurée, sendQuizLeadToStripe() échoue silencieusement
    et n'a aucun impact sur le quiz (fire-and-forget, voir submitQuiz()). */
-const QUIZ_LEAD_WORKER_URL = 'https://bunkaio-quiz-stripe.TON-SOUS-DOMAINE.workers.dev/quiz-lead';
+const QUIZ_LEAD_WORKER_URL = 'https://bunkaio-quiz-stripe.bunkaio.workers.dev/quiz-lead';
 
 const DELAY_LABELS = {
   urgent:   { fr: 'Urgent (moins de 2 semaines)', en: 'Urgent (under 2 weeks)' },
