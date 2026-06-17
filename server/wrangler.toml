@@ -1,0 +1,12 @@
+name = "bunkaio-quiz-stripe"
+main = "src/index.ts"
+compatibility_date = "2024-09-23"
+
+# Domaines autorisés à appeler ce Worker (CORS). Liste séparée par des virgules.
+# Ajoute http://127.0.0.1:5500 ou similaire ici temporairement si tu testes le site en local.
+[vars]
+ALLOWED_ORIGINS = "https://bunkaio.com,https://www.bunkaio.com"
+
+# STRIPE_SECRET_KEY n'est volontairement PAS défini ici : c'est un secret.
+# Il doit être injecté avec `npx wrangler secret put STRIPE_SECRET_KEY`
+# (voir README.md de ce dossier). Il n'apparaît jamais dans le repo.

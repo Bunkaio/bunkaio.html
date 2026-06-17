@@ -163,17 +163,27 @@
         <input type="tel" id="qPhone" placeholder="06 00 00 00 00">
       </div>
       <div class="fgroup stagger" style="animation-delay:0.44s">
+        <label data-lang="delay-label">Délai souhaité *</label>
+        <select id="qDelay" onchange="checkQuizForm()">
+          <option value="" data-lang="delay-opt-select">Sélectionnez…</option>
+          <option value="urgent" data-lang="delay-opt-urgent">Urgent (moins de 2 semaines)</option>
+          <option value="1_mois" data-lang="delay-opt-1m">Dans le mois</option>
+          <option value="2_3_mois" data-lang="delay-opt-2-3m">2 à 3 mois</option>
+          <option value="flexible" data-lang="delay-opt-flex">Flexible / pas de contrainte</option>
+        </select>
+      </div>
+      <div class="fgroup stagger" style="animation-delay:0.5s">
         <label data-lang="project-label">Votre projet *</label>
         <textarea id="qProject" placeholder="Décrivez votre projet en quelques mots…" oninput="checkQuizForm()"></textarea>
       </div>
-      <div class="quiz-reassurance stagger" style="animation-delay:0.48s">
+      <div class="quiz-reassurance stagger" style="animation-delay:0.54s">
         <p class="quiz-reassurance-text">Votre demande est examinée personnellement — jamais traitée en masse.<br>Nous vous répondons sous 48 heures avec une proposition adaptée à votre projet.</p>
       </div>
-      <div class="btn-row stagger" style="animation-delay:0.52s">
+      <div class="btn-row stagger" style="animation-delay:0.58s">
         <button class="btn btn-ghost" onclick="quizStep(4)"><span data-lang="back">← Retour</span></button>
         <button class="btn btn-solid" id="qSubmit" onclick="submitQuiz(event)" disabled><span data-lang="submit">Confirmez ma demande de devis</span></button>
       </div>
-      <div class="quiz-microcopy stagger" style="animation-delay:0.58s">Sans engagement · Réponse personnalisée sous 48h</div>
+      <div class="quiz-microcopy stagger" style="animation-delay:0.64s">Sans engagement · Réponse personnalisée sous 48h</div>
     </div>
 
     <div class="qstep" id="qs-6">

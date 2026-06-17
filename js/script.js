@@ -1,6 +1,42 @@
 /* ═══════════════ FORMSPREE → contact@bunkaio.com ═══════════════ */
 const FORMSPREE_URL = 'https://formspree.io/f/mnjybndv';
 
+/* ═══════════════ STRIPE LEAD CAPTURE (Cloudflare Worker — voir /server) ═══════════════
+   À remplacer par l'URL réelle après déploiement du Worker (voir server/README.md).
+   Tant que cette URL n'est pas configurée, sendQuizLeadToStripe() échoue silencieusement
+   et n'a aucun impact sur le quiz (fire-and-forget, voir submitQuiz()). */
+const QUIZ_LEAD_WORKER_URL = 'https://bunkaio-quiz-stripe.TON-SOUS-DOMAINE.workers.dev/quiz-lead';
+
+const DELAY_LABELS = {
+  urgent:   { fr: 'Urgent (moins de 2 semaines)', en: 'Urgent (under 2 weeks)' },
+  '1_mois': { fr: 'Dans le mois', en: 'Within a month' },
+  '2_3_mois': { fr: '2 à 3 mois', en: '2 to 3 months' },
+  flexible: { fr: 'Flexible / pas de contrainte', en: 'Flexible / no constraint' }
+};
+
+/**
+ * Envoie la soumission du quiz au Worker Stripe en arrière-plan.
+ * Fire-and-forget volontaire : ne renvoie rien d'utile au flux du quiz et
+ * n'est jamais attendu (await) par submitQuiz(), pour garantir qu'aucune
+ * latence ni erreur Stripe ne puisse retarder ou bloquer la fin du quiz
+ * pour le visiteur. Toute erreur est avalée ici et seulement loggée
+ * en console pour le debug.
+ */
+function sendQuizLeadToStripe(payload){
+  if (!QUIZ_LEAD_WORKER_URL || QUIZ_LEAD_WORKER_URL.includes('TON-SOUS-DOMAINE')) {
+    console.warn('[quiz-lead] QUIZ_LEAD_WORKER_URL non configurée — synchronisation Stripe ignorée.');
+    return;
+  }
+  fetch(QUIZ_LEAD_WORKER_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  })
+    .then(r => r.json())
+    .then(data => console.log('[quiz-lead] réponse Worker Stripe', data))
+    .catch(err => console.warn('[quiz-lead] échec d\'envoi au Worker Stripe (sans impact pour le visiteur)', err));
+}
+
 /* IMG et DRONE_MEDIA sont définis dans config/media.js — chargé avant ce fichier */
 
 /* ═══════════════ LANGUE ═══════════════ */
@@ -17,6 +53,7 @@ const I18N = {
     'options':'Options supplémentaires',
     'step-coords':'05 — Coordonnées','q-coords':'Vos coordonnées','q-coords-sub':'Nous étudions chaque demande personnellement. Réponse assurée sous 48h.',
     'name-label':'Nom / Société *','email-label':'Email *','phone-label':'Téléphone','phone-label-opt':'Téléphone — optionnel','project-label':'Votre projet *','message-label':'Message *',
+    'delay-label':'Délai souhaité *','delay-opt-select':'Sélectionnez…','delay-opt-urgent':'Urgent (moins de 2 semaines)','delay-opt-1m':'Dans le mois','delay-opt-2-3m':'2 à 3 mois','delay-opt-flex':'Flexible / pas de contrainte',
     'back':'← Retour','continue':'Continuer','submit':'Confirmez ma demande de devis',
     'success-label':'Demande reçue','success-title':'Votre demande a bien été envoyée',
     'success-text1':'Merci pour votre confiance. Votre demande de devis est entre nos mains : elle sera étudiée et vous recevrez une réponse sous <strong>48 heures</strong>.',
@@ -129,6 +166,7 @@ const I18N = {
     'options':'Additional options',
     'step-coords':'05 — Your details','q-coords':'Your details','q-coords-sub':'Every request is reviewed personally. We reply within 48 hours.',
     'name-label':'Name / Company *','email-label':'Email *','phone-label':'Phone','phone-label-opt':'Phone — optional','project-label':'Your project *','message-label':'Message *',
+    'delay-label':'Desired timeline *','delay-opt-select':'Select…','delay-opt-urgent':'Urgent (under 2 weeks)','delay-opt-1m':'Within a month','delay-opt-2-3m':'2 to 3 months','delay-opt-flex':'Flexible / no constraint',
     'back':'← Back','continue':'Continue','submit':'Confirm my quote request',
     'success-label':'Request received','success-title':'Your request has been sent',
     'success-text1':'Thank you for your trust. Your quote request is in our hands: it will be carefully reviewed and you will receive a reply within <strong>48 hours</strong>.',
@@ -628,7 +666,7 @@ const DRONE_CATS = [
 ];
 
 /* ═══════════════ ÉTAT ═══════════════ */
-const S = { cat:null, tier:null, prof:null, opts:[], comm:false, studio:false, photoPack:null, name:'', email:'', phone:'', project:'' };
+const S = { cat:null, tier:null, prof:null, opts:[], comm:false, studio:false, photoPack:null, name:'', email:'', phone:'', project:'', delay:'' };
 
 
 const io = new IntersectionObserver(entries => {
@@ -1043,7 +1081,8 @@ function checkQuizForm(){
   S.name    = document.getElementById('qName').value.trim();
   S.email   = document.getElementById('qEmail').value.trim();
   S.project = document.getElementById('qProject').value.trim();
-  document.getElementById('qSubmit').disabled = !(S.name && S.email && S.email.includes('@') && S.project.length > 0);
+  S.delay   = document.getElementById('qDelay').value;
+  document.getElementById('qSubmit').disabled = !(S.name && S.email && S.email.includes('@') && S.project.length > 0 && S.delay);
 }
 
 function computeTotal(){
@@ -1154,6 +1193,23 @@ function submitQuiz(e){
   document.getElementById('successName').textContent = S.name;
   document.getElementById('commRedirect').style.display = S.comm ? 'block' : 'none';
   document.getElementById('qSubmit').disabled = true;
+
+  /* Capture du lead côté Stripe — fire-and-forget, voir sendQuizLeadToStripe().
+     N'est jamais "await" ici : ne retarde et ne conditionne en rien la suite. */
+  sendQuizLeadToStripe({
+    name: S.name,
+    email: S.email,
+    phone: S.phone || undefined,
+    project: S.project,
+    category: cat.name.fr,
+    profile: prof.name.fr,
+    formule: formuleLabel,
+    budgetEstime: montantLabel,
+    delaiSouhaite: (DELAY_LABELS[S.delay] && DELAY_LABELS[S.delay].fr) || S.delay || undefined,
+    optionsChoisies: optNames,
+    interetCommunication: S.comm
+  });
+
   fetch(FORMSPREE_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
@@ -1168,6 +1224,7 @@ function submitQuiz(e){
       formule: formuleLabel,
       options_choisies: optNames,
       montant_total_estime: montantLabel,
+      delai_souhaite: (DELAY_LABELS[S.delay] && DELAY_LABELS[S.delay].fr) || S.delay || 'Non renseigné',
       lieu_seance: studioNote || undefined,
       description_projet: S.project,
       interet_communication: S.comm ? 'OUI — potentiellement intéressé' : 'Non'
