@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Bunkaio — Facture d'acompte</title>
+<style>
+  :root { --black:#0a0a0c; --grey:#6b6b70; --line:#e3e1dc; --bg:#faf9f6; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg); color: var(--black); padding: 40px 20px;
+  }
+  .wrap { max-width: 480px; margin: 0 auto; }
+  h1 { font-size: 22px; margin-bottom: 6px; }
+  p.sub { color: var(--grey); font-size: 14px; margin-bottom: 32px; }
+  label {
+    display: block; font-size: 11px; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--grey); margin-bottom: 8px;
+  }
+  .fgroup { margin-bottom: 22px; }
+  input {
+    width: 100%; border: 1px solid var(--line); border-radius: 4px;
+    padding: 11px 12px; font-size: 15px; background: #fff; color: var(--black);
+  }
+  button {
+    width: 100%; padding: 13px; border: none; border-radius: 4px;
+    background: var(--black); color: #fff; font-size: 15px; font-weight: 600;
+    cursor: pointer;
+  }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  #result { margin-top: 24px; padding: 16px; border-radius: 4px; font-size: 14px; display: none; }
+  #result.ok { background: #e8f5e9; border: 1px solid #a5d6a7; display: block; }
+  #result.err { background: #fdecea; border: 1px solid #f5b5ae; display: block; }
+  #result a { color: var(--black); font-weight: 600; word-break: break-all; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Générer une facture d'acompte</h1>
+  <p class="sub">Crée et envoie automatiquement par email une facture Stripe de 30 % à un client déjà présent dans la base (créé via le quiz).</p>
+
+  <div class="fgroup">
+    <label for="token">Token admin</label>
+    <input type="password" id="token" placeholder="Le mot de passe que tu as choisi avec wrangler secret put ADMIN_TOKEN">
+  </div>
+  <div class="fgroup">
+    <label for="email">Email du client</label>
+    <input type="email" id="email" placeholder="client@exemple.fr">
+  </div>
+  <div class="fgroup">
+    <label for="amount">Montant total HT (€)</label>
+    <input type="number" id="amount" placeholder="1200" min="0" step="0.01">
+  </div>
+  <div class="fgroup">
+    <label for="description">Description</label>
+    <input type="text" id="description" placeholder="Formule Signature — Mariage">
+  </div>
+
+  <button id="submitBtn" onclick="createInvoice()">Générer la facture d'acompte</button>
+
+  <div id="result"></div>
+</div>
+
+<script>
+  const WORKER_URL = 'https://bunkaio-quiz-stripe.bunkaio.workers.dev/create-deposit-invoice';
+
+  // Mémorise le token localement pour ne pas avoir à le retaper à chaque facture.
+  document.getElementById('token').value = localStorage.getItem('bunkaio_admin_token') || '';
+
+  async function createInvoice() {
+    const token = document.getElementById('token').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const amount = parseFloat(document.getElementById('amount').value);
+    const description = document.getElementById('description').value.trim();
+    const result = document.getElementById('result');
+    const btn = document.getElementById('submitBtn');
+
+    result.className = '';
+    result.style.display = 'none';
+
+    if (!token || !email || !amount || amount <= 0 || !description) {
+      result.className = 'err';
+      result.textContent = 'Remplis tous les champs (montant supérieur à 0).';
+      return;
+    }
+
+    localStorage.setItem('bunkaio_admin_token', token);
+    btn.disabled = true;
+    btn.textContent = 'Génération en cours…';
+
+    try {
+      const res = await fetch(WORKER_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        },
+        body: JSON.stringify({ email, totalAmountEur: amount, description })
+      });
+      const data = await res.json();
+
+      if (res.ok && data.ok) {
+        result.className = 'ok';
+        result.innerHTML = 'Facture envoyée par email au client.<br>Montant acompte : <strong>' + data.depositAmountEur + '€</strong><br>Lien : <a href="' + data.hostedInvoiceUrl + '" target="_blank">' + data.hostedInvoiceUrl + '</a>';
+      } else if (data.error === 'customer_not_found') {
+        result.className = 'err';
+        result.textContent = 'Aucun client Stripe trouvé avec cet email. Le client doit avoir soumis le quiz au moins une fois.';
+      } else if (data.error === 'unauthorized') {
+        result.className = 'err';
+        result.textContent = 'Token admin incorrect.';
+      } else {
+        result.className = 'err';
+        result.textContent = 'Erreur : ' + (data.error || res.status);
+      }
+    } catch (err) {
+      result.className = 'err';
+      result.textContent = 'Erreur réseau : ' + err.message;
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Générer la facture d'acompte";
+    }
+  }
+</script>
+</body>
+</html>

@@ -5,6 +5,7 @@
 export interface Env {
   STRIPE_SECRET_KEY: string;
   ALLOWED_ORIGINS: string;
+  ADMIN_TOKEN: string;
 }
 
 /**
@@ -29,4 +30,18 @@ export interface QuizLeadPayload {
 export interface UpsertResult {
   customerId: string;
   created: boolean;
+}
+
+/** Payload envoyé par admin/index.html pour générer une facture d'acompte. */
+export interface DepositInvoiceInput {
+  email: string;
+  totalAmountEur: number;
+  description: string;
+}
+
+/** Résultat renvoyé à admin/index.html après création de la facture. */
+export interface DepositInvoiceResult {
+  invoiceId: string;
+  hostedInvoiceUrl: string;
+  depositAmountEur: number;
 }

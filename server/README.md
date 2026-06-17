@@ -86,6 +86,33 @@ Wrangler démarre le Worker sur `http://localhost:8787`. Pour tester
 depuis le site servi en local (ex. `http://127.0.0.1:5500`), ajoute
 temporairement cette origine à `ALLOWED_ORIGINS` dans `wrangler.toml`.
 
+## Deuxième route : facture d'acompte automatique (`/create-deposit-invoice`)
+
+En plus de `/quiz-lead`, le Worker expose une route protégée qui crée et
+envoie automatiquement par email une facture Stripe d'acompte (30 % du
+montant total) pour un client déjà existant dans Stripe (créé via le
+quiz). Elle est appelée depuis la mini page `admin/index.html`, publiée
+sur le site comme une page normale (ex. `https://bunkaio.com/admin/`).
+
+Cette route est protégée par un jeton secret distinct de la clé Stripe —
+à inventer toi-même (une suite de caractères longue et aléatoire, pas un
+mot de passe habituel) :
+
+```bash
+npx wrangler secret put ADMIN_TOKEN
+# choisis et colle une valeur longue (ex. générée sur https://1password.com/password-generator/)
+```
+
+Redéploie ensuite pour que la nouvelle route soit active :
+
+```bash
+npm run deploy
+```
+
+Sur la page `admin/index.html`, le champ "Token admin" attend exactement
+cette même valeur. Elle est mémorisée dans le navigateur après la
+première saisie.
+
 ## Voir les logs en production
 
 ```bash

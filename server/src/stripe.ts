@@ -1,5 +1,5 @@
 import Stripe from 'stripe';
-import type { QuizLeadPayload, UpsertResult } from './types';
+import type { DepositInvoiceInput, DepositInvoiceResult, QuizLeadPayload, UpsertResult } from './types';
 
 /**
  * Crée un client Stripe compatible avec le runtime Cloudflare Workers.
@@ -42,22 +42,22 @@ function buildMetadata(payload: QuizLeadPayload): Record<string, string> {
   };
 }
 
+/** Retrouve le Customer Stripe associé à un email, ou `null` s'il n'existe pas encore. */
+async function findCustomerByEmail(stripe: Stripe, email: string): Promise<Stripe.Customer | null> {
+  const existing = await stripe.customers.list({ email, limit: 1 });
+  return existing.data[0] ?? null;
+}
+
 /**
  * Crée un Customer Stripe à partir d'une soumission de quiz, ou met à jour
  * le Customer existant si un client partage déjà cet email (déduplication).
- *
- * Conçu pour être réutilisé tel quel par de futures routes (devis, facture,
- * réservation) : ces routes pourront chercher le Customer par email avec la
- * même logique avant de créer une Quote/Invoice Stripe associée.
  */
 export async function upsertQuizCustomer(
   stripe: Stripe,
   payload: QuizLeadPayload
 ): Promise<UpsertResult> {
   const metadata = buildMetadata(payload);
-
-  const existing = await stripe.customers.list({ email: payload.email, limit: 1 });
-  const match = existing.data[0];
+  const match = await findCustomerByEmail(stripe, payload.email);
 
   if (match) {
     const updated = await stripe.customers.update(match.id, {
@@ -75,4 +75,50 @@ export async function upsertQuizCustomer(
     metadata,
   });
   return { customerId: created.id, created: true };
+}
+
+/**
+ * Crée et envoie une facture Stripe pour l'acompte de 30 % (modalité de
+ * paiement déjà annoncée sur le site), pour un Customer déjà existant
+ * (créé via le quiz). Utilisée par la route /create-deposit-invoice,
+ * appelée depuis la page d'administration (admin/index.html).
+ */
+export async function createDepositInvoice(
+  stripe: Stripe,
+  input: DepositInvoiceInput
+): Promise<DepositInvoiceResult> {
+  const customer = await findCustomerByEmail(stripe, input.email);
+  if (!customer) {
+    throw new Error('customer_not_found');
+  }
+
+  const depositAmountEur = Math.round(input.totalAmountEur * 0.3 * 100) / 100;
+
+  await stripe.invoiceItems.create({
+    customer: customer.id,
+    currency: 'eur',
+    amount: Math.round(depositAmountEur * 100),
+    description: `Acompte 30 % — ${input.description}`,
+  });
+
+  const invoice = await stripe.invoices.create({
+    customer: customer.id,
+    collection_method: 'send_invoice',
+    days_until_due: 7,
+    auto_advance: true,
+    metadata: {
+      type: 'acompte_30',
+      description: input.description,
+      montant_total_ht: String(input.totalAmountEur),
+    },
+  });
+
+  const finalized = await stripe.invoices.finalizeInvoice(invoice.id);
+  const sent = await stripe.invoices.sendInvoice(finalized.id);
+
+  return {
+    invoiceId: sent.id ?? finalized.id,
+    hostedInvoiceUrl: sent.hosted_invoice_url ?? finalized.hosted_invoice_url ?? '',
+    depositAmountEur,
+  };
 }
