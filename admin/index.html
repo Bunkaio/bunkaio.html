@@ -100,9 +100,12 @@
       });
       const data = await res.json();
 
-      if (res.ok && data.ok) {
+      if (res.ok && data.ok && data.emailSent) {
         result.className = 'ok';
         result.innerHTML = 'Facture envoyée par email au client.<br>Montant acompte : <strong>' + data.depositAmountEur + '€</strong><br>Lien : <a href="' + data.hostedInvoiceUrl + '" target="_blank">' + data.hostedInvoiceUrl + '</a>';
+      } else if (res.ok && data.ok && !data.emailSent) {
+        result.className = 'err';
+        result.innerHTML = 'Facture créée dans Stripe, mais l\'email n\'a pas pu être envoyé automatiquement.<br>Montant acompte : <strong>' + data.depositAmountEur + '€</strong><br>Transmets ce lien toi-même au client : <a href="' + data.hostedInvoiceUrl + '" target="_blank">' + data.hostedInvoiceUrl + '</a>';
       } else if (data.error === 'customer_not_found') {
         result.className = 'err';
         result.textContent = 'Aucun client Stripe trouvé avec cet email. Le client doit avoir soumis le quiz au moins une fois.';

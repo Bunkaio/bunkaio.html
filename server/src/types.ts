@@ -6,6 +6,8 @@ export interface Env {
   STRIPE_SECRET_KEY: string;
   ALLOWED_ORIGINS: string;
   ADMIN_TOKEN: string;
+  RESEND_API_KEY: string;
+  EMAIL_FROM: string;
 }
 
 /**
@@ -43,5 +45,7 @@ export interface DepositInvoiceInput {
 export interface DepositInvoiceResult {
   invoiceId: string;
   hostedInvoiceUrl: string;
+  invoicePdfUrl: string;
   depositAmountEur: number;
+  customerName: string;
 }

@@ -1,3 +1,4 @@
+import { buildDepositInvoiceEmail, buildQuizConfirmationEmail, sendEmail } from './email';
 import { createDepositInvoice, createStripeClient, upsertQuizCustomer } from './stripe';
 import type { DepositInvoiceInput, Env, QuizLeadPayload } from './types';
 
@@ -93,6 +94,16 @@ async function handleQuizLead(request: Request, env: Env, headers: Record<string
     const stripe = createStripeClient(env.STRIPE_SECRET_KEY);
     const result = await upsertQuizCustomer(stripe, body);
     console.log('[quiz-lead] client Stripe synchronisé', result);
+
+    // Email de confirmation au prospect — best-effort, ne doit jamais faire
+    // échouer la synchronisation Stripe qui vient de réussir.
+    try {
+      const { subject, html } = buildQuizConfirmationEmail({ customerName: body.name });
+      await sendEmail(env, body.email, subject, html);
+    } catch (emailErr) {
+      console.error("[quiz-lead] échec de l'envoi de l'email de confirmation", emailErr);
+    }
+
     return jsonResponse({ ok: true, ...result }, 200, headers);
   } catch (err) {
     console.error('[quiz-lead] échec de la synchronisation Stripe', err);
@@ -127,8 +138,24 @@ async function handleCreateDepositInvoice(request: Request, env: Env, headers: R
   try {
     const stripe = createStripeClient(env.STRIPE_SECRET_KEY);
     const result = await createDepositInvoice(stripe, body);
-    console.log('[create-deposit-invoice] facture créée et envoyée', result);
-    return jsonResponse({ ok: true, ...result }, 200, headers);
+    console.log('[create-deposit-invoice] facture créée', result);
+
+    try {
+      const { subject, html } = buildDepositInvoiceEmail({
+        customerName: result.customerName,
+        description: body.description,
+        depositAmountEur: result.depositAmountEur,
+        hostedInvoiceUrl: result.hostedInvoiceUrl,
+      });
+      await sendEmail(env, body.email, subject, html);
+      console.log('[create-deposit-invoice] email envoyé au client');
+      return jsonResponse({ ok: true, ...result, emailSent: true }, 200, headers);
+    } catch (emailErr) {
+      // La facture existe déjà côté Stripe même si l'email échoue : on le
+      // signale au front pour qu'il affiche le lien à transmettre à la main.
+      console.error("[create-deposit-invoice] facture créée mais email non envoyé", emailErr);
+      return jsonResponse({ ok: true, ...result, emailSent: false }, 200, headers);
+    }
   } catch (err) {
     if (err instanceof Error && err.message === 'customer_not_found') {
       console.error('[create-deposit-invoice] aucun client Stripe pour cet email', body.email);

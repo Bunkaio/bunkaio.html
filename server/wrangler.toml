@@ -6,7 +6,11 @@ compatibility_date = "2024-09-23"
 # Ajoute http://127.0.0.1:5500 ou similaire ici temporairement si tu testes le site en local.
 [vars]
 ALLOWED_ORIGINS = "https://bunkaio.com,https://www.bunkaio.com"
+# Adresse d'expédition des emails (factures, confirmations). Doit appartenir
+# à un domaine vérifié dans Resend — voir README.md de ce dossier.
+EMAIL_FROM = "Bunkaio <factures@bunkaio.com>"
 
-# STRIPE_SECRET_KEY n'est volontairement PAS défini ici : c'est un secret.
-# Il doit être injecté avec `npx wrangler secret put STRIPE_SECRET_KEY`
-# (voir README.md de ce dossier). Il n'apparaît jamais dans le repo.
+# STRIPE_SECRET_KEY et RESEND_API_KEY ne sont volontairement PAS définis ici :
+# ce sont des secrets. Ils doivent être injectés avec
+# `npx wrangler secret put STRIPE_SECRET_KEY` / `RESEND_API_KEY`
+# (voir README.md de ce dossier). Ils n'apparaissent jamais dans le repo.
