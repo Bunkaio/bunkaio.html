@@ -67,7 +67,8 @@
 
   .nav-brand { cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; flex-shrink: 0; }
   .nav-logo-img {
-    width: 42px; height: 42px; object-fit: contain;
+    width: 42px; height: 42px; object-fit: contain; box-sizing: border-box;
+    background: var(--black); border-radius: 10px; padding: 7px;
     animation: logoOpacity 3.6s ease-in-out infinite;
   }
   @keyframes logoOpacity { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
@@ -1784,7 +1785,7 @@
       border-bottom: 1px solid var(--line);
       width: 100%; gap: 2px;
     }
-    .nav-logo-img { width: 22px; height: 22px; }
+    .nav-logo-img { width: 26px; height: 26px; padding: 4px; }
     .nav-logo-fallback { font-size: 17px !important; display: block !important; }
     .nav-studio { font-size: 7px; letter-spacing: 0.26em; color: var(--grey); }
     /* FR/EN : positionné en absolu dans la ligne brand */
@@ -1939,7 +1940,8 @@ PE html>
 
   .nav-brand { cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; flex-shrink: 0; }
   .nav-logo-img {
-    width: 42px; height: 42px; object-fit: contain;
+    width: 42px; height: 42px; object-fit: contain; box-sizing: border-box;
+    background: var(--black); border-radius: 10px; padding: 7px;
     animation: logoOpacity 3.6s ease-in-out infinite;
   }
   @keyframes logoOpacity { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
