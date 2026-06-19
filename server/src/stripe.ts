@@ -78,10 +78,16 @@ export async function upsertQuizCustomer(
 }
 
 /**
- * Crée et envoie une facture Stripe pour l'acompte de 30 % (modalité de
- * paiement déjà annoncée sur le site), pour un Customer déjà existant
- * (créé via le quiz). Utilisée par la route /create-deposit-invoice,
- * appelée depuis la page d'administration (admin/index.html).
+ * Crée une facture Stripe pour l'acompte de 30 % (modalité de paiement déjà
+ * annoncée sur le site), pour un Customer déjà existant (créé via le quiz).
+ * Utilisée par la route /create-deposit-invoice, appelée depuis la page
+ * d'administration (admin/index.html).
+ *
+ * La facture est finalisée (ce qui génère son lien de paiement hébergé par
+ * Stripe) mais n'est volontairement PAS envoyée via `stripe.invoices.sendInvoice` :
+ * cette action est bloquée sur ce compte ("This invoice cannot be sent right
+ * now"). L'email au client est envoyé séparément par le Worker lui-même
+ * (voir email.ts), avec le lien généré ici.
  */
 export async function createDepositInvoice(
   stripe: Stripe,
@@ -114,11 +120,12 @@ export async function createDepositInvoice(
   });
 
   const finalized = await stripe.invoices.finalizeInvoice(invoice.id);
-  const sent = await stripe.invoices.sendInvoice(finalized.id);
 
   return {
-    invoiceId: sent.id ?? finalized.id,
-    hostedInvoiceUrl: sent.hosted_invoice_url ?? finalized.hosted_invoice_url ?? '',
+    invoiceId: finalized.id,
+    hostedInvoiceUrl: finalized.hosted_invoice_url ?? '',
+    invoicePdfUrl: finalized.invoice_pdf ?? '',
     depositAmountEur,
+    customerName: customer.name ?? '',
   };
 }

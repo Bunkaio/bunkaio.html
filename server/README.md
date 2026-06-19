@@ -113,6 +113,60 @@ Sur la page `admin/index.html`, le champ "Token admin" attend exactement
 cette même valeur. Elle est mémorisée dans le navigateur après la
 première saisie.
 
+## Troisième brique : envoi d'emails (Resend)
+
+Le compte Stripe de Bunkaio bloque actuellement l'envoi natif de factures
+par email (`stripe.invoices.sendInvoice` renvoie l'erreur *"This invoice
+cannot be sent right now"*, une restriction propre au compte, indépendante
+du code). Pour contourner ça sans dépendre de Stripe ni du support, le
+Worker génère la facture via l'API Stripe (ce qui fonctionne très bien et
+donne un lien de paiement hébergé) puis **envoie lui-même l'email** au
+client, avec un design aux couleurs de Bunkaio (logo, palette, police),
+via [Resend](https://resend.com) — un service d'emails transactionnels
+simple, avec une offre gratuite large (3 000 emails/mois).
+
+Ce même mécanisme envoie aussi automatiquement un email de confirmation
+au prospect dès qu'il soumet le quiz (`/quiz-lead`).
+
+### Configuration de Resend
+
+1. Crée un compte gratuit sur [resend.com](https://resend.com).
+2. Dans le Dashboard Resend, va dans **Domains** → **Add Domain** et entre
+   `bunkaio.com`.
+3. Resend affiche 2-3 enregistrements DNS (TXT/MX/CNAME) à ajouter chez
+   l'hébergeur de ton nom de domaine (là où `bunkaio.com` a été acheté —
+   pas forcément Cloudflare). **Ce n'est pas un changement de
+   nameservers** : ce sont juste des lignes ajoutées à la configuration
+   DNS existante, le site GitHub Pages continue de fonctionner normalement
+   pendant et après cette étape.
+4. Une fois les enregistrements ajoutés, clique sur **Verify** dans
+   Resend (la propagation DNS peut prendre de quelques minutes à
+   quelques heures).
+5. Dans Resend, va dans **API Keys** → **Create API Key**, copie la clé
+   générée (commence par `re_...`).
+6. Injecte-la dans le Worker :
+
+```bash
+npx wrangler secret put RESEND_API_KEY
+# colle la clé re_... quand demandé, puis Entrée
+```
+
+7. Vérifie que `EMAIL_FROM` dans `wrangler.toml` utilise bien une adresse
+   du domaine que tu viens de vérifier (par défaut `factures@bunkaio.com`
+   — n'importe quelle adresse `@bunkaio.com` fonctionne, pas besoin
+   qu'elle existe vraiment comme boîte mail).
+8. Redéploie :
+
+```bash
+npm run deploy
+```
+
+Tant que le domaine n'est pas vérifié dans Resend, l'envoi de facture
+continue de fonctionner côté Stripe (la facture est créée normalement),
+mais l'email échoue : la page admin affiche alors le lien de paiement à
+transmettre toi-même au client, en attendant que la vérification Resend
+soit terminée.
+
 ## Voir les logs en production
 
 ```bash
