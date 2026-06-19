@@ -1302,12 +1302,23 @@ function renderQuizPortfolio(){
     LANG === 'fr' ? 'Un aperçu de notre travail dans votre univers.' : 'A glimpse of our work in your universe.';
   const g = document.getElementById('pfPrevGallery');
   g.innerHTML = '';
-  for (let i = 0; i < 6; i++){
-    const ph = document.createElement('div');
-    ph.className = 'ph rv';
-    ph.innerHTML = `<img loading="lazy" src="https://picsum.photos/seed/${S.cat}-${i}/800/600" alt="${t(cat.name)} ${i+1}">`;
-    g.appendChild(ph);
-    observe(ph);
+  const photos = (IMG.portfolioMedia && IMG.portfolioMedia[S.cat]) || [];
+  if (photos.length === 0){
+    const empty = document.createElement('div');
+    empty.className = 'pf-empty rv';
+    empty.textContent = LANG === 'fr'
+      ? `Visuels « ${t(cat.name)} » à venir — contactez-nous pour des exemples.`
+      : `"${t(cat.name)}" visuals coming soon — get in touch for examples.`;
+    g.appendChild(empty);
+    observe(empty);
+  } else {
+    photos.slice(0, 6).forEach((src, i) => {
+      const ph = document.createElement('div');
+      ph.className = 'ph rv';
+      ph.innerHTML = `<img loading="lazy" src="${src}" alt="${LANG === 'fr' ? 'Photographie' : 'Photography'} ${t(cat.name)} — Bunkaio ${i + 1}">`;
+      g.appendChild(ph);
+      observe(ph);
+    });
   }
   document.querySelectorAll('#qs-6 .rv:not(.ph)').forEach(el => { el.classList.remove('in'); observe(el); });
 }
@@ -1603,13 +1614,25 @@ function selectPfTab(id){
   document.querySelectorAll('.pf-cat-tab').forEach(tab => tab.classList.toggle('active', tab.dataset.cat === id));
   const grid = document.getElementById('pfGrid');
   grid.innerHTML = '';
-  for (let i = 0; i < 40; i++){
+  const catLabel = t(PF_CATS.find(c => c.id === id)?.label || {});
+  const photos = (IMG.portfolioMedia && IMG.portfolioMedia[id]) || [];
+  if (photos.length === 0){
+    const empty = document.createElement('div');
+    empty.className = 'pf-empty rv';
+    empty.textContent = LANG === 'fr'
+      ? `Visuels « ${catLabel} » à venir — contactez-nous pour des exemples.`
+      : `"${catLabel}" visuals coming soon — get in touch for examples.`;
+    grid.appendChild(empty);
+    observe(empty);
+    return;
+  }
+  photos.forEach((src, i) => {
     const ph = document.createElement('div');
     ph.className = 'ph rv';
-    ph.innerHTML = `<img loading="lazy" src="https://picsum.photos/seed/${id}-${i}/700/900" alt="Projet ${i+1}">`;
+    ph.innerHTML = `<img loading="lazy" src="${src}" alt="${LANG === 'fr' ? 'Photographie' : 'Photography'} ${catLabel} — Bunkaio ${i + 1}">`;
     grid.appendChild(ph);
     observe(ph);
-  }
+  });
 }
 
 /* ═══════════════ CONTACT ═══════════════ */

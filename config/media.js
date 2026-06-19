@@ -183,6 +183,26 @@ const IMG = {
     mode:         'images/services/mode.jpg',          // Mode & créateurs
     event:        'images/services/event.jpg',         // Événementiel
   },
+
+  /* ──────────────────────────────────────────────────────────────────
+     GRILLE PORTFOLIO — RÉALISATIONS PAR CATÉGORIE
+     Photos affichées dans l'onglet Portfolio et dans l'aperçu du quiz
+     ("Réalisations — [catégorie]"). Une catégorie vide ([]) affiche un
+     message "Visuels à venir" au lieu d'images aléatoires.
+     Nommez vos fichiers 1.jpg, 2.jpg, ... dans le dossier correspondant
+     (images/portfolio/<catégorie>/) puis listez-les ci-dessous, dans
+     l'ordre d'affichage souhaité. Format : portrait, ~900×1200px.
+     ────────────────────────────────────────────────────────────────── */
+  portfolioMedia: {
+    immobilier:   [], // images/portfolio/immobilier/1.jpg, 2.jpg, ...
+    archi:        [], // images/portfolio/archi/1.jpg, 2.jpg, ...
+    cuisine:      [], // images/portfolio/cuisine/1.jpg, 2.jpg, ...
+    piscine:      [], // images/portfolio/piscine/1.jpg, 2.jpg, ...
+    artisan:      [], // images/portfolio/artisan/1.jpg, 2.jpg, ...
+    'photo-part': [], // images/portfolio/photo-part/1.jpg, 2.jpg, ...
+    mode:         [], // images/portfolio/mode/1.jpg, 2.jpg, ...
+    event:        [], // images/portfolio/event/1.jpg, 2.jpg, ...
+  },
 };
 
 

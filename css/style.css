@@ -1521,6 +1521,16 @@
   }
   .ph.revealed::after { transform: scaleY(0); }
 
+  .pf-empty {
+    grid-column: 1 / -1;
+    padding: 48px 24px;
+    text-align: center;
+    color: var(--gray-mid, #76717f);
+    font-size: 14px;
+    background: #efeaf6;
+    border-radius: 4px;
+  }
+
   /* ─── CTA BAND — FIN DE PORTFOLIO ─── */
   .pf-cta-band {
     background: var(--black); color: var(--white);
