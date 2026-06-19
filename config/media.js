@@ -17,7 +17,18 @@
    ┌─────────────────────────────────────────────────────────────────┐
    │  FORMATS RECOMMANDÉS                                             │
    │                                                                   │
-   │  Héros carrousel     1920 × 820 px   (ratio 21:9, paysage)     │
+   │  Héros Accueil (home) 2400 × 2400 px (carré, sujet centré)     │
+   │                       → image plein écran fixe derrière le      │
+   │                         titre, affichée aussi bien en grand      │
+   │                         écran large (paysage) qu'en mobile      │
+   │                         (portrait) : un format proche du carré  │
+   │                         avec le sujet bien centré évite que     │
+   │                         le recadrage automatique ne coupe       │
+   │                         l'essentiel de la photo dans un sens     │
+   │                         ou dans l'autre.                         │
+   │  Héros carrousel      1920 × 820 px   (ratio 21:9, paysage)     │
+   │                       → toutes les autres rubriques (Services,  │
+   │                         Drone, Portfolio, Contact, Partenaires) │
    │  Marquee accueil      600 × 750 px   (ratio 4:5, portrait)     │
    │  Photos services      900 × 1200 px  (ratio 3:4, portrait)     │
    │  Illustration devis   900 × 700 px   (ratio 9:7, paysage)      │
@@ -112,7 +123,9 @@ const IMG = {
      ────────────────────────────────────────────────────────────────── */
   heroImages: {
 
-    /* ① Accueil */
+    /* ① Accueil — image plein écran fixe (voir "Héros Accueil" ci-dessus,
+       2400×2400px / carré, sujet centré) : seule cette rubrique affiche
+       l'image en fond fixe derrière le titre, sur mobile comme en desktop. */
     home: [
       'images/hero/home-1.webp',
       'images/hero/home-2.webp',

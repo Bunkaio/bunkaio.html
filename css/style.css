@@ -275,26 +275,25 @@
   .hero-start {
     font-size: 11.5px; font-weight: 600; letter-spacing: 0.08em;
     text-transform: uppercase;
-    border: 1px solid rgba(10,10,12,0.28);
-    background: rgba(255,255,255,0.18);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    color: var(--black);
+    border: 1px solid var(--black);
+    background: var(--black);
+    color: var(--white);
     padding: 19px 54px; cursor: pointer;
     font-family: inherit;
     position: relative; overflow: hidden;
-    transition: color 0.5s var(--ease), border-color 0.5s var(--ease);
+    transition: transform 0.35s var(--ease), box-shadow 0.35s var(--ease);
     opacity: 0; animation: riseIn 1s var(--ease) 1.35s forwards;
   }
   .hero-start span { position: relative; z-index: 1; }
   .hero-start::before {
-    content: ''; position: absolute; inset: 0;
-    background: rgba(10,10,12,0.9);
-    transform: scaleX(0); transform-origin: left;
-    transition: transform 0.55s var(--ease-luxe);
+    content: ''; position: absolute; top: 0; left: -60%;
+    width: 40%; height: 100%;
+    background: linear-gradient(120deg, transparent, rgba(255,255,255,0.18), transparent);
+    transform: skewX(-20deg);
+    transition: left 0.6s var(--ease-luxe);
   }
-  .hero-start:hover { color: var(--white); border-color: rgba(10,10,12,0.9); }
-  .hero-start:hover::before { transform: scaleX(1); }
+  .hero-start:hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(10,10,12,0.32); }
+  .hero-start:hover::before { left: 120%; }
   @keyframes riseIn {
     from { opacity: 0; transform: translateY(16px); }
     to   { opacity: 1; transform: translateY(0); }
@@ -584,13 +583,13 @@
     font-size: 10.5px; font-weight: 600; letter-spacing: 0.18em;
     text-transform: uppercase;
     background: none; border: none;
-    border-bottom: 1px solid rgba(10,10,12,0.12);
+    border-bottom: 1px solid rgba(255,255,255,0.35);
     padding: 8px 2px;
-    cursor: pointer; color: rgba(10,10,12,0.45);
+    cursor: pointer; color: rgba(255,255,255,0.75);
     font-family: inherit;
     transition: color 0.35s var(--ease), border-color 0.35s var(--ease);
   }
-  .hero-access:hover { color: var(--black); border-bottom-color: var(--black); }
+  .hero-access:hover { color: var(--white); border-bottom-color: var(--white); }
 
   /* ─── LOGIN / ESPACE CLIENT & PARTENAIRE ─── */
   .login-page { max-width: 520px; margin: 0 auto; padding: 180px 32px 140px; position: relative; z-index: 1; }
