@@ -13,7 +13,7 @@
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
+  html { scroll-behavior: smooth; overflow-x: hidden; max-width: 100%; }
 
   body {
     font-family: 'DM Sans', sans-serif;
@@ -250,7 +250,8 @@
   }
   .hero-kicker {
     font-size: 11px; font-weight: 500; letter-spacing: 0.34em;
-    text-transform: uppercase; color: var(--grey);
+    text-transform: uppercase; color: var(--white);
+    text-shadow: 0 2px 10px rgba(0,0,0,0.45);
     margin-bottom: 30px; padding: 0 10px;
     opacity: 0; animation: riseIn 1s var(--ease) 0.2s forwards;
   }
@@ -892,7 +893,7 @@
   }
   .payment-flex-text { font-size: 13.5px; line-height: 1.7; color: #3a3544; }
   .payment-flex-text strong { color: var(--black); }
-  .payment-flex-methods { display: flex; gap: 8px; flex-wrap: wrap; flex-shrink: 0; }
+  .payment-flex-methods { display: flex; gap: 8px; flex-wrap: wrap; min-width: 0; }
   .payment-flex-pill {
     font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
     border: 1px solid var(--line); padding: 7px 13px; border-radius: 100px;
@@ -1189,11 +1190,16 @@
     font-weight: 700; letter-spacing: -0.03em;
     margin-bottom: 16px; line-height: 1.15; padding-bottom: 4px;
     color: var(--black);
+    opacity: 0; transform: translateY(24px);
+    animation: pageTextIn 0.9s var(--ease-luxe) forwards;
   }
   .page-sub {
     font-size: 14px; color: var(--grey); margin-bottom: 58px;
     max-width: 520px; line-height: 1.85;
+    opacity: 0; transform: translateY(20px);
+    animation: pageTextIn 0.9s var(--ease-luxe) 0.12s forwards;
   }
+  @keyframes pageTextIn { to { opacity: 1; transform: translateY(0); } }
 
   .services-filters { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 52px; }
   .filter-btn {
@@ -1787,8 +1793,14 @@
     font-size: clamp(32px, 5.2vw, 58px);
     font-weight: 700; letter-spacing: -0.03em;
     margin-bottom: 18px; line-height: 1.15; padding-bottom: 4px;
+    opacity: 0; transform: translateY(24px);
+    animation: pageTextIn 0.9s var(--ease-luxe) forwards;
   }
-  .ct-sub { font-size: 14px; color: var(--grey); line-height: 1.85; margin-bottom: 52px; max-width: 400px; }
+  .ct-sub {
+    font-size: 14px; color: var(--grey); line-height: 1.85; margin-bottom: 52px; max-width: 400px;
+    opacity: 0; transform: translateY(20px);
+    animation: pageTextIn 0.9s var(--ease-luxe) 0.12s forwards;
+  }
   .ct-info-block { margin-bottom: 40px; }
   .ct-info-label {
     font-size: 10px; font-weight: 600; letter-spacing: 0.26em;
