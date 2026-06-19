@@ -81,7 +81,7 @@
   .nav-brand { cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; flex-shrink: 0; }
   .nav-logo-img {
     width: 42px; height: 42px; object-fit: contain; box-sizing: border-box;
-    background: var(--black); border-radius: 10px; padding: 7px;
+    filter: brightness(0);
     animation: logoOpacity 3.6s ease-in-out infinite;
   }
   @keyframes logoOpacity { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
@@ -214,6 +214,7 @@
     overflow: hidden;
     z-index: 1;
     background: linear-gradient(135deg, #f6f3fd 0%, #ede5f8 100%);
+    will-change: opacity, transform;
   }
   .hero-slide {
     position: absolute; inset: 0;
@@ -266,7 +267,7 @@
   }
   @media (max-width: 920px) {
     :root { --nav-h: 130px; }
-    .page-hero-wrap { aspect-ratio: 16/9; max-height: 55vw; min-height: 180px; }
+    .page-hero-wrap { aspect-ratio: unset; height: 46vh; min-height: 260px; max-height: 420px; }
     html::before { opacity: 0.10; }
   }
 
@@ -1890,8 +1891,6 @@
       border-bottom: 1px solid var(--line);
       width: 100%; gap: 2px;
     }
-    .nav-logo-img { width: 26px; height: 26px; padding: 4px; }
-    .nav-logo-fallback { font-size: 17px !important; display: block !important; }
     .nav-studio { font-size: 7px; letter-spacing: 0.26em; color: var(--grey); }
     /* FR/EN : positionné en absolu dans la ligne brand */
     .lang-toggle {
@@ -1996,7 +1995,7 @@
   }
   @media (max-width: 920px) {
     :root { --nav-h: 130px; }
-    .page-hero-wrap { aspect-ratio: 16/9; max-height: 55vw; min-height: 180px; }
+    .page-hero-wrap { aspect-ratio: unset; height: 46vh; min-height: 260px; max-height: 420px; }
     html::before { opacity: 0.10; }
     .tier-list { grid-template-columns: 1fr; gap: 14px; }
     .services-grid { grid-template-columns: 1fr; }

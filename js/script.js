@@ -320,6 +320,26 @@ function syncNavHeight(){
   if (nav) document.documentElement.style.setProperty('--nav-h', nav.offsetHeight + 'px');
 }
 
+function updateHeroScrollFx(){
+  const wrap = document.getElementById('pageHeroWrap');
+  if (!wrap) return;
+  const h = wrap.offsetHeight || 1;
+  const progress = Math.min(Math.max(-wrap.getBoundingClientRect().top / h, 0), 1);
+  wrap.style.transform = `translateY(${progress * h * 0.22}px) scale(${1 - progress * 0.06})`;
+  wrap.style.opacity = String(1 - progress * 0.92);
+}
+
+function initHeroScrollFx(){
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (!ticking){
+      requestAnimationFrame(() => { updateHeroScrollFx(); ticking = false; });
+      ticking = true;
+    }
+  }, { passive: true });
+  updateHeroScrollFx();
+}
+
 function refreshDynamic(){
   renderCats();
   renderFooterServices();
@@ -781,6 +801,7 @@ function goView(v){
     document.getElementById('view-' + v).classList.add('active');
     document.querySelectorAll('.nav-link').forEach(l => l.classList.toggle('active', l.dataset.view === v));
     window.scrollTo({ top:0, behavior:'instant' });
+    updateHeroScrollFx();
     if (v !== 'quiz') setProgress(0);
     setPageBg(v);
     initHeroCarousel(v);
@@ -1933,3 +1954,4 @@ applyImages();
 document.querySelectorAll('.ph').forEach(observe);
 syncNavHeight();
 window.addEventListener('resize', syncNavHeight);
+initHeroScrollFx();
