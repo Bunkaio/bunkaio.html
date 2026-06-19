@@ -36,7 +36,7 @@
    │    devis/                Illustration section Devis & déroulé   │
    │    drone/                Vignettes miniatures projets drone      │
    │    portfolio/            Grille portfolio — par catégorie        │
-   │      immobilier/         Nommez vos photos 1.jpg, 2.jpg, ...    │
+   │      immobilier/         Nommez vos photos 1.webp, 2.webp, ...    │
    │      archi/                                                       │
    │      cuisine/                                                     │
    │      piscine/                                                     │
@@ -65,15 +65,15 @@ const IMG = {
      Conseil : utilisez la même image que le 1er slide du carrousel héros.
      Format : paysage large, ~1920×1080px minimum
      ────────────────────────────────────────────────────────────────── */
-  home:      'images/hero/home-1.jpg',       // Fond page Accueil
-  quiz:      'images/hero/quiz-1.jpg',       // Fond page Questionnaire devis
-  services:  'images/hero/services-1.jpg',   // Fond page Services
-  drone:     'images/hero/drone-1.jpg',      // Fond page 4K Drone
-  portfolio: 'images/hero/portfolio-1.jpg',  // Fond page Portfolio
-  contact:   'images/hero/contact-1.jpg',    // Fond page Contact
-  partners:  'images/hero/partners-1.jpg',   // Fond page Partenaires
-  login:     'images/hero/login-1.jpg',      // Fond page Connexion
-  account:   'images/hero/account-1.jpg',    // Fond page Espace client
+  home:      'images/hero/home-1.webp',       // Fond page Accueil
+  quiz:      'images/hero/quiz-1.webp',       // Fond page Questionnaire devis
+  services:  'images/hero/services-1.webp',   // Fond page Services
+  drone:     'images/hero/drone-1.webp',      // Fond page 4K Drone
+  portfolio: 'images/hero/portfolio-1.webp',  // Fond page Portfolio
+  contact:   'images/hero/contact-1.webp',    // Fond page Contact
+  partners:  'images/hero/partners-1.webp',   // Fond page Partenaires
+  login:     'images/hero/login-1.webp',      // Fond page Connexion
+  account:   'images/hero/account-1.webp',    // Fond page Espace client
 
   /* ──────────────────────────────────────────────────────────────────
      BANDE DÉFILANTE — PAGE D'ACCUEIL (section sous le héros)
@@ -82,14 +82,14 @@ const IMG = {
      Format : portrait, ~600×750px
      ────────────────────────────────────────────────────────────────── */
   marquee: [
-    'images/marquee/1.jpg',   // Marquee image 1
-    'images/marquee/2.jpg',   // Marquee image 2
-    'images/marquee/3.jpg',   // Marquee image 3
-    'images/marquee/4.jpg',   // Marquee image 4
-    'images/marquee/5.jpg',   // Marquee image 5
-    'images/marquee/6.jpg',   // Marquee image 6
-    'images/marquee/7.jpg',   // Marquee image 7
-    'images/marquee/8.jpg',   // Marquee image 8
+    'images/marquee/1.webp',   // Marquee image 1
+    'images/marquee/2.webp',   // Marquee image 2
+    'images/marquee/3.webp',   // Marquee image 3
+    'images/marquee/4.webp',   // Marquee image 4
+    'images/marquee/5.webp',   // Marquee image 5
+    'images/marquee/6.webp',   // Marquee image 6
+    'images/marquee/7.webp',   // Marquee image 7
+    'images/marquee/8.webp',   // Marquee image 8
   ],
 
   /* ──────────────────────────────────────────────────────────────────
@@ -97,7 +97,7 @@ const IMG = {
      Visible dans Services → onglet "Devis & déroulé", colonne de droite.
      Format : paysage, ~900×700px
      ────────────────────────────────────────────────────────────────── */
-  devis: 'images/devis/illustration.jpg',
+  devis: 'images/devis/illustration.webp',
 
   /* (Interne — graine pour les placeholders portfolio, ne pas modifier) */
   portfolioSeed: 'bk-pf',
@@ -114,57 +114,57 @@ const IMG = {
 
     /* ① Accueil */
     home: [
-      'images/hero/home-1.jpg',
-      'images/hero/home-2.jpg',
-      'images/hero/home-3.jpg',
+      'images/hero/home-1.webp',
+      'images/hero/home-2.webp',
+      'images/hero/home-3.webp',
     ],
 
     /* ② Questionnaire devis */
     quiz: [
-      'images/hero/quiz-1.jpg',
-      'images/hero/quiz-2.jpg',
+      'images/hero/quiz-1.webp',
+      'images/hero/quiz-2.webp',
     ],
 
     /* ③ Services */
     services: [
-      'images/hero/services-1.jpg',
-      'images/hero/services-2.jpg',
-      'images/hero/services-3.jpg',
+      'images/hero/services-1.webp',
+      'images/hero/services-2.webp',
+      'images/hero/services-3.webp',
     ],
 
     /* ④ 4K Drone */
     drone: [
-      'images/hero/drone-1.jpg',
-      'images/hero/drone-2.jpg',
+      'images/hero/drone-1.webp',
+      'images/hero/drone-2.webp',
     ],
 
     /* ⑤ Portfolio */
     portfolio: [
-      'images/hero/portfolio-1.jpg',
-      'images/hero/portfolio-2.jpg',
-      'images/hero/portfolio-3.jpg',
+      'images/hero/portfolio-1.webp',
+      'images/hero/portfolio-2.webp',
+      'images/hero/portfolio-3.webp',
     ],
 
     /* ⑥ Contact */
     contact: [
-      'images/hero/contact-1.jpg',
-      'images/hero/contact-2.jpg',
+      'images/hero/contact-1.webp',
+      'images/hero/contact-2.webp',
     ],
 
     /* ⑦ Partenaires */
     partners: [
-      'images/hero/partners-1.jpg',
-      'images/hero/partners-2.jpg',
+      'images/hero/partners-1.webp',
+      'images/hero/partners-2.webp',
     ],
 
     /* ⑧ Connexion */
     login: [
-      'images/hero/login-1.jpg',
+      'images/hero/login-1.webp',
     ],
 
     /* ⑨ Espace client / partenaire */
     account: [
-      'images/hero/account-1.jpg',
+      'images/hero/account-1.webp',
     ],
   },
 
@@ -174,14 +174,14 @@ const IMG = {
      Une image par catégorie. Format : portrait, ~900×1200px (ratio 3:4)
      ────────────────────────────────────────────────────────────────── */
   servicePhotos: {
-    immobilier:   'images/services/immobilier.jpg',    // Immobilier prestige
-    archi:        'images/services/archi.jpg',         // Architecture & design
-    cuisine:      'images/services/cuisine.jpg',       // Cuisines haut de gamme
-    piscine:      'images/services/piscine.jpg',       // Piscines & extérieurs
-    artisan:      'images/services/artisan.jpg',       // Artisanat d'art
-    'photo-part': 'images/services/photo-part.jpg',   // Séance photo particuliers
-    mode:         'images/services/mode.jpg',          // Mode & créateurs
-    event:        'images/services/event.jpg',         // Événementiel
+    immobilier:   'images/services/immobilier.webp',    // Immobilier prestige
+    archi:        'images/services/archi.webp',         // Architecture & design
+    cuisine:      'images/services/cuisine.webp',       // Cuisines haut de gamme
+    piscine:      'images/services/piscine.webp',       // Piscines & extérieurs
+    artisan:      'images/services/artisan.webp',       // Artisanat d'art
+    'photo-part': 'images/services/photo-part.webp',   // Séance photo particuliers
+    mode:         'images/services/mode.webp',          // Mode & créateurs
+    event:        'images/services/event.webp',         // Événementiel
   },
 
   /* ──────────────────────────────────────────────────────────────────
@@ -189,19 +189,19 @@ const IMG = {
      Photos affichées dans l'onglet Portfolio et dans l'aperçu du quiz
      ("Réalisations — [catégorie]"). Une catégorie vide ([]) affiche un
      message "Visuels à venir" au lieu d'images aléatoires.
-     Nommez vos fichiers 1.jpg, 2.jpg, ... dans le dossier correspondant
+     Nommez vos fichiers 1.webp, 2.webp, ... dans le dossier correspondant
      (images/portfolio/<catégorie>/) puis listez-les ci-dessous, dans
      l'ordre d'affichage souhaité. Format : portrait, ~900×1200px.
      ────────────────────────────────────────────────────────────────── */
   portfolioMedia: {
-    immobilier:   [], // images/portfolio/immobilier/1.jpg, 2.jpg, ...
-    archi:        [], // images/portfolio/archi/1.jpg, 2.jpg, ...
-    cuisine:      [], // images/portfolio/cuisine/1.jpg, 2.jpg, ...
-    piscine:      [], // images/portfolio/piscine/1.jpg, 2.jpg, ...
-    artisan:      [], // images/portfolio/artisan/1.jpg, 2.jpg, ...
-    'photo-part': [], // images/portfolio/photo-part/1.jpg, 2.jpg, ...
-    mode:         [], // images/portfolio/mode/1.jpg, 2.jpg, ...
-    event:        [], // images/portfolio/event/1.jpg, 2.jpg, ...
+    immobilier:   [], // images/portfolio/immobilier/1.webp, 2.webp, ...
+    archi:        [], // images/portfolio/archi/1.webp, 2.webp, ...
+    cuisine:      [], // images/portfolio/cuisine/1.webp, 2.webp, ...
+    piscine:      [], // images/portfolio/piscine/1.webp, 2.webp, ...
+    artisan:      [], // images/portfolio/artisan/1.webp, 2.webp, ...
+    'photo-part': [], // images/portfolio/photo-part/1.webp, 2.webp, ...
+    mode:         [], // images/portfolio/mode/1.webp, 2.webp, ...
+    event:        [], // images/portfolio/event/1.webp, 2.webp, ...
   },
 };
 
@@ -220,25 +220,25 @@ const DRONE_MEDIA = {
 
   /* ① Immobilier & architecture */
   immo: [
-    { thumb: 'images/drone/immo-1.jpg',    video: 'videos/drone/immo-1.mp4'    },  // Villa contemporaine — Hérault
-    { thumb: 'images/drone/immo-2.jpg',    video: 'videos/drone/immo-2.mp4'    },  // Domaine viticole — vente prestige
+    { thumb: 'images/drone/immo-1.webp',    video: 'videos/drone/immo-1.mp4'    },  // Villa contemporaine — Hérault
+    { thumb: 'images/drone/immo-2.webp',    video: 'videos/drone/immo-2.mp4'    },  // Domaine viticole — vente prestige
   ],
 
   /* ② Piscines & paysages */
   outdoor: [
-    { thumb: 'images/drone/outdoor-1.jpg', video: 'videos/drone/outdoor-1.mp4' },  // Piscine miroir
-    { thumb: 'images/drone/outdoor-2.jpg', video: 'videos/drone/outdoor-2.mp4' },  // Jardin paysager méditerranéen
+    { thumb: 'images/drone/outdoor-1.webp', video: 'videos/drone/outdoor-1.mp4' },  // Piscine miroir
+    { thumb: 'images/drone/outdoor-2.webp', video: 'videos/drone/outdoor-2.mp4' },  // Jardin paysager méditerranéen
   ],
 
   /* ③ Événementiel */
   event: [
-    { thumb: 'images/drone/event-1.jpg',   video: 'videos/drone/event-1.mp4'   },  // Réception privée — domaine
-    { thumb: 'images/drone/event-2.jpg',   video: 'videos/drone/event-2.mp4'   },  // Événement corporate
+    { thumb: 'images/drone/event-1.webp',   video: 'videos/drone/event-1.mp4'   },  // Réception privée — domaine
+    { thumb: 'images/drone/event-2.webp',   video: 'videos/drone/event-2.mp4'   },  // Événement corporate
   ],
 
   /* ④ Marques & lifestyle */
   brand: [
-    { thumb: 'images/drone/brand-1.jpg',   video: 'videos/drone/brand-1.mp4'   },  // Film de marque artisanale
-    { thumb: 'images/drone/brand-2.jpg',   video: 'videos/drone/brand-2.mp4'   },  // Campagne lifestyle été
+    { thumb: 'images/drone/brand-1.webp',   video: 'videos/drone/brand-1.mp4'   },  // Film de marque artisanale
+    { thumb: 'images/drone/brand-2.webp',   video: 'videos/drone/brand-2.mp4'   },  // Campagne lifestyle été
   ],
 };
