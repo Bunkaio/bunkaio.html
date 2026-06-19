@@ -309,11 +309,22 @@ async function handleStripeWebhook(request: Request, env: Env, headers: Record<s
     }
 
     // Le solde payé marque la fin du projet : on en profite pour demander un avis.
+    // La réduction de 15 % est offerte à TOUS les clients dont le projet est
+    // entièrement réglé, qu'ils cliquent ou non sur le lien d'avis — jamais en
+    // échange d'un avis (ce que Google interdit explicitement). Elle est donc
+    // accordée ici, immédiatement, indépendamment de tout clic.
     // Le lien pointe vers notre propre passerelle (/avis) plutôt que directement
-    // vers Google : elle enregistre le clic puis redirige, ce qui permet de
-    // n'accorder la réduction de 15 % qu'au moment où le client ouvre vraiment
-    // la page d'avis (voir handleReviewGateway) — pas dès l'envoi de l'email.
+    // vers Google : elle se contente d'enregistrer le clic à titre de mesure
+    // d'engagement avant de rediriger (voir handleReviewGateway) — sans rien
+    // accorder, ni conditionner quoi que ce soit à ce clic.
     if (kind === 'solde') {
+      if (customerId) {
+        try {
+          await grantReviewDiscount(stripe, customerId);
+        } catch (err) {
+          console.error('[stripe-webhook] échec attribution réduction fidélité', err);
+        }
+      }
       const reviewGatewayUrl = customerId
         ? `${new URL(request.url).origin}${REVIEW_GATEWAY_ROUTE}?c=${encodeURIComponent(customerId)}`
         : env.GOOGLE_REVIEW_URL;
@@ -355,12 +366,11 @@ async function handleStripeWebhook(request: Request, env: Env, headers: Record<s
 
 /**
  * Passerelle de clic pour la demande d'avis Google : redirige le client vers
- * la vraie page d'avis tout en enregistrant le clic sur sa fiche Customer
- * Stripe, et n'accorde la réduction de 15 % qu'à cet instant précis (pas dès
- * l'envoi de l'email) — on sait alors qu'il a au moins ouvert la page d'avis.
- * Honnêteté importante : un clic ne prouve pas qu'un avis a été posté, Google
- * ne fournissant aucun moyen de le vérifier ; c'est la meilleure approximation
- * possible avec les outils disponibles.
+ * la vraie page d'avis en enregistrant simplement le clic (mesure d'engagement)
+ * sur sa fiche Customer Stripe. N'accorde et ne conditionne plus rien à ce
+ * clic — la réduction de 15 % est déjà accordée à tous dès le solde payé (voir
+ * handleStripeWebhook), précisément pour ne jamais l'offrir "en échange" d'un
+ * avis, ce que Google interdit explicitement.
  * La redirection a toujours lieu, même si l'enregistrement échoue.
  */
 async function handleReviewGateway(request: Request, env: Env): Promise<Response> {
@@ -378,8 +388,7 @@ async function handleReviewGateway(request: Request, env: Env): Promise<Response
             avis_clique_le: new Date().toISOString().slice(0, 10),
           },
         });
-        await grantReviewDiscount(stripe, customerId);
-        console.log('[avis] clic enregistré, réduction accordée', { customerId });
+        console.log('[avis] clic enregistré', { customerId });
       }
     } catch (err) {
       console.error('[avis] échec enregistrement du clic', { customerId, err });
