@@ -172,13 +172,18 @@ export function buildReviewRequestEmail(params: {
     <a href="${params.googleReviewUrl}" style="display:inline-block;background:#0a0a0c;color:#ffffff;text-decoration:none;padding:14px 28px;border-radius:4px;font-weight:600;font-size:15px;">
       Laisser un avis Google
     </a>
-    <p style="font-size:15px;line-height:1.6;margin:28px 0 0;">À très vite,<br>L'équipe Bunkaio</p>
+    <p style="font-size:15px;line-height:1.6;margin:28px 0 0;">
+      Pour vous remercier, <strong>15 % de réduction</strong> seront automatiquement appliqués sur votre prochaine prestation avec Bunkaio.
+    </p>
+    <p style="font-size:15px;line-height:1.6;margin:20px 0 0;">À très vite,<br>L'équipe Bunkaio</p>
   `);
   const text = `${greeting}
 
 Votre prestation est désormais entièrement réglée — un grand merci pour votre confiance tout au long du projet. Si vous avez apprécié votre expérience avec Bunkaio, un avis ne prend que deux minutes et nous aide énormément.
 
 Laisser un avis Google : ${params.googleReviewUrl}
+
+Pour vous remercier, 15 % de réduction seront automatiquement appliqués sur votre prochaine prestation avec Bunkaio.
 
 À très vite,
 L'équipe Bunkaio`;

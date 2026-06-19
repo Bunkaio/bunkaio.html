@@ -224,6 +224,18 @@ Dès que la facture de **solde** (70 %) est payée — donc le projet
 entièrement réglé — le webhook envoie automatiquement un second email au
 client lui demandant un avis Google.
 
+Ce même email annonce une **réduction de 15 %** sur sa prochaine
+prestation. Concrètement, le Worker crée à cet instant un coupon Stripe
+à usage unique et l'attache directement au Customer concerné : Stripe
+l'applique alors **automatiquement** à sa prochaine facture (acompte ou
+solde), sans aucune action de ta part lors de la création de cette
+facture depuis `admin/index.html`, puis le retire après cette unique
+utilisation. Le coupon expire après un an s'il n'est pas utilisé. Comme
+il n'existe aucun moyen technique de vérifier qu'un client a réellement
+posté l'avis sur Google, la réduction est accordée dès l'envoi de
+l'email (sur la base de la confiance), pas après une vérification du
+dépôt effectif de l'avis.
+
 **Avant de redéployer**, remplace la valeur de `GOOGLE_REVIEW_URL` dans
 `wrangler.toml` par ton vrai lien d'avis Google (Google Maps → ta fiche
 d'établissement → **Demander des avis** → copier le lien). Tant que cette

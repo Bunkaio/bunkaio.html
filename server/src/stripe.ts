@@ -179,6 +179,29 @@ export async function recordPaymentOnCustomer(
 }
 
 /**
+ * Crée un coupon Stripe à usage unique (15 % de réduction, valable un an) et
+ * l'attache directement au Customer : Stripe l'applique alors automatiquement
+ * à sa prochaine facture (acompte ou solde) sans action supplémentaire de
+ * notre part, puis le retire après cette unique utilisation (duration: 'once').
+ * Appelé dès l'envoi de l'email de demande d'avis Google, suite au solde payé.
+ */
+export async function grantReviewDiscount(stripe: Stripe, customerId: string): Promise<void> {
+  const suffixBytes = new Uint8Array(4);
+  crypto.getRandomValues(suffixBytes);
+  const suffix = Array.from(suffixBytes, (b) => b.toString(16).padStart(2, '0')).join('').toUpperCase();
+
+  const coupon = await stripe.coupons.create({
+    percent_off: 15,
+    duration: 'once',
+    max_redemptions: 1,
+    redeem_by: Math.floor(Date.now() / 1000) + 365 * 24 * 60 * 60,
+    name: `Avis Google — ${suffix}`,
+  });
+
+  await stripe.customers.update(customerId, { coupon: coupon.id });
+}
+
+/**
  * Recherche les factures d'acompte/solde encore impayées dont l'échéance
  * est dépassée et qui n'ont pas déjà reçu de relance, pour la route
  * planifiée (cron) qui envoie un rappel automatique au client.

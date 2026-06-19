@@ -14,6 +14,7 @@ import {
   createDepositInvoice,
   createStripeClient,
   findOverdueInvoices,
+  grantReviewDiscount,
   markInvoiceReminded,
   recordPaymentOnCustomer,
   upsertQuizCustomer,
@@ -303,13 +304,22 @@ async function handleStripeWebhook(request: Request, env: Env, headers: Record<s
       console.error('[stripe-webhook] échec email de confirmation client', err);
     }
 
-    // Le solde payé marque la fin du projet : on en profite pour demander un avis.
+    // Le solde payé marque la fin du projet : on en profite pour demander un avis,
+    // avec une réduction de 15 % sur la prochaine prestation pour le remercier.
     if (kind === 'solde') {
       try {
         const { subject, html, text } = buildReviewRequestEmail({ customerName, googleReviewUrl: env.GOOGLE_REVIEW_URL });
         await sendEmail(env, customerEmail, subject, html, text);
       } catch (err) {
         console.error("[stripe-webhook] échec email de demande d'avis", err);
+      }
+
+      if (customerId) {
+        try {
+          await grantReviewDiscount(stripe, customerId);
+        } catch (err) {
+          console.error("[stripe-webhook] échec de l'attribution de la réduction avis", err);
+        }
       }
     }
   }
