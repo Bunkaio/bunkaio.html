@@ -14,15 +14,15 @@
 <meta property="og:url" content="https://bunkaio.com/">
 <meta property="og:title" content="Bunkaio — Photographe immobilier, vidéo & drone en Occitanie">
 <meta property="og:description" content="Studio photo, vidéo et drone en Occitanie : immobilier, architecture, événementiel, mode, entreprise. Devis en ligne en 2 minutes.">
-<meta property="og:image" content="https://bunkaio.com/images/logo.png">
+<meta property="og:image" content="https://bunkaio.com/images/logo.webp">
 
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Bunkaio — Photographe immobilier, vidéo & drone en Occitanie">
 <meta name="twitter:description" content="Studio photo, vidéo et drone en Occitanie : immobilier, architecture, événementiel, mode, entreprise. Devis en ligne en 2 minutes.">
-<meta name="twitter:image" content="https://bunkaio.com/images/logo.png">
+<meta name="twitter:image" content="https://bunkaio.com/images/logo.webp">
 
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='80' font-family='serif'>⊹</text></svg>">
-<link rel="stylesheet" href="css/style.css?v=202606193">
+<link rel="stylesheet" href="css/style.css?v=202606195">
 
 <script type="application/ld+json">
 {
@@ -31,8 +31,8 @@
   "name": "Bunkaio",
   "alternateName": "Studio Bunkaio",
   "url": "https://bunkaio.com/",
-  "logo": "https://bunkaio.com/images/logo.png",
-  "image": "https://bunkaio.com/images/logo.png",
+  "logo": "https://bunkaio.com/images/logo.webp",
+  "image": "https://bunkaio.com/images/logo.webp",
   "description": "Studio photo, vidéo et drone en Occitanie : photographie immobilière, vidéo immobilière, drone immobilier, photographie d'architecture, de cuisine, d'artisan, d'entreprise, événementielle, de mode et production vidéo entreprise.",
   "telephone": "+33758573161",
   "email": "contact@bunkaio.com",
@@ -74,7 +74,7 @@
 <nav>
   <div class="nav-inner">
     <div class="nav-brand" onclick="goView('home')">
-      <img class="nav-logo-img" src="images/logo.png" alt="Bunkaio"
+      <img class="nav-logo-img" src="images/logo.webp" alt="Bunkaio"
            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
       <div class="nav-logo-fallback">B ⊹</div>
       <div class="nav-studio">studio</div>
@@ -86,6 +86,7 @@
       <button class="nav-link" data-view="drone" onclick="goView('drone')" data-lang="drone">4K Drone</button>
       <button class="nav-link" data-view="contact" onclick="goView('contact')" data-lang="contact">Contact</button>
       <button class="nav-link" data-view="partners" onclick="goView('partners')" data-lang="partners">Partenaires</button>
+      <button class="nav-link" data-view="legal" onclick="goView('legal')" data-lang="nav-legal">FAQ</button>
     </div>
     <div class="nav-utils">
       <button class="lang-toggle" onclick="toggleLang()" id="langBtn">EN</button>
@@ -106,6 +107,7 @@
     <button class="nav-link mobile-link" data-view="drone" onclick="goView('drone');closeMobileMenu()" data-lang="drone">4K Drone</button>
     <button class="nav-link mobile-link" data-view="contact" onclick="goView('contact');closeMobileMenu()" data-lang="contact">Contact</button>
     <button class="nav-link mobile-link" data-view="partners" onclick="goView('partners');closeMobileMenu()" data-lang="partners">Partenaires</button>
+    <button class="nav-link mobile-link" data-view="legal" onclick="goView('legal');closeMobileMenu()" data-lang="nav-legal">FAQ</button>
   </div>
   <button class="nav-cta mobile-cta" onclick="goView('quiz');closeMobileMenu()" data-lang="start">Estimer mon projet</button>
   <div class="mobile-menu-footer">
@@ -611,6 +613,29 @@
   </div>
 </div>
 
+<!-- FAQ & POLITIQUE DE CONFIDENTIALITÉ -->
+<div class="view" id="view-legal">
+  <div class="services-page">
+    <h1 class="page-title" data-lang="legal-title">FAQ & politique de confidentialité</h1>
+    <p class="page-sub" data-lang="legal-sub">Les réponses aux questions les plus fréquentes, ainsi que nos engagements en matière de confidentialité et de droits d'utilisation des visuels.</p>
+
+    <div class="svc-tabs">
+      <button class="svc-tab active" id="legaltab-faq" onclick="setLegalTab('faq')" data-lang="legaltab-faq">FAQ</button>
+      <button class="svc-tab" id="legaltab-privacy" onclick="setLegalTab('privacy')" data-lang="legaltab-privacy">Politique de confidentialité</button>
+    </div>
+
+    <!-- FAQ -->
+    <div id="lsec-faq">
+      <div id="faqAccordion"></div>
+    </div>
+
+    <!-- Politique de confidentialité -->
+    <div id="lsec-privacy" style="display:none">
+      <div id="privacyAccordion"></div>
+    </div>
+  </div>
+</div>
+
 <!-- LOGIN -->
 <div class="view" id="view-login">
   <div class="login-page">
@@ -746,9 +771,17 @@
   </div>
   <div class="footer-grid">
     <div>
-      <div class="ft-brand-logo">B ⊹</div>
+      <img class="ft-brand-logo-img" src="images/logo.webp" alt="Bunkaio"
+           onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+      <div class="ft-brand-logo" style="display:none">B ⊹</div>
       <div class="ft-brand-studio">studio</div>
       <div class="ft-claim" data-lang="footer-claim">Nous révélons ce qui rend vos projets uniques.</div>
+      <div class="ft-follow">
+        <span class="ft-follow-label" data-lang="follow-label">Suivez-nous</span>
+        <a class="ft-social" href="https://instagram.com/bunkaio" target="_blank" rel="noopener" aria-label="Instagram Bunkaio">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.3" cy="6.7" r="1.1" fill="currentColor" stroke="none"/></svg>
+        </a>
+      </div>
     </div>
     <div class="footer-cols-right">
       <div>
@@ -761,10 +794,10 @@
           <li><button onclick="goView('portfolio')" data-lang="portfolio">Portfolio</button></li>
           <li><button onclick="goView('drone')" data-lang="drone">4K Drone</button></li>
           <li><button onclick="goView('partners')" data-lang="partners">Partenaires</button></li>
+          <li><button onclick="goView('legal')" data-lang="nav-legal">FAQ</button></li>
           <li><button onclick="openLogin('client')" data-lang="access-client">Accès client</button></li>
           <li><button onclick="goView('contact')" data-lang="contact">Contact</button></li>
           <li><a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a></li>
-          <li><a href="https://instagram.com/bunkaio" target="_blank" rel="noopener">Instagram — @bunkaio</a></li>
         </ul>
       </div>
     </div>
@@ -775,7 +808,7 @@
   </div>
 </footer>
 
-<script src="config/media.js?v=202606193"></script>
-<script src="js/script.js?v=202606193"></script>
+<script src="config/media.js?v=202606195"></script>
+<script src="js/script.js?v=202606195"></script>
 </body>
 </html>

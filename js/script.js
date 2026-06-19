@@ -44,7 +44,7 @@ let LANG = 'fr';
 
 const I18N = {
   fr: {
-    'estimate':'Devis','services':'Services','portfolio':'Portfolio','drone':'4K Drone','contact':'Contact','partners':'Partenaires',
+    'estimate':'Devis','services':'Services','portfolio':'Portfolio','drone':'4K Drone','contact':'Contact','partners':'Partenaires','nav-legal':'FAQ',
     'hero-kicker':'Photographie · vidéo · drone','hero-word1':'Estimez','hero-word2':'votre','hero-word3':'projet','start':'Estimer mon projet',
     'step-cat':'01 — Catégorie','q-cat':'Quel est votre domaine\u00a0?','q-cat-sub':'Sélectionnez l\'univers de votre projet.',
     'step-prof':'02 — Profil','q-prof':'Quel profil êtes-vous\u00a0?','q-prof-sub':'Identifiez-vous pour que nous comprenions précisément votre besoin.',
@@ -75,6 +75,9 @@ const I18N = {
     'company-label':'Entreprise','follow-label':'Suivez-nous','contact-btn':'Nous contacter',
     'ct-success-title':'Message envoyé','ct-success-text':'Merci pour votre message. Nous reviendrons vers vous sous 24 heures.',
     'partners-title':'Programme Partenaires Fondateurs',
+    'legal-title':'FAQ & politique de confidentialité',
+    'legal-sub':'Les réponses aux questions les plus fréquentes, ainsi que nos engagements en matière de confidentialité et de droits d\'utilisation des visuels.',
+    'legaltab-faq':'FAQ','legaltab-privacy':'Politique de confidentialité',
     'p-why':'Pourquoi Bunkaio existe',
     'p-why-1':'Nous vivons dans un monde où les contenus se multiplient, mais où les histoires se raréfient. Chaque jour, des milliers d\'images sont publiées puis oubliées.',
     'p-why-2':'Pourtant, derrière chaque lieu, chaque objet et chaque réalisation se cache une histoire qui mérite d\'être racontée.',
@@ -163,7 +166,7 @@ const I18N = {
     'ph-reg-email':'vous@societe.fr'
   },
   en: {
-    'estimate':'Quote','services':'Services','portfolio':'Portfolio','drone':'4K Drone','contact':'Contact','partners':'Partners',
+    'estimate':'Quote','services':'Services','portfolio':'Portfolio','drone':'4K Drone','contact':'Contact','partners':'Partners','nav-legal':'FAQ',
     'hero-kicker':'Photography · video · drone','hero-word1':'Estimate','hero-word2':'your','hero-word3':'project','start':'Estimate My Project',
     'step-cat':'01 — Category','q-cat':'What is your field\u00a0?','q-cat-sub':'Select the universe your project belongs to.',
     'step-prof':'02 — Profile','q-prof':'Which profile are you\u00a0?','q-prof-sub':'Tell us who you are so we can understand exactly what you need.',
@@ -194,6 +197,9 @@ const I18N = {
     'company-label':'Company','follow-label':'Follow us','contact-btn':'Get in touch',
     'ct-success-title':'Message sent','ct-success-text':'Thank you for your message. We will get back to you within 24 hours.',
     'partners-title':'Founding Partners Programme',
+    'legal-title':'FAQ & privacy policy',
+    'legal-sub':'Answers to the most frequently asked questions, along with our commitments on data privacy and image/video usage rights.',
+    'legaltab-faq':'FAQ','legaltab-privacy':'Privacy policy',
     'p-why':'Why Bunkaio exists',
     'p-why-1':'We live in a world where content keeps multiplying, yet stories are becoming rare. Every day, thousands of images are published and then forgotten.',
     'p-why-2':'And yet, behind every place, every object and every achievement lies a story that deserves to be told.',
@@ -858,6 +864,7 @@ function goView(v){
     if (v === 'drone') { renderDroneCats(); renderDroneProjects(activeDroneCat); document.querySelectorAll('#view-drone .rv').forEach(observe); }
     if (v === 'portfolio' && !pfLoaded) { renderPfTabs(); selectPfTab(PF_CATS[0].id); pfLoaded = true; }
     if (v === 'partners') { renderPartnersAccordion(); renderLogoCarousel(); document.querySelectorAll('#view-partners .rv').forEach(observe); const img = document.getElementById('img-partners-banner'); if (img && !img.src) img.src = IMG.partners; }
+    if (v === 'legal') { renderFaqAccordion(); renderPrivacyAccordion(); setLegalTab('faq'); }
   }, 420);
 }
 
@@ -1926,6 +1933,79 @@ function toggleAccordion(btn){
   const open = body.classList.contains('open');
   body.classList.toggle('open', !open);
   btn.setAttribute('aria-expanded', String(!open));
+}
+
+/* ═══════════════ FAQ & POLITIQUE DE CONFIDENTIALITÉ ═══════════════ */
+function setLegalTab(tab){
+  document.getElementById('legaltab-faq').classList.toggle('active', tab === 'faq');
+  document.getElementById('legaltab-privacy').classList.toggle('active', tab === 'privacy');
+  document.getElementById('lsec-faq').style.display = tab === 'faq' ? 'block' : 'none';
+  document.getElementById('lsec-privacy').style.display = tab === 'privacy' ? 'block' : 'none';
+}
+
+function renderAccordionInto(elId, sections){
+  const el = document.getElementById(elId);
+  if (!el) return;
+  el.innerHTML = sections.map((s, i) => `
+    <div class="accordion-item">
+      <button class="accordion-trigger" aria-expanded="${i === 0 ? 'true' : 'false'}" onclick="toggleAccordion(this)">
+        <span>${s.title}</span>
+        <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></span>
+      </button>
+      <div class="accordion-body ${i === 0 ? 'open' : ''}">
+        <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544">${s.body}</div>
+      </div>
+    </div>`).join('');
+}
+
+function renderFaqAccordion(){
+  const sections = LANG === 'fr' ? [
+    { title:'Quelles prestations proposez-vous ?', body:`<p>Photographie et vidéo immobilière, architecture & design, drone 4K, événementiel, marques et particuliers. Chaque univers dispose de formules détaillées dans notre <strong>catalogue & prix</strong>.</p>` },
+    { title:'Comment se déroule une prestation, de la demande à la livraison ?', body:`<p>Quatre étapes simples : <strong>devis</strong> personnalisé sous 24h, <strong>shooting</strong> à la date convenue, <strong>post-production</strong> (tri, retouche, montage), puis <strong>livraison</strong> de vos visuels via votre espace client. Le détail complet est disponible dans l'onglet « Devis & déroulé » de la page Services.</p>` },
+    { title:'Quels sont les délais de livraison ?', body:`<p>Ils varient selon la formule choisie et sont indiqués sur chaque offre du catalogue. Les délais démarrent à la date du shooting, hors demandes de retouches complémentaires.</p>` },
+    { title:'Comment fonctionne le paiement ?', body:`<p>30 % à la commande (signature du devis), solde à la livraison des livrables. Paiement par carte bancaire, prélèvement automatique, ou en 3x sans frais avec Klarna.</p>` },
+    { title:'Puis-je utiliser les visuels livrés pour un usage commercial ?', body:`<p>Oui. L'ensemble des droits d'utilisation des visuels livrés vous est cédé pour un usage commercial, sans limite de durée. Le détail des droits cédés et des réserves de Bunkaio est précisé dans l'onglet « Politique de confidentialité » ci-contre.</p>` },
+    { title:'Intervenez-vous partout en France ?', body:`<p>Nous intervenons principalement en Occitanie. Au-delà, toute demande est étudiée avec des frais de déplacement calculés selon la distance.</p>` },
+    { title:'Que se passe-t-il en cas de météo défavorable pour une prestation drone ?', body:`<p>La sécurité et la réglementation aérienne priment toujours. En cas de météo incompatible (vent, pluie, faible visibilité), la prestation est reportée sans frais à la première date disponible.</p>` },
+    { title:'Êtes-vous assurés et autorisés à piloter un drone ?', body:`<p>Oui. Nos pilotes sont formés et déclarés conformément à la réglementation de la DGAC, et notre activité est couverte par une assurance responsabilité civile professionnelle.</p>` },
+    { title:'Comment accéder à mes livrables après le shooting ?', body:`<p>Vous recevez vos identifiants d'<strong>espace client</strong> après validation du devis. Vos visuels y restent disponibles au téléchargement pendant toute la durée convenue.</p>` },
+    { title:'Comment devenir Partenaire Fondateur ?', body:`<p>Le programme et les conditions de candidature sont détaillés sur notre page <strong>Partenaires</strong>.</p>` },
+  ] : [
+    { title:'What services do you offer?', body:`<p>Real-estate photography and video, architecture & design, 4K drone, events, brands and private clients. Each universe has packages detailed in our <strong>catalogue & rates</strong>.</p>` },
+    { title:'How does a project run, from request to delivery?', body:`<p>Four simple steps: a personalised <strong>quote</strong> within 24h, the <strong>shoot</strong> on the agreed date, <strong>post-production</strong> (selection, retouching, editing), then <strong>delivery</strong> of your visuals via your client area. Full details are available under the "Quote & process" tab on the Services page.</p>` },
+    { title:'What are the delivery times?', body:`<p>They vary depending on the package chosen and are stated on each catalogue offer. Delivery times start from the shoot date, excluding any additional retouching requests.</p>` },
+    { title:'How does payment work?', body:`<p>30% upon booking (quote signature), balance on delivery. Payment by card, direct debit, or in 3 interest-free instalments with Klarna.</p>` },
+    { title:'Can I use the delivered visuals for commercial purposes?', body:`<p>Yes. All usage rights to the delivered visuals are transferred to you for commercial use, with no time limit. Details on the rights transferred and Bunkaio's reservations are set out in the "Privacy policy" tab opposite.</p>` },
+    { title:'Do you work throughout France?', body:`<p>We work mainly across Occitanie. Beyond that, every request is reviewed, with travel costs calculated based on distance.</p>` },
+    { title:'What happens if the weather is unsuitable for a drone shoot?', body:`<p>Safety and aviation regulations always come first. If weather conditions are unsuitable (wind, rain, poor visibility), the shoot is rescheduled at no extra cost to the next available date.</p>` },
+    { title:'Are you insured and authorised to fly a drone?', body:`<p>Yes. Our pilots are trained and registered in accordance with French DGAC regulations, and our activity is covered by professional liability insurance.</p>` },
+    { title:'How do I access my deliverables after the shoot?', body:`<p>You receive your <strong>client area</strong> credentials once the quote is confirmed. Your visuals remain available for download there for the agreed period.</p>` },
+    { title:'How can I become a Founding Partner?', body:`<p>The programme and application terms are detailed on our <strong>Partners</strong> page.</p>` },
+  ];
+  renderAccordionInto('faqAccordion', sections);
+}
+
+function renderPrivacyAccordion(){
+  const sections = LANG === 'fr' ? [
+    { title:'Responsable du traitement des données', body:`<p>Ce site est édité par <strong>BUNKAIO</strong>, Entreprise Individuelle, SIRET 951 547 587 00034, France. Pour toute question relative à vos données personnelles, contactez-nous à <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a>.</p>` },
+    { title:'Données collectées et finalités', body:`<p>Nous collectons uniquement les données que vous nous transmettez volontairement : nom, email, téléphone et informations relatives à votre projet via le formulaire de contact, le questionnaire de devis ou votre espace client/partenaire.</p><p>Ces données sont utilisées exclusivement pour répondre à vos demandes, établir vos devis et gérer votre compte. Elles ne sont ni vendues, ni cédées, ni partagées avec des tiers à des fins commerciales.</p>` },
+    { title:'Base légale et durée de conservation', body:`<p>Le traitement repose sur l'exécution de la relation commerciale ou précontractuelle (devis, prestation) et sur notre intérêt légitime à répondre à vos demandes.</p><p>Vos données sont conservées pendant la durée de la relation commerciale, puis archivées le temps imposé par nos obligations légales et comptables, avant suppression ou anonymisation.</p>` },
+    { title:'Cookies et traceurs', body:`<p>Ce site n'utilise aucun cookie publicitaire ni traceur tiers, et ne dépose aucun cookie de suivi. Aucune donnée de navigation n'est collectée à des fins d'analyse ou de profilage.</p>` },
+    { title:'Vos droits', body:`<p>Conformément au RGPD et à la loi Informatique et Libertés, vous disposez d'un droit d'accès, de rectification, d'effacement, de limitation, d'opposition et de portabilité sur vos données.</p><p>Vous pouvez exercer ces droits à tout moment en écrivant à <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a>. Vous disposez également du droit d'introduire une réclamation auprès de la CNIL (<a href="https://www.cnil.fr" target="_blank" rel="noopener">www.cnil.fr</a>).</p>` },
+    { title:'Hébergement et sécurité des données', body:`<p>Ce site est hébergé par GitHub, Inc. Les échanges sont sécurisés (HTTPS). Aucune base de données client n'est publiquement accessible : les informations transmises via nos formulaires sont traitées de façon confidentielle par BUNKAIO.</p>` },
+    { title:'Droits d\'auteur et droits d\'utilisation des photos & vidéos', body:`<p>BUNKAIO conserve l'intégralité de ses droits d'auteur (droit moral) sur l'ensemble des photographies et vidéos qu'elle réalise, conformément au Code de la propriété intellectuelle.</p><p>Les <strong>droits d'exploitation</strong> (droits d'utilisation commerciale) des visuels livrés sont cédés au client pour une utilisation commerciale, sans limite de durée, dans les conditions précisées au devis signé.</p><p>BUNKAIO se réserve le droit d'utiliser les visuels produits dans le cadre de ses propres supports de communication, de son portfolio et de ses réseaux sociaux, sauf demande contraire et écrite du client. Toute réutilisation par un tiers autre que le client nécessite l'autorisation écrite préalable de BUNKAIO.</p>` },
+    { title:'Mentions légales', body:`<p><strong>Éditeur du site :</strong> BUNKAIO, Entreprise Individuelle — SIRET 951 547 587 00034 — France. Contact : <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a> — 07 58 57 31 61.</p><p><strong>Hébergement :</strong> GitHub, Inc.</p><p><strong>Propriété intellectuelle :</strong> le contenu de ce site (textes, identité visuelle, code) est la propriété de BUNKAIO, sauf mention contraire, et ne peut être reproduit sans autorisation préalable.</p><p><strong>Droit applicable :</strong> le présent site est soumis au droit français ; tout litige relève de la compétence des tribunaux français.</p>` },
+  ] : [
+    { title:'Data controller', body:`<p>This site is published by <strong>BUNKAIO</strong>, a French sole proprietorship (Entreprise Individuelle), SIRET 951 547 587 00034, France. For any question regarding your personal data, contact us at <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a>.</p>` },
+    { title:'Data collected and purposes', body:`<p>We only collect the data you voluntarily provide: name, email, phone number and project details, via the contact form, the quote questionnaire, or your client/partner area.</p><p>This data is used exclusively to respond to your enquiries, prepare your quotes and manage your account. It is never sold, transferred or shared with third parties for commercial purposes.</p>` },
+    { title:'Legal basis and retention period', body:`<p>Processing is based on the performance of the (pre-)contractual relationship (quote, service) and on our legitimate interest in responding to your requests.</p><p>Your data is kept for the duration of the business relationship, then archived for the period required by our legal and accounting obligations, before deletion or anonymisation.</p>` },
+    { title:'Cookies and trackers', body:`<p>This site uses no advertising cookies and no third-party trackers, and sets no tracking cookies. No browsing data is collected for analytics or profiling purposes.</p>` },
+    { title:'Your rights', body:`<p>In accordance with the GDPR and French data protection law, you have the right to access, rectify, erase, restrict, object to, and port your data.</p><p>You may exercise these rights at any time by writing to <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a>. You also have the right to lodge a complaint with the CNIL (<a href="https://www.cnil.fr" target="_blank" rel="noopener">www.cnil.fr</a>).</p>` },
+    { title:'Hosting and data security', body:`<p>This site is hosted by GitHub, Inc. All exchanges are secured (HTTPS). No client database is publicly accessible: information submitted via our forms is handled confidentially by BUNKAIO.</p>` },
+    { title:'Copyright and usage rights for photos & videos', body:`<p>BUNKAIO retains full authorship rights (moral rights) over all photographs and videos it produces, in accordance with French intellectual property law.</p><p>The <strong>exploitation rights</strong> (commercial usage rights) to the delivered visuals are transferred to the client for commercial use, with no time limit, under the terms set out in the signed quote.</p><p>BUNKAIO reserves the right to use the visuals it produces for its own communication materials, portfolio and social media, unless the client requests otherwise in writing. Any reuse by a third party other than the client requires BUNKAIO's prior written authorisation.</p>` },
+    { title:'Legal notice', body:`<p><strong>Site publisher:</strong> BUNKAIO, sole proprietorship — SIRET 951 547 587 00034 — France. Contact: <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a> — +33 7 58 57 31 61.</p><p><strong>Hosting:</strong> GitHub, Inc.</p><p><strong>Intellectual property:</strong> the content of this site (text, visual identity, code) is the property of BUNKAIO, unless otherwise stated, and may not be reproduced without prior authorisation.</p><p><strong>Governing law:</strong> this site is governed by French law; any dispute falls under the jurisdiction of the French courts.</p>` },
+  ];
+  renderAccordionInto('privacyAccordion', sections);
 }
 
 /* ═══════════════ LOGO CAROUSEL ═══════════════ */

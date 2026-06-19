@@ -83,6 +83,7 @@ const IMG = {
   portfolio: 'images/hero/portfolio-1.webp',  // Fond page Portfolio
   contact:   'images/hero/contact-1.webp',    // Fond page Contact
   partners:  'images/hero/partners-1.webp',   // Fond page Partenaires
+  legal:     'images/hero/contact-1.webp',    // Fond page FAQ & confidentialité
   login:     'images/hero/login-1.webp',      // Fond page Connexion
   account:   'images/hero/account-1.webp',    // Fond page Espace client
 
@@ -132,11 +133,10 @@ const IMG = {
       'images/hero/home-3.webp',
     ],
 
-    /* ② Questionnaire devis */
-    quiz: [
-      'images/hero/quiz-1.webp',
-      'images/hero/quiz-2.webp',
-    ],
+    /* ② Questionnaire devis — pas de bannière : le quiz s'affiche
+       directement, sans obliger à scroller à chaque étape. Le fond
+       très atténué de la page (IMG.quiz ci-dessus) reste visible. */
+    quiz: [],
 
     /* ③ Services */
     services: [
@@ -169,6 +169,9 @@ const IMG = {
       'images/hero/partners-1.webp',
       'images/hero/partners-2.webp',
     ],
+
+    /* ⑦bis FAQ & politique de confidentialité — pas de bannière */
+    legal: [],
 
     /* ⑧ Connexion */
     login: [

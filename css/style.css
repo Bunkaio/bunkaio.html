@@ -1932,6 +1932,12 @@
     grid-template-columns: 1fr 1fr;
     gap: 40px;
   }
+  .ft-brand-logo-img {
+    width: 42px; height: 42px; object-fit: contain; box-sizing: border-box;
+    background: var(--black); border-radius: 10px; padding: 7px;
+    display: block; margin-bottom: 6px;
+    animation: logoOpacity 3.6s ease-in-out infinite;
+  }
   .ft-brand-logo {
     font-size: 24px; font-weight: 700; letter-spacing: -0.02em;
     margin-bottom: 4px;
@@ -1943,6 +1949,20 @@
     margin-bottom: 20px;
   }
   .ft-claim { font-size: 13px; color: var(--grey); line-height: 1.9; max-width: 280px; }
+  .ft-follow { display: flex; align-items: center; gap: 12px; margin-top: 22px; }
+  .ft-follow-label {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.26em;
+    text-transform: uppercase; color: var(--grey);
+  }
+  .ft-social {
+    width: 34px; height: 34px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid var(--line); border-radius: 50%;
+    color: var(--black);
+    transition: background 0.35s var(--ease), color 0.35s var(--ease), border-color 0.35s var(--ease);
+  }
+  .ft-social svg { width: 17px; height: 17px; }
+  .ft-social:hover { background: var(--black); color: var(--white); border-color: var(--black); }
   .ft-col-title {
     font-size: 10px; font-weight: 600; letter-spacing: 0.26em;
     text-transform: uppercase; color: var(--grey);
