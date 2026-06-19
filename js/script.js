@@ -463,17 +463,17 @@ const CATS = [
     icon:'event',
     tiers:{
       deco:{ price:390, delay:{fr:'3 jours ouvrés',en:'3 working days'}, items:{
-        fr:['30 photos HD retouchées','Couverture de 2 heures — les moments essentiels','Galerie privée de téléchargement'],
-        en:['30 retouched HD photos','2-hour coverage — the essential moments','Private download gallery'] } },
+        fr:['20 photos HD retouchées','Couverture de 2 heures — les moments essentiels','Galerie privée de téléchargement'],
+        en:['20 retouched HD photos','2-hour coverage — the essential moments','Private download gallery'] } },
       sig:{ price:690, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
-        fr:['60 photos HD retouchées','Couverture jusqu\'à 4 heures — moments clés et ambiance','Galerie privée de téléchargement'],
-        en:['60 retouched HD photos','Up to 4-hour coverage — key moments and atmosphere','Private download gallery'] } },
+        fr:['40 photos HD retouchées','Couverture jusqu\'à 4 heures — moments clés et ambiance','Galerie privée de téléchargement'],
+        en:['40 retouched HD photos','Up to 4-hour coverage — key moments and atmosphere','Private download gallery'] } },
       prem:{ price:1190, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
-        fr:['120 photos HD retouchées','Couverture complète de l\'événement','1 teaser vidéo (30 secondes)','Galerie privée de téléchargement'],
-        en:['120 retouched HD photos','Full event coverage','1 video teaser (30 seconds)','Private download gallery'] } },
+        fr:['80 photos HD retouchées','Couverture complète de l\'événement','1 teaser vidéo (30 secondes)','Galerie privée de téléchargement'],
+        en:['80 retouched HD photos','Full event coverage','1 video teaser (30 seconds)','Private download gallery'] } },
       edit:{ price:1990, delay:{fr:'10 jours ouvrés',en:'10 working days'}, items:{
-        fr:['120 photos HD retouchées','1 aftermovie (2 minutes)','2 Reels verticaux','Mise en lumière éditoriale de l\'événement','Publication sur les supports Bunkaio'],
-        en:['120 retouched HD photos','1 aftermovie (2 minutes)','2 vertical Reels','Editorial spotlight on the event','Featured on Bunkaio channels'] } }
+        fr:['100 photos HD retouchées','1 aftermovie (2 minutes)','2 Reels verticaux','Mise en lumière éditoriale de l\'événement','Publication sur les supports Bunkaio'],
+        en:['100 retouched HD photos','1 aftermovie (2 minutes)','2 vertical Reels','Editorial spotlight on the event','Featured on Bunkaio channels'] } }
     }}
 ];
 
@@ -509,6 +509,18 @@ const SUBS = {
     items:{
       fr:['1 session lifestyle ou lookbook par mois (jusqu\'à 25 photos HD)','2 Reels verticaux par mois, prêts pour vos campagnes','Direction artistique continue — cohérence visuelle toute l\'année','Options supplémentaires au tarif partenaire (-20%)'],
       en:['1 lifestyle or lookbook session per month (up to 25 HD photos)','2 vertical Reels per month, ready for your campaigns','Ongoing art direction — full-year visual consistency','All add-ons at partner rate (-20%)'] }
+  }
+};
+
+/* Formule spécialisée "Polas" — uniquement Mode & créateurs. Studio obligatoire (+60€, voir computeTotal). */
+const POLAS = {
+  mode: {
+    price: 290,
+    name:{fr:'Polas', en:'Polaroids'},
+    delay:{fr:'Tirages remis sur place — scans HD sous 48h', en:'Prints handed over on site — HD scans within 48h'},
+    items:{
+      fr:['Séance polaroïd argentique en studio','15 tirages instantanés originaux','Scans HD de chaque polaroïd','Galerie privée de téléchargement'],
+      en:['In-studio analogue polaroid session','15 original instant prints','HD scans of every polaroid','Private download gallery'] }
   }
 };
 
@@ -887,9 +899,13 @@ function renderTiers(){
   const cat = CATS.find(c => c.id === S.cat);
   if (!cat) return;
   const subEl = document.getElementById('tierSub');
-  subEl.textContent = LANG === 'fr'
-    ? t(cat.name) + ' — quatre formules, de la découverte à l\'expérience éditoriale complète.'
-    : t(cat.name) + ' — four packages, from the starter offer to the complete editorial experience.';
+  subEl.textContent = POLAS[S.cat]
+    ? (LANG === 'fr'
+        ? t(cat.name) + ' — quatre formules, de la découverte à l\'expérience éditoriale complète, ainsi qu\'un format signature Polas.'
+        : t(cat.name) + ' — four packages, from the starter offer to the complete editorial experience, plus a signature Polas format.')
+    : (LANG === 'fr'
+        ? t(cat.name) + ' — quatre formules, de la découverte à l\'expérience éditoriale complète.'
+        : t(cat.name) + ' — four packages, from the starter offer to the complete editorial experience.');
   const el = document.getElementById('tierList');
   el.innerHTML = '';
   TIERS.forEach((tier, i) => {
@@ -929,6 +945,27 @@ function renderTiers(){
     d.onclick = () => { S.tier = 'sub'; renderRecap(); renderOptions(); quizStep(4); };
     el.appendChild(d);
   }
+  if (POLAS[S.cat]) {
+    const polas = POLAS[S.cat];
+    const total = polas.price + 60;
+    const threeX = Math.round(total / 3).toLocaleString('fr-FR');
+    const payLine = LANG === 'fr' ? `Soit 3 × ${threeX}€ sans frais` : `That's 3 × €${threeX} interest-free`;
+    const badge = LANG === 'fr' ? 'Format signature' : 'Signature format';
+    const studioNote = LANG === 'fr' ? 'Studio inclus (+60€)' : 'Studio included (+€60)';
+    const d = document.createElement('div');
+    d.className = 'tier-card stagger';
+    d.style.animationDelay = (0.24 + (TIERS.length + (SUBS[S.cat] ? 1 : 0)) * 0.1) + 's';
+    d.innerHTML = `
+      <div class="tier-badge">${badge}</div>
+      <div class="tier-head">
+        <div class="tier-name">${t(polas.name)}</div>
+        <div class="tier-price">${total.toLocaleString('fr-FR')}€<small>HT</small></div>
+      </div>
+      <div class="tier-pay-line">${payLine}</div>
+      <div class="tier-detail">${t(polas.items).join(' · ')} · ${studioNote}</div>`;
+    d.onclick = () => { S.tier = 'polas'; renderRecap(); renderOptions(); quizStep(4); };
+    el.appendChild(d);
+  }
 }
 
 function renderRecap(){
@@ -954,6 +991,28 @@ function renderRecap(){
         ${t(sub.items).map(i => `<li>${i}</li>`).join('')}
       </ul>
       <div style="margin-top: 18px; font-size: 12px; color: var(--grey); line-height: 1.6;">${engagement}</div>`;
+    return;
+  }
+  if (S.tier === 'polas') {
+    const polas = POLAS[S.cat];
+    const total = polas.price + 60;
+    const threeX = Math.round(total / 3).toLocaleString('fr-FR');
+    const payLine = LANG === 'fr'
+      ? `💳 Soit 3 × ${threeX}€ sans frais avec Klarna — ou carte bancaire, prélèvement automatique, acompte 30 % + solde.`
+      : `💳 That's 3 × €${threeX} interest-free with Klarna — or credit card, direct debit, 30% deposit + balance.`;
+    const studioLabel = LANG === 'fr' ? 'Studio inclus (+60€)' : 'Studio included (+€60)';
+    box.innerHTML = `
+      <div class="recap-label">${selLabel}</div>
+      <div class="recap-title">
+        <span>${t(cat.name)} — ${t(polas.name)}</span>
+        <span>${total.toLocaleString('fr-FR')}€ HT</span>
+      </div>
+      <div class="recap-payment">${payLine}</div>
+      <ul class="recap-items">
+        ${t(polas.items).map(i => `<li>${i}</li>`).join('')}
+        <li>${studioLabel}</li>
+      </ul>
+      <div style="margin-top: 18px; font-size: 12px; color: var(--grey); line-height: 1.6;">${LANG === 'fr' ? 'Livraison' : 'Delivery'} : ${t(polas.delay)}</div>`;
     return;
   }
   const tier = TIERS.find(x => x.id === S.tier);
@@ -999,6 +1058,20 @@ function renderOptions(){
     note.innerHTML = LANG === 'fr'
       ? '<strong>Bon à savoir :</strong> en tant qu\'abonné Studio Continu, vous bénéficiez de <strong>-20% (tarif partenaire) sur toutes les options</strong>, à ajouter sur chaque reportage mensuel.'
       : '<strong>Good to know:</strong> as a Studio Continu subscriber, you get <strong>20% off all options</strong> (partner rate), which you can freely add to any monthly shoot.';
+    el.appendChild(note);
+    renderCommBox();
+    return;
+  }
+
+  if (S.tier === 'polas') {
+    S.studio = true;
+    label.style.display = 'none';
+    const note = document.createElement('div');
+    note.className = 'sub-options-note stagger';
+    note.style.animationDelay = '0.4s';
+    note.innerHTML = LANG === 'fr'
+      ? '<strong>Bon à savoir :</strong> le format Polas est une expérience clé en main — studio inclus, sans option additionnelle.'
+      : '<strong>Good to know:</strong> the Polas format is a turnkey experience — studio included, no additional options.';
     el.appendChild(note);
     renderCommBox();
     return;
@@ -1129,6 +1202,7 @@ function checkQuizForm(){
 
 function computeTotal(){
   if (S.tier === 'sub') return { amount: SUBS[S.cat].price, surDevis: false };
+  if (S.tier === 'polas') return { amount: POLAS[S.cat].price + 60, surDevis: false };
   const cat = CATS.find(c => c.id === S.cat);
   let total = cat.tiers[S.tier].price;
   let express = false;
@@ -1236,6 +1310,12 @@ function submitQuiz(e){
     formuleLabel = 'ABONNEMENT — ' + sub.name.fr + ' (' + sub.price + '€ HT/mois, engagement 6 mois)';
     montantLabel = sub.price + '€ HT/mois';
     budgetMontantEur = sub.price;
+  } else if (S.tier === 'polas') {
+    const polas = POLAS[S.cat];
+    const res = computeTotal();
+    formuleLabel = polas.name.fr + ' (' + res.amount + '€ HT, dont 60€ studio inclus)';
+    montantLabel = res.amount + '€ HT';
+    budgetMontantEur = res.amount;
   } else {
     const tier = TIERS.find(x => x.id === S.tier);
     const res = computeTotal();
@@ -1247,7 +1327,7 @@ function submitQuiz(e){
   const optNames = (S.tier !== 'sub' && S.opts.length)
     ? S.opts.map(id => { const o = allOpts.find(x => x.id === id); return o ? o.name.fr : id; }).filter(Boolean).join(' · ')
     : (S.tier === 'sub' ? '— (abonné : tarif partenaire -20% sur options)' : 'Aucune');
-  const studioNote = (S.cat === 'photo-part') ? (S.studio ? 'Studio (+60€)' : 'Extérieur') : '';
+  const studioNote = (S.cat === 'photo-part') ? (S.studio ? 'Studio (+60€)' : 'Extérieur') : (S.tier === 'polas' ? 'Studio inclus (+60€)' : '');
   document.getElementById('successName').textContent = S.name;
   document.getElementById('commRedirect').style.display = S.comm ? 'block' : 'none';
   document.getElementById('qSubmit').disabled = true;
