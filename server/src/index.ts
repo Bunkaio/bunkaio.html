@@ -26,6 +26,7 @@ const QUIZ_LEAD_ROUTE = '/quiz-lead';
 const DEPOSIT_INVOICE_ROUTE = '/create-deposit-invoice';
 const BALANCE_INVOICE_ROUTE = '/create-balance-invoice';
 const STRIPE_WEBHOOK_ROUTE = '/stripe-webhook';
+const REVIEW_GATEWAY_ROUTE = '/avis';
 
 /**
  * Détermine l'en-tête Access-Control-Allow-Origin à renvoyer : on échoue
@@ -304,22 +305,20 @@ async function handleStripeWebhook(request: Request, env: Env, headers: Record<s
       console.error('[stripe-webhook] échec email de confirmation client', err);
     }
 
-    // Le solde payé marque la fin du projet : on en profite pour demander un avis,
-    // avec une réduction de 15 % sur la prochaine prestation pour le remercier.
+    // Le solde payé marque la fin du projet : on en profite pour demander un avis.
+    // Le lien pointe vers notre propre passerelle (/avis) plutôt que directement
+    // vers Google : elle enregistre le clic puis redirige, ce qui permet de
+    // n'accorder la réduction de 15 % qu'au moment où le client ouvre vraiment
+    // la page d'avis (voir handleReviewGateway) — pas dès l'envoi de l'email.
     if (kind === 'solde') {
+      const reviewGatewayUrl = customerId
+        ? `${new URL(request.url).origin}${REVIEW_GATEWAY_ROUTE}?c=${encodeURIComponent(customerId)}`
+        : env.GOOGLE_REVIEW_URL;
       try {
-        const { subject, html, text } = buildReviewRequestEmail({ customerName, googleReviewUrl: env.GOOGLE_REVIEW_URL });
+        const { subject, html, text } = buildReviewRequestEmail({ customerName, reviewUrl: reviewGatewayUrl });
         await sendEmail(env, customerEmail, subject, html, text);
       } catch (err) {
         console.error("[stripe-webhook] échec email de demande d'avis", err);
-      }
-
-      if (customerId) {
-        try {
-          await grantReviewDiscount(stripe, customerId);
-        } catch (err) {
-          console.error("[stripe-webhook] échec de l'attribution de la réduction avis", err);
-        }
       }
     }
   }
@@ -349,6 +348,42 @@ async function handleStripeWebhook(request: Request, env: Env, headers: Record<s
   }
 
   return jsonResponse({ ok: true }, 200, headers);
+}
+
+/**
+ * Passerelle de clic pour la demande d'avis Google : redirige le client vers
+ * la vraie page d'avis tout en enregistrant le clic sur sa fiche Customer
+ * Stripe, et n'accorde la réduction de 15 % qu'à cet instant précis (pas dès
+ * l'envoi de l'email) — on sait alors qu'il a au moins ouvert la page d'avis.
+ * Honnêteté importante : un clic ne prouve pas qu'un avis a été posté, Google
+ * ne fournissant aucun moyen de le vérifier ; c'est la meilleure approximation
+ * possible avec les outils disponibles.
+ * La redirection a toujours lieu, même si l'enregistrement échoue.
+ */
+async function handleReviewGateway(request: Request, env: Env): Promise<Response> {
+  const customerId = new URL(request.url).searchParams.get('c');
+
+  if (customerId) {
+    try {
+      const stripe = createStripeClient(env.STRIPE_SECRET_KEY);
+      const customer = await stripe.customers.retrieve(customerId);
+      if (!customer.deleted && customer.metadata?.avis_clique !== 'oui') {
+        await stripe.customers.update(customerId, {
+          metadata: {
+            ...customer.metadata,
+            avis_clique: 'oui',
+            avis_clique_le: new Date().toISOString().slice(0, 10),
+          },
+        });
+        await grantReviewDiscount(stripe, customerId);
+        console.log('[avis] clic enregistré, réduction accordée', { customerId });
+      }
+    } catch (err) {
+      console.error('[avis] échec enregistrement du clic', { customerId, err });
+    }
+  }
+
+  return Response.redirect(env.GOOGLE_REVIEW_URL, 302);
 }
 
 /**
@@ -412,6 +447,9 @@ export default {
     }
     if (url.pathname === STRIPE_WEBHOOK_ROUTE) {
       return handleStripeWebhook(request, env, headers);
+    }
+    if (url.pathname === REVIEW_GATEWAY_ROUTE) {
+      return handleReviewGateway(request, env);
     }
     return jsonResponse({ ok: false, error: 'not_found' }, 404, headers);
   },

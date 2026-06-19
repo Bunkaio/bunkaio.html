@@ -225,16 +225,33 @@ entièrement réglé — le webhook envoie automatiquement un second email au
 client lui demandant un avis Google.
 
 Ce même email annonce une **réduction de 15 %** sur sa prochaine
-prestation. Concrètement, le Worker crée à cet instant un coupon Stripe
-à usage unique et l'attache directement au Customer concerné : Stripe
-l'applique alors **automatiquement** à sa prochaine facture (acompte ou
-solde), sans aucune action de ta part lors de la création de cette
+prestation, qui n'est accordée qu'au clic sur le lien d'avis (pas dès
+l'envoi de l'email). Concrètement, le lien dans l'email ne pointe pas
+directement vers Google : il pointe vers une **passerelle** exposée par
+le Worker (`/avis?c=<id_client>`), qui enregistre le clic sur la fiche
+Customer Stripe concernée (metadata `avis_clique`), crée à cet instant
+un coupon Stripe à usage unique et l'attache au Customer, puis redirige
+immédiatement vers la vraie page d'avis Google. Stripe applique ensuite
+ce coupon **automatiquement** à la prochaine facture du client (acompte
+ou solde), sans aucune action de ta part lors de la création de cette
 facture depuis `admin/index.html`, puis le retire après cette unique
-utilisation. Le coupon expire après un an s'il n'est pas utilisé. Comme
-il n'existe aucun moyen technique de vérifier qu'un client a réellement
-posté l'avis sur Google, la réduction est accordée dès l'envoi de
-l'email (sur la base de la confiance), pas après une vérification du
-dépôt effectif de l'avis.
+utilisation. Le coupon expire après un an s'il n'est pas utilisé. La
+redirection vers Google a toujours lieu même si l'enregistrement échoue
+côté Stripe — le client n'est jamais bloqué.
+
+Limite honnête à garder en tête : un clic prouve seulement que le client
+a ouvert la page d'avis Google, pas qu'il a réellement validé son avis —
+Google ne fournit aucun moyen de vérifier qu'un avis précis a été posté
+suite à un clic. C'est la meilleure approximation possible avec les
+outils disponibles sans mettre en place une intégration beaucoup plus
+lourde (API Google Business Profile, avec son propre compte Google Cloud
+et une autorisation manuelle de ta part).
+
+Cette même passerelle (`/avis`, sans le paramètre `c`) fonctionne aussi
+comme lien générique vers la page d'avis Google — utilisable par exemple
+dans un QR code imprimé (carte de remerciement, flyer). Dans ce cas, le
+client n'étant pas identifié, aucune réduction personnalisée n'est
+accordée : c'est une simple redirection.
 
 **Avant de redéployer**, remplace la valeur de `GOOGLE_REVIEW_URL` dans
 `wrangler.toml` par ton vrai lien d'avis Google (Google Maps → ta fiche

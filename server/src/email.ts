@@ -159,7 +159,7 @@ export function buildAdminPaymentNotificationEmail(params: {
 /** Email demandant un avis Google, envoyé automatiquement une fois le solde (70 %) payé — projet entièrement réglé. */
 export function buildReviewRequestEmail(params: {
   customerName: string;
-  googleReviewUrl: string;
+  reviewUrl: string;
 }): { subject: string; html: string; text: string } {
   const greeting = params.customerName ? `Bonjour ${params.customerName},` : 'Bonjour,';
   const html = emailShell(`
@@ -169,7 +169,7 @@ export function buildReviewRequestEmail(params: {
       Votre prestation est désormais entièrement réglée — un grand merci pour votre confiance tout au long du projet.
       Si vous avez apprécié votre expérience avec Bunkaio, un avis ne prend que deux minutes et nous aide énormément.
     </p>
-    <a href="${params.googleReviewUrl}" style="display:inline-block;background:#0a0a0c;color:#ffffff;text-decoration:none;padding:14px 28px;border-radius:4px;font-weight:600;font-size:15px;">
+    <a href="${params.reviewUrl}" style="display:inline-block;background:#0a0a0c;color:#ffffff;text-decoration:none;padding:14px 28px;border-radius:4px;font-weight:600;font-size:15px;">
       Laisser un avis Google
     </a>
     <p style="font-size:15px;line-height:1.6;margin:28px 0 0;">
@@ -181,7 +181,7 @@ export function buildReviewRequestEmail(params: {
 
 Votre prestation est désormais entièrement réglée — un grand merci pour votre confiance tout au long du projet. Si vous avez apprécié votre expérience avec Bunkaio, un avis ne prend que deux minutes et nous aide énormément.
 
-Laisser un avis Google : ${params.googleReviewUrl}
+Laisser un avis Google : ${params.reviewUrl}
 
 Pour vous remercier, 15 % de réduction seront automatiquement appliqués sur votre prochaine prestation avec Bunkaio.
 
