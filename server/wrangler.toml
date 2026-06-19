@@ -8,7 +8,7 @@ compatibility_date = "2024-09-23"
 ALLOWED_ORIGINS = "https://bunkaio.com,https://www.bunkaio.com"
 # Adresse d'expédition des emails (factures, confirmations). Doit appartenir
 # à un domaine vérifié dans Resend — voir README.md de ce dossier.
-EMAIL_FROM = "BUNKAIO <factures@bunkaio.com>"
+EMAIL_FROM = "BUNKAIO <contact@bunkaio.com>"
 
 # STRIPE_SECRET_KEY et RESEND_API_KEY ne sont volontairement PAS définis ici :
 # ce sont des secrets. Ils doivent être injectés avec
