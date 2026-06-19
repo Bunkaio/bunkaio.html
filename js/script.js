@@ -512,15 +512,16 @@ const SUBS = {
   }
 };
 
-/* Formule spécialisée "Polas" — uniquement Mode & créateurs. Studio obligatoire (+60€, voir computeTotal). */
+/* Formule spécialisée "Polas" — uniquement Mode & créateurs. Studio obligatoire (+60€, voir computeTotal).
+   Polas = photos simples sur fond blanc, sans artifice, peu retouchées, destinées aux dossiers d'agences de mannequins. */
 const POLAS = {
   mode: {
     price: 290,
-    name:{fr:'Polas', en:'Polaroids'},
-    delay:{fr:'Tirages remis sur place — scans HD sous 48h', en:'Prints handed over on site — HD scans within 48h'},
+    name:{fr:'Polas', en:'Polas'},
+    delay:{fr:'Livraison HD sous 24h', en:'HD delivery within 24h'},
     items:{
-      fr:['Séance polaroïd argentique en studio','15 tirages instantanés originaux','Scans HD de chaque polaroïd','Galerie privée de téléchargement'],
-      en:['In-studio analogue polaroid session','15 original instant prints','HD scans of every polaroid','Private download gallery'] }
+      fr:['Séance studio sur fond blanc, lumière neutre','Photos simples et naturelles, sans mise en scène','Retouche minimale — conforme aux standards des agences','Fichiers HD prêts à transmettre à votre agence'],
+      en:['Studio session on a plain white background, neutral lighting','Simple, natural shots with no styling','Minimal retouching — meets modelling agency standards','HD files ready to send to your agency'] }
   }
 };
 
@@ -1469,14 +1470,16 @@ const PROCESS_STEPS = {
     { title:'Étude de votre projet',       text:'Nous examinons vos besoins, vos objectifs et les éventuelles contraintes.' },
     { title:'Prise de contact',            text:'Nous revenons vers vous sous 48h ouvrées pour échanger sur votre projet.', badge:'Sous 48h' },
     { title:'Proposition personnalisée',   text:'Nous vous transmettons une proposition adaptée à vos besoins et à votre budget.' },
-    { title:'Validation & planification',  text:'Une fois la proposition validée, nous organisons la prestation et les modalités de réalisation.' },
+    { title:'Acompte & validation du rendez-vous', text:'Un acompte de 30% du montant total valide la réservation de votre date de séance.', badge:'Acompte 30%' },
+    { title:'Séance & livraison',          text:'Après la séance, le solde de 70% est à régler à réception de la commande. L\'accès à vos fichiers est ouvert dès le règlement effectué.', badge:'Solde 70%' },
   ],
   en:[
     { title:'Receiving your request',      text:'We review the information submitted in your questionnaire.' },
     { title:'Reviewing your project',      text:'We look at your needs, your goals and any specific constraints.' },
     { title:'Getting in touch',            text:'We get back to you within 48 working hours to discuss your project.', badge:'Within 48h' },
     { title:'Personalised proposal',       text:'We send you a proposal tailored to your needs and your budget.' },
-    { title:'Confirmation & planning',     text:'Once the proposal is confirmed, we organise the shoot and all practical details.' },
+    { title:'Deposit & booking confirmed', text:'A 30% deposit secures the booking of your session date.', badge:'30% deposit' },
+    { title:'Session & delivery',          text:'After the shoot, the remaining 70% is due on delivery of your order. File access opens as soon as payment is received.', badge:'70% balance' },
   ]
 };
 

@@ -254,7 +254,8 @@ const QUIZ_NEXT_STEPS: { title: string; text: string; badge?: string }[] = [
   { title: 'Étude de votre projet', text: 'Nous examinons vos besoins, vos objectifs et les éventuelles contraintes.' },
   { title: 'Prise de contact', text: 'Nous revenons vers vous sous 48h ouvrées pour échanger sur votre projet.', badge: 'SOUS 48H' },
   { title: 'Proposition personnalisée', text: 'Nous vous transmettons une proposition adaptée à vos besoins et à votre budget.' },
-  { title: 'Validation & planification', text: 'Une fois la proposition validée, nous organisons la prestation et les modalités de réalisation.' },
+  { title: 'Acompte & validation du rendez-vous', text: 'Un acompte de 30% du montant total valide la réservation de votre date de séance.', badge: 'ACOMPTE 30%' },
+  { title: 'Séance & livraison', text: 'Après la séance, le solde de 70% est à régler à réception de la commande. L\'accès à vos fichiers est ouvert dès le règlement effectué.', badge: 'SOLDE 70%' },
 ];
 
 /** Frise HTML "prochaines étapes" (fond noir, accents lavande) insérée dans l'email de confirmation du quiz. */
