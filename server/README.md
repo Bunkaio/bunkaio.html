@@ -280,6 +280,32 @@ curl "http://localhost:8787/__scheduled"
 
 (endpoint spécial disponible uniquement quand le Worker tourne en local via `npm run dev`).
 
+## Septième brique : score de leads et page admin dédiée
+
+Chaque soumission du quiz reçoit désormais automatiquement un **score de 0 à
+100** calculé à partir des réponses, pour repérer en un coup d'œil les
+prospects les plus prometteurs sans avoir à ouvrir chaque fiche Stripe :
+
+| Critère | Points |
+|---|---|
+| Budget estimé ≥ 1000 € HT | +25 |
+| Catégorie immobilier ou architecture | +20 |
+| Intérêt pour la communication récurrente | +15 |
+| Option drone choisie | +10 |
+| Délai souhaité urgent | +10 |
+
+Le score est ensuite classé en trois niveaux : **chaud** (≥ 70), **tiède**
+(40-69), **froid** (< 40). Ces deux informations (`lead_score`,
+`lead_temperature`) sont stockées dans les metadata du Customer Stripe, comme
+toutes les autres données du quiz — aucun nouvel outil n'est nécessaire.
+
+Une nouvelle route protégée par `ADMIN_TOKEN`, `GET /leads`, renvoie la liste
+de tous les leads triés du plus chaud au plus froid. Elle alimente une
+nouvelle page `admin/leads.html` (même fonctionnement que `admin/index.html` :
+token mémorisé dans le navigateur), qui affiche un tableau avec le nom/email,
+le score et sa température, la catégorie, le montant estimé et la date de
+soumission.
+
 ## Voir les logs en production
 
 ```bash

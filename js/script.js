@@ -1174,16 +1174,18 @@ function submitQuiz(e){
   const prof = S.cat === 'photo-part'
     ? (PHOTO_PART_PROFILES.find(p => p.id === S.prof) || { name:{fr:S.prof,en:S.prof} })
     : (PROFILES.find(p => p.id === S.prof) || { name:{fr:S.prof,en:S.prof} });
-  let formuleLabel, montantLabel;
+  let formuleLabel, montantLabel, budgetMontantEur;
   if (S.tier === 'sub') {
     const sub = SUBS[S.cat];
     formuleLabel = 'ABONNEMENT — ' + sub.name.fr + ' (' + sub.price + '€ HT/mois, engagement 6 mois)';
     montantLabel = sub.price + '€ HT/mois';
+    budgetMontantEur = sub.price;
   } else {
     const tier = TIERS.find(x => x.id === S.tier);
     const res = computeTotal();
     formuleLabel = tier.name.fr + ' (' + cat.tiers[S.tier].price + (S.studio?' +60€ studio':'') + '€ HT)';
     montantLabel = res.amount + '€ HT' + (res.surDevis ? ' + options sur devis' : '');
+    budgetMontantEur = res.amount;
   }
   const allOpts = [...OPTIONS, ...((SPECIAL_OPTIONS[S.cat+'_'+S.tier])||[])];
   const optNames = (S.tier !== 'sub' && S.opts.length)
@@ -1205,6 +1207,7 @@ function submitQuiz(e){
     profile: prof.name.fr,
     formule: formuleLabel,
     budgetEstime: montantLabel,
+    budgetMontantEur: budgetMontantEur,
     delaiSouhaite: (DELAY_LABELS[S.delay] && DELAY_LABELS[S.delay].fr) || S.delay || undefined,
     optionsChoisies: optNames,
     interetCommunication: S.comm

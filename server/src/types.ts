@@ -26,6 +26,7 @@ export interface QuizLeadPayload {
   profile: string;
   formule: string;
   budgetEstime: string;
+  budgetMontantEur?: number;
   delaiSouhaite?: string;
   optionsChoisies?: string;
   interetCommunication?: boolean;
@@ -60,4 +61,16 @@ export interface BalanceInvoiceResult {
   invoicePdfUrl: string;
   balanceAmountEur: number;
   customerName: string;
+}
+
+/** Une ligne de la liste des leads renvoyée à admin/leads.html (route /leads). */
+export interface LeadSummary {
+  customerId: string;
+  name: string;
+  email: string;
+  category: string;
+  budgetEstime: string;
+  leadScore: number;
+  leadTemperature: 'froid' | 'tiede' | 'chaud';
+  derniereSoumission: string;
 }

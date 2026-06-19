@@ -1,5 +1,31 @@
 import Stripe from 'stripe';
-import type { BalanceInvoiceResult, DepositInvoiceInput, DepositInvoiceResult, QuizLeadPayload, UpsertResult } from './types';
+import type { BalanceInvoiceResult, DepositInvoiceInput, DepositInvoiceResult, LeadSummary, QuizLeadPayload, UpsertResult } from './types';
+
+/** Montant (€ HT) à partir duquel un lead est considéré "budget élevé" pour le scoring. */
+const BUDGET_ELEVE_SEUIL_EUR = 1000;
+
+/**
+ * Calcule un score de 0 à 100 à partir des réponses du quiz, pour prioriser
+ * les leads sans avoir à ouvrir chaque fiche Stripe individuellement.
+ * Barème : budget élevé (+25), catégorie immobilier ou architecture (+20),
+ * intérêt pour la communication récurrente (+15), option drone (+10), délai
+ * urgent (+10). Seuils : 0-39 froid, 40-69 tiède, 70-100 chaud.
+ */
+function computeLeadScore(payload: QuizLeadPayload): { score: number; temperature: 'froid' | 'tiede' | 'chaud' } {
+  let score = 0;
+  if (typeof payload.budgetMontantEur === 'number' && payload.budgetMontantEur >= BUDGET_ELEVE_SEUIL_EUR) {
+    score += 25;
+  }
+  const category = payload.category.toLowerCase();
+  if (category.includes('immobilier')) score += 20;
+  if (category.includes('architecture')) score += 20;
+  if (payload.interetCommunication) score += 15;
+  if ((payload.optionsChoisies || '').toLowerCase().includes('drone')) score += 10;
+  if ((payload.delaiSouhaite || '').toLowerCase().includes('urgent')) score += 10;
+
+  const temperature = score >= 70 ? 'chaud' : score >= 40 ? 'tiede' : 'froid';
+  return { score, temperature };
+}
 
 /**
  * Crée un client Stripe compatible avec le runtime Cloudflare Workers.
@@ -28,6 +54,7 @@ function truncateForMetadata(value: string, maxLength = 490): string {
  * `source: quiz_bunkaio` permet de filtrer ces prospects depuis le dashboard Stripe.
  */
 function buildMetadata(payload: QuizLeadPayload): Record<string, string> {
+  const { score, temperature } = computeLeadScore(payload);
   return {
     source: 'quiz_bunkaio',
     type_projet: payload.category,
@@ -39,6 +66,8 @@ function buildMetadata(payload: QuizLeadPayload): Record<string, string> {
     description_projet: truncateForMetadata(payload.project),
     interet_communication: payload.interetCommunication ? 'oui' : 'non',
     derniere_soumission_quiz: new Date().toISOString(),
+    lead_score: String(score),
+    lead_temperature: temperature,
   };
 }
 
@@ -75,6 +104,30 @@ export async function upsertQuizCustomer(
     metadata,
   });
   return { customerId: created.id, created: true };
+}
+
+/**
+ * Liste les leads issus du quiz (metadata `source: quiz_bunkaio`), triés du
+ * plus chaud au plus froid, pour la page admin/leads.html. Stripe ne permet
+ * pas de filtrer `customers.list` par metadata : on récupère les 100 clients
+ * les plus récents puis on filtre côté Worker.
+ */
+export async function listLeads(stripe: Stripe): Promise<LeadSummary[]> {
+  const customers = await stripe.customers.list({ limit: 100 });
+
+  return customers.data
+    .filter((customer) => customer.metadata?.source === 'quiz_bunkaio')
+    .map((customer) => ({
+      customerId: customer.id,
+      name: customer.name ?? '',
+      email: customer.email ?? '',
+      category: customer.metadata?.type_projet ?? '',
+      budgetEstime: customer.metadata?.budget_estime ?? '',
+      leadScore: Number(customer.metadata?.lead_score ?? 0),
+      leadTemperature: (customer.metadata?.lead_temperature as LeadSummary['leadTemperature']) || 'froid',
+      derniereSoumission: customer.metadata?.derniere_soumission_quiz ?? '',
+    }))
+    .sort((a, b) => b.leadScore - a.leadScore);
 }
 
 /**

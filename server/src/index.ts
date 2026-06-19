@@ -15,6 +15,7 @@ import {
   createStripeClient,
   findOverdueInvoices,
   grantReviewDiscount,
+  listLeads,
   markInvoiceReminded,
   recordPaymentOnCustomer,
   upsertQuizCustomer,
@@ -27,6 +28,7 @@ const DEPOSIT_INVOICE_ROUTE = '/create-deposit-invoice';
 const BALANCE_INVOICE_ROUTE = '/create-balance-invoice';
 const STRIPE_WEBHOOK_ROUTE = '/stripe-webhook';
 const REVIEW_GATEWAY_ROUTE = '/avis';
+const LEADS_ROUTE = '/leads';
 
 /**
  * Détermine l'en-tête Access-Control-Allow-Origin à renvoyer : on échoue
@@ -42,7 +44,7 @@ function resolveAllowedOrigin(requestOrigin: string | null, allowedOrigins: stri
 function corsHeaders(origin: string): Record<string, string> {
   return {
     'Access-Control-Allow-Origin': origin,
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     'Access-Control-Max-Age': '86400',
   };
@@ -78,6 +80,7 @@ function isValidQuizLeadPayload(body: unknown): body is QuizLeadPayload {
     typeof b.profile === 'string' &&
     typeof b.formule === 'string' &&
     typeof b.budgetEstime === 'string' &&
+    (b.budgetMontantEur === undefined || (typeof b.budgetMontantEur === 'number' && Number.isFinite(b.budgetMontantEur))) &&
     (b.phone === undefined || typeof b.phone === 'string') &&
     (b.delaiSouhaite === undefined || typeof b.delaiSouhaite === 'string') &&
     (b.optionsChoisies === undefined || typeof b.optionsChoisies === 'string') &&
@@ -387,6 +390,32 @@ async function handleReviewGateway(request: Request, env: Env): Promise<Response
 }
 
 /**
+ * Liste les leads issus du quiz, triés du plus chaud au plus froid, pour la
+ * page admin/leads.html. Protégée par le même jeton ADMIN_TOKEN que les
+ * routes de facturation.
+ */
+async function handleListLeads(request: Request, env: Env, headers: Record<string, string>): Promise<Response> {
+  if (request.method !== 'GET') {
+    return jsonResponse({ ok: false, error: 'method_not_allowed' }, 405, headers);
+  }
+
+  const authHeader = request.headers.get('Authorization') ?? '';
+  if (authHeader !== `Bearer ${env.ADMIN_TOKEN}`) {
+    console.error('[leads] token admin invalide ou manquant');
+    return jsonResponse({ ok: false, error: 'unauthorized' }, 401, headers);
+  }
+
+  try {
+    const stripe = createStripeClient(env.STRIPE_SECRET_KEY);
+    const leads = await listLeads(stripe);
+    return jsonResponse({ ok: true, leads }, 200, headers);
+  } catch (err) {
+    console.error('[leads] échec de la récupération des leads', err);
+    return jsonResponse({ ok: false, error: 'stripe_error' }, 502, headers);
+  }
+}
+
+/**
  * Relance automatique (cron quotidien) des factures d'acompte/solde dont
  * l'échéance est dépassée. Une seule relance par facture (marquée via
  * metadata `relance_envoyee`), jamais de double envoi.
@@ -450,6 +479,9 @@ export default {
     }
     if (url.pathname === REVIEW_GATEWAY_ROUTE) {
       return handleReviewGateway(request, env);
+    }
+    if (url.pathname === LEADS_ROUTE) {
+      return handleListLeads(request, env, headers);
     }
     return jsonResponse({ ok: false, error: 'not_found' }, 404, headers);
   },

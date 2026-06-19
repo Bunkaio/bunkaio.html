@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Bunkaio — Leads</title>
+<style>
+  :root { --black:#0a0a0c; --grey:#6b6b70; --line:#e3e1dc; --bg:#faf9f6; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg); color: var(--black); padding: 40px 20px;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; }
+  h1 { font-size: 22px; margin-bottom: 6px; }
+  p.sub { color: var(--grey); font-size: 14px; margin-bottom: 28px; }
+  label {
+    display: block; font-size: 11px; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--grey); margin-bottom: 8px;
+  }
+  .fgroup { margin-bottom: 22px; max-width: 360px; }
+  input {
+    width: 100%; border: 1px solid var(--line); border-radius: 4px;
+    padding: 11px 12px; font-size: 15px; background: #fff; color: var(--black);
+  }
+  button {
+    padding: 13px 20px; border: none; border-radius: 4px;
+    background: var(--black); color: #fff; font-size: 15px; font-weight: 600;
+    cursor: pointer; margin-bottom: 24px;
+  }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  #result { margin-bottom: 20px; padding: 16px; border-radius: 4px; font-size: 14px; display: none; }
+  #result.err { background: #fdecea; border: 1px solid #f5b5ae; display: block; }
+  table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 4px; overflow: hidden; }
+  th, td { text-align: left; padding: 12px 14px; font-size: 14px; border-bottom: 1px solid var(--line); }
+  th { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--grey); }
+  td.email { color: var(--grey); font-size: 13px; }
+  .badge {
+    display: inline-block; padding: 3px 10px; border-radius: 100px;
+    font-size: 12px; font-weight: 600;
+  }
+  .badge.chaud { background: #fdecea; color: #c0392b; }
+  .badge.tiede { background: #fff3e0; color: #b06a00; }
+  .badge.froid { background: #e8eef5; color: #3a5a8c; }
+  .empty { color: var(--grey); font-size: 14px; padding: 20px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Leads du quiz</h1>
+  <p class="sub">Liste des prospects ayant soumis le quiz Bunkaio, triés du plus chaud au plus froid selon un score calculé automatiquement à partir de leurs réponses (budget, catégorie, options, délai).</p>
+
+  <div class="fgroup">
+    <label for="token">Token admin</label>
+    <input type="password" id="token" placeholder="Le même token que pour la page Factures">
+  </div>
+  <button id="loadBtn" onclick="loadLeads()">Charger les leads</button>
+
+  <div id="result"></div>
+  <div id="tableWrap"></div>
+</div>
+
+<script>
+  const WORKER_BASE = 'https://bunkaio-quiz-stripe.bunkaio.workers.dev';
+
+  document.getElementById('token').value = localStorage.getItem('bunkaio_admin_token') || '';
+
+  function temperatureLabel(t) {
+    if (t === 'chaud') return 'Chaud';
+    if (t === 'tiede') return 'Tiède';
+    return 'Froid';
+  }
+
+  function renderLeads(leads) {
+    const tableWrap = document.getElementById('tableWrap');
+    if (!leads.length) {
+      tableWrap.innerHTML = '<p class="empty">Aucun lead pour le moment.</p>';
+      return;
+    }
+
+    const rows = leads.map((lead) => {
+      const date = lead.derniereSoumission ? new Date(lead.derniereSoumission).toLocaleDateString('fr-FR') : '—';
+      return '<tr>' +
+        '<td>' + (lead.name || '(sans nom)') + '<br><span class="email">' + lead.email + '</span></td>' +
+        '<td><span class="badge ' + lead.leadTemperature + '">' + lead.leadScore + ' · ' + temperatureLabel(lead.leadTemperature) + '</span></td>' +
+        '<td>' + (lead.category || '—') + '</td>' +
+        '<td>' + (lead.budgetEstime || '—') + '</td>' +
+        '<td>' + date + '</td>' +
+        '</tr>';
+    }).join('');
+
+    tableWrap.innerHTML = '<table><thead><tr>' +
+      '<th>Lead</th><th>Score</th><th>Catégorie</th><th>Montant estimé</th><th>Soumis le</th>' +
+      '</tr></thead><tbody>' + rows + '</tbody></table>';
+  }
+
+  async function loadLeads() {
+    const token = document.getElementById('token').value.trim();
+    const result = document.getElementById('result');
+    const btn = document.getElementById('loadBtn');
+
+    result.className = '';
+    document.getElementById('tableWrap').innerHTML = '';
+
+    if (!token) {
+      result.className = 'err';
+      result.textContent = 'Renseigne le token admin.';
+      return;
+    }
+
+    localStorage.setItem('bunkaio_admin_token', token);
+    btn.disabled = true;
+    btn.textContent = 'Chargement…';
+
+    try {
+      const res = await fetch(WORKER_BASE + '/leads', {
+        headers: { 'Authorization': 'Bearer ' + token }
+      });
+      const data = await res.json();
+
+      if (res.ok && data.ok) {
+        renderLeads(data.leads);
+      } else if (data.error === 'unauthorized') {
+        result.className = 'err';
+        result.textContent = 'Token admin incorrect.';
+      } else {
+        result.className = 'err';
+        result.textContent = 'Erreur : ' + (data.error || res.status);
+      }
+    } catch (err) {
+      result.className = 'err';
+      result.textContent = 'Erreur réseau : ' + err.message;
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Charger les leads';
+    }
+  }
+</script>
+</body>
+</html>
