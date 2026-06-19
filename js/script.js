@@ -1465,22 +1465,18 @@ function renderServices(){
 /* ═══════════════ PROCESS DÉROULÉ ═══════════════ */
 const PROCESS_STEPS = {
   fr:[
-    { num:'01', icon:'◎', title:'Estimation en ligne',   text:'Complétez notre questionnaire en quelques minutes. Un récapitulatif détaillé est généré automatiquement.', tag:'Immédiat' },
-    { num:'02', icon:'↓', title:'Réponse sous 48h',      text:'Nous étudions votre demande et vous revenons avec une confirmation, un devis ajusté et les premières disponibilités.', tag:'Sous 48h' },
-    { num:'03', icon:'▪', title:'Signature du devis',    text:'Devis clair, sans surprise. Signature en ligne. Un acompte de 30% valide la commande et bloque votre créneau.', tag:'Acompte 30%' },
-    { num:'04', icon:'⊞', title:'Planification',         text:'Nous convenons ensemble de la date, du lieu et du brief visuel. Vous recevez une feuille de route complète.', tag:'Brief inclus' },
-    { num:'05', icon:'⊹', title:'Production',            text:'Reportage photo, vidéo, vol drone — tout est pris en charge. Lumière, cadre, soin du détail.', tag:'Jour J' },
-    { num:'06', icon:'✓', title:'Livraison',             text:'Vos visuels retouchés livrés dans les délais convenus via galerie privée sécurisée.', tag:'Galerie privée' },
-    { num:'07', icon:'—', title:'Solde & droits',        text:'Le solde (70%) est réglé à réception. Les droits d\'utilisation commerciale vous sont cédés sans limite de durée.', tag:'Solde 70%' },
+    { title:'Réception de votre demande',  text:'Nous analysons les informations transmises dans votre questionnaire.' },
+    { title:'Étude de votre projet',       text:'Nous examinons vos besoins, vos objectifs et les éventuelles contraintes.' },
+    { title:'Prise de contact',            text:'Nous revenons vers vous sous 48h ouvrées pour échanger sur votre projet.', badge:'Sous 48h' },
+    { title:'Proposition personnalisée',   text:'Nous vous transmettons une proposition adaptée à vos besoins et à votre budget.' },
+    { title:'Validation & planification',  text:'Une fois la proposition validée, nous organisons la prestation et les modalités de réalisation.' },
   ],
   en:[
-    { num:'01', icon:'◎', title:'Online estimate',   text:'Complete our questionnaire in a few minutes. A detailed summary is generated automatically.', tag:'Instant' },
-    { num:'02', icon:'↓', title:'Reply within 48h',  text:'We review your request and come back to you with a confirmation, an adjusted quote and our first available dates.', tag:'Within 48h' },
-    { num:'03', icon:'▪', title:'Quote signature',   text:'A clear quote, no surprises. Sign online. A 30% deposit confirms your order and locks in your time slot.', tag:'30% deposit' },
-    { num:'04', icon:'⊞', title:'Planning',          text:'We agree on the date, location and visual brief. You receive a complete run-of-show to prepare.', tag:'Brief included' },
-    { num:'05', icon:'⊹', title:'Production',        text:'Photography, video, drone — everything handled. Light, framing and every detail.', tag:'Shoot day' },
-    { num:'06', icon:'✓', title:'Delivery',          text:'Your retouched visuals delivered within the agreed timeframe via a secure private gallery.', tag:'Private gallery' },
-    { num:'07', icon:'—', title:'Balance & rights',  text:'The balance (70%) is due on receipt. Commercial usage rights are granted with no time limit.', tag:'70% balance' },
+    { title:'Receiving your request',      text:'We review the information submitted in your questionnaire.' },
+    { title:'Reviewing your project',      text:'We look at your needs, your goals and any specific constraints.' },
+    { title:'Getting in touch',            text:'We get back to you within 48 working hours to discuss your project.', badge:'Within 48h' },
+    { title:'Personalised proposal',       text:'We send you a proposal tailored to your needs and your budget.' },
+    { title:'Confirmation & planning',     text:'Once the proposal is confirmed, we organise the shoot and all practical details.' },
   ]
 };
 
@@ -1488,16 +1484,31 @@ function renderProcessSteps(){
   const el = document.getElementById('processSteps');
   if (!el) return;
   const steps = PROCESS_STEPS[LANG];
-  el.innerHTML = steps.map(s => `
-    <div class="process-step rv">
-      <div class="ps-num">${s.num}</div>
-      <div>
-        <div class="ps-icon">${s.icon}</div>
-        <div class="ps-title">${s.title}</div>
-        <div class="ps-text">${s.text}</div>
-        <span class="ps-tag">${s.tag}</span>
+  const kicker = LANG === 'fr' ? 'Les prochaines étapes' : 'What happens next';
+  const sub = LANG === 'fr'
+    ? 'Voici comment votre projet va être traité, étape par étape.'
+    : 'Here\'s how your project will be handled, step by step.';
+  el.innerHTML = `
+    <div class="pt-card rv">
+      <div class="pt-kicker">${kicker}</div>
+      <div class="pt-sub">${sub}</div>
+      <div class="pt-list">
+        ${steps.map((s, i) => `
+          <div class="pt-step">
+            <div class="pt-num-col">
+              <div class="pt-num">${i + 1}</div>
+              <div class="pt-line"></div>
+            </div>
+            <div class="pt-body">
+              <div class="pt-title-row">
+                <span class="pt-title">${s.title}</span>
+                ${s.badge ? `<span class="pt-badge">${s.badge}</span>` : ''}
+              </div>
+              <div class="pt-text">${s.text}</div>
+            </div>
+          </div>`).join('')}
       </div>
-    </div>`).join('');
+    </div>`;
   el.querySelectorAll('.rv').forEach(observe);
   const img = document.getElementById('img-devis-side');
   if (img && !img.src) img.src = IMG.devis;

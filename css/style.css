@@ -360,11 +360,51 @@
   }
   .process-info-box p { font-size: 13px; line-height: 1.9; color: #3a3544; margin-bottom: 10px; }
   .process-info-box p:last-child { margin-bottom: 0; }
+
+  /* ─── TIMELINE PROCHAINES ÉTAPES (devis & déroulé) ─── */
+  .pt-card {
+    background: var(--black);
+    border-radius: 12px;
+    padding: 40px 38px;
+    color: var(--white);
+  }
+  .pt-kicker {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--violet); margin-bottom: 10px;
+  }
+  .pt-sub {
+    font-size: 13.5px; line-height: 1.7; color: rgba(255,255,255,0.55); margin-bottom: 34px;
+    max-width: 380px;
+  }
+  .pt-list { display: flex; flex-direction: column; }
+  .pt-step { display: flex; gap: 18px; }
+  .pt-num-col { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; width: 34px; }
+  .pt-num {
+    width: 34px; height: 34px; border-radius: 50%;
+    border: 1.5px solid rgba(241,236,250,0.4);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; color: var(--violet);
+    flex-shrink: 0;
+  }
+  .pt-line { width: 1px; flex: 1; min-height: 30px; background: rgba(241,236,250,0.22); margin: 6px 0; }
+  .pt-step:last-child .pt-line { display: none; }
+  .pt-body { padding-bottom: 30px; }
+  .pt-step:last-child .pt-body { padding-bottom: 0; }
+  .pt-title-row { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; flex-wrap: wrap; }
+  .pt-title { font-size: 15px; font-weight: 700; color: var(--white); }
+  .pt-badge {
+    font-size: 9.5px; font-weight: 700; letter-spacing: 0.08em;
+    color: var(--black); background: var(--violet);
+    border-radius: 100px; padding: 4px 10px;
+  }
+  .pt-text { font-size: 13px; line-height: 1.7; color: rgba(255,255,255,0.55); max-width: 420px; }
+
   @media (max-width: 920px) {
     .process-grid { grid-template-columns: 1fr; }
     .process-img { position: static; }
     .svc-tabs { width: 100%; }
     .svc-tab { flex: 1; text-align: center; padding: 12px 10px; font-size: 10.5px; }
+    .pt-card { padding: 30px 24px; }
   }
 
   /* ─── LOGO CAROUSEL (partenaires) ─── */
