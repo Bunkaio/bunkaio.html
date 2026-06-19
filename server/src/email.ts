@@ -33,7 +33,7 @@ export function buildDepositInvoiceEmail(params: {
   description: string;
   depositAmountEur: number;
   hostedInvoiceUrl: string;
-}): { subject: string; html: string } {
+}): { subject: string; html: string; text: string } {
   const greeting = params.customerName ? `Bonjour ${params.customerName},` : 'Bonjour,';
   const html = emailShell(`
     <h1 style="font-size:20px;margin:0 0 16px;">Votre facture d'acompte</h1>
@@ -50,11 +50,20 @@ export function buildDepositInvoiceEmail(params: {
       <a href="${params.hostedInvoiceUrl}" style="color:#76717f;">${params.hostedInvoiceUrl}</a>
     </p>
   `);
-  return { subject: `Bunkaio — Votre facture d'acompte (${params.depositAmountEur.toFixed(2)} €)`, html };
+  const text = `${greeting}
+
+Voici votre facture d'acompte (30 %) pour : ${params.description}.
+
+Montant : ${params.depositAmountEur.toFixed(2)} €
+
+Voir et payer la facture : ${params.hostedInvoiceUrl}
+
+— BUNKAIO`;
+  return { subject: `Bunkaio — Votre facture d'acompte (${params.depositAmountEur.toFixed(2)} €)`, html, text };
 }
 
 /** Email de confirmation envoyé automatiquement après une soumission du quiz. */
-export function buildQuizConfirmationEmail(params: { customerName: string }): { subject: string; html: string } {
+export function buildQuizConfirmationEmail(params: { customerName: string }): { subject: string; html: string; text: string } {
   const greeting = params.customerName ? `Bonjour ${params.customerName},` : 'Bonjour,';
   const html = emailShell(`
     <h1 style="font-size:20px;margin:0 0 16px;">Merci pour votre demande</h1>
@@ -65,18 +74,24 @@ export function buildQuizConfirmationEmail(params: { customerName: string }): { 
     </p>
     <p style="font-size:15px;line-height:1.6;margin:0;">À très vite,<br>L'équipe Bunkaio</p>
   `);
-  return { subject: 'Bunkaio — Nous avons bien reçu votre demande', html };
+  const text = `${greeting}
+
+Nous avons bien reçu votre demande via le quiz Bunkaio. Chaque projet est étudié individuellement — nous revenons vers vous rapidement s'il correspond à notre ligne éditoriale.
+
+À très vite,
+L'équipe Bunkaio`;
+  return { subject: 'Bunkaio — Nous avons bien reçu votre demande', html, text };
 }
 
 /** Envoie un email transactionnel via l'API Resend (https://resend.com). */
-export async function sendEmail(env: Env, to: string, subject: string, html: string): Promise<void> {
+export async function sendEmail(env: Env, to: string, subject: string, html: string, text: string): Promise<void> {
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${env.RESEND_API_KEY}`,
     },
-    body: JSON.stringify({ from: env.EMAIL_FROM, to, subject, html }),
+    body: JSON.stringify({ from: env.EMAIL_FROM, to, subject, html, text }),
   });
   if (!res.ok) {
     const detail = await res.text();

@@ -98,8 +98,8 @@ async function handleQuizLead(request: Request, env: Env, headers: Record<string
     // Email de confirmation au prospect — best-effort, ne doit jamais faire
     // échouer la synchronisation Stripe qui vient de réussir.
     try {
-      const { subject, html } = buildQuizConfirmationEmail({ customerName: body.name });
-      await sendEmail(env, body.email, subject, html);
+      const { subject, html, text } = buildQuizConfirmationEmail({ customerName: body.name });
+      await sendEmail(env, body.email, subject, html, text);
     } catch (emailErr) {
       console.error("[quiz-lead] échec de l'envoi de l'email de confirmation", emailErr);
     }
@@ -141,13 +141,13 @@ async function handleCreateDepositInvoice(request: Request, env: Env, headers: R
     console.log('[create-deposit-invoice] facture créée', result);
 
     try {
-      const { subject, html } = buildDepositInvoiceEmail({
+      const { subject, html, text } = buildDepositInvoiceEmail({
         customerName: result.customerName,
         description: body.description,
         depositAmountEur: result.depositAmountEur,
         hostedInvoiceUrl: result.hostedInvoiceUrl,
       });
-      await sendEmail(env, body.email, subject, html);
+      await sendEmail(env, body.email, subject, html, text);
       console.log('[create-deposit-invoice] email envoyé au client');
       return jsonResponse({ ok: true, ...result, emailSent: true }, 200, headers);
     } catch (emailErr) {
