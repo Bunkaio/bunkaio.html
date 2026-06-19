@@ -13,10 +13,8 @@ EMAIL_FROM = "BUNKAIO <contact@bunkaio.com>"
 # reçu). Peut être la même que l'adresse ci-dessus.
 ADMIN_NOTIFICATION_EMAIL = "contact@bunkaio.com"
 # Lien vers la page d'avis Google de Bunkaio, utilisé dans l'email envoyé
-# au client une fois le solde payé. À REMPLACER par le vrai lien (Google
-# Maps → fiche d'établissement → "Demander des avis" → copier le lien)
-# avant de redéployer, sinon l'email envoie un lien invalide.
-GOOGLE_REVIEW_URL = "https://g.page/r/REMPLACE-MOI/review"
+# au client une fois le solde payé.
+GOOGLE_REVIEW_URL = "https://g.page/r/CaRPILV6GmYIEBM/review"
 
 # STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET et RESEND_API_KEY ne sont
 # volontairement PAS définis ici : ce sont des secrets. Ils doivent être
