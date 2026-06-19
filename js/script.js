@@ -393,6 +393,12 @@ function refreshDynamic(){
   if (document.getElementById('view-services').classList.contains('active')) { renderServices(); if (activeSvcTab === 'devis') renderProcessSteps(); }
   if (document.getElementById('view-drone').classList.contains('active')) { renderDroneCats(); renderDroneProjects(activeDroneCat); }
   if (document.getElementById('view-partners').classList.contains('active')) renderPartnersAccordion();
+  if (document.getElementById('view-legal').classList.contains('active')) { renderFaqAccordion(); renderPrivacyAccordion(); }
+  if (document.getElementById('view-portfolio').classList.contains('active')) {
+    const curPfCat = document.querySelector('#pfTabs .pf-cat-tab.active')?.dataset.cat || PF_CATS[0].id;
+    renderPfTabs();
+    selectPfTab(curPfCat);
+  }
   if (document.getElementById('view-login').classList.contains('active')) setLoginType(loginType);
   if (USER && document.getElementById('view-account').classList.contains('active')) renderAccount();
 }
