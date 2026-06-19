@@ -68,25 +68,17 @@
 
   nav {
     position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
-    background: transparent;
-    border-bottom: 1px solid transparent;
-    transition: background 0.5s var(--ease), backdrop-filter 0.5s var(--ease),
-                border-color 0.5s var(--ease), box-shadow 0.5s var(--ease);
-  }
-  nav::before {
-    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 170px; z-index: -1;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.55), rgba(0,0,0,0));
-    opacity: 1; transition: opacity 0.5s var(--ease);
-    pointer-events: none;
-  }
-  nav.scrolled {
-    background: rgba(10, 10, 12, 0.75);
+    background: rgba(10, 10, 12, 0.92);
     backdrop-filter: blur(20px) saturate(1.4);
     -webkit-backdrop-filter: blur(20px) saturate(1.4);
     border-bottom: 1px solid rgba(255,255,255,0.08);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    transition: background 0.5s var(--ease), box-shadow 0.5s var(--ease);
   }
-  nav.scrolled::before { opacity: 0; }
+  nav.scrolled {
+    background: rgba(10, 10, 12, 0.97);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  }
 
   .nav-inner {
     position: relative;
