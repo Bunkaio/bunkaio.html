@@ -323,6 +323,17 @@ function syncNavHeight(){
 function updateHeroScrollFx(){
   const wrap = document.getElementById('pageHeroWrap');
   if (!wrap) return;
+  if (wrap.classList.contains('home-bg')){
+    const heroEl = document.querySelector('#view-home .hero');
+    const heroH = (heroEl ? heroEl.offsetHeight : window.innerHeight) || window.innerHeight;
+    const fadeStart = heroH * 0.7;
+    const fadeRange = heroH * 0.3 || 1;
+    const progress = Math.min(Math.max((window.scrollY - fadeStart) / fadeRange, 0), 1);
+    wrap.style.opacity = String(1 - progress);
+    wrap.style.visibility = progress >= 1 ? 'hidden' : 'visible';
+    return;
+  }
+  wrap.style.visibility = '';
   const h = wrap.offsetHeight || 1;
   const progress = Math.min(Math.max(-wrap.getBoundingClientRect().top / h, 0), 1);
   wrap.style.transform = `translateY(${progress * h * 0.22}px) scale(${1 - progress * 0.06})`;
@@ -796,6 +807,8 @@ function initHeroCarousel(viewKey){
   setPageBg(viewKey);
   const wrap = document.getElementById('pageHeroWrap');
   if (!wrap) return;
+  wrap.classList.toggle('home-bg', viewKey === 'home');
+  wrap.style.opacity = ''; wrap.style.visibility = ''; wrap.style.transform = '';
   let images = IMG.heroImages && IMG.heroImages[viewKey];
   if (!images || (Array.isArray(images) && images.length === 0)){
     wrap.style.display = 'none'; return;
