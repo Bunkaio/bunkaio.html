@@ -12,9 +12,20 @@ EMAIL_FROM = "BUNKAIO <contact@bunkaio.com>"
 # Adresse qui reçoit les notifications internes (ex. paiement d'une facture
 # reçu). Peut être la même que l'adresse ci-dessus.
 ADMIN_NOTIFICATION_EMAIL = "contact@bunkaio.com"
+# Lien vers la page d'avis Google de Bunkaio, utilisé dans l'email envoyé
+# au client une fois le solde payé. À REMPLACER par le vrai lien (Google
+# Maps → fiche d'établissement → "Demander des avis" → copier le lien)
+# avant de redéployer, sinon l'email envoie un lien invalide.
+GOOGLE_REVIEW_URL = "https://g.page/r/REMPLACE-MOI/review"
 
 # STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET et RESEND_API_KEY ne sont
 # volontairement PAS définis ici : ce sont des secrets. Ils doivent être
 # injectés avec `npx wrangler secret put STRIPE_SECRET_KEY` /
 # `STRIPE_WEBHOOK_SECRET` / `RESEND_API_KEY` (voir README.md de ce dossier).
 # Ils n'apparaissent jamais dans le repo.
+
+# Vérifie chaque jour à 8h UTC (9h ou 10h heure de Paris selon la saison)
+# les factures d'acompte/solde impayées dont l'échéance est dépassée, et
+# envoie une relance par email — voir le handler `scheduled` dans index.ts.
+[triggers]
+crons = ["0 8 * * *"]

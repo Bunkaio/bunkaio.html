@@ -3,11 +3,22 @@ import {
   buildAdminPaymentNotificationEmail,
   buildBalanceInvoiceEmail,
   buildDepositInvoiceEmail,
+  buildOverdueReminderEmail,
   buildPaymentConfirmationEmail,
   buildQuizConfirmationEmail,
+  buildReviewRequestEmail,
   sendEmail,
 } from './email';
-import { createBalanceInvoice, createDepositInvoice, createStripeClient, upsertQuizCustomer, verifyWebhookEvent } from './stripe';
+import {
+  createBalanceInvoice,
+  createDepositInvoice,
+  createStripeClient,
+  findOverdueInvoices,
+  markInvoiceReminded,
+  recordPaymentOnCustomer,
+  upsertQuizCustomer,
+  verifyWebhookEvent,
+} from './stripe';
 import type { DepositInvoiceInput, Env, QuizLeadPayload } from './types';
 
 const QUIZ_LEAD_ROUTE = '/quiz-lead';
@@ -280,6 +291,7 @@ async function handleStripeWebhook(request: Request, env: Env, headers: Record<s
   const description = invoice.metadata?.description ?? '';
   const amountEur = invoice.amount_paid / 100;
   const kind: 'acompte' | 'solde' = invoiceType === 'acompte_30' ? 'acompte' : 'solde';
+  const customerId = typeof invoice.customer === 'string' ? invoice.customer : invoice.customer?.id;
 
   console.log('[stripe-webhook] facture payée', { invoiceId: invoice.id, kind, amountEur, customerEmail });
 
@@ -289,6 +301,16 @@ async function handleStripeWebhook(request: Request, env: Env, headers: Record<s
       await sendEmail(env, customerEmail, subject, html, text);
     } catch (err) {
       console.error('[stripe-webhook] échec email de confirmation client', err);
+    }
+
+    // Le solde payé marque la fin du projet : on en profite pour demander un avis.
+    if (kind === 'solde') {
+      try {
+        const { subject, html, text } = buildReviewRequestEmail({ customerName, googleReviewUrl: env.GOOGLE_REVIEW_URL });
+        await sendEmail(env, customerEmail, subject, html, text);
+      } catch (err) {
+        console.error("[stripe-webhook] échec email de demande d'avis", err);
+      }
     }
   }
 
@@ -306,7 +328,57 @@ async function handleStripeWebhook(request: Request, env: Env, headers: Record<s
     console.error('[stripe-webhook] échec notification admin', err);
   }
 
+  // Visible directement sur la fiche client Stripe (metadata) — best-effort,
+  // ne doit jamais faire échouer la confirmation qui vient de réussir.
+  if (customerId) {
+    try {
+      await recordPaymentOnCustomer(stripe, customerId, kind, amountEur);
+    } catch (err) {
+      console.error('[stripe-webhook] échec mise à jour metadata client', err);
+    }
+  }
+
   return jsonResponse({ ok: true }, 200, headers);
+}
+
+/**
+ * Relance automatique (cron quotidien) des factures d'acompte/solde dont
+ * l'échéance est dépassée. Une seule relance par facture (marquée via
+ * metadata `relance_envoyee`), jamais de double envoi.
+ */
+async function sendOverdueInvoiceReminders(env: Env): Promise<void> {
+  const stripe = createStripeClient(env.STRIPE_SECRET_KEY);
+  const overdueInvoices = await findOverdueInvoices(stripe);
+
+  for (const invoice of overdueInvoices) {
+    const invoiceType = invoice.metadata?.type;
+    const kind: 'acompte' | 'solde' = invoiceType === 'acompte_30' ? 'acompte' : 'solde';
+    const customerEmail = invoice.customer_email ?? '';
+    const customerName = invoice.customer_name ?? '';
+    const description = invoice.metadata?.description ?? '';
+    const amountEur = invoice.amount_due / 100;
+
+    if (!customerEmail) {
+      continue;
+    }
+
+    try {
+      const { subject, html, text } = buildOverdueReminderEmail({
+        customerName,
+        description,
+        amountEur,
+        invoiceType: kind,
+        hostedInvoiceUrl: invoice.hosted_invoice_url ?? '',
+      });
+      await sendEmail(env, customerEmail, subject, html, text);
+      await markInvoiceReminded(stripe, invoice);
+      console.log('[relance-facture] relance envoyée', { invoiceId: invoice.id, kind, customerEmail });
+    } catch (err) {
+      // On ne marque pas la facture comme relancée si l'email échoue,
+      // pour retenter automatiquement au prochain passage du cron.
+      console.error('[relance-facture] échec envoi relance', { invoiceId: invoice.id, err });
+    }
+  }
 }
 
 export default {
@@ -332,5 +404,13 @@ export default {
       return handleStripeWebhook(request, env, headers);
     }
     return jsonResponse({ ok: false, error: 'not_found' }, 404, headers);
+  },
+
+  async scheduled(_event: ScheduledEvent, env: Env): Promise<void> {
+    try {
+      await sendOverdueInvoiceReminders(env);
+    } catch (err) {
+      console.error('[relance-facture] échec de la vérification planifiée', err);
+    }
   },
 };

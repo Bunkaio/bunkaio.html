@@ -10,6 +10,7 @@ export interface Env {
   RESEND_API_KEY: string;
   EMAIL_FROM: string;
   ADMIN_NOTIFICATION_EMAIL: string;
+  GOOGLE_REVIEW_URL: string;
 }
 
 /**

@@ -152,6 +152,58 @@ export async function createBalanceInvoice(stripe: Stripe, input: DepositInvoice
 }
 
 /**
+ * Enregistre le paiement d'une facture (acompte ou solde) directement dans
+ * les metadata du Customer Stripe correspondant, pour pouvoir voir d'un
+ * coup d'œil dans la fiche client qui a payé quoi, sans ouvrir chaque
+ * facture. Préserve les metadata existantes (déduplication quiz, etc.) —
+ * Stripe remplace tout l'objet metadata à chaque update, jamais un merge.
+ */
+export async function recordPaymentOnCustomer(
+  stripe: Stripe,
+  customerId: string,
+  kind: 'acompte' | 'solde',
+  amountEur: number
+): Promise<void> {
+  const customer = await stripe.customers.retrieve(customerId);
+  if (customer.deleted) return;
+
+  const key = kind === 'acompte' ? 'acompte_paye' : 'solde_paye';
+  await stripe.customers.update(customerId, {
+    metadata: {
+      ...customer.metadata,
+      [key]: 'oui',
+      [`${key}_le`]: new Date().toISOString().slice(0, 10),
+      [`${key}_montant_eur`]: String(amountEur),
+    },
+  });
+}
+
+/**
+ * Recherche les factures d'acompte/solde encore impayées dont l'échéance
+ * est dépassée et qui n'ont pas déjà reçu de relance, pour la route
+ * planifiée (cron) qui envoie un rappel automatique au client.
+ */
+export async function findOverdueInvoices(stripe: Stripe): Promise<Stripe.Invoice[]> {
+  const nowSeconds = Math.floor(Date.now() / 1000);
+  const openInvoices = await stripe.invoices.list({ status: 'open', limit: 100 });
+
+  return openInvoices.data.filter((invoice) => {
+    const type = invoice.metadata?.type;
+    const isOwnInvoice = type === 'acompte_30' || type === 'solde_70';
+    const isOverdue = invoice.due_date !== null && invoice.due_date <= nowSeconds;
+    const alreadyReminded = invoice.metadata?.relance_envoyee === 'oui';
+    return isOwnInvoice && isOverdue && !alreadyReminded;
+  });
+}
+
+/** Marque une facture comme relancée, pour ne jamais envoyer deux rappels pour la même facture. */
+export async function markInvoiceReminded(stripe: Stripe, invoice: Stripe.Invoice): Promise<void> {
+  await stripe.invoices.update(invoice.id, {
+    metadata: { ...invoice.metadata, relance_envoyee: 'oui' },
+  });
+}
+
+/**
  * Vérifie la signature d'un événement webhook Stripe et le décode.
  * Utilise un CryptoProvider basé sur SubtleCrypto (Web Crypto API) au lieu
  * du module `crypto` natif de Node, indisponible dans le runtime Workers.

@@ -156,6 +156,74 @@ export function buildAdminPaymentNotificationEmail(params: {
   return { subject: `💰 Paiement reçu — ${params.customerName || params.customerEmail} (${label})`, html, text };
 }
 
+/** Email demandant un avis Google, envoyé automatiquement une fois le solde (70 %) payé — projet entièrement réglé. */
+export function buildReviewRequestEmail(params: {
+  customerName: string;
+  googleReviewUrl: string;
+}): { subject: string; html: string; text: string } {
+  const greeting = params.customerName ? `Bonjour ${params.customerName},` : 'Bonjour,';
+  const html = emailShell(`
+    <h1 style="font-size:20px;margin:0 0 16px;">Merci pour votre confiance !</h1>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">${greeting}</p>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">
+      Votre prestation est désormais entièrement réglée — un grand merci pour votre confiance tout au long du projet.
+      Si vous avez apprécié votre expérience avec Bunkaio, un avis ne prend que deux minutes et nous aide énormément.
+    </p>
+    <a href="${params.googleReviewUrl}" style="display:inline-block;background:#0a0a0c;color:#ffffff;text-decoration:none;padding:14px 28px;border-radius:4px;font-weight:600;font-size:15px;">
+      Laisser un avis Google
+    </a>
+    <p style="font-size:15px;line-height:1.6;margin:28px 0 0;">À très vite,<br>L'équipe Bunkaio</p>
+  `);
+  const text = `${greeting}
+
+Votre prestation est désormais entièrement réglée — un grand merci pour votre confiance tout au long du projet. Si vous avez apprécié votre expérience avec Bunkaio, un avis ne prend que deux minutes et nous aide énormément.
+
+Laisser un avis Google : ${params.googleReviewUrl}
+
+À très vite,
+L'équipe Bunkaio`;
+  return { subject: 'Bunkaio — Merci pour votre confiance !', html, text };
+}
+
+/** Email de rappel envoyé automatiquement (cron) quand une facture d'acompte ou de solde reste impayée après son échéance. */
+export function buildOverdueReminderEmail(params: {
+  customerName: string;
+  description: string;
+  amountEur: number;
+  invoiceType: 'acompte' | 'solde';
+  hostedInvoiceUrl: string;
+}): { subject: string; html: string; text: string } {
+  const greeting = params.customerName ? `Bonjour ${params.customerName},` : 'Bonjour,';
+  const label = params.invoiceType === 'acompte' ? "d'acompte (30 %)" : 'de solde (70 %)';
+  const html = emailShell(`
+    <h1 style="font-size:20px;margin:0 0 16px;">Petit rappel</h1>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">${greeting}</p>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">
+      Votre facture ${label} pour : <strong>${params.description}</strong> n'a pas encore été réglée.
+      Vous trouverez ci-dessous le lien pour la payer en ligne.
+    </p>
+    <p style="font-size:24px;font-weight:700;margin:0 0 28px;">${params.amountEur.toFixed(2)} €</p>
+    <a href="${params.hostedInvoiceUrl}" style="display:inline-block;background:#0a0a0c;color:#ffffff;text-decoration:none;padding:14px 28px;border-radius:4px;font-weight:600;font-size:15px;">
+      Voir et payer la facture
+    </a>
+    <p style="font-size:13px;color:#76717f;margin:28px 0 0;">
+      Si vous avez déjà réglé cette facture ou en cas de question, n'hésitez pas à nous répondre directement.
+    </p>
+  `);
+  const text = `${greeting}
+
+Votre facture ${label} pour : ${params.description} n'a pas encore été réglée. Voici le lien pour la payer en ligne :
+
+${params.hostedInvoiceUrl}
+
+Montant : ${params.amountEur.toFixed(2)} €
+
+Si vous avez déjà réglé cette facture ou en cas de question, n'hésitez pas à nous répondre directement.
+
+— BUNKAIO`;
+  return { subject: `Bunkaio — Rappel : facture ${label} en attente`, html, text };
+}
+
 /** Email de confirmation envoyé automatiquement après une soumission du quiz. */
 export function buildQuizConfirmationEmail(params: { customerName: string }): { subject: string; html: string; text: string } {
   const greeting = params.customerName ? `Bonjour ${params.customerName},` : 'Bonjour,';

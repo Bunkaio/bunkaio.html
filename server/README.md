@@ -214,6 +214,43 @@ Pour tester, paye une facture de test générée depuis `admin/index.html`
 `[stripe-webhook] facture payée` apparaît, et que les deux emails sont
 bien reçus.
 
+Ce même webhook met aussi à jour automatiquement les **metadata du
+Customer Stripe** (`acompte_paye`, `solde_paye`, dates, montants) — visible
+directement sur la fiche client dans Stripe, sans ouvrir chaque facture.
+
+## Cinquième brique : demande d'avis automatique après le solde payé
+
+Dès que la facture de **solde** (70 %) est payée — donc le projet
+entièrement réglé — le webhook envoie automatiquement un second email au
+client lui demandant un avis Google.
+
+**Avant de redéployer**, remplace la valeur de `GOOGLE_REVIEW_URL` dans
+`wrangler.toml` par ton vrai lien d'avis Google (Google Maps → ta fiche
+d'établissement → **Demander des avis** → copier le lien). Tant que cette
+valeur reste à `https://g.page/r/REMPLACE-MOI/review`, l'email partira
+quand même mais avec un lien invalide.
+
+## Sixième brique : relance automatique des factures impayées
+
+Une tâche planifiée (cron Cloudflare) tourne chaque jour à 8h UTC et
+recherche les factures d'acompte/solde dont l'échéance (7 jours après
+création) est dépassée et qui n'ont pas encore été relancées. Pour
+chacune, elle envoie un email de rappel au client avec le lien de paiement,
+puis marque la facture (metadata `relance_envoyee`) pour ne jamais relancer
+deux fois la même facture.
+
+Aucune configuration supplémentaire n'est nécessaire : le déclencheur est
+déjà défini dans `wrangler.toml` (`[triggers] crons = ["0 8 * * *"]`) et
+s'active automatiquement après un `npm run deploy`.
+
+Pour tester manuellement sans attendre le lendemain :
+
+```bash
+curl "http://localhost:8787/__scheduled" 
+```
+
+(endpoint spécial disponible uniquement quand le Worker tourne en local via `npm run dev`).
+
 ## Voir les logs en production
 
 ```bash
