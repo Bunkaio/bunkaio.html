@@ -248,20 +248,76 @@ Si vous avez déjà réglé cette facture ou en cas de question, n'hésitez pas 
 }
 
 /** Email de confirmation envoyé automatiquement après une soumission du quiz. */
+/** Étape de la frise "prochaines étapes" affichée dans l'email de confirmation du quiz. */
+const QUIZ_NEXT_STEPS: { title: string; text: string; badge?: string }[] = [
+  { title: 'Réception de votre demande', text: 'Nous analysons les informations transmises dans votre questionnaire.' },
+  { title: 'Étude de votre projet', text: 'Nous examinons vos besoins, vos objectifs et les éventuelles contraintes.' },
+  { title: 'Prise de contact', text: 'Nous revenons vers vous sous 48h ouvrées pour échanger sur votre projet.', badge: 'SOUS 48H' },
+  { title: 'Proposition personnalisée', text: 'Nous vous transmettons une proposition adaptée à vos besoins et à votre budget.' },
+  { title: 'Validation & planification', text: 'Une fois la proposition validée, nous organisons la prestation et les modalités de réalisation.' },
+];
+
+/** Frise HTML "prochaines étapes" (fond noir, accents lavande) insérée dans l'email de confirmation du quiz. */
+function quizNextStepsHtml(): string {
+  const rows = QUIZ_NEXT_STEPS.map((step, i) => {
+    const isLast = i === QUIZ_NEXT_STEPS.length - 1;
+    const connector = isLast ? '' : `
+      </tr><tr>
+        <td align="center" style="padding:3px 0;"><div style="width:1px;height:28px;background:rgba(241,236,250,0.22);margin:0 auto;"></div></td>`;
+    const badge = step.badge
+      ? `<span style="display:inline-block;margin-left:8px;font-size:10px;font-weight:700;letter-spacing:0.05em;color:#0a0a0c;background:#f1ecfa;border-radius:100px;padding:3px 9px;vertical-align:middle;font-family:Helvetica,Arial,sans-serif;">${step.badge}</span>`
+      : '';
+    return `
+      <tr>
+        <td width="34" valign="top" style="padding:0;">
+          <table role="presentation" cellpadding="0" cellspacing="0"><tr>
+            <td align="center" style="width:28px;height:28px;border-radius:50%;border:1.5px solid rgba(241,236,250,0.4);color:#f1ecfa;font-family:Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;">${i + 1}</td>${connector}
+          </tr></table>
+        </td>
+        <td style="padding:0 0 ${isLast ? '0' : '22px'} 14px;" valign="top">
+          <div style="${badge ? 'margin-bottom:3px;' : 'font-size:14px;font-weight:700;color:#ffffff;margin-bottom:3px;font-family:Helvetica,Arial,sans-serif;'}">${
+            badge
+              ? `<span style="font-size:14px;font-weight:700;color:#ffffff;font-family:Helvetica,Arial,sans-serif;">${step.title}</span>${badge}`
+              : step.title
+          }</div>
+          <div style="font-size:13px;line-height:1.55;color:rgba(255,255,255,0.55);">${step.text}</div>
+        </td>
+      </tr>`;
+  }).join('');
+
+  return `
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 28px;">
+      <tr><td style="background:#0a0a0c;border-radius:10px;padding:30px 26px 26px;">
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#d9cdf5;margin-bottom:9px;font-family:Helvetica,Arial,sans-serif;">
+          Les prochaines étapes
+        </div>
+        <div style="font-size:13px;line-height:1.6;color:rgba(255,255,255,0.55);margin-bottom:26px;">
+          Voici comment votre projet va être traité, étape par étape.
+        </div>
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0">${rows}</table>
+      </td></tr>
+    </table>`;
+}
+
 export function buildQuizConfirmationEmail(params: { customerName: string }): { subject: string; html: string; text: string } {
   const greeting = params.customerName ? `Bonjour ${params.customerName},` : 'Bonjour,';
   const html = emailShell(`
     <h1 style="font-size:20px;margin:0 0 16px;">Merci pour votre demande</h1>
     <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">${greeting}</p>
-    <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">
+    <p style="font-size:15px;line-height:1.6;margin:0 0 28px;">
       Nous avons bien reçu votre demande via le quiz Bunkaio. Chaque projet est étudié individuellement —
       nous revenons vers vous rapidement s'il correspond à notre ligne éditoriale.
     </p>
+    ${quizNextStepsHtml()}
     <p style="font-size:15px;line-height:1.6;margin:0;">À très vite,<br>L'équipe Bunkaio</p>
   `);
+  const stepsText = QUIZ_NEXT_STEPS.map((s, i) => `${i + 1}. ${s.title}${s.badge ? ` (${s.badge})` : ''} — ${s.text}`).join('\n');
   const text = `${greeting}
 
 Nous avons bien reçu votre demande via le quiz Bunkaio. Chaque projet est étudié individuellement — nous revenons vers vous rapidement s'il correspond à notre ligne éditoriale.
+
+LES PROCHAINES ÉTAPES
+${stepsText}
 
 À très vite,
 L'équipe Bunkaio`;
