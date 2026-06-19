@@ -150,8 +150,6 @@ const I18N = {
     'pay-flex-pill-card':'Carte bancaire',
     'pay-flex-pill-debit':'Prélèvement auto',
     'pay-flex-pill-split':'Acompte + solde',
-    'quiz-reassurance-pay':'<strong>Côté règlement :</strong> 3x sans frais avec Klarna, carte bancaire, prélèvement automatique, ou acompte 30 % + solde — au choix, sans aucun frais supplémentaire.',
-    'price-calc-payment':'💳 Réglable en 3x sans frais avec Klarna, par carte bancaire ou par prélèvement automatique.',
     'ph-name':'Votre nom ou société',
     'ph-email':'vous@societe.fr',
     'ph-phone':'06 00 00 00 00',
@@ -271,8 +269,6 @@ const I18N = {
     'pay-flex-pill-card':'Credit card',
     'pay-flex-pill-debit':'Direct debit',
     'pay-flex-pill-split':'Deposit + balance',
-    'quiz-reassurance-pay':'<strong>On the payment side:</strong> 3 interest-free instalments with Klarna, credit card, direct debit, or a 30% deposit + balance — your choice, no extra fees.',
-    'price-calc-payment':'💳 Payable in 3 interest-free instalments with Klarna, by credit card or by direct debit.',
     'ph-name':'Your name or company',
     'ph-email':'you@company.com',
     'ph-phone':'Your phone number',
@@ -324,6 +320,7 @@ function refreshDynamic(){
   if (S.cat && document.getElementById('qs-2').classList.contains('active')) renderProfiles();
   if (S.cat && document.getElementById('qs-3').classList.contains('active')) renderTiers();
   if (S.cat && S.tier && document.getElementById('qs-4').classList.contains('active')) { renderRecap(); renderOptions(); }
+  if (S.cat && S.tier && document.getElementById('qs-5').classList.contains('active')) updateQuizPayReassurance();
   if (S.cat && document.getElementById('qs-6').classList.contains('active')) renderQuizPortfolio();
   if (document.getElementById('view-services').classList.contains('active')) { renderServices(); if (activeSvcTab === 'devis') renderProcessSteps(); }
   if (document.getElementById('view-drone').classList.contains('active')) { renderDroneCats(); renderDroneProjects(activeDroneCat); }
@@ -773,6 +770,23 @@ function quizStep(n){
   document.getElementById('qs-' + n).classList.add('active');
   setProgress(n / 6 * 100);
   window.scrollTo({ top:0, behavior:'smooth' });
+  if (n === 5) updateQuizPayReassurance();
+}
+
+function updateQuizPayReassurance(){
+  const el = document.getElementById('quizReassurancePay');
+  if (!el || !S.tier) return;
+  if (S.tier === 'sub') {
+    el.innerHTML = LANG === 'fr'
+      ? '<strong>Côté règlement :</strong> votre abonnement est réglable chaque mois par carte bancaire ou prélèvement automatique, sans engagement de paiement anticipé.'
+      : '<strong>On the payment side:</strong> your subscription is billed monthly by credit card or direct debit, with no upfront payment required.';
+    return;
+  }
+  const res = computeTotal();
+  const threeX = Math.round(res.amount / 3).toLocaleString('fr-FR');
+  el.innerHTML = LANG === 'fr'
+    ? `<strong>Côté règlement :</strong> soit 3 × ${threeX}€ sans frais avec Klarna — ou carte bancaire, prélèvement automatique, ou acompte 30 % + solde. Sans aucun frais supplémentaire.`
+    : `<strong>On the payment side:</strong> that's 3 × €${threeX} interest-free with Klarna — or credit card, direct debit, or a 30% deposit + balance. No extra fees.`;
 }
 
 function goToTiers(){
@@ -880,6 +894,8 @@ function renderTiers(){
   el.innerHTML = '';
   TIERS.forEach((tier, i) => {
     const td = cat.tiers[tier.id];
+    const threeX = Math.round(td.price / 3).toLocaleString('fr-FR');
+    const payLine = LANG === 'fr' ? `Soit 3 × ${threeX}€ sans frais` : `That's 3 × €${threeX} interest-free`;
     const d = document.createElement('div');
     d.className = 'tier-card stagger';
     d.style.animationDelay = (0.24 + i * 0.1) + 's';
@@ -889,6 +905,7 @@ function renderTiers(){
         <div class="tier-name">${t(tier.name)}</div>
         <div class="tier-price">${td.price.toLocaleString('fr-FR')}€<small>HT</small></div>
       </div>
+      <div class="tier-pay-line">${payLine}</div>
       <div class="tier-detail">${t(td.items).join(' · ')}</div>`;
     d.onclick = () => { S.tier = tier.id; renderRecap(); renderOptions(); quizStep(4); };
     el.appendChild(d);
@@ -1133,6 +1150,7 @@ function animatePriceCalc(){
   const box   = document.getElementById('priceCalcBox');
   const amtEl = document.getElementById('priceCalcAmt');
   const noteEl= document.getElementById('priceCalcNote');
+  const payEl = document.getElementById('priceCalcPayment');
   if (!box || !amtEl) return;
   box.style.display = 'block';
 
@@ -1145,6 +1163,19 @@ function animatePriceCalc(){
     const res = computeTotal();
     targetAmount = res.amount;
     surDevis     = res.surDevis;
+  }
+
+  if (payEl) {
+    if (isSub) {
+      payEl.textContent = LANG === 'fr'
+        ? '💳 Réglable chaque mois par carte bancaire ou prélèvement automatique.'
+        : '💳 Billed monthly by credit card or direct debit.';
+    } else {
+      const threeX = Math.round(targetAmount / 3).toLocaleString('fr-FR');
+      payEl.textContent = LANG === 'fr'
+        ? `💳 Soit 3 × ${threeX}€ sans frais avec Klarna, ou par carte bancaire / prélèvement automatique.`
+        : `💳 That's 3 × €${threeX} interest-free with Klarna, or by credit card / direct debit.`;
+    }
   }
 
   /* Counter animation */
@@ -1273,6 +1304,16 @@ function setSvcTab(tab){
   if (tab === 'devis') renderProcessSteps();
 }
 
+function updatePayFlexBanner(list){
+  const el = document.getElementById('svcPayFlexText');
+  if (!el || !list.length) return;
+  const minPrice = Math.min(...list.map(c => c.tiers.deco.price));
+  const monthly = Math.round(minPrice / 3).toLocaleString('fr-FR');
+  el.innerHTML = LANG === 'fr'
+    ? `<strong>À partir de ${monthly}€/mois avec Klarna</strong>, carte bancaire ou prélèvement automatique — ou en 2 fois, acompte 30 % puis solde. Sans aucun frais supplémentaire.`
+    : `<strong>From €${monthly}/mo with Klarna</strong>, credit card or direct debit — or in 2 instalments, 30% deposit then balance. No extra fees.`;
+}
+
 function renderServices(){
   const fl = document.getElementById('servicesFilters');
   fl.innerHTML = '';
@@ -1304,6 +1345,7 @@ function renderServices(){
   const grid = document.getElementById('servicesGrid');
   grid.innerHTML = '';
   const list = activeServiceFilter ? CATS.filter(c => c.id === activeServiceFilter) : CATS;
+  updatePayFlexBanner(list);
   list.forEach(c => {
     const card = document.createElement('div');
     card.className = 'service-card rv';

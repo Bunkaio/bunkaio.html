@@ -35,6 +35,8 @@ export function buildDepositInvoiceEmail(params: {
   hostedInvoiceUrl: string;
 }): { subject: string; html: string; text: string } {
   const greeting = params.customerName ? `Bonjour ${params.customerName},` : 'Bonjour,';
+  const threeX = (params.depositAmountEur / 3).toFixed(2);
+  const payLine = `Soit 3 × ${threeX} € sans frais avec Klarna — ou par carte bancaire, par prélèvement automatique, au choix sur la page de paiement.`;
   const html = emailShell(`
     <h1 style="font-size:20px;margin:0 0 16px;">Votre facture d'acompte</h1>
     <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">${greeting}</p>
@@ -43,7 +45,7 @@ export function buildDepositInvoiceEmail(params: {
     </p>
     <p style="font-size:24px;font-weight:700;margin:0 0 12px;">${params.depositAmountEur.toFixed(2)} €</p>
     <p style="font-size:13px;color:#76717f;margin:0 0 28px;">
-      Réglable en 3x sans frais avec Klarna, par carte bancaire ou par prélèvement automatique — au choix sur la page de paiement.
+      ${payLine}
     </p>
     <a href="${params.hostedInvoiceUrl}" style="display:inline-block;background:#0a0a0c;color:#ffffff;text-decoration:none;padding:14px 28px;border-radius:4px;font-weight:600;font-size:15px;">
       Voir et payer la facture
@@ -58,7 +60,7 @@ export function buildDepositInvoiceEmail(params: {
 Voici votre facture d'acompte (30 %) pour : ${params.description}.
 
 Montant : ${params.depositAmountEur.toFixed(2)} €
-Réglable en 3x sans frais avec Klarna, par carte bancaire ou par prélèvement automatique — au choix sur la page de paiement.
+${payLine}
 
 Voir et payer la facture : ${params.hostedInvoiceUrl}
 
@@ -74,6 +76,8 @@ export function buildBalanceInvoiceEmail(params: {
   hostedInvoiceUrl: string;
 }): { subject: string; html: string; text: string } {
   const greeting = params.customerName ? `Bonjour ${params.customerName},` : 'Bonjour,';
+  const threeX = (params.balanceAmountEur / 3).toFixed(2);
+  const payLine = `Soit 3 × ${threeX} € sans frais avec Klarna — ou par carte bancaire, par prélèvement automatique, au choix sur la page de paiement.`;
   const html = emailShell(`
     <h1 style="font-size:20px;margin:0 0 16px;">Votre facture de solde</h1>
     <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">${greeting}</p>
@@ -82,7 +86,7 @@ export function buildBalanceInvoiceEmail(params: {
     </p>
     <p style="font-size:24px;font-weight:700;margin:0 0 12px;">${params.balanceAmountEur.toFixed(2)} €</p>
     <p style="font-size:13px;color:#76717f;margin:0 0 28px;">
-      Réglable en 3x sans frais avec Klarna, par carte bancaire ou par prélèvement automatique — au choix sur la page de paiement.
+      ${payLine}
     </p>
     <a href="${params.hostedInvoiceUrl}" style="display:inline-block;background:#0a0a0c;color:#ffffff;text-decoration:none;padding:14px 28px;border-radius:4px;font-weight:600;font-size:15px;">
       Voir et payer la facture
@@ -97,7 +101,7 @@ export function buildBalanceInvoiceEmail(params: {
 Voici votre facture de solde (70 %) pour : ${params.description}.
 
 Montant : ${params.balanceAmountEur.toFixed(2)} €
-Réglable en 3x sans frais avec Klarna, par carte bancaire ou par prélèvement automatique — au choix sur la page de paiement.
+${payLine}
 
 Voir et payer la facture : ${params.hostedInvoiceUrl}
 
@@ -208,6 +212,8 @@ export function buildOverdueReminderEmail(params: {
 }): { subject: string; html: string; text: string } {
   const greeting = params.customerName ? `Bonjour ${params.customerName},` : 'Bonjour,';
   const label = params.invoiceType === 'acompte' ? "d'acompte (30 %)" : 'de solde (70 %)';
+  const threeX = (params.amountEur / 3).toFixed(2);
+  const payLine = `Rappel : soit 3 × ${threeX} € sans frais avec Klarna, par carte bancaire ou par prélèvement automatique.`;
   const html = emailShell(`
     <h1 style="font-size:20px;margin:0 0 16px;">Petit rappel</h1>
     <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">${greeting}</p>
@@ -217,7 +223,7 @@ export function buildOverdueReminderEmail(params: {
     </p>
     <p style="font-size:24px;font-weight:700;margin:0 0 12px;">${params.amountEur.toFixed(2)} €</p>
     <p style="font-size:13px;color:#76717f;margin:0 0 28px;">
-      Rappel : réglable en 3x sans frais avec Klarna, par carte bancaire ou par prélèvement automatique.
+      ${payLine}
     </p>
     <a href="${params.hostedInvoiceUrl}" style="display:inline-block;background:#0a0a0c;color:#ffffff;text-decoration:none;padding:14px 28px;border-radius:4px;font-weight:600;font-size:15px;">
       Voir et payer la facture
@@ -233,7 +239,7 @@ Votre facture ${label} pour : ${params.description} n'a pas encore été réglé
 ${params.hostedInvoiceUrl}
 
 Montant : ${params.amountEur.toFixed(2)} €
-Rappel : réglable en 3x sans frais avec Klarna, par carte bancaire ou par prélèvement automatique.
+${payLine}
 
 Si vous avez déjà réglé cette facture ou en cas de question, n'hésitez pas à nous répondre directement.
 
