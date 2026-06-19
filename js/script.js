@@ -141,9 +141,17 @@ const I18N = {
     'footer-claim2':'Photographie · vidéo · drone',
     'stab-catalogue':'Catalogue & prix','stab-devis':'Devis & déroulé',
     'p-trust':'Ils nous ont fait confiance',
-    'process-payment-info':'<strong>Modalités de paiement :</strong> 30 % à la commande à la signature du devis, solde à la livraison des livrables.',
+    'process-payment-info':'<strong>Modalités de paiement :</strong> 30 % à la commande à la signature du devis, solde à la livraison des livrables. Chaque versement est réglable en 3x sans frais avec Klarna, par carte bancaire ou par prélèvement automatique.',
     'process-delay-info':'Les délais indiqués sur chaque formule démarrent à la date du shooting.',
     'process-rights-info':'L\'ensemble des droits d\'utilisation des visuels livrés vous sont cédés pour une utilisation commerciale sans limite de durée.',
+    'pay-flex-kicker':'Paiement flexible',
+    'pay-flex-text':'<strong>3x sans frais avec Klarna</strong>, carte bancaire ou prélèvement automatique — ou en 2 fois, acompte 30 % puis solde. Sans aucun frais supplémentaire.',
+    'pay-flex-pill-klarna':'3x sans frais',
+    'pay-flex-pill-card':'Carte bancaire',
+    'pay-flex-pill-debit':'Prélèvement auto',
+    'pay-flex-pill-split':'Acompte + solde',
+    'quiz-reassurance-pay':'<strong>Côté règlement :</strong> 3x sans frais avec Klarna, carte bancaire, prélèvement automatique, ou acompte 30 % + solde — au choix, sans aucun frais supplémentaire.',
+    'price-calc-payment':'💳 Réglable en 3x sans frais avec Klarna, par carte bancaire ou par prélèvement automatique.',
     'ph-name':'Votre nom ou société',
     'ph-email':'vous@societe.fr',
     'ph-phone':'06 00 00 00 00',
@@ -254,9 +262,17 @@ const I18N = {
     'footer-claim2':'Photography · video · drone',
     'stab-catalogue':'Catalogue & rates','stab-devis':'Quote & process',
     'p-trust':'They trusted us',
-    'process-payment-info':'<strong>Payment terms:</strong> 30% deposit upon signing the quote, balance due on delivery of your deliverables.',
+    'process-payment-info':'<strong>Payment terms:</strong> 30% deposit upon signing the quote, balance due on delivery of your deliverables. Each payment can be split into 3 interest-free instalments with Klarna, by credit card or by direct debit.',
     'process-delay-info':'The delivery timelines indicated on each package begin on the day of the shoot.',
     'process-rights-info':'Full commercial usage rights for all delivered visuals are granted to you with no time limit.',
+    'pay-flex-kicker':'Flexible payment',
+    'pay-flex-text':'<strong>3 interest-free instalments with Klarna</strong>, credit card or direct debit — or in two payments, 30% deposit then balance. No extra fees, ever.',
+    'pay-flex-pill-klarna':'3x interest-free',
+    'pay-flex-pill-card':'Credit card',
+    'pay-flex-pill-debit':'Direct debit',
+    'pay-flex-pill-split':'Deposit + balance',
+    'quiz-reassurance-pay':'<strong>On the payment side:</strong> 3 interest-free instalments with Klarna, credit card, direct debit, or a 30% deposit + balance — your choice, no extra fees.',
+    'price-calc-payment':'💳 Payable in 3 interest-free instalments with Klarna, by credit card or by direct debit.',
     'ph-name':'Your name or company',
     'ph-email':'you@company.com',
     'ph-phone':'Your phone number',
@@ -907,12 +923,16 @@ function renderRecap(){
     const engagement = LANG === 'fr'
       ? 'Engagement minimum : 6 mois · Reconduction mensuelle ensuite'
       : 'Minimum commitment: 6 months · Monthly renewal afterwards';
+    const payLine = LANG === 'fr'
+      ? '💳 Réglable par carte bancaire ou prélèvement automatique, chaque mois.'
+      : '💳 Payable by credit card or direct debit, every month.';
     box.innerHTML = `
       <div class="recap-label">${selLabel}</div>
       <div class="recap-title">
         <span>${t(sub.name)}</span>
         <span>${sub.price.toLocaleString('fr-FR')}€ HT/${LANG === 'fr' ? 'mois' : 'mo'}</span>
       </div>
+      <div class="recap-payment">${payLine}</div>
       <ul class="recap-items">
         ${t(sub.items).map(i => `<li>${i}</li>`).join('')}
       </ul>
@@ -923,12 +943,17 @@ function renderRecap(){
   const td = cat.tiers[S.tier];
   const delivLabel = LANG === 'fr' ? 'Livraison' : 'Delivery';
   const studioSupplement = (S.cat === 'photo-part' && S.studio) ? ' + 60€ studio' : '';
+  const threeX = Math.round(td.price / 3).toLocaleString('fr-FR');
+  const payLine = LANG === 'fr'
+    ? `💳 Soit 3 × ${threeX}€ sans frais avec Klarna — ou carte bancaire, prélèvement automatique, acompte 30 % + solde.`
+    : `💳 That's 3 × €${threeX} interest-free with Klarna — or credit card, direct debit, 30% deposit + balance.`;
   box.innerHTML = `
     <div class="recap-label">${selLabel}</div>
     <div class="recap-title">
       <span>${t(cat.name)} — ${t(tier.name)}</span>
       <span>${td.price.toLocaleString('fr-FR')}€${studioSupplement} HT</span>
     </div>
+    <div class="recap-payment">${payLine}</div>
     <ul class="recap-items">
       ${t(td.items).map(i => `<li>${i}</li>`).join('')}
     </ul>

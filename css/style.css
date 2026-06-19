@@ -727,6 +727,32 @@
     min-height: 60px;
   }
 
+  /* ─── PAIEMENT FLEXIBLE (mis en avant à côté des tarifs) ─── */
+  .payment-flex-strip {
+    display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
+    border: 1px solid var(--black);
+    background: rgba(255,255,255,0.6);
+    backdrop-filter: blur(8px);
+    padding: 20px 28px;
+    margin-bottom: 28px;
+    border-radius: 8px;
+  }
+  .payment-flex-icon { font-size: 21px; line-height: 1; flex-shrink: 0; }
+  .payment-flex-body { flex: 1 1 260px; min-width: 220px; }
+  .payment-flex-kicker {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--grey); margin-bottom: 5px;
+  }
+  .payment-flex-text { font-size: 13.5px; line-height: 1.7; color: #3a3544; }
+  .payment-flex-text strong { color: var(--black); }
+  .payment-flex-methods { display: flex; gap: 8px; flex-wrap: wrap; flex-shrink: 0; }
+  .payment-flex-pill {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+    border: 1px solid var(--line); padding: 7px 13px; border-radius: 100px;
+    white-space: nowrap; color: var(--black);
+  }
+  .payment-flex-pill.highlight { background: var(--black); color: var(--white); border-color: var(--black); }
+
   .tier-list { display: flex; flex-direction: column; gap: 16px; }
   .tier-card {
     border: 1px solid var(--line);
@@ -833,6 +859,15 @@
     width: 9px; height: 1px; background: var(--black);
   }
 
+  .recap-payment {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 12.5px; font-weight: 600; color: var(--black);
+    background: rgba(20,10,40,0.04);
+    border: 1px solid var(--line);
+    padding: 9px 16px; border-radius: 100px;
+    margin-bottom: 22px; line-height: 1.5;
+  }
+
   .opt-section-label {
     font-size: 11px; font-weight: 600; letter-spacing: 0.26em;
     text-transform: uppercase; color: var(--grey); margin-bottom: 24px;
@@ -906,6 +941,11 @@
   .quiz-reassurance-text {
     font-size: 12.5px; line-height: 1.75; color: var(--grey);
   }
+  .quiz-reassurance-pay {
+    font-size: 12.5px; line-height: 1.75; color: var(--black);
+    margin-top: 10px;
+  }
+  .quiz-reassurance-pay strong { font-weight: 700; }
   .quiz-microcopy {
     text-align: right;
     font-size: 10px; letter-spacing: 0.1em;
@@ -2138,6 +2178,11 @@ PE html>
   .price-calc-note {
     margin: 20px auto 0; max-width: 480px;
     font-size: 13px; color: var(--grey); line-height: 1.7;
+    position: relative; z-index: 1;
+  }
+  .price-calc-payment {
+    margin: 16px auto 0; max-width: 480px;
+    font-size: 13px; font-weight: 600; color: var(--black); line-height: 1.7;
     position: relative; z-index: 1;
   }
   @media (max-width: 920px) {

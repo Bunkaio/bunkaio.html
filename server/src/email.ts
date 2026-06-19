@@ -41,7 +41,10 @@ export function buildDepositInvoiceEmail(params: {
     <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">
       Voici votre facture d'acompte (30 %) pour : <strong>${params.description}</strong>.
     </p>
-    <p style="font-size:24px;font-weight:700;margin:0 0 28px;">${params.depositAmountEur.toFixed(2)} €</p>
+    <p style="font-size:24px;font-weight:700;margin:0 0 12px;">${params.depositAmountEur.toFixed(2)} €</p>
+    <p style="font-size:13px;color:#76717f;margin:0 0 28px;">
+      Réglable en 3x sans frais avec Klarna, par carte bancaire ou par prélèvement automatique — au choix sur la page de paiement.
+    </p>
     <a href="${params.hostedInvoiceUrl}" style="display:inline-block;background:#0a0a0c;color:#ffffff;text-decoration:none;padding:14px 28px;border-radius:4px;font-weight:600;font-size:15px;">
       Voir et payer la facture
     </a>
@@ -55,6 +58,7 @@ export function buildDepositInvoiceEmail(params: {
 Voici votre facture d'acompte (30 %) pour : ${params.description}.
 
 Montant : ${params.depositAmountEur.toFixed(2)} €
+Réglable en 3x sans frais avec Klarna, par carte bancaire ou par prélèvement automatique — au choix sur la page de paiement.
 
 Voir et payer la facture : ${params.hostedInvoiceUrl}
 
@@ -76,7 +80,10 @@ export function buildBalanceInvoiceEmail(params: {
     <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">
       Voici votre facture de solde (70 %) pour : <strong>${params.description}</strong>.
     </p>
-    <p style="font-size:24px;font-weight:700;margin:0 0 28px;">${params.balanceAmountEur.toFixed(2)} €</p>
+    <p style="font-size:24px;font-weight:700;margin:0 0 12px;">${params.balanceAmountEur.toFixed(2)} €</p>
+    <p style="font-size:13px;color:#76717f;margin:0 0 28px;">
+      Réglable en 3x sans frais avec Klarna, par carte bancaire ou par prélèvement automatique — au choix sur la page de paiement.
+    </p>
     <a href="${params.hostedInvoiceUrl}" style="display:inline-block;background:#0a0a0c;color:#ffffff;text-decoration:none;padding:14px 28px;border-radius:4px;font-weight:600;font-size:15px;">
       Voir et payer la facture
     </a>
@@ -90,6 +97,7 @@ export function buildBalanceInvoiceEmail(params: {
 Voici votre facture de solde (70 %) pour : ${params.description}.
 
 Montant : ${params.balanceAmountEur.toFixed(2)} €
+Réglable en 3x sans frais avec Klarna, par carte bancaire ou par prélèvement automatique — au choix sur la page de paiement.
 
 Voir et payer la facture : ${params.hostedInvoiceUrl}
 
@@ -207,7 +215,10 @@ export function buildOverdueReminderEmail(params: {
       Votre facture ${label} pour : <strong>${params.description}</strong> n'a pas encore été réglée.
       Vous trouverez ci-dessous le lien pour la payer en ligne.
     </p>
-    <p style="font-size:24px;font-weight:700;margin:0 0 28px;">${params.amountEur.toFixed(2)} €</p>
+    <p style="font-size:24px;font-weight:700;margin:0 0 12px;">${params.amountEur.toFixed(2)} €</p>
+    <p style="font-size:13px;color:#76717f;margin:0 0 28px;">
+      Rappel : réglable en 3x sans frais avec Klarna, par carte bancaire ou par prélèvement automatique.
+    </p>
     <a href="${params.hostedInvoiceUrl}" style="display:inline-block;background:#0a0a0c;color:#ffffff;text-decoration:none;padding:14px 28px;border-radius:4px;font-weight:600;font-size:15px;">
       Voir et payer la facture
     </a>
@@ -222,6 +233,7 @@ Votre facture ${label} pour : ${params.description} n'a pas encore été réglé
 ${params.hostedInvoiceUrl}
 
 Montant : ${params.amountEur.toFixed(2)} €
+Rappel : réglable en 3x sans frais avec Klarna, par carte bancaire ou par prélèvement automatique.
 
 Si vous avez déjà réglé cette facture ou en cas de question, n'hésitez pas à nous répondre directement.
 

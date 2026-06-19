@@ -125,6 +125,19 @@
       <div class="qstep-meta stagger" style="animation-delay:0.05s" data-lang="step-tier">03 — Prestation</div>
       <h2 class="qstep-title stagger" style="animation-delay:0.12s" data-lang="q-tier">Quel niveau de prestation&nbsp;?</h2>
       <p class="qstep-sub stagger" style="animation-delay:0.2s" id="tierSub"></p>
+      <div class="payment-flex-strip stagger" style="animation-delay:0.24s">
+        <div class="payment-flex-icon">💳</div>
+        <div class="payment-flex-body">
+          <div class="payment-flex-kicker" data-lang="pay-flex-kicker">Paiement flexible</div>
+          <div class="payment-flex-text" data-lang="pay-flex-text"><strong>3x sans frais avec Klarna</strong>, carte bancaire ou prélèvement automatique — ou en 2 fois, acompte 30 % puis solde. Sans aucun frais supplémentaire.</div>
+        </div>
+        <div class="payment-flex-methods">
+          <span class="payment-flex-pill highlight" data-lang="pay-flex-pill-klarna">3x sans frais</span>
+          <span class="payment-flex-pill" data-lang="pay-flex-pill-card">Carte bancaire</span>
+          <span class="payment-flex-pill" data-lang="pay-flex-pill-debit">Prélèvement auto</span>
+          <span class="payment-flex-pill" data-lang="pay-flex-pill-split">Acompte + solde</span>
+        </div>
+      </div>
       <div class="tier-list" id="tierList"></div>
       <div class="btn-row stagger" style="animation-delay:0.55s">
         <button class="btn btn-ghost" onclick="quizStep(2)"><span data-lang="back">← Retour</span></button>
@@ -177,6 +190,7 @@
       </div>
       <div class="quiz-reassurance stagger" style="animation-delay:0.54s">
         <p class="quiz-reassurance-text">Votre demande est examinée personnellement — jamais traitée en masse.<br>Nous vous répondons sous 48 heures avec une proposition adaptée à votre projet.</p>
+        <p class="quiz-reassurance-pay" data-lang="quiz-reassurance-pay"><strong>Côté règlement :</strong> 3x sans frais avec Klarna, carte bancaire, prélèvement automatique, ou acompte 30 % + solde — au choix, sans aucun frais supplémentaire.</p>
       </div>
       <div class="btn-row stagger" style="animation-delay:0.58s">
         <button class="btn btn-ghost" onclick="quizStep(4)"><span data-lang="back">← Retour</span></button>
@@ -195,6 +209,7 @@
         <div class="price-calc-label">ESTIMATION DE VOTRE DEVIS</div>
         <div class="price-calc-amount" id="priceCalcAmt">0€ HT</div>
         <div class="price-calc-note" id="priceCalcNote" style="display:none"></div>
+        <div class="price-calc-payment" data-lang="price-calc-payment">💳 Réglable en 3x sans frais avec Klarna, par carte bancaire ou par prélèvement automatique.</div>
       </div>
 
       <div class="success-box stagger" style="animation-delay:0.18s">
@@ -234,6 +249,19 @@
   <div class="services-page">
     <h1 class="page-title" data-lang="services-title">Services</h1>
     <p class="page-sub" data-lang="services-sub">L'ensemble de nos prestations et leurs tarifs, par univers. Chaque formule est pensée pour révéler ce qui rend votre projet unique.</p>
+    <div class="payment-flex-strip">
+      <div class="payment-flex-icon">💳</div>
+      <div class="payment-flex-body">
+        <div class="payment-flex-kicker" data-lang="pay-flex-kicker">Paiement flexible</div>
+        <div class="payment-flex-text" data-lang="pay-flex-text"><strong>3x sans frais avec Klarna</strong>, carte bancaire ou prélèvement automatique — ou en 2 fois, acompte 30 % puis solde. Sans aucun frais supplémentaire.</div>
+      </div>
+      <div class="payment-flex-methods">
+        <span class="payment-flex-pill highlight" data-lang="pay-flex-pill-klarna">3x sans frais</span>
+        <span class="payment-flex-pill" data-lang="pay-flex-pill-card">Carte bancaire</span>
+        <span class="payment-flex-pill" data-lang="pay-flex-pill-debit">Prélèvement auto</span>
+        <span class="payment-flex-pill" data-lang="pay-flex-pill-split">Acompte + solde</span>
+      </div>
+    </div>
 <!-- Onglets -->
     <div class="svc-tabs">
       <button class="svc-tab active" id="stab-catalogue" onclick="setSvcTab('catalogue')" data-lang="stab-catalogue">Catalogue & prix</button>
