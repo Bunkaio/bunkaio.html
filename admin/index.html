@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>Bunkaio — Facture d'acompte</title>
+<title>Bunkaio — Factures</title>
 <style>
   :root { --black:#0a0a0c; --grey:#6b6b70; --line:#e3e1dc; --bg:#faf9f6; }
   * { box-sizing: border-box; }
@@ -27,8 +27,9 @@
   button {
     width: 100%; padding: 13px; border: none; border-radius: 4px;
     background: var(--black); color: #fff; font-size: 15px; font-weight: 600;
-    cursor: pointer;
+    cursor: pointer; margin-bottom: 12px;
   }
+  button.secondary { background: #fff; color: var(--black); border: 1px solid var(--line); }
   button:disabled { opacity: 0.5; cursor: not-allowed; }
   #result { margin-top: 24px; padding: 16px; border-radius: 4px; font-size: 14px; display: none; }
   #result.ok { background: #e8f5e9; border: 1px solid #a5d6a7; display: block; }
@@ -38,8 +39,8 @@
 </head>
 <body>
 <div class="wrap">
-  <h1>Générer une facture d'acompte</h1>
-  <p class="sub">Crée et envoie automatiquement par email une facture Stripe de 30 % à un client déjà présent dans la base (créé via le quiz).</p>
+  <h1>Générer une facture</h1>
+  <p class="sub">Crée et envoie automatiquement par email une facture Stripe (acompte 30 % ou solde 70 %) à un client déjà présent dans la base (créé via le quiz). Les deux factures utilisent les mêmes informations ci-dessous et peuvent être générées séparément, à tout moment.</p>
 
   <div class="fgroup">
     <label for="token">Token admin</label>
@@ -58,24 +59,43 @@
     <input type="text" id="description" placeholder="Formule Signature — Mariage">
   </div>
 
-  <button id="submitBtn" onclick="createInvoice()">Générer la facture d'acompte</button>
+  <button id="depositBtn" onclick="createInvoice('deposit')">Générer la facture d'acompte (30 %)</button>
+  <button id="balanceBtn" class="secondary" onclick="createInvoice('balance')">Générer la facture du solde (70 %)</button>
 
   <div id="result"></div>
 </div>
 
 <script>
-  const WORKER_URL = 'https://bunkaio-quiz-stripe.bunkaio.workers.dev/create-deposit-invoice';
+  const WORKER_BASE = 'https://bunkaio-quiz-stripe.bunkaio.workers.dev';
+
+  const INVOICE_KINDS = {
+    deposit: {
+      route: '/create-deposit-invoice',
+      btnId: 'depositBtn',
+      idleLabel: "Générer la facture d'acompte (30 %)",
+      amountField: 'depositAmountEur',
+      amountLabel: 'acompte',
+    },
+    balance: {
+      route: '/create-balance-invoice',
+      btnId: 'balanceBtn',
+      idleLabel: 'Générer la facture du solde (70 %)',
+      amountField: 'balanceAmountEur',
+      amountLabel: 'solde',
+    },
+  };
 
   // Mémorise le token localement pour ne pas avoir à le retaper à chaque facture.
   document.getElementById('token').value = localStorage.getItem('bunkaio_admin_token') || '';
 
-  async function createInvoice() {
+  async function createInvoice(kind) {
+    const cfg = INVOICE_KINDS[kind];
     const token = document.getElementById('token').value.trim();
     const email = document.getElementById('email').value.trim();
     const amount = parseFloat(document.getElementById('amount').value);
     const description = document.getElementById('description').value.trim();
     const result = document.getElementById('result');
-    const btn = document.getElementById('submitBtn');
+    const btn = document.getElementById(cfg.btnId);
 
     result.className = '';
 
@@ -90,7 +110,7 @@
     btn.textContent = 'Génération en cours…';
 
     try {
-      const res = await fetch(WORKER_URL, {
+      const res = await fetch(WORKER_BASE + cfg.route, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -102,10 +122,10 @@
 
       if (res.ok && data.ok && data.emailSent) {
         result.className = 'ok';
-        result.innerHTML = 'Facture envoyée par email au client.<br>Montant acompte : <strong>' + data.depositAmountEur + '€</strong><br>Lien : <a href="' + data.hostedInvoiceUrl + '" target="_blank">' + data.hostedInvoiceUrl + '</a>';
+        result.innerHTML = 'Facture envoyée par email au client.<br>Montant ' + cfg.amountLabel + ' : <strong>' + data[cfg.amountField] + '€</strong><br>Lien : <a href="' + data.hostedInvoiceUrl + '" target="_blank">' + data.hostedInvoiceUrl + '</a>';
       } else if (res.ok && data.ok && !data.emailSent) {
         result.className = 'err';
-        result.innerHTML = 'Facture créée dans Stripe, mais l\'email n\'a pas pu être envoyé automatiquement.<br>Montant acompte : <strong>' + data.depositAmountEur + '€</strong><br>Transmets ce lien toi-même au client : <a href="' + data.hostedInvoiceUrl + '" target="_blank">' + data.hostedInvoiceUrl + '</a>';
+        result.innerHTML = 'Facture créée dans Stripe, mais l\'email n\'a pas pu être envoyé automatiquement.<br>Montant ' + cfg.amountLabel + ' : <strong>' + data[cfg.amountField] + '€</strong><br>Transmets ce lien toi-même au client : <a href="' + data.hostedInvoiceUrl + '" target="_blank">' + data.hostedInvoiceUrl + '</a>';
       } else if (data.error === 'customer_not_found') {
         result.className = 'err';
         result.textContent = 'Aucun client Stripe trouvé avec cet email. Le client doit avoir soumis le quiz au moins une fois.';
@@ -121,7 +141,7 @@
       result.textContent = 'Erreur réseau : ' + err.message;
     } finally {
       btn.disabled = false;
-      btn.textContent = "Générer la facture d'acompte";
+      btn.textContent = cfg.idleLabel;
     }
   }
 </script>

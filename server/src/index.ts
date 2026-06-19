@@ -1,9 +1,10 @@
-import { buildDepositInvoiceEmail, buildQuizConfirmationEmail, sendEmail } from './email';
-import { createDepositInvoice, createStripeClient, upsertQuizCustomer } from './stripe';
+import { buildBalanceInvoiceEmail, buildDepositInvoiceEmail, buildQuizConfirmationEmail, sendEmail } from './email';
+import { createBalanceInvoice, createDepositInvoice, createStripeClient, upsertQuizCustomer } from './stripe';
 import type { DepositInvoiceInput, Env, QuizLeadPayload } from './types';
 
 const QUIZ_LEAD_ROUTE = '/quiz-lead';
 const DEPOSIT_INVOICE_ROUTE = '/create-deposit-invoice';
+const BALANCE_INVOICE_ROUTE = '/create-balance-invoice';
 
 /**
  * Détermine l'en-tête Access-Control-Allow-Origin à renvoyer : on échoue
@@ -166,6 +167,59 @@ async function handleCreateDepositInvoice(request: Request, env: Env, headers: R
   }
 }
 
+async function handleCreateBalanceInvoice(request: Request, env: Env, headers: Record<string, string>): Promise<Response> {
+  if (request.method !== 'POST') {
+    return jsonResponse({ ok: false, error: 'method_not_allowed' }, 405, headers);
+  }
+
+  const authHeader = request.headers.get('Authorization') ?? '';
+  if (authHeader !== `Bearer ${env.ADMIN_TOKEN}`) {
+    console.error('[create-balance-invoice] token admin invalide ou manquant');
+    return jsonResponse({ ok: false, error: 'unauthorized' }, 401, headers);
+  }
+
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch (err) {
+    console.error('[create-balance-invoice] corps de requête JSON invalide', err);
+    return jsonResponse({ ok: false, error: 'invalid_json' }, 400, headers);
+  }
+
+  if (!isValidDepositInvoiceInput(body)) {
+    console.error('[create-balance-invoice] payload rejeté par la validation', body);
+    return jsonResponse({ ok: false, error: 'invalid_payload' }, 400, headers);
+  }
+
+  try {
+    const stripe = createStripeClient(env.STRIPE_SECRET_KEY);
+    const result = await createBalanceInvoice(stripe, body);
+    console.log('[create-balance-invoice] facture créée', result);
+
+    try {
+      const { subject, html, text } = buildBalanceInvoiceEmail({
+        customerName: result.customerName,
+        description: body.description,
+        balanceAmountEur: result.balanceAmountEur,
+        hostedInvoiceUrl: result.hostedInvoiceUrl,
+      });
+      await sendEmail(env, body.email, subject, html, text);
+      console.log('[create-balance-invoice] email envoyé au client');
+      return jsonResponse({ ok: true, ...result, emailSent: true }, 200, headers);
+    } catch (emailErr) {
+      console.error("[create-balance-invoice] facture créée mais email non envoyé", emailErr);
+      return jsonResponse({ ok: true, ...result, emailSent: false }, 200, headers);
+    }
+  } catch (err) {
+    if (err instanceof Error && err.message === 'customer_not_found') {
+      console.error('[create-balance-invoice] aucun client Stripe pour cet email', body.email);
+      return jsonResponse({ ok: false, error: 'customer_not_found' }, 404, headers);
+    }
+    console.error('[create-balance-invoice] échec de la création de facture', err);
+    return jsonResponse({ ok: false, error: 'stripe_error' }, 502, headers);
+  }
+}
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const headers = corsHeaders(resolveAllowedOrigin(request.headers.get('Origin'), env.ALLOWED_ORIGINS));
@@ -181,6 +235,9 @@ export default {
     }
     if (url.pathname === DEPOSIT_INVOICE_ROUTE) {
       return handleCreateDepositInvoice(request, env, headers);
+    }
+    if (url.pathname === BALANCE_INVOICE_ROUTE) {
+      return handleCreateBalanceInvoice(request, env, headers);
     }
     return jsonResponse({ ok: false, error: 'not_found' }, 404, headers);
   },

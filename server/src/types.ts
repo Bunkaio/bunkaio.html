@@ -41,11 +41,20 @@ export interface DepositInvoiceInput {
   description: string;
 }
 
-/** Résultat renvoyé à admin/index.html après création de la facture. */
+/** Résultat renvoyé à admin/index.html après création de la facture d'acompte. */
 export interface DepositInvoiceResult {
   invoiceId: string;
   hostedInvoiceUrl: string;
   invoicePdfUrl: string;
   depositAmountEur: number;
+  customerName: string;
+}
+
+/** Résultat renvoyé à admin/index.html après création de la facture de solde. */
+export interface BalanceInvoiceResult {
+  invoiceId: string;
+  hostedInvoiceUrl: string;
+  invoicePdfUrl: string;
+  balanceAmountEur: number;
   customerName: string;
 }

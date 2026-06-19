@@ -62,6 +62,41 @@ Voir et payer la facture : ${params.hostedInvoiceUrl}
   return { subject: `Bunkaio — Votre facture d'acompte (${params.depositAmountEur.toFixed(2)} €)`, html, text };
 }
 
+/** Email envoyé au client avec le lien de paiement du solde (remplace l'envoi Stripe bloqué). */
+export function buildBalanceInvoiceEmail(params: {
+  customerName: string;
+  description: string;
+  balanceAmountEur: number;
+  hostedInvoiceUrl: string;
+}): { subject: string; html: string; text: string } {
+  const greeting = params.customerName ? `Bonjour ${params.customerName},` : 'Bonjour,';
+  const html = emailShell(`
+    <h1 style="font-size:20px;margin:0 0 16px;">Votre facture de solde</h1>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">${greeting}</p>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">
+      Voici votre facture de solde (70 %) pour : <strong>${params.description}</strong>.
+    </p>
+    <p style="font-size:24px;font-weight:700;margin:0 0 28px;">${params.balanceAmountEur.toFixed(2)} €</p>
+    <a href="${params.hostedInvoiceUrl}" style="display:inline-block;background:#0a0a0c;color:#ffffff;text-decoration:none;padding:14px 28px;border-radius:4px;font-weight:600;font-size:15px;">
+      Voir et payer la facture
+    </a>
+    <p style="font-size:13px;color:#76717f;margin:28px 0 0;">
+      Si le bouton ne fonctionne pas, copiez ce lien dans votre navigateur :<br>
+      <a href="${params.hostedInvoiceUrl}" style="color:#76717f;">${params.hostedInvoiceUrl}</a>
+    </p>
+  `);
+  const text = `${greeting}
+
+Voici votre facture de solde (70 %) pour : ${params.description}.
+
+Montant : ${params.balanceAmountEur.toFixed(2)} €
+
+Voir et payer la facture : ${params.hostedInvoiceUrl}
+
+— BUNKAIO`;
+  return { subject: `Bunkaio — Votre facture de solde (${params.balanceAmountEur.toFixed(2)} €)`, html, text };
+}
+
 /** Email de confirmation envoyé automatiquement après une soumission du quiz. */
 export function buildQuizConfirmationEmail(params: { customerName: string }): { subject: string; html: string; text: string } {
   const greeting = params.customerName ? `Bonjour ${params.customerName},` : 'Bonjour,';
