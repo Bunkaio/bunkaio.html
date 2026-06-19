@@ -112,6 +112,11 @@ export async function createDepositInvoice(
     collection_method: 'send_invoice',
     days_until_due: 7,
     auto_advance: true,
+    // Sans ce paramètre, Stripe exclut par défaut la ligne d'acompte qu'on
+    // vient de créer ci-dessus : la facture se finalise alors vide (0€) et
+    // est auto-marquée payée. C'est la cause des anciennes factures de test
+    // à 0€.
+    pending_invoice_items_behavior: 'include',
     metadata: {
       type: 'acompte_30',
       description: input.description,
