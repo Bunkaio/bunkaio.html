@@ -175,31 +175,50 @@ export function buildReviewRequestEmail(params: {
 }): { subject: string; html: string; text: string } {
   const greeting = params.customerName ? `Bonjour ${params.customerName},` : 'Bonjour,';
   const html = emailShell(`
-    <h1 style="font-size:20px;margin:0 0 16px;">Merci pour votre confiance !</h1>
+    <h1 style="font-size:22px;margin:0 0 18px;letter-spacing:-0.01em;">Projet livré.</h1>
     <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">${greeting}</p>
     <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">
-      Votre prestation est désormais entièrement réglée — un grand merci pour votre confiance tout au long du projet.
-      Pour vous remercier, <strong>15 % de réduction</strong> seront automatiquement appliqués sur votre prochaine prestation avec Bunkaio.
+      Votre prestation est désormais intégralement réglée — votre projet est officiellement achevé.
+      Merci d'avoir fait confiance à Bunkaio pour le mener à bien, du premier échange jusqu'à la livraison finale.
     </p>
-    <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">
-      Si vous avez apprécié votre expérience avec Bunkaio, un avis ne prend que deux minutes et nous aide énormément.
+    <p style="font-size:15px;line-height:1.6;margin:0 0 32px;">
+      En signe de reconnaissance pour cette collaboration, un avantage de <strong>15 % vous est dès à présent réservé</strong>
+      sur votre prochaine prestation avec Bunkaio — sans démarche de votre part, il s'appliquera automatiquement.
     </p>
-    <a href="${params.reviewUrl}" style="display:inline-block;background:#0a0a0c;color:#ffffff;text-decoration:none;padding:14px 28px;border-radius:4px;font-weight:600;font-size:15px;">
-      Laisser un avis Google
-    </a>
-    <p style="font-size:15px;line-height:1.6;margin:28px 0 0;">À très vite,<br>L'équipe Bunkaio</p>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 28px;">
+      <tr><td style="background:#0a0a0c;border-radius:10px;padding:32px 28px;text-align:center;">
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#d9cdf5;margin-bottom:12px;font-family:Helvetica,Arial,sans-serif;">
+          Votre regard compte
+        </div>
+        <div style="font-size:18px;font-weight:700;color:#ffffff;line-height:1.4;margin-bottom:14px;font-family:Helvetica,Arial,sans-serif;">
+          Votre expérience peut éclairer d'autres porteurs de projet
+        </div>
+        <div style="font-size:14px;line-height:1.6;color:rgba(255,255,255,0.6);margin-bottom:24px;">
+          Avant de se lancer, beaucoup hésitent encore. Un retour sincère comme le vôtre peut les aider à avancer
+          avec confiance — et à rejoindre, eux aussi, l'aventure Bunkaio.
+        </div>
+        <a href="${params.reviewUrl}" style="display:inline-block;background:#ffffff;color:#0a0a0c;text-decoration:none;padding:14px 32px;border-radius:4px;font-weight:700;font-size:15px;letter-spacing:0.01em;">
+          Partager mon expérience →
+        </a>
+      </td></tr>
+    </table>
+    <p style="font-size:15px;line-height:1.6;margin:0;">À très vite,<br>L'équipe Bunkaio</p>
   `);
   const text = `${greeting}
 
-Votre prestation est désormais entièrement réglée — un grand merci pour votre confiance tout au long du projet. Pour vous remercier, 15 % de réduction seront automatiquement appliqués sur votre prochaine prestation avec Bunkaio.
+Votre prestation est désormais intégralement réglée — votre projet est officiellement achevé. Merci d'avoir fait confiance à Bunkaio pour le mener à bien, du premier échange jusqu'à la livraison finale.
 
-Si vous avez apprécié votre expérience avec Bunkaio, un avis ne prend que deux minutes et nous aide énormément.
+En signe de reconnaissance pour cette collaboration, un avantage de 15 % vous est dès à présent réservé sur votre prochaine prestation avec Bunkaio — sans démarche de votre part, il s'appliquera automatiquement.
 
-Laisser un avis Google : ${params.reviewUrl}
+VOTRE REGARD COMPTE
+Votre expérience peut éclairer d'autres porteurs de projet
+Avant de se lancer, beaucoup hésitent encore. Un retour sincère comme le vôtre peut les aider à avancer avec confiance — et à rejoindre, eux aussi, l'aventure Bunkaio.
+
+Partager mon expérience : ${params.reviewUrl}
 
 À très vite,
 L'équipe Bunkaio`;
-  return { subject: 'Bunkaio — Merci pour votre confiance !', html, text };
+  return { subject: 'Bunkaio — Votre projet est officiellement livré', html, text };
 }
 
 /** Email de rappel envoyé automatiquement (cron) quand une facture d'acompte ou de solde reste impayée après son échéance. */
