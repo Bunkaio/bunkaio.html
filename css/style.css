@@ -1934,6 +1934,7 @@
   }
   .ft-brand-logo-img {
     width: 42px; height: 42px; object-fit: contain; box-sizing: border-box;
+    background: var(--black); border-radius: 10px; padding: 7px;
     display: block; margin-bottom: 6px;
     animation: logoOpacity 3.6s ease-in-out infinite;
   }
