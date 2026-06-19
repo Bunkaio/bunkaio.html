@@ -513,15 +513,16 @@ const SUBS = {
 };
 
 /* Formule spécialisée "Polas" — uniquement Mode & créateurs. Studio obligatoire (+60€, voir computeTotal).
-   Polas = photos simples sur fond blanc, sans artifice, peu retouchées, destinées aux dossiers d'agences de mannequins. */
+   Polas (digitals) = photos brutes et sans retouche, destinées exclusivement aux agences pour évaluer
+   la morphologie, la posture et le potentiel brut du mannequin — aucune mise en scène. */
 const POLAS = {
   mode: {
-    price: 290,
+    price: 190,
     name:{fr:'Polas', en:'Polas'},
     delay:{fr:'Livraison HD sous 24h', en:'HD delivery within 24h'},
     items:{
-      fr:['Séance studio sur fond blanc, lumière neutre','Photos simples et naturelles, sans mise en scène','Retouche minimale — conforme aux standards des agences','Fichiers HD prêts à transmettre à votre agence'],
-      en:['Studio session on a plain white background, neutral lighting','Simple, natural shots with no styling','Minimal retouching — meets modelling agency standards','HD files ready to send to your agency'] }
+      fr:['Séance studio sur fond blanc, lumière neutre','Photos brutes, sans retouche ni mise en scène','Visage, profils et plans corps entier','Fichiers HD prêts à transmettre à votre agence'],
+      en:['Studio session on a plain white background, neutral lighting','Raw shots, no retouching or styling','Face, profiles and full-body shots','HD files ready to send to your agency'] }
   }
 };
 
@@ -578,6 +579,17 @@ const PROFILES = [
   { id:'event',    name:{fr:'Agence événementielle',     en:'Event agency'},            icon:'event'   },
   { id:'autre',    name:{fr:'Autre',                     en:'Other'},                   icon:'autre'   }
 ];
+
+/* Profils cohérents affichés à l'étape "Quel profil êtes-vous ?" selon le domaine choisi à l'étape précédente. */
+const CAT_PROFILES = {
+  immobilier: ['agence', 'promo', 'marque', 'autre'],
+  archi:      ['agence', 'promo', 'marque', 'autre'],
+  cuisine:    ['artisan', 'marque', 'agence', 'gastro', 'autre'],
+  piscine:    ['paysage', 'artisan', 'marque', 'autre'],
+  artisan:    ['artisan', 'marque', 'autre'],
+  mode:       ['marque', 'agence', 'artisan', 'autre'],
+  event:      ['event', 'agence', 'marque', 'autre']
+};
 
 const PHOTO_PART_PROFILES = [
   { id:'seul',   name:{fr:'Seul(e)',   en:'Solo'},          icon:'person',
@@ -842,7 +854,9 @@ function renderCats(){
 function renderProfiles(){
   const el = document.getElementById('profGrid');
   el.innerHTML = '';
-  const profiles = S.cat === 'photo-part' ? PHOTO_PART_PROFILES : PROFILES;
+  const profiles = S.cat === 'photo-part'
+    ? PHOTO_PART_PROFILES
+    : (CAT_PROFILES[S.cat] ? PROFILES.filter(p => CAT_PROFILES[S.cat].includes(p.id)) : PROFILES);
   profiles.forEach((p, i) => {
     const d = document.createElement('div');
     d.className = 'prof-card stagger' + (S.prof === p.id ? ' selected' : '');
@@ -902,20 +916,42 @@ function renderTiers(){
   const subEl = document.getElementById('tierSub');
   subEl.textContent = POLAS[S.cat]
     ? (LANG === 'fr'
-        ? t(cat.name) + ' — quatre formules, de la découverte à l\'expérience éditoriale complète, ainsi qu\'un format signature Polas.'
-        : t(cat.name) + ' — four packages, from the starter offer to the complete editorial experience, plus a signature Polas format.')
+        ? t(cat.name) + ' — un format Polas pour mannequins, ainsi que quatre formules, de la découverte à l\'expérience éditoriale complète.'
+        : t(cat.name) + ' — a Polas format for models, plus four packages, from the starter offer to the complete editorial experience.')
     : (LANG === 'fr'
         ? t(cat.name) + ' — quatre formules, de la découverte à l\'expérience éditoriale complète.'
         : t(cat.name) + ' — four packages, from the starter offer to the complete editorial experience.');
   const el = document.getElementById('tierList');
   el.innerHTML = '';
-  TIERS.forEach((tier, i) => {
+  let slot = 0;
+  if (POLAS[S.cat]) {
+    const polas = POLAS[S.cat];
+    const total = polas.price + 60;
+    const threeX = Math.round(total / 3).toLocaleString('fr-FR');
+    const payLine = LANG === 'fr' ? `Soit 3 × ${threeX}€ sans frais` : `That's 3 × €${threeX} interest-free`;
+    const badge = LANG === 'fr' ? 'Spécial mannequins' : 'For models';
+    const studioNote = LANG === 'fr' ? 'Studio inclus (+60€)' : 'Studio included (+€60)';
+    const d = document.createElement('div');
+    d.className = 'tier-card stagger';
+    d.style.animationDelay = (0.24 + slot++ * 0.1) + 's';
+    d.innerHTML = `
+      <div class="tier-badge">${badge}</div>
+      <div class="tier-head">
+        <div class="tier-name">${t(polas.name)}</div>
+        <div class="tier-price">${total.toLocaleString('fr-FR')}€<small>HT</small></div>
+      </div>
+      <div class="tier-pay-line">${payLine}</div>
+      <div class="tier-detail">${t(polas.items).join(' · ')} · ${studioNote}</div>`;
+    d.onclick = () => { S.tier = 'polas'; renderRecap(); renderOptions(); quizStep(4); };
+    el.appendChild(d);
+  }
+  TIERS.forEach((tier) => {
     const td = cat.tiers[tier.id];
     const threeX = Math.round(td.price / 3).toLocaleString('fr-FR');
     const payLine = LANG === 'fr' ? `Soit 3 × ${threeX}€ sans frais` : `That's 3 × €${threeX} interest-free`;
     const d = document.createElement('div');
     d.className = 'tier-card stagger';
-    d.style.animationDelay = (0.24 + i * 0.1) + 's';
+    d.style.animationDelay = (0.24 + slot++ * 0.1) + 's';
     d.innerHTML = `
       ${tier.badge ? `<div class="tier-badge">${t(tier.badge)}</div>` : ''}
       <div class="tier-head">
@@ -931,7 +967,7 @@ function renderTiers(){
     const sub = SUBS[S.cat];
     const d = document.createElement('div');
     d.className = 'tier-card sub-card stagger';
-    d.style.animationDelay = (0.24 + TIERS.length * 0.1) + 's';
+    d.style.animationDelay = (0.24 + slot++ * 0.1) + 's';
     const badge = LANG === 'fr' ? 'Abonnement mensuel' : 'Monthly plan';
     const engagement = LANG === 'fr' ? 'Engagement minimum : 6 mois' : 'Minimum commitment: 6 months';
     const saving = LANG === 'fr' ? 'Bien plus avantageux qu\'un achat ponctuel' : 'Far better value than individual bookings';
@@ -944,27 +980,6 @@ function renderTiers(){
       <div class="tier-detail">${t(sub.items).join(' · ')}</div>
       <div class="sub-engagement">${engagement} · ${saving}</div>`;
     d.onclick = () => { S.tier = 'sub'; renderRecap(); renderOptions(); quizStep(4); };
-    el.appendChild(d);
-  }
-  if (POLAS[S.cat]) {
-    const polas = POLAS[S.cat];
-    const total = polas.price + 60;
-    const threeX = Math.round(total / 3).toLocaleString('fr-FR');
-    const payLine = LANG === 'fr' ? `Soit 3 × ${threeX}€ sans frais` : `That's 3 × €${threeX} interest-free`;
-    const badge = LANG === 'fr' ? 'Format signature' : 'Signature format';
-    const studioNote = LANG === 'fr' ? 'Studio inclus (+60€)' : 'Studio included (+€60)';
-    const d = document.createElement('div');
-    d.className = 'tier-card stagger';
-    d.style.animationDelay = (0.24 + (TIERS.length + (SUBS[S.cat] ? 1 : 0)) * 0.1) + 's';
-    d.innerHTML = `
-      <div class="tier-badge">${badge}</div>
-      <div class="tier-head">
-        <div class="tier-name">${t(polas.name)}</div>
-        <div class="tier-price">${total.toLocaleString('fr-FR')}€<small>HT</small></div>
-      </div>
-      <div class="tier-pay-line">${payLine}</div>
-      <div class="tier-detail">${t(polas.items).join(' · ')} · ${studioNote}</div>`;
-    d.onclick = () => { S.tier = 'polas'; renderRecap(); renderOptions(); quizStep(4); };
     el.appendChild(d);
   }
 }
