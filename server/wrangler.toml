@@ -9,8 +9,12 @@ ALLOWED_ORIGINS = "https://bunkaio.com,https://www.bunkaio.com"
 # Adresse d'expédition des emails (factures, confirmations). Doit appartenir
 # à un domaine vérifié dans Resend — voir README.md de ce dossier.
 EMAIL_FROM = "BUNKAIO <contact@bunkaio.com>"
+# Adresse qui reçoit les notifications internes (ex. paiement d'une facture
+# reçu). Peut être la même que l'adresse ci-dessus.
+ADMIN_NOTIFICATION_EMAIL = "contact@bunkaio.com"
 
-# STRIPE_SECRET_KEY et RESEND_API_KEY ne sont volontairement PAS définis ici :
-# ce sont des secrets. Ils doivent être injectés avec
-# `npx wrangler secret put STRIPE_SECRET_KEY` / `RESEND_API_KEY`
-# (voir README.md de ce dossier). Ils n'apparaissent jamais dans le repo.
+# STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET et RESEND_API_KEY ne sont
+# volontairement PAS définis ici : ce sont des secrets. Ils doivent être
+# injectés avec `npx wrangler secret put STRIPE_SECRET_KEY` /
+# `STRIPE_WEBHOOK_SECRET` / `RESEND_API_KEY` (voir README.md de ce dossier).
+# Ils n'apparaissent jamais dans le repo.

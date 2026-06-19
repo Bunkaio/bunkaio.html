@@ -1,10 +1,19 @@
-import { buildBalanceInvoiceEmail, buildDepositInvoiceEmail, buildQuizConfirmationEmail, sendEmail } from './email';
-import { createBalanceInvoice, createDepositInvoice, createStripeClient, upsertQuizCustomer } from './stripe';
+import type Stripe from 'stripe';
+import {
+  buildAdminPaymentNotificationEmail,
+  buildBalanceInvoiceEmail,
+  buildDepositInvoiceEmail,
+  buildPaymentConfirmationEmail,
+  buildQuizConfirmationEmail,
+  sendEmail,
+} from './email';
+import { createBalanceInvoice, createDepositInvoice, createStripeClient, upsertQuizCustomer, verifyWebhookEvent } from './stripe';
 import type { DepositInvoiceInput, Env, QuizLeadPayload } from './types';
 
 const QUIZ_LEAD_ROUTE = '/quiz-lead';
 const DEPOSIT_INVOICE_ROUTE = '/create-deposit-invoice';
 const BALANCE_INVOICE_ROUTE = '/create-balance-invoice';
+const STRIPE_WEBHOOK_ROUTE = '/stripe-webhook';
 
 /**
  * Détermine l'en-tête Access-Control-Allow-Origin à renvoyer : on échoue
@@ -220,6 +229,86 @@ async function handleCreateBalanceInvoice(request: Request, env: Env, headers: R
   }
 }
 
+/**
+ * Reçoit les événements webhook Stripe. Déclenche un email de confirmation
+ * au client et une notification interne dès qu'une facture d'acompte ou de
+ * solde (créées par les routes ci-dessus) est marquée payée par Stripe.
+ *
+ * `invoice.paid` est utilisé plutôt que `invoice.payment_succeeded` car il
+ * se déclenche aussi pour les paiements marqués manuellement (hors carte).
+ *
+ * La signature est vérifiée via `STRIPE_WEBHOOK_SECRET` (distinct de la clé
+ * API Stripe) — c'est ce qui garantit que la requête vient bien de Stripe.
+ */
+async function handleStripeWebhook(request: Request, env: Env, headers: Record<string, string>): Promise<Response> {
+  if (request.method !== 'POST') {
+    return jsonResponse({ ok: false, error: 'method_not_allowed' }, 405, headers);
+  }
+
+  const signature = request.headers.get('stripe-signature');
+  if (!signature) {
+    console.error('[stripe-webhook] en-tête stripe-signature manquant');
+    return jsonResponse({ ok: false, error: 'missing_signature' }, 400, headers);
+  }
+
+  // Le corps doit être lu en texte brut (pas en JSON) : la vérification de
+  // signature recalcule un HMAC sur les octets exacts envoyés par Stripe.
+  const payload = await request.text();
+  const stripe = createStripeClient(env.STRIPE_SECRET_KEY);
+
+  let event: Stripe.Event;
+  try {
+    event = await verifyWebhookEvent(stripe, payload, signature, env.STRIPE_WEBHOOK_SECRET);
+  } catch (err) {
+    console.error('[stripe-webhook] signature invalide', err);
+    return jsonResponse({ ok: false, error: 'invalid_signature' }, 400, headers);
+  }
+
+  if (event.type !== 'invoice.paid') {
+    return jsonResponse({ ok: true, ignored: true }, 200, headers);
+  }
+
+  const invoice = event.data.object as Stripe.Invoice;
+  const invoiceType = invoice.metadata?.type;
+  if (invoiceType !== 'acompte_30' && invoiceType !== 'solde_70') {
+    // Facture payée mais pas créée par nos automatisations (ex. facture manuelle) — on ignore.
+    return jsonResponse({ ok: true, ignored: true }, 200, headers);
+  }
+
+  const customerName = invoice.customer_name ?? '';
+  const customerEmail = invoice.customer_email ?? '';
+  const description = invoice.metadata?.description ?? '';
+  const amountEur = invoice.amount_paid / 100;
+  const kind: 'acompte' | 'solde' = invoiceType === 'acompte_30' ? 'acompte' : 'solde';
+
+  console.log('[stripe-webhook] facture payée', { invoiceId: invoice.id, kind, amountEur, customerEmail });
+
+  if (customerEmail) {
+    try {
+      const { subject, html, text } = buildPaymentConfirmationEmail({ customerName, description, amountEur, invoiceType: kind });
+      await sendEmail(env, customerEmail, subject, html, text);
+    } catch (err) {
+      console.error('[stripe-webhook] échec email de confirmation client', err);
+    }
+  }
+
+  try {
+    const { subject, html, text } = buildAdminPaymentNotificationEmail({
+      customerName,
+      customerEmail,
+      description,
+      amountEur,
+      invoiceType: kind,
+      invoiceId: invoice.id,
+    });
+    await sendEmail(env, env.ADMIN_NOTIFICATION_EMAIL, subject, html, text);
+  } catch (err) {
+    console.error('[stripe-webhook] échec notification admin', err);
+  }
+
+  return jsonResponse({ ok: true }, 200, headers);
+}
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const headers = corsHeaders(resolveAllowedOrigin(request.headers.get('Origin'), env.ALLOWED_ORIGINS));
@@ -238,6 +327,9 @@ export default {
     }
     if (url.pathname === BALANCE_INVOICE_ROUTE) {
       return handleCreateBalanceInvoice(request, env, headers);
+    }
+    if (url.pathname === STRIPE_WEBHOOK_ROUTE) {
+      return handleStripeWebhook(request, env, headers);
     }
     return jsonResponse({ ok: false, error: 'not_found' }, 404, headers);
   },

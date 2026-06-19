@@ -150,3 +150,19 @@ export async function createBalanceInvoice(stripe: Stripe, input: DepositInvoice
   const { amountEur, ...rest } = result;
   return { ...rest, balanceAmountEur: amountEur };
 }
+
+/**
+ * Vérifie la signature d'un événement webhook Stripe et le décode.
+ * Utilise un CryptoProvider basé sur SubtleCrypto (Web Crypto API) au lieu
+ * du module `crypto` natif de Node, indisponible dans le runtime Workers.
+ * Lève une erreur si la signature est invalide (requête non envoyée par Stripe).
+ */
+export async function verifyWebhookEvent(
+  stripe: Stripe,
+  payload: string,
+  signature: string,
+  secret: string
+): Promise<Stripe.Event> {
+  const cryptoProvider = Stripe.createSubtleCryptoProvider();
+  return stripe.webhooks.constructEventAsync(payload, signature, secret, undefined, cryptoProvider);
+}

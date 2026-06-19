@@ -97,6 +97,65 @@ Voir et payer la facture : ${params.hostedInvoiceUrl}
   return { subject: `Bunkaio — Votre facture de solde (${params.balanceAmountEur.toFixed(2)} €)`, html, text };
 }
 
+/** Email envoyé au client dès que Stripe confirme le paiement d'une facture (acompte ou solde), via le webhook. */
+export function buildPaymentConfirmationEmail(params: {
+  customerName: string;
+  description: string;
+  amountEur: number;
+  invoiceType: 'acompte' | 'solde';
+}): { subject: string; html: string; text: string } {
+  const greeting = params.customerName ? `Bonjour ${params.customerName},` : 'Bonjour,';
+  const isDeposit = params.invoiceType === 'acompte';
+  const message = isDeposit
+    ? `Nous avons bien reçu votre acompte pour : <strong>${params.description}</strong>. Votre projet est officiellement lancé — nous revenons vers vous prochainement pour la suite.`
+    : `Nous avons bien reçu le solde pour : <strong>${params.description}</strong>. Le règlement de votre prestation est désormais complet. Merci pour votre confiance !`;
+  const messageText = isDeposit
+    ? `Nous avons bien reçu votre acompte pour : ${params.description}. Votre projet est officiellement lancé — nous revenons vers vous prochainement pour la suite.`
+    : `Nous avons bien reçu le solde pour : ${params.description}. Le règlement de votre prestation est désormais complet. Merci pour votre confiance !`;
+  const html = emailShell(`
+    <h1 style="font-size:20px;margin:0 0 16px;">Paiement reçu</h1>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">${greeting}</p>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">${message}</p>
+    <p style="font-size:24px;font-weight:700;margin:0 0 8px;">${params.amountEur.toFixed(2)} €</p>
+    <p style="font-size:13px;color:#76717f;margin:0 0 28px;">${isDeposit ? 'Acompte (30 %)' : 'Solde (70 %)'} réglé</p>
+    <p style="font-size:15px;line-height:1.6;margin:0;">À très vite,<br>L'équipe Bunkaio</p>
+  `);
+  const text = `${greeting}
+
+${messageText}
+
+Montant réglé : ${params.amountEur.toFixed(2)} € (${isDeposit ? 'acompte 30 %' : 'solde 70 %'})
+
+À très vite,
+L'équipe Bunkaio`;
+  return { subject: `Bunkaio — Paiement reçu (${params.amountEur.toFixed(2)} €)`, html, text };
+}
+
+/** Notification interne envoyée à l'administratrice dès qu'un paiement (acompte ou solde) est confirmé par Stripe. */
+export function buildAdminPaymentNotificationEmail(params: {
+  customerName: string;
+  customerEmail: string;
+  description: string;
+  amountEur: number;
+  invoiceType: 'acompte' | 'solde';
+  invoiceId: string;
+}): { subject: string; html: string; text: string } {
+  const label = params.invoiceType === 'acompte' ? 'Acompte (30 %)' : 'Solde (70 %)';
+  const lines = [
+    `Client : ${params.customerName || '(sans nom)'} <${params.customerEmail}>`,
+    `Projet : ${params.description}`,
+    `Type : ${label}`,
+    `Montant réglé : ${params.amountEur.toFixed(2)} €`,
+    `Facture Stripe : ${params.invoiceId}`,
+  ];
+  const html = `<p style="font-family:Helvetica,Arial,sans-serif;font-size:14px;line-height:1.6;color:#0a0a0c;">
+    💰 <strong>Paiement reçu</strong><br><br>
+    ${lines.join('<br>')}
+  </p>`;
+  const text = `Paiement reçu\n\n${lines.join('\n')}`;
+  return { subject: `💰 Paiement reçu — ${params.customerName || params.customerEmail} (${label})`, html, text };
+}
+
 /** Email de confirmation envoyé automatiquement après une soumission du quiz. */
 export function buildQuizConfirmationEmail(params: { customerName: string }): { subject: string; html: string; text: string } {
   const greeting = params.customerName ? `Bonjour ${params.customerName},` : 'Bonjour,';

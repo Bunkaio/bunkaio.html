@@ -167,6 +167,53 @@ mais l'email échoue : la page admin affiche alors le lien de paiement à
 transmettre toi-même au client, en attendant que la vérification Resend
 soit terminée.
 
+## Quatrième brique : confirmation automatique de paiement (webhook Stripe)
+
+Jusqu'ici, rien ne se passait automatiquement quand un client payait
+réellement une facture d'acompte ou de solde — il fallait aller vérifier
+soi-même dans le Dashboard Stripe. Le Worker expose maintenant une route
+`/stripe-webhook` que Stripe appelle dès qu'une facture est payée. Elle
+déclenche automatiquement :
+
+- un email de confirmation/remerciement au client ;
+- une notification interne (par email, à `ADMIN_NOTIFICATION_EMAIL`) pour
+  ne plus avoir à surveiller Stripe manuellement.
+
+Seules les factures créées par `/create-deposit-invoice` et
+`/create-balance-invoice` déclenchent ces emails (reconnues via leur
+metadata Stripe) — une facture payée créée manuellement ailleurs dans
+Stripe est ignorée silencieusement.
+
+### Configuration du webhook
+
+1. Dans le [Dashboard Stripe](https://dashboard.stripe.com/webhooks) → **Développeurs** → **Webhooks** → **Add an endpoint**.
+2. URL de l'endpoint :
+   ```
+   https://bunkaio-quiz-stripe.<ton-sous-domaine>.workers.dev/stripe-webhook
+   ```
+3. Dans **Select events to listen to**, sélectionne uniquement **`invoice.paid`**.
+4. Une fois l'endpoint créé, Stripe affiche une **Signing secret** (commence par `whsec_...`) — copie-la.
+5. Injecte-la dans le Worker :
+
+```bash
+npx wrangler secret put STRIPE_WEBHOOK_SECRET
+# colle la valeur whsec_... quand demandé, puis Entrée
+```
+
+6. Vérifie que `ADMIN_NOTIFICATION_EMAIL` dans `wrangler.toml` correspond
+   bien à l'adresse où tu veux recevoir les notifications de paiement
+   (par défaut `contact@bunkaio.com`).
+7. Redéploie :
+
+```bash
+npm run deploy
+```
+
+Pour tester, paye une facture de test générée depuis `admin/index.html`
+(en mode test Stripe), puis vérifie dans `npm run tail` que la ligne
+`[stripe-webhook] facture payée` apparaît, et que les deux emails sont
+bien reçus.
+
 ## Voir les logs en production
 
 ```bash

@@ -4,10 +4,12 @@
  */
 export interface Env {
   STRIPE_SECRET_KEY: string;
+  STRIPE_WEBHOOK_SECRET: string;
   ALLOWED_ORIGINS: string;
   ADMIN_TOKEN: string;
   RESEND_API_KEY: string;
   EMAIL_FROM: string;
+  ADMIN_NOTIFICATION_EMAIL: string;
 }
 
 /**
