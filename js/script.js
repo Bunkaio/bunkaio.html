@@ -307,11 +307,17 @@ function updateLang(){
   document.getElementById('langBtn').textContent = LANG === 'fr' ? 'EN' : 'FR';
   updatePlaceholders();
   refreshDynamic();
+  syncNavHeight();
 }
 
 function toggleLang(){
   LANG = LANG === 'fr' ? 'en' : 'fr';
   updateLang();
+}
+
+function syncNavHeight(){
+  const nav = document.querySelector('nav');
+  if (nav) document.documentElement.style.setProperty('--nav-h', nav.offsetHeight + 'px');
 }
 
 function refreshDynamic(){
@@ -1925,3 +1931,5 @@ updatePlaceholders();
 updateLang();
 applyImages();
 document.querySelectorAll('.ph').forEach(observe);
+syncNavHeight();
+window.addEventListener('resize', syncNavHeight);
