@@ -27,6 +27,18 @@
 
   ::selection { background: var(--black); color: var(--white); }
 
+  /* ─── FOND DE PAGE (image à faible opacité) ─── */
+  .page-bg {
+    position: fixed; inset: 0;
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 0;
+    transition: background-image 0.1s, opacity 1.2s var(--ease);
+    will-change: opacity;
+  }
+
   .orb {
     position: fixed; border-radius: 50%;
     filter: blur(90px); pointer-events: none; z-index: 0;
@@ -80,7 +92,7 @@
   }
   .nav-studio { font-size: 9px; font-weight: 600; letter-spacing: 0.3em; text-transform: uppercase; color: var(--grey); }
 
-  .nav-links { display: flex; gap: 30px; align-items: center; flex-wrap: nowrap; justify-content: flex-end; }
+  .nav-links { display: flex; gap: 30px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
   .nav-link {
     font-size: 12px; font-weight: 600; letter-spacing: 0.06em;
     text-transform: uppercase; color: var(--black);
@@ -215,17 +227,16 @@
     display: block;
   }
   .page-hero-overlay {
-    position: absolute; inset: 0;
-    z-index: 2;
+    position: absolute; inset: 0; z-index: 2;
     background: linear-gradient(
       to bottom,
-      rgba(200,170,240,0.14) 0%,
-      transparent 40%,
-      rgba(246,243,253,0.6) 100%
+      rgba(228, 215, 252, 0.35) 0%,    /* violet clair */
+      rgba(255, 255, 255, 0.04) 38%,   /* quasi transparent */
+      rgba(255, 255, 255, 0.65) 100%   /* blanc */
     );
     pointer-events: none;
   }
-  /* ─── PAGE-BG (fond semi-transparent) ─── */
+  /* ─── PAGE-BG (fond semi-transparent via CSS variable) ─── */
   html::before {
     content: '';
     position: fixed; top:0; left:0; width:100%; height:100%;
@@ -1946,264 +1957,6 @@
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
   }
-PE html>
-<html lang="fr">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>STUDIO BUNKAIO</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='80' font-family='serif'>⊹</text></svg>">
-  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap');
-
-  :root {
-    --black: #0a0a0c;
-    --white: #ffffff;
-    --grey: #76717f;
-    --line: rgba(20, 10, 40, 0.09);
-    --violet: #f1ecfa;
-    --violet-deep: #e6def5;
-    --ease: cubic-bezier(0.22, 1, 0.36, 1);
-    --ease-luxe: cubic-bezier(0.65, 0, 0.35, 1);
-    --nav-h: 90px;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
-
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: linear-gradient(175deg, #ffffff 0%, #fdfcff 35%, #f6f1fc 70%, var(--violet) 100%);
-    background-attachment: fixed;
-    color: var(--black);
-    -webkit-font-smoothing: antialiased;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  ::selection { background: var(--black); color: var(--white); }
-
-  /* ─── FOND DE PAGE (image à faible opacité) ─── */
-  .page-bg {
-    position: fixed; inset: 0;
-    background-size: cover;
-    background-position: center;
-    opacity: 0;
-    pointer-events: none;
-    z-index: 0;
-    transition: background-image 0.1s, opacity 1.2s var(--ease);
-    will-change: opacity;
-  }
-
-  .orb {
-    position: fixed; border-radius: 50%;
-    filter: blur(90px); pointer-events: none; z-index: 0;
-    opacity: 0.5;
-    animation: orbFloat 18s ease-in-out infinite alternate;
-  }
-  .orb-1 { width: 480px; height: 480px; background: radial-gradient(circle, #ece2fb, transparent 70%); top: -10%; right: -8%; }
-  .orb-2 { width: 380px; height: 380px; background: radial-gradient(circle, #f3edfc, transparent 70%); bottom: -6%; left: -6%; animation-delay: -9s; }
-  @keyframes orbFloat {
-    from { transform: translate(0, 0) scale(1); }
-    to   { transform: translate(-40px, 30px) scale(1.08); }
-  }
-
-  .veil {
-    position: fixed; inset: 0; z-index: 900;
-    background: var(--black);
-    transform: scaleY(0); transform-origin: bottom;
-    pointer-events: none;
-  }
-  .veil.sweep { animation: veilSweep 0.9s var(--ease-luxe) forwards; }
-  @keyframes veilSweep {
-    0%   { transform: scaleY(0); transform-origin: bottom; }
-    45%  { transform: scaleY(1); transform-origin: bottom; }
-    55%  { transform: scaleY(1); transform-origin: top; }
-    100% { transform: scaleY(0); transform-origin: top; }
-  }
-
-  nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 300;
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 16px 48px;
-    background: rgba(255, 255, 255, 0.94);
-    backdrop-filter: blur(24px) saturate(1.6);
-    -webkit-backdrop-filter: blur(24px) saturate(1.6);
-    border-bottom: 1px solid rgba(180, 150, 230, 0.1);
-    box-shadow: 0 1px 0 rgba(200,170,240,0.1), 0 8px 32px rgba(150,100,220,0.03);
-    gap: 20px;
-  }
-
-  .nav-brand { cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; flex-shrink: 0; }
-  .nav-logo-img {
-    width: 42px; height: 42px; object-fit: contain; box-sizing: border-box;
-    background: var(--black); border-radius: 10px; padding: 7px;
-    animation: logoOpacity 3.6s ease-in-out infinite;
-  }
-  @keyframes logoOpacity { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
-  .nav-logo-fallback {
-    display: none;
-    font-size: 22px; font-weight: 700; letter-spacing: -0.02em;
-    animation: logoOpacity 3.6s ease-in-out infinite;
-  }
-  .nav-studio { font-size: 9px; font-weight: 600; letter-spacing: 0.3em; text-transform: uppercase; color: var(--grey); }
-
-  .nav-links { display: flex; gap: 30px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
-  .nav-link {
-    font-size: 12px; font-weight: 600; letter-spacing: 0.06em;
-    text-transform: uppercase; color: var(--black);
-    cursor: pointer; position: relative; padding: 6px 0;
-    background: none; border: none; font-family: inherit;
-    overflow: visible;
-  }
-  .nav-link::after {
-    content: ''; position: absolute; bottom: 0; left: 0;
-    width: 0; height: 1px; background: var(--black);
-    transition: width 0.45s var(--ease);
-  }
-  .nav-link:hover::after, .nav-link.active::after { width: 100%; }
-
-  .lang-toggle {
-    font-size: 11px; font-weight: 700; letter-spacing: 0.02em;
-    background: none; border: 1px solid rgba(10,10,12,0.18);
-    padding: 7px 14px; cursor: pointer; color: var(--black);
-    font-family: inherit;
-    transition: all 0.35s var(--ease);
-  }
-  .lang-toggle:hover { border-color: var(--black); }
-
-  .nav-connect {
-    font-size: 11px; font-weight: 600; letter-spacing: 0.16em;
-    text-transform: uppercase;
-    background: rgba(10,10,12,0.05);
-    border: 1px solid rgba(10,10,12,0.22);
-    padding: 9px 20px;
-    cursor: pointer; color: var(--black);
-    font-family: inherit;
-    position: relative; overflow: hidden;
-    transition: color 0.4s var(--ease), background 0.4s var(--ease), border-color 0.4s var(--ease);
-  }
-  .nav-connect span { position: relative; z-index: 1; }
-  .nav-connect::before {
-    content: ''; position: absolute; inset: 0;
-    background: var(--black);
-    transform: scaleX(0); transform-origin: right;
-    transition: transform 0.45s var(--ease-luxe);
-  }
-  .nav-connect:hover { color: var(--white); }
-  .nav-connect:hover::before { transform: scaleX(1); transform-origin: left; }
-
-  .view { display: none; position: relative; z-index: 1; }
-  .view.active { display: block; animation: viewIn 0.8s var(--ease) both; }
-  @keyframes viewIn {
-    from { opacity: 0; transform: translateY(26px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  .hero {
-    min-height: 100vh;
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    text-align: center;
-    padding: 150px 28px 100px;
-    position: relative;
-  }
-  .hero-kicker {
-    font-size: 11px; font-weight: 500; letter-spacing: 0.34em;
-    text-transform: uppercase; color: var(--grey);
-    margin-bottom: 30px; padding: 0 10px;
-    opacity: 0; animation: riseIn 1s var(--ease) 0.2s forwards;
-  }
-  .hero-title {
-    font-size: clamp(30px, 4.6vw, 56px);
-    font-weight: 700; letter-spacing: -0.03em; line-height: 1.15;
-    padding: 0 12px 6px;
-    overflow: visible;
-  }
-  .hero-title .word {
-    display: inline-block;
-    opacity: 0; transform: translateY(34px);
-    animation: wordUp 1s var(--ease-luxe) forwards;
-  }
-  @keyframes wordUp { to { opacity: 1; transform: translateY(0); } }
-  .hero-line {
-    width: 1px; height: 60px; background: linear-gradient(to bottom, var(--black), transparent);
-    margin: 46px 0;
-    transform: scaleY(0); transform-origin: top;
-    animation: lineGrow 1s var(--ease-luxe) 1.1s forwards;
-  }
-  .hero-start {
-    font-size: 11.5px; font-weight: 600; letter-spacing: 0.08em;
-    text-transform: uppercase;
-    border: 1px solid rgba(10,10,12,0.28);
-    background: rgba(255,255,255,0.18);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    color: var(--black);
-    padding: 19px 54px; cursor: pointer;
-    font-family: inherit;
-    position: relative; overflow: hidden;
-    transition: color 0.5s var(--ease), border-color 0.5s var(--ease);
-    opacity: 0; animation: riseIn 1s var(--ease) 1.35s forwards;
-  }
-  .hero-start span { position: relative; z-index: 1; }
-  .hero-start::before {
-    content: ''; position: absolute; inset: 0;
-    background: rgba(10,10,12,0.9);
-    transform: scaleX(0); transform-origin: left;
-    transition: transform 0.55s var(--ease-luxe);
-  }
-  .hero-start:hover { color: var(--white); border-color: rgba(10,10,12,0.9); }
-  .hero-start:hover::before { transform: scaleX(1); }
-  @keyframes riseIn {
-    from { opacity: 0; transform: translateY(16px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes lineGrow { to { transform: scaleY(1); } }
-
-  /* ─── HERO CAROUSEL par page ─── */
-  .page-hero-wrap {
-    position: relative;
-    width: 100%;
-    margin-top: var(--nav-h);
-    aspect-ratio: 21/9;
-    overflow: hidden;
-    z-index: 1;
-    background: linear-gradient(135deg, #f6f3fd 0%, #ede5f8 100%);
-  }
-  .hero-slide {
-    position: absolute; inset: 0;
-    opacity: 0;
-    transition: opacity 1.4s ease;
-  }
-  .hero-slide.active { opacity: 1; }
-  .hero-slide img {
-    width: 100%; height: 100%;
-    object-fit: cover; object-position: center;
-    display: block;
-  }
-  .page-hero-overlay {
-    position: absolute; inset: 0; z-index: 2;
-    background: linear-gradient(
-      to bottom,
-      rgba(228, 215, 252, 0.35) 0%,    /* violet clair */
-      rgba(255, 255, 255, 0.04) 38%,   /* quasi transparent */
-      rgba(255, 255, 255, 0.65) 100%   /* blanc */
-    );
-    pointer-events: none;
-  }
-  /* ─── PAGE-BG (fond semi-transparent via CSS variable) ─── */
-  html::before {
-    content: '';
-    position: fixed; top:0; left:0; width:100%; height:100%;
-    background-image: var(--page-bg-url, none);
-    background-size: cover; background-position: center;
-    opacity: 0.07;
-    pointer-events: none;
-    z-index: -1;
-    -webkit-transform: translateZ(0);
-    transform: translateZ(0);
-  }
-  
   /* ─── ESTIMATION CALCULATEUR ─── */
   .price-calc-wrap {
     text-align: center;
