@@ -72,23 +72,47 @@
 <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
 
 <nav>
-  <div class="nav-brand" onclick="goView('home')">
-    <img class="nav-logo-img" src="images/logo.png" alt="Bunkaio"
-         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-    <div class="nav-logo-fallback">B ⊹</div>
-    <div class="nav-studio">studio</div>
-  </div>
-  <div class="nav-links">
-    <button class="nav-link" data-view="quiz" onclick="goView('quiz')" data-lang="estimate">Devis</button>
-    <button class="nav-link" data-view="services" onclick="goView('services')" data-lang="services">Services</button>
-    <button class="nav-link" data-view="portfolio" onclick="goView('portfolio')" data-lang="portfolio">Portfolio</button>
-    <button class="nav-link" data-view="drone" onclick="goView('drone')" data-lang="drone">4K Drone</button>
-    <button class="nav-link" data-view="contact" onclick="goView('contact')" data-lang="contact">Contact</button>
-    <button class="nav-link" data-view="partners" onclick="goView('partners')" data-lang="partners">Partenaires</button>
-    <button class="nav-connect" onclick="openLogin('client')"><span data-lang="nav-connect">Connexion</span></button>
-    <button class="lang-toggle" onclick="toggleLang()" id="langBtn">EN</button>
+  <div class="nav-inner">
+    <div class="nav-brand" onclick="goView('home')">
+      <img class="nav-logo-img" src="images/logo.png" alt="Bunkaio"
+           onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+      <div class="nav-logo-fallback">B ⊹</div>
+      <div class="nav-studio">studio</div>
+    </div>
+    <div class="nav-center">
+      <button class="nav-link" data-view="quiz" onclick="goView('quiz')" data-lang="estimate">Devis</button>
+      <button class="nav-link" data-view="services" onclick="goView('services')" data-lang="services">Services</button>
+      <button class="nav-link" data-view="portfolio" onclick="goView('portfolio')" data-lang="portfolio">Portfolio</button>
+      <button class="nav-link" data-view="drone" onclick="goView('drone')" data-lang="drone">4K Drone</button>
+      <button class="nav-link" data-view="contact" onclick="goView('contact')" data-lang="contact">Contact</button>
+      <button class="nav-link" data-view="partners" onclick="goView('partners')" data-lang="partners">Partenaires</button>
+    </div>
+    <div class="nav-utils">
+      <button class="lang-toggle" onclick="toggleLang()" id="langBtn">EN</button>
+      <button class="nav-connect" onclick="openLogin('client')"><span data-lang="nav-connect">Connexion</span></button>
+      <button class="nav-cta" onclick="goView('quiz')" data-lang="start">Estimer mon projet</button>
+      <button class="nav-burger" id="navBurger" aria-label="Menu" aria-expanded="false" onclick="toggleMobileMenu()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
   </div>
 </nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <div class="mobile-menu-links">
+    <button class="nav-link mobile-link" data-view="quiz" onclick="goView('quiz');closeMobileMenu()" data-lang="estimate">Devis</button>
+    <button class="nav-link mobile-link" data-view="services" onclick="goView('services');closeMobileMenu()" data-lang="services">Services</button>
+    <button class="nav-link mobile-link" data-view="portfolio" onclick="goView('portfolio');closeMobileMenu()" data-lang="portfolio">Portfolio</button>
+    <button class="nav-link mobile-link" data-view="drone" onclick="goView('drone');closeMobileMenu()" data-lang="drone">4K Drone</button>
+    <button class="nav-link mobile-link" data-view="contact" onclick="goView('contact');closeMobileMenu()" data-lang="contact">Contact</button>
+    <button class="nav-link mobile-link" data-view="partners" onclick="goView('partners');closeMobileMenu()" data-lang="partners">Partenaires</button>
+  </div>
+  <button class="nav-cta mobile-cta" onclick="goView('quiz');closeMobileMenu()" data-lang="start">Estimer mon projet</button>
+  <div class="mobile-menu-footer">
+    <button class="nav-connect" onclick="openLogin('client');closeMobileMenu()"><span data-lang="nav-connect">Connexion</span></button>
+    <button class="lang-toggle" onclick="toggleLang()">EN</button>
+  </div>
+</div>
 
 <!-- IMAGE HERO — différente par page
      Modifier les URLs dans IMG.heroImages (en haut du script)  -->

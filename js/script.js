@@ -304,7 +304,7 @@ function updateLang(){
     if (I18N[LANG][key] !== undefined) el.innerHTML = I18N[LANG][key];
   });
   document.documentElement.lang = LANG;
-  document.getElementById('langBtn').textContent = LANG === 'fr' ? 'EN' : 'FR';
+  document.querySelectorAll('.lang-toggle').forEach(el => el.textContent = LANG === 'fr' ? 'EN' : 'FR');
   updatePlaceholders();
   refreshDynamic();
   syncNavHeight();
@@ -338,6 +338,40 @@ function initHeroScrollFx(){
     }
   }, { passive: true });
   updateHeroScrollFx();
+}
+
+function updateNavScrollState(){
+  const nav = document.querySelector('nav');
+  if (!nav) return;
+  nav.classList.toggle('scrolled', window.scrollY > 16);
+  syncNavHeight();
+}
+
+function initNavScrollState(){
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (!ticking){
+      requestAnimationFrame(() => { updateNavScrollState(); ticking = false; });
+      ticking = true;
+    }
+  }, { passive: true });
+  updateNavScrollState();
+}
+
+function toggleMobileMenu(){
+  const isOpen = document.body.classList.contains('menu-open');
+  if (isOpen) closeMobileMenu(); else openMobileMenu();
+}
+
+function openMobileMenu(){
+  document.body.classList.add('menu-open');
+  document.getElementById('navBurger').setAttribute('aria-expanded', 'true');
+}
+
+function closeMobileMenu(){
+  document.body.classList.remove('menu-open');
+  const burger = document.getElementById('navBurger');
+  if (burger) burger.setAttribute('aria-expanded', 'false');
 }
 
 function refreshDynamic(){
@@ -802,6 +836,8 @@ function goView(v){
     document.querySelectorAll('.nav-link').forEach(l => l.classList.toggle('active', l.dataset.view === v));
     window.scrollTo({ top:0, behavior:'instant' });
     updateHeroScrollFx();
+    updateNavScrollState();
+    closeMobileMenu();
     if (v !== 'quiz') setProgress(0);
     setPageBg(v);
     initHeroCarousel(v);
@@ -1953,5 +1989,6 @@ updateLang();
 applyImages();
 document.querySelectorAll('.ph').forEach(observe);
 syncNavHeight();
-window.addEventListener('resize', syncNavHeight);
+window.addEventListener('resize', () => { syncNavHeight(); if (window.innerWidth > 1180) closeMobileMenu(); });
 initHeroScrollFx();
+initNavScrollState();
