@@ -167,10 +167,17 @@
   .nav-cta:hover::before { left: 120%; }
 
   .nav-burger {
-    display: none; width: 26px; height: 18px; position: relative;
-    background: none; border: none; cursor: pointer; padding: 0;
+    display: none; width: 42px; height: 42px; position: relative;
+    background: rgba(255,255,255,0.06);
+    border: 1.5px solid rgba(255,255,255,0.45);
+    border-radius: 50%;
+    cursor: pointer; padding: 0;
     align-items: center; justify-content: center; z-index: 1;
+    transition: background 0.3s var(--ease), border-color 0.3s var(--ease), transform 0.3s var(--ease);
   }
+  .nav-burger:hover { background: rgba(255,255,255,0.14); border-color: var(--white); }
+  .nav-burger:active { transform: scale(0.92); }
+  body.menu-open .nav-burger { border-color: var(--white); background: rgba(255,255,255,0.14); }
   .nav-burger-glyph {
     display: block; font-size: 22px; line-height: 1; color: var(--white);
     transition: transform 0.45s var(--ease-luxe);
