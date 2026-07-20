@@ -27,3 +27,7 @@ GOOGLE_REVIEW_URL = "https://g.page/r/CaRPILV6GmYIEBM/review"
 # envoie une relance par email — voir le handler `scheduled` dans index.ts.
 [triggers]
 crons = ["0 8 * * *"]
+
+[[r2_buckets]]
+binding = "MEDIA_BUCKET"
+bucket_name = "bunkaio-media"

@@ -11,6 +11,7 @@ export interface Env {
   EMAIL_FROM: string;
   ADMIN_NOTIFICATION_EMAIL: string;
   GOOGLE_REVIEW_URL: string;
+  MEDIA_BUCKET: R2Bucket;
 }
 
 /**
