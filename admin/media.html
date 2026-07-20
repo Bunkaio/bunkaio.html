@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Bunkaio — Médias</title>
+<style>
+  :root {
+    --black: #0a0a0c;
+    --grey: #6b6b70;
+    --line: #e3e1dc;
+    --bg: #faf9f6;
+    --blue: #007aff;
+    --green: #34c759;
+    --red: #ff3b30;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg); color: var(--black);
+  }
+
+  /* ── Header ── */
+  .header {
+    position: sticky; top: 0; z-index: 10;
+    background: rgba(250, 249, 246, 0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--line);
+    padding: 16px 24px;
+    display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  }
+  .header h1 { font-size: 17px; font-weight: 700; flex-shrink: 0; }
+  .header-token { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 220px; }
+  .header-token label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--grey); white-space: nowrap; }
+  .header-token input {
+    flex: 1; border: 1px solid var(--line); border-radius: 4px;
+    padding: 7px 10px; font-size: 13px; background: #fff; color: var(--black); min-width: 0;
+  }
+  .nav-links { display: flex; gap: 12px; }
+  .nav-links a { font-size: 12px; color: var(--grey); text-decoration: none; }
+  .nav-links a:hover { color: var(--black); }
+
+  /* ── Page body ── */
+  .page { max-width: 1100px; margin: 0 auto; padding: 32px 24px 80px; }
+  .page-title { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+  .page-sub { font-size: 13px; color: var(--grey); margin-bottom: 40px; line-height: 1.6; }
+
+  /* ── Sections ── */
+  .section { margin-bottom: 48px; }
+  .section-header { margin-bottom: 16px; }
+  .section-title { font-size: 15px; font-weight: 700; margin-bottom: 3px; }
+  .section-desc { font-size: 12px; color: var(--grey); }
+
+  /* ── Grid ── */
+  .slots-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+    gap: 12px;
+  }
+
+  /* ── Slot card ── */
+  .slot-card {
+    border: 1.5px solid var(--line);
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    background: #fff;
+    transition: border-color 0.18s, box-shadow 0.18s;
+    user-select: none;
+  }
+  .slot-card:hover { border-color: #bbb; box-shadow: 0 2px 10px rgba(0,0,0,0.07); }
+  .slot-card.drag-over { border-color: var(--blue); border-style: dashed; }
+  .slot-card.uploading { opacity: 0.75; pointer-events: none; }
+
+  .slot-thumb {
+    width: 100%; aspect-ratio: 4/3;
+    background: #f0eeeb;
+    position: relative; overflow: hidden;
+  }
+  .slot-thumb img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+    transition: opacity 0.2s;
+  }
+  .slot-thumb .empty-icon {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 6px; color: #bbb; font-size: 28px;
+  }
+  .slot-thumb .empty-icon span { font-size: 11px; color: var(--grey); }
+
+  .slot-meta { padding: 9px 10px 10px; }
+  .slot-label { font-size: 11px; font-weight: 600; color: var(--black); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .slot-path { font-size: 10px; color: #aaa; margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .slot-status { font-size: 10px; margin-top: 4px; min-height: 13px; }
+  .slot-status.idle { color: #bbb; }
+  .slot-status.uploading { color: var(--blue); }
+  .slot-status.success { color: var(--green); }
+  .slot-status.error { color: var(--red); }
+
+  /* ── Progress bar inside thumb ── */
+  .slot-progress {
+    position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+    background: var(--blue); transform-origin: left;
+    transform: scaleX(0); transition: transform 0.2s;
+    display: none;
+  }
+  .slot-card.uploading .slot-progress { display: block; transform: scaleX(0.6); animation: progressPulse 1s ease-in-out infinite alternate; }
+  @keyframes progressPulse { to { transform: scaleX(0.9); } }
+
+  /* ── Portfolio section ── */
+  .pf-section { border: 1px solid var(--line); border-radius: 10px; padding: 20px; }
+  .pf-cat { margin-bottom: 24px; }
+  .pf-cat:last-child { margin-bottom: 0; }
+  .pf-cat-title { font-size: 13px; font-weight: 600; margin-bottom: 10px; }
+  .pf-add-btn {
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    width: 148px; aspect-ratio: 4/3;
+    border: 1.5px dashed var(--line); border-radius: 8px;
+    background: #fff; cursor: pointer; color: var(--grey); font-size: 12px;
+    transition: border-color 0.18s, color 0.18s;
+  }
+  .pf-add-btn:hover { border-color: var(--black); color: var(--black); }
+  .pf-grid { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-start; }
+  .pf-img-card {
+    width: 148px; border-radius: 8px; overflow: hidden;
+    border: 1.5px solid var(--line); background: #fff; position: relative;
+  }
+  .pf-img-card img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; }
+  .pf-img-label { font-size: 10px; color: var(--grey); padding: 4px 8px; }
+
+  @media (max-width: 600px) {
+    .header { padding: 12px 16px; }
+    .page { padding: 24px 16px 60px; }
+    .slots-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
+    .pf-add-btn { width: 130px; }
+    .pf-img-card { width: 130px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Bunkaio — Médias</h1>
+  <div class="header-token">
+    <label for="token">Token admin</label>
+    <input type="password" id="token" placeholder="Ton mot de passe admin">
+  </div>
+  <div class="nav-links">
+    <a href="index.html">Factures</a>
+    <a href="leads.html">Leads</a>
+  </div>
+</div>
+
+<div class="page">
+  <h2 class="page-title">Gérer les médias</h2>
+  <p class="page-sub">
+    Glisse-dépose tes photos directement sur chaque emplacement, ou clique dessus pour ouvrir le sélecteur de fichiers.<br>
+    Les images sont uploadées en direct sur le site — aucune manipulation de code nécessaire.
+  </p>
+  <div id="sections"></div>
+</div>
+
+<script>
+const WORKER_BASE = 'https://bunkaio-quiz-stripe.bunkaio.workers.dev';
+const MEDIA_BASE  = WORKER_BASE + '/media';
+
+// ── Slots fixes ──────────────────────────────────────────────────────────────
+const SECTIONS = [
+  {
+    id: 'home-hero',
+    title: 'Accueil — Carrousel héros',
+    desc: '2400 × 2400 px recommandé (carré, sujet centré)',
+    slots: [
+      { path: 'hero/home-1.webp', label: 'Photo 1' },
+      { path: 'hero/home-2.webp', label: 'Photo 2' },
+      { path: 'hero/home-3.webp', label: 'Photo 3' },
+    ],
+  },
+  {
+    id: 'marquee',
+    title: 'Bande défilante — Accueil',
+    desc: '600 × 750 px (portrait 4:5)',
+    slots: Array.from({ length: 8 }, (_, i) => ({ path: `marquee/${i + 1}.webp`, label: `Photo ${i + 1}` })),
+  },
+  {
+    id: 'services-hero',
+    title: 'Services — Carrousel héros',
+    desc: '1920 × 820 px (paysage 21:9)',
+    slots: [
+      { path: 'hero/services-1.webp', label: 'Photo 1' },
+      { path: 'hero/services-2.webp', label: 'Photo 2' },
+      { path: 'hero/services-3.webp', label: 'Photo 3' },
+    ],
+  },
+  {
+    id: 'services-cats',
+    title: 'Services — Photos catégories',
+    desc: '900 × 1200 px (portrait 3:4)',
+    slots: [
+      { path: 'services/immobilier.webp', label: 'Immobilier' },
+      { path: 'services/archi.webp', label: 'Architecture' },
+      { path: 'services/cuisine.webp', label: 'Cuisines' },
+      { path: 'services/piscine.webp', label: 'Piscines' },
+      { path: 'services/artisan.webp', label: 'Artisanat' },
+      { path: 'services/photo-part.webp', label: 'Photo particuliers' },
+      { path: 'services/mode.webp', label: 'Mode' },
+      { path: 'services/event.webp', label: 'Événementiel' },
+    ],
+  },
+  {
+    id: 'drone-hero',
+    title: 'Drone — Carrousel héros',
+    desc: '1920 × 820 px (paysage 21:9)',
+    slots: [
+      { path: 'hero/drone-1.webp', label: 'Photo 1' },
+      { path: 'hero/drone-2.webp', label: 'Photo 2' },
+    ],
+  },
+  {
+    id: 'drone-thumbs',
+    title: 'Drone — Vignettes projets',
+    desc: '640 × 400 px (paysage 16:10) — miniature cliquable pour chaque projet',
+    slots: [
+      { path: 'drone/immo-1.webp', label: 'Immobilier 1' },
+      { path: 'drone/immo-2.webp', label: 'Immobilier 2' },
+      { path: 'drone/outdoor-1.webp', label: 'Piscines 1' },
+      { path: 'drone/outdoor-2.webp', label: 'Piscines 2' },
+      { path: 'drone/event-1.webp', label: 'Événementiel 1' },
+      { path: 'drone/event-2.webp', label: 'Événementiel 2' },
+      { path: 'drone/brand-1.webp', label: 'Marques 1' },
+      { path: 'drone/brand-2.webp', label: 'Marques 2' },
+    ],
+  },
+  {
+    id: 'portfolio-hero',
+    title: 'Portfolio — Carrousel héros',
+    desc: '1920 × 820 px (paysage 21:9)',
+    slots: [
+      { path: 'hero/portfolio-1.webp', label: 'Photo 1' },
+      { path: 'hero/portfolio-2.webp', label: 'Photo 2' },
+      { path: 'hero/portfolio-3.webp', label: 'Photo 3' },
+    ],
+  },
+  {
+    id: 'contact-hero',
+    title: 'Contact — Carrousel héros',
+    desc: '1920 × 820 px (paysage 21:9)',
+    slots: [
+      { path: 'hero/contact-1.webp', label: 'Photo 1' },
+      { path: 'hero/contact-2.webp', label: 'Photo 2' },
+    ],
+  },
+  {
+    id: 'partners-hero',
+    title: 'Partenaires — Carrousel héros',
+    desc: '1920 × 820 px (paysage 21:9)',
+    slots: [
+      { path: 'hero/partners-1.webp', label: 'Photo 1' },
+      { path: 'hero/partners-2.webp', label: 'Photo 2' },
+    ],
+  },
+  {
+    id: 'devis-illus',
+    title: 'Devis — Illustration latérale',
+    desc: '900 × 700 px (paysage 9:7)',
+    slots: [{ path: 'devis/illustration.webp', label: 'Illustration' }],
+  },
+  {
+    id: 'other',
+    title: 'Autres pages',
+    desc: '1920 × 820 px (paysage 21:9)',
+    slots: [
+      { path: 'hero/login-1.webp', label: 'Connexion' },
+      { path: 'hero/account-1.webp', label: 'Espace client' },
+    ],
+  },
+];
+
+// ── Portfolio categories ─────────────────────────────────────────────────────
+const PF_CATS = [
+  { id: 'immobilier', label: 'Immobilier' },
+  { id: 'archi', label: 'Architecture' },
+  { id: 'cuisine', label: 'Cuisines' },
+  { id: 'piscine', label: 'Piscines' },
+  { id: 'artisan', label: 'Artisanat' },
+  { id: 'photo-part', label: 'Photo particuliers' },
+  { id: 'mode', label: 'Mode' },
+  { id: 'event', label: 'Événementiel' },
+];
+
+// ── Token ────────────────────────────────────────────────────────────────────
+document.getElementById('token').value = localStorage.getItem('bunkaio_admin_token') || '';
+document.getElementById('token').addEventListener('change', (e) => {
+  localStorage.setItem('bunkaio_admin_token', e.target.value.trim());
+});
+
+function getToken() {
+  return document.getElementById('token').value.trim();
+}
+
+// ── Slug helper ──────────────────────────────────────────────────────────────
+function slug(path) {
+  return 'slot-' + path.replace(/[^a-z0-9]/gi, '-');
+}
+
+// ── Upload ───────────────────────────────────────────────────────────────────
+async function uploadFile(file, path, card) {
+  const token = getToken();
+  if (!token) {
+    alert('Entre ton token admin en haut de page d\'abord.');
+    return;
+  }
+  localStorage.setItem('bunkaio_admin_token', token);
+
+  const statusEl = card.querySelector('.slot-status');
+  const imgEl    = card.querySelector('img');
+  const emptyEl  = card.querySelector('.empty-icon');
+
+  card.classList.add('uploading');
+  if (statusEl) { statusEl.textContent = 'Upload en cours…'; statusEl.className = 'slot-status uploading'; }
+
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('path', path);
+
+  try {
+    const res  = await fetch(WORKER_BASE + '/upload-image', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + token },
+      body: formData,
+    });
+    const data = await res.json();
+
+    if (res.ok && data.ok) {
+      const freshSrc = MEDIA_BASE + '/' + path + '?t=' + Date.now();
+      if (imgEl) {
+        imgEl.src = freshSrc;
+        imgEl.style.display = '';
+        if (emptyEl) emptyEl.style.display = 'none';
+      }
+      if (statusEl) { statusEl.textContent = 'Uploadé ✓'; statusEl.className = 'slot-status success'; }
+    } else {
+      const msg = data.error === 'unauthorized' ? 'Token incorrect' : (data.error || 'Erreur');
+      if (statusEl) { statusEl.textContent = msg; statusEl.className = 'slot-status error'; }
+    }
+  } catch (err) {
+    if (statusEl) { statusEl.textContent = 'Erreur réseau'; statusEl.className = 'slot-status error'; }
+  } finally {
+    card.classList.remove('uploading');
+  }
+}
+
+// ── Slot card ────────────────────────────────────────────────────────────────
+function makeSlotCard(slot) {
+  const card = document.createElement('div');
+  card.className = 'slot-card';
+
+  const imgSrc = MEDIA_BASE + '/' + slot.path;
+
+  card.innerHTML = `
+    <div class="slot-thumb">
+      <img src="${imgSrc}" alt="${slot.label}" loading="lazy"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="empty-icon" style="display:none">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="3" y="3" width="18" height="18" rx="3"/>
+          <path d="M3 16l5-5 4 4 3-3 6 5"/>
+          <circle cx="8.5" cy="8.5" r="1.5"/>
+        </svg>
+        <span>Ajouter</span>
+      </div>
+      <div class="slot-progress"></div>
+    </div>
+    <div class="slot-meta">
+      <div class="slot-label">${slot.label}</div>
+      <div class="slot-path">${slot.path}</div>
+      <div class="slot-status idle" id="${slug(slot.path)}">Cliquer ou glisser</div>
+    </div>
+  `;
+
+  const input = document.createElement('input');
+  input.type = 'file'; input.accept = 'image/*'; input.style.display = 'none';
+  input.addEventListener('change', (e) => { if (e.target.files[0]) uploadFile(e.target.files[0], slot.path, card); });
+  card.appendChild(input);
+
+  card.addEventListener('click', () => input.click());
+
+  card.addEventListener('dragover', (e) => { e.preventDefault(); card.classList.add('drag-over'); });
+  card.addEventListener('dragleave', () => card.classList.remove('drag-over'));
+  card.addEventListener('drop', (e) => {
+    e.preventDefault(); card.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file) uploadFile(file, slot.path, card);
+  });
+
+  return card;
+}
+
+// ── Portfolio ────────────────────────────────────────────────────────────────
+async function loadPfCategory(catId, grid, addBtn) {
+  const token = getToken();
+  if (!token) { alert('Entre ton token admin d\'abord.'); return; }
+  localStorage.setItem('bunkaio_admin_token', token);
+
+  addBtn.textContent = 'Chargement…';
+  try {
+    const res  = await fetch(WORKER_BASE + '/list-media?prefix=portfolio/' + catId + '/', {
+      headers: { 'Authorization': 'Bearer ' + token },
+    });
+    const data = await res.json();
+    if (!res.ok || !data.ok) { addBtn.textContent = '+ Ajouter'; return; }
+
+    data.keys.sort().forEach((key) => {
+      const card = makePfImgCard(key);
+      grid.insertBefore(card, addBtn);
+    });
+    addBtn.textContent = '+ Ajouter';
+  } catch {
+    addBtn.textContent = '+ Ajouter';
+  }
+}
+
+function makePfImgCard(key) {
+  const card = document.createElement('div');
+  card.className = 'pf-img-card';
+  const name = key.split('/').pop();
+  card.innerHTML = `
+    <img src="${MEDIA_BASE}/${key}?t=${Date.now()}" alt="${name}" loading="lazy">
+    <div class="pf-img-label">${name}</div>
+  `;
+  return card;
+}
+
+function makePfCategory(cat) {
+  const wrap = document.createElement('div');
+  wrap.className = 'pf-cat';
+
+  const titleEl = document.createElement('div');
+  titleEl.className = 'pf-cat-title';
+  titleEl.textContent = cat.label;
+  wrap.appendChild(titleEl);
+
+  const grid = document.createElement('div');
+  grid.className = 'pf-grid';
+  wrap.appendChild(grid);
+
+  let loaded = false;
+
+  const addBtn = document.createElement('div');
+  addBtn.className = 'pf-add-btn';
+  addBtn.innerHTML = '+ Ajouter';
+  grid.appendChild(addBtn);
+
+  const input = document.createElement('input');
+  input.type = 'file'; input.accept = 'image/*'; input.multiple = true; input.style.display = 'none';
+  wrap.appendChild(input);
+
+  input.addEventListener('change', async (e) => {
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
+
+    // Next index = count of existing pf-img-card elements + 1
+    const existing = grid.querySelectorAll('.pf-img-card').length;
+    for (let i = 0; i < files.length; i++) {
+      const idx  = existing + i + 1;
+      const path = `portfolio/${cat.id}/${idx}.webp`;
+
+      const card = document.createElement('div');
+      card.className = 'pf-img-card';
+      card.innerHTML = `<div class="pf-img-label" style="padding:6px 8px;font-size:10px;color:#999;">Upload ${idx}…</div>`;
+      grid.insertBefore(card, addBtn);
+
+      const formData = new FormData();
+      formData.append('file', files[i]);
+      formData.append('path', path);
+      try {
+        const res = await fetch(WORKER_BASE + '/upload-image', {
+          method: 'POST',
+          headers: { 'Authorization': 'Bearer ' + getToken() },
+          body: formData,
+        });
+        const data = await res.json();
+        if (res.ok && data.ok) {
+          card.innerHTML = `
+            <img src="${MEDIA_BASE}/${path}?t=${Date.now()}" alt="${idx}.webp" loading="lazy">
+            <div class="pf-img-label">${idx}.webp</div>
+          `;
+        } else {
+          card.innerHTML = `<div class="pf-img-label" style="color:var(--red);padding:8px;">Erreur ${data.error||''}</div>`;
+        }
+      } catch {
+        card.innerHTML = `<div class="pf-img-label" style="color:var(--red);padding:8px;">Erreur réseau</div>`;
+      }
+    }
+    input.value = '';
+  });
+
+  addBtn.addEventListener('click', () => {
+    if (!loaded) { loaded = true; loadPfCategory(cat.id, grid, addBtn); }
+    else { input.click(); }
+  });
+
+  // After first load, make addBtn work as file picker too
+  wrap._onLoaded = () => { addBtn.addEventListener('click', () => input.click()); };
+
+  return wrap;
+}
+
+// ── Build UI ─────────────────────────────────────────────────────────────────
+function buildUI() {
+  const container = document.getElementById('sections');
+
+  // Fixed slots
+  SECTIONS.forEach((section) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'section';
+    wrap.innerHTML = `
+      <div class="section-header">
+        <div class="section-title">${section.title}</div>
+        <div class="section-desc">${section.desc}</div>
+      </div>
+    `;
+    const grid = document.createElement('div');
+    grid.className = 'slots-grid';
+    section.slots.forEach((slot) => grid.appendChild(makeSlotCard(slot)));
+    wrap.appendChild(grid);
+    container.appendChild(wrap);
+  });
+
+  // Portfolio
+  const pfWrap = document.createElement('div');
+  pfWrap.className = 'section';
+  pfWrap.innerHTML = `
+    <div class="section-header">
+      <div class="section-title">Portfolio — Réalisations</div>
+      <div class="section-desc">Clique sur "+ Ajouter" pour charger les photos existantes d'une catégorie et en ajouter de nouvelles. Format recommandé : portrait 900 × 1200 px.</div>
+    </div>
+  `;
+  const pfInner = document.createElement('div');
+  pfInner.className = 'pf-section';
+  PF_CATS.forEach((cat) => pfInner.appendChild(makePfCategory(cat)));
+  pfWrap.appendChild(pfInner);
+  container.appendChild(pfWrap);
+}
+
+buildUI();
+</script>
+</body>
+</html>

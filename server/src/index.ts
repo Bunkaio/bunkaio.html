@@ -29,6 +29,9 @@ const BALANCE_INVOICE_ROUTE = '/create-balance-invoice';
 const STRIPE_WEBHOOK_ROUTE = '/stripe-webhook';
 const REVIEW_GATEWAY_ROUTE = '/avis';
 const LEADS_ROUTE = '/leads';
+const UPLOAD_IMAGE_ROUTE = '/upload-image';
+const LIST_MEDIA_ROUTE = '/list-media';
+const MEDIA_ROUTE_PREFIX = '/media/';
 
 /**
  * Détermine l'en-tête Access-Control-Allow-Origin à renvoyer : on échoue
@@ -464,6 +467,89 @@ async function sendOverdueInvoiceReminders(env: Env): Promise<void> {
   }
 }
 
+function getContentType(path: string): string {
+  const ext = (path.split('.').pop() ?? '').toLowerCase();
+  const map: Record<string, string> = {
+    webp: 'image/webp', jpg: 'image/jpeg', jpeg: 'image/jpeg',
+    png: 'image/png', gif: 'image/gif', mp4: 'video/mp4',
+    heic: 'image/heic', heif: 'image/heif',
+  };
+  return map[ext] ?? 'application/octet-stream';
+}
+
+function isValidMediaPath(path: string): boolean {
+  return /^[\w][\w\-]*(\/[\w][\w\-]*)*\.(webp|jpg|jpeg|png|gif|mp4|heic|heif)$/i.test(path);
+}
+
+async function handleUploadImage(request: Request, env: Env, headers: Record<string, string>): Promise<Response> {
+  if (request.method !== 'POST') {
+    return jsonResponse({ ok: false, error: 'method_not_allowed' }, 405, headers);
+  }
+  const authHeader = request.headers.get('Authorization') ?? '';
+  if (authHeader !== `Bearer ${env.ADMIN_TOKEN}`) {
+    return jsonResponse({ ok: false, error: 'unauthorized' }, 401, headers);
+  }
+
+  let formData: FormData;
+  try {
+    formData = await request.formData();
+  } catch {
+    return jsonResponse({ ok: false, error: 'invalid_form_data' }, 400, headers);
+  }
+
+  const file = formData.get('file') as File | null;
+  const path = formData.get('path') as string | null;
+
+  if (!file || !path) {
+    return jsonResponse({ ok: false, error: 'missing_file_or_path' }, 400, headers);
+  }
+  if (!isValidMediaPath(path)) {
+    return jsonResponse({ ok: false, error: 'invalid_path' }, 400, headers);
+  }
+
+  const contentType = (file as File).type || getContentType(path);
+  const arrayBuffer = await (file as File).arrayBuffer();
+  await env.MEDIA_BUCKET.put(path, arrayBuffer, {
+    httpMetadata: { contentType },
+  });
+
+  console.log('[upload-image] fichier uploadé', { path, contentType, size: arrayBuffer.byteLength });
+  return jsonResponse({ ok: true, path }, 200, headers);
+}
+
+async function handleMediaServe(request: Request, env: Env, mediaPath: string): Promise<Response> {
+  if (!mediaPath || !isValidMediaPath(mediaPath)) {
+    return new Response('Not found', { status: 404 });
+  }
+  const object = await env.MEDIA_BUCKET.get(mediaPath);
+  if (!object) {
+    return new Response('Not found', { status: 404, headers: { 'Cache-Control': 'no-store' } });
+  }
+  const contentType = object.httpMetadata?.contentType ?? getContentType(mediaPath);
+  return new Response(object.body, {
+    headers: {
+      'Content-Type': contentType,
+      'Cache-Control': 'public, max-age=3600',
+      'ETag': `"${object.etag}"`,
+      'Access-Control-Allow-Origin': '*',
+    },
+  });
+}
+
+async function handleListMedia(request: Request, env: Env, headers: Record<string, string>): Promise<Response> {
+  if (request.method !== 'GET') {
+    return jsonResponse({ ok: false, error: 'method_not_allowed' }, 405, headers);
+  }
+  const authHeader = request.headers.get('Authorization') ?? '';
+  if (authHeader !== `Bearer ${env.ADMIN_TOKEN}`) {
+    return jsonResponse({ ok: false, error: 'unauthorized' }, 401, headers);
+  }
+  const prefix = new URL(request.url).searchParams.get('prefix') ?? '';
+  const listed = await env.MEDIA_BUCKET.list({ prefix, limit: 500 });
+  const keys = listed.objects.map((obj) => obj.key);
+  return jsonResponse({ ok: true, keys }, 200, headers);
+}
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const headers = corsHeaders(resolveAllowedOrigin(request.headers.get('Origin'), env.ALLOWED_ORIGINS));
@@ -491,6 +577,16 @@ export default {
     }
     if (url.pathname === LEADS_ROUTE) {
       return handleListLeads(request, env, headers);
+    }
+    if (url.pathname === UPLOAD_IMAGE_ROUTE) {
+      return handleUploadImage(request, env, headers);
+    }
+    if (url.pathname === LIST_MEDIA_ROUTE) {
+      return handleListMedia(request, env, headers);
+    }
+    if (url.pathname.startsWith(MEDIA_ROUTE_PREFIX)) {
+      const mediaPath = url.pathname.slice(MEDIA_ROUTE_PREFIX.length);
+      return handleMediaServe(request, env, mediaPath);
     }
     return jsonResponse({ ok: false, error: 'not_found' }, 404, headers);
   },
