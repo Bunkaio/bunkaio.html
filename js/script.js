@@ -548,7 +548,14 @@ const CATS = [
       edit:{ price:1990, delay:{fr:'10 jours ouvrés',en:'10 working days'}, items:{
         fr:['100 photos HD retouchées','1 aftermovie (2 minutes)','2 Reels verticaux','Mise en lumière éditoriale de l\'événement','Publication sur les supports Bunkaio'],
         en:['100 retouched HD photos','1 aftermovie (2 minutes)','2 vertical Reels','Editorial spotlight on the event','Featured on Bunkaio channels'] } }
-    }}
+    }},
+  { id:'lumen',
+    lumen: true,
+    name:{fr:'Lumen', en:'Lumen'},
+    tag:{fr:'Photobooth IA — mariages haut de gamme', en:'IA Photobooth — luxury weddings'},
+    icon:'lumen',
+    tiers:{}
+  }
 ];
 
 /* ════════════════════════════════════════════════════════════════
@@ -643,6 +650,63 @@ const SPECIAL_OPTIONS = {
   ]
 };
 
+/* ════════════════════════════════════════════════════════════════
+   📸  LUMEN — Photobooth IA · mariages haut de gamme
+   ════════════════════════════════════════════════════════════════ */
+const LUMEN_TIERS = [
+  { id:'ess',  name:{fr:'Essentiel',  en:'Essentials'},
+    badge: null,
+    price: 550, priceCHF: 630,
+    delay:{fr:'7 jours ouvrés', en:'7 working days'},
+    items:{
+      fr:['Photobooth IA installé et opérationnel','Jusqu\'à 4 heures de prestation','Impressions illimitées incluses','Galerie privée livrée sous 7 jours'],
+      en:['IA photobooth set up and ready','Up to 4 hours service','Unlimited prints included','Private gallery delivered within 7 days'] }
+  },
+  { id:'sig',  name:{fr:'Signature',  en:'Signature'},
+    badge:{fr:'Le plus choisi', en:'Most popular'},
+    price: 1100, priceCHF: 1300,
+    delay:{fr:'5 jours ouvrés', en:'5 working days'},
+    items:{
+      fr:['Photobooth IA installé et opérationnel','Jusqu\'à 6 heures de prestation','Style personnalisé (fond, habillage, palette)','Impressions illimitées incluses','Galerie privée livrée sous 5 jours'],
+      en:['IA photobooth set up and ready','Up to 6 hours service','Custom style (backdrop, branding, palette)','Unlimited prints included','Private gallery delivered within 5 days'] }
+  },
+  { id:'surm', name:{fr:'Sur-mesure', en:'Bespoke'},
+    badge:{fr:'Entièrement personnalisé', en:'Fully bespoke'},
+    price: 1800, priceCHF: null,
+    delay:{fr:'Sur accord', en:'On agreement'},
+    items:{
+      fr:['Devis personnalisé selon votre projet','Durée, style et options définis ensemble'],
+      en:['Personalised quote based on your project','Duration, style and options defined together'] }
+  }
+];
+
+const LUMEN_PROFILES = [
+  { id:'mariage', name:{fr:'Mariage',                       en:'Wedding'},               icon:'couple',
+    desc:{fr:'Vous préparez votre mariage et souhaitez offrir une expérience mémorable à vos invités. Lumen installe un photobooth IA élégant et discret, adapté à l\'ambiance de votre réception.',
+          en:'You are planning your wedding and want to offer your guests a memorable experience. Lumen sets up an elegant, discreet IA photobooth suited to your reception atmosphere.'} },
+  { id:'wedding-planner', name:{fr:'Wedding planner / agence', en:'Wedding planner / agency'}, icon:'agency',
+    desc:{fr:'Vous organisez des mariages pour le compte de vos clients. Lumen s\'intègre à votre offre premium comme une option haut de gamme, sans contrainte logistique pour vous.',
+          en:'You organise weddings on behalf of your clients. Lumen integrates into your premium offering as a high-end option, with no logistical burden on your side.'} },
+  { id:'corp', name:{fr:'Entreprise / événement corporate', en:'Company / corporate event'},   icon:'event',
+    desc:{fr:'Vous organisez un événement d\'entreprise — soirée annuelle, séminaire, lancement. Lumen apporte une animation haut de gamme, personnalisée à vos couleurs.',
+          en:'You are organising a corporate event — annual dinner, seminar, launch. Lumen delivers a premium experience, customised to your brand.'} }
+];
+
+const LUMEN_OPTIONS = [
+  { id:'lumen-style', icon:'🎨', price: null,
+    name:{fr:'Style personnalisé', en:'Custom style'},
+    note:{fr:'Fond dédié, habillage aux couleurs de votre événement, typographie sur mesure. Inclus dans la formule Signature.',
+          en:'Dedicated backdrop, branding matching your event colours, bespoke typography. Included in the Signature package.'} },
+  { id:'lumen-heure', icon:'⏱', price: 190,
+    name:{fr:'Heure supplémentaire', en:'Additional hour'},
+    note:{fr:'Prolongez votre prestation d\'une heure. Facturable par heure additionnelle.',
+          en:'Extend your service by one hour. Billed per additional hour.'} },
+  { id:'lumen-print', icon:'🖨', price: null,
+    name:{fr:'Impressions illimitées', en:'Unlimited prints'},
+    note:{fr:'Tirages photo illimités pendant toute la durée de la prestation. Inclus dans les formules Essentiel et Signature.',
+          en:'Unlimited photo prints throughout the service. Included in the Essentials and Signature packages.'} }
+];
+
 const PROFILES = [
   { id:'agence',   name:{fr:'Agence / studio',          en:'Agency / studio'},         icon:'agency'  },
   { id:'promo',    name:{fr:'Propriétaire / promoteur',  en:'Owner / developer'},       icon:'promo'   },
@@ -727,7 +791,8 @@ const PF_CATS = [
   { id:'artisan',     label:{fr:'Artisanat',   en:'Craftsmanship'} },
   { id:'photo-part',  label:{fr:'Séance photo',en:'Portrait'} },
   { id:'mode',        label:{fr:'Mode',        en:'Fashion'} },
-  { id:'event',       label:{fr:'Événementiel',en:'Events'} }
+  { id:'event',       label:{fr:'Événementiel',en:'Events'} },
+  { id:'lumen',       label:{fr:'Lumen',       en:'Lumen'} }
 ];
 
 const DRONE_CATS = [
@@ -933,7 +998,9 @@ function renderCats(){
 function renderProfiles(){
   const el = document.getElementById('profGrid');
   el.innerHTML = '';
-  const profiles = S.cat === 'photo-part'
+  const profiles = S.cat === 'lumen'
+    ? LUMEN_PROFILES
+    : S.cat === 'photo-part'
     ? PHOTO_PART_PROFILES
     : (CAT_PROFILES[S.cat] ? PROFILES.filter(p => CAT_PROFILES[S.cat].includes(p.id)) : PROFILES);
   profiles.forEach((p, i) => {
@@ -949,7 +1016,10 @@ function renderProfiles(){
       S.prof = p.id;
       const box = document.getElementById('profQBox');
       box.style.display = 'block';
-      if (S.cat === 'photo-part') {
+      if (S.cat === 'lumen') {
+        const lp = LUMEN_PROFILES.find(x => x.id === p.id);
+        box.innerHTML = lp ? lp.desc[LANG] : '';
+      } else if (S.cat === 'photo-part') {
         const pp = PHOTO_PART_PROFILES.find(x => x.id === p.id);
         box.innerHTML = pp ? pp.desc[LANG] : '';
       } else {
@@ -962,7 +1032,10 @@ function renderProfiles(){
   if (S.prof) {
     const box = document.getElementById('profQBox');
     box.style.display = 'block';
-    if (S.cat === 'photo-part') {
+    if (S.cat === 'lumen') {
+      const lp = LUMEN_PROFILES.find(x => x.id === S.prof);
+      box.innerHTML = lp ? lp.desc[LANG] : '';
+    } else if (S.cat === 'photo-part') {
       const pp = PHOTO_PART_PROFILES.find(x => x.id === S.prof);
       box.innerHTML = pp ? pp.desc[LANG] : '';
     } else {
@@ -984,7 +1057,8 @@ function getIcon(type){
     autre:   `<svg width="52" height="52" viewBox="0 0 56 56" ${stroke}><circle cx="28" cy="28" r="16"/><path d="M24 24 Q24 20 28 20 Q32 20 32 24 Q32 27 28 28 L28 32"/><circle cx="28" cy="38" r="0.5"/></svg>`,
     person:  `<svg width="52" height="52" viewBox="0 0 56 56" ${stroke}><circle cx="28" cy="20" r="9"/><path d="M12 46 Q12 32 28 32 Q44 32 44 46"/></svg>`,
     couple:  `<svg width="52" height="52" viewBox="0 0 56 56" ${stroke}><circle cx="20" cy="20" r="8"/><path d="M8 46 Q8 33 20 33 Q26 33 30 37"/><circle cx="36" cy="20" r="8"/><path d="M48 46 Q48 33 36 33 Q30 33 26 37"/></svg>`,
-    group:   `<svg width="52" height="52" viewBox="0 0 56 56" ${stroke}><circle cx="14" cy="22" r="7"/><path d="M4 45 Q4 34 14 34 Q18 34 21 36"/><circle cx="28" cy="18" r="9"/><path d="M14 45 Q14 32 28 32 Q42 32 42 45"/><circle cx="42" cy="22" r="7"/><path d="M52 45 Q52 34 42 34 Q38 34 35 36"/></svg>`
+    group:   `<svg width="52" height="52" viewBox="0 0 56 56" ${stroke}><circle cx="14" cy="22" r="7"/><path d="M4 45 Q4 34 14 34 Q18 34 21 36"/><circle cx="28" cy="18" r="9"/><path d="M14 45 Q14 32 28 32 Q42 32 42 45"/><circle cx="42" cy="22" r="7"/><path d="M52 45 Q52 34 42 34 Q38 34 35 36"/></svg>`,
+    lumen:   `<svg width="52" height="52" viewBox="0 0 56 56" ${stroke}><circle cx="28" cy="28" r="13"/><circle cx="28" cy="28" r="5"/><line x1="28" y1="10" x2="28" y2="15"/><line x1="28" y1="41" x2="28" y2="46"/><line x1="10" y1="28" x2="15" y2="28"/><line x1="41" y1="28" x2="46" y2="28"/><line x1="38.2" y1="17.8" x2="34.4" y2="21.6"/><line x1="17.8" y1="38.2" x2="21.6" y2="34.4"/><line x1="17.8" y1="17.8" x2="21.6" y2="21.6"/><line x1="38.2" y1="38.2" x2="34.4" y2="34.4"/></svg>`
   };
   return icons[type] || icons.autre;
 }
@@ -993,6 +1067,43 @@ function renderTiers(){
   const cat = CATS.find(c => c.id === S.cat);
   if (!cat) return;
   const subEl = document.getElementById('tierSub');
+  const el = document.getElementById('tierList');
+  el.innerHTML = '';
+  /* ─── Lumen : trois formules propriétaires ─── */
+  if (S.cat === 'lumen') {
+    subEl.textContent = LANG === 'fr'
+      ? 'Lumen by Bunkaio — trois formules pour votre mariage, de l\'essentiel à l\'entièrement sur-mesure.'
+      : 'Lumen by Bunkaio — three packages for your wedding, from essentials to fully bespoke.';
+    LUMEN_TIERS.forEach((lt, idx) => {
+      const isSurm = lt.id === 'surm';
+      const priceStr = isSurm
+        ? (LANG === 'fr' ? 'À partir de ' : 'From ') + lt.price.toLocaleString('fr-FR') + '€'
+        : lt.price.toLocaleString('fr-FR') + '€';
+      const chfLine = lt.priceCHF
+        ? `<div style="font-size:12px;color:var(--grey);margin-top:4px">${lt.priceCHF.toLocaleString('fr-FR')} CHF</div>`
+        : '';
+      const payLine = isSurm
+        ? (LANG === 'fr' ? 'Devis personnalisé — réponse sous 48h ouvrées' : 'Personalised quote — reply within 48 working hours')
+        : (LANG === 'fr'
+            ? `Soit 3 × ${Math.round(lt.price / 3).toLocaleString('fr-FR')}€ sans frais`
+            : `That's 3 × €${Math.round(lt.price / 3).toLocaleString('fr-FR')} interest-free`);
+      const d = document.createElement('div');
+      d.className = 'tier-card stagger';
+      d.style.animationDelay = (0.24 + idx * 0.1) + 's';
+      d.innerHTML = `
+        ${lt.badge ? `<div class="tier-badge">${t(lt.badge)}</div>` : ''}
+        <div class="tier-head">
+          <div class="tier-name">${t(lt.name)}</div>
+          <div class="tier-price">${priceStr}<small>HT</small></div>
+        </div>
+        ${chfLine}
+        <div class="tier-pay-line">${payLine}</div>
+        <div class="tier-detail">${t(lt.items).join(' · ')}</div>`;
+      d.onclick = () => { S.tier = lt.id; renderRecap(); renderOptions(); quizStep(4); };
+      el.appendChild(d);
+    });
+    return;
+  }
   subEl.textContent = POLAS[S.cat]
     ? (LANG === 'fr'
         ? t(cat.name) + ' — un format Polas pour mannequins, ainsi que quatre formules, de la découverte à l\'expérience éditoriale complète.'
@@ -1000,8 +1111,6 @@ function renderTiers(){
     : (LANG === 'fr'
         ? t(cat.name) + ' — quatre formules, de la découverte à l\'expérience éditoriale complète.'
         : t(cat.name) + ' — four packages, from the starter offer to the complete editorial experience.');
-  const el = document.getElementById('tierList');
-  el.innerHTML = '';
   let slot = 0;
   if (POLAS[S.cat]) {
     const polas = POLAS[S.cat];
@@ -1110,6 +1219,33 @@ function renderRecap(){
       <div style="margin-top: 18px; font-size: 12px; color: var(--grey); line-height: 1.6;">${LANG === 'fr' ? 'Livraison' : 'Delivery'} : ${t(polas.delay)}</div>`;
     return;
   }
+  if (S.cat === 'lumen') {
+    const lt = LUMEN_TIERS.find(x => x.id === S.tier);
+    if (!lt) return;
+    const isSurm = lt.id === 'surm';
+    const chfLine = lt.priceCHF ? ` / ${lt.priceCHF.toLocaleString('fr-FR')} CHF` : '';
+    const pricePrefix = isSurm ? (LANG === 'fr' ? 'À partir de ' : 'From ') : '';
+    const threeX = Math.round(lt.price / 3).toLocaleString('fr-FR');
+    const payLine = isSurm
+      ? (LANG === 'fr'
+          ? '💳 Devis personnalisé — nous vous revenons sous 48h ouvrées.'
+          : '💳 Personalised quote — we get back to you within 48 working hours.')
+      : (LANG === 'fr'
+          ? `💳 Soit 3 × ${threeX}€ sans frais avec Klarna — ou carte bancaire, prélèvement automatique, acompte 30 % + solde.`
+          : `💳 That's 3 × €${threeX} interest-free with Klarna — or credit card, direct debit, 30% deposit + balance.`);
+    box.innerHTML = `
+      <div class="recap-label">${selLabel}</div>
+      <div class="recap-title">
+        <span>Lumen — ${t(lt.name)}</span>
+        <span>${pricePrefix}${lt.price.toLocaleString('fr-FR')}€${chfLine} HT</span>
+      </div>
+      <div class="recap-payment">${payLine}</div>
+      <ul class="recap-items">
+        ${t(lt.items).map(i => `<li>${i}</li>`).join('')}
+      </ul>
+      <div style="margin-top: 18px; font-size: 12px; color: var(--grey); line-height: 1.6;">${LANG === 'fr' ? 'Livraison' : 'Delivery'} : ${t(lt.delay)}</div>`;
+    return;
+  }
   const tier = TIERS.find(x => x.id === S.tier);
   const td = cat.tiers[S.tier];
   const delivLabel = LANG === 'fr' ? 'Livraison' : 'Delivery';
@@ -1132,6 +1268,7 @@ function renderRecap(){
 }
 
 function commEligible(){
+  if (S.cat === 'lumen') return false;
   if (S.cat === 'mode') return false;
   if (S.cat === 'photo-part') return false;
   return ['immobilier','archi','cuisine','piscine','event'].includes(S.cat) || S.prof === 'marque';
@@ -1173,6 +1310,34 @@ function renderOptions(){
   }
 
   label.style.display = 'block';
+
+  /* ─── Options Lumen ─── */
+  if (S.cat === 'lumen') {
+    LUMEN_OPTIONS.forEach((o, i) => {
+      const d = document.createElement('div');
+      d.className = 'opt-item stagger';
+      d.style.animationDelay = (0.42 + i * 0.08) + 's';
+      const priceDisplay = typeof o.price === 'number'
+        ? '+' + o.price + '€'
+        : (LANG === 'fr' ? 'Inclus' : 'Included');
+      d.innerHTML = `
+        <div class="opt-icon">${o.icon}</div>
+        <div class="opt-check"></div>
+        <div class="opt-body">
+          <div class="opt-name">${t(o.name)}</div>
+          <div class="opt-note">${t(o.note)}</div>
+        </div>
+        <div class="opt-price">${priceDisplay}</div>`;
+      d.onclick = () => {
+        d.classList.toggle('selected');
+        if (d.classList.contains('selected')) S.opts.push(o.id);
+        else S.opts = S.opts.filter(x => x !== o.id);
+      };
+      el.appendChild(d);
+    });
+    renderCommBox();
+    return;
+  }
 
   /* ─── Studio ou extérieur (photo-part seulement) ─── */
   if (S.cat === 'photo-part') {
@@ -1298,6 +1463,18 @@ function checkQuizForm(){
 function computeTotal(){
   if (S.tier === 'sub') return { amount: SUBS[S.cat].price, surDevis: false };
   if (S.tier === 'polas') return { amount: POLAS[S.cat].price + 60, surDevis: false };
+  if (S.cat === 'lumen') {
+    const lt = LUMEN_TIERS.find(x => x.id === S.tier);
+    if (!lt) return { amount: 0, surDevis: true };
+    let total = lt.price;
+    let hasSurDevis = lt.id === 'surm';
+    S.opts.forEach(id => {
+      const o = LUMEN_OPTIONS.find(x => x.id === id);
+      if (o && typeof o.price === 'number') total += o.price;
+      else if (o) hasSurDevis = true;
+    });
+    return { amount: total, surDevis: hasSurDevis };
+  }
   const cat = CATS.find(c => c.id === S.cat);
   let total = cat.tiers[S.tier].price;
   let express = false;
@@ -1339,6 +1516,10 @@ function animatePriceCalc(){
       payEl.textContent = LANG === 'fr'
         ? '💳 Réglable chaque mois par carte bancaire ou prélèvement automatique.'
         : '💳 Billed monthly by credit card or direct debit.';
+    } else if (S.cat === 'lumen' && S.tier === 'surm') {
+      payEl.textContent = LANG === 'fr'
+        ? '💳 Devis personnalisé — réponse sous 48h ouvrées. Paiement : acompte 30 % + solde à la livraison.'
+        : '💳 Personalised quote — reply within 48 working hours. Payment: 30% deposit + balance on delivery.';
     } else {
       const threeX = Math.round(targetAmount / 3).toLocaleString('fr-FR');
       payEl.textContent = LANG === 'fr'
@@ -1407,7 +1588,9 @@ function submitQuiz(e){
   S.phone   = document.getElementById('qPhone').value.trim();
   S.project = document.getElementById('qProject').value.trim();
   const cat  = CATS.find(c => c.id === S.cat);
-  const prof = S.cat === 'photo-part'
+  const prof = S.cat === 'lumen'
+    ? (LUMEN_PROFILES.find(p => p.id === S.prof) || { name:{fr:S.prof,en:S.prof} })
+    : S.cat === 'photo-part'
     ? (PHOTO_PART_PROFILES.find(p => p.id === S.prof) || { name:{fr:S.prof,en:S.prof} })
     : (PROFILES.find(p => p.id === S.prof) || { name:{fr:S.prof,en:S.prof} });
   let formuleLabel, montantLabel, budgetMontantEur;
@@ -1422,6 +1605,15 @@ function submitQuiz(e){
     formuleLabel = polas.name.fr + ' (' + res.amount + '€ HT, dont 60€ studio inclus)';
     montantLabel = res.amount + '€ HT';
     budgetMontantEur = res.amount;
+  } else if (S.cat === 'lumen') {
+    const lt = LUMEN_TIERS.find(x => x.id === S.tier);
+    const res = computeTotal();
+    const priceStr = lt.id === 'surm' ? 'à partir de 1800€ HT' : lt.price + '€ HT';
+    formuleLabel = 'Lumen — ' + lt.name.fr + ' (' + priceStr + ')';
+    montantLabel = lt.id === 'surm'
+      ? 'Sur devis (à partir de 1800€ HT)'
+      : res.amount + '€ HT' + (res.surDevis ? ' + options sur devis' : '');
+    budgetMontantEur = lt.price;
   } else {
     const tier = TIERS.find(x => x.id === S.tier);
     const res = computeTotal();
@@ -1429,7 +1621,9 @@ function submitQuiz(e){
     montantLabel = res.amount + '€ HT' + (res.surDevis ? ' + options sur devis' : '');
     budgetMontantEur = res.amount;
   }
-  const allOpts = [...OPTIONS, ...((SPECIAL_OPTIONS[S.cat+'_'+S.tier])||[])];
+  const allOpts = S.cat === 'lumen'
+    ? LUMEN_OPTIONS
+    : [...OPTIONS, ...((SPECIAL_OPTIONS[S.cat+'_'+S.tier])||[])];
   const optNames = (S.tier !== 'sub' && S.opts.length)
     ? S.opts.map(id => { const o = allOpts.find(x => x.id === id); return o ? o.name.fr : id; }).filter(Boolean).join(' · ')
     : (S.tier === 'sub' ? '— (abonné : tarif partenaire -20% sur options)' : 'Aucune');
@@ -1492,8 +1686,9 @@ function setSvcTab(tab){
 
 function updatePayFlexBanner(list){
   const el = document.getElementById('svcPayFlexText');
-  if (!el || !list.length) return;
-  const minPrice = Math.min(...list.map(c => c.tiers.deco.price));
+  const pricedList = list.filter(c => !c.lumen && c.tiers && c.tiers.deco);
+  if (!el || !pricedList.length) return;
+  const minPrice = Math.min(...pricedList.map(c => c.tiers.deco.price));
   const monthly = Math.round(minPrice / 3).toLocaleString('fr-FR');
   el.innerHTML = LANG === 'fr'
     ? `<strong>À partir de ${monthly}€/mois avec Klarna</strong>, carte bancaire ou prélèvement automatique — ou en 2 fois, acompte 30 % puis solde. Sans aucun frais supplémentaire.`
@@ -1547,11 +1742,17 @@ function renderServices(){
       </div>
       <div class="service-tag">${t(c.tag)}</div>
       <div class="service-tiers">
-        ${TIERS.map(tier => `
-          <div class="service-tier">
-            <span class="service-tier-name">${t(tier.name)}</span>
-            <span class="service-tier-price">${c.tiers[tier.id].price.toLocaleString('fr-FR')}€<small>HT</small></span>
-          </div>`).join('')}
+        ${c.lumen
+          ? LUMEN_TIERS.map(lt => `
+              <div class="service-tier">
+                <span class="service-tier-name">${t(lt.name)}</span>
+                <span class="service-tier-price">${lt.id === 'surm' ? (LANG === 'fr' ? 'Devis' : 'Quote') : lt.price.toLocaleString('fr-FR') + '€'}<small>${lt.id === 'surm' ? '' : ' HT'}</small></span>
+              </div>`).join('')
+          : TIERS.map(tier => `
+              <div class="service-tier">
+                <span class="service-tier-name">${t(tier.name)}</span>
+                <span class="service-tier-price">${c.tiers[tier.id].price.toLocaleString('fr-FR')}€<small>HT</small></span>
+              </div>`).join('')}
       </div>
       ${subRow}
       <button class="service-cta">${I18N[LANG]['svc-cta']}</button>`;
@@ -1966,6 +2167,8 @@ function renderFaqAccordion(){
     { title:'Êtes-vous assurés et autorisés à piloter un drone ?', body:`<p>Oui. Nos pilotes sont formés et déclarés conformément à la réglementation de la DGAC, et notre activité est couverte par une assurance responsabilité civile professionnelle.</p>` },
     { title:'Comment accéder à mes livrables après le shooting ?', body:`<p>Vous recevez vos identifiants d'<strong>espace client</strong> après validation du devis. Vos visuels y restent disponibles au téléchargement pendant toute la durée convenue.</p>` },
     { title:'Comment devenir Partenaire Fondateur ?', body:`<p>Le programme et les conditions de candidature sont détaillés sur notre page <strong>Partenaires</strong>.</p>` },
+    { title:'Qu\'est-ce que Lumen by Bunkaio ?', body:`<p>Lumen est le service photobooth IA de Bunkaio, conçu pour les mariages haut de gamme. Il allie technologie et élégance pour offrir aux invités une expérience mémorable, et aux mariés des souvenirs durables. Trois formules sont disponibles — Essentiel, Signature et Sur-mesure — selon la durée et le niveau de personnalisation souhaités.</p>` },
+    { title:'Lumen intervient-il uniquement pour les mariages ?', body:`<p>Lumen est conçu en priorité pour les mariages. Il s'adapte également aux réceptions privées, aux événements corporate et aux soirées organisées par des agences événementielles. Contactez-nous pour toute demande spécifique.</p>` },
   ] : [
     { title:'What services do you offer?', body:`<p>Real-estate photography and video, architecture & design, 4K drone, events, brands and private clients. Each universe has packages detailed in our <strong>catalogue & rates</strong>.</p>` },
     { title:'How does a project run, from request to delivery?', body:`<p>Four simple steps: a personalised <strong>quote</strong> within 24h, the <strong>shoot</strong> on the agreed date, <strong>post-production</strong> (selection, retouching, editing), then <strong>delivery</strong> of your visuals via your client area. Full details are available under the "Quote & process" tab on the Services page.</p>` },
@@ -1977,6 +2180,8 @@ function renderFaqAccordion(){
     { title:'Are you insured and authorised to fly a drone?', body:`<p>Yes. Our pilots are trained and registered in accordance with French DGAC regulations, and our activity is covered by professional liability insurance.</p>` },
     { title:'How do I access my deliverables after the shoot?', body:`<p>You receive your <strong>client area</strong> credentials once the quote is confirmed. Your visuals remain available for download there for the agreed period.</p>` },
     { title:'How can I become a Founding Partner?', body:`<p>The programme and application terms are detailed on our <strong>Partners</strong> page.</p>` },
+    { title:'What is Lumen by Bunkaio?', body:`<p>Lumen is Bunkaio's IA photobooth service, designed for luxury weddings. It combines technology and elegance to give guests a memorable experience and couples lasting memories. Three packages are available — Essentials, Signature and Bespoke — depending on the duration and level of customisation needed.</p>` },
+    { title:'Is Lumen exclusively for weddings?', body:`<p>Lumen is designed primarily for weddings. It also adapts to private receptions, corporate events and parties organised by event agencies. Contact us for any specific enquiry.</p>` },
   ];
   renderAccordionInto('faqAccordion', sections);
 }
