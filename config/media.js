@@ -85,7 +85,8 @@ const IMG = {
      Format : paysage large, ~1920×1080px minimum
      ────────────────────────────────────────────────────────────────── */
   home:      'images/hero/home-1.webp',               // Fond page Accueil
-  homeVideo: 'videos/home-bg.mp4',                    // Vidéo de fond Accueil (laisser vide '' pour revenir aux images)
+  homeVideo: 'videos/home-bg.mp4?v=3',                // Vidéo de fond Accueil — incrémenter ?v=X à chaque remplacement pour casser le cache mobile (laisser vide '' pour revenir aux images)
+  missionVideo: '',                                    // Vidéo de fond section "Pourquoi Bunkaio existe" (page Partenaires) — ex: 'videos/mission-bg.mp4' (laisser vide pour fond noir uni)
   quiz:      MEDIA_BASE + '/hero/quiz-1.webp',       // Fond page Questionnaire devis
   services:  MEDIA_BASE + '/hero/services-1.webp',   // Fond page Services
   drone:     MEDIA_BASE + '/hero/drone-1.webp',      // Fond page 4K Drone
