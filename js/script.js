@@ -2477,7 +2477,6 @@ function initCatShowcase(){
     if (!textEl) {
       content.innerHTML = `
         <div class="cat-showcase-text">
-          <div class="cat-showcase-kicker">${t({fr:'Prestation',en:'Service'})} ${idx + 1} / ${order.length}</div>
           <div class="cat-showcase-name">${t(cat.name)}</div>
           <div class="cat-showcase-tag">${t(cat.tag)}</div>
         </div>
@@ -2492,7 +2491,6 @@ function initCatShowcase(){
     textEl.classList.add(leaveClass);
     setTimeout(() => {
       textEl.innerHTML = `
-        <div class="cat-showcase-kicker">${t({fr:'Prestation',en:'Service'})} ${idx + 1} / ${order.length}</div>
         <div class="cat-showcase-name">${t(cat.name)}</div>
         <div class="cat-showcase-tag">${t(cat.tag)}</div>`;
       if (btnEl) btnEl.setAttribute('onclick', `goToQuizCategory('${cat.id}')`);

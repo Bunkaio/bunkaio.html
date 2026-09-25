@@ -2426,11 +2426,6 @@
   @keyframes slideHintRight {
     0%, 100% { transform: translateX(0); } 50% { transform: translateX(8px); }
   }
-  .cat-showcase-kicker {
-    font-size: 11px; font-weight: 600; letter-spacing: 0.34em;
-    text-transform: uppercase; color: rgba(255,255,255,0.72);
-    margin-bottom: 22px;
-  }
   .cat-showcase-name {
     font-size: clamp(30px, 5.5vw, 56px);
     font-weight: 700; letter-spacing: -0.03em; line-height: 1.12;
