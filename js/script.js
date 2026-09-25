@@ -848,18 +848,34 @@ function initHeroCarousel(viewKey){
     const vw = document.createElement('div');
     vw.className = 'hero-video-wrap';
     const vid = document.createElement('video');
-    vid.src = IMG.homeVideo;
-    vid.autoplay = true;
-    vid.muted = true;
-    vid.loop = true;
+    /* Attributs posés AVANT le src : requis par Safari/iOS pour autoriser
+       l'autoplay muet sans intervention de l'utilisateur. */
+    vid.setAttribute('muted', '');
+    vid.setAttribute('autoplay', '');
+    vid.setAttribute('loop', '');
     vid.setAttribute('playsinline', '');
     vid.setAttribute('webkit-playsinline', '');
-    vid.setAttribute('preload', 'metadata');
+    vid.setAttribute('preload', 'auto');
+    vid.muted = true;
+    vid.disablePictureInPicture = true;
     vid.style.width = '100%';
     vid.style.height = '100%';
+    vid.src = IMG.homeVideo;
     vw.appendChild(vid);
     const overlay = wrap.querySelector('.page-hero-overlay');
     wrap.insertBefore(vw, overlay || null);
+
+    const tryPlay = () => {
+      const p = vid.play();
+      if (p && p.catch) p.catch(() => {});
+    };
+    tryPlay();
+    vid.addEventListener('loadedmetadata', tryPlay);
+    vid.addEventListener('canplay', tryPlay);
+    /* Filet de sécurité : si le navigateur bloque quand même l'autoplay,
+       la vidéo démarre au premier geste de l'utilisateur, sans bouton visible. */
+    const resumeOnGesture = () => { tryPlay(); };
+    ['touchstart', 'click'].forEach(ev => document.addEventListener(ev, resumeOnGesture, { once: true, passive: true }));
     return;
   }
 
