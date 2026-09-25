@@ -196,16 +196,25 @@ const SECTIONS = [
   {
     id: 'services-cats',
     title: 'Services — Photos catégories',
-    desc: '900 × 1200 px (portrait 3:4)',
+    desc: '1600 × 2000 px (portrait 4:5) — fond du parcours prestations + vignette filtre Services',
+    slots: [
+      { path: 'services/photo-part.webp', label: 'Photo particuliers' },
+      { path: 'services/mode.webp', label: 'Mode, agence, mannequins' },
+      { path: 'services/commercial.webp', label: 'Commercial & produits' },
+      { path: 'services/event.webp', label: 'Événementiel' },
+      { path: 'services/lumen.webp', label: 'Lumen' },
+    ],
+  },
+  {
+    id: 'services-cats-archive',
+    title: 'Services — Catégories archivées (non utilisées actuellement)',
+    desc: '900 × 1200 px (portrait 3:4) — pas nécessaire tant que ces catégories restent désactivées',
     slots: [
       { path: 'services/immobilier.webp', label: 'Immobilier' },
       { path: 'services/archi.webp', label: 'Architecture' },
       { path: 'services/cuisine.webp', label: 'Cuisines' },
       { path: 'services/piscine.webp', label: 'Piscines' },
       { path: 'services/artisan.webp', label: 'Artisanat' },
-      { path: 'services/photo-part.webp', label: 'Photo particuliers' },
-      { path: 'services/mode.webp', label: 'Mode' },
-      { path: 'services/event.webp', label: 'Événementiel' },
     ],
   },
   {
@@ -279,14 +288,15 @@ const SECTIONS = [
 
 // ── Portfolio categories ─────────────────────────────────────────────────────
 const PF_CATS = [
-  { id: 'immobilier', label: 'Immobilier' },
-  { id: 'archi', label: 'Architecture' },
-  { id: 'cuisine', label: 'Cuisines' },
-  { id: 'piscine', label: 'Piscines' },
-  { id: 'artisan', label: 'Artisanat' },
   { id: 'photo-part', label: 'Photo particuliers' },
-  { id: 'mode', label: 'Mode' },
+  { id: 'mode', label: 'Mode, agence, mannequins' },
+  { id: 'commercial', label: 'Commercial & produits' },
   { id: 'event', label: 'Événementiel' },
+  { id: 'immobilier', label: 'Immobilier (archivé)' },
+  { id: 'archi', label: 'Architecture (archivé)' },
+  { id: 'cuisine', label: 'Cuisines (archivé)' },
+  { id: 'piscine', label: 'Piscines (archivé)' },
+  { id: 'artisan', label: 'Artisanat (archivé)' },
 ];
 
 // ── Token ────────────────────────────────────────────────────────────────────
