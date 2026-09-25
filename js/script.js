@@ -45,7 +45,7 @@ let LANG = 'fr';
 const I18N = {
   fr: {
     'estimate':'Devis','services':'Services','portfolio':'Portfolio','drone':'4K Drone','contact':'Contact','partners':'Partenaires','nav-legal':'FAQ',
-    'hero-kicker':'Photographie · vidéo · drone','hero-word1':'Estimez','hero-word2':'votre','hero-word3':'projet','start':'Estimer mon projet',
+    'hero-kicker':'Portrait · Signature · Studio','hero-word1':'Estimez','hero-word2':'votre','hero-word3':'projet','start':'Estimer mon projet',
     'step-cat':'01 — Catégorie','q-cat':'Quel est votre domaine\u00a0?','q-cat-sub':'Sélectionnez l\'univers de votre projet.',
     'step-prof':'02 — Profil','q-prof':'Quel profil êtes-vous\u00a0?','q-prof-sub':'Identifiez-vous pour que nous comprenions précisément votre besoin.',
     'step-tier':'03 — Prestation','q-tier':'Quel niveau de prestation\u00a0?',
@@ -167,7 +167,7 @@ const I18N = {
   },
   en: {
     'estimate':'Quote','services':'Services','portfolio':'Portfolio','drone':'4K Drone','contact':'Contact','partners':'Partners','nav-legal':'FAQ',
-    'hero-kicker':'Photography · video · drone','hero-word1':'Estimate','hero-word2':'your','hero-word3':'project','start':'Estimate My Project',
+    'hero-kicker':'Portrait · Signature · Studio','hero-word1':'Estimate','hero-word2':'your','hero-word3':'project','start':'Estimate My Project',
     'step-cat':'01 — Category','q-cat':'What is your field\u00a0?','q-cat-sub':'Select the universe your project belongs to.',
     'step-prof':'02 — Profile','q-prof':'Which profile are you\u00a0?','q-prof-sub':'Tell us who you are so we can understand exactly what you need.',
     'step-tier':'03 — Service level','q-tier':'Which level of service\u00a0?',
@@ -441,42 +441,6 @@ const CATS = [
         fr:['35 photos HD retouchées','12 photos aériennes par drone certifié','1 film principal (2 minutes)','2 Reels verticaux','Storytelling complet du projet','Publication sur les supports Bunkaio'],
         en:['35 retouched HD photos','12 aerial photos by certified drone','1 main film (2 minutes)','2 vertical Reels','Complete project storytelling','Featured on Bunkaio channels'] } }
     }},
-  { id:'cuisine',
-    name:{fr:'Cuisines haut de gamme', en:'High-end kitchens'},
-    tag:{fr:'Cuisinistes · showrooms', en:'Kitchen makers · showrooms'},
-    icon:'gastro',
-    tiers:{
-      deco:{ price:390, delay:{fr:'3 jours ouvrés',en:'3 working days'}, items:{
-        fr:['8 photos HD retouchées','Une réalisation ou un espace showroom','Galerie privée de téléchargement'],
-        en:['8 retouched HD photos','One project or one showroom space','Private download gallery'] } },
-      sig:{ price:790, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
-        fr:['20 photos HD retouchées','Mise en valeur des matériaux et finitions','Galerie privée de téléchargement'],
-        en:['20 retouched HD photos','Showcasing materials and finishes','Private download gallery'] } },
-      prem:{ price:1290, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
-        fr:['30 photos HD retouchées','1 film principal (60 secondes)','1 Reel vertical pour les réseaux','Galerie privée de téléchargement'],
-        en:['30 retouched HD photos','1 main film (60 seconds)','1 vertical Reel for social media','Private download gallery'] } },
-      edit:{ price:1990, delay:{fr:'10 jours ouvrés',en:'10 working days'}, items:{
-        fr:['35 photos HD retouchées','1 film principal (90 secondes)','2 Reels verticaux','Storytelling de la réalisation','Publication sur les supports Bunkaio'],
-        en:['35 retouched HD photos','1 main film (90 seconds)','2 vertical Reels','Project storytelling','Featured on Bunkaio channels'] } }
-    }},
-  { id:'piscine',
-    name:{fr:'Piscines & extérieurs', en:'Pools & outdoor spaces'},
-    tag:{fr:'Piscinistes · paysagistes', en:'Pool builders · landscapers'},
-    icon:'paysage',
-    tiers:{
-      deco:{ price:390, delay:{fr:'3 jours ouvrés',en:'3 working days'}, items:{
-        fr:['8 photos HD retouchées','Une réalisation au meilleur moment de la journée','Galerie privée de téléchargement'],
-        en:['8 retouched HD photos','One project at the best moment of the day','Private download gallery'] } },
-      sig:{ price:790, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
-        fr:['20 photos HD retouchées','Travail de la lumière naturelle et des reflets','Galerie privée de téléchargement'],
-        en:['20 retouched HD photos','Natural light and reflections carefully crafted','Private download gallery'] } },
-      prem:{ price:1290, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
-        fr:['30 photos HD retouchées','8 photos aériennes par drone certifié','1 film principal (60 secondes)','1 Reel vertical'],
-        en:['30 retouched HD photos','8 aerial photos by certified drone','1 main film (60 seconds)','1 vertical Reel'] } },
-      edit:{ price:1990, delay:{fr:'10 jours ouvrés',en:'10 working days'}, items:{
-        fr:['35 photos HD retouchées','10 photos aériennes par drone certifié','1 film principal (90 secondes)','2 Reels verticaux','Storytelling de la réalisation','Publication sur les supports Bunkaio'],
-        en:['35 retouched HD photos','10 aerial photos by certified drone','1 main film (90 seconds)','2 vertical Reels','Project storytelling','Featured on Bunkaio channels'] } }
-    }},
   { id:'artisan',
     name:{fr:'Artisanat d\'art', en:'Master craftsmanship'},
     tag:{fr:'Ébénistes · marbriers · créateurs', en:'Cabinetmakers · marble workers · makers'},
@@ -569,13 +533,6 @@ const SUBS = {
     items:{
       fr:['1 reportage photo par mois (jusqu\'à 25 photos HD, 1 ou 2 biens)','1 Reel vertical par mois (annonces + réseaux)','Priorité planning 48h — vos biens en avant-première','Options supplémentaires au tarif partenaire (-20%)'],
       en:['1 photo shoot per month (up to 25 HD photos, 1 or 2 properties)','1 vertical Reel per month (listings + social)','48-hour priority scheduling on every new listing','All add-ons at partner rate (-20%)'] }
-  },
-  cuisine: {
-    price: 490,
-    name:{fr:'Studio Continu — Cuisines', en:'Studio Continu — Kitchens'},
-    items:{
-      fr:['1 réalisation documentée par mois (jusqu\'à 20 photos HD)','1 Reel vertical + Stories prêts à publier','Cohérence visuelle mensuelle pour vos réseaux et showroom','Options supplémentaires au tarif partenaire (-20%)'],
-      en:['1 project documented per month (up to 20 HD photos)','1 vertical Reel + Stories ready to publish','Monthly visual consistency for social and showroom','All add-ons at partner rate (-20%)'] }
   },
   artisan: {
     price: 350,
@@ -722,8 +679,6 @@ const PROFILES = [
 const CAT_PROFILES = {
   immobilier: ['agence', 'promo', 'marque', 'autre'],
   archi:      ['agence', 'promo', 'marque', 'autre'],
-  cuisine:    ['artisan', 'marque', 'agence', 'gastro', 'autre'],
-  piscine:    ['paysage', 'artisan', 'marque', 'autre'],
   artisan:    ['artisan', 'marque', 'autre'],
   mode:       ['marque', 'agence', 'artisan', 'autre'],
   event:      ['event', 'agence', 'marque', 'autre']
@@ -786,8 +741,6 @@ const TIERS = [
 const PF_CATS = [
   { id:'immobilier',  label:{fr:'Immobilier', en:'Real estate'} },
   { id:'archi',       label:{fr:'Architecture',en:'Architecture'} },
-  { id:'cuisine',     label:{fr:'Cuisines',    en:'Kitchens'} },
-  { id:'piscine',     label:{fr:'Piscines',    en:'Pools'} },
   { id:'artisan',     label:{fr:'Artisanat',   en:'Craftsmanship'} },
   { id:'photo-part',  label:{fr:'Séance photo',en:'Portrait'} },
   { id:'mode',        label:{fr:'Mode',        en:'Fashion'} },
