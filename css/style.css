@@ -1797,8 +1797,10 @@
     border-bottom: 1px solid var(--line);
   }
   .testimonials-label {
-    font-size: 13px; font-weight: 700; letter-spacing: 0.2em;
-    text-transform: uppercase; color: var(--black);
+    /* Même police/taille que "Nous ne documentons pas des projets…" */
+    font-size: clamp(26px, 4.4vw, 48px);
+    font-weight: 700; letter-spacing: -0.025em; line-height: 1.28;
+    color: var(--black);
   }
   .testi-arrows { display: flex; gap: 10px; flex-shrink: 0; }
   .testi-arrow {
@@ -2354,32 +2356,27 @@
     border-left: 1px solid var(--line);
   }
   .reassure-item:first-child { border-left: none; padding-left: 0; }
-  .reassure-icon, .reassure-num, .reassure-title, .reassure-text {
+  .reassure-icon, .reassure-num, .reassure-text {
     opacity: 0; filter: blur(6px); transform: translateY(14px);
   }
   .reassure-section.in .reassure-icon,
   .reassure-section.in .reassure-num,
-  .reassure-section.in .reassure-title,
   .reassure-section.in .reassure-text {
     animation: reassureTextReveal 0.9s var(--ease-luxe) forwards;
   }
   /* Cascade par item (délai de base croissant), puis à l'intérieur de
-     chaque item : icône -> numéro -> titre -> texte. */
+     chaque item : icône -> numéro -> (titre, voir plus bas) -> texte. */
   .reassure-section.in .reassure-item:nth-child(1) .reassure-icon  { animation-delay: 0.05s; }
   .reassure-section.in .reassure-item:nth-child(1) .reassure-num   { animation-delay: 0.12s; }
-  .reassure-section.in .reassure-item:nth-child(1) .reassure-title { animation-delay: 0.19s; }
   .reassure-section.in .reassure-item:nth-child(1) .reassure-text  { animation-delay: 0.28s; }
   .reassure-section.in .reassure-item:nth-child(2) .reassure-icon  { animation-delay: 0.16s; }
   .reassure-section.in .reassure-item:nth-child(2) .reassure-num   { animation-delay: 0.23s; }
-  .reassure-section.in .reassure-item:nth-child(2) .reassure-title { animation-delay: 0.30s; }
   .reassure-section.in .reassure-item:nth-child(2) .reassure-text  { animation-delay: 0.39s; }
   .reassure-section.in .reassure-item:nth-child(3) .reassure-icon  { animation-delay: 0.27s; }
   .reassure-section.in .reassure-item:nth-child(3) .reassure-num   { animation-delay: 0.34s; }
-  .reassure-section.in .reassure-item:nth-child(3) .reassure-title { animation-delay: 0.41s; }
   .reassure-section.in .reassure-item:nth-child(3) .reassure-text  { animation-delay: 0.50s; }
   .reassure-section.in .reassure-item:nth-child(4) .reassure-icon  { animation-delay: 0.38s; }
   .reassure-section.in .reassure-item:nth-child(4) .reassure-num   { animation-delay: 0.45s; }
-  .reassure-section.in .reassure-item:nth-child(4) .reassure-title { animation-delay: 0.52s; }
   .reassure-section.in .reassure-item:nth-child(4) .reassure-text  { animation-delay: 0.61s; }
   @keyframes reassureTextReveal { to { opacity: 1; filter: blur(0); transform: translateY(0); } }
   .reassure-icon {
@@ -2394,20 +2391,16 @@
   .reassure-title {
     font-size: 15px; font-weight: 700; letter-spacing: -0.01em;
     margin-bottom: 10px; line-height: 1.3;
-    position: relative; display: inline-block;
+    opacity: 1; filter: none; transform: none;
+    clip-path: inset(0 100% 0 -2px);
   }
-  /* Soulignement animé qui se dessine sous le titre, juste après son
-     apparition — renforce la sensation de mouvement de la section. */
-  .reassure-title::after {
-    content: ''; position: absolute; left: 0; bottom: -3px;
-    width: 100%; height: 1.5px; background: var(--black);
-    transform: scaleX(0); transform-origin: left;
-  }
-  .reassure-section.in .reassure-item:nth-child(1) .reassure-title::after { animation: reassureUnderline 0.6s var(--ease-luxe) 0.5s forwards; }
-  .reassure-section.in .reassure-item:nth-child(2) .reassure-title::after { animation: reassureUnderline 0.6s var(--ease-luxe) 0.61s forwards; }
-  .reassure-section.in .reassure-item:nth-child(3) .reassure-title::after { animation: reassureUnderline 0.6s var(--ease-luxe) 0.72s forwards; }
-  .reassure-section.in .reassure-item:nth-child(4) .reassure-title::after { animation: reassureUnderline 0.6s var(--ease-luxe) 0.83s forwards; }
-  @keyframes reassureUnderline { to { transform: scaleX(1); } }
+  /* Le titre "s'écrit" de gauche à droite (pas de fondu/flou comme les
+     autres éléments), façon machine à écrire, juste après l'icône. */
+  .reassure-section.in .reassure-item:nth-child(1) .reassure-title { animation: reassureWrite 0.65s steps(18, end) 0.16s forwards; }
+  .reassure-section.in .reassure-item:nth-child(2) .reassure-title { animation: reassureWrite 0.65s steps(18, end) 0.27s forwards; }
+  .reassure-section.in .reassure-item:nth-child(3) .reassure-title { animation: reassureWrite 0.65s steps(18, end) 0.38s forwards; }
+  .reassure-section.in .reassure-item:nth-child(4) .reassure-title { animation: reassureWrite 0.65s steps(18, end) 0.49s forwards; }
+  @keyframes reassureWrite { to { clip-path: inset(0 0 0 -2px); } }
   .reassure-text {
     font-size: 12.5px; line-height: 1.65; color: var(--grey);
   }

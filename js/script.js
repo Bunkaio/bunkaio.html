@@ -582,7 +582,7 @@ const CATS = [
   { id:'photo-part',
     name:{fr:'Séance photo — particuliers', en:'Portrait & lifestyle — individuals'},
     tag:{fr:'Extérieur · studio · solo · couple · groupe', en:'Outdoor · studio · solo · couple · group'},
-    icon:'autre',
+    icon:'camera',
     tiers:{
       deco:{ price:230, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
         fr:['1h de séance — extérieur ou studio (+60€)','8 photos HD retouchées','Sélection guidée incluse','Galerie privée de téléchargement'],
@@ -1171,6 +1171,31 @@ function renderMissionServices(){
     </div>`).join('');
 }
 
+/* Défilement automatique en boucle du carrousel de prestations —
+   pause au survol (desktop) et à l'interaction tactile (mobile),
+   même logique que le carrousel de témoignages. */
+let _missionServicesPaused = false;
+let _missionServicesResumeTO = null;
+function initMissionServicesAutoplay(){
+  const track = document.getElementById('missionServicesTrack');
+  if (!track || track.dataset.autoplayInit) return;
+  track.dataset.autoplayInit = '1';
+  setInterval(() => {
+    if (_missionServicesPaused) return;
+    const card = track.querySelector('.mission-service-card');
+    const amount = (card ? card.offsetWidth : 140) + 10;
+    const atEnd = track.scrollLeft + track.clientWidth >= track.scrollWidth - 4;
+    track.scrollTo({ left: atEnd ? 0 : track.scrollLeft + amount, behavior: 'smooth' });
+  }, 2600);
+  track.addEventListener('mouseenter', () => { _missionServicesPaused = true; });
+  track.addEventListener('mouseleave', () => { _missionServicesPaused = false; });
+  track.addEventListener('touchstart', () => {
+    _missionServicesPaused = true;
+    clearTimeout(_missionServicesResumeTO);
+    _missionServicesResumeTO = setTimeout(() => { _missionServicesPaused = false; }, 5000);
+  }, { passive: true });
+}
+
 function renderCats(){
   const el = document.getElementById('catList');
   el.innerHTML = '';
@@ -1258,6 +1283,7 @@ function getIcon(type){
     paysage: `<svg width="52" height="52" viewBox="0 0 56 56" ${stroke}><circle cx="40" cy="16" r="5"/><path d="M8 42 L20 28 L30 38 L38 30 L48 42"/><line x1="8" y1="46" x2="48" y2="46"/></svg>`,
     event:   `<svg width="52" height="52" viewBox="0 0 56 56" ${stroke}><path d="M28 10 L32 22 L44 22 L34 30 L38 42 L28 34 L18 42 L22 30 L12 22 L24 22 Z"/></svg>`,
     autre:   `<svg width="52" height="52" viewBox="0 0 56 56" ${stroke}><circle cx="28" cy="28" r="16"/><path d="M24 24 Q24 20 28 20 Q32 20 32 24 Q32 27 28 28 L28 32"/><circle cx="28" cy="38" r="0.5"/></svg>`,
+    camera:  `<svg width="52" height="52" viewBox="0 0 56 56" ${stroke}><path d="M10 20h6l3-5h18l3 5h6a2 2 0 0 1 2 2v20a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2V22a2 2 0 0 1 2-2z"/><circle cx="28" cy="32" r="8"/></svg>`,
     person:  `<svg width="52" height="52" viewBox="0 0 56 56" ${stroke}><circle cx="28" cy="20" r="9"/><path d="M12 46 Q12 32 28 32 Q44 32 44 46"/></svg>`,
     couple:  `<svg width="52" height="52" viewBox="0 0 56 56" ${stroke}><circle cx="20" cy="20" r="8"/><path d="M8 46 Q8 33 20 33 Q26 33 30 37"/><circle cx="36" cy="20" r="8"/><path d="M48 46 Q48 33 36 33 Q30 33 26 37"/></svg>`,
     group:   `<svg width="52" height="52" viewBox="0 0 56 56" ${stroke}><circle cx="14" cy="22" r="7"/><path d="M4 45 Q4 34 14 34 Q18 34 21 36"/><circle cx="28" cy="18" r="9"/><path d="M14 45 Q14 32 28 32 Q42 32 42 45"/><circle cx="42" cy="22" r="7"/><path d="M52 45 Q52 34 42 34 Q38 34 35 36"/></svg>`,
@@ -2604,6 +2630,7 @@ function applyImages(){
 /* ═══════════════ INIT ═══════════════ */
 renderCats();
 renderMissionServices();
+initMissionServicesAutoplay();
 renderMarquee();
 renderLogoCarousel();
 renderFooterServices();
