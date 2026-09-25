@@ -113,8 +113,11 @@
     justify-self: center;
   }
   .nav-link {
-    font-size: 12px; font-weight: 600; letter-spacing: 0.06em;
-    text-transform: uppercase; color: rgba(255,255,255,0.78);
+    /* Même caractère typographique que "Nous ne documentons pas des
+       projets…" — gras, resserré, sans majuscules — plutôt que le
+       petit-capitales espacé habituel des menus. */
+    font-size: 13.5px; font-weight: 700; letter-spacing: -0.02em;
+    text-transform: none; color: rgba(255,255,255,0.78);
     cursor: pointer; position: relative; padding: 6px 0;
     background: none; border: none; font-family: inherit;
     overflow: visible; white-space: nowrap;
@@ -232,8 +235,8 @@
 
   .mobile-menu-links { display: flex; flex-direction: column; align-items: center; gap: 24px; }
   .mobile-link {
-    font-size: clamp(14px, 3.2vw, 18px); font-weight: 600;
-    letter-spacing: 0.06em; text-transform: uppercase;
+    font-size: clamp(16px, 3.6vw, 20px); font-weight: 700;
+    letter-spacing: -0.02em; text-transform: none;
     color: rgba(255,255,255,0.78);
     opacity: 0; transform: translateY(18px);
     transition: color 0.3s var(--ease), opacity 0.5s var(--ease), transform 0.5s var(--ease);
@@ -277,7 +280,13 @@
     .nav-burger { display: flex; }
   }
 
-  .view { display: none; position: relative; z-index: 1; }
+  /* pointer-events:none sur .view lui-même, restauré sur ses enfants
+     directs : évite qu'une zone vide de la page (ex: le déclencheur de
+     la vidéo "Le studio") ne capte les clics destinés aux calques
+     fixes en dessous (#pageHeroWrap, #missionVideoWrap), tout en
+     laissant tout le contenu réel parfaitement cliquable. */
+  .view { display: none; position: relative; z-index: 1; pointer-events: none; }
+  .view.active > * { pointer-events: auto; }
   .view.active { display: block; animation: viewIn 0.8s var(--ease) both; }
   @keyframes viewIn {
     from { opacity: 0; transform: translateY(26px); }
@@ -2331,7 +2340,11 @@
   }
   /* Déclencheur invisible : réserve l'espace de scroll dans le flux normal
      de la page, observé en JS pour piloter l'apparition de la vidéo fixe. */
-  .home-claim-trigger { min-height: 100vh; }
+  /* pointer-events:none essentiel : ce déclencheur est vide mais occupe
+     100vh dans le flux normal (z-index du .view au-dessus du calque
+     vidéo fixe) — sans ça, il intercepte tous les clics destinés à la
+     vidéo/aux pastilles de prestations en dessous. */
+  .home-claim-trigger { min-height: 100vh; pointer-events: none !important; }
   @media (max-width: 600px) {
     .mission-video-content { padding: 36px 24px; }
     /* Le CTA reste identique au desktop, pas de resserrement */
