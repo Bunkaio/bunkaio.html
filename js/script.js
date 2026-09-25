@@ -55,6 +55,7 @@ const I18N = {
     'name-label':'Nom / Société *','email-label':'Email *','phone-label':'Téléphone','phone-label-opt':'Téléphone — optionnel','project-label':'Votre projet *','message-label':'Message *',
     'delay-label':'Délai souhaité *','delay-opt-select':'Sélectionnez…','delay-opt-urgent':'Urgent (moins de 2 semaines)','delay-opt-1m':'Dans le mois','delay-opt-2-3m':'2 à 3 mois','delay-opt-flex':'Flexible / pas de contrainte',
     'back':'← Retour','continue':'Continuer','submit':'Confirmez ma demande de devis',
+    'quiz-back':'Retour','quiz-home':'Accueil',
     'success-label':'Demande reçue','success-title':'Votre demande a bien été envoyée',
     'success-text1':'Merci pour votre confiance. Votre demande de devis est entre nos mains : elle sera étudiée et vous recevrez une réponse sous <strong>48 heures</strong>.',
     'success-text2':'Chaque demande est évaluée individuellement et n\'est acceptée que si elle correspond à la <strong>ligne éditoriale de BUNKAIO</strong>. Nous travaillons uniquement avec des projets qui résonnent avec notre univers — c\'est ce qui garantit la qualité de chaque collaboration.',
@@ -234,6 +235,7 @@ const I18N = {
     'name-label':'Name / Company *','email-label':'Email *','phone-label':'Phone','phone-label-opt':'Phone — optional','project-label':'Your project *','message-label':'Message *',
     'delay-label':'Desired timeline *','delay-opt-select':'Select…','delay-opt-urgent':'Urgent (under 2 weeks)','delay-opt-1m':'Within a month','delay-opt-2-3m':'2 to 3 months','delay-opt-flex':'Flexible / no constraint',
     'back':'← Back','continue':'Continue','submit':'Confirm my quote request',
+    'quiz-back':'Back','quiz-home':'Home',
     'success-label':'Request received','success-title':'Your request has been sent',
     'success-text1':'Thank you for your trust. Your quote request is in our hands: it will be carefully reviewed and you will receive a reply within <strong>48 hours</strong>.',
     'success-text2':'Every request is assessed individually and is only accepted if it aligns with <strong>BUNKAIO\'s editorial line</strong>. We work exclusively with projects that resonate with our universe — this is what guarantees the quality of every collaboration.',
@@ -1121,6 +1123,8 @@ function goView(v){
     updateNavScrollState();
     closeMobileMenu();
     if (v !== 'quiz') setProgress(0);
+    const quizNav = document.getElementById('quizNavRow');
+    if (quizNav) quizNav.style.display = (v === 'quiz') ? '' : 'none';
     setPageBg(v);
     initHeroCarousel(v);
     /* Bannière "Un projet en tête ?" du footer : masquée sur l'accueil
@@ -1156,6 +1160,13 @@ function quizStep(n){
   setProgress(n / 6 * 100);
   window.scrollTo({ top:0, behavior:'smooth' });
   if (n === 5) updateQuizPayReassurance();
+}
+
+/* Bouton "Retour" toujours visible du questionnaire : remonte d'une
+   étape, ou renvoie à l'accueil si on est déjà sur la première. */
+function quizGoBack(){
+  if (currentStep > 1) quizStep(currentStep - 1);
+  else goView('home');
 }
 
 function updateQuizPayReassurance(){
@@ -2417,14 +2428,13 @@ function renderCommBox(){
 }
 
 /* ═══════════════ PRESTATIONS — calque fixe plein écran, fond image (Accueil) ═══════════════
-   Remplace l'ancienne bande d'images défilante : même mécanique que le
-   hero et la vidéo "Le studio" (calque position:fixed partagé, piloté
-   par IntersectionObserver), mais avec un fond IMAGE qui change à
-   chaque catégorie parcourue au fil du scroll. Un déclencheur invisible
-   par catégorie (.cat-showcase-trigger) détermine quel fond/texte
-   afficher ; la désactivation se fait dès que le déclencheur "Le
-   studio" suivant commence à apparaître (même logique que la vidéo qui
-   cède la place à la section blanche). */
+   Remplace l'ancienne bande d'images défilante : même calque
+   position:fixed partagé que le hero et la vidéo "Le studio", montré/masqué
+   via IntersectionObserver sur un unique déclencheur invisible.
+   Contrairement aux autres calques, le scroll vertical ne change PAS de
+   catégorie ici : il fait simplement défiler la page, comme n'importe
+   quelle section. Le changement de catégorie se fait uniquement au
+   swipe/molette horizontal ou via les flèches — desktop et mobile. */
 let _catShowcaseInit = false;
 function initCatShowcase(){
   const wrap = document.getElementById('catShowcaseWrap');
@@ -2433,20 +2443,15 @@ function initCatShowcase(){
   const content = document.getElementById('catShowcaseContent');
   const arrowPrev = document.getElementById('catShowcaseArrowPrev');
   const arrowNext = document.getElementById('catShowcaseArrowNext');
-  const triggers = document.querySelectorAll('.cat-showcase-trigger');
-  if (!wrap || !bgA || !bgB || !content || !triggers.length || _catShowcaseInit) return;
+  const trigger = document.getElementById('catShowcaseTrigger');
+  if (!wrap || !bgA || !bgB || !content || !trigger || _catShowcaseInit) return;
   _catShowcaseInit = true;
 
-  const order = Array.from(triggers).map(t => t.dataset.cat);
+  const order = CATS.map(c => c.id);
   let currentCat = null;
   let currentIdx = -1;
   let shownIsA = true; /* quel calque image est actuellement visible */
   let hintShown = false;
-
-  const jumpTo = (catId) => {
-    const tr = Array.from(triggers).find(x => x.dataset.cat === catId);
-    if (tr) tr.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
 
   const paintDots = (catId) => {
     document.querySelectorAll('.cat-showcase-dot').forEach(d => {
@@ -2545,22 +2550,18 @@ function initCatShowcase(){
       textEl.style.filter = 'blur(0)';
     }, 220);
   };
-  window._catShowcaseJump = jumpTo;
-  window._catShowcaseNav = (delta) => {
+  const catNav = (delta) => {
     if (currentIdx === -1) return;
     const nextIdx = currentIdx + delta;
     if (nextIdx < 0 || nextIdx >= order.length) return;
-    jumpTo(order[nextIdx]);
+    renderCat(order[nextIdx]);
   };
+  window._catShowcaseJump = renderCat; /* points cliquables */
+  window._catShowcaseNav = catNav;     /* flèches gauche/droite */
   renderCat(order[0]);
 
-  const visible = new Set();
   const catIO = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) { visible.add(e.target); renderCat(e.target.dataset.cat); }
-      else visible.delete(e.target);
-    });
-    const nowActive = visible.size > 0;
+    const nowActive = entries[0].isIntersecting;
     wrap.classList.toggle('active', nowActive);
     /* Indice "ça glisse" sur les flèches, affiché une seule fois, à la
        première arrivée sur le parcours prestations. */
@@ -2572,7 +2573,51 @@ function initCatShowcase(){
       }, 600);
     }
   }, { threshold: 0.5 });
-  triggers.forEach(tr => catIO.observe(tr));
+  catIO.observe(trigger);
+
+  /* Molette / trackpad : un mouvement à dominante HORIZONTALE change de
+     catégorie (et empêche tout scroll latéral de la page) ; un mouvement
+     à dominante VERTICALE n'est pas intercepté et fait défiler la page
+     normalement, comme n'importe quelle autre section. */
+  let wheelBusy = false;
+  wrap.addEventListener('wheel', (e) => {
+    if (!wrap.classList.contains('active')) return;
+    const adx = Math.abs(e.deltaX), ady = Math.abs(e.deltaY);
+    if (adx <= ady || adx < 12) return;
+    e.preventDefault();
+    if (wheelBusy) return;
+    wheelBusy = true;
+    catNav(e.deltaX > 0 ? 1 : -1);
+    setTimeout(() => { wheelBusy = false; }, 550);
+  }, { passive: false });
+
+  /* Tactile : même logique — un swipe à dominante horizontale change de
+     catégorie, un swipe vertical fait défiler la page normalement. La
+     décision (horizontal ou vertical) se prend au premier mouvement net
+     du geste, puis reste figée jusqu'au relâchement du doigt. */
+  let touchStartX = 0, touchStartY = 0, touchDecided = false, touchHorizontal = false;
+  wrap.addEventListener('touchstart', (e) => {
+    if (!wrap.classList.contains('active')) return;
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+    touchDecided = false;
+    touchHorizontal = false;
+  }, { passive: true });
+  wrap.addEventListener('touchmove', (e) => {
+    if (!wrap.classList.contains('active')) return;
+    const dx = e.touches[0].clientX - touchStartX;
+    const dy = e.touches[0].clientY - touchStartY;
+    if (!touchDecided && (Math.abs(dx) > 10 || Math.abs(dy) > 10)) {
+      touchDecided = true;
+      touchHorizontal = Math.abs(dx) > Math.abs(dy);
+    }
+    if (touchHorizontal) e.preventDefault();
+  }, { passive: false });
+  wrap.addEventListener('touchend', (e) => {
+    if (!wrap.classList.contains('active') || !touchHorizontal) return;
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 40) catNav(dx < 0 ? 1 : -1);
+  }, { passive: true });
 }
 
 /* ═══════════════ VIDÉO "LE STUDIO" — calque fixe plein écran (Accueil) ═══════════════

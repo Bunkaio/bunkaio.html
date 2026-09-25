@@ -138,10 +138,13 @@ const IMG = {
        en fond, sur mobile comme en desktop. */
     home: [],
 
-    /* ② Questionnaire devis — pas de bannière : le quiz s'affiche
-       directement, sans obliger à scroller à chaque étape. Le fond
-       très atténué de la page (IMG.quiz ci-dessus) reste visible. */
-    quiz: [],
+    /* ② Questionnaire devis — même fond fixe que les autres rubriques,
+       pour la cohérence visuelle (et pour que la navbar ait toujours
+       un fond derrière elle). C'est un calque position:fixed, il n'ajoute
+       aucune hauteur de scroll supplémentaire. */
+    quiz: [
+      MEDIA_BASE + '/hero/quiz-1.webp',
+    ],
 
     /* ③ Services */
     services: [
@@ -175,8 +178,11 @@ const IMG = {
       MEDIA_BASE + '/hero/partners-2.webp',
     ],
 
-    /* ⑦bis FAQ & politique de confidentialité — pas de bannière */
-    legal: [],
+    /* ⑦bis FAQ & politique de confidentialité — réutilise la photo de
+       la page Contact (même thématique éditoriale, pas de doublon à gérer). */
+    legal: [
+      MEDIA_BASE + '/hero/contact-1.webp',
+    ],
 
     /* ⑧ Connexion */
     login: [

@@ -22,7 +22,7 @@
 <meta name="twitter:image" content="https://bunkaio.com/images/logo.webp">
 
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='80' font-family='serif'>⊹</text></svg>">
-<link rel="stylesheet" href="css/style.css?v=202609269">
+<link rel="stylesheet" href="css/style.css?v=202609270">
 
 <script type="application/ld+json">
 {
@@ -154,6 +154,22 @@
   <div class="cat-showcase-content" id="catShowcaseContent"></div>
 </div>
 
+<!-- Retour / Accueil du questionnaire — en dehors de .view (comme les
+     calques fixes ci-dessus) car un calque position:fixed placé DANS un
+     .view perd son ancrage viewport : l'animation d'entrée de .view.active
+     pose un transform sur l'ancêtre, qui devient le référentiel de tout
+     descendant fixed. Visibilité pilotée par goView() (v === 'quiz'). -->
+<div class="quiz-nav-row" id="quizNavRow" style="display:none">
+  <button class="quiz-nav-btn" onclick="quizGoBack()" aria-label="Retour">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    <span data-lang="quiz-back">Retour</span>
+  </button>
+  <button class="quiz-nav-btn quiz-nav-home" onclick="goView('home')" aria-label="Accueil">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    <span data-lang="quiz-home">Accueil</span>
+  </button>
+</div>
+
 <!-- HOME -->
 <div class="view active" id="view-home">
   <section class="hero">
@@ -175,14 +191,13 @@
     </div>
   </section>
 
-  <!-- Déclencheurs prestations — remplace l'ancienne bande d'images
-       défilante. Un déclencheur par catégorie, contenu généré en JS
-       (voir initCatShowcase() + #catShowcaseWrap plus haut). -->
-  <div class="cat-showcase-trigger" data-cat="photo-part"></div>
-  <div class="cat-showcase-trigger" data-cat="mode"></div>
-  <div class="cat-showcase-trigger" data-cat="commercial"></div>
-  <div class="cat-showcase-trigger" data-cat="event"></div>
-  <div class="cat-showcase-trigger" data-cat="lumen"></div>
+  <!-- Déclencheur prestations — remplace l'ancienne bande d'images
+       défilante. Une seule section : le scroll vertical fait simplement
+       apparaître/disparaître le calque (comme n'importe quelle section),
+       le changement de catégorie se fait uniquement au swipe/molette
+       horizontal ou via les flèches (voir initCatShowcase() — l'ordre des
+       catégories vient directement de CATS dans js/script.js). -->
+  <div class="cat-showcase-trigger" id="catShowcaseTrigger"></div>
 
   <div class="home-claim-trigger" id="homeClaimSection"></div>
 
@@ -1019,7 +1034,7 @@
   </div>
 </footer>
 
-<script src="config/media.js?v=202609269"></script>
-<script src="js/script.js?v=202609269"></script>
+<script src="config/media.js?v=202609270"></script>
+<script src="js/script.js?v=202609270"></script>
 </body>
 </html>

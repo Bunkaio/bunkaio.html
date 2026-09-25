@@ -73,10 +73,14 @@
 
   nav {
     position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
-    background: transparent;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    border-bottom: 1px solid transparent;
+    /* Toujours un minimum de contraste, même tout en haut de page — sur
+       les rubriques à fond clair (Services, Portfolio...), un nav
+       totalement transparent rendait le logo/les liens blancs invisibles.
+       La navbar ne doit jamais "disparaître". */
+    background: rgba(10, 10, 12, 0.34);
+    backdrop-filter: blur(10px) saturate(1.3);
+    -webkit-backdrop-filter: blur(10px) saturate(1.3);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
     box-shadow: none;
     transition: background 0.5s var(--ease), backdrop-filter 0.5s var(--ease),
                 -webkit-backdrop-filter 0.5s var(--ease), border-color 0.5s var(--ease),
@@ -841,6 +845,33 @@
     transition: opacity 0.9s var(--ease), transform 0.9s var(--ease);
   }
   .rv.in { opacity: 1; transform: translateY(0); }
+
+  /* Retour / Accueil — toujours visibles pendant le questionnaire, quelle
+     que soit la position de scroll dans l'étape en cours. */
+  .quiz-nav-row {
+    position: fixed; top: calc(var(--nav-h, 90px) + 14px); left: 32px; z-index: 60;
+    display: flex; gap: 10px;
+    pointer-events: auto;
+  }
+  .quiz-nav-btn {
+    display: flex; align-items: center; gap: 7px;
+    font-family: inherit; font-size: 12px; font-weight: 600;
+    color: var(--black);
+    background: rgba(255,255,255,0.62);
+    border: 1px solid rgba(10,10,12,0.14);
+    border-radius: 999px;
+    padding: 9px 16px 9px 12px; cursor: pointer;
+    backdrop-filter: blur(14px) saturate(1.4);
+    -webkit-backdrop-filter: blur(14px) saturate(1.4);
+    transition: background 0.3s var(--ease), border-color 0.3s var(--ease), transform 0.3s var(--ease);
+  }
+  .quiz-nav-btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+  .quiz-nav-btn:hover { background: rgba(255,255,255,0.9); border-color: rgba(10,10,12,0.28); transform: translateY(-1px); }
+  @media (max-width: 600px) {
+    .quiz-nav-row { top: calc(var(--nav-h, 74px) + 10px); left: 16px; gap: 8px; }
+    .quiz-nav-btn span { display: none; }
+    .quiz-nav-btn { padding: 10px; border-radius: 50%; }
+  }
 
   .quiz-wrap {
     max-width: 760px; margin: 0 auto;
@@ -1806,11 +1837,11 @@
     text-align: center; max-width: 640px; margin: 0 auto 30px;
     display: flex; flex-direction: column; align-items: center;
   }
-  .testi-logo-img { width: 34px; height: 34px; object-fit: contain; margin-bottom: 18px; }
+  .testi-logo-img { width: 72px; height: 72px; object-fit: contain; margin-bottom: 22px; }
   .testi-logo-fallback {
     display: none; color: var(--black);
-    font-size: 18px; font-weight: 700; letter-spacing: -0.02em;
-    margin-bottom: 18px;
+    font-size: 34px; font-weight: 700; letter-spacing: -0.02em;
+    margin-bottom: 22px;
   }
   .testi-quote-mark {
     color: var(--violet-deep); margin-bottom: 6px;
@@ -1822,6 +1853,12 @@
     font-weight: 700; letter-spacing: -0.025em; line-height: 1.28;
     color: var(--black);
     text-wrap: balance;
+    /* Révélation flou -> net dédiée au titre, même langage que le
+       texte "Nous ne documentons pas des projets…". */
+    opacity: 0; filter: blur(8px); transform: translateY(14px);
+  }
+  .testi-heading.in .testimonials-label {
+    animation: missionTextReveal 1s var(--ease-luxe) 0.2s forwards;
   }
   .testi-arrows-row {
     display: flex; justify-content: flex-end;
@@ -2451,12 +2488,16 @@
     margin-bottom: 16px;
     max-width: 780px;
     text-wrap: balance;
+    /* Ombre portée pour détacher le titre du fond image, quel que soit
+       le sujet ou la luminosité de la photo. */
+    text-shadow: 0 2px 18px rgba(0,0,0,0.5), 0 1px 4px rgba(0,0,0,0.4);
   }
   .cat-showcase-tag {
     font-size: 14px; color: rgba(255,255,255,0.78);
     margin-bottom: 34px;
     max-width: 460px;
     text-wrap: balance;
+    text-shadow: 0 1px 10px rgba(0,0,0,0.45);
   }
   /* .hero-start porte une animation d'entrée pensée pour le chargement
      de la page (délai 1.35s) — inadaptée ici puisque ce bouton est
