@@ -1765,30 +1765,39 @@
     max-width: 1200px; margin: 0 auto;
   }
   .testimonials-label {
-    font-size: 11px; font-weight: 600; letter-spacing: 0.28em;
-    text-transform: uppercase; color: var(--grey);
+    font-size: 13px; font-weight: 700; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--black);
     margin-bottom: 44px; padding-bottom: 14px;
     border-bottom: 1px solid var(--line);
   }
   .testimonials-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;
   }
   .testi-card {
-    padding: 36px 30px 32px;
+    padding: 32px 30px;
     border: 1px solid rgba(10,10,12,0.07);
     background: rgba(255,255,255,0.55);
     backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
     position: relative;
   }
-  .testi-mark {
-    display: block; font-size: 52px; font-weight: 700; line-height: 0.9;
-    color: var(--violet-deep);
-    font-family: Georgia, 'Times New Roman', serif;
-    margin-bottom: 14px; user-select: none;
+  .testi-avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--black); color: var(--white);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700;
+    margin-bottom: 18px;
+  }
+  .testi-tag {
+    display: inline-block;
+    font-size: 10px; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--black);
+    background: var(--violet);
+    padding: 5px 11px; border-radius: 20px;
+    margin-bottom: 18px;
   }
   .testi-text {
     font-size: 13.5px; line-height: 1.85;
-    color: var(--black); margin-bottom: 26px; font-style: italic;
+    color: var(--black); margin-bottom: 24px;
   }
   .testi-sep { width: 28px; height: 1px; background: var(--line); margin-bottom: 16px; }
   .testi-name {
@@ -2205,6 +2214,10 @@
   @media (max-width: 600px) {
     .mission-video-section { min-height: 88vh; }
     .mission-video-content { padding: 36px 24px; }
+    /* Le CTA reste identique au desktop, pas de resserrement */
+    .home-claim-cta { font-size: 14px; padding: 14px 32px; }
+    /* Bande d'images masquée sur mobile pour atteindre la vidéo plus vite */
+    .marquee { display: none; }
   }
 
   /* ─── SECTION RÉASSURANCE — bandeau compact, scannable d'un coup d'œil ─── */
@@ -2237,19 +2250,17 @@
   @media (max-width: 860px) {
     .reassure-section { padding: 48px 24px; }
     .reassure-strip {
-      grid-auto-flow: column;
-      grid-auto-columns: 74%;
+      display: flex;
+      flex-direction: column;
       grid-template-columns: none;
-      gap: 20px;
-      overflow-x: auto;
-      scroll-snap-type: x mandatory;
-      -webkit-overflow-scrolling: touch;
-      padding-bottom: 6px;
-      margin: 0 -24px;
-      padding-left: 24px; padding-right: 24px;
     }
     .reassure-item {
-      border-left: none; padding: 0;
-      scroll-snap-align: start;
+      border-left: none;
+      border-top: 1px solid var(--line);
+      padding: 24px 0 0;
+      margin-top: 24px;
+    }
+    .reassure-item:first-child {
+      border-top: none; padding-top: 0; margin-top: 0;
     }
   }
