@@ -2347,6 +2347,7 @@ updatePlaceholders();
 updateLang();
 applyImages();
 document.querySelectorAll('.ph').forEach(observe);
+document.querySelectorAll('#view-home .rv').forEach(observe);
 syncNavHeight();
 window.addEventListener('resize', () => { syncNavHeight(); if (window.innerWidth > 1180) closeMobileMenu(); });
 initHeroScrollFx();
