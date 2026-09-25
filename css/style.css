@@ -2209,7 +2209,12 @@
   @media (max-width: 920px) {
     .tier-list { grid-template-columns: 1fr; gap: 14px; }
     .services-grid { grid-template-columns: 1fr; }
-    .quiz-wrap { padding: 24px 16px 60px; }
+    /* Espace du haut suffisant pour ne jamais passer sous le bloc
+       Retour/Accueil (position fixe, sous la navbar) — cette règle
+       écrasait par erreur le padding-top défini plus haut pour cette
+       même largeur d'écran, ne laissant que 24px : le premier texte de
+       chaque étape se retrouvait caché derrière les boutons. */
+    .quiz-wrap { padding: 165px 16px 60px; }
     .prof-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
     .opt-item { padding: 14px 12px; gap: 10px; }
     .price-calc-wrap { padding: 28px 20px; }
