@@ -86,7 +86,7 @@ const IMG = {
      ────────────────────────────────────────────────────────────────── */
   home:      '',                                       // Fond page Accueil — vide car la vidéo (homeVideo) est utilisée exclusivement
   homeVideo: 'videos/home-bg.mp4?v=3',                // Vidéo de fond Accueil — incrémenter ?v=X à chaque remplacement pour casser le cache mobile
-  missionVideo: '',                                    // Vidéo de fond section "Pourquoi Bunkaio existe" (page Partenaires) — ex: 'videos/mission-bg.mp4' (laisser vide pour fond noir uni)
+  missionVideo: 'videos/mission-bg.mp4?v=1',           // Vidéo de fond section "Pourquoi Bunkaio existe" (page Partenaires) — incrémenter ?v=X à chaque remplacement pour casser le cache mobile
   quiz:      MEDIA_BASE + '/hero/quiz-1.webp',       // Fond page Questionnaire devis
   services:  MEDIA_BASE + '/hero/services-1.webp',   // Fond page Services
   drone:     MEDIA_BASE + '/hero/drone-1.webp',      // Fond page 4K Drone
