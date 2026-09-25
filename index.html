@@ -84,7 +84,7 @@
       <button class="nav-link" data-view="quiz" onclick="goView('quiz')" data-lang="estimate">Devis</button>
       <button class="nav-link" data-view="services" onclick="goView('services')" data-lang="services">Services</button>
       <button class="nav-link" data-view="portfolio" onclick="goView('portfolio')" data-lang="portfolio">Portfolio</button>
-      <button class="nav-link" data-view="drone" onclick="goView('drone')" data-lang="drone">4K Drone</button>
+      <button class="nav-link" data-view="drone" onclick="goView('drone')" data-lang="drone">4K Drone<span class="nav-soon" data-lang="nav-soon">Bientôt</span></button>
       <button class="nav-link" data-view="contact" onclick="goView('contact')" data-lang="contact">Contact</button>
       <button class="nav-link" data-view="partners" onclick="goView('partners')" data-lang="partners">Partenaires</button>
       <button class="nav-link" data-view="legal" onclick="goView('legal')" data-lang="nav-legal">FAQ</button>
@@ -105,7 +105,7 @@
     <button class="nav-link mobile-link" data-view="quiz" onclick="goView('quiz');closeMobileMenu()" data-lang="estimate">Devis</button>
     <button class="nav-link mobile-link" data-view="services" onclick="goView('services');closeMobileMenu()" data-lang="services">Services</button>
     <button class="nav-link mobile-link" data-view="portfolio" onclick="goView('portfolio');closeMobileMenu()" data-lang="portfolio">Portfolio</button>
-    <button class="nav-link mobile-link" data-view="drone" onclick="goView('drone');closeMobileMenu()" data-lang="drone">4K Drone</button>
+    <button class="nav-link mobile-link" data-view="drone" onclick="goView('drone');closeMobileMenu()" data-lang="drone">4K Drone<span class="nav-soon" data-lang="nav-soon">Bientôt</span></button>
     <button class="nav-link mobile-link" data-view="contact" onclick="goView('contact');closeMobileMenu()" data-lang="contact">Contact</button>
     <button class="nav-link mobile-link" data-view="partners" onclick="goView('partners');closeMobileMenu()" data-lang="partners">Partenaires</button>
     <button class="nav-link mobile-link" data-view="legal" onclick="goView('legal');closeMobileMenu()" data-lang="nav-legal">FAQ</button>
@@ -391,6 +391,15 @@
 
 <!-- 4K DRONE -->
 <div class="view" id="view-drone">
+  <div class="drone-soon-banner">
+    <div class="drone-soon-inner">
+      <span class="drone-soon-icon">🚁</span>
+      <div>
+        <div class="drone-soon-title" data-lang="drone-soon-title">Cette rubrique sera bientôt disponible</div>
+        <div class="drone-soon-sub" data-lang="drone-soon-sub">Nos prestations drone sont en cours de déploiement. Revenez prochainement.</div>
+      </div>
+    </div>
+  </div>
   <div class="drone-page">
     <h1 class="page-title" data-lang="drone-title">4K Drone & vidéo</h1>
     <p class="drone-intro" data-lang="drone-intro">Derrière chaque image aérienne, il y a une formation, des certifications et un matériel choisi avec exigence. Voici ce qui garantit la qualité — et la légalité — de chacune de nos productions.</p>

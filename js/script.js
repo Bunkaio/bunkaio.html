@@ -63,6 +63,9 @@ const I18N = {
     'svc-all':'Tous','svc-cta':'Estimer ce projet →','svc-sub-label':'Abonnement mensuel',
     'drone-title':'4K Drone & vidéo',
     'drone-intro':'Derrière chaque image aérienne, il y a une formation, des certifications et un matériel choisi avec exigence. Voici ce qui garantit la qualité — et la légalité — de chacune de nos productions.',
+    'nav-soon':'Bientôt',
+    'drone-soon-title':'Cette rubrique sera bientôt disponible',
+    'drone-soon-sub':'Nos prestations drone sont en cours de déploiement. Revenez prochainement.',
     'cred-label':'Formation, certifications & matériel',
     'cred1-title':'BTS Photographie — ETPA','cred1-text':'Formation supérieure en photographie à l\'ETPA, école de référence. Maîtrise complète de la lumière, de la composition et de la postproduction.',
     'cred2-title':'6 ans d\'expérience terrain','cred2-text':'Six années de photographie de terrain, au contact direct des sujets et des contraintes réelles : lumière changeante, délais, exigence du résultat. Une expérience affinée reportage après reportage.',
@@ -185,6 +188,9 @@ const I18N = {
     'svc-all':'All','svc-cta':'Get a quote for this →','svc-sub-label':'Monthly plan',
     'drone-title':'4K Drone & video',
     'drone-intro':'Behind every aerial image lies proper training, official certifications and carefully chosen equipment. Here is what guarantees the quality — and the legality — of every one of our productions.',
+    'nav-soon':'Soon',
+    'drone-soon-title':'This section is coming soon',
+    'drone-soon-sub':'Our drone services are being deployed. Check back soon.',
     'cred-label':'Training, certifications & equipment',
     'cred1-title':'Advanced Diploma in Photography — ETPA','cred1-text':'Higher education in photography at ETPA, one of France\'s leading photography schools. Full command of light, composition and post-production.',
     'cred2-title':'6 years of field experience','cred2-text':'Six years of photography in the field, working directly with subjects and real-world constraints: changing light, tight schedules, demanding results. An expertise sharpened with every assignment.',
@@ -404,7 +410,8 @@ function refreshDynamic(){
 }
 
 /* ═══════════════ DONNÉES ═══════════════ */
-const CATS = [
+/* ════ ARCHIVE — Catégories suspendues (à réactiver en décommentant) ════
+const CATS_ARCHIVE_SUSPENDED = [
   { id:'immobilier',
     name:{fr:'Immobilier prestige', en:'Luxury real estate'},
     tag:{fr:'Vente · location · promotion', en:'Sales · rentals · development'},
@@ -459,6 +466,10 @@ const CATS = [
         fr:['35 photos HD retouchées','1 film principal','2 Reels verticaux','Storytelling de l\'atelier et du savoir-faire','Publication sur les supports Bunkaio'],
         en:['35 retouched HD photos','1 main film','2 vertical Reels','Workshop and craftsmanship storytelling','Featured on Bunkaio channels'] } }
     }},
+];
+════════════════════════════════════════════════════════════════════════ */
+
+const CATS = [
   { id:'photo-part',
     name:{fr:'Séance photo — particuliers', en:'Portrait & lifestyle — individuals'},
     tag:{fr:'Extérieur · studio · solo · couple · groupe', en:'Outdoor · studio · solo · couple · group'},
@@ -579,7 +590,7 @@ const OPTIONS = [
       { id:'p15', label:{fr:'Pack 15 photos supplémentaires', en:'Pack of 15 extra photos'}, price:420 },
       { id:'p20', label:{fr:'Pack 20 photos supplémentaires', en:'Pack of 20 extra photos'}, price:520 },
     ]},
-  { id:'drone', icon:'🚁', price:'À partir de 390€',
+  { id:'drone', icon:'🚁', price:'À partir de 390€', comingSoon: true,
     name:{fr:'Prises de vue drone additionnelles', en:'Additional drone footage'},
     note:{fr:'Perspectives aériennes supplémentaires par pilote certifié A1/A3 & A2. Précisez le volume souhaité dans votre message.',
           en:'Additional aerial perspectives by A1/A3 & A2 certified pilot. Specify the volume needed in your message.'} },
@@ -613,7 +624,7 @@ const SPECIAL_OPTIONS = {
 const LUMEN_TIERS = [
   { id:'ess',  name:{fr:'Essentiel',  en:'Essentials'},
     badge: null,
-    price: 550, priceCHF: 630,
+    price: 550, priceUSD: 600,
     delay:{fr:'7 jours ouvrés', en:'7 working days'},
     items:{
       fr:['Photobooth IA installé et opérationnel','Jusqu\'à 4 heures de prestation','Impressions illimitées incluses','Galerie privée livrée sous 7 jours'],
@@ -621,7 +632,7 @@ const LUMEN_TIERS = [
   },
   { id:'sig',  name:{fr:'Signature',  en:'Signature'},
     badge:{fr:'Le plus choisi', en:'Most popular'},
-    price: 1100, priceCHF: 1300,
+    price: 1100, priceUSD: 1200,
     delay:{fr:'5 jours ouvrés', en:'5 working days'},
     items:{
       fr:['Photobooth IA installé et opérationnel','Jusqu\'à 6 heures de prestation','Style personnalisé (fond, habillage, palette)','Impressions illimitées incluses','Galerie privée livrée sous 5 jours'],
@@ -629,7 +640,7 @@ const LUMEN_TIERS = [
   },
   { id:'surm', name:{fr:'Sur-mesure', en:'Bespoke'},
     badge:{fr:'Entièrement personnalisé', en:'Fully bespoke'},
-    price: 1800, priceCHF: null,
+    price: 1800, priceUSD: 2000,
     delay:{fr:'Sur accord', en:'On agreement'},
     items:{
       fr:['Devis personnalisé selon votre projet','Durée, style et options définis ensemble'],
@@ -1032,8 +1043,8 @@ function renderTiers(){
       const priceStr = isSurm
         ? (LANG === 'fr' ? 'À partir de ' : 'From ') + lt.price.toLocaleString('fr-FR') + '€'
         : lt.price.toLocaleString('fr-FR') + '€';
-      const chfLine = lt.priceCHF
-        ? `<div style="font-size:12px;color:var(--grey);margin-top:4px">${lt.priceCHF.toLocaleString('fr-FR')} CHF</div>`
+      const chfLine = (LANG === 'en' && lt.priceUSD)
+        ? `<div style="font-size:12px;color:var(--grey);margin-top:4px">$${lt.priceUSD.toLocaleString('en-US')}</div>`
         : '';
       const payLine = isSurm
         ? (LANG === 'fr' ? 'Devis personnalisé — réponse sous 48h ouvrées' : 'Personalised quote — reply within 48 working hours')
@@ -1176,7 +1187,7 @@ function renderRecap(){
     const lt = LUMEN_TIERS.find(x => x.id === S.tier);
     if (!lt) return;
     const isSurm = lt.id === 'surm';
-    const chfLine = lt.priceCHF ? ` / ${lt.priceCHF.toLocaleString('fr-FR')} CHF` : '';
+    const chfLine = (LANG === 'en' && lt.priceUSD) ? ` / $${lt.priceUSD.toLocaleString('en-US')}` : '';
     const pricePrefix = isSurm ? (LANG === 'fr' ? 'À partir de ' : 'From ') : '';
     const threeX = Math.round(lt.price / 3).toLocaleString('fr-FR');
     const payLine = isSurm
@@ -1318,6 +1329,20 @@ function renderOptions(){
     const d = document.createElement('div');
     d.className = 'opt-item stagger';
     d.style.animationDelay = (0.42 + i * 0.08) + 's';
+    if (o.comingSoon) {
+      const soonLabel = LANG === 'fr' ? 'Bientôt disponible' : 'Coming soon';
+      d.style.opacity = '0.5';
+      d.style.pointerEvents = 'none';
+      d.innerHTML = `
+        <div class="opt-icon">${o.icon}</div>
+        <div class="opt-body">
+          <div class="opt-name">${t(o.name)}</div>
+          <div class="opt-note" style="color:var(--grey)">${soonLabel}</div>
+        </div>
+        <div class="opt-price" style="font-size:11px;letter-spacing:.04em;text-transform:uppercase">${soonLabel}</div>`;
+      el.appendChild(d);
+      return;
+    }
     if (o.packs) {
       d.innerHTML = `
         <div class="opt-icon">${o.icon}</div>

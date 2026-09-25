@@ -2101,3 +2101,50 @@
     .cred-grid { grid-template-columns: 1fr; }
     .pfGrid { grid-template-columns: 1fr 1fr; }
   }
+
+  /* ─── NAV "BIENTÔT" BADGE ─── */
+  .nav-soon {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 2px 6px;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    background: var(--violet-deep);
+    color: var(--grey);
+    border-radius: 4px;
+    vertical-align: middle;
+    line-height: 1.4;
+  }
+
+  /* ─── DRONE COMING SOON BANNER ─── */
+  .drone-soon-banner {
+    background: var(--violet);
+    border-bottom: 1px solid var(--violet-deep);
+    padding: 20px 32px;
+    margin-bottom: 32px;
+  }
+  .drone-soon-inner {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    max-width: 800px;
+  }
+  .drone-soon-icon {
+    font-size: 28px;
+    flex-shrink: 0;
+  }
+  .drone-soon-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--black);
+    margin-bottom: 4px;
+  }
+  .drone-soon-sub {
+    font-size: 13px;
+    color: var(--grey);
+  }
+  @media (max-width: 600px) {
+    .drone-soon-banner { padding: 16px; }
+  }
