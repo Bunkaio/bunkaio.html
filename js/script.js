@@ -2333,12 +2333,30 @@ function initHomeClaimVideo(){
   const vid = createBgVideo(IMG.missionVideo);
   box.appendChild(vid);
 
+  /* Activation : dès que le déclencheur (100vh) entre à l'écran.
+     Désactivation : dès que la section blanche suivante (réassurance)
+     commence elle-même à apparaître, même d'un pixel — priorité au
+     fond blanc. Combiné à un fondu rapide (0.25s en CSS), la vidéo a
+     disparu avant que le texte (en retrait de 64px dans la section)
+     ne devienne réellement lisible à l'écran. */
+  const reassureEl = document.querySelector('.reassure-section');
+  let triggerVisible = false;
+  let reassureVisible = false;
+  const updateMissionWrap = () => {
+    wrap.classList.toggle('active', triggerVisible && !reassureVisible);
+  };
   const missionIO = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      wrap.classList.toggle('active', e.isIntersecting);
-    });
+    entries.forEach(e => { triggerVisible = e.isIntersecting; });
+    updateMissionWrap();
   }, { threshold: 0.15 });
   missionIO.observe(trigger);
+  if (reassureEl) {
+    const reassureIO = new IntersectionObserver(entries => {
+      entries.forEach(e => { reassureVisible = e.isIntersecting; });
+      updateMissionWrap();
+    }, { threshold: 0 });
+    reassureIO.observe(reassureEl);
+  }
 }
 
 /* ═══════════════ ACCORDÉON PARTENAIRES ═══════════════ */
