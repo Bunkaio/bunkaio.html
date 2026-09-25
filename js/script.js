@@ -1260,9 +1260,10 @@ function renderCats(){
     const d = document.createElement('div');
     d.className = 'cat-item stagger';
     d.style.animationDelay = (0.28 + i * 0.07) + 's';
+    const photoUrl = IMG.servicePhotos && IMG.servicePhotos[c.id];
     d.innerHTML = `
       <div class="cat-left">
-        <div class="cat-ic">${getIcon(c.icon)}</div>
+        <div class="cat-photo"${photoUrl ? ` style="background-image:url('${photoUrl}')"` : ''}></div>
         <div class="cat-name">${t(c.name)}</div>
       </div>
       <div class="cat-right">
