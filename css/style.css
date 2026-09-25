@@ -1749,17 +1749,15 @@
 
   .home-claim {
     text-align: center;
-    padding: 0 28px 90px;
+    padding: 0 28px;
+    margin-bottom: 90px;
     position: relative; z-index: 1;
   }
   .home-claim-kicker {
-    font-size: 10px; font-weight: 600; letter-spacing: 0.3em;
-    text-transform: uppercase; color: var(--grey); margin-bottom: 18px;
+    text-transform: uppercase;
   }
-  .home-claim-text {
-    font-size: clamp(19px, 2.8vw, 28px);
-    font-weight: 700; letter-spacing: -0.02em; line-height: 1.45;
-    max-width: 620px; margin: 0 auto;
+  .home-claim-cta {
+    margin-top: 32px;
   }
 
   /* ─── TÉMOIGNAGES (accueil) ─── */
@@ -2211,5 +2209,12 @@
     .mission-video-content { padding: 36px 22px; }
   }
 
-  /* ─── SECTION RÉASSURANCE — fond blanc (page Partenaires) ─── */
-  .reassure-section { margin-bottom: 60px; }
+  /* ─── SECTION RÉASSURANCE — fond blanc (page Accueil) ─── */
+  .reassure-section {
+    max-width: 1200px; margin: 0 auto 90px;
+    padding: 0 48px;
+    position: relative; z-index: 1;
+  }
+  @media (max-width: 600px) {
+    .reassure-section { padding: 0 22px; margin-bottom: 70px; }
+  }

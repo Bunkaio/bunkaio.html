@@ -963,7 +963,7 @@ function goView(v){
     if (v === 'services') { renderServices(); setSvcTab('catalogue'); }
     if (v === 'drone') { renderDroneCats(); renderDroneProjects(activeDroneCat); document.querySelectorAll('#view-drone .rv').forEach(observe); }
     if (v === 'portfolio' && !pfLoaded) { renderPfTabs(); selectPfTab(PF_CATS[0].id); pfLoaded = true; }
-    if (v === 'partners') { renderPartnersAccordion(); renderLogoCarousel(); document.querySelectorAll('#view-partners .rv').forEach(observe); const img = document.getElementById('img-partners-banner'); if (img && !img.src) img.src = IMG.partners; initMissionVideo(); }
+    if (v === 'partners') { renderPartnersAccordion(); renderLogoCarousel(); document.querySelectorAll('#view-partners .rv').forEach(observe); const img = document.getElementById('img-partners-banner'); if (img && !img.src) img.src = IMG.partners; }
     if (v === 'legal') { renderFaqAccordion(); renderPrivacyAccordion(); setLegalTab('faq'); }
   }, 420);
 }
@@ -2149,13 +2149,13 @@ function renderCommBox(){
   box.appendChild(d);
 }
 
-/* ═══════════════ VIDÉO SECTION MISSION (page Partenaires) ═══════════════ */
-let _missionVideoInit = false;
-function initMissionVideo(){
-  const box = document.getElementById('missionVideoBg');
-  if (!box || _missionVideoInit) return;
+/* ═══════════════ VIDÉO SECTION "LE STUDIO" (page Accueil) ═══════════════ */
+let _homeClaimVideoInit = false;
+function initHomeClaimVideo(){
+  const box = document.getElementById('homeClaimVideoBg');
+  if (!box || _homeClaimVideoInit) return;
   if (!IMG.missionVideo) return; /* pas de vidéo définie -> fond noir uni du CSS */
-  _missionVideoInit = true;
+  _homeClaimVideoInit = true;
   const vid = createBgVideo(IMG.missionVideo);
   box.appendChild(vid);
 }
@@ -2165,11 +2165,13 @@ function renderPartnersAccordion(){
   const el = document.getElementById('partnersAccordion');
   if (!el) return;
   const sections = LANG === 'fr' ? [
+    { title:'Pourquoi Bunkaio existe', body:`<p>Nous vivons dans un monde où les contenus se multiplient, mais où les histoires se raréfient. Derrière chaque lieu, chaque objet et chaque réalisation se cache une histoire qui mérite d'être racontée.</p><p><strong>Nous ne documentons pas des projets. Nous révélons ce qui les rend uniques.</strong></p>` },
     { title:'Qui peut devenir Partenaire Fondateur ?', body:`<p>Le programme est réservé aux entreprises et professionnels dont les réalisations correspondent à l'univers Bunkaio.</p><ul class="ft-list" style="margin-top:18px"><li style="margin-bottom:12px">⊹ Architecture & habitat</li><li style="margin-bottom:12px">⊹ Aménagement & design</li><li style="margin-bottom:12px">⊹ Artisanat d'exception</li><li style="margin-bottom:12px">⊹ Marques & lifestyle</li><li>⊹ Événementiel & lieux</li></ul>` },
     { title:'Les avantages du programme', body:`<div style="display:grid;grid-template-columns:1fr 1fr;gap:18px"><div class="cred-card"><div class="cred-num">01</div><div class="cred-title">Mise en lumière éditoriale</div><div class="cred-text">Votre activité racontée selon la méthode Bunkaio — Découverte, Vision, Défi, Savoir-Faire, Mon Regard, Révélation.</div></div><div class="cred-card"><div class="cred-num">02</div><div class="cred-title">Visibilité renforcée</div><div class="cred-text">Présence sur le site, les réseaux et les futurs supports éditoriaux de la marque.</div></div><div class="cred-card"><div class="cred-num">03</div><div class="cred-title">Relation privilégiée</div><div class="cred-text">Accès prioritaire aux disponibilités et offres préférentielles.</div></div><div class="cred-card"><div class="cred-num">04</div><div class="cred-title">Un écosystème</div><div class="cred-text">Un cercle de professionnels partageant l'exigence et l'amour du travail bien fait.</div></div></div>` },
     { title:'Les places disponibles', body:`<p>10 places par univers, soit un maximum de <strong>60 partenaires fondateurs</strong>. Une fois ce quota atteint, les nouvelles candidatures seront placées sur liste d'attente.</p>` },
     { title:'Le processus de sélection', body:`<div class="process-steps" style="margin-top:0"><div class="process-step"><div class="ps-num">01</div><div><div class="ps-title">Présentation</div><div class="ps-text">Compléter le questionnaire Bunkaio — activité, réalisations, objectifs.</div></div></div><div class="process-step"><div class="ps-num">02</div><div><div class="ps-title">Étude</div><div class="ps-text">Analyse selon la qualité des réalisations et la cohérence éditoriale.</div></div></div><div class="process-step"><div class="ps-num">03</div><div><div class="ps-title">Réponse</div><div class="ps-text">Sélectionné, compatible (ponctuel) ou réorienté selon les besoins.</div></div></div><div class="process-step" style="border-bottom:none"><div class="ps-num">04</div><div><div class="ps-title">Lancement</div><div class="ps-text">Onboarding personnalisé et feuille de route éditoriale.</div></div></div></div>` }
   ] : [
+    { title:'Why Bunkaio exists', body:`<p>We live in a world where content keeps multiplying, yet stories are becoming rare. Behind every place, every object and every achievement lies a story that deserves to be told.</p><p><strong>We don't document projects. We reveal what makes them unique.</strong></p>` },
     { title:'Who can become a Founding Partner?', body:`<p>The programme is reserved for companies and professionals whose work aligns with the Bunkaio universe.</p><ul class="ft-list" style="margin-top:18px"><li style="margin-bottom:12px">⊹ Architecture & living</li><li style="margin-bottom:12px">⊹ Fittings & design</li><li style="margin-bottom:12px">⊹ Exceptional craftsmanship</li><li style="margin-bottom:12px">⊹ Brands & lifestyle</li><li>⊹ Events & venues</li></ul>` },
     { title:'Programme benefits', body:`<div style="display:grid;grid-template-columns:1fr 1fr;gap:18px"><div class="cred-card"><div class="cred-num">01</div><div class="cred-title">An editorial spotlight</div><div class="cred-text">Your work told as a story — Discovery, Vision, Challenge, Craftsmanship, My Perspective, Revelation.</div></div><div class="cred-card"><div class="cred-num">02</div><div class="cred-title">Enhanced visibility</div><div class="cred-text">Privileged presence on the Bunkaio website, social channels and future publications.</div></div><div class="cred-card"><div class="cred-num">03</div><div class="cred-title">A privileged relationship</div><div class="cred-text">Priority scheduling and preferential rates.</div></div><div class="cred-card"><div class="cred-num">04</div><div class="cred-title">An ecosystem</div><div class="cred-text">A circle of professionals sharing the same high standards and love of work well done.</div></div></div>` },
     { title:'Available places', body:`<p>10 places per universe, for a maximum of <strong>60 founding partners</strong>. Once this quota is reached, new applications will be placed on a waiting list.</p>` },
@@ -2340,6 +2342,7 @@ renderFooterServices();
 /* Hero image home */
 
 initHeroCarousel('home');
+initHomeClaimVideo();
 updatePlaceholders();
 updateLang();
 applyImages();
