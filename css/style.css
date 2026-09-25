@@ -333,14 +333,25 @@
     object-fit: cover; object-position: center;
     display: block;
   }
-  /* ─── VIDÉO DE FOND ─── */
+  /* ─── VIDÉO DE FOND — Responsive mobile ─── */
   .hero-video-wrap {
     position: absolute; inset: 0; z-index: 0;
+    overflow: hidden;
+    background: #000;
   }
   .hero-video-wrap video {
     width: 100%; height: 100%;
-    object-fit: cover; object-position: center;
+    object-fit: cover;
+    object-position: center;
     display: block;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+  @media (max-width: 768px) {
+    .hero-video-wrap video {
+      min-width: 100%;
+      min-height: 100%;
+    }
   }
   .page-hero-overlay {
     position: absolute; inset: 0; z-index: 2;

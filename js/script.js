@@ -849,9 +849,14 @@ function initHeroCarousel(viewKey){
     vw.className = 'hero-video-wrap';
     const vid = document.createElement('video');
     vid.src = IMG.homeVideo;
-    vid.autoplay = true; vid.muted = true; vid.loop = true;
+    vid.autoplay = true;
+    vid.muted = true;
+    vid.loop = true;
     vid.setAttribute('playsinline', '');
-    vid.setAttribute('preload', 'auto');
+    vid.setAttribute('webkit-playsinline', '');
+    vid.setAttribute('preload', 'metadata');
+    vid.style.width = '100%';
+    vid.style.height = '100%';
     vw.appendChild(vid);
     const overlay = wrap.querySelector('.page-hero-overlay');
     wrap.insertBefore(vw, overlay || null);
