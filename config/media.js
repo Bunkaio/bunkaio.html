@@ -84,7 +84,7 @@ const IMG = {
      Conseil : utilisez la même image que le 1er slide du carrousel héros.
      Format : paysage large, ~1920×1080px minimum
      ────────────────────────────────────────────────────────────────── */
-  home:      MEDIA_BASE + '/hero/home-1.webp',       // Fond page Accueil
+  home:      'images/hero/home-1.webp',               // Fond page Accueil
   quiz:      MEDIA_BASE + '/hero/quiz-1.webp',       // Fond page Questionnaire devis
   services:  MEDIA_BASE + '/hero/services-1.webp',   // Fond page Services
   drone:     MEDIA_BASE + '/hero/drone-1.webp',      // Fond page 4K Drone
@@ -136,9 +136,9 @@ const IMG = {
        2400×2400px / carré, sujet centré) : seule cette rubrique affiche
        l'image en fond fixe derrière le titre, sur mobile comme en desktop. */
     home: [
-      MEDIA_BASE + '/hero/home-1.webp',
-      MEDIA_BASE + '/hero/home-2.webp',
-      MEDIA_BASE + '/hero/home-3.webp',
+      'images/hero/home-1.webp',
+      'images/hero/home-2.webp',
+      'images/hero/home-3.webp',
     ],
 
     /* ② Questionnaire devis — pas de bannière : le quiz s'affiche
