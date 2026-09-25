@@ -84,8 +84,8 @@ const IMG = {
      Conseil : utilisez la même image que le 1er slide du carrousel héros.
      Format : paysage large, ~1920×1080px minimum
      ────────────────────────────────────────────────────────────────── */
-  home:      'images/hero/home-1.webp',               // Fond page Accueil
-  homeVideo: 'videos/home-bg.mp4?v=3',                // Vidéo de fond Accueil — incrémenter ?v=X à chaque remplacement pour casser le cache mobile (laisser vide '' pour revenir aux images)
+  home:      '',                                       // Fond page Accueil — vide car la vidéo (homeVideo) est utilisée exclusivement
+  homeVideo: 'videos/home-bg.mp4?v=3',                // Vidéo de fond Accueil — incrémenter ?v=X à chaque remplacement pour casser le cache mobile
   missionVideo: '',                                    // Vidéo de fond section "Pourquoi Bunkaio existe" (page Partenaires) — ex: 'videos/mission-bg.mp4' (laisser vide pour fond noir uni)
   quiz:      MEDIA_BASE + '/hero/quiz-1.webp',       // Fond page Questionnaire devis
   services:  MEDIA_BASE + '/hero/services-1.webp',   // Fond page Services
@@ -134,14 +134,9 @@ const IMG = {
      ────────────────────────────────────────────────────────────────── */
   heroImages: {
 
-    /* ① Accueil — image plein écran fixe (voir "Héros Accueil" ci-dessus,
-       2400×2400px / carré, sujet centré) : seule cette rubrique affiche
-       l'image en fond fixe derrière le titre, sur mobile comme en desktop. */
-    home: [
-      'images/hero/home-1.webp',
-      'images/hero/home-2.webp',
-      'images/hero/home-3.webp',
-    ],
+    /* ① Accueil — vide : la vidéo (homeVideo) est utilisée exclusivement
+       en fond, sur mobile comme en desktop. */
+    home: [],
 
     /* ② Questionnaire devis — pas de bannière : le quiz s'affiche
        directement, sans obliger à scroller à chaque étape. Le fond
