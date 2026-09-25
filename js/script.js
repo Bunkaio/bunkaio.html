@@ -94,6 +94,27 @@ const I18N = {
     'reassure3-text':'Vos visuels vous appartiennent. Conditions d\'usage définies noir sur blanc avant chaque prestation — aucune mauvaise surprise.',
     'reassure4-title':'Un interlocuteur unique',
     'reassure4-text':'De la première prise de contact à la livraison finale, vous échangez avec la même personne. Pas de standard, pas de sous-traitance.',
+    'cred-mini1':'Basé dans le Sud de la France — déplacements partout en France',
+    'cred-mini2':'Photographe professionnel qualifié — BTS Photographie',
+    'cred-mini3':'Matériel professionnel haut de gamme',
+    'cred-mini4':'8 ans d\'expérience · 200+ projets réalisés',
+    'cred-faq-link':'Des questions ? Consultez notre FAQ →',
+    'testi-share-btn':'Partager mon expérience',
+    'share-title':'Partager mon expérience',
+    'share-sub':'Vous avez travaillé avec BUNKAIO ? Votre retour aide d\'autres clients à se projeter — et compte énormément pour nous.',
+    'share-info-label':'Comment ça marche',
+    'share-info-value':'Votre message nous est envoyé directement. Avec votre accord, il pourra être publié (de façon anonymisée si vous le souhaitez) dans la section témoignages du site.',
+    'share-specialty-label':'Prestation concernée *',
+    'share-specialty-opt0':'Sélectionnez…',
+    'share-specialty-opt1':'Portrait extérieur',
+    'share-specialty-opt2':'Photo produits',
+    'share-specialty-opt3':'Campagne corporate',
+    'share-specialty-opt4':'Événementiel',
+    'share-specialty-opt5':'Autre',
+    'share-text-label':'Votre expérience *',
+    'share-btn':'Envoyer mon témoignage',
+    'share-success-title':'Merci pour votre retour',
+    'share-success-text':'Votre témoignage a bien été reçu. Nous vous recontacterons si nous souhaitons le publier.',
     'trust-label':'Ils ont fait confiance à BUNKAIO',
     'testi1-tag':'Portrait extérieur',
     'testi1-text':'Je redoutais la séance, comme beaucoup. Bunkaio a pris le temps qu\'il fallait pour que j\'oublie l\'appareil — les photos ne ressemblent à aucune photo de profil que j\'ai eue avant. J\'y ressemble enfin.',
@@ -252,6 +273,27 @@ const I18N = {
     'reassure3-text':'Your visuals belong to you. Usage terms defined in writing before every project — no surprises.',
     'reassure4-title':'A single point of contact',
     'reassure4-text':'From first contact to final delivery, you deal with the same person. No call centre, no subcontracting.',
+    'cred-mini1':'Based in the South of France — available for travel across the country',
+    'cred-mini2':'Qualified professional photographer — BTS Photography diploma',
+    'cred-mini3':'Professional-grade equipment',
+    'cred-mini4':'8 years of experience · 200+ projects completed',
+    'cred-faq-link':'Any questions? Check our FAQ →',
+    'testi-share-btn':'Share my experience',
+    'share-title':'Share my experience',
+    'share-sub':'Have you worked with BUNKAIO? Your feedback helps other clients picture what to expect — and it means a great deal to us.',
+    'share-info-label':'How it works',
+    'share-info-value':'Your message is sent to us directly. With your consent, it may be published (anonymised if you prefer) in the testimonials section of the site.',
+    'share-specialty-label':'Service concerned *',
+    'share-specialty-opt0':'Select…',
+    'share-specialty-opt1':'Outdoor portrait',
+    'share-specialty-opt2':'Product photography',
+    'share-specialty-opt3':'Corporate campaign',
+    'share-specialty-opt4':'Events',
+    'share-specialty-opt5':'Other',
+    'share-text-label':'Your experience *',
+    'share-btn':'Send my testimonial',
+    'share-success-title':'Thank you for your feedback',
+    'share-success-text':'Your testimonial has been received. We will get back to you if we would like to publish it.',
     'trust-label':'They trusted BUNKAIO',
     'testi1-tag':'Outdoor portrait',
     'testi1-text':'I dreaded the session, like most people do. Bunkaio took exactly the time needed for me to forget the camera was there — these photos look nothing like any profile picture I\'ve had before. I finally recognise myself in them.',
@@ -2068,6 +2110,35 @@ function sendContact(e){
   });
 }
 
+/* ═══════════════ PARTAGER MON EXPÉRIENCE (témoignage) ═══════════════ */
+function sendShare(e){
+  e.preventDefault();
+  const n = document.getElementById('shName').value.trim();
+  const em = document.getElementById('shEmail').value.trim();
+  const spe = document.getElementById('shSpecialty').value;
+  const txt = document.getElementById('shText').value.trim();
+  const btn = document.querySelector('#shareForm .btn-solid');
+  if (btn) btn.disabled = true;
+  fetch(FORMSPREE_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify({
+      _subject: 'NOUVEAU TÉMOIGNAGE — ' + n,
+      _replyto: em,
+      nom: n,
+      email: em,
+      prestation_concernee: spe,
+      temoignage: txt
+    })
+  }).then(() => {
+    document.getElementById('shareForm').style.display = 'none';
+    document.getElementById('shSuccess').style.display = 'block';
+  }).catch(() => {
+    document.getElementById('shareForm').style.display = 'none';
+    document.getElementById('shSuccess').style.display = 'block';
+  });
+}
+
 /* ═══════════════ ESPACE CLIENT / PARTENAIRE ═══════════════ */
 const ACCOUNTS_URL = 'comptes.json';
 let loginType = 'client';
@@ -2267,13 +2338,45 @@ function renderPartnersAccordion(){
     </div>`).join('');
 }
 
-/* ═══════════════ CARROUSEL TÉMOIGNAGES ═══════════════ */
+/* ═══════════════ CARROUSEL TÉMOIGNAGES — autoplay en boucle ═══════════════ */
+let _testiPaused = false;
+let _testiResumeTO = null;
+
+function testiPauseTemp(ms){
+  _testiPaused = true;
+  clearTimeout(_testiResumeTO);
+  _testiResumeTO = setTimeout(() => { _testiPaused = false; }, ms);
+}
+
 function testiScroll(dir){
   const track = document.getElementById('testiCarousel');
   if (!track) return;
   const card = track.querySelector('.testi-card');
   const amount = (card ? card.offsetWidth : 340) + 20;
   track.scrollBy({ left: dir * amount, behavior: 'smooth' });
+  testiPauseTemp(6000);
+}
+
+function testiAutoStep(){
+  if (_testiPaused) return;
+  const track = document.getElementById('testiCarousel');
+  if (!track) return;
+  const card = track.querySelector('.testi-card');
+  const amount = (card ? card.offsetWidth : 340) + 20;
+  const atEnd = track.scrollLeft + track.clientWidth >= track.scrollWidth - 4;
+  track.scrollTo({ left: atEnd ? 0 : track.scrollLeft + amount, behavior: 'smooth' });
+}
+
+function initTestiAutoplay(){
+  const track = document.getElementById('testiCarousel');
+  if (!track) return;
+  setInterval(testiAutoStep, 4500);
+  /* Desktop : pause au survol souris */
+  track.addEventListener('mouseenter', () => { _testiPaused = true; });
+  track.addEventListener('mouseleave', () => { _testiPaused = false; });
+  /* Mobile : pause quand l'utilisateur interagit avec le carrousel,
+     reprise automatique après un temps d'inactivité */
+  track.addEventListener('touchstart', () => testiPauseTemp(5000), { passive: true });
 }
 
 function toggleAccordion(btn){
@@ -2430,6 +2533,7 @@ renderFooterServices();
 
 initHeroCarousel('home');
 initHomeClaimVideo();
+initTestiAutoplay();
 updatePlaceholders();
 updateLang();
 applyImages();
