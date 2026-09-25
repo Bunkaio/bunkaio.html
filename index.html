@@ -22,7 +22,7 @@
 <meta name="twitter:image" content="https://bunkaio.com/images/logo.webp">
 
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='80' font-family='serif'>⊹</text></svg>">
-<link rel="stylesheet" href="css/style.css?v=202609255">
+<link rel="stylesheet" href="css/style.css?v=202609256">
 
 <script type="application/ld+json">
 {
@@ -182,13 +182,19 @@
   </div>
 
   <div class="testimonials-section">
-    <div class="testimonials-label rv" data-lang="trust-label">Ils ont fait confiance à BUNKAIO</div>
-    <div class="testimonials-grid">
+    <div class="testimonials-head">
+      <div class="testimonials-label rv" data-lang="trust-label">Ils ont fait confiance à BUNKAIO</div>
+      <div class="testi-arrows">
+        <button class="testi-arrow" onclick="testiScroll(-1)" aria-label="Précédent">‹</button>
+        <button class="testi-arrow" onclick="testiScroll(1)" aria-label="Suivant">›</button>
+      </div>
+    </div>
+    <div class="testi-carousel" id="testiCarousel">
 
       <div class="testi-card rv">
         <div class="testi-avatar">T</div>
         <div class="testi-tag" data-lang="testi1-tag">Portrait extérieur</div>
-        <p class="testi-text" data-lang="testi1-text">Séance portrait en extérieur pour refondre mon image professionnelle. Résultat : +40&nbsp;% de demandes de rendez-vous le mois suivant — naturel, jamais posé.</p>
+        <p class="testi-text" data-lang="testi1-text">Je redoutais la séance, comme beaucoup. Bunkaio a pris le temps qu'il fallait pour que j'oublie l'appareil — les photos ne ressemblent à aucune photo de profil que j'ai eue avant. J'y ressemble enfin.</p>
         <div class="testi-sep"></div>
         <div class="testi-name">Thomas B.</div>
         <div class="testi-role" data-lang="testi1-role">Consultant indépendant · Aix-en-Provence</div>
@@ -197,7 +203,7 @@
       <div class="testi-card rv">
         <div class="testi-avatar">S</div>
         <div class="testi-tag" data-lang="testi2-tag">Photo produits</div>
-        <p class="testi-text" data-lang="testi2-text">Nos fiches produits ont été entièrement reprises par Bunkaio. Le taux de conversion de notre boutique en ligne a grimpé de 18&nbsp;% le mois suivant.</p>
+        <p class="testi-text" data-lang="testi2-text">J'avais peur que mes bijoux paraissent froids en photo. C'est l'inverse qui s'est produit — chaque pièce a l'air presque vivante. Mes clientes me disent qu'elles ont "senti" la matière avant même d'ouvrir le colis.</p>
         <div class="testi-sep"></div>
         <div class="testi-name">Sophie M.</div>
         <div class="testi-role" data-lang="testi2-role">Fondatrice · Atelier Maren, joaillerie, Paris</div>
@@ -206,7 +212,7 @@
       <div class="testi-card rv">
         <div class="testi-avatar">N</div>
         <div class="testi-tag" data-lang="testi3-tag">Campagne corporate</div>
-        <p class="testi-text" data-lang="testi3-text">Campagne photo pour notre rapport annuel et nos supports internes. Une image humaine et professionnelle pour nos 40 collaborateurs, sans rien de figé.</p>
+        <p class="testi-text" data-lang="testi3-text">Personne dans l'équipe n'aime être pris en photo. Bunkaio a réussi à capturer 40 personnes qui n'ont jamais eu l'air aussi naturelles. Notre rapport annuel a enfin une âme.</p>
         <div class="testi-sep"></div>
         <div class="testi-name">Nicolas F.</div>
         <div class="testi-role" data-lang="testi3-role">Directeur de la communication · Lyon</div>
@@ -215,10 +221,46 @@
       <div class="testi-card rv">
         <div class="testi-avatar">J</div>
         <div class="testi-tag" data-lang="testi4-tag">Événementiel</div>
-        <p class="testi-text" data-lang="testi4-text">Couverture complète de notre soirée de lancement, 200 invités. Les photos triées et livrées dès le lendemain matin.</p>
+        <p class="testi-text" data-lang="testi4-text">200 invités, une seule soirée, aucun droit à l'erreur. Bunkaio était partout sans jamais se faire remarquer. Le lendemain matin, tout le monde avait déjà ses photos — c'est rare, et ça change tout.</p>
         <div class="testi-sep"></div>
         <div class="testi-name">Julie R.</div>
         <div class="testi-role" data-lang="testi4-role">Chargée d'événementiel · Bordeaux</div>
+      </div>
+
+      <div class="testi-card rv">
+        <div class="testi-avatar">C</div>
+        <div class="testi-tag" data-lang="testi5-tag">Portrait extérieur</div>
+        <p class="testi-text" data-lang="testi5-text">On a marché dans le vieux Lyon pendant une heure, sans jamais vraiment poser. Le résultat est le portrait le plus honnête qu'on ait jamais fait de moi. Mes proches n'arrêtent pas de me le dire.</p>
+        <div class="testi-sep"></div>
+        <div class="testi-name">Camille L.</div>
+        <div class="testi-role" data-lang="testi5-role">Coach en reconversion · Lyon</div>
+      </div>
+
+      <div class="testi-card rv">
+        <div class="testi-avatar">K</div>
+        <div class="testi-tag" data-lang="testi6-tag">Photo produits</div>
+        <p class="testi-text" data-lang="testi6-text">On avait déjà fait photographier nos produits ailleurs, sans grande conviction. Avec Bunkaio, on a enfin compris pourquoi certaines marques donnent envie et d'autres non. C'est une question de lumière, de patience, de regard.</p>
+        <div class="testi-sep"></div>
+        <div class="testi-name">Karim D.</div>
+        <div class="testi-role" data-lang="testi6-role">Co-fondateur · Marque de cosmétiques bio, Nantes</div>
+      </div>
+
+      <div class="testi-card rv">
+        <div class="testi-avatar">A</div>
+        <div class="testi-tag" data-lang="testi7-tag">Campagne corporate</div>
+        <p class="testi-text" data-lang="testi7-text">On voulait éviter les clichés habituels — costumes figés, sourires forcés. Le résultat raconte vraiment qui on est en tant qu'entreprise, pas seulement ce qu'on fait.</p>
+        <div class="testi-sep"></div>
+        <div class="testi-name">Anaïs T.</div>
+        <div class="testi-role" data-lang="testi7-role">Responsable RH · PME industrielle, Toulouse</div>
+      </div>
+
+      <div class="testi-card rv">
+        <div class="testi-avatar">V</div>
+        <div class="testi-tag" data-lang="testi8-tag">Événementiel</div>
+        <p class="testi-text" data-lang="testi8-text">Ce que j'ai préféré, c'est n'avoir jamais eu à diriger qui que ce soit. Les meilleurs moments de la soirée ont été capturés sans qu'on s'en aperçoive. C'est ça, la vraie différence.</p>
+        <div class="testi-sep"></div>
+        <div class="testi-name">Vincent P.</div>
+        <div class="testi-role" data-lang="testi8-role">Organisateur d'événements d'entreprise · Marseille</div>
       </div>
 
     </div>
@@ -861,7 +903,7 @@
   </div>
 </footer>
 
-<script src="config/media.js?v=202609255"></script>
-<script src="js/script.js?v=202609255"></script>
+<script src="config/media.js?v=202609256"></script>
+<script src="js/script.js?v=202609256"></script>
 </body>
 </html>

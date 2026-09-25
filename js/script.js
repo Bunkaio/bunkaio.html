@@ -96,17 +96,29 @@ const I18N = {
     'reassure4-text':'De la première prise de contact à la livraison finale, vous échangez avec la même personne. Pas de standard, pas de sous-traitance.',
     'trust-label':'Ils ont fait confiance à BUNKAIO',
     'testi1-tag':'Portrait extérieur',
-    'testi1-text':'Séance portrait en extérieur pour refondre mon image professionnelle. Résultat : +40 % de demandes de rendez-vous le mois suivant — naturel, jamais posé.',
+    'testi1-text':'Je redoutais la séance, comme beaucoup. Bunkaio a pris le temps qu\'il fallait pour que j\'oublie l\'appareil — les photos ne ressemblent à aucune photo de profil que j\'ai eue avant. J\'y ressemble enfin.',
     'testi1-role':'Consultant indépendant · Aix-en-Provence',
     'testi2-tag':'Photo produits',
-    'testi2-text':'Nos fiches produits ont été entièrement reprises par Bunkaio. Le taux de conversion de notre boutique en ligne a grimpé de 18 % le mois suivant.',
+    'testi2-text':'J\'avais peur que mes bijoux paraissent froids en photo. C\'est l\'inverse qui s\'est produit — chaque pièce a l\'air presque vivante. Mes clientes me disent qu\'elles ont "senti" la matière avant même d\'ouvrir le colis.',
     'testi2-role':'Fondatrice · Atelier Maren, joaillerie, Paris',
     'testi3-tag':'Campagne corporate',
-    'testi3-text':'Campagne photo pour notre rapport annuel et nos supports internes. Une image humaine et professionnelle pour nos 40 collaborateurs, sans rien de figé.',
+    'testi3-text':'Personne dans l\'équipe n\'aime être pris en photo. Bunkaio a réussi à capturer 40 personnes qui n\'ont jamais eu l\'air aussi naturelles. Notre rapport annuel a enfin une âme.',
     'testi3-role':'Directeur de la communication · Lyon',
     'testi4-tag':'Événementiel',
-    'testi4-text':'Couverture complète de notre soirée de lancement, 200 invités. Les photos triées et livrées dès le lendemain matin.',
+    'testi4-text':'200 invités, une seule soirée, aucun droit à l\'erreur. Bunkaio était partout sans jamais se faire remarquer. Le lendemain matin, tout le monde avait déjà ses photos — c\'est rare, et ça change tout.',
     'testi4-role':'Chargée d\'événementiel · Bordeaux',
+    'testi5-tag':'Portrait extérieur',
+    'testi5-text':'On a marché dans le vieux Lyon pendant une heure, sans jamais vraiment poser. Le résultat est le portrait le plus honnête qu\'on ait jamais fait de moi. Mes proches n\'arrêtent pas de me le dire.',
+    'testi5-role':'Coach en reconversion · Lyon',
+    'testi6-tag':'Photo produits',
+    'testi6-text':'On avait déjà fait photographier nos produits ailleurs, sans grande conviction. Avec Bunkaio, on a enfin compris pourquoi certaines marques donnent envie et d\'autres non. C\'est une question de lumière, de patience, de regard.',
+    'testi6-role':'Co-fondateur · Marque de cosmétiques bio, Nantes',
+    'testi7-tag':'Campagne corporate',
+    'testi7-text':'On voulait éviter les clichés habituels — costumes figés, sourires forcés. Le résultat raconte vraiment qui on est en tant qu\'entreprise, pas seulement ce qu\'on fait.',
+    'testi7-role':'Responsable RH · PME industrielle, Toulouse',
+    'testi8-tag':'Événementiel',
+    'testi8-text':'Ce que j\'ai préféré, c\'est n\'avoir jamais eu à diriger qui que ce soit. Les meilleurs moments de la soirée ont été capturés sans qu\'on s\'en aperçoive. C\'est ça, la vraie différence.',
+    'testi8-role':'Organisateur d\'événements d\'entreprise · Marseille',
     'p-who':'Qui peut devenir Partenaire Fondateur\u00a0?',
     'p-who-text':'Le programme Partenaires Fondateurs est réservé aux entreprises et professionnels dont les réalisations, les valeurs et l\'exigence correspondent à l\'univers Bunkaio. Nous recherchons notamment\u00a0:',
     'p-list-1':'Architecture & habitat — architectes, architectes d\'intérieur, constructeurs, maîtres d\'œuvre, promoteurs premium',
@@ -242,17 +254,29 @@ const I18N = {
     'reassure4-text':'From first contact to final delivery, you deal with the same person. No call centre, no subcontracting.',
     'trust-label':'They trusted BUNKAIO',
     'testi1-tag':'Outdoor portrait',
-    'testi1-text':'An outdoor portrait session to refresh my professional image. Result: +40% meeting requests the following month — natural, never staged.',
+    'testi1-text':'I dreaded the session, like most people do. Bunkaio took exactly the time needed for me to forget the camera was there — these photos look nothing like any profile picture I\'ve had before. I finally recognise myself in them.',
     'testi1-role':'Independent consultant · Aix-en-Provence',
     'testi2-tag':'Product photography',
-    'testi2-text':'Bunkaio completely reshot our product pages. Our online store\'s conversion rate rose 18% the following month.',
+    'testi2-text':'I was afraid my jewellery would look cold in photos. The opposite happened — each piece feels almost alive. My customers tell me they could "feel" the material before even opening the box.',
     'testi2-role':'Founder · Atelier Maren, jewellery, Paris',
     'testi3-tag':'Corporate campaign',
-    'testi3-text':'A photo campaign for our annual report and internal materials. A human, professional image for our 40 employees, nothing staged.',
+    'testi3-text':'No one on the team likes having their photo taken. Bunkaio managed to capture 40 people who have never looked so natural. Our annual report finally has a soul.',
     'testi3-role':'Head of communications · Lyon',
     'testi4-tag':'Events',
-    'testi4-text':'Full coverage of our launch evening, 200 guests. Photos sorted and delivered the very next morning.',
+    'testi4-text':'200 guests, one single evening, no room for error. Bunkaio was everywhere without ever being noticed. By the next morning, everyone already had their photos — that\'s rare, and it changes everything.',
     'testi4-role':'Event manager · Bordeaux',
+    'testi5-tag':'Outdoor portrait',
+    'testi5-text':'We walked through old Lyon for an hour, never really posing. The result is the most honest portrait anyone has ever taken of me. My friends keep telling me so.',
+    'testi5-role':'Career transition coach · Lyon',
+    'testi6-tag':'Product photography',
+    'testi6-text':'We\'d had our products photographed elsewhere before, without much conviction. With Bunkaio, we finally understood why some brands make you want to buy and others don\'t. It\'s a matter of light, patience, and a certain eye.',
+    'testi6-role':'Co-founder · Organic cosmetics brand, Nantes',
+    'testi7-tag':'Corporate campaign',
+    'testi7-text':'We wanted to avoid the usual clichés — stiff suits, forced smiles. The result truly tells who we are as a company, not just what we do.',
+    'testi7-role':'HR manager · Industrial SME, Toulouse',
+    'testi8-tag':'Events',
+    'testi8-text':'What I appreciated most is that I never had to direct anyone. The best moments of the evening were captured without anyone noticing. That\'s the real difference.',
+    'testi8-role':'Corporate event organiser · Marseille',
     'p-who':'Who can become a Founding Partner\u00a0?',
     'p-who-text':'The Founding Partners programme is reserved for companies and professionals whose work, values and standards align with the Bunkaio universe. We are particularly looking for\u00a0:',
     'p-list-1':'Architecture & living — architects, interior architects, builders, project managers, premium developers',
@@ -1012,10 +1036,13 @@ function goView(v){
        (navigateurs mobiles) — on les relance systématiquement. */
     resumeAllBgVideos();
     if (v === 'services') { renderServices(); setSvcTab('catalogue'); }
-    if (v === 'drone') { renderDroneCats(); renderDroneProjects(activeDroneCat); document.querySelectorAll('#view-drone .rv').forEach(observe); }
+    if (v === 'drone') { renderDroneCats(); renderDroneProjects(activeDroneCat); }
     if (v === 'portfolio' && !pfLoaded) { renderPfTabs(); selectPfTab(PF_CATS[0].id); pfLoaded = true; }
-    if (v === 'partners') { renderPartnersAccordion(); renderLogoCarousel(); document.querySelectorAll('#view-partners .rv').forEach(observe); const img = document.getElementById('img-partners-banner'); if (img && !img.src) img.src = IMG.partners; }
+    if (v === 'partners') { renderPartnersAccordion(); renderLogoCarousel(); const img = document.getElementById('img-partners-banner'); if (img && !img.src) img.src = IMG.partners; }
     if (v === 'legal') { renderFaqAccordion(); renderPrivacyAccordion(); setLegalTab('faq'); }
+    /* Anime au scroll tous les éléments .rv de la vue active — cohérent
+       sur l'ensemble du site, plus besoin de le câbler page par page. */
+    document.querySelectorAll('#view-' + v + ' .rv:not(.in)').forEach(observe);
   }, 420);
 }
 
@@ -2238,6 +2265,15 @@ function renderPartnersAccordion(){
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544">${s.body}</div>
       </div>
     </div>`).join('');
+}
+
+/* ═══════════════ CARROUSEL TÉMOIGNAGES ═══════════════ */
+function testiScroll(dir){
+  const track = document.getElementById('testiCarousel');
+  if (!track) return;
+  const card = track.querySelector('.testi-card');
+  const amount = (card ? card.offsetWidth : 340) + 20;
+  track.scrollBy({ left: dir * amount, behavior: 'smooth' });
 }
 
 function toggleAccordion(btn){
