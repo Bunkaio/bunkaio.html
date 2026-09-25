@@ -1067,18 +1067,29 @@ function initHeroCarousel(viewKey){
   if (!wrap) return;
   wrap.style.opacity = ''; wrap.style.visibility = '';
 
-  /* ── Vidéo de fond (page Accueil uniquement si IMG.homeVideo est défini) ── */
-  wrap.querySelectorAll('.hero-video-wrap').forEach(s => s.remove());
+  /* ── Vidéo de fond (page Accueil uniquement si IMG.homeVideo est défini) ──
+     Créée UNE SEULE FOIS : la retirer/recréer à chaque retour sur l'accueil
+     la faisait repartir de zéro (perte de la boucle en cours, nouveau
+     risque de blocage autoplay par le navigateur à chaque navigation).
+     On se contente désormais de la montrer/masquer, l'élément <video>
+     continue de jouer en arrière-plan même quand on quitte la page. */
+  let vw = wrap.querySelector('.hero-video-wrap');
   if (viewKey === 'home' && IMG.homeVideo) {
     wrap.style.display = '';
-    const vw = document.createElement('div');
-    vw.className = 'hero-video-wrap';
-    const vid = createBgVideo(IMG.homeVideo);
-    vw.appendChild(vid);
-    const overlay = wrap.querySelector('.page-hero-overlay');
-    wrap.insertBefore(vw, overlay || null);
+    if (!vw) {
+      vw = document.createElement('div');
+      vw.className = 'hero-video-wrap';
+      const vid = createBgVideo(IMG.homeVideo);
+      vw.appendChild(vid);
+      const overlay = wrap.querySelector('.page-hero-overlay');
+      wrap.insertBefore(vw, overlay || null);
+    }
+    vw.style.display = '';
+    wrap.querySelectorAll('.hero-slide').forEach(s => s.remove());
+    resumeAllBgVideos();
     return;
   }
+  if (vw) vw.style.display = 'none';
 
   let images = IMG.heroImages && IMG.heroImages[viewKey];
   if (!images || (Array.isArray(images) && images.length === 0)){
@@ -1158,7 +1169,13 @@ function quizStep(n){
   document.querySelectorAll('.qstep').forEach(s => s.classList.remove('active'));
   document.getElementById('qs-' + n).classList.add('active');
   setProgress(n / 6 * 100);
-  window.scrollTo({ top:0, behavior:'smooth' });
+  /* Scroll instantané (pas 'smooth') : l'apparition en fondu du contenu
+     de l'étape démarre au même instant que le changement de classe
+     .active — avec un scroll animé, si l'utilisateur était loin en bas
+     de l'étape précédente, l'animation se jouait hors champ pendant la
+     remontée et l'étape apparaissait déjà entièrement visible, sans que
+     personne n'ait le temps de voir l'effet. */
+  window.scrollTo({ top:0, behavior:'instant' });
   if (n === 5) updateQuizPayReassurance();
 }
 

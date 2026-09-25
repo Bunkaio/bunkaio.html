@@ -2406,10 +2406,16 @@
   /* Déclencheur invisible : réserve l'espace de scroll dans le flux normal
      de la page, observé en JS pour piloter l'apparition de la vidéo fixe. */
   /* pointer-events:none essentiel : ce déclencheur est vide mais occupe
-     100vh dans le flux normal (z-index du .view au-dessus du calque
+     de l'espace dans le flux normal (z-index du .view au-dessus du calque
      vidéo fixe) — sans ça, il intercepte tous les clics destinés à la
-     vidéo/aux pastilles de prestations en dessous. */
-  .home-claim-trigger { min-height: 100vh; pointer-events: none !important; scroll-snap-align: start; }
+     vidéo/aux pastilles de prestations en dessous.
+     220vh (et non 100vh) : un déclencheur d'un seul écran de haut se
+     traverse en une fraction de seconde au moindre scroll rapide — pas
+     le temps de lire "Nous ne documentons pas des projets…" ni de voir
+     l'animation flou -> net se terminer. Plus de hauteur = plus de
+     distance à parcourir = plus de temps réel où la section reste à
+     l'écran, quelle que soit la vitesse de scroll. */
+  .home-claim-trigger { min-height: 220vh; pointer-events: none !important; scroll-snap-align: start; }
 
   /* ─── PRESTATIONS — calque fixe plein écran, fond image par catégorie ─── */
   .cat-showcase-wrap {
@@ -2537,11 +2543,14 @@
   }
   .cat-showcase-dot.active::before { background: var(--white); width: 20px; border-radius: 3px; }
   .cat-showcase-dot:hover::before { background: rgba(255,255,255,0.7); }
-  /* Un déclencheur par catégorie + repère de scroll simple (pas de
-     scroll-snap mandatory, trop rigide au clavier/trackpad — juste un
-     "aimant" léger qui aide à se stabiliser sur une catégorie). */
+  /* Repère de scroll simple (pas de scroll-snap mandatory, trop rigide au
+     clavier/trackpad — juste un "aimant" léger). 200vh (et non 100vh) :
+     laisse le temps de voir l'animation flou -> net de la 1ère catégorie
+     se terminer avant de défiler plus loin, et donne assez d'espace pour
+     parcourir les catégories au swipe/molette horizontal sans avoir déjà
+     quitté la section (même raison que .home-claim-trigger ci-dessus). */
   .cat-showcase-trigger {
-    min-height: 100vh;
+    min-height: 200vh;
     pointer-events: none !important;
     scroll-snap-align: start;
   }
