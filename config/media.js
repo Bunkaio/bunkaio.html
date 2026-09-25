@@ -201,7 +201,8 @@ const IMG = {
     piscine:      MEDIA_BASE + '/services/piscine.webp',       // Piscines & extérieurs
     artisan:      MEDIA_BASE + '/services/artisan.webp',       // Artisanat d'art
     'photo-part': MEDIA_BASE + '/services/photo-part.webp',   // Séance photo particuliers
-    mode:         MEDIA_BASE + '/services/mode.webp',          // Mode & créateurs
+    mode:         MEDIA_BASE + '/services/mode.webp',          // Mode, agence et mannequins
+    commercial:   MEDIA_BASE + '/services/commercial.webp',    // Commercial & produits
     event:        MEDIA_BASE + '/services/event.webp',         // Événementiel
     lumen:        MEDIA_BASE + '/services/lumen.webp',          // Lumen — photobooth IA mariages
   },
@@ -223,6 +224,7 @@ const IMG = {
     artisan:      [], // images/portfolio/artisan/1.webp, 2.webp, ...
     'photo-part': [], // images/portfolio/photo-part/1.webp, 2.webp, ...
     mode:         [], // images/portfolio/mode/1.webp, 2.webp, ...
+    commercial:   [], // images/portfolio/commercial/1.webp, 2.webp, ...
     event:        [], // images/portfolio/event/1.webp, 2.webp, ...
   },
 };

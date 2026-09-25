@@ -598,7 +598,7 @@ const CATS = [
         en:['Full day — 4 different locations','4 different outfits','30 retouched HD photos','1 short film (30 seconds)','Art direction & styling','Featured on Bunkaio channels'] } }
     }},
   { id:'mode',
-    name:{fr:'Mode & créateurs', en:'Fashion & brands'},
+    name:{fr:'Mode, agence et mannequins', en:'Fashion, agencies & models'},
     tag:{fr:'Marques · agences · e-commerce · lookbook', en:'Brands · agencies · e-commerce · lookbook'},
     icon:'marque',
     tiers:{
@@ -614,6 +614,24 @@ const CATS = [
       edit:{ price:2390, delay:{fr:'10 jours ouvrés',en:'10 working days'}, items:{
         fr:['Campagne — 35 photos HD retouchées','1 film publicitaire (2 minutes)','3 Reels verticaux','Storytelling de marque','Publication sur les supports Bunkaio'],
         en:['Campaign — 35 retouched HD photos','1 commercial film (2 minutes)','3 vertical Reels','Brand storytelling','Featured on Bunkaio channels'] } }
+    }},
+  { id:'commercial',
+    name:{fr:'Commercial & produits', en:'Commercial & products'},
+    tag:{fr:'Packshots · produits · marques · entreprises', en:'Packshots · products · brands · businesses'},
+    icon:'product',
+    tiers:{
+      deco:{ price:350, delay:{fr:'3 jours ouvrés',en:'3 working days'}, items:{
+        fr:['Jusqu\'à 5 produits — 10 photos HD retouchées','Fond neutre studio','Galerie privée de téléchargement'],
+        en:['Up to 5 products — 10 retouched HD photos','Neutral studio backdrop','Private download gallery'] } },
+      sig:{ price:690, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
+        fr:['Jusqu\'à 12 produits — 20 photos HD retouchées','Mise en scène incluse','Galerie privée de téléchargement'],
+        en:['Up to 12 products — 20 retouched HD photos','Styled setup included','Private download gallery'] } },
+      prem:{ price:1290, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
+        fr:['Jusqu\'à 25 produits — 35 photos HD retouchées','Mise en scène incluse','1 Reel vertical produit','Galerie privée de téléchargement'],
+        en:['Up to 25 products — 35 retouched HD photos','Styled setup included','1 vertical product Reel','Private download gallery'] } },
+      edit:{ price:2190, delay:{fr:'10 jours ouvrés',en:'10 working days'}, items:{
+        fr:['Catalogue complet — 50 photos HD retouchées','1 film de marque (90 secondes)','2 Reels verticaux','Publication sur les supports Bunkaio'],
+        en:['Full catalogue — 50 retouched HD photos','1 brand film (90 seconds)','2 vertical Reels','Featured on Bunkaio channels'] } }
     }},
   { id:'event',
     name:{fr:'Événementiel', en:'Events'},
@@ -801,6 +819,7 @@ const CAT_PROFILES = {
   archi:      ['agence', 'promo', 'marque', 'autre'],
   artisan:    ['artisan', 'marque', 'autre'],
   mode:       ['marque', 'agence', 'artisan', 'autre'],
+  commercial: ['marque', 'agence', 'gastro', 'artisan', 'autre'],
   event:      ['event', 'agence', 'marque', 'autre']
 };
 
@@ -864,6 +883,7 @@ const PF_CATS = [
   { id:'artisan',     label:{fr:'Artisanat',   en:'Craftsmanship'} },
   { id:'photo-part',  label:{fr:'Séance photo',en:'Portrait'} },
   { id:'mode',        label:{fr:'Mode',        en:'Fashion'} },
+  { id:'commercial',  label:{fr:'Commercial',  en:'Commercial'} },
   { id:'event',       label:{fr:'Événementiel',en:'Events'} },
   { id:'lumen',       label:{fr:'Lumen',       en:'Lumen'} }
 ];
@@ -1292,7 +1312,8 @@ function getIcon(type){
     person:  `<svg width="52" height="52" viewBox="0 0 56 56" ${stroke}><circle cx="28" cy="20" r="9"/><path d="M12 46 Q12 32 28 32 Q44 32 44 46"/></svg>`,
     couple:  `<svg width="52" height="52" viewBox="0 0 56 56" ${stroke}><circle cx="20" cy="20" r="8"/><path d="M8 46 Q8 33 20 33 Q26 33 30 37"/><circle cx="36" cy="20" r="8"/><path d="M48 46 Q48 33 36 33 Q30 33 26 37"/></svg>`,
     group:   `<svg width="52" height="52" viewBox="0 0 56 56" ${stroke}><circle cx="14" cy="22" r="7"/><path d="M4 45 Q4 34 14 34 Q18 34 21 36"/><circle cx="28" cy="18" r="9"/><path d="M14 45 Q14 32 28 32 Q42 32 42 45"/><circle cx="42" cy="22" r="7"/><path d="M52 45 Q52 34 42 34 Q38 34 35 36"/></svg>`,
-    lumen:   `<svg width="52" height="52" viewBox="0 0 56 56" ${stroke}><circle cx="28" cy="28" r="13"/><circle cx="28" cy="28" r="5"/><line x1="28" y1="10" x2="28" y2="15"/><line x1="28" y1="41" x2="28" y2="46"/><line x1="10" y1="28" x2="15" y2="28"/><line x1="41" y1="28" x2="46" y2="28"/><line x1="38.2" y1="17.8" x2="34.4" y2="21.6"/><line x1="17.8" y1="38.2" x2="21.6" y2="34.4"/><line x1="17.8" y1="17.8" x2="21.6" y2="21.6"/><line x1="38.2" y1="38.2" x2="34.4" y2="34.4"/></svg>`
+    lumen:   `<svg width="52" height="52" viewBox="0 0 56 56" ${stroke}><circle cx="28" cy="28" r="13"/><circle cx="28" cy="28" r="5"/><line x1="28" y1="10" x2="28" y2="15"/><line x1="28" y1="41" x2="28" y2="46"/><line x1="10" y1="28" x2="15" y2="28"/><line x1="41" y1="28" x2="46" y2="28"/><line x1="38.2" y1="17.8" x2="34.4" y2="21.6"/><line x1="17.8" y1="38.2" x2="21.6" y2="34.4"/><line x1="17.8" y1="17.8" x2="21.6" y2="21.6"/><line x1="38.2" y1="38.2" x2="34.4" y2="34.4"/></svg>`,
+    product: `<svg width="52" height="52" viewBox="0 0 56 56" ${stroke}><path d="M14 20 L28 12 L42 20 L42 38 L28 46 L14 38 Z"/><path d="M14 20 L28 28 L42 20"/><line x1="28" y1="28" x2="28" y2="46"/></svg>`
   };
   return icons[type] || icons.autre;
 }
@@ -1505,7 +1526,7 @@ function commEligible(){
   if (S.cat === 'lumen') return false;
   if (S.cat === 'mode') return false;
   if (S.cat === 'photo-part') return false;
-  return ['immobilier','archi','cuisine','piscine','event'].includes(S.cat) || S.prof === 'marque';
+  return ['immobilier','archi','cuisine','piscine','event','commercial'].includes(S.cat) || S.prof === 'marque';
 }
 
 function renderOptions(){
