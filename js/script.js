@@ -874,6 +874,27 @@ function observe(el){ io.observe(el); }
    invisible tant que la lecture n'a pas réellement démarré (jamais de
    bouton "play" visible). Utilisé par le hero Accueil et par toute autre
    section vidéo (ex: section Mission de la page Partenaires). */
+
+/* Registre de toutes les vidéos de fond créées, pour pouvoir les relancer
+   globalement (changement d'onglet, retour sur une vue, etc.). */
+const _bgVideos = [];
+
+function resumeAllBgVideos(){
+  _bgVideos.forEach(vid => {
+    if (vid.isConnected && vid.paused) {
+      const p = vid.play();
+      if (p && p.catch) p.catch(() => {});
+    }
+  });
+}
+/* Mobile : quitter l'onglet/l'app ou verrouiller l'écran met en pause les
+   vidéos en fond — on les relance dès que la page redevient visible. */
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') resumeAllBgVideos();
+});
+window.addEventListener('pageshow', resumeAllBgVideos);
+window.addEventListener('focus', resumeAllBgVideos);
+
 function createBgVideo(src){
   const vid = document.createElement('video');
   /* Attributs posés AVANT le src : requis par Safari/iOS pour autoriser
@@ -911,6 +932,7 @@ function createBgVideo(src){
      la vidéo démarre au premier geste de l'utilisateur, sans bouton visible. */
   const resumeOnGesture = () => { tryPlay(); };
   ['touchstart', 'click'].forEach(ev => document.addEventListener(ev, resumeOnGesture, { once: true, passive: true }));
+  _bgVideos.push(vid);
   return vid;
 }
 
@@ -986,6 +1008,9 @@ function goView(v){
     if (v !== 'quiz') setProgress(0);
     setPageBg(v);
     initHeroCarousel(v);
+    /* Revenir sur une vue peut avoir mis en pause ses vidéos de fond
+       (navigateurs mobiles) — on les relance systématiquement. */
+    resumeAllBgVideos();
     if (v === 'services') { renderServices(); setSvcTab('catalogue'); }
     if (v === 'drone') { renderDroneCats(); renderDroneProjects(activeDroneCat); document.querySelectorAll('#view-drone .rv').forEach(observe); }
     if (v === 'portfolio' && !pfLoaded) { renderPfTabs(); selectPfTab(PF_CATS[0].id); pfLoaded = true; }
