@@ -1979,25 +1979,6 @@
     font-size: clamp(17px, 2vw, 22px);
     font-weight: 700; letter-spacing: -0.02em; color: var(--black);
   }
-  .footer-cta-btn {
-    display: inline-flex; align-items: center; gap: 8px;
-    font-family: inherit;
-    font-size: 11px; font-weight: 600; letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--white); background: var(--black);
-    border: none; padding: 13px 26px; border-radius: 2px;
-    cursor: pointer; white-space: nowrap;
-    position: relative; overflow: hidden;
-    transition: transform 0.35s var(--ease), box-shadow 0.35s var(--ease);
-  }
-  .footer-cta-btn::before {
-    content: ''; position: absolute; inset: 0;
-    background: rgba(255,255,255,0.12);
-    transform: scaleX(0); transform-origin: right;
-    transition: transform 0.45s var(--ease-luxe);
-  }
-  .footer-cta-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(10,10,12,0.18); }
-  .footer-cta-btn:hover::before { transform: scaleX(1); transform-origin: left; }
 
   footer {
     border-top: 1px solid var(--line);
@@ -2107,7 +2088,6 @@
     .testi-card { width: 82%; }
     .testi-arrows { display: none; }
     .footer-cta-row { flex-direction: column; align-items: flex-start; gap: 18px; }
-    .footer-cta-btn { width: 100%; justify-content: center; }
     footer { padding: 40px 22px 30px; }
     .footer-grid { grid-template-columns: 1fr; gap: 30px; }
     .footer-cols-right { grid-template-columns: 1fr 1fr; gap: 20px; }
@@ -2292,7 +2272,50 @@
     animation: missionTextReveal 1.2s var(--ease-luxe) 0.35s forwards;
   }
   .mission-video-wrap.active .home-claim-cta {
-    opacity: 0; animation: missionTextReveal 1s var(--ease-luxe) 0.55s forwards;
+    opacity: 0; animation: missionTextReveal 1s var(--ease-luxe) 0.65s forwards;
+  }
+  /* Encadré blanc — carrousel des prestations, renvoie chacune vers
+     son étape dédiée du formulaire de devis */
+  .mission-services-box {
+    width: 100%; max-width: 560px;
+    background: var(--white);
+    border-radius: 18px;
+    padding: 20px 0;
+    margin: 30px 0 10px;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.3);
+    opacity: 0; filter: blur(10px); transform: translateY(18px);
+  }
+  .mission-video-wrap.active .mission-services-box {
+    animation: missionTextReveal 1.1s var(--ease-luxe) 0.45s forwards;
+  }
+  .mission-services-track {
+    display: flex; gap: 6px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    padding: 0 14px;
+    scrollbar-width: none;
+  }
+  .mission-services-track::-webkit-scrollbar { display: none; }
+  .mission-service-card {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    width: 104px;
+    padding: 10px 6px;
+    cursor: pointer;
+    border-radius: 12px;
+    transition: background 0.25s var(--ease);
+  }
+  .mission-service-card:hover { background: var(--violet); }
+  .mission-service-card svg { width: 32px; height: 32px; }
+  .mission-service-name {
+    font-size: 11px; font-weight: 600; letter-spacing: -0.005em;
+    color: var(--black); text-align: center; line-height: 1.3;
+  }
+  @media (max-width: 600px) {
+    .mission-services-box { margin: 22px 0 6px; }
+    .mission-service-card { width: 88px; }
   }
   @keyframes missionTextReveal {
     to { opacity: 1; filter: blur(0); transform: translateY(0); }
@@ -2364,7 +2387,20 @@
   .reassure-title {
     font-size: 15px; font-weight: 700; letter-spacing: -0.01em;
     margin-bottom: 10px; line-height: 1.3;
+    position: relative; display: inline-block;
   }
+  /* Soulignement animé qui se dessine sous le titre, juste après son
+     apparition — renforce la sensation de mouvement de la section. */
+  .reassure-title::after {
+    content: ''; position: absolute; left: 0; bottom: -3px;
+    width: 100%; height: 1.5px; background: var(--black);
+    transform: scaleX(0); transform-origin: left;
+  }
+  .reassure-section.in .reassure-item:nth-child(1) .reassure-title::after { animation: reassureUnderline 0.6s var(--ease-luxe) 0.5s forwards; }
+  .reassure-section.in .reassure-item:nth-child(2) .reassure-title::after { animation: reassureUnderline 0.6s var(--ease-luxe) 0.61s forwards; }
+  .reassure-section.in .reassure-item:nth-child(3) .reassure-title::after { animation: reassureUnderline 0.6s var(--ease-luxe) 0.72s forwards; }
+  .reassure-section.in .reassure-item:nth-child(4) .reassure-title::after { animation: reassureUnderline 0.6s var(--ease-luxe) 0.83s forwards; }
+  @keyframes reassureUnderline { to { transform: scaleX(1); } }
   .reassure-text {
     font-size: 12.5px; line-height: 1.65; color: var(--grey);
   }

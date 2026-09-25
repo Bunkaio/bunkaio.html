@@ -498,6 +498,7 @@ function closeMobileMenu(){
 
 function refreshDynamic(){
   renderCats();
+  renderMissionServices();
   renderFooterServices();
   if (S.cat && document.getElementById('qs-2').classList.contains('active')) renderProfiles();
   if (S.cat && document.getElementById('qs-3').classList.contains('active')) renderTiers();
@@ -1142,6 +1143,32 @@ function goToTiers(){
 function goToCoords(){
   quizStep(5);
   checkQuizForm();
+}
+
+/* Va directement à l'étape "profil" du formulaire de devis pour une
+   catégorie donnée — utilisé par le carrousel de prestations de la
+   section "Le studio" (saute l'étape de choix de catégorie, déjà
+   fait via le clic sur la carte). */
+function goToQuizCategory(catId){
+  goView('quiz');
+  S.cat = catId; S.tier = null; S.prof = null;
+  const box = document.getElementById('profQBox');
+  if (box) box.style.display = 'none';
+  renderProfiles();
+  quizStep(2);
+}
+
+/* Carrousel des prestations — section "Le studio" (page Accueil).
+   Une carte par catégorie du formulaire de devis (CATS), cliquable,
+   renvoie directement à l'étape profil pour cette catégorie. */
+function renderMissionServices(){
+  const track = document.getElementById('missionServicesTrack');
+  if (!track) return;
+  track.innerHTML = CATS.map(c => `
+    <div class="mission-service-card" onclick="goToQuizCategory('${c.id}')">
+      ${getIcon(c.icon)}
+      <div class="mission-service-name">${t(c.name)}</div>
+    </div>`).join('');
 }
 
 function renderCats(){
@@ -2576,6 +2603,7 @@ function applyImages(){
 
 /* ═══════════════ INIT ═══════════════ */
 renderCats();
+renderMissionServices();
 renderMarquee();
 renderLogoCarousel();
 renderFooterServices();
