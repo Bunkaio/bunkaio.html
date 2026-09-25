@@ -22,7 +22,7 @@
 <meta name="twitter:image" content="https://bunkaio.com/images/logo.webp">
 
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='80' font-family='serif'>⊹</text></svg>">
-<link rel="stylesheet" href="css/style.css?v=202609268">
+<link rel="stylesheet" href="css/style.css?v=202609269">
 
 <script type="application/ld+json">
 {
@@ -145,10 +145,12 @@
   <div class="cat-showcase-bg" id="catShowcaseBgA"></div>
   <div class="cat-showcase-bg" id="catShowcaseBgB"></div>
   <div class="cat-showcase-overlay"></div>
-  <div class="cat-showcase-slide-hint" id="catShowcaseSlideHint">
-    <svg class="chev-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-    <svg class="chev-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-  </div>
+  <button class="cat-showcase-arrow cat-showcase-arrow-left" id="catShowcaseArrowPrev" onclick="_catShowcaseNav(-1)" aria-label="Précédent">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+  </button>
+  <button class="cat-showcase-arrow cat-showcase-arrow-right" id="catShowcaseArrowNext" onclick="_catShowcaseNav(1)" aria-label="Suivant">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+  </button>
   <div class="cat-showcase-content" id="catShowcaseContent"></div>
 </div>
 
@@ -1017,7 +1019,7 @@
   </div>
 </footer>
 
-<script src="config/media.js?v=202609268"></script>
-<script src="js/script.js?v=202609268"></script>
+<script src="config/media.js?v=202609269"></script>
+<script src="js/script.js?v=202609269"></script>
 </body>
 </html>

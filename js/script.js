@@ -586,6 +586,8 @@ const CATS = [
   { id:'photo-part',
     name:{fr:'Séance photo — particuliers', en:'Portrait & lifestyle — individuals'},
     tag:{fr:'Extérieur · studio · solo · couple · groupe', en:'Outdoor · studio · solo · couple · group'},
+    pitch:{fr:'Pas besoin d\'être à l\'aise devant l\'objectif : c\'est notre rôle de vous mettre en confiance. Résultat, des photos qui vous ressemblent vraiment — livrées en 5 jours.',
+      en:'No need to feel at ease in front of the camera — that\'s our job. The result: photos that truly look like you, delivered in 5 days.'},
     icon:'camera',
     tiers:{
       deco:{ price:230, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
@@ -604,6 +606,8 @@ const CATS = [
   { id:'mode',
     name:{fr:'Mode, agence et mannequins', en:'Fashion, agencies & models'},
     tag:{fr:'Marques · agences · e-commerce · lookbook', en:'Brands · agencies · e-commerce · lookbook'},
+    pitch:{fr:'Des visuels qui vendent, pas seulement qui plaisent. Chaque lookbook est pensé pour votre stratégie de marque, du shooting jusqu\'à la publication.',
+      en:'Visuals that sell, not just visuals that please. Every lookbook is built around your brand strategy, from shoot to publication.'},
     icon:'marque',
     tiers:{
       deco:{ price:490, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
@@ -622,6 +626,8 @@ const CATS = [
   { id:'commercial',
     name:{fr:'Commercial & produits', en:'Commercial & products'},
     tag:{fr:'Packshots · produits · marques · entreprises', en:'Packshots · products · brands · businesses'},
+    pitch:{fr:'Des packshots nets et lumineux, prêts à convertir — sur votre site comme sur vos réseaux. La même exigence qu\'une campagne, quel que soit le nombre de produits.',
+      en:'Crisp, bright packshots built to convert — on your site and your socials alike. Campaign-level quality, whatever the size of your catalogue.'},
     icon:'product',
     tiers:{
       deco:{ price:350, delay:{fr:'3 jours ouvrés',en:'3 working days'}, items:{
@@ -640,6 +646,8 @@ const CATS = [
   { id:'event',
     name:{fr:'Événementiel', en:'Events'},
     tag:{fr:'Domaines · entreprises · réceptions', en:'Estates · corporate · receptions'},
+    pitch:{fr:'Votre journée ne se rejoue pas deux fois. Nous restons discrets pour que vous puissiez la vivre pleinement, pendant que nous en capturons chaque instant.',
+      en:'Your day only happens once. We stay discreet so you can live it fully, while we capture every moment that matters.'},
     icon:'event',
     tiers:{
       deco:{ price:390, delay:{fr:'3 jours ouvrés',en:'3 working days'}, items:{
@@ -659,6 +667,8 @@ const CATS = [
     lumen: true,
     name:{fr:'Lumen', en:'Lumen'},
     tag:{fr:'Photobooth IA — mariages haut de gamme', en:'IA Photobooth — luxury weddings'},
+    pitch:{fr:'Un souvenir unique, généré par IA en quelques secondes, sans jamais sacrifier l\'élégance de votre réception. Vos invités repartent avec bien plus qu\'une photo.',
+      en:'A one-of-a-kind keepsake, AI-generated in seconds, without ever compromising the elegance of your event. Your guests leave with far more than a photo.'},
     icon:'lumen',
     tiers:{}
   }
@@ -1185,6 +1195,13 @@ function goToQuizCategory(catId){
   if (box) box.style.display = 'none';
   renderProfiles();
   quizStep(2);
+}
+
+/* Renvoie vers la page Services, filtrée sur la catégorie concernée —
+   c'est le tableau de tarifs de ce domaine qui s'affiche directement. */
+function goToServiceTable(catId){
+  activeServiceFilter = catId;
+  goView('services');
 }
 
 /* Carrousel des prestations — section "Le studio" (page Accueil).
@@ -2014,6 +2031,7 @@ function renderServices(){
         <div class="service-name">${t(c.name)}</div>
       </div>
       <div class="service-tag">${t(c.tag)}</div>
+      ${c.pitch ? `<p class="service-pitch">${t(c.pitch)}</p>` : ''}
       <div class="service-tiers">
         ${c.lumen
           ? LUMEN_TIERS.map(lt => `
@@ -2413,7 +2431,8 @@ function initCatShowcase(){
   const bgA = document.getElementById('catShowcaseBgA');
   const bgB = document.getElementById('catShowcaseBgB');
   const content = document.getElementById('catShowcaseContent');
-  const slideHint = document.getElementById('catShowcaseSlideHint');
+  const arrowPrev = document.getElementById('catShowcaseArrowPrev');
+  const arrowNext = document.getElementById('catShowcaseArrowNext');
   const triggers = document.querySelectorAll('.cat-showcase-trigger');
   if (!wrap || !bgA || !bgB || !content || !triggers.length || _catShowcaseInit) return;
   _catShowcaseInit = true;
@@ -2435,6 +2454,13 @@ function initCatShowcase(){
     });
   };
 
+  /* Estompe la flèche en bord de parcours (pas de "précédent" sur la
+     première catégorie, pas de "suivant" sur la dernière). */
+  const paintArrows = (idx) => {
+    if (arrowPrev) arrowPrev.classList.toggle('is-disabled', idx <= 0);
+    if (arrowNext) arrowNext.classList.toggle('is-disabled', idx >= order.length - 1);
+  };
+
   const renderCat = (catId) => {
     if (catId === currentCat) return;
     const cat = CATS.find(c => c.id === catId);
@@ -2445,10 +2471,11 @@ function initCatShowcase(){
     const dir = currentIdx === -1 ? 0 : (idx > currentIdx ? 1 : -1);
     currentCat = catId;
     currentIdx = idx;
+    paintArrows(idx);
 
     /* Slide horizontal image : le calque caché entre par le côté
-       pendant que le calque visible sort par le côté opposé — un vrai
-       glissement de carrousel, pas un simple fondu. */
+       pendant que le calque visible sort par le côté opposé, jusqu'à
+       coller contre le bord — un vrai glissement de carrousel. */
     const url = IMG.servicePhotos && IMG.servicePhotos[catId];
     const shown = shownIsA ? bgA : bgB;
     const hidden = shownIsA ? bgB : bgA;
@@ -2476,14 +2503,22 @@ function initCatShowcase(){
 
     if (!textEl) {
       content.innerHTML = `
-        <div class="cat-showcase-text">
+        <div class="cat-showcase-text" style="opacity:0; filter:blur(10px); transform:translateY(18px);">
           <div class="cat-showcase-name">${t(cat.name)}</div>
           <div class="cat-showcase-tag">${t(cat.tag)}</div>
         </div>
-        <button class="hero-start" onclick="goToQuizCategory('${cat.id}')"><span>${t({fr:'Découvrir cette prestation',en:'Discover this service'})}</span></button>
+        <button class="hero-start" onclick="goToServiceTable('${cat.id}')"><span>${t({fr:'Découvrir cette prestation',en:'Discover this service'})}</span></button>
         <div class="cat-showcase-dots">
           ${order.map(id => `<div class="cat-showcase-dot${id === catId ? ' active' : ''}" data-cat="${id}" onclick="_catShowcaseJump('${id}')"></div>`).join('')}
         </div>`;
+      /* Même entrée flou -> net que le texte "Nous ne documentons pas..."
+         de la section suivante, pour la toute première apparition. */
+      const freshText = content.querySelector('.cat-showcase-text');
+      requestAnimationFrame(() => {
+        freshText.style.opacity = '1';
+        freshText.style.filter = 'blur(0)';
+        freshText.style.transform = 'translateY(0)';
+      });
       return;
     }
 
@@ -2493,20 +2528,30 @@ function initCatShowcase(){
       textEl.innerHTML = `
         <div class="cat-showcase-name">${t(cat.name)}</div>
         <div class="cat-showcase-tag">${t(cat.tag)}</div>`;
-      if (btnEl) btnEl.setAttribute('onclick', `goToQuizCategory('${cat.id}')`);
+      if (btnEl) btnEl.setAttribute('onclick', `goToServiceTable('${cat.id}')`);
       paintDots(catId);
-      /* Entre depuis le côté opposé à celui par lequel l'ancien texte est sorti */
+      /* Entre depuis le côté opposé à celui par lequel l'ancien texte est
+         sorti, collé contre le bord, avec le même flou -> net que la
+         vidéo "Le studio". */
       textEl.classList.remove(leaveClass);
       textEl.classList.add('is-entering');
-      textEl.style.transform = `translateX(${dir >= 0 ? 36 : -36}px)`;
+      textEl.style.transform = `translateX(${dir >= 0 ? 60 : -60}vw)`;
       textEl.style.opacity = '0';
+      textEl.style.filter = 'blur(10px)';
       void textEl.offsetWidth;
       textEl.classList.remove('is-entering');
       textEl.style.transform = 'translateX(0)';
       textEl.style.opacity = '1';
+      textEl.style.filter = 'blur(0)';
     }, 220);
   };
   window._catShowcaseJump = jumpTo;
+  window._catShowcaseNav = (delta) => {
+    if (currentIdx === -1) return;
+    const nextIdx = currentIdx + delta;
+    if (nextIdx < 0 || nextIdx >= order.length) return;
+    jumpTo(order[nextIdx]);
+  };
   renderCat(order[0]);
 
   const visible = new Set();
@@ -2517,11 +2562,14 @@ function initCatShowcase(){
     });
     const nowActive = visible.size > 0;
     wrap.classList.toggle('active', nowActive);
-    /* Indice "ça glisse" affiché une seule fois, à la première arrivée
-       sur le parcours prestations. */
-    if (nowActive && !hintShown && slideHint) {
+    /* Indice "ça glisse" sur les flèches, affiché une seule fois, à la
+       première arrivée sur le parcours prestations. */
+    if (nowActive && !hintShown) {
       hintShown = true;
-      setTimeout(() => slideHint.classList.add('show'), 600);
+      setTimeout(() => {
+        if (arrowPrev) arrowPrev.classList.add('teach');
+        if (arrowNext) arrowNext.classList.add('teach');
+      }, 600);
     }
   }, { threshold: 0.5 });
   triggers.forEach(tr => catIO.observe(tr));

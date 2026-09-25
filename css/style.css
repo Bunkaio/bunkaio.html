@@ -1355,7 +1355,14 @@
   .service-icon { width: 44px; height: 44px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
   .service-icon svg { width: 100%; height: 100%; }
   .service-name { font-size: 17px; font-weight: 700; letter-spacing: -0.01em; line-height: 1.35; color: var(--black); }
-  .service-tag { font-size: 10.5px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--grey); margin-bottom: 22px; line-height: 1.6; }
+  .service-tag { font-size: 10.5px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--grey); margin-bottom: 16px; line-height: 1.6; }
+  /* Pitch marketing court — attire et rassure avant d'afficher les prix,
+     placé juste après le tag et avant le tableau de tarifs : le pont
+     entre "c'est pour qui" et "combien ça coûte". */
+  .service-pitch {
+    font-size: 13px; line-height: 1.6; color: var(--black);
+    margin-bottom: 22px;
+  }
   .service-tiers { display: flex; flex-direction: column; flex: 1; }
   .service-tier {
     display: flex; justify-content: space-between; align-items: center;
@@ -2388,43 +2395,54 @@
     text-align: center; padding: 60px 32px;
     overflow: hidden;
   }
-  /* Le texte glisse latéralement en même temps que l'image, même sens,
-     pour un changement de catégorie qui se lit comme un vrai "slide". */
+  /* Le texte glisse latéralement en même temps que l'image, jusqu'à
+     "coller" contre le bord de l'écran, avec le même effet flou -> net
+     que le texte de la section "Le studio" (nous ne documentons pas...). */
   .cat-showcase-text {
-    transition: transform 0.45s var(--ease-luxe), opacity 0.3s ease;
-    will-change: transform;
+    transition: transform 0.6s var(--ease-luxe), opacity 0.5s ease, filter 0.6s var(--ease-luxe);
+    will-change: transform, filter, opacity;
   }
-  .cat-showcase-text.is-leaving-next { transform: translateX(-36px); opacity: 0; }
-  .cat-showcase-text.is-leaving-prev { transform: translateX(36px); opacity: 0; }
+  .cat-showcase-text.is-leaving-next { transform: translateX(-60vw); opacity: 0; filter: blur(10px); }
+  .cat-showcase-text.is-leaving-prev { transform: translateX(60vw); opacity: 0; filter: blur(10px); }
   .cat-showcase-text.is-entering { transition: none; }
 
-  /* Petit indice "ça glisse" — deux chevrons qui pulsent brièvement la
-     première fois qu'on arrive sur le parcours prestations, pour montrer
-     que le contenu défile latéralement. Disparaît ensuite pour de bon. */
-  .cat-showcase-slide-hint {
-    position: absolute; top: 50%; left: 0; right: 0; z-index: 2;
-    display: flex; justify-content: space-between;
-    padding: 0 18px;
+  /* Flèches de navigation gauche/droite — desktop et mobile — pour changer
+     de catégorie sans dépendre du scroll. Estompées en bord de parcours. */
+  .cat-showcase-arrow {
+    position: absolute; top: 50%; z-index: 3;
+    width: 48px; height: 48px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.3);
+    backdrop-filter: blur(16px) saturate(1.5);
+    -webkit-backdrop-filter: blur(16px) saturate(1.5);
+    color: var(--white);
+    cursor: pointer;
     transform: translateY(-50%);
-    pointer-events: none;
-    opacity: 0;
+    transition: background 0.3s var(--ease), border-color 0.3s var(--ease), opacity 0.3s ease;
   }
-  .cat-showcase-slide-hint.show { animation: slideHintTeach 2.6s var(--ease) 1; }
-  .cat-showcase-slide-hint svg {
-    width: 26px; height: 26px;
-    color: rgba(255,255,255,0.85);
-    filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4));
+  .cat-showcase-arrow svg { width: 20px; height: 20px; }
+  .cat-showcase-arrow:hover { background: rgba(255,255,255,0.22); border-color: rgba(255,255,255,0.5); }
+  .cat-showcase-arrow-left { left: 20px; }
+  .cat-showcase-arrow-right { right: 20px; }
+  .cat-showcase-arrow.is-disabled { opacity: 0; pointer-events: none; }
+  /* Indice "ça glisse" — les flèches se dandinent brièvement la première
+     fois qu'on arrive sur le parcours prestations, pour montrer qu'on
+     peut naviguer avec elles. Ne se rejoue plus ensuite. */
+  .cat-showcase-arrow-left.teach { animation: archNudgeLeft 1.3s ease-in-out 2; }
+  .cat-showcase-arrow-right.teach { animation: archNudgeRight 1.3s ease-in-out 2; }
+  @keyframes archNudgeLeft {
+    0%, 100% { transform: translateY(-50%) translateX(0); } 50% { transform: translateY(-50%) translateX(-7px); }
   }
-  .cat-showcase-slide-hint .chev-left { animation: slideHintLeft 1.3s ease-in-out infinite; }
-  .cat-showcase-slide-hint .chev-right { animation: slideHintRight 1.3s ease-in-out infinite; }
-  @keyframes slideHintTeach {
-    0% { opacity: 0; } 15% { opacity: 1; } 80% { opacity: 1; } 100% { opacity: 0; }
+  @keyframes archNudgeRight {
+    0%, 100% { transform: translateY(-50%) translateX(0); } 50% { transform: translateY(-50%) translateX(7px); }
   }
-  @keyframes slideHintLeft {
-    0%, 100% { transform: translateX(0); } 50% { transform: translateX(-8px); }
-  }
-  @keyframes slideHintRight {
-    0%, 100% { transform: translateX(0); } 50% { transform: translateX(8px); }
+  @media (max-width: 600px) {
+    .cat-showcase-arrow { width: 40px; height: 40px; }
+    .cat-showcase-arrow svg { width: 17px; height: 17px; }
+    .cat-showcase-arrow-left { left: 12px; }
+    .cat-showcase-arrow-right { right: 12px; }
   }
   .cat-showcase-name {
     font-size: clamp(30px, 5.5vw, 56px);
