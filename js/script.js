@@ -1089,6 +1089,11 @@ function goView(v){
     if (v !== 'quiz') setProgress(0);
     setPageBg(v);
     initHeroCarousel(v);
+    /* Bannière "Un projet en tête ?" du footer : masquée sur l'accueil
+       (déjà plusieurs CTA "Estimer mon projet" sur cette page), visible
+       partout ailleurs. */
+    const footerCta = document.querySelector('.footer-cta-row');
+    if (footerCta) footerCta.style.display = (v === 'home') ? 'none' : '';
     /* Revenir sur une vue peut avoir mis en pause ses vidéos de fond
        (navigateurs mobiles) — on les relance systématiquement. */
     resumeAllBgVideos();
@@ -2368,6 +2373,54 @@ function renderCommBox(){
   box.appendChild(d);
 }
 
+/* ═══════════════ PRESTATIONS — calque fixe plein écran, fond image (Accueil) ═══════════════
+   Remplace l'ancienne bande d'images défilante : même mécanique que le
+   hero et la vidéo "Le studio" (calque position:fixed partagé, piloté
+   par IntersectionObserver), mais avec un fond IMAGE qui change à
+   chaque catégorie parcourue au fil du scroll. Un déclencheur invisible
+   par catégorie (.cat-showcase-trigger) détermine quel fond/texte
+   afficher ; la désactivation se fait dès que le déclencheur "Le
+   studio" suivant commence à apparaître (même logique que la vidéo qui
+   cède la place à la section blanche). */
+let _catShowcaseInit = false;
+function initCatShowcase(){
+  const wrap = document.getElementById('catShowcaseWrap');
+  const bg = document.getElementById('catShowcaseBg');
+  const content = document.getElementById('catShowcaseContent');
+  const triggers = document.querySelectorAll('.cat-showcase-trigger');
+  if (!wrap || !bg || !content || !triggers.length || _catShowcaseInit) return;
+  _catShowcaseInit = true;
+
+  const order = Array.from(triggers).map(t => t.dataset.cat);
+
+  const renderCat = (catId) => {
+    const cat = CATS.find(c => c.id === catId);
+    if (!cat) return;
+    const url = IMG.servicePhotos && IMG.servicePhotos[catId];
+    if (url) bg.style.backgroundImage = `url('${url}')`;
+    const idx = order.indexOf(catId);
+    content.innerHTML = `
+      <div class="cat-showcase-kicker">${t({fr:'Prestation',en:'Service'})} ${idx + 1} / ${order.length}</div>
+      <div class="cat-showcase-name">${t(cat.name)}</div>
+      <div class="cat-showcase-tag">${t(cat.tag)}</div>
+      <button class="hero-start" onclick="goToQuizCategory('${cat.id}')"><span>${t({fr:'Découvrir cette prestation',en:'Discover this service'})}</span></button>
+      <div class="cat-showcase-dots">
+        ${order.map((id, i) => `<div class="cat-showcase-dot${i === idx ? ' active' : ''}"></div>`).join('')}
+      </div>`;
+  };
+  renderCat(order[0]);
+
+  const visible = new Set();
+  const catIO = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { visible.add(e.target); renderCat(e.target.dataset.cat); }
+      else visible.delete(e.target);
+    });
+    wrap.classList.toggle('active', visible.size > 0);
+  }, { threshold: 0.5 });
+  triggers.forEach(tr => catIO.observe(tr));
+}
+
 /* ═══════════════ VIDÉO "LE STUDIO" — calque fixe plein écran (Accueil) ═══════════════
    Même mécanique que le hero : la vidéo vit dans un calque position:fixed
    partagé, et son opacité est pilotée par un IntersectionObserver dédié
@@ -2580,15 +2633,6 @@ function renderLogoCarousel(){
   el.innerHTML = make() + make();
 }
 
-/* ═══════════════ MARQUEE ═══════════════ */
-function renderMarquee(){
-  const track = document.getElementById('marqueeTrack');
-  if (!track) return;
-  const make = () => IMG.marquee.map(src =>
-    `<div class="marquee-item"><img loading="lazy" src="${src}" alt="Bunkaio"></div>`
-  ).join('');
-  track.innerHTML = make() + make();
-}
 
 /* ═══════════════ FOOTER SERVICES ═══════════════ */
 function renderFooterServices(){
@@ -2631,7 +2675,7 @@ function applyImages(){
 renderCats();
 renderMissionServices();
 initMissionServicesAutoplay();
-renderMarquee();
+initCatShowcase();
 renderLogoCarousel();
 renderFooterServices();
 /* Hero image home */
@@ -2645,6 +2689,9 @@ applyImages();
 document.querySelectorAll('.ph').forEach(observe);
 document.querySelectorAll('#view-home .rv:not(.reassure-section)').forEach(observe);
 document.querySelectorAll('#view-home .reassure-section').forEach(observeLate);
+/* Accueil actif par défaut au chargement -> bannière footer masquée */
+const _footerCtaInit = document.querySelector('.footer-cta-row');
+if (_footerCtaInit) _footerCtaInit.style.display = 'none';
 syncNavHeight();
 window.addEventListener('resize', () => { syncNavHeight(); if (window.innerWidth > 1180) closeMobileMenu(); });
 initHeroScrollFx();

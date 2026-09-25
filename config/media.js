@@ -203,6 +203,7 @@ const IMG = {
     'photo-part': MEDIA_BASE + '/services/photo-part.webp',   // Séance photo particuliers
     mode:         MEDIA_BASE + '/services/mode.webp',          // Mode & créateurs
     event:        MEDIA_BASE + '/services/event.webp',         // Événementiel
+    lumen:        MEDIA_BASE + '/services/lumen.webp',          // Lumen — photobooth IA mariages
   },
 
   /* ──────────────────────────────────────────────────────────────────

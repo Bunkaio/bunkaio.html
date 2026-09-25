@@ -1747,34 +1747,6 @@
   .pf-cta-arrow { transition: transform 0.35s var(--ease); display: inline-block; }
   .pf-cta-btn:hover .pf-cta-arrow { transform: translateX(5px); }
 
-  /* ─── MARQUEE D'IMAGES (accueil) ─── */
-  .marquee {
-    overflow: hidden;
-    padding: 0 0 100px;
-    position: relative; z-index: 1;
-    -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
-    mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
-  }
-  .marquee-track {
-    display: flex; gap: 14px;
-    width: max-content;
-    animation: marqueeScroll 55s linear infinite;
-  }
-  .marquee:hover .marquee-track { animation-play-state: paused; }
-  .marquee-item {
-    width: 280px; aspect-ratio: 4/5;
-    flex-shrink: 0;
-    overflow: hidden;
-    background: #efeaf6;
-    border-radius: 6px;
-  }
-  .marquee-item img {
-    width: 100%; height: 100%; object-fit: cover; display: block;
-    filter: grayscale(30%);
-    transition: filter 0.6s var(--ease), transform 0.8s var(--ease-luxe);
-  }
-  .marquee-item:hover img { filter: grayscale(0%); transform: scale(1.05); }
-  @keyframes marqueeScroll { to { transform: translateX(-50%); } }
 
   .home-claim {
     text-align: center;
@@ -1794,22 +1766,30 @@
     max-width: 1200px; margin: 0 auto;
   }
   .testi-share-row { text-align: center; margin-top: 36px; }
-  .testi-logo-row { text-align: center; margin-bottom: 28px; }
-  .testi-logo-img { width: 38px; height: 38px; object-fit: contain; display: inline-block; }
+  .testi-heading {
+    text-align: center; max-width: 640px; margin: 0 auto 30px;
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .testi-logo-img { width: 34px; height: 34px; object-fit: contain; margin-bottom: 18px; }
   .testi-logo-fallback {
     display: none; color: var(--black);
-    font-size: 20px; font-weight: 700; letter-spacing: -0.02em;
+    font-size: 18px; font-weight: 700; letter-spacing: -0.02em;
+    margin-bottom: 18px;
   }
-  .testimonials-head {
-    display: flex; align-items: flex-end; justify-content: space-between;
-    gap: 20px; margin-bottom: 32px; padding-bottom: 14px;
-    border-bottom: 1px solid var(--line);
+  .testi-quote-mark {
+    color: var(--violet-deep); margin-bottom: 6px;
   }
+  .testi-quote-mark svg { width: 30px; height: 30px; display: block; }
   .testimonials-label {
     /* Même police/taille que "Nous ne documentons pas des projets…" */
     font-size: clamp(26px, 4.4vw, 48px);
     font-weight: 700; letter-spacing: -0.025em; line-height: 1.28;
     color: var(--black);
+  }
+  .testi-arrows-row {
+    display: flex; justify-content: flex-end;
+    margin-bottom: 18px; padding-bottom: 14px;
+    border-bottom: 1px solid var(--line);
   }
   .testi-arrows { display: flex; gap: 10px; flex-shrink: 0; }
   .testi-arrow {
@@ -2108,7 +2088,6 @@
     .cat-left { gap: 16px; }
     .cat-item { padding: 22px 6px; }
     .cat-item:hover { padding-left: 14px; }
-    .marquee-item { width: 220px; }
     .orb-1 { width: 300px; height: 300px; }
     .orb-2 { width: 260px; height: 260px; }
   }
@@ -2345,12 +2324,72 @@
      vidéo fixe) — sans ça, il intercepte tous les clics destinés à la
      vidéo/aux pastilles de prestations en dessous. */
   .home-claim-trigger { min-height: 100vh; pointer-events: none !important; }
+
+  /* ─── PRESTATIONS — calque fixe plein écran, fond image par catégorie ─── */
+  .cat-showcase-wrap {
+    position: fixed; inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    background: var(--black);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  .cat-showcase-wrap.active { opacity: 1; pointer-events: auto; }
+  .cat-showcase-bg {
+    position: absolute; inset: 0;
+    background-size: cover; background-position: center;
+    transition: background-image 0.5s ease;
+  }
+  .cat-showcase-overlay {
+    position: absolute; inset: 0; z-index: 1;
+    background: linear-gradient(to bottom, rgba(10,10,12,0.45) 0%, rgba(10,10,12,0.12) 45%, rgba(10,10,12,0.55) 100%);
+  }
+  .cat-showcase-content {
+    position: absolute; inset: 0; z-index: 2;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: 60px 32px;
+  }
+  .cat-showcase-kicker {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.34em;
+    text-transform: uppercase; color: rgba(255,255,255,0.72);
+    margin-bottom: 22px;
+  }
+  .cat-showcase-name {
+    font-size: clamp(30px, 5.5vw, 56px);
+    font-weight: 700; letter-spacing: -0.03em; line-height: 1.12;
+    color: var(--white);
+    margin-bottom: 16px;
+    max-width: 780px;
+  }
+  .cat-showcase-tag {
+    font-size: 14px; color: rgba(255,255,255,0.78);
+    margin-bottom: 34px;
+    max-width: 460px;
+  }
+  /* .hero-start porte une animation d'entrée pensée pour le chargement
+     de la page (délai 1.35s) — inadaptée ici puisque ce bouton est
+     recréé dynamiquement à chaque catégorie parcourue au scroll. */
+  .cat-showcase-content .hero-start { opacity: 1; animation: none; }
+  .cat-showcase-dots {
+    position: absolute; bottom: 40px; left: 0; right: 0; z-index: 2;
+    display: flex; justify-content: center; gap: 8px;
+  }
+  .cat-showcase-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: rgba(255,255,255,0.35);
+    transition: background 0.3s var(--ease), width 0.3s var(--ease);
+  }
+  .cat-showcase-dot.active { background: var(--white); width: 20px; border-radius: 3px; }
+  .cat-showcase-trigger { min-height: 100vh; pointer-events: none !important; }
+  @media (max-width: 600px) {
+    .cat-showcase-content { padding: 40px 24px; }
+    .cat-showcase-dots { bottom: 26px; }
+  }
   @media (max-width: 600px) {
     .mission-video-content { padding: 36px 24px; }
     /* Le CTA reste identique au desktop, pas de resserrement */
     .home-claim-cta { font-size: 14px; padding: 14px 32px; }
-    /* Bande d'images masquée sur mobile pour atteindre la vidéo plus vite */
-    .marquee { display: none; }
   }
 
   /* ─── SECTION RÉASSURANCE — bandeau compact, scannable d'un coup d'œil ─── */
