@@ -449,6 +449,10 @@ function updateHeroScrollFx(){
   const progress = Math.min(Math.max((window.scrollY - fadeStart) / fadeRange, 0), 1);
   wrap.style.opacity = String(1 - progress);
   wrap.style.visibility = progress >= 1 ? 'hidden' : 'visible';
+
+  /* Disparaît dès le premier geste de scroll — inutile de le garder */
+  const hint = document.getElementById('scrollHint');
+  if (hint) hint.classList.toggle('is-hidden', window.scrollY > 40);
 }
 
 function initHeroScrollFx(){
@@ -2409,13 +2413,16 @@ function initCatShowcase(){
   const bgA = document.getElementById('catShowcaseBgA');
   const bgB = document.getElementById('catShowcaseBgB');
   const content = document.getElementById('catShowcaseContent');
+  const slideHint = document.getElementById('catShowcaseSlideHint');
   const triggers = document.querySelectorAll('.cat-showcase-trigger');
   if (!wrap || !bgA || !bgB || !content || !triggers.length || _catShowcaseInit) return;
   _catShowcaseInit = true;
 
   const order = Array.from(triggers).map(t => t.dataset.cat);
   let currentCat = null;
+  let currentIdx = -1;
   let shownIsA = true; /* quel calque image est actuellement visible */
+  let hintShown = false;
 
   const jumpTo = (catId) => {
     const tr = Array.from(triggers).find(x => x.dataset.cat === catId);
@@ -2430,27 +2437,42 @@ function initCatShowcase(){
 
   const renderCat = (catId) => {
     if (catId === currentCat) return;
-    currentCat = catId;
     const cat = CATS.find(c => c.id === catId);
     if (!cat) return;
+    const idx = order.indexOf(catId);
+    /* Sens du slide : on avance dans la liste -> le nouveau vient de la
+       droite (dir 1) ; on recule -> il vient de la gauche (dir -1). */
+    const dir = currentIdx === -1 ? 0 : (idx > currentIdx ? 1 : -1);
+    currentCat = catId;
+    currentIdx = idx;
 
-    /* Fondu enchaîné image : on peint le calque caché puis on
-       intervertit lequel est visible — vrai crossfade, pas un
-       changement instantané. */
+    /* Slide horizontal image : le calque caché entre par le côté
+       pendant que le calque visible sort par le côté opposé — un vrai
+       glissement de carrousel, pas un simple fondu. */
     const url = IMG.servicePhotos && IMG.servicePhotos[catId];
     const shown = shownIsA ? bgA : bgB;
     const hidden = shownIsA ? bgB : bgA;
     if (url) hidden.style.backgroundImage = `url('${url}')`;
-    hidden.classList.add('is-shown');
-    shown.classList.remove('is-shown');
+
+    if (dir === 0) {
+      hidden.style.transition = 'none';
+      hidden.style.transform = 'translateX(0)';
+      void hidden.offsetWidth;
+      hidden.style.transition = '';
+    } else {
+      hidden.style.transition = 'none';
+      hidden.style.transform = `translateX(${dir * 100}%)`;
+      void hidden.offsetWidth;
+      hidden.style.transition = '';
+      requestAnimationFrame(() => { hidden.style.transform = 'translateX(0)'; });
+      shown.style.transform = `translateX(${-dir * 100}%)`;
+    }
     shownIsA = !shownIsA;
 
     /* Si les points/bouton existent déjà (2e passage), on ne les
-       reconstruit pas : on fait juste disparaître puis réapparaître le
-       texte, et on met à jour le point actif + la cible du bouton. */
+       reconstruit pas : le texte glisse dans le même sens que l'image. */
     const textEl = content.querySelector('.cat-showcase-text');
     const btnEl = content.querySelector('.hero-start');
-    const idx = order.indexOf(catId);
 
     if (!textEl) {
       content.innerHTML = `
@@ -2466,7 +2488,8 @@ function initCatShowcase(){
       return;
     }
 
-    textEl.classList.add('is-leaving');
+    const leaveClass = dir >= 0 ? 'is-leaving-next' : 'is-leaving-prev';
+    textEl.classList.add(leaveClass);
     setTimeout(() => {
       textEl.innerHTML = `
         <div class="cat-showcase-kicker">${t({fr:'Prestation',en:'Service'})} ${idx + 1} / ${order.length}</div>
@@ -2474,7 +2497,15 @@ function initCatShowcase(){
         <div class="cat-showcase-tag">${t(cat.tag)}</div>`;
       if (btnEl) btnEl.setAttribute('onclick', `goToQuizCategory('${cat.id}')`);
       paintDots(catId);
-      textEl.classList.remove('is-leaving');
+      /* Entre depuis le côté opposé à celui par lequel l'ancien texte est sorti */
+      textEl.classList.remove(leaveClass);
+      textEl.classList.add('is-entering');
+      textEl.style.transform = `translateX(${dir >= 0 ? 36 : -36}px)`;
+      textEl.style.opacity = '0';
+      void textEl.offsetWidth;
+      textEl.classList.remove('is-entering');
+      textEl.style.transform = 'translateX(0)';
+      textEl.style.opacity = '1';
     }, 220);
   };
   window._catShowcaseJump = jumpTo;
@@ -2486,7 +2517,14 @@ function initCatShowcase(){
       if (e.isIntersecting) { visible.add(e.target); renderCat(e.target.dataset.cat); }
       else visible.delete(e.target);
     });
-    wrap.classList.toggle('active', visible.size > 0);
+    const nowActive = visible.size > 0;
+    wrap.classList.toggle('active', nowActive);
+    /* Indice "ça glisse" affiché une seule fois, à la première arrivée
+       sur le parcours prestations. */
+    if (nowActive && !hintShown && slideHint) {
+      hintShown = true;
+      setTimeout(() => slideHint.classList.add('show'), 600);
+    }
   }, { threshold: 0.5 });
   triggers.forEach(tr => catIO.observe(tr));
 }

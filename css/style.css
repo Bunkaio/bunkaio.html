@@ -320,6 +320,7 @@
     padding: 0 12px 6px;
     overflow: visible;
     color: var(--white);
+    text-wrap: balance;
   }
   .hero-title .word {
     display: inline-block;
@@ -647,6 +648,27 @@
     transition: color 0.35s var(--ease), border-color 0.35s var(--ease);
   }
   .hero-access:hover { color: var(--white); border-bottom-color: var(--white); }
+
+  /* ─── INDICATEUR DE SCROLL — signale qu'il y a du contenu en dessous ─── */
+  .scroll-hint {
+    position: absolute; bottom: 36px; left: 50%;
+    transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    color: rgba(255,255,255,0.7);
+    font-size: 10px; font-weight: 600; letter-spacing: 0.24em; text-transform: uppercase;
+    opacity: 0; animation: riseIn 1s var(--ease) 1.9s forwards;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+  }
+  .scroll-hint.is-hidden { opacity: 0 !important; }
+  .scroll-hint svg { width: 16px; height: 16px; animation: scrollHintBounce 1.8s ease-in-out infinite; }
+  @keyframes scrollHintBounce {
+    0%, 100% { transform: translateY(0); opacity: 0.5; }
+    50% { transform: translateY(6px); opacity: 1; }
+  }
+  @media (max-width: 600px) {
+    .scroll-hint { bottom: 22px; }
+  }
 
   /* ─── LOGIN / ESPACE CLIENT & PARTENAIRE ─── */
   .login-page { max-width: 520px; margin: 0 auto; padding: 180px 32px 140px; position: relative; z-index: 1; }
@@ -1258,6 +1280,7 @@
     color: var(--black);
     opacity: 0; transform: translateY(24px);
     animation: pageTextIn 0.9s var(--ease-luxe) forwards;
+    text-wrap: balance;
   }
   .page-sub {
     font-size: 14px; color: var(--grey); margin-bottom: 58px;
@@ -1791,6 +1814,7 @@
     font-size: clamp(26px, 4.4vw, 48px);
     font-weight: 700; letter-spacing: -0.025em; line-height: 1.28;
     color: var(--black);
+    text-wrap: balance;
   }
   .testi-arrows-row {
     display: flex; justify-content: flex-end;
@@ -2260,6 +2284,7 @@
     font-weight: 700; letter-spacing: -0.025em; line-height: 1.28;
     color: var(--white);
     opacity: 0; filter: blur(10px); transform: translateY(18px);
+    text-wrap: balance;
   }
   .mission-video-wrap.active .mission-kicker {
     animation: missionTextReveal 1s var(--ease-luxe) 0.15s forwards;
@@ -2343,16 +2368,16 @@
   }
   .cat-showcase-wrap.active { opacity: 1; pointer-events: auto; }
   /* Deux calques image superposés : on écrit la nouvelle photo sur celui
-     du dessous puis on le fait apparaître en fondu — un vrai fondu
-     enchaîné, contrairement à "transition: background-image" qui ne
-     s'anime pas de façon fiable dans les navigateurs. */
+     du dessous puis on le fait glisser depuis le côté — un vrai slide
+     horizontal (comme un carrousel), pas un simple fondu. Le sens
+     (gauche/droite) dépend du sens de parcours des catégories, piloté
+     en JS via des transform inline. */
   .cat-showcase-bg {
     position: absolute; inset: 0;
     background-size: cover; background-position: center;
-    opacity: 0;
-    transition: opacity 0.7s var(--ease);
+    transition: transform 0.65s var(--ease-luxe), opacity 0.5s ease;
+    will-change: transform;
   }
-  .cat-showcase-bg.is-shown { opacity: 1; }
   .cat-showcase-overlay {
     position: absolute; inset: 0; z-index: 1;
     background: linear-gradient(to bottom, rgba(10,10,12,0.45) 0%, rgba(10,10,12,0.12) 45%, rgba(10,10,12,0.55) 100%);
@@ -2361,11 +2386,46 @@
     position: absolute; inset: 0; z-index: 2;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     text-align: center; padding: 60px 32px;
+    overflow: hidden;
   }
-  /* Le texte (nom, tag, kicker) s'efface puis revient en fondu+montée à
-     chaque changement de catégorie, au lieu de changer d'un coup sec. */
-  .cat-showcase-text { transition: opacity 0.35s var(--ease), transform 0.35s var(--ease); }
-  .cat-showcase-text.is-leaving { opacity: 0; transform: translateY(-10px); }
+  /* Le texte glisse latéralement en même temps que l'image, même sens,
+     pour un changement de catégorie qui se lit comme un vrai "slide". */
+  .cat-showcase-text {
+    transition: transform 0.45s var(--ease-luxe), opacity 0.3s ease;
+    will-change: transform;
+  }
+  .cat-showcase-text.is-leaving-next { transform: translateX(-36px); opacity: 0; }
+  .cat-showcase-text.is-leaving-prev { transform: translateX(36px); opacity: 0; }
+  .cat-showcase-text.is-entering { transition: none; }
+
+  /* Petit indice "ça glisse" — deux chevrons qui pulsent brièvement la
+     première fois qu'on arrive sur le parcours prestations, pour montrer
+     que le contenu défile latéralement. Disparaît ensuite pour de bon. */
+  .cat-showcase-slide-hint {
+    position: absolute; top: 50%; left: 0; right: 0; z-index: 2;
+    display: flex; justify-content: space-between;
+    padding: 0 18px;
+    transform: translateY(-50%);
+    pointer-events: none;
+    opacity: 0;
+  }
+  .cat-showcase-slide-hint.show { animation: slideHintTeach 2.6s var(--ease) 1; }
+  .cat-showcase-slide-hint svg {
+    width: 26px; height: 26px;
+    color: rgba(255,255,255,0.85);
+    filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4));
+  }
+  .cat-showcase-slide-hint .chev-left { animation: slideHintLeft 1.3s ease-in-out infinite; }
+  .cat-showcase-slide-hint .chev-right { animation: slideHintRight 1.3s ease-in-out infinite; }
+  @keyframes slideHintTeach {
+    0% { opacity: 0; } 15% { opacity: 1; } 80% { opacity: 1; } 100% { opacity: 0; }
+  }
+  @keyframes slideHintLeft {
+    0%, 100% { transform: translateX(0); } 50% { transform: translateX(-8px); }
+  }
+  @keyframes slideHintRight {
+    0%, 100% { transform: translateX(0); } 50% { transform: translateX(8px); }
+  }
   .cat-showcase-kicker {
     font-size: 11px; font-weight: 600; letter-spacing: 0.34em;
     text-transform: uppercase; color: rgba(255,255,255,0.72);
@@ -2377,11 +2437,13 @@
     color: var(--white);
     margin-bottom: 16px;
     max-width: 780px;
+    text-wrap: balance;
   }
   .cat-showcase-tag {
     font-size: 14px; color: rgba(255,255,255,0.78);
     margin-bottom: 34px;
     max-width: 460px;
+    text-wrap: balance;
   }
   /* .hero-start porte une animation d'entrée pensée pour le chargement
      de la page (délai 1.35s) — inadaptée ici puisque ce bouton est
