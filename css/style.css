@@ -328,10 +328,11 @@
   }
   .hero-title .word {
     display: inline-block;
-    opacity: 0; transform: translateY(34px);
+    opacity: 0; filter: blur(10px); transform: translateY(34px);
     animation: wordUp 1s var(--ease-luxe) forwards;
   }
-  @keyframes wordUp { to { opacity: 1; transform: translateY(0); } }
+  /* Même révélation flou -> net que "Nous ne documentons pas des projets…" */
+  @keyframes wordUp { to { opacity: 1; filter: blur(0); transform: translateY(0); } }
   .hero-line {
     width: 1px; height: 60px; background: linear-gradient(to bottom, var(--black), transparent);
     margin: 46px 0;
@@ -2452,6 +2453,13 @@
   .cat-showcase-text.is-leaving-next { transform: translateX(-60vw); opacity: 0; filter: blur(10px); }
   .cat-showcase-text.is-leaving-prev { transform: translateX(60vw); opacity: 0; filter: blur(10px); }
   .cat-showcase-text.is-entering { transition: none; }
+  /* Toute première apparition du parcours prestations : exactement la
+     même révélation (durée, délai, courbe) que le texte "Nous ne
+     documentons pas des projets…" de la section suivante — un temps
+     plus posé que le glissement latéral rapide entre deux catégories. */
+  .cat-showcase-text.is-first-reveal {
+    transition: transform 1.2s var(--ease-luxe) 0.2s, opacity 1.2s var(--ease-luxe) 0.2s, filter 1.2s var(--ease-luxe) 0.2s;
+  }
 
   /* Flèches de navigation gauche/droite — desktop et mobile — pour changer
      de catégorie sans dépendre du scroll. Estompées en bord de parcours. */

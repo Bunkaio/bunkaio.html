@@ -2509,7 +2509,7 @@ function initCatShowcase(){
 
     if (!textEl) {
       content.innerHTML = `
-        <div class="cat-showcase-text" style="opacity:0; filter:blur(10px); transform:translateY(18px);">
+        <div class="cat-showcase-text is-first-reveal" style="opacity:0; filter:blur(10px); transform:translateY(18px);">
           <div class="cat-showcase-name">${t(cat.name)}</div>
           <div class="cat-showcase-tag">${t(cat.tag)}</div>
         </div>
@@ -2518,7 +2518,8 @@ function initCatShowcase(){
           ${order.map(id => `<div class="cat-showcase-dot${id === catId ? ' active' : ''}" data-cat="${id}" onclick="_catShowcaseJump('${id}')"></div>`).join('')}
         </div>`;
       /* Même entrée flou -> net que le texte "Nous ne documentons pas..."
-         de la section suivante, pour la toute première apparition. */
+         de la section suivante (même durée/délai/courbe, voir la classe
+         .is-first-reveal), pour la toute première apparition. */
       const freshText = content.querySelector('.cat-showcase-text');
       requestAnimationFrame(() => {
         freshText.style.opacity = '1';
@@ -2528,6 +2529,9 @@ function initCatShowcase(){
       return;
     }
 
+    /* Retire la transition "révélation" posée (plus lente) dès qu'une
+       vraie catégorie change : le glissement latéral doit rester rapide. */
+    textEl.classList.remove('is-first-reveal');
     const leaveClass = dir >= 0 ? 'is-leaving-next' : 'is-leaving-prev';
     textEl.classList.add(leaveClass);
     setTimeout(() => {
