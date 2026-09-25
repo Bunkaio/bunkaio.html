@@ -1074,6 +1074,7 @@ function initHeroCarousel(viewKey){
      On se contente désormais de la montrer/masquer, l'élément <video>
      continue de jouer en arrière-plan même quand on quitte la page. */
   let vw = wrap.querySelector('.hero-video-wrap');
+  wrap.classList.toggle('is-dark', viewKey === 'home');
   if (viewKey === 'home' && IMG.homeVideo) {
     wrap.style.display = '';
     if (!vw) {

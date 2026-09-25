@@ -358,6 +358,14 @@
     background: linear-gradient(135deg, #f6f3fd 0%, #ede5f8 100%);
     will-change: opacity;
   }
+  /* Accueil : fond noir dès le tout premier rendu (posé directement en
+     HTML, pas en JS, pour zéro délai) — la vidéo met un instant à charger
+     assez de données pour démarrer, le dégradé clair par défaut se
+     voyait alors quelques secondes en fond, "rose" une fois combiné au
+     voile clair de .page-hero-overlay. Noir = cohérent avec la vidéo
+     et le reste de la charte de l'accueil, quel que soit le temps de
+     chargement. */
+  .page-hero-wrap.is-dark { background: var(--black); }
   .hero-slide {
     position: absolute; inset: 0;
     opacity: 0;
