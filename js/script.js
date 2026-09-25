@@ -2385,29 +2385,78 @@ function renderCommBox(){
 let _catShowcaseInit = false;
 function initCatShowcase(){
   const wrap = document.getElementById('catShowcaseWrap');
-  const bg = document.getElementById('catShowcaseBg');
+  const bgA = document.getElementById('catShowcaseBgA');
+  const bgB = document.getElementById('catShowcaseBgB');
   const content = document.getElementById('catShowcaseContent');
   const triggers = document.querySelectorAll('.cat-showcase-trigger');
-  if (!wrap || !bg || !content || !triggers.length || _catShowcaseInit) return;
+  if (!wrap || !bgA || !bgB || !content || !triggers.length || _catShowcaseInit) return;
   _catShowcaseInit = true;
 
   const order = Array.from(triggers).map(t => t.dataset.cat);
+  let currentCat = null;
+  let shownIsA = true; /* quel calque image est actuellement visible */
+
+  const jumpTo = (catId) => {
+    const tr = Array.from(triggers).find(x => x.dataset.cat === catId);
+    if (tr) tr.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  const paintDots = (catId) => {
+    document.querySelectorAll('.cat-showcase-dot').forEach(d => {
+      d.classList.toggle('active', d.dataset.cat === catId);
+    });
+  };
 
   const renderCat = (catId) => {
+    if (catId === currentCat) return;
+    currentCat = catId;
     const cat = CATS.find(c => c.id === catId);
     if (!cat) return;
+
+    /* Fondu enchaîné image : on peint le calque caché puis on
+       intervertit lequel est visible — vrai crossfade, pas un
+       changement instantané. */
     const url = IMG.servicePhotos && IMG.servicePhotos[catId];
-    if (url) bg.style.backgroundImage = `url('${url}')`;
+    const shown = shownIsA ? bgA : bgB;
+    const hidden = shownIsA ? bgB : bgA;
+    if (url) hidden.style.backgroundImage = `url('${url}')`;
+    hidden.classList.add('is-shown');
+    shown.classList.remove('is-shown');
+    shownIsA = !shownIsA;
+
+    /* Si les points/bouton existent déjà (2e passage), on ne les
+       reconstruit pas : on fait juste disparaître puis réapparaître le
+       texte, et on met à jour le point actif + la cible du bouton. */
+    const textEl = content.querySelector('.cat-showcase-text');
+    const btnEl = content.querySelector('.hero-start');
     const idx = order.indexOf(catId);
-    content.innerHTML = `
-      <div class="cat-showcase-kicker">${t({fr:'Prestation',en:'Service'})} ${idx + 1} / ${order.length}</div>
-      <div class="cat-showcase-name">${t(cat.name)}</div>
-      <div class="cat-showcase-tag">${t(cat.tag)}</div>
-      <button class="hero-start" onclick="goToQuizCategory('${cat.id}')"><span>${t({fr:'Découvrir cette prestation',en:'Discover this service'})}</span></button>
-      <div class="cat-showcase-dots">
-        ${order.map((id, i) => `<div class="cat-showcase-dot${i === idx ? ' active' : ''}"></div>`).join('')}
-      </div>`;
+
+    if (!textEl) {
+      content.innerHTML = `
+        <div class="cat-showcase-text">
+          <div class="cat-showcase-kicker">${t({fr:'Prestation',en:'Service'})} ${idx + 1} / ${order.length}</div>
+          <div class="cat-showcase-name">${t(cat.name)}</div>
+          <div class="cat-showcase-tag">${t(cat.tag)}</div>
+        </div>
+        <button class="hero-start" onclick="goToQuizCategory('${cat.id}')"><span>${t({fr:'Découvrir cette prestation',en:'Discover this service'})}</span></button>
+        <div class="cat-showcase-dots">
+          ${order.map(id => `<div class="cat-showcase-dot${id === catId ? ' active' : ''}" data-cat="${id}" onclick="_catShowcaseJump('${id}')"></div>`).join('')}
+        </div>`;
+      return;
+    }
+
+    textEl.classList.add('is-leaving');
+    setTimeout(() => {
+      textEl.innerHTML = `
+        <div class="cat-showcase-kicker">${t({fr:'Prestation',en:'Service'})} ${idx + 1} / ${order.length}</div>
+        <div class="cat-showcase-name">${t(cat.name)}</div>
+        <div class="cat-showcase-tag">${t(cat.tag)}</div>`;
+      if (btnEl) btnEl.setAttribute('onclick', `goToQuizCategory('${cat.id}')`);
+      paintDots(catId);
+      textEl.classList.remove('is-leaving');
+    }, 220);
   };
+  window._catShowcaseJump = jumpTo;
   renderCat(order[0]);
 
   const visible = new Set();

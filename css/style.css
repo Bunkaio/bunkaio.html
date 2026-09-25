@@ -13,7 +13,12 @@
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  html { scroll-behavior: smooth; overflow-x: hidden; overflow-y: visible; max-width: 100%; }
+  /* scroll-snap-type: "proximity" (pas "mandatory") — n'attire vers un
+     point d'ancrage que si l'utilisateur s'arrête déjà à proximité,
+     sans jamais forcer/bloquer le scroll normal ailleurs sur le site.
+     Seuls le hero et les déclencheurs de la séquence Accueil (voir plus
+     bas) portent scroll-snap-align : aucune autre page n'est concernée. */
+  html { scroll-behavior: smooth; overflow-x: hidden; overflow-y: visible; max-width: 100%; scroll-snap-type: y proximity; }
 
   body {
     font-family: 'DM Sans', sans-serif;
@@ -300,6 +305,7 @@
     text-align: center;
     padding: 150px 28px 100px;
     position: relative;
+    scroll-snap-align: start;
   }
   .hero-kicker {
     font-size: 11px; font-weight: 500; letter-spacing: 0.34em;
@@ -2323,7 +2329,7 @@
      100vh dans le flux normal (z-index du .view au-dessus du calque
      vidéo fixe) — sans ça, il intercepte tous les clics destinés à la
      vidéo/aux pastilles de prestations en dessous. */
-  .home-claim-trigger { min-height: 100vh; pointer-events: none !important; }
+  .home-claim-trigger { min-height: 100vh; pointer-events: none !important; scroll-snap-align: start; }
 
   /* ─── PRESTATIONS — calque fixe plein écran, fond image par catégorie ─── */
   .cat-showcase-wrap {
@@ -2336,11 +2342,17 @@
     transition: opacity 0.3s ease;
   }
   .cat-showcase-wrap.active { opacity: 1; pointer-events: auto; }
+  /* Deux calques image superposés : on écrit la nouvelle photo sur celui
+     du dessous puis on le fait apparaître en fondu — un vrai fondu
+     enchaîné, contrairement à "transition: background-image" qui ne
+     s'anime pas de façon fiable dans les navigateurs. */
   .cat-showcase-bg {
     position: absolute; inset: 0;
     background-size: cover; background-position: center;
-    transition: background-image 0.5s ease;
+    opacity: 0;
+    transition: opacity 0.7s var(--ease);
   }
+  .cat-showcase-bg.is-shown { opacity: 1; }
   .cat-showcase-overlay {
     position: absolute; inset: 0; z-index: 1;
     background: linear-gradient(to bottom, rgba(10,10,12,0.45) 0%, rgba(10,10,12,0.12) 45%, rgba(10,10,12,0.55) 100%);
@@ -2350,6 +2362,10 @@
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     text-align: center; padding: 60px 32px;
   }
+  /* Le texte (nom, tag, kicker) s'efface puis revient en fondu+montée à
+     chaque changement de catégorie, au lieu de changer d'un coup sec. */
+  .cat-showcase-text { transition: opacity 0.35s var(--ease), transform 0.35s var(--ease); }
+  .cat-showcase-text.is-leaving { opacity: 0; transform: translateY(-10px); }
   .cat-showcase-kicker {
     font-size: 11px; font-weight: 600; letter-spacing: 0.34em;
     text-transform: uppercase; color: rgba(255,255,255,0.72);
@@ -2372,16 +2388,29 @@
      recréé dynamiquement à chaque catégorie parcourue au scroll. */
   .cat-showcase-content .hero-start { opacity: 1; animation: none; }
   .cat-showcase-dots {
-    position: absolute; bottom: 40px; left: 0; right: 0; z-index: 2;
-    display: flex; justify-content: center; gap: 8px;
+    position: absolute; bottom: 40px; left: 0; right: 0; z-index: 3;
+    display: flex; justify-content: center; gap: 10px;
   }
   .cat-showcase-dot {
-    width: 6px; height: 6px; border-radius: 50%;
-    background: rgba(255,255,255,0.35);
-    transition: background 0.3s var(--ease), width 0.3s var(--ease);
+    width: 22px; height: 22px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; pointer-events: auto;
   }
-  .cat-showcase-dot.active { background: var(--white); width: 20px; border-radius: 3px; }
-  .cat-showcase-trigger { min-height: 100vh; pointer-events: none !important; }
+  .cat-showcase-dot::before {
+    content: ''; width: 6px; height: 6px; border-radius: 50%;
+    background: rgba(255,255,255,0.4);
+    transition: background 0.3s var(--ease), width 0.3s var(--ease), border-radius 0.3s var(--ease);
+  }
+  .cat-showcase-dot.active::before { background: var(--white); width: 20px; border-radius: 3px; }
+  .cat-showcase-dot:hover::before { background: rgba(255,255,255,0.7); }
+  /* Un déclencheur par catégorie + repère de scroll simple (pas de
+     scroll-snap mandatory, trop rigide au clavier/trackpad — juste un
+     "aimant" léger qui aide à se stabiliser sur une catégorie). */
+  .cat-showcase-trigger {
+    min-height: 100vh;
+    pointer-events: none !important;
+    scroll-snap-align: start;
+  }
   @media (max-width: 600px) {
     .cat-showcase-content { padding: 40px 24px; }
     .cat-showcase-dots { bottom: 26px; }
