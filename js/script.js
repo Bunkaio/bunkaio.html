@@ -848,7 +848,7 @@ function observe(el){ io.observe(el); }
    invisible tant que la lecture n'a pas réellement démarré (jamais de
    bouton "play" visible). Utilisé par le hero Accueil et par toute autre
    section vidéo (ex: section Mission de la page Partenaires). */
-function createBgVideo(src, posterSrc){
+function createBgVideo(src){
   const vid = document.createElement('video');
   /* Attributs posés AVANT le src : requis par Safari/iOS pour autoriser
      l'autoplay muet sans intervention de l'utilisateur. */
@@ -858,11 +858,16 @@ function createBgVideo(src, posterSrc){
   vid.setAttribute('playsinline', '');
   vid.setAttribute('webkit-playsinline', '');
   vid.setAttribute('preload', 'auto');
+  vid.setAttribute('controls', 'false');
+  vid.setAttribute('disableRemotePlayback', '');
+  vid.controls = false;
   vid.muted = true;
   vid.disablePictureInPicture = true;
   vid.style.width = '100%';
   vid.style.height = '100%';
-  if (posterSrc) vid.poster = posterSrc;
+  /* Pas de poster : certains navigateurs mobiles affichent un bouton
+     "play" par-dessus une image poster tant que la lecture n'a pas
+     commencé. Sans poster, rien à afficher -> rien à cliquer. */
   vid.src = src;
 
   vid.addEventListener('playing', () => vid.classList.add('is-playing'));
@@ -873,7 +878,10 @@ function createBgVideo(src, posterSrc){
   tryPlay();
   vid.addEventListener('loadedmetadata', tryPlay);
   vid.addEventListener('canplay', tryPlay);
-  /* Filet de sécurité : si le navigateur bloque quand même l'autoplay,
+  /* Filet de sécurité boucle : si l'attribut loop n'est pas honoré par
+     un navigateur (certaines versions mobiles), on relance à la main. */
+  vid.addEventListener('ended', () => { vid.currentTime = 0; tryPlay(); });
+  /* Filet de sécurité autoplay : si le navigateur bloque quand même,
      la vidéo démarre au premier geste de l'utilisateur, sans bouton visible. */
   const resumeOnGesture = () => { tryPlay(); };
   ['touchstart', 'click'].forEach(ev => document.addEventListener(ev, resumeOnGesture, { once: true, passive: true }));
@@ -900,7 +908,7 @@ function initHeroCarousel(viewKey){
     wrap.style.display = '';
     const vw = document.createElement('div');
     vw.className = 'hero-video-wrap';
-    const vid = createBgVideo(IMG.homeVideo, IMG.home);
+    const vid = createBgVideo(IMG.homeVideo);
     vw.appendChild(vid);
     const overlay = wrap.querySelector('.page-hero-overlay');
     wrap.insertBefore(vw, overlay || null);
@@ -2148,7 +2156,7 @@ function initMissionVideo(){
   if (!box || _missionVideoInit) return;
   if (!IMG.missionVideo) return; /* pas de vidéo définie -> fond noir uni du CSS */
   _missionVideoInit = true;
-  const vid = createBgVideo(IMG.missionVideo, null);
+  const vid = createBgVideo(IMG.missionVideo);
   box.appendChild(vid);
 }
 
