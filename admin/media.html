@@ -156,7 +156,8 @@
   <h2 class="page-title">Gérer les médias</h2>
   <p class="page-sub">
     Glisse-dépose tes photos directement sur chaque emplacement, ou clique dessus pour ouvrir le sélecteur de fichiers.<br>
-    Les images sont uploadées en direct sur le site — aucune manipulation de code nécessaire.
+    Les images sont uploadées en direct sur le site — aucune manipulation de code nécessaire.<br>
+    <em>Les vidéos de fond (accueil, page Partenaires) ne passent pas par ce panel — dis-le moi directement, je m'en occupe.</em>
   </p>
   <div id="sections"></div>
 </div>
@@ -167,26 +168,42 @@ const MEDIA_BASE  = WORKER_BASE + '/media';
 
 // ── Slots fixes ──────────────────────────────────────────────────────────────
 const SECTIONS = [
+  // ── Accueil ────────────────────────────────────────────────────────────────
+  // Pas de section ici : le fond de la page d'accueil est une vidéo
+  // (videos/home-bg.mp4 + videos/mission-bg.mp4), gérée depuis GitHub,
+  // pas depuis ce panel. L'ancienne bande d'images défilante a été retirée.
+
+  // ── Parcours prestations (accueil) + filtre catégorie (Services) ───────────
   {
-    id: 'home-hero',
-    title: 'Accueil — Carrousel héros',
-    desc: '2400 × 2400 px recommandé (carré, sujet centré)',
+    id: 'services-cats',
+    title: '📸 Prestations — 5 catégories actives',
+    desc: '1600 × 2000 px, portrait 4:5, sujet centré. Utilisée en fond plein écran du parcours "prestations" sur l\'accueil, et comme vignette quand on filtre par catégorie sur la page Services.',
     slots: [
-      { path: 'hero/home-1.webp', label: 'Photo 1' },
-      { path: 'hero/home-2.webp', label: 'Photo 2' },
-      { path: 'hero/home-3.webp', label: 'Photo 3' },
+      { path: 'services/photo-part.webp', label: 'Séance photo — particuliers' },
+      { path: 'services/mode.webp', label: 'Mode, agence et mannequins' },
+      { path: 'services/commercial.webp', label: 'Commercial & produits' },
+      { path: 'services/event.webp', label: 'Événementiel' },
+      { path: 'services/lumen.webp', label: 'Lumen — photobooth IA mariages' },
     ],
   },
+
+  // ── Portfolio (grille de réalisations, par catégorie) ───────────────────────
   {
-    id: 'marquee',
-    title: 'Bande défilante — Accueil',
-    desc: '600 × 750 px (portrait 4:5)',
-    slots: Array.from({ length: 8 }, (_, i) => ({ path: `marquee/${i + 1}.webp`, label: `Photo ${i + 1}` })),
+    id: 'portfolio-hero',
+    title: '🖼 Portfolio — bannière en haut de page',
+    desc: '1920 × 820 px, paysage 21:9.',
+    slots: [
+      { path: 'hero/portfolio-1.webp', label: 'Photo 1' },
+      { path: 'hero/portfolio-2.webp', label: 'Photo 2' },
+      { path: 'hero/portfolio-3.webp', label: 'Photo 3' },
+    ],
   },
+
+  // ── Services ─────────────────────────────────────────────────────────────
   {
     id: 'services-hero',
-    title: 'Services — Carrousel héros',
-    desc: '1920 × 820 px (paysage 21:9)',
+    title: '🛠 Services — bannière en haut de page',
+    desc: '1920 × 820 px, paysage 21:9.',
     slots: [
       { path: 'hero/services-1.webp', label: 'Photo 1' },
       { path: 'hero/services-2.webp', label: 'Photo 2' },
@@ -194,33 +211,17 @@ const SECTIONS = [
     ],
   },
   {
-    id: 'services-cats',
-    title: 'Services — Photos catégories',
-    desc: '1600 × 2000 px (portrait 4:5) — fond du parcours prestations + vignette filtre Services',
-    slots: [
-      { path: 'services/photo-part.webp', label: 'Photo particuliers' },
-      { path: 'services/mode.webp', label: 'Mode, agence, mannequins' },
-      { path: 'services/commercial.webp', label: 'Commercial & produits' },
-      { path: 'services/event.webp', label: 'Événementiel' },
-      { path: 'services/lumen.webp', label: 'Lumen' },
-    ],
+    id: 'devis-illus',
+    title: '🛠 Services — illustration "Devis & déroulé"',
+    desc: '900 × 700 px, paysage 9:7. Visible dans l\'onglet Devis & déroulé, colonne de droite.',
+    slots: [{ path: 'devis/illustration.webp', label: 'Illustration' }],
   },
-  {
-    id: 'services-cats-archive',
-    title: 'Services — Catégories archivées (non utilisées actuellement)',
-    desc: '900 × 1200 px (portrait 3:4) — pas nécessaire tant que ces catégories restent désactivées',
-    slots: [
-      { path: 'services/immobilier.webp', label: 'Immobilier' },
-      { path: 'services/archi.webp', label: 'Architecture' },
-      { path: 'services/cuisine.webp', label: 'Cuisines' },
-      { path: 'services/piscine.webp', label: 'Piscines' },
-      { path: 'services/artisan.webp', label: 'Artisanat' },
-    ],
-  },
+
+  // ── 4K Drone ─────────────────────────────────────────────────────────────
   {
     id: 'drone-hero',
-    title: 'Drone — Carrousel héros',
-    desc: '1920 × 820 px (paysage 21:9)',
+    title: '🚁 4K Drone — bannière en haut de page',
+    desc: '1920 × 820 px, paysage 21:9. Rubrique en "Bientôt disponible" — pas urgent.',
     slots: [
       { path: 'hero/drone-1.webp', label: 'Photo 1' },
       { path: 'hero/drone-2.webp', label: 'Photo 2' },
@@ -228,33 +229,25 @@ const SECTIONS = [
   },
   {
     id: 'drone-thumbs',
-    title: 'Drone — Vignettes projets',
-    desc: '640 × 400 px (paysage 16:10) — miniature cliquable pour chaque projet',
+    title: '🚁 4K Drone — vignettes projets',
+    desc: '640 × 400 px, paysage 16:10 — miniature cliquable par projet. Pas urgent tant que la rubrique est en pause.',
     slots: [
-      { path: 'drone/immo-1.webp', label: 'Immobilier 1' },
-      { path: 'drone/immo-2.webp', label: 'Immobilier 2' },
-      { path: 'drone/outdoor-1.webp', label: 'Piscines 1' },
-      { path: 'drone/outdoor-2.webp', label: 'Piscines 2' },
-      { path: 'drone/event-1.webp', label: 'Événementiel 1' },
-      { path: 'drone/event-2.webp', label: 'Événementiel 2' },
-      { path: 'drone/brand-1.webp', label: 'Marques 1' },
-      { path: 'drone/brand-2.webp', label: 'Marques 2' },
+      { path: 'drone/immo-1.webp', label: 'Immobilier — projet 1' },
+      { path: 'drone/immo-2.webp', label: 'Immobilier — projet 2' },
+      { path: 'drone/outdoor-1.webp', label: 'Piscines & paysages — projet 1' },
+      { path: 'drone/outdoor-2.webp', label: 'Piscines & paysages — projet 2' },
+      { path: 'drone/event-1.webp', label: 'Événementiel — projet 1' },
+      { path: 'drone/event-2.webp', label: 'Événementiel — projet 2' },
+      { path: 'drone/brand-1.webp', label: 'Marques & lifestyle — projet 1' },
+      { path: 'drone/brand-2.webp', label: 'Marques & lifestyle — projet 2' },
     ],
   },
-  {
-    id: 'portfolio-hero',
-    title: 'Portfolio — Carrousel héros',
-    desc: '1920 × 820 px (paysage 21:9)',
-    slots: [
-      { path: 'hero/portfolio-1.webp', label: 'Photo 1' },
-      { path: 'hero/portfolio-2.webp', label: 'Photo 2' },
-      { path: 'hero/portfolio-3.webp', label: 'Photo 3' },
-    ],
-  },
+
+  // ── Contact & Partenaires ────────────────────────────────────────────────
   {
     id: 'contact-hero',
-    title: 'Contact — Carrousel héros',
-    desc: '1920 × 820 px (paysage 21:9)',
+    title: '✉️ Contact — bannière en haut de page',
+    desc: '1920 × 820 px, paysage 21:9.',
     slots: [
       { path: 'hero/contact-1.webp', label: 'Photo 1' },
       { path: 'hero/contact-2.webp', label: 'Photo 2' },
@@ -262,26 +255,36 @@ const SECTIONS = [
   },
   {
     id: 'partners-hero',
-    title: 'Partenaires — Carrousel héros',
-    desc: '1920 × 820 px (paysage 21:9)',
+    title: '🤝 Partenaires — bannière en haut de page',
+    desc: '1920 × 820 px, paysage 21:9.',
     slots: [
       { path: 'hero/partners-1.webp', label: 'Photo 1' },
       { path: 'hero/partners-2.webp', label: 'Photo 2' },
     ],
   },
-  {
-    id: 'devis-illus',
-    title: 'Devis — Illustration latérale',
-    desc: '900 × 700 px (paysage 9:7)',
-    slots: [{ path: 'devis/illustration.webp', label: 'Illustration' }],
-  },
+
+  // ── Connexion & espace client ────────────────────────────────────────────
   {
     id: 'other',
-    title: 'Autres pages',
-    desc: '1920 × 820 px (paysage 21:9)',
+    title: '🔒 Connexion & espace client — bannières',
+    desc: '1920 × 820 px, paysage 21:9.',
     slots: [
-      { path: 'hero/login-1.webp', label: 'Connexion' },
-      { path: 'hero/account-1.webp', label: 'Espace client' },
+      { path: 'hero/login-1.webp', label: 'Page de connexion' },
+      { path: 'hero/account-1.webp', label: 'Espace client / partenaire' },
+    ],
+  },
+
+  // ── Catégories archivées ─────────────────────────────────────────────────
+  {
+    id: 'services-cats-archive',
+    title: '🗄 Catégories archivées — non utilisées actuellement',
+    desc: '900 × 1200 px, portrait 3:4. Ces prestations sont désactivées du catalogue en ligne ; inutile d\'exporter ces photos tant que tu ne les réactives pas.',
+    slots: [
+      { path: 'services/immobilier.webp', label: 'Immobilier' },
+      { path: 'services/archi.webp', label: 'Architecture' },
+      { path: 'services/cuisine.webp', label: 'Cuisines' },
+      { path: 'services/piscine.webp', label: 'Piscines' },
+      { path: 'services/artisan.webp', label: 'Artisanat' },
     ],
   },
 ];
