@@ -152,23 +152,36 @@
   .nav-connect span { position: relative; z-index: 1; }
   .nav-connect:hover { background: rgba(255,255,255,0.16); border-color: rgba(255,255,255,0.45); }
 
-  .nav-cta {
-    font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
-    text-transform: uppercase; white-space: nowrap;
-    background: var(--white); color: var(--black);
-    border: none; padding: 11px 26px; cursor: pointer;
-    font-family: inherit; position: relative; overflow: hidden;
-    transition: transform 0.35s var(--ease), box-shadow 0.35s var(--ease);
+  /* ─── CTA "Estimer mon projet" — verre dépoli arrondi, cohérent partout ─── */
+  .nav-cta, .hero-start {
+    font-family: inherit;
+    font-weight: 700; font-size: 14px; letter-spacing: -0.01em;
+    text-transform: none; white-space: nowrap;
+    color: var(--white);
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.38);
+    border-radius: 18px;
+    backdrop-filter: blur(20px) saturate(1.6);
+    -webkit-backdrop-filter: blur(20px) saturate(1.6);
+    padding: 14px 32px; cursor: pointer;
+    position: relative; overflow: hidden;
+    transition: background 0.35s var(--ease), border-color 0.35s var(--ease),
+                transform 0.35s var(--ease), box-shadow 0.35s var(--ease);
   }
-  .nav-cta::before {
+  .nav-cta::before, .hero-start::before {
     content: ''; position: absolute; top: 0; left: -60%;
     width: 40%; height: 100%;
-    background: linear-gradient(120deg, transparent, rgba(10,10,12,0.16), transparent);
+    background: linear-gradient(120deg, transparent, rgba(255,255,255,0.22), transparent);
     transform: skewX(-20deg);
     transition: left 0.6s var(--ease-luxe);
   }
-  .nav-cta:hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(255,255,255,0.22); }
-  .nav-cta:hover::before { left: 120%; }
+  .nav-cta:hover, .hero-start:hover {
+    background: rgba(255,255,255,0.22);
+    border-color: rgba(255,255,255,0.6);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+  }
+  .nav-cta:hover::before, .hero-start:hover::before { left: 120%; }
 
   .nav-burger {
     display: none; width: 42px; height: 42px; position: relative;
@@ -286,27 +299,9 @@
     animation: lineGrow 1s var(--ease-luxe) 1.1s forwards;
   }
   .hero-start {
-    font-size: 11.5px; font-weight: 600; letter-spacing: 0.08em;
-    text-transform: uppercase;
-    border: 1px solid var(--black);
-    background: var(--black);
-    color: var(--white);
-    padding: 19px 54px; cursor: pointer;
-    font-family: inherit;
-    position: relative; overflow: hidden;
-    transition: transform 0.35s var(--ease), box-shadow 0.35s var(--ease);
     opacity: 0; animation: riseIn 1s var(--ease) 1.35s forwards;
   }
   .hero-start span { position: relative; z-index: 1; }
-  .hero-start::before {
-    content: ''; position: absolute; top: 0; left: -60%;
-    width: 40%; height: 100%;
-    background: linear-gradient(120deg, transparent, rgba(255,255,255,0.18), transparent);
-    transform: skewX(-20deg);
-    transition: left 0.6s var(--ease-luxe);
-  }
-  .hero-start:hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(10,10,12,0.32); }
-  .hero-start:hover::before { left: 120%; }
   @keyframes riseIn {
     from { opacity: 0; transform: translateY(16px); }
     to   { opacity: 1; transform: translateY(0); }
@@ -337,7 +332,6 @@
   .hero-video-wrap {
     position: absolute; inset: 0; z-index: 0;
     overflow: hidden;
-    background: #000;
   }
   .hero-video-wrap video {
     width: 100%; height: 100%;
@@ -346,7 +340,12 @@
     display: block;
     -webkit-transform: translateZ(0);
     transform: translateZ(0);
+    /* Invisible tant que la lecture n'a pas réellement démarré —
+       évite tout flash de l'icône "play" native pendant le chargement. */
+    opacity: 0;
+    transition: opacity 0.7s ease;
   }
+  .hero-video-wrap video.is-playing { opacity: 1; }
   @media (max-width: 768px) {
     .hero-video-wrap video {
       min-width: 100%;
@@ -2168,3 +2167,49 @@
   @media (max-width: 600px) {
     .drone-soon-banner { padding: 16px; }
   }
+
+  /* ─── SECTION MISSION (page Partenaires) — vidéo de fond ─── */
+  .mission-video-section {
+    position: relative;
+    min-height: 58vh;
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 60px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--black);
+  }
+  .mission-video-bg { position: absolute; inset: 0; z-index: 0; }
+  .mission-video-bg video {
+    width: 100%; height: 100%;
+    object-fit: cover; object-position: center;
+    display: block;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+  }
+  .mission-video-bg video.is-playing { opacity: 1; }
+  .mission-video-overlay {
+    position: absolute; inset: 0; z-index: 1;
+    background: linear-gradient(to bottom, rgba(10,10,12,0.35) 0%, rgba(10,10,12,0.55) 100%);
+  }
+  .mission-video-content {
+    position: relative; z-index: 2;
+    text-align: center; max-width: 720px;
+    padding: 60px 32px;
+  }
+  .mission-kicker {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.3em;
+    text-transform: uppercase; color: rgba(255,255,255,0.7);
+    margin-bottom: 22px;
+  }
+  .mission-text {
+    font-size: clamp(22px, 3.4vw, 34px);
+    font-weight: 700; letter-spacing: -0.02em; line-height: 1.35;
+    color: var(--white);
+  }
+  @media (max-width: 600px) {
+    .mission-video-section { min-height: 44vh; border-radius: 10px; margin-bottom: 40px; }
+    .mission-video-content { padding: 36px 22px; }
+  }
+
+  /* ─── SECTION RÉASSURANCE — fond blanc (page Partenaires) ─── */
+  .reassure-section { margin-bottom: 60px; }

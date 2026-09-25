@@ -86,6 +86,14 @@ const I18N = {
     'p-why-2':'Pourtant, derrière chaque lieu, chaque objet et chaque réalisation se cache une histoire qui mérite d\'être racontée.',
     'p-why-3':'Chez Bunkaio, nous croyons que la valeur d\'un projet ne réside pas uniquement dans son résultat final, mais également dans la vision, les défis et le savoir-faire qui ont permis son existence.',
     'p-mission':'Nous ne documentons pas des projets. Nous révélons ce qui les rend uniques.',
+    'reassure1-title':'Une spécialité, pas une généralité',
+    'reassure1-text':'Portrait, signature et studio — BUNKAIO ne couvre pas tout, mais fait cela avec exigence. Chaque séance est pensée pour révéler une identité, pas seulement capturer une image.',
+    'reassure2-title':'Un studio sélectif',
+    'reassure2-text':'Chaque demande est étudiée individuellement. Nous n\'acceptons que les projets qui résonnent avec notre univers — c\'est ce qui garantit la qualité de chaque collaboration.',
+    'reassure3-title':'Confidentialité & droits clairs',
+    'reassure3-text':'Vos visuels vous appartiennent. Conditions d\'usage transparentes, définies avant chaque prestation — aucune mauvaise surprise.',
+    'reassure4-title':'Réponse sous 48h',
+    'reassure4-text':'Chaque demande de devis reçoit une réponse personnalisée sous 48 heures, avec un interlocuteur unique du premier échange à la livraison.',
     'p-who':'Qui peut devenir Partenaire Fondateur\u00a0?',
     'p-who-text':'Le programme Partenaires Fondateurs est réservé aux entreprises et professionnels dont les réalisations, les valeurs et l\'exigence correspondent à l\'univers Bunkaio. Nous recherchons notamment\u00a0:',
     'p-list-1':'Architecture & habitat — architectes, architectes d\'intérieur, constructeurs, maîtres d\'œuvre, promoteurs premium',
@@ -211,6 +219,14 @@ const I18N = {
     'p-why-2':'And yet, behind every place, every object and every achievement lies a story that deserves to be told.',
     'p-why-3':'At Bunkaio, we believe the value of a project lies not only in its final result, but also in the vision, the challenges and the craftsmanship that brought it to life.',
     'p-mission':'We don\'t document projects. We reveal what makes them unique.',
+    'reassure1-title':'A specialty, not a generality',
+    'reassure1-text':'Portrait, signature and studio — BUNKAIO doesn\'t cover everything, but does it with rigour. Every session is designed to reveal an identity, not just capture an image.',
+    'reassure2-title':'A selective studio',
+    'reassure2-text':'Every request is reviewed individually. We only accept projects that resonate with our world — this is what guarantees the quality of every collaboration.',
+    'reassure3-title':'Confidentiality & clear rights',
+    'reassure3-text':'Your visuals belong to you. Transparent usage terms, defined before every project — no surprises.',
+    'reassure4-title':'Response within 48h',
+    'reassure4-text':'Every quote request receives a personalised reply within 48 hours, with a single point of contact from first contact to delivery.',
     'p-who':'Who can become a Founding Partner\u00a0?',
     'p-who-text':'The Founding Partners programme is reserved for companies and professionals whose work, values and standards align with the Bunkaio universe. We are particularly looking for\u00a0:',
     'p-list-1':'Architecture & living — architects, interior architects, builders, project managers, premium developers',
@@ -827,6 +843,43 @@ function observe(el){ io.observe(el); }
 
 
 
+/* ═══════════════ VIDÉO DE FOND — utilitaire réutilisable ═══════════════
+   Crée un <video> en autoplay/muet/boucle, fiable sur mobile comme desktop,
+   invisible tant que la lecture n'a pas réellement démarré (jamais de
+   bouton "play" visible). Utilisé par le hero Accueil et par toute autre
+   section vidéo (ex: section Mission de la page Partenaires). */
+function createBgVideo(src, posterSrc){
+  const vid = document.createElement('video');
+  /* Attributs posés AVANT le src : requis par Safari/iOS pour autoriser
+     l'autoplay muet sans intervention de l'utilisateur. */
+  vid.setAttribute('muted', '');
+  vid.setAttribute('autoplay', '');
+  vid.setAttribute('loop', '');
+  vid.setAttribute('playsinline', '');
+  vid.setAttribute('webkit-playsinline', '');
+  vid.setAttribute('preload', 'auto');
+  vid.muted = true;
+  vid.disablePictureInPicture = true;
+  vid.style.width = '100%';
+  vid.style.height = '100%';
+  if (posterSrc) vid.poster = posterSrc;
+  vid.src = src;
+
+  vid.addEventListener('playing', () => vid.classList.add('is-playing'));
+  const tryPlay = () => {
+    const p = vid.play();
+    if (p && p.catch) p.catch(() => {});
+  };
+  tryPlay();
+  vid.addEventListener('loadedmetadata', tryPlay);
+  vid.addEventListener('canplay', tryPlay);
+  /* Filet de sécurité : si le navigateur bloque quand même l'autoplay,
+     la vidéo démarre au premier geste de l'utilisateur, sans bouton visible. */
+  const resumeOnGesture = () => { tryPlay(); };
+  ['touchstart', 'click'].forEach(ev => document.addEventListener(ev, resumeOnGesture, { once: true, passive: true }));
+  return vid;
+}
+
 /* ═══════════════ CARROUSEL HERO ═══════════════ */
 let _carouselTimer = null;
 
@@ -847,36 +900,10 @@ function initHeroCarousel(viewKey){
     wrap.style.display = '';
     const vw = document.createElement('div');
     vw.className = 'hero-video-wrap';
-    const vid = document.createElement('video');
-    /* Attributs posés AVANT le src : requis par Safari/iOS pour autoriser
-       l'autoplay muet sans intervention de l'utilisateur. */
-    vid.setAttribute('muted', '');
-    vid.setAttribute('autoplay', '');
-    vid.setAttribute('loop', '');
-    vid.setAttribute('playsinline', '');
-    vid.setAttribute('webkit-playsinline', '');
-    vid.setAttribute('preload', 'auto');
-    vid.muted = true;
-    vid.disablePictureInPicture = true;
-    vid.style.width = '100%';
-    vid.style.height = '100%';
-    if (IMG.home) vid.poster = IMG.home;
-    vid.src = IMG.homeVideo;
+    const vid = createBgVideo(IMG.homeVideo, IMG.home);
     vw.appendChild(vid);
     const overlay = wrap.querySelector('.page-hero-overlay');
     wrap.insertBefore(vw, overlay || null);
-
-    const tryPlay = () => {
-      const p = vid.play();
-      if (p && p.catch) p.catch(() => {});
-    };
-    tryPlay();
-    vid.addEventListener('loadedmetadata', tryPlay);
-    vid.addEventListener('canplay', tryPlay);
-    /* Filet de sécurité : si le navigateur bloque quand même l'autoplay,
-       la vidéo démarre au premier geste de l'utilisateur, sans bouton visible. */
-    const resumeOnGesture = () => { tryPlay(); };
-    ['touchstart', 'click'].forEach(ev => document.addEventListener(ev, resumeOnGesture, { once: true, passive: true }));
     return;
   }
 
@@ -928,7 +955,7 @@ function goView(v){
     if (v === 'services') { renderServices(); setSvcTab('catalogue'); }
     if (v === 'drone') { renderDroneCats(); renderDroneProjects(activeDroneCat); document.querySelectorAll('#view-drone .rv').forEach(observe); }
     if (v === 'portfolio' && !pfLoaded) { renderPfTabs(); selectPfTab(PF_CATS[0].id); pfLoaded = true; }
-    if (v === 'partners') { renderPartnersAccordion(); renderLogoCarousel(); document.querySelectorAll('#view-partners .rv').forEach(observe); const img = document.getElementById('img-partners-banner'); if (img && !img.src) img.src = IMG.partners; }
+    if (v === 'partners') { renderPartnersAccordion(); renderLogoCarousel(); document.querySelectorAll('#view-partners .rv').forEach(observe); const img = document.getElementById('img-partners-banner'); if (img && !img.src) img.src = IMG.partners; initMissionVideo(); }
     if (v === 'legal') { renderFaqAccordion(); renderPrivacyAccordion(); setLegalTab('faq'); }
   }, 420);
 }
@@ -2114,18 +2141,27 @@ function renderCommBox(){
   box.appendChild(d);
 }
 
+/* ═══════════════ VIDÉO SECTION MISSION (page Partenaires) ═══════════════ */
+let _missionVideoInit = false;
+function initMissionVideo(){
+  const box = document.getElementById('missionVideoBg');
+  if (!box || _missionVideoInit) return;
+  if (!IMG.missionVideo) return; /* pas de vidéo définie -> fond noir uni du CSS */
+  _missionVideoInit = true;
+  const vid = createBgVideo(IMG.missionVideo, null);
+  box.appendChild(vid);
+}
+
 /* ═══════════════ ACCORDÉON PARTENAIRES ═══════════════ */
 function renderPartnersAccordion(){
   const el = document.getElementById('partnersAccordion');
   if (!el) return;
   const sections = LANG === 'fr' ? [
-    { title:'Pourquoi Bunkaio existe', body:`<p>Nous vivons dans un monde où les contenus se multiplient, mais où les histoires se raréfient. Derrière chaque lieu, chaque objet et chaque réalisation se cache une histoire qui mérite d'être racontée.</p><p><strong>Nous ne documentons pas des projets. Nous révélons ce qui les rend uniques.</strong></p>` },
     { title:'Qui peut devenir Partenaire Fondateur ?', body:`<p>Le programme est réservé aux entreprises et professionnels dont les réalisations correspondent à l'univers Bunkaio.</p><ul class="ft-list" style="margin-top:18px"><li style="margin-bottom:12px">⊹ Architecture & habitat</li><li style="margin-bottom:12px">⊹ Aménagement & design</li><li style="margin-bottom:12px">⊹ Artisanat d'exception</li><li style="margin-bottom:12px">⊹ Marques & lifestyle</li><li>⊹ Événementiel & lieux</li></ul>` },
     { title:'Les avantages du programme', body:`<div style="display:grid;grid-template-columns:1fr 1fr;gap:18px"><div class="cred-card"><div class="cred-num">01</div><div class="cred-title">Mise en lumière éditoriale</div><div class="cred-text">Votre activité racontée selon la méthode Bunkaio — Découverte, Vision, Défi, Savoir-Faire, Mon Regard, Révélation.</div></div><div class="cred-card"><div class="cred-num">02</div><div class="cred-title">Visibilité renforcée</div><div class="cred-text">Présence sur le site, les réseaux et les futurs supports éditoriaux de la marque.</div></div><div class="cred-card"><div class="cred-num">03</div><div class="cred-title">Relation privilégiée</div><div class="cred-text">Accès prioritaire aux disponibilités et offres préférentielles.</div></div><div class="cred-card"><div class="cred-num">04</div><div class="cred-title">Un écosystème</div><div class="cred-text">Un cercle de professionnels partageant l'exigence et l'amour du travail bien fait.</div></div></div>` },
     { title:'Les places disponibles', body:`<p>10 places par univers, soit un maximum de <strong>60 partenaires fondateurs</strong>. Une fois ce quota atteint, les nouvelles candidatures seront placées sur liste d'attente.</p>` },
     { title:'Le processus de sélection', body:`<div class="process-steps" style="margin-top:0"><div class="process-step"><div class="ps-num">01</div><div><div class="ps-title">Présentation</div><div class="ps-text">Compléter le questionnaire Bunkaio — activité, réalisations, objectifs.</div></div></div><div class="process-step"><div class="ps-num">02</div><div><div class="ps-title">Étude</div><div class="ps-text">Analyse selon la qualité des réalisations et la cohérence éditoriale.</div></div></div><div class="process-step"><div class="ps-num">03</div><div><div class="ps-title">Réponse</div><div class="ps-text">Sélectionné, compatible (ponctuel) ou réorienté selon les besoins.</div></div></div><div class="process-step" style="border-bottom:none"><div class="ps-num">04</div><div><div class="ps-title">Lancement</div><div class="ps-text">Onboarding personnalisé et feuille de route éditoriale.</div></div></div></div>` }
   ] : [
-    { title:'Why Bunkaio exists', body:`<p>We live in a world where content keeps multiplying, yet stories are becoming rare. Behind every place, every object and every achievement lies a story that deserves to be told.</p><p><strong>We don't document projects. We reveal what makes them unique.</strong></p>` },
     { title:'Who can become a Founding Partner?', body:`<p>The programme is reserved for companies and professionals whose work aligns with the Bunkaio universe.</p><ul class="ft-list" style="margin-top:18px"><li style="margin-bottom:12px">⊹ Architecture & living</li><li style="margin-bottom:12px">⊹ Fittings & design</li><li style="margin-bottom:12px">⊹ Exceptional craftsmanship</li><li style="margin-bottom:12px">⊹ Brands & lifestyle</li><li>⊹ Events & venues</li></ul>` },
     { title:'Programme benefits', body:`<div style="display:grid;grid-template-columns:1fr 1fr;gap:18px"><div class="cred-card"><div class="cred-num">01</div><div class="cred-title">An editorial spotlight</div><div class="cred-text">Your work told as a story — Discovery, Vision, Challenge, Craftsmanship, My Perspective, Revelation.</div></div><div class="cred-card"><div class="cred-num">02</div><div class="cred-title">Enhanced visibility</div><div class="cred-text">Privileged presence on the Bunkaio website, social channels and future publications.</div></div><div class="cred-card"><div class="cred-num">03</div><div class="cred-title">A privileged relationship</div><div class="cred-text">Priority scheduling and preferential rates.</div></div><div class="cred-card"><div class="cred-num">04</div><div class="cred-title">An ecosystem</div><div class="cred-text">A circle of professionals sharing the same high standards and love of work well done.</div></div></div>` },
     { title:'Available places', body:`<p>10 places per universe, for a maximum of <strong>60 founding partners</strong>. Once this quota is reached, new applications will be placed on a waiting list.</p>` },
