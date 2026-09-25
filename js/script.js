@@ -860,6 +860,7 @@ function initHeroCarousel(viewKey){
     vid.disablePictureInPicture = true;
     vid.style.width = '100%';
     vid.style.height = '100%';
+    if (IMG.home) vid.poster = IMG.home;
     vid.src = IMG.homeVideo;
     vw.appendChild(vid);
     const overlay = wrap.querySelector('.page-hero-overlay');
