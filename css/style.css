@@ -2198,25 +2198,30 @@
     .drone-soon-banner { padding: 16px; }
   }
 
-  /* ─── SECTION VIDÉO "LE STUDIO" (page Accueil) — plein écran, edge-to-edge ─── */
-  .mission-video-section {
-    position: relative;
-    min-height: 100vh;
-    width: 100vw;
-    margin-left: calc(-50vw + 50%);
+  /* ─── VIDÉO "LE STUDIO" — calque fixe plein écran, même mécanique que le
+     hero (#pageHeroWrap) : opacité pilotée en JS selon la présence à
+     l'écran du déclencheur .home-claim-trigger. Garantit un rendu fixe
+     fiable sur tous navigateurs, y compris iOS Safari où position:sticky
+     combiné à 100vh se comporte de façon incohérente. ─── */
+  .mission-video-wrap {
+    position: fixed; inset: 0;
+    z-index: 0;
     overflow: hidden;
-    display: flex; align-items: center; justify-content: center;
     background: var(--black);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.7s ease;
   }
+  .mission-video-wrap.active { opacity: 1; pointer-events: auto; }
   /* Séparation esthétique avec la vidéo 1 : un liseré + un fondu qui
      marquent le "seam" là où la vidéo 2 arrive par-dessus la vidéo 1. */
-  .mission-video-section::before {
+  .mission-video-wrap::before {
     content: '';
     position: absolute; top: 0; left: 0; right: 0; height: 140px;
     background: linear-gradient(to bottom, rgba(0,0,0,0.5), transparent);
     z-index: 3; pointer-events: none;
   }
-  .mission-video-section::after {
+  .mission-video-wrap::after {
     content: '';
     position: absolute; top: 0; left: 0; right: 0; height: 1px;
     background: linear-gradient(to right, transparent, rgba(255,255,255,0.35), transparent);
@@ -2236,10 +2241,11 @@
     background: linear-gradient(to bottom, rgba(10,10,12,0.4) 0%, rgba(10,10,12,0.2) 40%, rgba(10,10,12,0.5) 100%);
   }
   .mission-video-content {
-    position: relative; z-index: 2;
-    text-align: center; max-width: 780px;
-    padding: 60px 32px;
+    position: absolute; inset: 0; z-index: 2;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: 60px 32px;
   }
+  .mission-video-content > * { max-width: 780px; }
   .mission-kicker {
     font-size: 11px; font-weight: 600; letter-spacing: 0.34em;
     text-transform: uppercase; color: rgba(255,255,255,0.72);
@@ -2252,24 +2258,22 @@
     color: var(--white);
     opacity: 0; filter: blur(10px); transform: translateY(18px);
   }
-  .mission-video-section.in .mission-kicker {
-    animation: missionTextReveal 1s var(--ease-luxe) 0.1s forwards;
+  .mission-video-wrap.active .mission-kicker {
+    animation: missionTextReveal 1s var(--ease-luxe) 0.15s forwards;
   }
-  .mission-video-section.in .mission-text {
-    animation: missionTextReveal 1.2s var(--ease-luxe) 0.28s forwards;
+  .mission-video-wrap.active .mission-text {
+    animation: missionTextReveal 1.2s var(--ease-luxe) 0.35s forwards;
+  }
+  .mission-video-wrap.active .home-claim-cta {
+    opacity: 0; animation: missionTextReveal 1s var(--ease-luxe) 0.55s forwards;
   }
   @keyframes missionTextReveal {
     to { opacity: 1; filter: blur(0); transform: translateY(0); }
   }
+  /* Déclencheur invisible : réserve l'espace de scroll dans le flux normal
+     de la page, observé en JS pour piloter l'apparition de la vidéo fixe. */
+  .home-claim-trigger { min-height: 100vh; }
   @media (max-width: 600px) {
-    /* Vidéo 2 fixée en fond comme la vidéo 1 (hero) : elle se pin à l'écran
-       le temps de sa section, puis se fait recouvrir par la suite — crée
-       une transition en fondu enchaîné naturelle entre les deux vidéos. */
-    .mission-video-section {
-      min-height: 100vh;
-      position: sticky;
-      top: 0;
-    }
     .mission-video-content { padding: 36px 24px; }
     /* Le CTA reste identique au desktop, pas de resserrement */
     .home-claim-cta { font-size: 14px; padding: 14px 32px; }
@@ -2302,8 +2306,9 @@
   .reassure-section.in .reassure-item:nth-child(4) { animation-delay: 0.38s; }
   @keyframes reassureRise { to { opacity: 1; transform: translateY(0); } }
   .reassure-icon {
-    font-size: 22px; line-height: 1; margin-bottom: 14px; display: block;
+    margin-bottom: 16px; color: var(--black);
   }
+  .reassure-icon svg { width: 22px; height: 22px; display: block; }
   .reassure-num {
     font-size: 11px; font-weight: 600; letter-spacing: 0.2em;
     color: var(--grey); margin-bottom: 16px;
@@ -2345,7 +2350,8 @@
     display: flex; align-items: center; gap: 10px;
     font-size: 12.5px; color: var(--grey);
   }
-  .cred-mini-icon { font-size: 15px; line-height: 1; }
+  .cred-mini-icon { display: flex; color: var(--black); flex-shrink: 0; }
+  .cred-mini-icon svg { width: 16px; height: 16px; display: block; }
   .cred-faq-link {
     margin-left: auto;
     font-size: 12.5px; font-weight: 600; color: var(--black);

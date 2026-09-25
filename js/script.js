@@ -929,6 +929,20 @@ const io = new IntersectionObserver(entries => {
 }, { threshold: 0.12 });
 function observe(el){ io.observe(el); }
 
+/* Variante à déclenchement plus tardif (l'élément doit être nettement
+   visible, pas juste effleurer le bas de l'écran) : utilisée pour les
+   sections dont l'animation d'entrée doit être perçue par l'utilisateur
+   et non déjà terminée quand son regard y arrive. */
+const ioLate = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('in');
+      ioLate.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.35 });
+function observeLate(el){ ioLate.observe(el); }
+
 /* ═══════════════ I18N ═══════════════ */
 
 
@@ -1083,8 +1097,11 @@ function goView(v){
     if (v === 'partners') { renderPartnersAccordion(); renderLogoCarousel(); const img = document.getElementById('img-partners-banner'); if (img && !img.src) img.src = IMG.partners; }
     if (v === 'legal') { renderFaqAccordion(); renderPrivacyAccordion(); setLegalTab('faq'); }
     /* Anime au scroll tous les éléments .rv de la vue active — cohérent
-       sur l'ensemble du site, plus besoin de le câbler page par page. */
-    document.querySelectorAll('#view-' + v + ' .rv:not(.in)').forEach(observe);
+       sur l'ensemble du site, plus besoin de le câbler page par page.
+       .reassure-section utilise un seuil de déclenchement plus tardif
+       pour que l'animation soit visible plutôt que déjà terminée. */
+    document.querySelectorAll('#view-' + v + ' .rv:not(.in):not(.reassure-section)').forEach(observe);
+    document.querySelectorAll('#view-' + v + ' .reassure-section:not(.in)').forEach(observeLate);
   }, 420);
 }
 
@@ -2298,15 +2315,30 @@ function renderCommBox(){
   box.appendChild(d);
 }
 
-/* ═══════════════ VIDÉO SECTION "LE STUDIO" (page Accueil) ═══════════════ */
+/* ═══════════════ VIDÉO "LE STUDIO" — calque fixe plein écran (Accueil) ═══════════════
+   Même mécanique que le hero : la vidéo vit dans un calque position:fixed
+   partagé, et son opacité est pilotée par un IntersectionObserver dédié
+   qui observe le déclencheur invisible .home-claim-trigger. Contrairement
+   à position:sticky (peu fiable dès que la section fait 100vh sans
+   "réserve" de scroll, notamment sur iOS Safari), ce calque reste
+   réellement immobile à l'écran tant que le déclencheur est visible. */
 let _homeClaimVideoInit = false;
 function initHomeClaimVideo(){
   const box = document.getElementById('homeClaimVideoBg');
-  if (!box || _homeClaimVideoInit) return;
+  const wrap = document.getElementById('missionVideoWrap');
+  const trigger = document.getElementById('homeClaimSection');
+  if (!box || !wrap || !trigger || _homeClaimVideoInit) return;
   if (!IMG.missionVideo) return; /* pas de vidéo définie -> fond noir uni du CSS */
   _homeClaimVideoInit = true;
   const vid = createBgVideo(IMG.missionVideo);
   box.appendChild(vid);
+
+  const missionIO = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      wrap.classList.toggle('active', e.isIntersecting);
+    });
+  }, { threshold: 0.15 });
+  missionIO.observe(trigger);
 }
 
 /* ═══════════════ ACCORDÉON PARTENAIRES ═══════════════ */
@@ -2538,7 +2570,8 @@ updatePlaceholders();
 updateLang();
 applyImages();
 document.querySelectorAll('.ph').forEach(observe);
-document.querySelectorAll('#view-home .rv').forEach(observe);
+document.querySelectorAll('#view-home .rv:not(.reassure-section)').forEach(observe);
+document.querySelectorAll('#view-home .reassure-section').forEach(observeLate);
 syncNavHeight();
 window.addEventListener('resize', () => { syncNavHeight(); if (window.innerWidth > 1180) closeMobileMenu(); });
 initHeroScrollFx();
