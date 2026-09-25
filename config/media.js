@@ -85,6 +85,7 @@ const IMG = {
      Format : paysage large, ~1920×1080px minimum
      ────────────────────────────────────────────────────────────────── */
   home:      'images/hero/home-1.webp',               // Fond page Accueil
+  homeVideo: '',                                       // Vidéo de fond Accueil — ex: 'videos/home-bg.mp4' (laisser vide pour utiliser les images)
   quiz:      MEDIA_BASE + '/hero/quiz-1.webp',       // Fond page Questionnaire devis
   services:  MEDIA_BASE + '/hero/services-1.webp',   // Fond page Services
   drone:     MEDIA_BASE + '/hero/drone-1.webp',      // Fond page 4K Drone

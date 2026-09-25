@@ -840,6 +840,24 @@ function initHeroCarousel(viewKey){
   const wrap = document.getElementById('pageHeroWrap');
   if (!wrap) return;
   wrap.style.opacity = ''; wrap.style.visibility = '';
+
+  /* ── Vidéo de fond (page Accueil uniquement si IMG.homeVideo est défini) ── */
+  wrap.querySelectorAll('.hero-video-wrap').forEach(s => s.remove());
+  if (viewKey === 'home' && IMG.homeVideo) {
+    wrap.style.display = '';
+    const vw = document.createElement('div');
+    vw.className = 'hero-video-wrap';
+    const vid = document.createElement('video');
+    vid.src = IMG.homeVideo;
+    vid.autoplay = true; vid.muted = true; vid.loop = true;
+    vid.setAttribute('playsinline', '');
+    vid.setAttribute('preload', 'auto');
+    vw.appendChild(vid);
+    const overlay = wrap.querySelector('.page-hero-overlay');
+    wrap.insertBefore(vw, overlay || null);
+    return;
+  }
+
   let images = IMG.heroImages && IMG.heroImages[viewKey];
   if (!images || (Array.isArray(images) && images.length === 0)){
     wrap.style.display = 'none'; return;
