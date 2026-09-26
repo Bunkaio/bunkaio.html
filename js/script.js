@@ -2583,8 +2583,21 @@ function initCatShowcase(){
   window._catShowcaseNav = catNav;     /* flèches gauche/droite */
   renderCat(order[0]);
 
-  const catIO = new IntersectionObserver(entries => {
-    const nowActive = entries[0].isIntersecting;
+  /* Activation : même mécanique que la vidéo "Le studio" juste après
+     (voir initHomeClaimVideo — triggerVisible && !sectionPrécédenteVisible),
+     plutôt qu'un seuil unique de 50% sur le déclencheur de 200vh. Un seuil
+     isolé à 50% suppose une hauteur de viewport stable pour calculer le
+     bon moment ; sur iOS Safari, la hauteur réelle du viewport change
+     pendant le scroll (barre d'adresse qui se cache/réapparaît — le bug
+     100vh bien connu), ce qui peut empêcher ce seuil d'être atteint et
+     laisser le calque en permanence inactif (fond blanc à la place du
+     carrousel, jamais de déclenchement). En observant en plus la sortie
+     réelle du hero, l'activation ne dépend plus de ce calcul de hauteur. */
+  const heroEl = document.querySelector('.hero');
+  let triggerVisible = false;
+  let heroVisible = !!heroEl;
+  const updateCatWrap = () => {
+    const nowActive = triggerVisible && !heroVisible;
     wrap.classList.toggle('active', nowActive);
     /* Indice "ça glisse" sur les flèches, affiché une seule fois, à la
        première arrivée sur le parcours prestations. */
@@ -2595,8 +2608,19 @@ function initCatShowcase(){
         if (arrowNext) arrowNext.classList.add('teach');
       }, 600);
     }
-  }, { threshold: 0.5 });
+  };
+  const catIO = new IntersectionObserver(entries => {
+    entries.forEach(e => { triggerVisible = e.isIntersecting; });
+    updateCatWrap();
+  }, { threshold: 0 });
   catIO.observe(trigger);
+  if (heroEl) {
+    const heroIO = new IntersectionObserver(entries => {
+      entries.forEach(e => { heroVisible = e.isIntersecting; });
+      updateCatWrap();
+    }, { threshold: 0 });
+    heroIO.observe(heroEl);
+  }
 
   /* Molette / trackpad : un mouvement à dominante HORIZONTALE change de
      catégorie (et empêche tout scroll latéral de la page) ; un mouvement
