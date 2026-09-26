@@ -2710,6 +2710,30 @@
     text-decoration: underline; text-underline-offset: 2px;
     cursor: pointer;
   }
+
+  /* ─── Vidéo de fond plein écran — page Services (IMG.servicesVideo) ───
+     Le calque vidéo (#pageHeroWrap) est fixe et couvre tout l'écran ;
+     le titre et les deux encadrés du haut (paiement, réassurance)
+     passent alors par-dessus. #view-services.has-bg-video est posé en
+     JS (voir initHeroCarousel()) uniquement quand une vidéo est
+     effectivement active, donc n'affecte rien tant qu'aucun fichier
+     n'est déposé dans l'admin média. Le halo blanc flouté derrière le
+     titre garantit une lecture correcte quel que soit le contenu de la
+     vidéo (clair ou sombre) ; .payment-flex-strip est déjà en verre
+     dépoli, seule .reassure-section (fond blanc plein) a besoin d'être
+     rendue translucide ici. */
+  #view-services.has-bg-video .page-title,
+  #view-services.has-bg-video .page-sub {
+    text-shadow: 0 1px 3px rgba(255,255,255,0.8), 0 2px 20px rgba(255,255,255,0.9);
+  }
+  #view-services.has-bg-video .reassure-section {
+    background: rgba(255,255,255,0.55);
+    backdrop-filter: blur(14px) saturate(1.4);
+    -webkit-backdrop-filter: blur(14px) saturate(1.4);
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.5);
+  }
+
   @media (max-width: 860px) {
     .reassure-section { padding: 48px 24px; }
     .reassure-strip {

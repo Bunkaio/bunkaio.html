@@ -108,6 +108,53 @@
   .slot-card.uploading .slot-progress { display: block; transform: scaleX(0.6); animation: progressPulse 1s ease-in-out infinite alternate; }
   @keyframes progressPulse { to { transform: scaleX(0.9); } }
 
+  /* ── Video slot card (fond plein écran) ── */
+  .video-card {
+    display: flex; gap: 20px; flex-wrap: wrap;
+    border: 1.5px solid var(--line); border-radius: 10px;
+    padding: 20px; background: #fff;
+  }
+  .video-slot-thumb {
+    width: 240px; max-width: 100%; aspect-ratio: 16/9; flex-shrink: 0;
+    background: #0a0a0c; border-radius: 8px; overflow: hidden;
+    position: relative; cursor: pointer;
+    border: 1.5px solid var(--line);
+    transition: border-color 0.18s;
+  }
+  .video-slot-thumb:hover { border-color: #bbb; }
+  .video-slot-thumb.drag-over { border-color: var(--blue); border-style: dashed; }
+  .video-slot-thumb.uploading { opacity: 0.75; pointer-events: none; }
+  .video-slot-thumb video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .video-slot-thumb .empty-icon {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 6px; color: #666; font-size: 28px;
+  }
+  .video-slot-thumb .empty-icon span { font-size: 11px; color: #999; }
+  .video-slot-thumb .slot-progress {
+    position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+    background: var(--blue); transform-origin: left;
+    transform: scaleX(0); transition: transform 0.2s;
+    display: none;
+  }
+  .video-slot-thumb.uploading .slot-progress { display: block; transform: scaleX(0.6); animation: progressPulse 1s ease-in-out infinite alternate; }
+  .video-card-body { flex: 1; min-width: 220px; }
+  .video-card-label { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+  .video-card-path { font-size: 10.5px; color: #aaa; margin-bottom: 10px; }
+  .video-card-params { list-style: none; }
+  .video-card-params li {
+    font-size: 12px; color: var(--grey); line-height: 1.7;
+    padding-left: 16px; position: relative;
+  }
+  .video-card-params li::before {
+    content: '—'; position: absolute; left: 0; color: #ccc;
+  }
+  .video-card-status { font-size: 11px; margin-top: 10px; min-height: 14px; }
+  .video-card-status.idle { color: #bbb; }
+  .video-card-status.uploading { color: var(--blue); }
+  .video-card-status.success { color: var(--green); }
+  .video-card-status.error { color: var(--red); }
+
   /* ── Portfolio section ── */
   .pf-section { border: 1px solid var(--line); border-radius: 10px; padding: 20px; }
   .pf-cat { margin-bottom: 24px; }
@@ -155,9 +202,9 @@
 <div class="page">
   <h2 class="page-title">Gérer les médias</h2>
   <p class="page-sub">
-    Glisse-dépose tes photos directement sur chaque emplacement, ou clique dessus pour ouvrir le sélecteur de fichiers.<br>
-    Les images sont uploadées en direct sur le site — aucune manipulation de code nécessaire.<br>
-    <em>Les vidéos de fond (accueil, page Partenaires) ne passent pas par ce panel — dis-le moi directement, je m'en occupe.</em>
+    Glisse-dépose tes photos (et vidéos, tout en haut de page) directement sur chaque emplacement, ou clique dessus pour ouvrir le sélecteur de fichiers.<br>
+    Tout est uploadé en direct sur le site — aucune manipulation de code nécessaire.<br>
+    <em>Exception : les vidéos de fond de l'accueil et de la page Partenaires (hors catalogue ci-dessous) ne passent pas encore par ce panel — dis-le moi directement, je m'en occupe.</em>
   </p>
   <div id="sections"></div>
 </div>
@@ -165,6 +212,29 @@
 <script>
 const WORKER_BASE = 'https://bunkaio-quiz-stripe.bunkaio.workers.dev';
 const MEDIA_BASE  = WORKER_BASE + '/media';
+
+// ── Vidéos de fond plein écran ────────────────────────────────────────────────
+// Catégorie distincte des bannières photo ci-dessous : une vidéo déposée ici
+// prend automatiquement le relais des photos de bannière de la même rubrique
+// (repli silencieux sur les photos tant qu'aucune vidéo n'existe à ce chemin).
+// Pour donner une vidéo de fond à une nouvelle rubrique plus tard, ajoute une
+// entrée ici avec le même id que sa clé dans IMG (ex. 'drone' -> IMG.droneVideo)
+// — le reste (repli photo, activation) fonctionne automatiquement, sans autre
+// changement de code.
+const VIDEO_SECTIONS = [
+  {
+    id: 'services-video',
+    view: 'services',
+    label: 'Services — fond plein écran',
+    path: 'services/bg-video.mp4',
+    params: [
+      'Format vidéo : .mp4 (H.264)',
+      'Cadrage : paysage 16:9, 1920 × 1080 px minimum',
+      'Boucle courte et fluide, SANS son (lue automatiquement en muet, en boucle) — 8 à 20 secondes idéalement',
+      'Poids conseillé : 10 à 20 Mo maximum, pour un chargement rapide même en 4G',
+    ],
+  },
+];
 
 // ── Slots fixes ──────────────────────────────────────────────────────────────
 const SECTIONS = [
@@ -373,6 +443,103 @@ async function uploadFile(file, path, card) {
   }
 }
 
+// ── Video slot card (fond plein écran) ──────────────────────────────────────
+function makeVideoCard(video) {
+  const wrap = document.createElement('div');
+  wrap.className = 'video-card';
+
+  const videoSrc = MEDIA_BASE + '/' + video.path;
+
+  wrap.innerHTML = `
+    <div class="video-slot-thumb">
+      <video src="${videoSrc}" muted loop playsinline preload="metadata"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"
+             onloadeddata="this.play().catch(()=>{})"></video>
+      <div class="empty-icon" style="display:none">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <polygon points="6 4 20 12 6 20 6 4"/>
+        </svg>
+        <span>Déposer la vidéo</span>
+      </div>
+      <div class="slot-progress"></div>
+    </div>
+    <div class="video-card-body">
+      <div class="video-card-label">${video.label}</div>
+      <div class="video-card-path">${video.path}</div>
+      <ul class="video-card-params">
+        ${video.params.map(p => `<li>${p}</li>`).join('')}
+      </ul>
+      <div class="video-card-status idle" id="${slug(video.path)}">Cliquer ou glisser le fichier .mp4 ici</div>
+    </div>
+  `;
+
+  const thumb = wrap.querySelector('.video-slot-thumb');
+  const input = document.createElement('input');
+  input.type = 'file'; input.accept = 'video/mp4,video/*'; input.style.display = 'none';
+  input.addEventListener('change', (e) => { if (e.target.files[0]) uploadVideoFile(e.target.files[0], video.path, thumb); });
+  wrap.appendChild(input);
+
+  thumb.addEventListener('click', () => input.click());
+  thumb.addEventListener('dragover', (e) => { e.preventDefault(); thumb.classList.add('drag-over'); });
+  thumb.addEventListener('dragleave', () => thumb.classList.remove('drag-over'));
+  thumb.addEventListener('drop', (e) => {
+    e.preventDefault(); thumb.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file) uploadVideoFile(file, video.path, thumb);
+  });
+
+  return wrap;
+}
+
+async function uploadVideoFile(file, path, thumb) {
+  const token = getToken();
+  if (!token) {
+    alert('Entre ton token admin en haut de page d\'abord.');
+    return;
+  }
+  localStorage.setItem('bunkaio_admin_token', token);
+
+  const card     = thumb.closest('.video-card');
+  const statusEl = card.querySelector('.video-card-status');
+  const videoEl  = thumb.querySelector('video');
+  const emptyEl  = thumb.querySelector('.empty-icon');
+
+  thumb.classList.add('uploading');
+  if (statusEl) { statusEl.textContent = 'Upload en cours…'; statusEl.className = 'video-card-status uploading'; }
+
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('path', path);
+
+  try {
+    const res  = await fetch(WORKER_BASE + '/upload-image', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + token },
+      body: formData,
+    });
+    const data = await res.json();
+
+    if (res.ok && data.ok) {
+      const freshSrc = MEDIA_BASE + '/' + path + '?t=' + Date.now();
+      if (videoEl) {
+        videoEl.src = freshSrc;
+        videoEl.style.display = '';
+        videoEl.load();
+        videoEl.play().catch(() => {});
+        if (emptyEl) emptyEl.style.display = 'none';
+      }
+      if (statusEl) { statusEl.textContent = 'Uploadé ✓ — en ligne sur le site sous quelques minutes'; statusEl.className = 'video-card-status success'; }
+    } else {
+      const msg = data.error === 'unauthorized' ? 'Token incorrect' : (data.error || 'Erreur');
+      if (statusEl) { statusEl.textContent = msg; statusEl.className = 'video-card-status error'; }
+    }
+  } catch (err) {
+    if (statusEl) { statusEl.textContent = 'Erreur réseau'; statusEl.className = 'video-card-status error'; }
+  } finally {
+    thumb.classList.remove('uploading');
+  }
+}
+
 // ── Slot card ────────────────────────────────────────────────────────────────
 function makeSlotCard(slot) {
   const card = document.createElement('div');
@@ -532,6 +699,21 @@ function makePfCategory(cat) {
 // ── Build UI ─────────────────────────────────────────────────────────────────
 function buildUI() {
   const container = document.getElementById('sections');
+
+  // Vidéos de fond plein écran — catégorie distincte, en tête de page
+  const videoWrap = document.createElement('div');
+  videoWrap.className = 'section';
+  videoWrap.innerHTML = `
+    <div class="section-header">
+      <div class="section-title">🎬 Vidéos de fond plein écran</div>
+      <div class="section-desc">Une vidéo déposée ici remplace automatiquement les photos de bannière de la même rubrique, partout sur le site — respecte les paramètres indiqués sous chaque emplacement pour un rendu net et un chargement rapide.</div>
+    </div>
+  `;
+  const videoGrid = document.createElement('div');
+  videoGrid.style.cssText = 'display:flex;flex-direction:column;gap:16px;';
+  VIDEO_SECTIONS.forEach((video) => videoGrid.appendChild(makeVideoCard(video)));
+  videoWrap.appendChild(videoGrid);
+  container.appendChild(videoWrap);
 
   // Fixed slots
   SECTIONS.forEach((section) => {

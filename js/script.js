@@ -1078,59 +1078,111 @@ function initHeroCarousel(viewKey){
   const wrap = document.getElementById('pageHeroWrap');
   if (!wrap) return;
   wrap.style.opacity = ''; wrap.style.visibility = '';
+  const viewEl = document.getElementById('view-' + viewKey);
+
+  /* Repli photos de bannière habituel — factorisé pour pouvoir aussi
+     servir de filet de sécurité si une vidéo de fond générique (voir
+     plus bas) ne charge pas (pas encore déposée dans l'admin média). */
+  const showHeroImages = () => {
+    let images = IMG.heroImages && IMG.heroImages[viewKey];
+    if (!images || (Array.isArray(images) && images.length === 0)){
+      wrap.style.display = 'none'; return;
+    }
+    if (!Array.isArray(images)) images = [images];
+    wrap.style.display = '';
+    wrap.querySelectorAll('.hero-slide').forEach(s => s.remove());
+    const overlay = wrap.querySelector('.page-hero-overlay');
+    images.forEach((src, i) => {
+      const slide = document.createElement('div');
+      slide.className = 'hero-slide' + (i === 0 ? ' active' : '');
+      const img = document.createElement('img');
+      img.src = src; img.alt = ''; img.loading = i === 0 ? 'eager' : 'lazy';
+      slide.appendChild(img);
+      wrap.insertBefore(slide, overlay || null);
+    });
+    if (images.length > 1){
+      let cur = 0;
+      _carouselTimer = setInterval(() => {
+        const slides = wrap.querySelectorAll('.hero-slide');
+        if (!slides.length) return;
+        slides[cur].classList.remove('active');
+        cur = (cur + 1) % slides.length;
+        slides[cur].classList.add('active');
+        document.documentElement.style.setProperty('--page-bg-url','url('+images[cur]+')');
+      }, 5000);
+    }
+  };
 
   /* ── Vidéo de fond (page Accueil uniquement si IMG.homeVideo est défini) ──
      Créée UNE SEULE FOIS : la retirer/recréer à chaque retour sur l'accueil
      la faisait repartir de zéro (perte de la boucle en cours, nouveau
      risque de blocage autoplay par le navigateur à chaque navigation).
      On se contente désormais de la montrer/masquer, l'élément <video>
-     continue de jouer en arrière-plan même quand on quitte la page. */
-  let vw = wrap.querySelector('.hero-video-wrap');
-  wrap.classList.toggle('is-dark', viewKey === 'home');
+     continue de jouer en arrière-plan même quand on quitte la page.
+     Chaque vidéo (accueil, ou une rubrique via IMG.<vue>Video plus bas)
+     a son propre calque identifié par data-view, pour coexister sans
+     se marcher dessus au fil de la navigation. */
+  const allVideoWraps = () => wrap.querySelectorAll('.hero-video-wrap');
+  const videoWrapFor = (key) => wrap.querySelector('.hero-video-wrap[data-view="' + key + '"]');
+
   if (viewKey === 'home' && IMG.homeVideo) {
+    wrap.classList.add('is-dark');
+    if (viewEl) viewEl.classList.remove('has-bg-video');
     wrap.style.display = '';
+    let vw = videoWrapFor('home');
     if (!vw) {
       vw = document.createElement('div');
       vw.className = 'hero-video-wrap';
+      vw.dataset.view = 'home';
       const vid = createBgVideo(IMG.homeVideo);
       vw.appendChild(vid);
       const overlay = wrap.querySelector('.page-hero-overlay');
       wrap.insertBefore(vw, overlay || null);
     }
-    vw.style.display = '';
+    allVideoWraps().forEach(v => { v.style.display = (v === vw) ? '' : 'none'; });
     wrap.querySelectorAll('.hero-slide').forEach(s => s.remove());
     resumeAllBgVideos();
     return;
   }
-  if (vw) vw.style.display = 'none';
 
-  let images = IMG.heroImages && IMG.heroImages[viewKey];
-  if (!images || (Array.isArray(images) && images.length === 0)){
-    wrap.style.display = 'none'; return;
+  /* ── Vidéo de fond générique par rubrique (ex. IMG.servicesVideo) ──
+     Le chemin est pré-câblé vers R2 (voir config/media.js) : dès qu'un
+     fichier est déposé au même chemin depuis admin/media.html, cette
+     vidéo prend le relais automatiquement, sans toucher au code. Tant
+     qu'aucun fichier n'existe à ce chemin (404), repli silencieux sur
+     les photos de bannière habituelles — aucune régression possible en
+     attendant l'upload. */
+  const genericVideoSrc = IMG[viewKey + 'Video'];
+  if (genericVideoSrc) {
+    wrap.classList.add('is-dark');
+    if (viewEl) viewEl.classList.add('has-bg-video');
+    wrap.style.display = '';
+    let gvw = videoWrapFor(viewKey);
+    if (!gvw) {
+      gvw = document.createElement('div');
+      gvw.className = 'hero-video-wrap';
+      gvw.dataset.view = viewKey;
+      const vid = createBgVideo(genericVideoSrc);
+      vid.addEventListener('error', () => {
+        gvw.style.display = 'none';
+        wrap.classList.remove('is-dark');
+        if (viewEl) viewEl.classList.remove('has-bg-video');
+        showHeroImages();
+      }, { once: true });
+      gvw.appendChild(vid);
+      const overlay = wrap.querySelector('.page-hero-overlay');
+      wrap.insertBefore(gvw, overlay || null);
+    }
+    allVideoWraps().forEach(v => { v.style.display = (v === gvw) ? '' : 'none'; });
+    wrap.querySelectorAll('.hero-slide').forEach(s => s.remove());
+    resumeAllBgVideos();
+    return;
   }
-  if (!Array.isArray(images)) images = [images];
-  wrap.style.display = '';
-  wrap.querySelectorAll('.hero-slide').forEach(s => s.remove());
-  const overlay = wrap.querySelector('.page-hero-overlay');
-  images.forEach((src, i) => {
-    const slide = document.createElement('div');
-    slide.className = 'hero-slide' + (i === 0 ? ' active' : '');
-    const img = document.createElement('img');
-    img.src = src; img.alt = ''; img.loading = i === 0 ? 'eager' : 'lazy';
-    slide.appendChild(img);
-    wrap.insertBefore(slide, overlay || null);
-  });
-  if (images.length > 1){
-    let cur = 0;
-    _carouselTimer = setInterval(() => {
-      const slides = wrap.querySelectorAll('.hero-slide');
-      if (!slides.length) return;
-      slides[cur].classList.remove('active');
-      cur = (cur + 1) % slides.length;
-      slides[cur].classList.add('active');
-      document.documentElement.style.setProperty('--page-bg-url','url('+images[cur]+')');
-    }, 5000);
-  }
+
+  wrap.classList.toggle('is-dark', false);
+  if (viewEl) viewEl.classList.remove('has-bg-video');
+  allVideoWraps().forEach(v => { v.style.display = 'none'; });
+  showHeroImages();
 }
 
 function goView(v){
