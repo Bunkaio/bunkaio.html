@@ -2476,7 +2476,7 @@ function initCatShowcase(){
   if (!wrap || !bgA || !bgB || !content || !trigger || _catShowcaseInit) return;
   _catShowcaseInit = true;
 
-  const order = CATS.map(c => c.id);
+  const order = CATS.filter(c => IMG.servicePhotos && IMG.servicePhotos[c.id]).map(c => c.id);
   let currentCat = null;
   let currentIdx = -1;
   let shownIsA = true; /* quel calque image est actuellement visible */
