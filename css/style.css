@@ -1767,6 +1767,7 @@
     transition: transform 1.1s var(--ease-luxe), filter 0.7s var(--ease);
   }
   .ph:hover img { transform: scale(1); filter: grayscale(0%); }
+  .ph video { width: 100%; height: 100%; object-fit: cover; display: block; }
   .ph::after {
     content: ''; position: absolute; inset: 0;
     background: var(--violet-deep);
@@ -2286,6 +2287,66 @@
     .drone-soon-banner { padding: 16px; }
   }
 
+  /* ─── DRONE — page "en cours de réalisation" (rubrique mise en pause,
+     voir le commentaire HTML juste au-dessus dans index.html pour le
+     contenu complet conservé). Centrée, même langage visuel (couleurs,
+     typographie, cadence d'apparition pageTextIn) que les autres pages. ─── */
+  .drone-placeholder {
+    min-height: 62vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center;
+    padding: 160px 28px 120px;
+    max-width: 560px;
+    margin: 0 auto;
+  }
+  .drone-placeholder-icon {
+    width: 60px; height: 60px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+    background: var(--violet);
+    border: 1px solid var(--violet-deep);
+    color: var(--black);
+    margin-bottom: 30px;
+    opacity: 0; transform: translateY(20px);
+    animation: pageTextIn 0.9s var(--ease-luxe) forwards;
+  }
+  .drone-placeholder-icon svg { width: 26px; height: 26px; }
+  .drone-placeholder-kicker {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--grey);
+    margin-bottom: 18px;
+    opacity: 0; transform: translateY(20px);
+    animation: pageTextIn 0.9s var(--ease-luxe) 0.08s forwards;
+  }
+  .drone-placeholder-title {
+    font-size: clamp(30px, 4.6vw, 48px);
+    font-weight: 700; letter-spacing: -0.03em; line-height: 1.16;
+    color: var(--black);
+    margin-bottom: 18px;
+    text-wrap: balance;
+    opacity: 0; transform: translateY(20px);
+    animation: pageTextIn 0.9s var(--ease-luxe) 0.16s forwards;
+  }
+  .drone-placeholder-text {
+    font-size: 14.5px; color: var(--grey); line-height: 1.85;
+    max-width: 440px; margin: 0 auto 36px;
+    opacity: 0; transform: translateY(20px);
+    animation: pageTextIn 0.9s var(--ease-luxe) 0.24s forwards;
+  }
+  /* .hero-start est pensé pour un fond sombre (verre dépoli blanc) —
+     cette page a un fond clair, donc bascule vers un bouton plein noir. */
+  .drone-placeholder .hero-start {
+    color: var(--white);
+    background: var(--black);
+    border-color: var(--black);
+    backdrop-filter: none; -webkit-backdrop-filter: none;
+    opacity: 0; animation: pageTextIn 0.9s var(--ease-luxe) 0.32s forwards;
+  }
+  .drone-placeholder .hero-start:hover { background: #232228; }
+  @media (max-width: 600px) {
+    .drone-placeholder { padding: 130px 24px 90px; }
+  }
+
   /* ─── VIDÉO "LE STUDIO" — calque fixe plein écran, même mécanique que le
      hero (#pageHeroWrap) : opacité pilotée en JS selon la présence à
      l'écran du déclencheur .home-claim-trigger. Garantit un rendu fixe
@@ -2474,15 +2535,28 @@
      devient la slide active, plutôt que de glisser latéralement : le
      déplacement horizontal lui-même est déjà assuré par le scroll natif
      du navigateur, qui déplace la slide entière (texte inclus) d'un
-     seul bloc — plus fluide et fiable qu'une animation JS séparée. */
-  .cat-showcase-name, .cat-showcase-tag, .cat-showcase-content .hero-start {
-    opacity: 0; filter: blur(8px); transform: translateY(16px);
-    transition: opacity 0.6s var(--ease-luxe), filter 0.6s var(--ease-luxe), transform 0.6s var(--ease-luxe);
+     seul bloc — plus fluide et fiable qu'une animation JS séparée.
+     Mêmes réglages (durée, flou, décalage, cadence) que le titre "Nous
+     ne documentons pas des projets…" de la section "Le studio" juste
+     après (.mission-kicker / .mission-text / .home-claim-cta) — la
+     transition CSS rejoue à chaque fois (contrairement à une @keyframes
+     animation "forwards"), ce qui convient ici puisque le carrousel
+     répète cette révélation à chaque catégorie parcourue. */
+  .cat-showcase-tag {
+    opacity: 0; filter: blur(6px); transform: translateY(10px);
+    transition: opacity 1s var(--ease-luxe), filter 1s var(--ease-luxe), transform 1s var(--ease-luxe);
   }
-  .cat-showcase-content .hero-start { animation: none; }
-  .cat-showcase-slide.is-active .cat-showcase-name { opacity: 1; filter: blur(0); transform: translateY(0); transition-delay: 0.05s; }
-  .cat-showcase-slide.is-active .cat-showcase-tag { opacity: 1; filter: blur(0); transform: translateY(0); transition-delay: 0.12s; }
-  .cat-showcase-slide.is-active .cat-showcase-content .hero-start { opacity: 1; filter: blur(0); transform: translateY(0); transition-delay: 0.18s; }
+  .cat-showcase-name {
+    opacity: 0; filter: blur(10px); transform: translateY(18px);
+    transition: opacity 1.2s var(--ease-luxe), filter 1.2s var(--ease-luxe), transform 1.2s var(--ease-luxe);
+  }
+  .cat-showcase-content .hero-start {
+    opacity: 0; animation: none;
+    transition: opacity 1s var(--ease-luxe);
+  }
+  .cat-showcase-slide.is-active .cat-showcase-tag { opacity: 1; filter: blur(0); transform: translateY(0); transition-delay: 0.15s; }
+  .cat-showcase-slide.is-active .cat-showcase-name { opacity: 1; filter: blur(0); transform: translateY(0); transition-delay: 0.35s; }
+  .cat-showcase-slide.is-active .cat-showcase-content .hero-start { opacity: 1; transition-delay: 0.65s; }
 
   /* Flèches de navigation gauche/droite — desktop et mobile — pour changer
      de catégorie sans dépendre du scroll. Estompées en bord de parcours. */
@@ -2630,6 +2704,11 @@
   @keyframes reassureWrite { to { clip-path: inset(0 0 0 -2px); } }
   .reassure-text {
     font-size: 12.5px; line-height: 1.65; color: var(--grey);
+  }
+  .svc-trust-link {
+    color: var(--black); font-weight: 600;
+    text-decoration: underline; text-underline-offset: 2px;
+    cursor: pointer;
   }
   @media (max-width: 860px) {
     .reassure-section { padding: 48px 24px; }
