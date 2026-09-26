@@ -2682,7 +2682,7 @@ function initHomeClaimVideo(){
     const reassureIO = new IntersectionObserver(entries => {
       entries.forEach(e => { reassureVisible = e.isIntersecting; });
       updateMissionWrap();
-    }, { threshold: 0 });
+    }, { threshold: 0.4 });
     reassureIO.observe(reassureEl);
   }
 }
