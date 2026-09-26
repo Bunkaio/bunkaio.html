@@ -2605,7 +2605,7 @@ function initCatShowcase(){
         if (arrowNext) arrowNext.classList.add('teach');
       }, 600);
     }
-  }, { threshold: 0.5 });
+  }, { threshold: 0 });
   catIO.observe(trigger);
 
   /* Molette / trackpad : un mouvement à dominante HORIZONTALE change de
@@ -2686,7 +2686,7 @@ function initHomeClaimVideo(){
   const missionIO = new IntersectionObserver(entries => {
     entries.forEach(e => { triggerVisible = e.isIntersecting; });
     updateMissionWrap();
-  }, { threshold: 0.15 });
+  }, { threshold: 0 });
   missionIO.observe(trigger);
   if (reassureEl) {
     const reassureIO = new IntersectionObserver(entries => {
