@@ -2487,42 +2487,28 @@
   .home-claim-trigger { min-height: 220vh; pointer-events: none !important; scroll-snap-align: start; }
 
   /* ─── PRESTATIONS — carrousel horizontal natif (scroll-snap) ───
-     En flux normal de page (pas de position:fixed) : une section d'un
-     seul écran de haut qui défile avec la page comme n'importe quelle
-     autre section. À l'intérieur, le fond photo (calque partagé, fondu
-     enchaîné entre catégories) reste fixe par rapport à SON texte —
-     photo et texte d'une même catégorie restent solidaires l'un de
-     l'autre — pendant que le texte défile HORIZONTALEMENT au
-     swipe/trackpad, géré nativement par le navigateur. */
+     En flux normal de page (pas de position:fixed, pas de déclencheur
+     multi-écrans piloté par IntersectionObserver) : une section d'un
+     seul écran de haut, dont le contenu défile HORIZONTALEMENT au
+     swipe/trackpad, géré nativement par le navigateur. Élimine le bug
+     100vh d'iOS Safari (barre d'adresse qui se cache/réapparaît pendant
+     le scroll), qui rendait l'ancien calque fixe invisible sur certains
+     téléphones : plus aucun calcul de hauteur de viewport n'entre en jeu
+     dans l'activation de cette section. */
   .cat-showcase {
     position: relative;
     height: 85vh;
     height: 85svh; /* hauteur stable (petit viewport) : ne varie pas quand la
                        barre d'adresse mobile se cache/réapparaît pendant le
-                       scroll — sans ça la section "respire" (grandit/rétrécit)
-                       et la photo semble sauter légèrement. Repli sur 85vh
-                       pour les navigateurs qui ne connaissent pas svh. */
+                       scroll — sans ça la section "respire" (grandit/rétrécit).
+                       Repli sur 85vh pour les navigateurs sans svh. */
     min-height: 480px;
     max-height: 820px;
     overflow: hidden;
     background: var(--black);
     scroll-snap-align: start;
   }
-  /* Fond photo — calque partagé, en dehors du track qui défile : reste
-     fixe derrière pendant le swipe, seul le texte (dans le track,
-     ci-dessous) se déplace. Une slide par catégorie, empilées, fondu
-     enchaîné géré par la classe .active (même principe que .hero-slide,
-     déjà utilisé pour les bannières des autres rubriques). */
-  .cat-showcase-bg-layer { position: absolute; inset: 0; z-index: 0; }
-  .cat-showcase-bg-slide {
-    position: absolute; inset: 0;
-    background-size: cover; background-position: center;
-    opacity: 0;
-    transition: opacity 0.9s ease;
-  }
-  .cat-showcase-bg-slide.active { opacity: 1; }
   .cat-showcase-track {
-    position: relative; z-index: 2;
     display: flex;
     width: 100%; height: 100%;
     overflow-x: auto;
@@ -2538,6 +2524,7 @@
     width: 100%; height: 100%;
     scroll-snap-align: start;
     scroll-snap-stop: always;
+    background-size: cover; background-position: center;
   }
   .cat-showcase-overlay {
     position: absolute; inset: 0; z-index: 1;
@@ -2551,14 +2538,11 @@
   /* Le texte/bouton de chaque slide se révèle (flou -> net) quand elle
      devient la slide active, plutôt que de glisser latéralement : le
      déplacement horizontal lui-même est déjà assuré par le scroll natif
-     du navigateur, qui déplace la slide entière (texte inclus) d'un
-     seul bloc — plus fluide et fiable qu'une animation JS séparée.
+     du navigateur, qui déplace la slide entière (texte ET photo inclus)
+     d'un seul bloc — plus fluide et fiable qu'une animation JS séparée.
      Mêmes réglages (durée, flou, décalage, cadence) que le titre "Nous
      ne documentons pas des projets…" de la section "Le studio" juste
-     après (.mission-kicker / .mission-text / .home-claim-cta) — la
-     transition CSS rejoue à chaque fois (contrairement à une @keyframes
-     animation "forwards"), ce qui convient ici puisque le carrousel
-     répète cette révélation à chaque catégorie parcourue. */
+     après (.mission-kicker / .mission-text / .home-claim-cta). */
   .cat-showcase-tag {
     opacity: 0; filter: blur(6px); transform: translateY(10px);
     transition: opacity 1s var(--ease-luxe), filter 1s var(--ease-luxe), transform 1s var(--ease-luxe);
