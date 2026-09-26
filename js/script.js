@@ -2525,28 +2525,24 @@ function renderCommBox(){
   box.appendChild(d);
 }
 
-/* ═══════════════ PRESTATIONS — calque fixe plein écran (Accueil) ═══════════════
-   Même mécanique que le hero et la vidéo "Le studio" juste après : le
-   calque (#catShowcase) vit hors de .view, son opacité est pilotée par
-   la présence à l'écran d'un déclencheur invisible (.cat-showcase-trigger,
-   dans #view-home), avec le même garde-fou anti-bug-100vh-iOS que ces
-   deux calques (activation basée sur la sortie réelle du hero, pas sur
-   un pourcentage de hauteur du déclencheur — voir le commentaire détaillé
-   plus bas). À l'intérieur, une slide par catégorie ; le scroll HORIZONTAL
-   (swipe tactile, glissement trackpad, molette convertie) est géré
-   nativement par le navigateur via scroll-snap — le même mécanisme fiable
-   que n'importe quel carrousel "stories" sur mobile — et ne déplace que
-   le texte : le fond photo, lui, reste immobile derrière. */
+/* ═══════════════ PRESTATIONS — carrousel horizontal natif (Accueil) ═══════════════
+   Section en flux normal de page (pas de calque position:fixed) : elle
+   défile avec la page comme n'importe quelle autre section. À
+   l'intérieur, le fond photo (calque partagé, hors du track qui défile)
+   reste fixe par rapport à SON texte — photo et texte d'une même
+   catégorie restent solidaires — pendant que le texte, lui, se déplace
+   HORIZONTALEMENT au swipe/trackpad/molette, géré nativement par le
+   navigateur via scroll-snap — le même mécanisme fiable que n'importe
+   quel carrousel "stories" sur mobile. */
 let _catShowcaseInit = false;
 function initCatShowcase(){
   const root = document.getElementById('catShowcase');
-  const trigger = document.getElementById('catShowcaseTrigger');
   const bgLayer = document.getElementById('catShowcaseBgLayer');
   const track = document.getElementById('catShowcaseTrack');
   const dotsWrap = document.getElementById('catShowcaseDots');
   const arrowPrev = document.getElementById('catShowcaseArrowPrev');
   const arrowNext = document.getElementById('catShowcaseArrowNext');
-  if (!root || !trigger || !bgLayer || !track || !dotsWrap || _catShowcaseInit) return;
+  if (!root || !bgLayer || !track || !dotsWrap || _catShowcaseInit) return;
   if (!CATS.length) return;
   _catShowcaseInit = true;
 
@@ -2633,49 +2629,25 @@ function initCatShowcase(){
      pour l'ancienne largeur ne correspond plus. */
   window.addEventListener('resize', () => goTo(currentIdx, 'auto'));
 
+  /* Révélation flou -> net de la 1ère catégorie + indice "ça glisse" sur
+     les flèches, une seule fois, à la première arrivée réelle sur la
+     section (pas au chargement de la page) — simple IntersectionObserver
+     sur une section d'un seul écran de haut : aucun piège 100vh iOS ici,
+     contrairement à un déclencheur de plusieurs écrans de haut. */
   paintArrows(0);
-
-  /* Activation du calque fixe : même mécanique que initHomeClaimVideo()
-     juste après (triggerVisible && !heroVisible), plutôt qu'un seuil de
-     visibilité isolé sur le déclencheur. Un seuil isolé suppose une
-     hauteur de viewport stable pour calculer le bon moment ; sur iOS
-     Safari, la hauteur réelle du viewport change pendant le scroll
-     (barre d'adresse qui se cache/réapparaît — le bug 100vh bien connu),
-     ce qui peut empêcher ce seuil d'être atteint et laisser le calque en
-     permanence inactif (fond blanc à la place du carrousel). En
-     observant en plus la sortie réelle du hero, l'activation ne dépend
-     plus de ce calcul de hauteur. */
-  const heroEl = document.querySelector('.hero');
-  let triggerVisible = false;
-  let heroVisible = !!heroEl;
-  const updateShowcase = () => {
-    const nowActive = triggerVisible && !heroVisible;
-    root.classList.toggle('active', nowActive);
-    if (nowActive) {
-      slides[currentIdx].classList.add('is-active');
-      /* Indice "ça glisse" sur les flèches, affiché une seule fois, à la
-         première arrivée sur le parcours prestations. */
-      if (!hintShown) {
-        hintShown = true;
-        setTimeout(() => {
-          if (arrowPrev) arrowPrev.classList.add('teach');
-          if (arrowNext) arrowNext.classList.add('teach');
-        }, 600);
-      }
+  const revealIO = new IntersectionObserver(entries => {
+    if (!entries[0].isIntersecting) return;
+    slides[currentIdx].classList.add('is-active');
+    if (!hintShown) {
+      hintShown = true;
+      setTimeout(() => {
+        if (arrowPrev) arrowPrev.classList.add('teach');
+        if (arrowNext) arrowNext.classList.add('teach');
+      }, 500);
     }
-  };
-  const catIO = new IntersectionObserver(entries => {
-    entries.forEach(e => { triggerVisible = e.isIntersecting; });
-    updateShowcase();
-  }, { threshold: 0 });
-  catIO.observe(trigger);
-  if (heroEl) {
-    const heroIO = new IntersectionObserver(entries => {
-      entries.forEach(e => { heroVisible = e.isIntersecting; });
-      updateShowcase();
-    }, { threshold: 0 });
-    heroIO.observe(heroEl);
-  }
+    revealIO.disconnect();
+  }, { threshold: 0.3 });
+  revealIO.observe(root);
 }
 
 /* ═══════════════ VIDÉO "LE STUDIO" — calque fixe plein écran (Accueil) ═══════════════
