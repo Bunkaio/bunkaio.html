@@ -89,6 +89,13 @@ const IMG = {
   missionVideo: 'videos/mission-bg.mp4?v=1',           // Vidéo de fond section "Pourquoi Bunkaio existe" (page Partenaires) — incrémenter ?v=X à chaque remplacement pour casser le cache mobile
   quiz:      MEDIA_BASE + '/hero/quiz-1.webp',       // Fond page Questionnaire devis
   services:  MEDIA_BASE + '/hero/services-1.webp',   // Fond page Services
+  /* Vidéo de fond plein écran optionnelle de la page Services — remplace
+     automatiquement les 3 photos de bannière ci-dessus dès qu'un fichier
+     existe à ce chemin. Chemin pré-câblé vers R2 : déposez le fichier
+     depuis admin/media.html (rubrique "Vidéos de fond") pour l'activer,
+     rien à modifier ici. Tant qu'aucun fichier n'existe (404), repli
+     automatique et silencieux sur les 3 photos ci-dessus. */
+  servicesVideo: MEDIA_BASE + '/services/bg-video.mp4',
   drone:     MEDIA_BASE + '/hero/drone-1.webp',      // Fond page 4K Drone
   portfolio: MEDIA_BASE + '/hero/portfolio-1.webp',  // Fond page Portfolio
   contact:   MEDIA_BASE + '/hero/contact-1.webp',    // Fond page Contact
