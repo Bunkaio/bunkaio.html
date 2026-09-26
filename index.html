@@ -123,6 +123,28 @@
   <div class="page-hero-overlay"></div>
 </div>
 
+<!-- PRESTATIONS — calque fixe plein écran, même mécanique que le hero
+     (visibilité pilotée en JS selon la présence du déclencheur
+     #catShowcaseTrigger dans #view-home, voir initCatShowcase()). Le
+     fond photo (calque partagé, fondu enchaîné entre catégories) et le
+     reste (flèches, points) sont fixes à l'écran pendant que le texte,
+     dans le track qui défile, bouge au swipe/trackpad — le navigateur
+     gère nativement le scroll et le snap horizontal, fiable sur tous
+     les appareils y compris iOS Safari. Contenu généré en JS (ordre =
+     CATS dans js/script.js). -->
+<section class="cat-showcase" id="catShowcase">
+  <div class="cat-showcase-bg-layer" id="catShowcaseBgLayer"></div>
+  <div class="cat-showcase-overlay"></div>
+  <div class="cat-showcase-track" id="catShowcaseTrack"></div>
+  <button class="cat-showcase-arrow cat-showcase-arrow-left" id="catShowcaseArrowPrev" aria-label="Précédent">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+  </button>
+  <button class="cat-showcase-arrow cat-showcase-arrow-right" id="catShowcaseArrowNext" aria-label="Suivant">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+  </button>
+  <div class="cat-showcase-dots" id="catShowcaseDots"></div>
+</section>
+
 <!-- VIDÉO "LE STUDIO" — calque fixe plein écran, même mécanique que le hero.
      Visibilité pilotée en JS par la présence du déclencheur #homeClaimSection
      dans le viewport (voir initMissionVideoWrap() dans script.js). -->
@@ -174,25 +196,11 @@
     </div>
   </section>
 
-  <!-- PRESTATIONS — carrousel horizontal natif (scroll-snap), en flux
-       normal de page (pas de calque position:fixed). Le fond photo reste
-       fixe derrière (un calque partagé, fondu enchaîné entre catégories) ;
-       seul le texte, dans le track qui défile, bouge au swipe/trackpad —
-       le navigateur gère nativement le scroll et le snap, fiable sur tous
-       les appareils y compris iOS Safari. Contenu généré en JS (voir
-       initCatShowcase(), ordre = CATS dans js/script.js). -->
-  <section class="cat-showcase" id="catShowcase">
-    <div class="cat-showcase-bg-layer" id="catShowcaseBgLayer"></div>
-    <div class="cat-showcase-overlay"></div>
-    <div class="cat-showcase-track" id="catShowcaseTrack"></div>
-    <button class="cat-showcase-arrow cat-showcase-arrow-left" id="catShowcaseArrowPrev" aria-label="Précédent">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-    </button>
-    <button class="cat-showcase-arrow cat-showcase-arrow-right" id="catShowcaseArrowNext" aria-label="Suivant">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-    </button>
-    <div class="cat-showcase-dots" id="catShowcaseDots"></div>
-  </section>
+  <!-- Déclencheur prestations — réserve l'espace de scroll dans le flux
+       normal de la page (comme .home-claim-trigger ci-dessous) ; le
+       calque plein écran correspondant (#catShowcase) vit hors de .view,
+       voir plus haut. -->
+  <div class="cat-showcase-trigger" id="catShowcaseTrigger"></div>
 
   <div class="home-claim-trigger" id="homeClaimSection"></div>
 
