@@ -2537,28 +2537,35 @@ function renderCommBox(){
 let _catShowcaseInit = false;
 function initCatShowcase(){
   const root = document.getElementById('catShowcase');
+  const bgLayer = document.getElementById('catShowcaseBgLayer');
   const track = document.getElementById('catShowcaseTrack');
   const dotsWrap = document.getElementById('catShowcaseDots');
   const arrowPrev = document.getElementById('catShowcaseArrowPrev');
   const arrowNext = document.getElementById('catShowcaseArrowNext');
-  if (!root || !track || !dotsWrap || _catShowcaseInit) return;
+  if (!root || !bgLayer || !track || !dotsWrap || _catShowcaseInit) return;
   if (!CATS.length) return;
   _catShowcaseInit = true;
 
-  track.innerHTML = CATS.map(cat => {
+  /* Fond photo : calque partagé, hors du track qui défile (voir CSS) —
+     reste fixe derrière pendant le swipe, fondu enchaîné entre
+     catégories piloté par setActive() ci-dessous. Le track ne contient
+     plus que le texte, qui lui se déplace avec le geste. */
+  bgLayer.innerHTML = CATS.map((cat, i) => {
     const url = IMG.servicePhotos && IMG.servicePhotos[cat.id];
-    return `
-      <div class="cat-showcase-slide" data-cat="${cat.id}"${url ? ` style="background-image:url('${url}')"` : ''}>
-        <div class="cat-showcase-overlay"></div>
+    return `<div class="cat-showcase-bg-slide${i === 0 ? ' active' : ''}" data-cat="${cat.id}"${url ? ` style="background-image:url('${url}')"` : ''}></div>`;
+  }).join('');
+
+  track.innerHTML = CATS.map(cat => `
+      <div class="cat-showcase-slide" data-cat="${cat.id}">
         <div class="cat-showcase-content">
           <div class="cat-showcase-name">${t(cat.name)}</div>
           <div class="cat-showcase-tag">${t(cat.tag)}</div>
           <button class="hero-start" onclick="goToServiceTable('${cat.id}')"><span>${t({fr:'Découvrir cette prestation',en:'Discover this service'})}</span></button>
         </div>
-      </div>`;
-  }).join('');
+      </div>`).join('');
   dotsWrap.innerHTML = CATS.map((cat, i) => `<div class="cat-showcase-dot${i === 0 ? ' active' : ''}" data-idx="${i}" onclick="_catShowcaseJump(${i})"></div>`).join('');
 
+  const bgSlides = Array.from(bgLayer.querySelectorAll('.cat-showcase-bg-slide'));
   const slides = Array.from(track.querySelectorAll('.cat-showcase-slide'));
   const dots = Array.from(dotsWrap.querySelectorAll('.cat-showcase-dot'));
   let currentIdx = 0;
@@ -2573,6 +2580,7 @@ function initCatShowcase(){
 
   const setActive = (idx) => {
     currentIdx = idx;
+    bgSlides.forEach((s, i) => s.classList.toggle('active', i === idx));
     slides.forEach((s, i) => s.classList.toggle('is-active', i === idx));
     dots.forEach((d, i) => d.classList.toggle('active', i === idx));
     paintArrows(idx);
