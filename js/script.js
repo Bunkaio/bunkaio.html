@@ -826,7 +826,6 @@ const PROFILES = [
   { id:'gastro',   name:{fr:'Restaurateur / hôtelier',   en:'Restaurant / hotel owner'},icon:'gastro'  },
   { id:'paysage',  name:{fr:'Pisciniste / paysagiste',   en:'Pool builder / landscaper'},icon:'paysage'},
   { id:'event',    name:{fr:'Agence événementielle',     en:'Event agency'},            icon:'event'   },
-  { id:'mannequin',name:{fr:'Modèl(e) et mannequin',     en:'Model & talent'},          icon:'person'  },
   { id:'autre',    name:{fr:'Autre',                     en:'Other'},                   icon:'autre'   }
 ];
 
@@ -835,7 +834,7 @@ const CAT_PROFILES = {
   immobilier: ['agence', 'promo', 'marque', 'autre'],
   archi:      ['agence', 'promo', 'marque', 'autre'],
   artisan:    ['artisan', 'marque', 'autre'],
-  mode:       ['mannequin', 'marque', 'agence', 'artisan', 'autre'],
+  mode:       ['marque', 'agence', 'artisan', 'autre'],
   commercial: ['marque', 'agence', 'gastro', 'artisan', 'autre'],
   event:      ['event', 'agence', 'marque', 'autre']
 };
@@ -880,10 +879,6 @@ const PROFILE_DESCRIPTIONS = {
   event: {
     fr:'Chaque événement est unique et ne se reproduira jamais. Nous documentons les moments clés avec discrétion et précision — l\'émotion, les détails, l\'ambiance — pour prolonger l\'expérience.',
     en:'Every event is unique and will never happen again. We document the key moments with discretion and precision — the emotion, the details, the atmosphere.'
-  },
-  mannequin: {
-    fr:'Vous testez vos photos auprès d\'agences ou de castings. Nos séances Polas sont spécialement conçues pour évaluer votre potentiel : photos brutes, sans mise en scène, sur fond blanc — exactement ce qu\'une agence attend. Visage, profils, plans corps entier.',
-    en:'You\'re testing your portfolio for agencies or castings. Our Polas sessions are specifically designed to evaluate your potential: raw shots, no styling, plain white background — exactly what an agency needs. Face, profiles, full-body shots.'
   },
   autre: {
     fr:'Votre activité ne rentre dans aucune case ? C\'est peut-être exactement ce qui la rend intéressante. Décrivez-nous votre univers dans le champ « Votre projet ».',
@@ -1307,16 +1302,11 @@ function renderCats(){
 function renderProfiles(){
   const el = document.getElementById('profGrid');
   el.innerHTML = '';
-  let profiles;
-  if (S.cat === 'lumen') {
-    profiles = LUMEN_PROFILES;
-  } else if (S.cat === 'photo-part') {
-    profiles = PHOTO_PART_PROFILES;
-  } else if (CAT_PROFILES[S.cat]) {
-    profiles = CAT_PROFILES[S.cat].map(id => PROFILES.find(p => p.id === id)).filter(Boolean);
-  } else {
-    profiles = PROFILES;
-  }
+  const profiles = S.cat === 'lumen'
+    ? LUMEN_PROFILES
+    : S.cat === 'photo-part'
+    ? PHOTO_PART_PROFILES
+    : (CAT_PROFILES[S.cat] ? PROFILES.filter(p => CAT_PROFILES[S.cat].includes(p.id)) : PROFILES);
   profiles.forEach((p, i) => {
     const d = document.createElement('div');
     d.className = 'prof-card stagger' + (S.prof === p.id ? ' selected' : '');
@@ -2476,7 +2466,7 @@ function initCatShowcase(){
   if (!wrap || !bgA || !bgB || !content || !trigger || _catShowcaseInit) return;
   _catShowcaseInit = true;
 
-  const order = CATS.filter(c => IMG.servicePhotos && IMG.servicePhotos[c.id]).map(c => c.id);
+  const order = CATS.map(c => c.id);
   let currentCat = null;
   let currentIdx = -1;
   let shownIsA = true; /* quel calque image est actuellement visible */
@@ -2605,7 +2595,7 @@ function initCatShowcase(){
         if (arrowNext) arrowNext.classList.add('teach');
       }, 600);
     }
-  }, { threshold: 0 });
+  }, { threshold: 0.5 });
   catIO.observe(trigger);
 
   /* Molette / trackpad : un mouvement à dominante HORIZONTALE change de
@@ -2686,13 +2676,13 @@ function initHomeClaimVideo(){
   const missionIO = new IntersectionObserver(entries => {
     entries.forEach(e => { triggerVisible = e.isIntersecting; });
     updateMissionWrap();
-  }, { threshold: 0 });
+  }, { threshold: 0.15 });
   missionIO.observe(trigger);
   if (reassureEl) {
     const reassureIO = new IntersectionObserver(entries => {
       entries.forEach(e => { reassureVisible = e.isIntersecting; });
       updateMissionWrap();
-    }, { threshold: 0.4 });
+    }, { threshold: 0 });
     reassureIO.observe(reassureEl);
   }
 }
