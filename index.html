@@ -137,25 +137,8 @@
   </div>
 </div>
 
-<!-- PRESTATIONS — calque fixe plein écran, fond image (change à chaque
-     catégorie parcourue). Suite de la séquence vidéo 1 -> vidéo 2 ->
-     ici : un fond fixe par prestation, piloté par les déclencheurs
-     .cat-showcase-trigger dans #view-home (voir initCatShowcase()). -->
-<div class="cat-showcase-wrap" id="catShowcaseWrap">
-  <div class="cat-showcase-bg" id="catShowcaseBgA"></div>
-  <div class="cat-showcase-bg" id="catShowcaseBgB"></div>
-  <div class="cat-showcase-overlay"></div>
-  <button class="cat-showcase-arrow cat-showcase-arrow-left" id="catShowcaseArrowPrev" onclick="_catShowcaseNav(-1)" aria-label="Précédent">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-  </button>
-  <button class="cat-showcase-arrow cat-showcase-arrow-right" id="catShowcaseArrowNext" onclick="_catShowcaseNav(1)" aria-label="Suivant">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-  </button>
-  <div class="cat-showcase-content" id="catShowcaseContent"></div>
-</div>
-
 <!-- Retour / Accueil du questionnaire — en dehors de .view (comme les
-     calques fixes ci-dessus) car un calque position:fixed placé DANS un
+     calques fixes ci-dessous) car un calque position:fixed placé DANS un
      .view perd son ancrage viewport : l'animation d'entrée de .view.active
      pose un transform sur l'ancêtre, qui devient le référentiel de tout
      descendant fixed. Visibilité pilotée par goView() (v === 'quiz'). -->
@@ -191,13 +174,22 @@
     </div>
   </section>
 
-  <!-- Déclencheur prestations — remplace l'ancienne bande d'images
-       défilante. Une seule section : le scroll vertical fait simplement
-       apparaître/disparaître le calque (comme n'importe quelle section),
-       le changement de catégorie se fait uniquement au swipe/molette
-       horizontal ou via les flèches (voir initCatShowcase() — l'ordre des
-       catégories vient directement de CATS dans js/script.js). -->
-  <div class="cat-showcase-trigger" id="catShowcaseTrigger"></div>
+  <!-- PRESTATIONS — carrousel horizontal natif (scroll-snap), en flux
+       normal de page (pas de calque position:fixed). Une slide par
+       catégorie, glissée au doigt/trackpad comme n'importe quel carrousel
+       "stories" — le navigateur gère nativement le scroll et le snap,
+       fiable sur tous les appareils y compris iOS Safari. Contenu généré
+       en JS (voir initCatShowcase(), ordre = CATS dans js/script.js). -->
+  <section class="cat-showcase" id="catShowcase">
+    <div class="cat-showcase-track" id="catShowcaseTrack"></div>
+    <button class="cat-showcase-arrow cat-showcase-arrow-left" id="catShowcaseArrowPrev" aria-label="Précédent">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <button class="cat-showcase-arrow cat-showcase-arrow-right" id="catShowcaseArrowNext" aria-label="Suivant">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+    <div class="cat-showcase-dots" id="catShowcaseDots"></div>
+  </section>
 
   <div class="home-claim-trigger" id="homeClaimSection"></div>
 

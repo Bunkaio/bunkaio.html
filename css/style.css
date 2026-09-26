@@ -2425,27 +2425,41 @@
      l'écran, quelle que soit la vitesse de scroll. */
   .home-claim-trigger { min-height: 220vh; pointer-events: none !important; scroll-snap-align: start; }
 
-  /* ─── PRESTATIONS — calque fixe plein écran, fond image par catégorie ─── */
-  .cat-showcase-wrap {
-    position: fixed; inset: 0;
-    z-index: 0;
+  /* ─── PRESTATIONS — carrousel horizontal natif (scroll-snap) ───
+     En flux normal de page (pas de position:fixed, pas de déclencheur
+     multi-écrans piloté par IntersectionObserver) : une section d'un
+     seul écran de haut, dont le contenu défile HORIZONTALEMENT au
+     swipe/trackpad, géré nativement par le navigateur. Élimine le bug
+     100vh d'iOS Safari (barre d'adresse qui se cache/réapparaît pendant
+     le scroll), qui rendait l'ancien calque fixe invisible sur certains
+     téléphones : plus aucun calcul de hauteur de viewport n'entre en jeu
+     dans l'activation de cette section. */
+  .cat-showcase {
+    position: relative;
+    height: 85vh;
+    min-height: 480px;
+    max-height: 820px;
     overflow: hidden;
     background: var(--black);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
+    scroll-snap-align: start;
   }
-  .cat-showcase-wrap.active { opacity: 1; pointer-events: auto; }
-  /* Deux calques image superposés : on écrit la nouvelle photo sur celui
-     du dessous puis on le fait glisser depuis le côté — un vrai slide
-     horizontal (comme un carrousel), pas un simple fondu. Le sens
-     (gauche/droite) dépend du sens de parcours des catégories, piloté
-     en JS via des transform inline. */
-  .cat-showcase-bg {
-    position: absolute; inset: 0;
+  .cat-showcase-track {
+    display: flex;
+    width: 100%; height: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .cat-showcase-track::-webkit-scrollbar { display: none; }
+  .cat-showcase-slide {
+    position: relative;
+    flex: 0 0 100%;
+    width: 100%; height: 100%;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
     background-size: cover; background-position: center;
-    transition: transform 0.65s var(--ease-luxe), opacity 0.5s ease;
-    will-change: transform;
   }
   .cat-showcase-overlay {
     position: absolute; inset: 0; z-index: 1;
@@ -2455,25 +2469,20 @@
     position: absolute; inset: 0; z-index: 2;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     text-align: center; padding: 60px 32px;
-    overflow: hidden;
   }
-  /* Le texte glisse latéralement en même temps que l'image, jusqu'à
-     "coller" contre le bord de l'écran, avec le même effet flou -> net
-     que le texte de la section "Le studio" (nous ne documentons pas...). */
-  .cat-showcase-text {
-    transition: transform 0.6s var(--ease-luxe), opacity 0.5s ease, filter 0.6s var(--ease-luxe);
-    will-change: transform, filter, opacity;
+  /* Le texte/bouton de chaque slide se révèle (flou -> net) quand elle
+     devient la slide active, plutôt que de glisser latéralement : le
+     déplacement horizontal lui-même est déjà assuré par le scroll natif
+     du navigateur, qui déplace la slide entière (texte inclus) d'un
+     seul bloc — plus fluide et fiable qu'une animation JS séparée. */
+  .cat-showcase-name, .cat-showcase-tag, .cat-showcase-content .hero-start {
+    opacity: 0; filter: blur(8px); transform: translateY(16px);
+    transition: opacity 0.6s var(--ease-luxe), filter 0.6s var(--ease-luxe), transform 0.6s var(--ease-luxe);
   }
-  .cat-showcase-text.is-leaving-next { transform: translateX(-60vw); opacity: 0; filter: blur(10px); }
-  .cat-showcase-text.is-leaving-prev { transform: translateX(60vw); opacity: 0; filter: blur(10px); }
-  .cat-showcase-text.is-entering { transition: none; }
-  /* Toute première apparition du parcours prestations : exactement la
-     même révélation (durée, délai, courbe) que le texte "Nous ne
-     documentons pas des projets…" de la section suivante — un temps
-     plus posé que le glissement latéral rapide entre deux catégories. */
-  .cat-showcase-text.is-first-reveal {
-    transition: transform 1.2s var(--ease-luxe) 0.2s, opacity 1.2s var(--ease-luxe) 0.2s, filter 1.2s var(--ease-luxe) 0.2s;
-  }
+  .cat-showcase-content .hero-start { animation: none; }
+  .cat-showcase-slide.is-active .cat-showcase-name { opacity: 1; filter: blur(0); transform: translateY(0); transition-delay: 0.05s; }
+  .cat-showcase-slide.is-active .cat-showcase-tag { opacity: 1; filter: blur(0); transform: translateY(0); transition-delay: 0.12s; }
+  .cat-showcase-slide.is-active .cat-showcase-content .hero-start { opacity: 1; filter: blur(0); transform: translateY(0); transition-delay: 0.18s; }
 
   /* Flèches de navigation gauche/droite — desktop et mobile — pour changer
      de catégorie sans dépendre du scroll. Estompées en bord de parcours. */
@@ -2531,10 +2540,6 @@
     text-wrap: balance;
     text-shadow: 0 1px 10px rgba(0,0,0,0.45);
   }
-  /* .hero-start porte une animation d'entrée pensée pour le chargement
-     de la page (délai 1.35s) — inadaptée ici puisque ce bouton est
-     recréé dynamiquement à chaque catégorie parcourue au scroll. */
-  .cat-showcase-content .hero-start { opacity: 1; animation: none; }
   .cat-showcase-dots {
     position: absolute; bottom: 40px; left: 0; right: 0; z-index: 3;
     display: flex; justify-content: center; gap: 10px;
@@ -2551,18 +2556,8 @@
   }
   .cat-showcase-dot.active::before { background: var(--white); width: 20px; border-radius: 3px; }
   .cat-showcase-dot:hover::before { background: rgba(255,255,255,0.7); }
-  /* Repère de scroll simple (pas de scroll-snap mandatory, trop rigide au
-     clavier/trackpad — juste un "aimant" léger). 200vh (et non 100vh) :
-     laisse le temps de voir l'animation flou -> net de la 1ère catégorie
-     se terminer avant de défiler plus loin, et donne assez d'espace pour
-     parcourir les catégories au swipe/molette horizontal sans avoir déjà
-     quitté la section (même raison que .home-claim-trigger ci-dessus). */
-  .cat-showcase-trigger {
-    min-height: 200vh;
-    pointer-events: none !important;
-    scroll-snap-align: start;
-  }
   @media (max-width: 600px) {
+    .cat-showcase { height: 78vh; min-height: 420px; }
     .cat-showcase-content { padding: 40px 24px; }
     .cat-showcase-dots { bottom: 26px; }
   }
