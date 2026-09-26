@@ -70,7 +70,7 @@
    Les images sont servies par le Worker Cloudflare depuis un bucket R2.
    Pour uploader vos photos : ouvrez admin/media.html sur le site.
    ═══════════════════════════════════════════════════════════════════ */
-const MEDIA_BASE = '/images';
+const MEDIA_BASE = '/media';
 
 
 /* ═══════════════════════════════════════════════════════════════════
