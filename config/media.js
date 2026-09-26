@@ -120,6 +120,7 @@ const IMG = {
      Format : paysage, ~900×700px
      ────────────────────────────────────────────────────────────────── */
   devis: MEDIA_BASE + '/devis/illustration.webp',
+  devisVideo: '',   // Vidéo optionnelle à la place de l'illustration (ex. 'videos/devis-process.mp4') — vide = illustration fixe utilisée
 
   /* (Interne — graine pour les placeholders portfolio, ne pas modifier) */
   portfolioSeed: 'bk-pf',

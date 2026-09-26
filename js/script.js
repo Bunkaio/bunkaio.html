@@ -62,11 +62,17 @@ const I18N = {
     'home-btn':'Retour à l\'accueil','see-portfolio':'Voir tout le portfolio',
     'services-title':'Services','services-sub':'L\'ensemble de nos prestations et leurs tarifs, par univers. Chaque formule est pensée pour révéler ce qui rend votre projet unique.',
     'svc-all':'Tous','svc-cta':'Estimer ce projet →','svc-sub-label':'Abonnement mensuel',
+    'svc-trust1-title':'Réponse sous 48h','svc-trust1-text':'Chaque demande est étudiée puis traitée personnellement — jamais de réponse automatique.',
+    'svc-trust2-title':'Un parcours accompagné','svc-trust2-text':'De la demande à la livraison, 6 étapes claires — <span class="svc-trust-link" onclick="setSvcTab(\'devis\')">voir le déroulé complet</span>.',
+    'svc-trust3-title':'Vos droits garantis','svc-trust3-text':'Les visuels livrés vous appartiennent, avec des conditions d\'usage définies noir sur blanc dès le devis.',
+    'svc-trust4-title':'Un interlocuteur unique','svc-trust4-text':'Du premier échange à la livraison finale, vous échangez toujours avec la même personne.',
     'drone-title':'4K Drone & vidéo',
     'drone-intro':'Derrière chaque image aérienne, il y a une formation, des certifications et un matériel choisi avec exigence. Voici ce qui garantit la qualité — et la légalité — de chacune de nos productions.',
     'nav-soon':'Bientôt',
     'drone-soon-title':'Cette rubrique sera bientôt disponible',
     'drone-soon-sub':'Nos prestations drone sont en cours de déploiement. Revenez prochainement.',
+    'drone-placeholder-title':'En cours de réalisation',
+    'drone-placeholder-text':'Nous préparons cette prestation avec le même soin que le reste du studio — formules, certifications et portfolio aérien seront bientôt en ligne. En attendant, estimons ensemble votre projet.',
     'cred-label':'Formation, certifications & matériel',
     'cred1-title':'BTS Photographie — ETPA','cred1-text':'Formation supérieure en photographie à l\'ETPA, école de référence. Maîtrise complète de la lumière, de la composition et de la postproduction.',
     'cred2-title':'6 ans d\'expérience terrain','cred2-text':'Six années de photographie de terrain, au contact direct des sujets et des contraintes réelles : lumière changeante, délais, exigence du résultat. Une expérience affinée reportage après reportage.',
@@ -242,11 +248,17 @@ const I18N = {
     'home-btn':'Back to home','see-portfolio':'View the full portfolio',
     'services-title':'Services','services-sub':'All of our services and rates, organised by universe. Each package is designed to reveal what makes your project unique.',
     'svc-all':'All','svc-cta':'Get a quote for this →','svc-sub-label':'Monthly plan',
+    'svc-trust1-title':'Reply within 48h','svc-trust1-text':'Every request is reviewed and handled personally — never an automated reply.',
+    'svc-trust2-title':'A guided journey','svc-trust2-text':'From request to delivery, 6 clear steps — <span class="svc-trust-link" onclick="setSvcTab(\'devis\')">see the full process</span>.',
+    'svc-trust3-title':'Your rights guaranteed','svc-trust3-text':'The delivered visuals belong to you, with usage terms clearly defined from the quote onward.',
+    'svc-trust4-title':'One single point of contact','svc-trust4-text':'From the first exchange to final delivery, you always speak with the same person.',
     'drone-title':'4K Drone & video',
     'drone-intro':'Behind every aerial image lies proper training, official certifications and carefully chosen equipment. Here is what guarantees the quality — and the legality — of every one of our productions.',
     'nav-soon':'Soon',
     'drone-soon-title':'This section is coming soon',
     'drone-soon-sub':'Our drone services are being deployed. Check back soon.',
+    'drone-placeholder-title':'Coming soon',
+    'drone-placeholder-text':'We\'re preparing this service with the same care as the rest of the studio — plans, certifications and aerial portfolio will be online soon. In the meantime, let\'s estimate your project.',
     'cred-label':'Training, certifications & equipment',
     'cred1-title':'Advanced Diploma in Photography — ETPA','cred1-text':'Higher education in photography at ETPA, one of France\'s leading photography schools. Full command of light, composition and post-production.',
     'cred2-title':'6 years of field experience','cred2-text':'Six years of photography in the field, working directly with subjects and real-world constraints: changing light, tight schedules, demanding results. An expertise sharpened with every assignment.',
@@ -2140,8 +2152,21 @@ function renderProcessSteps(){
       </div>
     </div>`;
   el.querySelectorAll('.rv').forEach(observe);
-  const img = document.getElementById('img-devis-side');
-  if (img && !img.src) img.src = IMG.devis;
+  /* Illustration latérale : vidéo si IMG.devisVideo est renseignée
+     (voir config/media.js), sinon l'image fixe habituelle — même
+     principe de repli que le fond vidéo de l'accueil (IMG.homeVideo). */
+  const sideImgBox = document.querySelector('#ssec-devis .side-img');
+  if (sideImgBox) {
+    if (IMG.devisVideo) {
+      if (!sideImgBox.querySelector('video')) {
+        sideImgBox.innerHTML = '';
+        sideImgBox.appendChild(createBgVideo(IMG.devisVideo));
+      }
+    } else {
+      const img = document.getElementById('img-devis-side');
+      if (img && !img.src) img.src = IMG.devis;
+    }
+  }
 }
 
 /* ═══════════════ 4K DRONE ═══════════════ */
@@ -2149,6 +2174,7 @@ let activeDroneCat = DRONE_CATS[0].id;
 
 function renderDroneCats(){
   const el = document.getElementById('droneCats');
+  if (!el) return; /* rubrique mise en pause (voir index.html) — élément absent du DOM */
   el.innerHTML = '';
   DRONE_CATS.forEach(c => {
     const d = document.createElement('div');
@@ -2162,8 +2188,9 @@ function renderDroneCats(){
 }
 
 function renderDroneProjects(catId){
-  const cat = DRONE_CATS.find(c => c.id === catId);
   const el = document.getElementById('droneProjects');
+  if (!el) return; /* rubrique mise en pause (voir index.html) — élément absent du DOM */
+  const cat = DRONE_CATS.find(c => c.id === catId);
   el.innerHTML = '';
   cat.projects.forEach(p => {
     const d = document.createElement('div');

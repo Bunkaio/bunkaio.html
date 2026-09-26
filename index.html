@@ -504,6 +504,41 @@
         <span class="payment-flex-pill" data-lang="pay-flex-pill-split">Acompte + solde</span>
       </div>
     </div>
+
+    <!-- Réassurance — parcours client. Même composant (structure, style,
+         animation) que la section équivalente de l'accueil : réutilisé ici
+         pour casser l'effet "catalogue" en donnant tout de suite des
+         repères sur le déroulé, les délais et les droits, avant la grille
+         de prix. Le 2e item renvoie vers l'onglet "Devis & déroulé". -->
+    <div class="reassure-section rv">
+      <div class="reassure-strip">
+        <div class="reassure-item">
+          <div class="reassure-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg></div>
+          <div class="reassure-num">01</div>
+          <div class="reassure-title" data-lang="svc-trust1-title">Réponse sous 48h</div>
+          <div class="reassure-text" data-lang="svc-trust1-text">Chaque demande est étudiée puis traitée personnellement — jamais de réponse automatique.</div>
+        </div>
+        <div class="reassure-item">
+          <div class="reassure-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h10M4 18h16"/><circle cx="19" cy="12" r="2"/></svg></div>
+          <div class="reassure-num">02</div>
+          <div class="reassure-title" data-lang="svc-trust2-title">Un parcours accompagné</div>
+          <div class="reassure-text" data-lang="svc-trust2-text">De la demande à la livraison, 6 étapes claires — <span class="svc-trust-link" onclick="setSvcTab('devis')" data-lang="svc-trust2-link">voir le déroulé complet</span>.</div>
+        </div>
+        <div class="reassure-item">
+          <div class="reassure-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/></svg></div>
+          <div class="reassure-num">03</div>
+          <div class="reassure-title" data-lang="svc-trust3-title">Vos droits garantis</div>
+          <div class="reassure-text" data-lang="svc-trust3-text">Les visuels livrés vous appartiennent, avec des conditions d'usage définies noir sur blanc dès le devis.</div>
+        </div>
+        <div class="reassure-item">
+          <div class="reassure-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6.5 8-6.5s8 2.5 8 6.5"/></svg></div>
+          <div class="reassure-num">04</div>
+          <div class="reassure-title" data-lang="svc-trust4-title">Un interlocuteur unique</div>
+          <div class="reassure-text" data-lang="svc-trust4-text">Du premier échange à la livraison finale, vous échangez toujours avec la même personne.</div>
+        </div>
+      </div>
+    </div>
+
 <!-- Onglets -->
     <div class="svc-tabs">
       <button class="svc-tab active" id="stab-catalogue" onclick="setSvcTab('catalogue')" data-lang="stab-catalogue">Catalogue & prix</button>
@@ -548,8 +583,21 @@
   </div>
 </div>
 
-<!-- 4K DRONE -->
+<!-- 4K DRONE — rubrique mise en pause (page "en cours de réalisation" ci-dessous).
+     Tout le contenu complet (certifications, formules & tarifs, portfolio drone)
+     est conservé intact en commentaire juste en dessous, prêt à être réactivé :
+     il suffit de retirer ce commentaire et de supprimer le bloc .drone-placeholder. -->
 <div class="view" id="view-drone">
+  <div class="drone-placeholder">
+    <div class="drone-placeholder-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M12 3v2.4M12 18.6V21M21 12h-2.4M5.4 12H3M18.1 5.9l-1.7 1.7M7.6 16.4l-1.7 1.7M18.1 18.1l-1.7-1.7M7.6 7.6 5.9 5.9"/></svg>
+    </div>
+    <div class="drone-placeholder-kicker" data-lang="drone-title">4K Drone & vidéo</div>
+    <h1 class="drone-placeholder-title" data-lang="drone-placeholder-title">En cours de réalisation</h1>
+    <p class="drone-placeholder-text" data-lang="drone-placeholder-text">Nous préparons cette prestation avec le même soin que le reste du studio — formules, certifications et portfolio aérien seront bientôt en ligne. En attendant, estimons ensemble votre projet.</p>
+    <button class="hero-start" onclick="goView('quiz')"><span data-lang="start">Estimer mon projet</span></button>
+  </div>
+  <!--
   <div class="drone-soon-banner">
     <div class="drone-soon-inner">
       <span class="drone-soon-icon">🚁</span>
@@ -672,6 +720,7 @@
       </div>
     </div>
   </div>
+  -->
 </div>
 
 <div class="video-modal" id="videoModal" onclick="if(event.target===this) closeVideoModal()">
