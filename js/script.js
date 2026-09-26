@@ -2446,225 +2446,121 @@ function renderCommBox(){
   box.appendChild(d);
 }
 
-/* ═══════════════ PRESTATIONS — calque fixe plein écran, fond image (Accueil) ═══════════════
-   Remplace l'ancienne bande d'images défilante : même calque
-   position:fixed partagé que le hero et la vidéo "Le studio", montré/masqué
-   via IntersectionObserver sur un unique déclencheur invisible.
-   Contrairement aux autres calques, le scroll vertical ne change PAS de
-   catégorie ici : il fait simplement défiler la page, comme n'importe
-   quelle section. Le changement de catégorie se fait uniquement au
-   swipe/molette horizontal ou via les flèches — desktop et mobile. */
+/* ═══════════════ PRESTATIONS — carrousel horizontal natif (Accueil) ═══════════════
+   Section en flux normal de page (pas de calque position:fixed, pas de
+   déclencheur multi-écrans piloté par IntersectionObserver sur un
+   pourcentage de hauteur — l'ancienne mécanique, cassée sur iOS Safari
+   par le bug 100vh de barre d'adresse dynamique, qui pouvait laisser le
+   calque en permanence invisible). Une slide par catégorie, le scroll
+   horizontal (swipe tactile, glissement trackpad, molette convertie) est
+   géré nativement par le navigateur via scroll-snap — le même mécanisme
+   fiable que n'importe quel carrousel "stories" sur mobile. */
 let _catShowcaseInit = false;
 function initCatShowcase(){
-  const wrap = document.getElementById('catShowcaseWrap');
-  const bgA = document.getElementById('catShowcaseBgA');
-  const bgB = document.getElementById('catShowcaseBgB');
-  const content = document.getElementById('catShowcaseContent');
+  const root = document.getElementById('catShowcase');
+  const track = document.getElementById('catShowcaseTrack');
+  const dotsWrap = document.getElementById('catShowcaseDots');
   const arrowPrev = document.getElementById('catShowcaseArrowPrev');
   const arrowNext = document.getElementById('catShowcaseArrowNext');
-  const trigger = document.getElementById('catShowcaseTrigger');
-  if (!wrap || !bgA || !bgB || !content || !trigger || _catShowcaseInit) return;
+  if (!root || !track || !dotsWrap || _catShowcaseInit) return;
+  if (!CATS.length) return;
   _catShowcaseInit = true;
 
-  const order = CATS.map(c => c.id);
-  let currentCat = null;
-  let currentIdx = -1;
-  let shownIsA = true; /* quel calque image est actuellement visible */
-  let hintShown = false;
+  track.innerHTML = CATS.map(cat => {
+    const url = IMG.servicePhotos && IMG.servicePhotos[cat.id];
+    return `
+      <div class="cat-showcase-slide" data-cat="${cat.id}"${url ? ` style="background-image:url('${url}')"` : ''}>
+        <div class="cat-showcase-overlay"></div>
+        <div class="cat-showcase-content">
+          <div class="cat-showcase-name">${t(cat.name)}</div>
+          <div class="cat-showcase-tag">${t(cat.tag)}</div>
+          <button class="hero-start" onclick="goToServiceTable('${cat.id}')"><span>${t({fr:'Découvrir cette prestation',en:'Discover this service'})}</span></button>
+        </div>
+      </div>`;
+  }).join('');
+  dotsWrap.innerHTML = CATS.map((cat, i) => `<div class="cat-showcase-dot${i === 0 ? ' active' : ''}" data-idx="${i}" onclick="_catShowcaseJump(${i})"></div>`).join('');
 
-  const paintDots = (catId) => {
-    document.querySelectorAll('.cat-showcase-dot').forEach(d => {
-      d.classList.toggle('active', d.dataset.cat === catId);
-    });
-  };
+  const slides = Array.from(track.querySelectorAll('.cat-showcase-slide'));
+  const dots = Array.from(dotsWrap.querySelectorAll('.cat-showcase-dot'));
+  let currentIdx = 0;
+  let hintShown = false;
 
   /* Estompe la flèche en bord de parcours (pas de "précédent" sur la
      première catégorie, pas de "suivant" sur la dernière). */
   const paintArrows = (idx) => {
     if (arrowPrev) arrowPrev.classList.toggle('is-disabled', idx <= 0);
-    if (arrowNext) arrowNext.classList.toggle('is-disabled', idx >= order.length - 1);
+    if (arrowNext) arrowNext.classList.toggle('is-disabled', idx >= slides.length - 1);
   };
 
-  const renderCat = (catId) => {
-    if (catId === currentCat) return;
-    const cat = CATS.find(c => c.id === catId);
-    if (!cat) return;
-    const idx = order.indexOf(catId);
-    /* Sens du slide : on avance dans la liste -> le nouveau vient de la
-       droite (dir 1) ; on recule -> il vient de la gauche (dir -1). */
-    const dir = currentIdx === -1 ? 0 : (idx > currentIdx ? 1 : -1);
-    currentCat = catId;
+  const setActive = (idx) => {
     currentIdx = idx;
+    slides.forEach((s, i) => s.classList.toggle('is-active', i === idx));
+    dots.forEach((d, i) => d.classList.toggle('active', i === idx));
     paintArrows(idx);
-
-    /* Slide horizontal image : le calque caché entre par le côté
-       pendant que le calque visible sort par le côté opposé, jusqu'à
-       coller contre le bord — un vrai glissement de carrousel. */
-    const url = IMG.servicePhotos && IMG.servicePhotos[catId];
-    const shown = shownIsA ? bgA : bgB;
-    const hidden = shownIsA ? bgB : bgA;
-    if (url) hidden.style.backgroundImage = `url('${url}')`;
-
-    if (dir === 0) {
-      hidden.style.transition = 'none';
-      hidden.style.transform = 'translateX(0)';
-      void hidden.offsetWidth;
-      hidden.style.transition = '';
-    } else {
-      hidden.style.transition = 'none';
-      hidden.style.transform = `translateX(${dir * 100}%)`;
-      void hidden.offsetWidth;
-      hidden.style.transition = '';
-      requestAnimationFrame(() => { hidden.style.transform = 'translateX(0)'; });
-      shown.style.transform = `translateX(${-dir * 100}%)`;
-    }
-    shownIsA = !shownIsA;
-
-    /* Si les points/bouton existent déjà (2e passage), on ne les
-       reconstruit pas : le texte glisse dans le même sens que l'image. */
-    const textEl = content.querySelector('.cat-showcase-text');
-    const btnEl = content.querySelector('.hero-start');
-
-    if (!textEl) {
-      content.innerHTML = `
-        <div class="cat-showcase-text is-first-reveal" style="opacity:0; filter:blur(10px); transform:translateY(18px);">
-          <div class="cat-showcase-name">${t(cat.name)}</div>
-          <div class="cat-showcase-tag">${t(cat.tag)}</div>
-        </div>
-        <button class="hero-start" onclick="goToServiceTable('${cat.id}')"><span>${t({fr:'Découvrir cette prestation',en:'Discover this service'})}</span></button>
-        <div class="cat-showcase-dots">
-          ${order.map(id => `<div class="cat-showcase-dot${id === catId ? ' active' : ''}" data-cat="${id}" onclick="_catShowcaseJump('${id}')"></div>`).join('')}
-        </div>`;
-      /* Même entrée flou -> net que le texte "Nous ne documentons pas..."
-         de la section suivante (même durée/délai/courbe, voir la classe
-         .is-first-reveal), pour la toute première apparition. */
-      const freshText = content.querySelector('.cat-showcase-text');
-      requestAnimationFrame(() => {
-        freshText.style.opacity = '1';
-        freshText.style.filter = 'blur(0)';
-        freshText.style.transform = 'translateY(0)';
-      });
-      return;
-    }
-
-    /* Retire la transition "révélation" posée (plus lente) dès qu'une
-       vraie catégorie change : le glissement latéral doit rester rapide. */
-    textEl.classList.remove('is-first-reveal');
-    const leaveClass = dir >= 0 ? 'is-leaving-next' : 'is-leaving-prev';
-    textEl.classList.add(leaveClass);
-    setTimeout(() => {
-      textEl.innerHTML = `
-        <div class="cat-showcase-name">${t(cat.name)}</div>
-        <div class="cat-showcase-tag">${t(cat.tag)}</div>`;
-      if (btnEl) btnEl.setAttribute('onclick', `goToServiceTable('${cat.id}')`);
-      paintDots(catId);
-      /* Entre depuis le côté opposé à celui par lequel l'ancien texte est
-         sorti, collé contre le bord, avec le même flou -> net que la
-         vidéo "Le studio". */
-      textEl.classList.remove(leaveClass);
-      textEl.classList.add('is-entering');
-      textEl.style.transform = `translateX(${dir >= 0 ? 60 : -60}vw)`;
-      textEl.style.opacity = '0';
-      textEl.style.filter = 'blur(10px)';
-      void textEl.offsetWidth;
-      textEl.classList.remove('is-entering');
-      textEl.style.transform = 'translateX(0)';
-      textEl.style.opacity = '1';
-      textEl.style.filter = 'blur(0)';
-    }, 220);
   };
-  const catNav = (delta) => {
-    if (currentIdx === -1) return;
-    const nextIdx = currentIdx + delta;
-    if (nextIdx < 0 || nextIdx >= order.length) return;
-    renderCat(order[nextIdx]);
-  };
-  window._catShowcaseJump = renderCat; /* points cliquables */
-  window._catShowcaseNav = catNav;     /* flèches gauche/droite */
-  renderCat(order[0]);
 
-  /* Activation : même mécanique que la vidéo "Le studio" juste après
-     (voir initHomeClaimVideo — triggerVisible && !sectionPrécédenteVisible),
-     plutôt qu'un seuil unique de 50% sur le déclencheur de 200vh. Un seuil
-     isolé à 50% suppose une hauteur de viewport stable pour calculer le
-     bon moment ; sur iOS Safari, la hauteur réelle du viewport change
-     pendant le scroll (barre d'adresse qui se cache/réapparaît — le bug
-     100vh bien connu), ce qui peut empêcher ce seuil d'être atteint et
-     laisser le calque en permanence inactif (fond blanc à la place du
-     carrousel, jamais de déclenchement). En observant en plus la sortie
-     réelle du hero, l'activation ne dépend plus de ce calcul de hauteur. */
-  const heroEl = document.querySelector('.hero');
-  let triggerVisible = false;
-  let heroVisible = !!heroEl;
-  const updateCatWrap = () => {
-    const nowActive = triggerVisible && !heroVisible;
-    wrap.classList.toggle('active', nowActive);
-    /* Indice "ça glisse" sur les flèches, affiché une seule fois, à la
-       première arrivée sur le parcours prestations. */
-    if (nowActive && !hintShown) {
+  const goTo = (idx, behavior) => {
+    idx = Math.max(0, Math.min(slides.length - 1, idx));
+    track.scrollTo({ left: idx * track.clientWidth, behavior: behavior || 'smooth' });
+  };
+  window._catShowcaseJump = (idx) => goTo(idx); /* points cliquables */
+  window._catShowcaseNav = (delta) => goTo(currentIdx + delta); /* flèches gauche/droite */
+  if (arrowPrev) arrowPrev.addEventListener('click', () => goTo(currentIdx - 1));
+  if (arrowNext) arrowNext.addEventListener('click', () => goTo(currentIdx + 1));
+
+  /* Détecte la slide effectivement centrée après un scroll horizontal
+     natif (swipe, trackpad, molette convertie ci-dessous ou scrollTo
+     programmatique) — un simple debounce sur l'évènement scroll du
+     conteneur, sans dépendance à la hauteur du viewport de la page. */
+  let scrollTimer = null;
+  track.addEventListener('scroll', () => {
+    clearTimeout(scrollTimer);
+    scrollTimer = setTimeout(() => {
+      const idx = Math.round(track.scrollLeft / track.clientWidth);
+      setActive(Math.max(0, Math.min(slides.length - 1, idx)));
+    }, 80);
+  }, { passive: true });
+
+  /* Molette souris classique (pas de trackpad) : convertit un scroll
+     vertical en défilement horizontal du carrousel, pratique tant qu'on
+     n'est pas en bord de parcours — sinon on laisse la page défiler
+     verticalement normalement. Le trackpad (swipe latéral natif,
+     deltaX) n'a besoin d'aucune aide : le navigateur gère déjà le
+     scroll horizontal nativement, tout comme le swipe tactile mobile. */
+  root.addEventListener('wheel', (e) => {
+    const adx = Math.abs(e.deltaX), ady = Math.abs(e.deltaY);
+    if (adx > ady) return; /* déjà horizontal -> laisser faire nativement */
+    const atStart = track.scrollLeft <= 4;
+    const atEnd = track.scrollLeft >= track.scrollWidth - track.clientWidth - 4;
+    if ((e.deltaY > 0 && atEnd) || (e.deltaY < 0 && atStart)) return;
+    e.preventDefault();
+    track.scrollLeft += e.deltaY;
+  }, { passive: false });
+
+  /* Re-snap sur la slide courante après un redimensionnement (rotation
+     d'écran, changement de fenêtre) : la position en pixels calculée
+     pour l'ancienne largeur ne correspond plus. */
+  window.addEventListener('resize', () => goTo(currentIdx, 'auto'));
+
+  /* Révélation flou -> net de la 1ère catégorie + indice "ça glisse" sur
+     les flèches, une seule fois, à la première arrivée réelle sur la
+     section (pas au chargement de la page) — simple IntersectionObserver
+     sur une section d'un seul écran de haut : aucun piège 100vh iOS ici,
+     contrairement à l'ancien déclencheur de plusieurs écrans de haut. */
+  paintArrows(0);
+  const revealIO = new IntersectionObserver(entries => {
+    if (!entries[0].isIntersecting) return;
+    slides[currentIdx].classList.add('is-active');
+    if (!hintShown) {
       hintShown = true;
       setTimeout(() => {
         if (arrowPrev) arrowPrev.classList.add('teach');
         if (arrowNext) arrowNext.classList.add('teach');
-      }, 600);
+      }, 500);
     }
-  };
-  const catIO = new IntersectionObserver(entries => {
-    entries.forEach(e => { triggerVisible = e.isIntersecting; });
-    updateCatWrap();
-  }, { threshold: 0 });
-  catIO.observe(trigger);
-  if (heroEl) {
-    const heroIO = new IntersectionObserver(entries => {
-      entries.forEach(e => { heroVisible = e.isIntersecting; });
-      updateCatWrap();
-    }, { threshold: 0 });
-    heroIO.observe(heroEl);
-  }
-
-  /* Molette / trackpad : un mouvement à dominante HORIZONTALE change de
-     catégorie (et empêche tout scroll latéral de la page) ; un mouvement
-     à dominante VERTICALE n'est pas intercepté et fait défiler la page
-     normalement, comme n'importe quelle autre section. */
-  let wheelBusy = false;
-  wrap.addEventListener('wheel', (e) => {
-    if (!wrap.classList.contains('active')) return;
-    const adx = Math.abs(e.deltaX), ady = Math.abs(e.deltaY);
-    if (adx <= ady || adx < 12) return;
-    e.preventDefault();
-    if (wheelBusy) return;
-    wheelBusy = true;
-    catNav(e.deltaX > 0 ? 1 : -1);
-    setTimeout(() => { wheelBusy = false; }, 550);
-  }, { passive: false });
-
-  /* Tactile : même logique — un swipe à dominante horizontale change de
-     catégorie, un swipe vertical fait défiler la page normalement. La
-     décision (horizontal ou vertical) se prend au premier mouvement net
-     du geste, puis reste figée jusqu'au relâchement du doigt. */
-  let touchStartX = 0, touchStartY = 0, touchDecided = false, touchHorizontal = false;
-  wrap.addEventListener('touchstart', (e) => {
-    if (!wrap.classList.contains('active')) return;
-    touchStartX = e.touches[0].clientX;
-    touchStartY = e.touches[0].clientY;
-    touchDecided = false;
-    touchHorizontal = false;
-  }, { passive: true });
-  wrap.addEventListener('touchmove', (e) => {
-    if (!wrap.classList.contains('active')) return;
-    const dx = e.touches[0].clientX - touchStartX;
-    const dy = e.touches[0].clientY - touchStartY;
-    if (!touchDecided && (Math.abs(dx) > 10 || Math.abs(dy) > 10)) {
-      touchDecided = true;
-      touchHorizontal = Math.abs(dx) > Math.abs(dy);
-    }
-    if (touchHorizontal) e.preventDefault();
-  }, { passive: false });
-  wrap.addEventListener('touchend', (e) => {
-    if (!wrap.classList.contains('active') || !touchHorizontal) return;
-    const dx = e.changedTouches[0].clientX - touchStartX;
-    if (Math.abs(dx) > 40) catNav(dx < 0 ? 1 : -1);
-  }, { passive: true });
+    revealIO.disconnect();
+  }, { threshold: 0.3 });
+  revealIO.observe(root);
 }
 
 /* ═══════════════ VIDÉO "LE STUDIO" — calque fixe plein écran (Accueil) ═══════════════
