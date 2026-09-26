@@ -175,15 +175,12 @@
   </section>
 
   <!-- PRESTATIONS — carrousel horizontal natif (scroll-snap), en flux
-       normal de page (pas de calque position:fixed). Le fond photo reste
-       fixe derrière (un calque partagé, fondu enchaîné entre catégories) ;
-       seul le texte, dans le track qui défile, bouge au swipe/trackpad —
-       le navigateur gère nativement le scroll et le snap, fiable sur tous
-       les appareils y compris iOS Safari. Contenu généré en JS (voir
-       initCatShowcase(), ordre = CATS dans js/script.js). -->
+       normal de page (pas de calque position:fixed). Une slide par
+       catégorie, glissée au doigt/trackpad comme n'importe quel carrousel
+       "stories" — le navigateur gère nativement le scroll et le snap,
+       fiable sur tous les appareils y compris iOS Safari. Contenu généré
+       en JS (voir initCatShowcase(), ordre = CATS dans js/script.js). -->
   <section class="cat-showcase" id="catShowcase">
-    <div class="cat-showcase-bg-layer" id="catShowcaseBgLayer"></div>
-    <div class="cat-showcase-overlay"></div>
     <div class="cat-showcase-track" id="catShowcaseTrack"></div>
     <button class="cat-showcase-arrow cat-showcase-arrow-left" id="catShowcaseArrowPrev" aria-label="Précédent">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>

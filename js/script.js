@@ -2526,46 +2526,40 @@ function renderCommBox(){
 }
 
 /* ═══════════════ PRESTATIONS — carrousel horizontal natif (Accueil) ═══════════════
-   Section en flux normal de page (pas de calque position:fixed) : elle
-   défile avec la page comme n'importe quelle autre section. À
-   l'intérieur, le fond photo (calque partagé, hors du track qui défile)
-   reste fixe par rapport à SON texte — photo et texte d'une même
-   catégorie restent solidaires — pendant que le texte, lui, se déplace
-   HORIZONTALEMENT au swipe/trackpad/molette, géré nativement par le
+   Section en flux normal de page (pas de calque position:fixed, pas de
+   déclencheur multi-écrans piloté par IntersectionObserver sur un
+   pourcentage de hauteur — l'ancienne mécanique, cassée sur iOS Safari
+   par le bug 100vh de barre d'adresse dynamique, qui pouvait laisser le
+   calque en permanence invisible). Une slide par catégorie (photo +
+   texte dans le même bloc), le scroll horizontal (swipe tactile,
+   glissement trackpad, molette convertie) est géré nativement par le
    navigateur via scroll-snap — le même mécanisme fiable que n'importe
    quel carrousel "stories" sur mobile. */
 let _catShowcaseInit = false;
 function initCatShowcase(){
   const root = document.getElementById('catShowcase');
-  const bgLayer = document.getElementById('catShowcaseBgLayer');
   const track = document.getElementById('catShowcaseTrack');
   const dotsWrap = document.getElementById('catShowcaseDots');
   const arrowPrev = document.getElementById('catShowcaseArrowPrev');
   const arrowNext = document.getElementById('catShowcaseArrowNext');
-  if (!root || !bgLayer || !track || !dotsWrap || _catShowcaseInit) return;
+  if (!root || !track || !dotsWrap || _catShowcaseInit) return;
   if (!CATS.length) return;
   _catShowcaseInit = true;
 
-  /* Fond photo : calque partagé, hors du track qui défile (voir CSS) —
-     reste fixe derrière pendant le swipe, fondu enchaîné entre
-     catégories piloté par setActive() ci-dessous. Le track ne contient
-     plus que le texte, qui lui se déplace avec le geste. */
-  bgLayer.innerHTML = CATS.map((cat, i) => {
+  track.innerHTML = CATS.map(cat => {
     const url = IMG.servicePhotos && IMG.servicePhotos[cat.id];
-    return `<div class="cat-showcase-bg-slide${i === 0 ? ' active' : ''}" data-cat="${cat.id}"${url ? ` style="background-image:url('${url}')"` : ''}></div>`;
-  }).join('');
-
-  track.innerHTML = CATS.map(cat => `
-      <div class="cat-showcase-slide" data-cat="${cat.id}">
+    return `
+      <div class="cat-showcase-slide" data-cat="${cat.id}"${url ? ` style="background-image:url('${url}')"` : ''}>
+        <div class="cat-showcase-overlay"></div>
         <div class="cat-showcase-content">
           <div class="cat-showcase-name">${t(cat.name)}</div>
           <div class="cat-showcase-tag">${t(cat.tag)}</div>
           <button class="hero-start" onclick="goToServiceTable('${cat.id}')"><span>${t({fr:'Découvrir cette prestation',en:'Discover this service'})}</span></button>
         </div>
-      </div>`).join('');
+      </div>`;
+  }).join('');
   dotsWrap.innerHTML = CATS.map((cat, i) => `<div class="cat-showcase-dot${i === 0 ? ' active' : ''}" data-idx="${i}" onclick="_catShowcaseJump(${i})"></div>`).join('');
 
-  const bgSlides = Array.from(bgLayer.querySelectorAll('.cat-showcase-bg-slide'));
   const slides = Array.from(track.querySelectorAll('.cat-showcase-slide'));
   const dots = Array.from(dotsWrap.querySelectorAll('.cat-showcase-dot'));
   let currentIdx = 0;
@@ -2580,7 +2574,6 @@ function initCatShowcase(){
 
   const setActive = (idx) => {
     currentIdx = idx;
-    bgSlides.forEach((s, i) => s.classList.toggle('active', i === idx));
     slides.forEach((s, i) => s.classList.toggle('is-active', i === idx));
     dots.forEach((d, i) => d.classList.toggle('active', i === idx));
     paintArrows(idx);
