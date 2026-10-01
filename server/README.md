@@ -429,6 +429,19 @@ client (champ `typeProjet`, 'particulier' ou 'marque') :
   (les domaines du questionnaire de devis) plutôt qu'une liste propre au
   moodboard — une seule taxonomie à tenir à jour sur tout le site.
 
+### Dixième brique : Mon partenariat (comptes Partenaire)
+
+Même principe que les autres onglets : un champ `partenariat` sur le compte
+(`{secteur, statut, dateAdhesion, articleUrl}`), visible uniquement côté
+front quand `type` du compte vaut `'partner'` — l'onglet "Mon partenariat"
+est masqué pour les comptes client. `secteur` reprend les identifiants du
+formulaire de candidature (architecture, amenagement, artisanat, marques,
+evenementiel). Les 4 avantages du programme et la mention des places
+disponibles ne sont pas stockés par compte : ce sont des textes statiques
+partagés avec la page Partenaires → Programme (mêmes clés I18N), pour ne
+jamais les désynchroniser. Pas de nouveau déploiement Cloudflare requis,
+un `npm run deploy` après `git pull` suffit.
+
 ## Voir les logs en production
 
 ```bash
