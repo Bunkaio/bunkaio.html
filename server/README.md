@@ -306,6 +306,102 @@ token mémorisé dans le navigateur), qui affiche un tableau avec le nom/email,
 le score et sa température, la catégorie, le montant estimé et la date de
 soumission.
 
+## Huitième brique : espace client sécurisé (comptes en base, plus en fichier public)
+
+L'espace client/partenaire du site (connexion, commandes, paiements,
+factures, informations, abonnements) lisait jusqu'ici un fichier
+`comptes.json` à la racine du dépôt — or le dépôt GitHub du site est
+**public**, donc ce fichier était servi sans aucune authentification à
+quiconque sur `bunkaio.com/comptes.json` (noms, emails, téléphones,
+montants, lien Lightroom personnel de chaque client inclus).
+
+Cette brique remplace entièrement ce mécanisme par une vraie base de
+comptes côté serveur ([Cloudflare KV](https://developers.cloudflare.com/kv/)),
+jamais exposée directement : le site ne peut plus qu'appeler des routes
+du Worker, qui vérifient l'identité avant de renvoyer quoi que ce soit.
+Le code d'accès n'est jamais stocké en clair, seulement son empreinte
+SHA-256 (voir `hashCode()` dans `src/accounts.ts`).
+
+### 1. Créer le namespace KV (une seule fois)
+
+```bash
+npx wrangler kv namespace create ACCOUNTS_KV
+```
+
+Wrangler affiche un bloc contenant un `id`. Colle cet id dans
+`wrangler.toml`, à la place de `REMPLACER_PAR_L_ID_DU_NAMESPACE` :
+
+```toml
+[[kv_namespaces]]
+binding = "ACCOUNTS_KV"
+id = "colle-l-id-ici"
+```
+
+### 2. Redéployer
+
+```bash
+npm run deploy
+```
+
+Les nouvelles routes sont alors actives :
+
+- `POST /auth-login` — connexion (appelée par `doLogin()` dans `js/script.js`). Payload `{ type, email, code }`, renvoie le compte (sans le code) si les identifiants correspondent.
+- `POST /account-update` — le client met à jour lui-même son nom/téléphone/adresse (ré-authentifie avec son code à chaque appel). Appelée par `saveAccInfo()`.
+- `GET /accounts` (protégée par `ADMIN_TOKEN`) — liste tous les comptes (résumé). Avec `?type=client&email=...`, renvoie un compte en détail.
+- `POST /accounts` (protégée par `ADMIN_TOKEN`) — crée ou met à jour un compte (profil, commandes, paiements, factures, abonnement). `code` est optionnel à la mise à jour (laisse le code d'accès actuel inchangé s'il est omis) et obligatoire à la création.
+
+### 3. Gérer les comptes clients
+
+Une nouvelle page `admin/comptes.html` (même token admin que les autres
+pages `admin/`) permet de créer et modifier les comptes directement,
+sans toucher au code ni à GitHub — c'est elle qui remplace l'édition
+manuelle de `comptes.json`.
+
+### 4. Migrer le compte de démonstration
+
+`comptes.json` est supprimé du dépôt (il n'est plus lu nulle part). Pour
+recréer le compte de démonstration (`demo@bunkaio.com` / `BKO-DEMO`) dans
+la nouvelle base, le plus simple est d'utiliser `admin/comptes.html` une
+fois déployé — ou directement en ligne de commande :
+
+```bash
+curl -X POST "https://bunkaio-quiz-stripe.<ton-sous-domaine>.workers.dev/accounts" \
+  -H "Authorization: Bearer <ton ADMIN_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "type": "client",
+    "email": "demo@bunkaio.com",
+    "code": "BKO-DEMO",
+    "nom": "Maison Lumière",
+    "telephone": "06 12 34 56 78",
+    "adresse": "12 rue des Ateliers, 75011 Paris",
+    "etapeActuelle": 3,
+    "lightroomUrl": "https://lightroom.adobe.com/shares/EXEMPLE-A-REMPLACER",
+    "commandes": [
+      { "date": "12/09/2026", "prestation": "Formule Signature — Shooting produit", "montant": "2 400 € HT", "statut": "En production" }
+    ],
+    "paiements": [
+      { "date": "12/09/2026", "reference": "ACPT-2026-0142", "methode": "Carte bancaire", "montant": "720 € HT", "statut": "Payé", "factureUrl": "https://invoice.stripe.com/i/EXEMPLE" }
+    ],
+    "factures": [
+      { "numero": "FAC-2026-0142-A", "date": "12/09/2026", "montant": "720 € HT", "statut": "Payée", "url": "https://invoice.stripe.com/i/EXEMPLE" }
+    ]
+  }'
+```
+
+### Limite honnête à garder en tête
+
+Il n'y a pas de session persistée (pas de cookie, pas de JWT) : le front
+garde le code d'accès en mémoire le temps de l'onglet ouvert, pour
+pouvoir ré-authentifier `/account-update`, mais ne le stocke nulle part
+(ni `localStorage`, ni cookie) — le client doit se reconnecter à chaque
+visite, exactement comme avant. C'est une amélioration de sécurité
+majeure par rapport au fichier public (la base entière n'est plus
+exposée, un compte isolé n'est renvoyé qu'après vérification), mais pas
+encore un système de session complet — raisonnable pour un espace de
+suivi de commande, à revoir si l'espace client gagne des fonctionnalités
+plus sensibles.
+
 ## Voir les logs en production
 
 ```bash

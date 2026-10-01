@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Bunkaio — Comptes clients</title>
+<style>
+  :root {
+    --black: #0a0a0c; --grey: #6b6b70; --line: #e3e1dc; --bg: #faf9f6;
+    --blue: #007aff; --green: #34c759; --red: #ff3b30;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg); color: var(--black);
+  }
+  .header {
+    position: sticky; top: 0; z-index: 10;
+    background: rgba(250, 249, 246, 0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--line);
+    padding: 16px 24px;
+    display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  }
+  .header h1 { font-size: 17px; font-weight: 700; flex-shrink: 0; }
+  .header-token { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 220px; }
+  .header-token label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--grey); white-space: nowrap; }
+  .header-token input {
+    flex: 1; border: 1px solid var(--line); border-radius: 4px;
+    padding: 7px 10px; font-size: 13px; background: #fff; color: var(--black); min-width: 0;
+  }
+  .nav-links { display: flex; gap: 12px; }
+  .nav-links a { font-size: 12px; color: var(--grey); text-decoration: none; }
+  .nav-links a:hover { color: var(--black); }
+
+  .page { max-width: 760px; margin: 0 auto; padding: 32px 24px 80px; }
+  .page-title { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+  .page-sub { font-size: 13px; color: var(--grey); margin-bottom: 36px; line-height: 1.6; }
+
+  .section { margin-bottom: 36px; }
+  .section-title { font-size: 13px; font-weight: 700; margin-bottom: 14px; }
+
+  .picker-row { display: flex; gap: 10px; }
+  select, input, textarea {
+    width: 100%; border: 1px solid var(--line); border-radius: 4px;
+    padding: 11px 12px; font-size: 14px; background: #fff; color: var(--black);
+    font-family: inherit;
+  }
+  textarea { min-height: 90px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12.5px; resize: vertical; }
+  select { cursor: pointer; }
+  .picker-row select { flex: 1; }
+  .picker-row button { width: auto; padding: 11px 20px; white-space: nowrap; }
+
+  .fgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .fgroup { margin-bottom: 18px; }
+  .fgroup label { display: block; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--grey); margin-bottom: 7px; }
+  .fgroup .hint { font-size: 11px; color: var(--grey); margin-top: 6px; line-height: 1.5; }
+
+  button {
+    border: none; border-radius: 4px;
+    background: var(--black); color: #fff; font-size: 14px; font-weight: 600;
+    cursor: pointer; padding: 13px;
+  }
+  button.secondary { background: #fff; color: var(--black); border: 1px solid var(--line); }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  #result { margin-top: 24px; padding: 16px; border-radius: 4px; font-size: 13.5px; display: none; line-height: 1.6; }
+  #result.ok { background: #e8f5e9; border: 1px solid #a5d6a7; display: block; }
+  #result.err { background: #fdecea; border: 1px solid #f5b5ae; display: block; }
+
+  @media (max-width: 600px) {
+    .page { padding: 24px 16px 60px; }
+    .fgrid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Bunkaio — Comptes</h1>
+  <div class="header-token">
+    <label for="token">Token admin</label>
+    <input type="password" id="token" placeholder="Ton mot de passe admin">
+  </div>
+  <div class="nav-links">
+    <a href="index.html">Factures</a>
+    <a href="leads.html">Leads</a>
+    <a href="media.html">Médias</a>
+  </div>
+</div>
+
+<div class="page">
+  <h2 class="page-title">Comptes espace client / partenaire</h2>
+  <p class="page-sub">
+    Crée ou modifie les comptes de l'espace client — remplace l'ancienne édition manuelle de comptes.json sur GitHub.
+    Les commandes/paiements/factures/abonnement se saisissent au format JSON ci-dessous (mêmes champs que ce qu'affiche l'espace client).
+  </p>
+
+  <div class="section">
+    <div class="section-title">Charger un compte existant</div>
+    <div class="picker-row">
+      <select id="accountPicker"><option value="">— Sélectionner un compte —</option></select>
+      <button class="secondary" type="button" onclick="loadAccounts()">Rafraîchir</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Identité du compte</div>
+    <div class="fgrid">
+      <div class="fgroup">
+        <label for="fType">Type</label>
+        <select id="fType"><option value="client">Client</option><option value="partner">Partenaire</option></select>
+      </div>
+      <div class="fgroup">
+        <label for="fEmail">Email (identifiant de connexion)</label>
+        <input type="email" id="fEmail" placeholder="client@exemple.fr">
+      </div>
+    </div>
+    <div class="fgroup">
+      <label for="fCode">Code d'accès</label>
+      <input type="text" id="fCode" placeholder="BKO-0000">
+      <div class="hint">Obligatoire à la création. Laisse vide à la mise à jour pour garder le code actuel — remplis-le uniquement pour le changer.</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Profil</div>
+    <div class="fgroup">
+      <label for="fNom">Nom / Société</label>
+      <input type="text" id="fNom">
+    </div>
+    <div class="fgrid">
+      <div class="fgroup">
+        <label for="fTelephone">Téléphone</label>
+        <input type="tel" id="fTelephone">
+      </div>
+      <div class="fgroup">
+        <label for="fEtape">Étape du projet en cours</label>
+        <select id="fEtape">
+          <option value="">— Aucune —</option>
+          <option value="1">1 — Devis confirmé</option>
+          <option value="2">2 — Shooting planifié</option>
+          <option value="3">3 — Post-production</option>
+          <option value="4">4 — Livré</option>
+        </select>
+      </div>
+    </div>
+    <div class="fgroup">
+      <label for="fAdresse">Adresse de facturation</label>
+      <textarea id="fAdresse" style="min-height:60px;font-family:inherit;font-size:14px"></textarea>
+    </div>
+    <div class="fgroup">
+      <label for="fLightroom">Lien Lightroom personnel</label>
+      <input type="text" id="fLightroom" placeholder="https://lightroom.adobe.com/shares/...">
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Mes commandes (JSON)</div>
+    <div class="fgroup">
+      <textarea id="fCommandes" placeholder='[{"date":"12/09/2026","prestation":"Formule Signature","montant":"2 400 € HT","statut":"En production"}]'></textarea>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Mes paiements (JSON)</div>
+    <div class="fgroup">
+      <textarea id="fPaiements" placeholder='[{"date":"12/09/2026","reference":"ACPT-2026-0142","methode":"Carte bancaire","montant":"720 € HT","statut":"Payé","factureUrl":"https://invoice.stripe.com/i/..."}]'></textarea>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Mes factures (JSON)</div>
+    <div class="fgroup">
+      <textarea id="fFactures" placeholder='[{"numero":"FAC-2026-0142-A","date":"12/09/2026","montant":"720 € HT","statut":"Payée","url":"https://invoice.stripe.com/i/..."}]'></textarea>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Mon abonnement (JSON — laisser vide si aucun)</div>
+    <div class="fgroup">
+      <textarea id="fAbonnement" placeholder='{"categorie":"immobilier","statut":"Actif","dateDebut":"01/06/2026","prochaineFacture":"01/10/2026","utilisation":{"reportages":{"label":"Reportages","utilises":1,"inclus":1},"reels":{"label":"Reels","utilises":1,"inclus":1}}}'></textarea>
+      <div class="hint">categorie doit correspondre à une clé de SUBS dans js/script.js (immobilier, artisan ou mode).</div>
+    </div>
+  </div>
+
+  <button id="saveBtn" onclick="saveAccount()" style="width:100%">Enregistrer ce compte</button>
+  <div id="result"></div>
+</div>
+
+<script>
+const WORKER_BASE = 'https://bunkaio-quiz-stripe.bunkaio.workers.dev';
+
+document.getElementById('token').value = localStorage.getItem('bunkaio_admin_token') || '';
+document.getElementById('token').addEventListener('change', (e) => {
+  localStorage.setItem('bunkaio_admin_token', e.target.value.trim());
+});
+
+function getToken() { return document.getElementById('token').value.trim(); }
+
+function jsonFieldValue(id) {
+  const raw = document.getElementById(id).value.trim();
+  if (!raw) return undefined;
+  return JSON.parse(raw); // laisse volontairement remonter — catché par le caller pour signaler le champ en erreur
+}
+
+async function loadAccounts() {
+  const token = getToken();
+  if (!token) { alert('Entre ton token admin d\'abord.'); return; }
+  localStorage.setItem('bunkaio_admin_token', token);
+  const picker = document.getElementById('accountPicker');
+  picker.innerHTML = '<option value="">Chargement…</option>';
+  try {
+    const res = await fetch(WORKER_BASE + '/accounts', { headers: { 'Authorization': 'Bearer ' + token } });
+    const data = await res.json();
+    if (!res.ok || !data.ok) {
+      picker.innerHTML = '<option value="">— Erreur de chargement —</option>';
+      return;
+    }
+    picker.innerHTML = '<option value="">— Sélectionner un compte —</option>' +
+      data.accounts.map(a => `<option value="${a.type}|${a.email}">${a.type === 'client' ? 'Client' : 'Partenaire'} — ${a.nom || a.email} (${a.email})</option>`).join('');
+  } catch {
+    picker.innerHTML = '<option value="">— Erreur réseau —</option>';
+  }
+}
+
+document.getElementById('accountPicker').addEventListener('change', async (e) => {
+  const value = e.target.value;
+  if (!value) return;
+  const [type, email] = value.split('|');
+  const token = getToken();
+  try {
+    const res = await fetch(WORKER_BASE + '/accounts?type=' + encodeURIComponent(type) + '&email=' + encodeURIComponent(email), {
+      headers: { 'Authorization': 'Bearer ' + token },
+    });
+    const data = await res.json();
+    if (!res.ok || !data.ok) { alert('Compte introuvable.'); return; }
+    const acc = data.account;
+    document.getElementById('fType').value = acc.type;
+    document.getElementById('fEmail').value = acc.email;
+    document.getElementById('fCode').value = '';
+    document.getElementById('fNom').value = acc.nom || '';
+    document.getElementById('fTelephone').value = acc.telephone || '';
+    document.getElementById('fEtape').value = acc.etapeActuelle || '';
+    document.getElementById('fAdresse').value = acc.adresse || '';
+    document.getElementById('fLightroom').value = acc.lightroomUrl || '';
+    document.getElementById('fCommandes').value = acc.commandes ? JSON.stringify(acc.commandes, null, 2) : '';
+    document.getElementById('fPaiements').value = acc.paiements ? JSON.stringify(acc.paiements, null, 2) : '';
+    document.getElementById('fFactures').value = acc.factures ? JSON.stringify(acc.factures, null, 2) : '';
+    document.getElementById('fAbonnement').value = acc.abonnement ? JSON.stringify(acc.abonnement, null, 2) : '';
+  } catch {
+    alert('Erreur réseau lors du chargement du compte.');
+  }
+});
+
+async function saveAccount() {
+  const token = getToken();
+  const result = document.getElementById('result');
+  const btn = document.getElementById('saveBtn');
+  result.className = '';
+
+  if (!token) { result.className = 'err'; result.textContent = 'Entre ton token admin d\'abord.'; return; }
+  const type = document.getElementById('fType').value;
+  const email = document.getElementById('fEmail').value.trim();
+  if (!email || !email.includes('@')) { result.className = 'err'; result.textContent = 'Email invalide.'; return; }
+
+  let commandes, paiements, factures, abonnement;
+  try { commandes = jsonFieldValue('fCommandes'); }
+  catch { result.className = 'err'; result.textContent = 'JSON invalide dans "Mes commandes".'; return; }
+  try { paiements = jsonFieldValue('fPaiements'); }
+  catch { result.className = 'err'; result.textContent = 'JSON invalide dans "Mes paiements".'; return; }
+  try { factures = jsonFieldValue('fFactures'); }
+  catch { result.className = 'err'; result.textContent = 'JSON invalide dans "Mes factures".'; return; }
+  try { abonnement = jsonFieldValue('fAbonnement'); }
+  catch { result.className = 'err'; result.textContent = 'JSON invalide dans "Mon abonnement".'; return; }
+
+  localStorage.setItem('bunkaio_admin_token', token);
+  btn.disabled = true;
+  btn.textContent = 'Enregistrement…';
+
+  const payload = {
+    type, email,
+    nom: document.getElementById('fNom').value.trim() || undefined,
+    telephone: document.getElementById('fTelephone').value.trim() || undefined,
+    adresse: document.getElementById('fAdresse').value.trim() || undefined,
+    etapeActuelle: document.getElementById('fEtape').value ? Number(document.getElementById('fEtape').value) : undefined,
+    lightroomUrl: document.getElementById('fLightroom').value.trim() || undefined,
+    commandes, paiements, factures,
+    abonnement: abonnement ?? null,
+  };
+  const code = document.getElementById('fCode').value.trim();
+  if (code) payload.code = code;
+
+  try {
+    const res = await fetch(WORKER_BASE + '/accounts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json();
+    if (res.ok && data.ok) {
+      result.className = 'ok';
+      result.textContent = 'Compte enregistré (' + data.account.email + ').';
+      document.getElementById('fCode').value = '';
+      loadAccounts();
+    } else if (data.error === 'code_required_for_new_account') {
+      result.className = 'err';
+      result.textContent = 'Ce compte n\'existe pas encore : renseigne un code d\'accès pour le créer.';
+    } else if (data.error === 'unauthorized') {
+      result.className = 'err';
+      result.textContent = 'Token admin incorrect.';
+    } else {
+      result.className = 'err';
+      result.textContent = 'Erreur : ' + (data.error || res.status);
+    }
+  } catch (err) {
+    result.className = 'err';
+    result.textContent = 'Erreur réseau : ' + err.message;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Enregistrer ce compte';
+  }
+}
+
+loadAccounts();
+</script>
+</body>
+</html>

@@ -12,6 +12,7 @@ export interface Env {
   ADMIN_NOTIFICATION_EMAIL: string;
   GOOGLE_REVIEW_URL: string;
   MEDIA_BUCKET: R2Bucket;
+  ACCOUNTS_KV: KVNamespace;
 }
 
 /**
@@ -74,4 +75,118 @@ export interface LeadSummary {
   leadScore: number;
   leadTemperature: 'froid' | 'tiede' | 'chaud';
   derniereSoumission: string;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   ESPACE CLIENT / PARTENAIRE — comptes stockés dans ACCOUNTS_KV
+   ════════════════════════════════════════════════════════════════
+   Remplace l'ancien comptes.json (fichier statique public). Chaque
+   compte est une entrée KV sous la clé `account:<type>:<email>` —
+   voir accounts.ts. Le code d'accès n'est jamais stocké en clair :
+   seul son hash SHA-256 (codeHash) est persisté.
+   ════════════════════════════════════════════════════════════════ */
+
+export type AccountType = 'client' | 'partner';
+
+/** Une ligne de l'historique "Mes commandes". */
+export interface AccountOrder {
+  date?: string;
+  prestation?: string;
+  montant?: string;
+  statut?: string;
+}
+
+/** Une ligne de l'historique "Mes paiements". */
+export interface AccountPayment {
+  date?: string;
+  reference?: string;
+  methode?: string;
+  montant?: string;
+  statut?: string;
+  factureUrl?: string;
+}
+
+/** Une ligne de l'onglet "Mes factures". */
+export interface AccountInvoice {
+  numero?: string;
+  date?: string;
+  montant?: string;
+  statut?: string;
+  url?: string;
+}
+
+/** Suivi d'usage mensuel d'un abonnement Studio Continu (voir SUBS dans js/script.js). */
+export interface AccountSubscriptionUsage {
+  label?: string;
+  utilises: number;
+  inclus: number;
+}
+
+/** Onglet "Mes abonnements" — présent seulement si le client est abonné. */
+export interface AccountSubscription {
+  categorie: string; // clé SUBS correspondante : 'immobilier' | 'artisan' | 'mode'
+  statut: string; // 'Actif' | 'En pause' | 'Résilié'
+  dateDebut?: string;
+  prochaineFacture?: string;
+  utilisation?: Record<string, AccountSubscriptionUsage>;
+}
+
+/** Enregistrement complet d'un compte, tel que stocké dans ACCOUNTS_KV. */
+export interface AccountRecord {
+  type: AccountType;
+  email: string;
+  codeHash: string;
+  nom?: string;
+  telephone?: string;
+  adresse?: string;
+  etapeActuelle?: number;
+  lightroomUrl?: string;
+  commandes?: AccountOrder[];
+  paiements?: AccountPayment[];
+  factures?: AccountInvoice[];
+  abonnement?: AccountSubscription;
+}
+
+/** Version du compte renvoyée au front — jamais le hash du code. */
+export type PublicAccountRecord = Omit<AccountRecord, 'codeHash'>;
+
+/** Payload de /auth-login. */
+export interface AuthLoginPayload {
+  type: AccountType;
+  email: string;
+  code: string;
+}
+
+/** Payload de /account-update — le client ré-authentifie avec son code actuel. */
+export interface AccountSelfUpdatePayload {
+  type: AccountType;
+  email: string;
+  code: string;
+  nom?: string;
+  telephone?: string;
+  adresse?: string;
+}
+
+/** Payload de POST /accounts (admin) — crée ou met à jour un compte. `code` est optionnel
+    à la mise à jour (laisse le hash existant inchangé s'il est omis). */
+export interface AdminAccountUpsertPayload {
+  type: AccountType;
+  email: string;
+  code?: string;
+  nom?: string;
+  telephone?: string;
+  adresse?: string;
+  etapeActuelle?: number;
+  lightroomUrl?: string;
+  commandes?: AccountOrder[];
+  paiements?: AccountPayment[];
+  factures?: AccountInvoice[];
+  abonnement?: AccountSubscription | null;
+}
+
+/** Ligne légère renvoyée par GET /accounts (sans le détail commandes/paiements/etc.). */
+export interface AdminAccountSummary {
+  type: AccountType;
+  email: string;
+  nom?: string;
 }

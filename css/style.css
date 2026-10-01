@@ -854,21 +854,72 @@
     .status-stepper::before { top: 14px; }
   }
 
-  /* ─── AIDE RAPIDE — bande persistante en bas de l'espace client, même
-     traitement "verre dépoli" que .table-wrap/.lr-box ci-dessus ─── */
+  /* ─── NOUVELLE COMMANDE + AIDE RAPIDE — rangée persistante en bas de
+     l'espace client, même traitement "verre dépoli" que .table-wrap/
+     .lr-box ci-dessus. Le 1er bloc (#accUpsellCard) est rempli par JS,
+     son message s'adapte selon que le client est déjà abonné ou non —
+     voir renderAccUpsell() dans js/script.js. ─── */
+  .acc-cta-row { display: flex; gap: 24px; flex-wrap: wrap; margin-top: 44px; }
   .acc-help-card {
     display: flex; align-items: center; justify-content: space-between;
     flex-wrap: wrap; gap: 18px;
+    flex: 1 1 320px;
     border: 1px solid rgba(255,255,255,0.5);
     background: rgba(255,255,255,0.92);
     backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
     box-shadow: 0 20px 60px rgba(0,0,0,0.35);
     border-radius: 8px;
     padding: 26px 30px;
-    margin-top: 44px;
   }
   .acc-help-title { font-size: 14.5px; font-weight: 700; margin-bottom: 4px; }
   .acc-help-sub { font-size: 12.5px; color: var(--grey); }
+
+  /* ─── MES ABONNEMENTS ─── */
+  .acc-subs-empty { text-align: center; padding: 56px 40px; }
+  .acc-subs-empty-title { font-size: 18px; font-weight: 700; margin-bottom: 14px; }
+  .acc-subs-empty-text { font-size: 13.5px; color: var(--grey); line-height: 1.9; max-width: 480px; margin: 0 auto 30px; }
+
+  .acc-sub-head {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    flex-wrap: wrap; gap: 16px;
+    padding-bottom: 26px; margin-bottom: 26px;
+    border-bottom: 1px solid var(--line);
+  }
+  .acc-sub-name { font-size: 20px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 8px; }
+  .acc-sub-meta { font-size: 12.5px; color: var(--grey); line-height: 1.8; }
+  .acc-sub-price { font-size: 22px; font-weight: 700; white-space: nowrap; }
+  .acc-sub-price small { font-size: 12px; font-weight: 600; color: var(--grey); }
+
+  .acc-sub-section-title {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--grey);
+    margin-bottom: 16px;
+  }
+  .acc-sub-items { list-style: none; margin-bottom: 36px; }
+  .acc-sub-items li {
+    font-size: 13.5px; line-height: 1.7; padding-left: 20px; position: relative;
+    margin-bottom: 8px; color: #3a3544;
+  }
+  .acc-sub-items li::before { content: '⊹'; position: absolute; left: 0; color: var(--grey); }
+
+  .acc-sub-usage-row { margin-bottom: 18px; }
+  .acc-sub-usage-row:last-child { margin-bottom: 0; }
+  .acc-sub-usage-label {
+    display: flex; justify-content: space-between;
+    font-size: 12.5px; margin-bottom: 8px;
+  }
+  .acc-sub-usage-track { height: 5px; border-radius: 100px; background: var(--line); overflow: hidden; }
+  .acc-sub-usage-fill { height: 100%; background: var(--black); border-radius: 100px; transition: width 0.6s var(--ease); }
+
+  .acc-sub-manage {
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 16px;
+    margin-top: 36px; padding-top: 30px;
+    border-top: 1px solid var(--line);
+  }
+  .acc-sub-manage-title { font-size: 13.5px; font-weight: 700; margin-bottom: 4px; }
+  .acc-sub-manage-text { font-size: 12px; color: var(--grey); }
+  @media (max-width: 600px) { .acc-subs-empty { padding: 40px 24px; } }
 
   /* ─── MES INFORMATIONS — carte "verre dépoli", même traitement que
      .table-wrap/.lr-box/.acc-help-card ci-dessus ─── */
