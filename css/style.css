@@ -1414,6 +1414,28 @@
     padding: 5px 12px; margin-bottom: 16px;
     line-height: 1.4;
   }
+  /* ─── PROMOTION — distincte de .tier-badge (qui signale un niveau,
+     "Le plus choisi" etc.) : fond violet clair plutôt qu'un contour
+     noir, pour se détacher comme une offre ponctuelle. Alimentée par
+     un champ optionnel `promo` sur chaque palier dans CATS/SUBS — voir
+     le commentaire au-dessus de TIERS dans ce fichier. ─── */
+  .tier-promo {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 9px; font-weight: 700; letter-spacing: 0.18em;
+    text-transform: uppercase;
+    background: var(--violet-deep); color: var(--black);
+    border-radius: 100px;
+    padding: 6px 14px; margin-bottom: 16px; margin-right: 8px;
+    line-height: 1.4;
+  }
+  .tier-badge + .tier-promo, .tier-promo + .tier-badge { margin-left: 0; }
+  .service-tier-promo {
+    display: inline-block; margin-left: 8px;
+    font-size: 8.5px; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: var(--violet-deep); color: var(--black);
+    border-radius: 100px; padding: 3px 9px;
+  }
 
   /* ─── CARTE ABONNEMENT (mise en valeur) ─── */
   .tier-card.sub-card {

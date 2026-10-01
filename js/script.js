@@ -1142,6 +1142,15 @@ const PROFILE_DESCRIPTIONS = {
   }
 };
 
+/* Promotions ponctuelles : ajoutez un champ `promo:{fr:'...',en:'...'}`
+   directement sur le palier concerné, dans l'objet `tiers` de la
+   catégorie visée plus bas dans CATS (ex. CATS[0].tiers.sig.promo =
+   {fr:'-15% ce mois-ci', en:'-15% this month'}) ou sur une formule de
+   SUBS. Affiché automatiquement en badge violet clair — à la fois dans
+   le questionnaire de devis (renderTiers()) et sur la page Services
+   (renderServices()) — sans autre changement de code. Aucune promotion
+   n'est activée par défaut : à ajouter au cas par cas selon les offres
+   réellement en cours. */
 const TIERS = [
   { id:'deco', name:{fr:'Découverte', en:'Starter'},         badge:{fr:'Pour découvrir',     en:'To get started'} },
   { id:'sig',  name:{fr:'Signature',  en:'Signature'},        badge:null },
@@ -1746,7 +1755,7 @@ function renderTiers(){
       d.className = 'tier-card stagger';
       d.style.animationDelay = (0.24 + idx * 0.1) + 's';
       d.innerHTML = `
-        ${lt.badge ? `<div class="tier-badge">${t(lt.badge)}</div>` : ''}
+        ${lt.promo ? `<div class="tier-promo">${t(lt.promo)}</div>` : ''}${lt.badge ? `<div class="tier-badge">${t(lt.badge)}</div>` : ''}
         <div class="tier-head">
           <div class="tier-name">${t(lt.name)}</div>
           <div class="tier-price">${priceStr}<small>HT</small></div>
@@ -1778,7 +1787,7 @@ function renderTiers(){
     d.className = 'tier-card stagger';
     d.style.animationDelay = (0.24 + slot++ * 0.1) + 's';
     d.innerHTML = `
-      <div class="tier-badge">${badge}</div>
+      ${polas.promo ? `<div class="tier-promo">${t(polas.promo)}</div>` : ''}<div class="tier-badge">${badge}</div>
       <div class="tier-head">
         <div class="tier-name">${t(polas.name)}</div>
         <div class="tier-price">${total.toLocaleString('fr-FR')}€<small>HT</small></div>
@@ -1796,7 +1805,7 @@ function renderTiers(){
     d.className = 'tier-card stagger';
     d.style.animationDelay = (0.24 + slot++ * 0.1) + 's';
     d.innerHTML = `
-      ${tier.badge ? `<div class="tier-badge">${t(tier.badge)}</div>` : ''}
+      ${td.promo ? `<div class="tier-promo">${t(td.promo)}</div>` : ''}${tier.badge ? `<div class="tier-badge">${t(tier.badge)}</div>` : ''}
       <div class="tier-head">
         <div class="tier-name">${t(tier.name)}</div>
         <div class="tier-price">${td.price.toLocaleString('fr-FR')}€<small>HT</small></div>
@@ -1815,7 +1824,7 @@ function renderTiers(){
     const engagement = LANG === 'fr' ? 'Engagement minimum : 6 mois' : 'Minimum commitment: 6 months';
     const saving = LANG === 'fr' ? 'Bien plus avantageux qu\'un achat ponctuel' : 'Far better value than individual bookings';
     d.innerHTML = `
-      <div class="tier-badge">${badge}</div>
+      ${sub.promo ? `<div class="tier-promo">${t(sub.promo)}</div>` : ''}<div class="tier-badge">${badge}</div>
       <div class="tier-head">
         <div class="tier-name">${t(sub.name)}</div>
         <div class="tier-price">${sub.price.toLocaleString('fr-FR')}€<small>HT/${LANG === 'fr' ? 'mois' : 'mo'}</small></div>
@@ -2387,7 +2396,7 @@ function renderServices(){
     card.className = 'service-card rv';
     const subRow = SUBS[c.id] ? `
       <div class="service-sub-row">
-        <span class="service-sub-label">${I18N[LANG]['svc-sub-label']}</span>
+        <span class="service-sub-label">${I18N[LANG]['svc-sub-label']}${SUBS[c.id].promo ? `<span class="service-tier-promo">${t(SUBS[c.id].promo)}</span>` : ''}</span>
         <span class="service-sub-price">${SUBS[c.id].price.toLocaleString('fr-FR')}€<small> HT/${LANG === 'fr' ? 'mois' : 'mo'}</small></span>
       </div>` : '';
     card.innerHTML = `
@@ -2401,12 +2410,12 @@ function renderServices(){
         ${c.lumen
           ? LUMEN_TIERS.map(lt => `
               <div class="service-tier">
-                <span class="service-tier-name">${t(lt.name)}</span>
+                <span class="service-tier-name">${t(lt.name)}${lt.promo ? `<span class="service-tier-promo">${t(lt.promo)}</span>` : ''}</span>
                 <span class="service-tier-price">${lt.id === 'surm' ? (LANG === 'fr' ? 'Devis' : 'Quote') : lt.price.toLocaleString('fr-FR') + '€'}<small>${lt.id === 'surm' ? '' : ' HT'}</small></span>
               </div>`).join('')
           : TIERS.map(tier => `
               <div class="service-tier">
-                <span class="service-tier-name">${t(tier.name)}</span>
+                <span class="service-tier-name">${t(tier.name)}${c.tiers[tier.id].promo ? `<span class="service-tier-promo">${t(c.tiers[tier.id].promo)}</span>` : ''}</span>
                 <span class="service-tier-price">${c.tiers[tier.id].price.toLocaleString('fr-FR')}€<small>HT</small></span>
               </div>`).join('')}
       </div>
