@@ -1,4 +1,5 @@
 import type Stripe from 'stripe';
+import { getAccount, listAccounts, putAccount, sanitizeAccount, upsertAccountFromAdmin, verifyLogin } from './accounts';
 import {
   buildAdminPaymentNotificationEmail,
   buildBalanceInvoiceEmail,
@@ -21,7 +22,15 @@ import {
   upsertQuizCustomer,
   verifyWebhookEvent,
 } from './stripe';
-import type { DepositInvoiceInput, Env, QuizLeadPayload } from './types';
+import type {
+  AccountSelfUpdatePayload,
+  AccountType,
+  AdminAccountUpsertPayload,
+  AuthLoginPayload,
+  DepositInvoiceInput,
+  Env,
+  QuizLeadPayload,
+} from './types';
 
 const QUIZ_LEAD_ROUTE = '/quiz-lead';
 const DEPOSIT_INVOICE_ROUTE = '/create-deposit-invoice';
@@ -32,6 +41,9 @@ const LEADS_ROUTE = '/leads';
 const UPLOAD_IMAGE_ROUTE = '/upload-image';
 const LIST_MEDIA_ROUTE = '/list-media';
 const MEDIA_ROUTE_PREFIX = '/media/';
+const AUTH_LOGIN_ROUTE = '/auth-login';
+const ACCOUNT_UPDATE_ROUTE = '/account-update';
+const ACCOUNTS_ROUTE = '/accounts';
 
 /**
  * Détermine l'en-tête Access-Control-Allow-Origin à renvoyer : on échoue
@@ -89,6 +101,175 @@ function isValidQuizLeadPayload(body: unknown): body is QuizLeadPayload {
     (b.optionsChoisies === undefined || typeof b.optionsChoisies === 'string') &&
     (b.interetCommunication === undefined || typeof b.interetCommunication === 'boolean')
   );
+}
+
+function isValidAccountType(value: unknown): value is AccountType {
+  return value === 'client' || value === 'partner';
+}
+
+function isValidAuthLoginPayload(body: unknown): body is AuthLoginPayload {
+  if (typeof body !== 'object' || body === null) return false;
+  const b = body as Record<string, unknown>;
+  return (
+    isValidAccountType(b.type) &&
+    typeof b.email === 'string' && b.email.includes('@') &&
+    typeof b.code === 'string' && b.code.trim().length > 0
+  );
+}
+
+function isValidAccountSelfUpdatePayload(body: unknown): body is AccountSelfUpdatePayload {
+  if (typeof body !== 'object' || body === null) return false;
+  const b = body as Record<string, unknown>;
+  return (
+    isValidAccountType(b.type) &&
+    typeof b.email === 'string' && b.email.includes('@') &&
+    typeof b.code === 'string' && b.code.trim().length > 0 &&
+    (b.nom === undefined || typeof b.nom === 'string') &&
+    (b.telephone === undefined || typeof b.telephone === 'string') &&
+    (b.adresse === undefined || typeof b.adresse === 'string')
+  );
+}
+
+function isValidAdminAccountUpsertPayload(body: unknown): body is AdminAccountUpsertPayload {
+  if (typeof body !== 'object' || body === null) return false;
+  const b = body as Record<string, unknown>;
+  return (
+    isValidAccountType(b.type) &&
+    typeof b.email === 'string' && b.email.includes('@') &&
+    (b.code === undefined || typeof b.code === 'string') &&
+    (b.nom === undefined || typeof b.nom === 'string') &&
+    (b.telephone === undefined || typeof b.telephone === 'string') &&
+    (b.adresse === undefined || typeof b.adresse === 'string') &&
+    (b.etapeActuelle === undefined || typeof b.etapeActuelle === 'number') &&
+    (b.lightroomUrl === undefined || typeof b.lightroomUrl === 'string') &&
+    (b.commandes === undefined || Array.isArray(b.commandes)) &&
+    (b.paiements === undefined || Array.isArray(b.paiements)) &&
+    (b.factures === undefined || Array.isArray(b.factures)) &&
+    (b.abonnement === undefined || b.abonnement === null || typeof b.abonnement === 'object')
+  );
+}
+
+/**
+ * Connexion espace client/partenaire. Remplace l'ancien comptes.json servi
+ * publiquement : la base de comptes (ACCOUNTS_KV) n'est accessible que via
+ * ce Worker, jamais directement. Erreur volontairement générique (pas de
+ * distinction email inconnu / code incorrect) pour ne pas permettre
+ * l'énumération des emails enregistrés.
+ */
+async function handleAuthLogin(request: Request, env: Env, headers: Record<string, string>): Promise<Response> {
+  if (request.method !== 'POST') {
+    return jsonResponse({ ok: false, error: 'method_not_allowed' }, 405, headers);
+  }
+
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return jsonResponse({ ok: false, error: 'invalid_json' }, 400, headers);
+  }
+  if (!isValidAuthLoginPayload(body)) {
+    return jsonResponse({ ok: false, error: 'invalid_payload' }, 400, headers);
+  }
+
+  const account = await verifyLogin(env, body.type, body.email, body.code);
+  if (!account) {
+    return jsonResponse({ ok: false, error: 'invalid_credentials' }, 401, headers);
+  }
+  return jsonResponse({ ok: true, account: sanitizeAccount(account) }, 200, headers);
+}
+
+/**
+ * Mise à jour "Mes informations" par le client lui-même — ré-authentifie
+ * avec son code d'accès actuel à chaque appel (pas de session persistée),
+ * puis écrase uniquement nom/téléphone/adresse. Email et type de compte ne
+ * sont volontairement pas modifiables ici : ce sont les clés d'identité du
+ * compte (changer l'email reviendrait à en créer un autre).
+ */
+async function handleAccountUpdate(request: Request, env: Env, headers: Record<string, string>): Promise<Response> {
+  if (request.method !== 'POST') {
+    return jsonResponse({ ok: false, error: 'method_not_allowed' }, 405, headers);
+  }
+
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return jsonResponse({ ok: false, error: 'invalid_json' }, 400, headers);
+  }
+  if (!isValidAccountSelfUpdatePayload(body)) {
+    return jsonResponse({ ok: false, error: 'invalid_payload' }, 400, headers);
+  }
+
+  const account = await verifyLogin(env, body.type, body.email, body.code);
+  if (!account) {
+    return jsonResponse({ ok: false, error: 'invalid_credentials' }, 401, headers);
+  }
+
+  const updated = {
+    ...account,
+    nom: body.nom ?? account.nom,
+    telephone: body.telephone ?? account.telephone,
+    adresse: body.adresse ?? account.adresse,
+  };
+  await putAccount(env, updated);
+  console.log('[account-update] informations mises à jour', { type: body.type, email: body.email });
+  return jsonResponse({ ok: true, account: sanitizeAccount(updated) }, 200, headers);
+}
+
+/**
+ * Gestion des comptes côté admin (protégée par ADMIN_TOKEN, même garde que
+ * les autres routes admin). GET liste tous les comptes (résumé léger), ou
+ * un seul compte en détail avec ?type=&email=. POST crée ou met à jour un
+ * compte — voir upsertAccountFromAdmin().
+ */
+async function handleAdminAccounts(request: Request, env: Env, headers: Record<string, string>): Promise<Response> {
+  const authHeader = request.headers.get('Authorization') ?? '';
+  if (authHeader !== `Bearer ${env.ADMIN_TOKEN}`) {
+    return jsonResponse({ ok: false, error: 'unauthorized' }, 401, headers);
+  }
+
+  if (request.method === 'GET') {
+    const url = new URL(request.url);
+    const type = url.searchParams.get('type');
+    const email = url.searchParams.get('email');
+    if (type && email) {
+      if (!isValidAccountType(type)) {
+        return jsonResponse({ ok: false, error: 'invalid_type' }, 400, headers);
+      }
+      const account = await getAccount(env, type, email);
+      if (!account) {
+        return jsonResponse({ ok: false, error: 'not_found' }, 404, headers);
+      }
+      return jsonResponse({ ok: true, account: sanitizeAccount(account) }, 200, headers);
+    }
+    const accounts = await listAccounts(env);
+    return jsonResponse({ ok: true, accounts }, 200, headers);
+  }
+
+  if (request.method === 'POST') {
+    let body: unknown;
+    try {
+      body = await request.json();
+    } catch {
+      return jsonResponse({ ok: false, error: 'invalid_json' }, 400, headers);
+    }
+    if (!isValidAdminAccountUpsertPayload(body)) {
+      return jsonResponse({ ok: false, error: 'invalid_payload' }, 400, headers);
+    }
+    try {
+      const account = await upsertAccountFromAdmin(env, body);
+      console.log('[accounts] compte créé/mis à jour par l\'admin', { type: account.type, email: account.email });
+      return jsonResponse({ ok: true, account: sanitizeAccount(account) }, 200, headers);
+    } catch (err) {
+      if (err instanceof Error && err.message === 'code_required_for_new_account') {
+        return jsonResponse({ ok: false, error: 'code_required_for_new_account' }, 400, headers);
+      }
+      console.error('[accounts] échec création/mise à jour', err);
+      return jsonResponse({ ok: false, error: 'kv_error' }, 502, headers);
+    }
+  }
+
+  return jsonResponse({ ok: false, error: 'method_not_allowed' }, 405, headers);
 }
 
 async function handleQuizLead(request: Request, env: Env, headers: Record<string, string>): Promise<Response> {
@@ -583,6 +764,15 @@ export default {
     }
     if (url.pathname === LIST_MEDIA_ROUTE) {
       return handleListMedia(request, env, headers);
+    }
+    if (url.pathname === AUTH_LOGIN_ROUTE) {
+      return handleAuthLogin(request, env, headers);
+    }
+    if (url.pathname === ACCOUNT_UPDATE_ROUTE) {
+      return handleAccountUpdate(request, env, headers);
+    }
+    if (url.pathname === ACCOUNTS_ROUTE) {
+      return handleAdminAccounts(request, env, headers);
     }
     if (url.pathname.startsWith(MEDIA_ROUTE_PREFIX)) {
       const mediaPath = url.pathname.slice(MEDIA_ROUTE_PREFIX.length);

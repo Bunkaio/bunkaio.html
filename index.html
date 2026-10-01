@@ -22,7 +22,7 @@
 <meta name="twitter:image" content="https://bunkaio.com/images/logo.webp">
 
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='80' font-family='serif'>⊹</text></svg>">
-<link rel="stylesheet" href="css/style.css?v=202610017">
+<link rel="stylesheet" href="css/style.css?v=202610018">
 
 <script type="application/ld+json">
 {
@@ -1160,6 +1160,7 @@
 
     <div class="account-tabs">
       <button class="pf-cat-tab active" id="atab-orders" onclick="setAccountTab('orders')" data-lang="acc-orders">Mes commandes</button>
+      <button class="pf-cat-tab" id="atab-subs" onclick="setAccountTab('subs')" data-lang="acc-subs">Mes abonnements</button>
       <button class="pf-cat-tab" id="atab-payments" onclick="setAccountTab('payments')" data-lang="acc-payments">Mes paiements</button>
       <button class="pf-cat-tab" id="atab-factures" onclick="setAccountTab('factures')" data-lang="acc-factures">Mes factures</button>
       <button class="pf-cat-tab" id="atab-portfolio" onclick="setAccountTab('portfolio')" data-lang="acc-portfolio">Mon portfolio</button>
@@ -1180,6 +1181,10 @@
           <tbody id="ordersBody"></tbody>
         </table>
       </div>
+    </div>
+
+    <div class="account-section" id="asec-subs">
+      <div id="accSubsContent"></div>
     </div>
 
     <div class="account-section" id="asec-payments">
@@ -1252,14 +1257,10 @@
 
         <!-- Vue édition -->
         <div id="accInfoEdit" style="display:none">
-          <p class="acc-info-note" data-lang="acc-info-note">Ces informations sont transmises à notre équipe et prises en compte sous 24h.</p>
+          <p class="acc-info-note" data-lang="acc-info-note">Pour changer votre email de connexion, contactez-nous directement.</p>
           <div class="fgroup">
             <label data-lang="name-label">Nom / Société *</label>
             <input type="text" id="accEditName">
-          </div>
-          <div class="fgroup">
-            <label data-lang="email-label">Email *</label>
-            <input type="email" id="accEditEmail">
           </div>
           <div class="fgroup">
             <label data-lang="phone-label-opt">Téléphone — optionnel</label>
@@ -1278,19 +1279,24 @@
 
         <!-- Succès -->
         <div class="success-box" id="accInfoSuccess" style="display:none">
-          <h3 data-lang="acc-info-success-title">Modifications transmises</h3>
-          <p data-lang="acc-info-success-text">Votre demande de mise à jour a bien été reçue. Elle sera prise en compte sous 24 heures.</p>
+          <h3 data-lang="acc-info-success-title">Modifications enregistrées</h3>
+          <p data-lang="acc-info-success-text">Vos informations ont bien été mises à jour.</p>
         </div>
       </div>
     </div>
 
-    <!-- Aide rapide — toujours visible, quel que soit l'onglet actif -->
-    <div class="acc-help-card">
-      <div class="acc-help-text">
-        <div class="acc-help-title" data-lang="acc-help-title">Une question sur votre projet&nbsp;?</div>
-        <div class="acc-help-sub" data-lang="acc-help-sub">Votre interlocuteur BUNKAIO vous répond directement.</div>
+    <!-- Nouvelle commande (contenu adapté selon abonnement en cours, voir
+         renderAccUpsell()) + aide rapide — toujours visibles, quel que
+         soit l'onglet actif -->
+    <div class="acc-cta-row">
+      <div class="acc-help-card" id="accUpsellCard"></div>
+      <div class="acc-help-card">
+        <div class="acc-help-text">
+          <div class="acc-help-title" data-lang="acc-help-title">Une question sur votre projet&nbsp;?</div>
+          <div class="acc-help-sub" data-lang="acc-help-sub">Votre interlocuteur BUNKAIO vous répond directement.</div>
+        </div>
+        <a class="btn btn-ghost" href="mailto:contact@bunkaio.com"><span data-lang="acc-help-btn">Nous écrire</span></a>
       </div>
-      <a class="btn btn-ghost" href="mailto:contact@bunkaio.com"><span data-lang="acc-help-btn">Nous écrire</span></a>
     </div>
   </div>
 </div>
@@ -1340,7 +1346,7 @@
   </div>
 </footer>
 
-<script src="config/media.js?v=202610017"></script>
-<script src="js/script.js?v=202610017"></script>
+<script src="config/media.js?v=202610018"></script>
+<script src="js/script.js?v=202610018"></script>
 </body>
 </html>

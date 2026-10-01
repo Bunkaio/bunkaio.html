@@ -220,7 +220,21 @@ const I18N = {
     'register-success-text':'Votre demande de création de compte a bien été transmise. Vous recevrez votre code d\'accès personnel par email sous 24 heures.',
     'logout':'Déconnexion',
     'acc-client-badge':'Espace client','acc-partner-badge':'Espace partenaire',
-    'acc-orders':'Mes commandes','acc-payments':'Mes paiements','acc-factures':'Mes factures','acc-portfolio':'Mon portfolio','acc-infos':'Mes informations',
+    'acc-orders':'Mes commandes','acc-subs':'Mes abonnements','acc-payments':'Mes paiements','acc-factures':'Mes factures','acc-portfolio':'Mon portfolio','acc-infos':'Mes informations',
+    'acc-subs-empty-title':'Aucun abonnement actif',
+    'acc-subs-empty-text':'Découvrez Studio Continu : nos formules d\'abonnement mensuel pour un suivi photo et vidéo continu, avec un tarif préférentiel sur toutes les options.',
+    'acc-subs-discover-btn':'Découvrir Studio Continu',
+    'acc-subs-since':'Abonné depuis le','acc-subs-next':'Prochaine facture le','acc-subs-month':'/mois',
+    'acc-subs-included':'Inclus ce mois-ci','acc-subs-usage':'Utilisation du mois en cours',
+    'acc-subs-manage-title':'Besoin d\'ajuster votre abonnement ?',
+    'acc-subs-manage-text':'Mettre en pause, résilier ou changer de formule — écrivez-nous directement.',
+    'acc-subs-manage-btn':'Nous écrire',
+    'acc-subs-upsell-title':'Un projet ponctuel en plus de votre abonnement ?',
+    'acc-subs-upsell-text':'Vos options supplémentaires sont au tarif partenaire (-20%).',
+    'acc-subs-upsell-btn':'Estimer un projet',
+    'acc-upsell-title':'Un nouveau projet en tête ?',
+    'acc-upsell-text':'Estimez votre prochain projet en quelques minutes.',
+    'acc-upsell-btn':'Estimer mon projet',
     'th-date':'Date','th-service':'Prestation','th-amount':'Montant','th-status':'Statut','th-ref':'Référence','th-method':'Méthode','th-invoice':'Facture','th-invoice-num':'Numéro',
     'empty-orders':'Aucune commande pour le moment. Vos prestations apparaîtront ici dès leur validation.',
     'empty-payments':'Aucun paiement enregistré pour le moment.',
@@ -236,9 +250,9 @@ const I18N = {
     'acc-info-edit-btn':'Modifier mes informations',
     'acc-info-save-btn':'Enregistrer les modifications',
     'acc-info-cancel-btn':'Annuler',
-    'acc-info-note':'Ces informations sont transmises à notre équipe et prises en compte sous 24h.',
-    'acc-info-success-title':'Modifications transmises',
-    'acc-info-success-text':'Votre demande de mise à jour a bien été reçue. Elle sera prise en compte sous 24 heures.',
+    'acc-info-note':'Pour changer votre email de connexion, contactez-nous directement.',
+    'acc-info-success-title':'Modifications enregistrées',
+    'acc-info-success-text':'Vos informations ont bien été mises à jour.',
     'comm-kicker':'Pour aller plus loin',
     'comm-title':'Besoin d\'accompagnement en communication digitale\u00a0?',
     'comm-text':'Notre partenaire Agency Nascimento accompagne les clients BUNKAIO au-delà de l\'image : création de site web, référencement (SEO), publicité en ligne (SEA, Ads), stratégie réseaux sociaux et analyse de données.',
@@ -450,7 +464,21 @@ const I18N = {
     'register-success-text':'Your account request has been sent successfully. You will receive your personal access code by email within 24 hours.',
     'logout':'Sign out',
     'acc-client-badge':'Client area','acc-partner-badge':'Partner area',
-    'acc-orders':'My orders','acc-payments':'My payments','acc-factures':'My invoices','acc-portfolio':'My portfolio','acc-infos':'My information',
+    'acc-orders':'My orders','acc-subs':'My subscriptions','acc-payments':'My payments','acc-factures':'My invoices','acc-portfolio':'My portfolio','acc-infos':'My information',
+    'acc-subs-empty-title':'No active subscription',
+    'acc-subs-empty-text':'Discover Studio Continu: our monthly subscription packages for ongoing photo and video coverage, with a preferential rate on every add-on.',
+    'acc-subs-discover-btn':'Discover Studio Continu',
+    'acc-subs-since':'Subscribed since','acc-subs-next':'Next invoice on','acc-subs-month':'/month',
+    'acc-subs-included':'Included this month','acc-subs-usage':'Current month usage',
+    'acc-subs-manage-title':'Need to adjust your subscription ?',
+    'acc-subs-manage-text':'Pause, cancel or change plan — write to us directly.',
+    'acc-subs-manage-btn':'Write to us',
+    'acc-subs-upsell-title':'A one-off project alongside your subscription ?',
+    'acc-subs-upsell-text':'Your add-ons are billed at partner rate (-20%).',
+    'acc-subs-upsell-btn':'Estimate a project',
+    'acc-upsell-title':'A new project in mind ?',
+    'acc-upsell-text':'Estimate your next project in a few minutes.',
+    'acc-upsell-btn':'Estimate my project',
     'th-date':'Date','th-service':'Service','th-amount':'Amount','th-status':'Status','th-ref':'Reference','th-method':'Method','th-invoice':'Invoice','th-invoice-num':'Number',
     'empty-orders':'No orders yet. Your services will appear here as soon as they are confirmed.',
     'empty-payments':'No payments recorded yet.',
@@ -466,9 +494,9 @@ const I18N = {
     'acc-info-edit-btn':'Edit my information',
     'acc-info-save-btn':'Save changes',
     'acc-info-cancel-btn':'Cancel',
-    'acc-info-note':'This information is sent to our team and taken into account within 24h.',
-    'acc-info-success-title':'Changes submitted',
-    'acc-info-success-text':'Your update request has been received. It will be taken into account within 24 hours.',
+    'acc-info-note':'To change your login email, please contact us directly.',
+    'acc-info-success-title':'Changes saved',
+    'acc-info-success-text':'Your information has been updated.',
     'comm-kicker':'Going further',
     'comm-title':'Need support with your digital communication\u00a0?',
     'comm-text':'Our partner Agency Nascimento supports BUNKAIO clients beyond imagery: website creation, search engine optimisation (SEO), online advertising (SEA, Ads), social media strategy and data analysis.',
@@ -2616,16 +2644,16 @@ function sendApply(e){
 }
 
 /* ═══════════════ ESPACE CLIENT / PARTENAIRE ═══════════════ */
-/* ⚠️ comptes.json est un fichier statique servi publiquement (le dépôt
-   GitHub est public) : n'importe qui peut l'ouvrir directement sur
-   bunkaio.com/comptes.json, sans connexion. Tant que l'authentification
-   ne passe pas par un backend sécurisé (Worker + stockage protégé),
-   ce fichier doit rester un compte de DÉMONSTRATION uniquement — ne pas
-   y ajouter de vrais clients (noms, emails, montants, lien Lightroom
-   réel) avant d'avoir sécurisé l'accès. */
-const ACCOUNTS_URL = 'comptes.json';
+/* La base de comptes vit côté serveur (Cloudflare KV, voir server/src/
+   accounts.ts) — le front ne lit plus jamais de fichier public, il
+   n'appelle que /auth-login et /account-update sur le Worker, qui
+   vérifient l'identité avant de renvoyer quoi que ce soit. USER_CODE
+   garde le code d'accès en mémoire (jamais localStorage) le temps de
+   l'onglet ouvert, pour ré-authentifier /account-update. */
+const ACCOUNTS_API_BASE = 'https://bunkaio-quiz-stripe.bunkaio.workers.dev';
 let loginType = 'client';
 let USER = null;
+let USER_CODE = null;
 
 function openLogin(type){
   setLoginType(type);
@@ -2657,20 +2685,23 @@ function doLogin(){
   const err   = document.getElementById('loginError');
   err.style.display = 'none';
   if (!email || !code) { err.style.display = 'block'; return; }
-  fetch(ACCOUNTS_URL + '?v=' + Date.now())
+  const btn = document.querySelector('#loginForm .btn-solid');
+  if (btn) btn.disabled = true;
+  fetch(ACCOUNTS_API_BASE + '/auth-login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ type: loginType, email, code })
+  })
     .then(r => r.json())
     .then(data => {
-      const acc = (data.comptes || []).find(a =>
-        a.type === loginType &&
-        (a.email || '').toLowerCase() === email &&
-        (a.code || '').toUpperCase() === code
-      );
-      if (!acc) { err.style.display = 'block'; return; }
-      USER = acc;
+      if (btn) btn.disabled = false;
+      if (!data.ok || !data.account) { err.style.display = 'block'; return; }
+      USER = data.account;
+      USER_CODE = code;
       renderAccount();
       goView('account');
     })
-    .catch(() => { err.style.display = 'block'; });
+    .catch(() => { if (btn) btn.disabled = false; err.style.display = 'block'; });
 }
 
 function doRegister(){
@@ -2695,7 +2726,7 @@ function doRegister(){
       email: em,
       telephone: ph || 'Non renseigné',
       activite: act,
-      action_requise: 'Créer entrée dans comptes.json sur GitHub puis envoyer code accès par email'
+      action_requise: 'Créer ce compte depuis admin/comptes.html puis envoyer le code d\'accès par email'
     })
   }).then(r => r.json()).then(data => {
     if (data.ok || data.next) {
@@ -2714,13 +2745,14 @@ function doRegister(){
 
 function doLogout(){
   USER = null;
+  USER_CODE = null;
   document.getElementById('logEmail').value = '';
   document.getElementById('logCode').value = '';
   goView('home');
 }
 
 function setAccountTab(tab){
-  ['orders','payments','factures','portfolio','infos'].forEach(x => {
+  ['orders','subs','payments','factures','portfolio','infos'].forEach(x => {
     document.getElementById('atab-' + x).classList.toggle('active', x === tab);
     document.getElementById('asec-' + x).classList.toggle('active', x === tab);
   });
@@ -2751,12 +2783,97 @@ function renderAccountStepper(){
   }).join('');
 }
 
+/* ═══════════════ ESPACE CLIENT — MES ABONNEMENTS ═══════════════
+   Studio Continu (voir SUBS plus haut) : seules les catégories
+   immobilier/artisan/mode proposent l'option abonnement dans le
+   questionnaire de devis. USER.abonnement (depuis la base de comptes)
+   référence juste l'une de ces clés + statut/usage — le contenu du
+   plan (nom, prix, inclus) est toujours lu depuis SUBS, jamais dupliqué
+   dans le compte, pour rester automatiquement à jour si l'offre change. */
+function renderAccSubs(){
+  const el = document.getElementById('accSubsContent');
+  if (!el || !USER) return;
+  const sub = USER.abonnement;
+  const plan = sub && SUBS[sub.categorie];
+
+  if (!sub || !plan) {
+    el.innerHTML = `
+      <div class="acc-info-card acc-subs-empty">
+        <div class="acc-subs-empty-title">${I18N[LANG]['acc-subs-empty-title']}</div>
+        <p class="acc-subs-empty-text">${I18N[LANG]['acc-subs-empty-text']}</p>
+        <div class="btn-row" style="justify-content:center">
+          <button class="btn btn-solid" onclick="goView('quiz')"><span>${I18N[LANG]['acc-subs-discover-btn']}</span></button>
+        </div>
+      </div>`;
+    return;
+  }
+
+  const items = (plan.items[LANG] || []).map(i => `<li>${i}</li>`).join('');
+  const usage = Object.values(sub.utilisation || {}).map(u => {
+    const pct = u.inclus > 0 ? Math.min(100, Math.round((u.utilises / u.inclus) * 100)) : 0;
+    return `
+      <div class="acc-sub-usage-row">
+        <div class="acc-sub-usage-label"><span>${u.label || ''}</span><span>${u.utilises} / ${u.inclus}</span></div>
+        <div class="acc-sub-usage-track"><div class="acc-sub-usage-fill" style="width:${pct}%"></div></div>
+      </div>`;
+  }).join('');
+
+  el.innerHTML = `
+    <div class="acc-info-card">
+      <div class="acc-sub-head">
+        <div>
+          <div class="acc-sub-name">${t(plan.name)}</div>
+          <div class="acc-sub-meta">
+            ${sub.dateDebut ? `${I18N[LANG]['acc-subs-since']} ${sub.dateDebut}<br>` : ''}
+            ${sub.prochaineFacture ? `${I18N[LANG]['acc-subs-next']} ${sub.prochaineFacture}` : ''}
+          </div>
+        </div>
+        <div style="text-align:right">
+          <span class="status-pill ${statusClass(sub.statut)}" style="margin-bottom:10px;display:inline-block">${sub.statut || '—'}</span>
+          <div class="acc-sub-price">${plan.price}€<small>${I18N[LANG]['acc-subs-month']}</small></div>
+        </div>
+      </div>
+      <div class="acc-sub-section-title">${I18N[LANG]['acc-subs-included']}</div>
+      <ul class="acc-sub-items">${items}</ul>
+      ${usage ? `<div class="acc-sub-section-title">${I18N[LANG]['acc-subs-usage']}</div>${usage}` : ''}
+      <div class="acc-sub-manage">
+        <div>
+          <div class="acc-sub-manage-title">${I18N[LANG]['acc-subs-manage-title']}</div>
+          <div class="acc-sub-manage-text">${I18N[LANG]['acc-subs-manage-text']}</div>
+        </div>
+        <a class="btn btn-ghost" href="mailto:contact@bunkaio.com"><span>${I18N[LANG]['acc-subs-manage-btn']}</span></a>
+      </div>
+    </div>`;
+}
+
+/* CTA "nouvelle commande", toujours visible en bas de l'espace client —
+   message adapté selon que le client a déjà un abonnement actif ou non
+   (incite à un projet ponctuel complémentaire, au tarif partenaire, s'il
+   est déjà abonné ; incite à découvrir Studio Continu ou à démarrer un
+   premier projet sinon). */
+function renderAccUpsell(){
+  const el = document.getElementById('accUpsellCard');
+  if (!el || !USER) return;
+  const hasSub = USER.abonnement && SUBS[USER.abonnement.categorie];
+  const titleKey = hasSub ? 'acc-subs-upsell-title' : 'acc-upsell-title';
+  const textKey  = hasSub ? 'acc-subs-upsell-text'  : 'acc-upsell-text';
+  const btnKey   = hasSub ? 'acc-subs-upsell-btn'    : 'acc-upsell-btn';
+  el.innerHTML = `
+    <div class="acc-help-text">
+      <div class="acc-help-title">${I18N[LANG][titleKey]}</div>
+      <div class="acc-help-sub">${I18N[LANG][textKey]}</div>
+    </div>
+    <button class="btn btn-solid" onclick="goView('quiz')"><span>${I18N[LANG][btnKey]}</span></button>`;
+}
+
 function renderAccount(){
   if (!USER) return;
   document.getElementById('accBadge').textContent =
     I18N[LANG][USER.type === 'client' ? 'acc-client-badge' : 'acc-partner-badge'];
   document.getElementById('accName').textContent = USER.nom || USER.email;
   renderAccountStepper();
+  renderAccSubs();
+  renderAccUpsell();
   const ob = document.getElementById('ordersBody');
   const orders = USER.commandes || [];
   ob.innerHTML = orders.length
@@ -2799,52 +2916,45 @@ function toggleAccInfoEdit(edit){
   document.getElementById('accInfoError').style.display = 'none';
   if (edit && USER) {
     document.getElementById('accEditName').value = USER.nom || '';
-    document.getElementById('accEditEmail').value = USER.email || '';
     document.getElementById('accEditPhone').value = USER.telephone || '';
     document.getElementById('accEditAddress').value = USER.adresse || '';
   }
 }
 
-/* Pas de backend d'écriture pour comptes.json (fichier statique, voir
-   note de sécurité plus haut) : la "modification" est transmise par
-   email à l'équipe Bunkaio pour prise en compte manuelle, comme pour
-   la création de compte (doRegister()). On reflète quand même la
-   saisie côté client dans cette session (USER en mémoire) pour une
-   confirmation visuelle immédiate — un rechargement de page revient
-   aux données de comptes.json tant que la demande n'a pas été traitée. */
+/* Écrit directement dans la base de comptes via /account-update (voir
+   server/src/index.ts → handleAccountUpdate) : la mise à jour est
+   immédiate et définitive, plus une simple demande par email. Le code
+   d'accès (USER_CODE, en mémoire depuis la connexion) ré-authentifie
+   l'appel — l'email de connexion n'est volontairement pas modifiable
+   ici (c'est la clé d'identité du compte). */
 function saveAccInfo(){
   const n  = document.getElementById('accEditName').value.trim();
-  const em = document.getElementById('accEditEmail').value.trim();
   const ph = document.getElementById('accEditPhone').value.trim();
   const ad = document.getElementById('accEditAddress').value.trim();
   const err = document.getElementById('accInfoError');
-  if (!n || !em || !em.includes('@')) { err.style.display = 'block'; return; }
+  if (!n) { err.style.display = 'block'; return; }
   err.style.display = 'none';
   const btn = document.querySelector('#accInfoEdit .btn-solid');
   if (btn) btn.disabled = true;
-  fetch(FORMSPREE_URL, {
+  fetch(ACCOUNTS_API_BASE + '/account-update', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-    body: JSON.stringify({
-      _subject: 'MISE À JOUR INFOS CLIENT — ' + n,
-      _replyto: em,
-      email_compte: USER.email,
-      nom_precedent: USER.nom || '',
-      nom_nouveau: n,
-      email_nouveau: em,
-      telephone_nouveau: ph || 'Non renseigné',
-      adresse_nouvelle: ad || 'Non renseignée',
-      action_requise: 'Mettre à jour cette entrée dans comptes.json sur GitHub'
-    })
-  }).then(() => {
-    USER.nom = n; USER.email = em; USER.telephone = ph; USER.adresse = ad;
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ type: USER.type, email: USER.email, code: USER_CODE, nom: n, telephone: ph, adresse: ad })
+  }).then(r => r.json()).then(data => {
+    if (btn) btn.disabled = false;
+    if (!data.ok || !data.account) {
+      err.textContent = 'Erreur lors de l\'enregistrement. Écrivez à contact@bunkaio.com';
+      err.style.display = 'block';
+      return;
+    }
+    USER = data.account;
     document.getElementById('accName').textContent = USER.nom || USER.email;
     renderAccInfoView();
     toggleAccInfoEdit(false);
     document.getElementById('accInfoSuccess').style.display = 'block';
   }).catch(() => {
     if (btn) btn.disabled = false;
-    err.textContent = 'Erreur lors de l\'envoi. Écrivez à contact@bunkaio.com';
+    err.textContent = 'Erreur réseau. Écrivez à contact@bunkaio.com';
     err.style.display = 'block';
   });
 }
