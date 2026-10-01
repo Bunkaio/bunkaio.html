@@ -1212,8 +1212,9 @@
 
   .qstep-meta {
     font-size: 11px; font-weight: 500; letter-spacing: 0.3em;
-    text-transform: uppercase; color: var(--grey); margin-bottom: 20px;
+    text-transform: uppercase; color: rgba(255,255,255,0.82); margin-bottom: 20px;
     padding: 2px 0;
+    text-shadow: 0 1px 8px rgba(0,0,0,0.45);
   }
   /* Chaque étape du questionnaire remonte en haut de page (quizStep(),
      scrollTo top instantané) : le titre est donc toujours posé sur la
@@ -1232,6 +1233,12 @@
     text-shadow: 0 2px 14px rgba(0,0,0,0.45), 0 1px 3px rgba(0,0,0,0.4);
   }
 
+  /* La liste de catégories est elle aussi posée directement sur la
+     bannière photo (#pageHeroWrap, même raisonnement que .qstep-title) :
+     texte et flèche en blanc + ombre plutôt que noir/gris. Le survol
+     original (voile violet clair) assombrissait un fond blanc ; sur une
+     photo, c'est l'inverse qui fonctionne — un voile sombre, qui garde
+     le texte blanc lisible tout en apportant un repère visuel net. */
   .cat-list { display: flex; flex-direction: column; }
   .cat-item {
     display: flex; justify-content: space-between; align-items: center;
@@ -1244,23 +1251,34 @@
   .cat-item:first-child { border-top: 1px solid var(--line); }
   .cat-item::before {
     content: ''; position: absolute; inset: 0;
-    background: linear-gradient(to right, rgba(240, 234, 250, 0.0), rgba(240, 234, 250, 0.65));
+    background: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.3));
     opacity: 0; transition: opacity 0.45s var(--ease);
     pointer-events: none;
   }
   .cat-item:hover { padding-left: 26px; }
   .cat-item:hover::before { opacity: 1; }
-  .cat-name { font-size: 19px; font-weight: 600; letter-spacing: -0.015em; line-height: 1.4; position: relative; z-index: 1; }
-  .cat-tag { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--grey); line-height: 1.6; text-align: right; position: relative; z-index: 1; }
+  .cat-name {
+    font-size: 19px; font-weight: 600; letter-spacing: -0.015em; line-height: 1.4;
+    position: relative; z-index: 1;
+    color: var(--white);
+    text-shadow: 0 2px 14px rgba(0,0,0,0.5), 0 1px 3px rgba(0,0,0,0.45);
+  }
+  .cat-tag {
+    font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase;
+    color: rgba(255,255,255,0.82); line-height: 1.6; text-align: right;
+    position: relative; z-index: 1;
+    text-shadow: 0 1px 8px rgba(0,0,0,0.45);
+  }
   .cat-arrow {
-    width: 28px; height: 1px; background: var(--black);
+    width: 28px; height: 1px; background: var(--white);
     position: relative; opacity: 0; transform: translateX(-10px);
     transition: all 0.45s var(--ease); flex-shrink: 0; z-index: 1;
+    filter: drop-shadow(0 1px 4px rgba(0,0,0,0.4));
   }
   .cat-arrow::after {
     content: ''; position: absolute; right: 0; top: -3.5px;
     width: 7px; height: 7px;
-    border-top: 1px solid var(--black); border-right: 1px solid var(--black);
+    border-top: 1px solid var(--white); border-right: 1px solid var(--white);
     transform: rotate(45deg);
   }
   .cat-item:hover .cat-arrow { opacity: 1; transform: translateX(0); }
@@ -1285,6 +1303,11 @@
     gap: 18px;
     margin-bottom: 40px;
   }
+  /* Comme .cat-card ci-dessus : état par défaut sans fond propre, donc
+     posé directement sur la bannière photo. Icônes dessinées en JS
+     (getIcon() dans js/script.js) avec stroke="currentColor" — la
+     couleur se pilote donc entièrement ici, blanche par défaut avec une
+     ombre portée (filter: drop-shadow, l'équivalent SVG de text-shadow). */
   .prof-card {
     display: flex; flex-direction: column; align-items: center; gap: 14px;
     cursor: pointer;
@@ -1294,8 +1317,8 @@
     border: 1px solid transparent;
   }
   .prof-card:hover {
-    border: 1px solid var(--line);
-    background: rgba(240, 234, 250, 0.4);
+    border: 1px solid rgba(255,255,255,0.3);
+    background: rgba(0, 0, 0, 0.3);
     transform: translateY(-4px);
   }
   .prof-card.selected { border: 1px solid var(--black); background: var(--black); }
@@ -1303,14 +1326,16 @@
     width: 52px; height: 52px;
     display: flex; align-items: center; justify-content: center;
     transition: transform 0.45s var(--ease);
+    color: var(--white);
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.45));
   }
   .prof-card:hover .prof-icon { transform: scale(1.12); }
-  .prof-card.selected .prof-icon svg { stroke: var(--white); }
   .prof-name {
     font-size: 12px; font-weight: 600; text-align: center;
     line-height: 1.45; transition: color 0.45s var(--ease);
+    color: var(--white);
+    text-shadow: 0 1px 8px rgba(0,0,0,0.45);
   }
-  .prof-card.selected .prof-name { color: var(--white); }
 
   .prof-q-box {
     background: rgba(240, 234, 250, 0.5);

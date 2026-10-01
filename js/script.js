@@ -1614,6 +1614,27 @@ function renderCats(){
   el.appendChild(collabItem);
 }
 
+/* Centralise la recherche de description utilisée à la fois par le
+   survol (aperçu) et le clic (sélection), pour ne l'écrire qu'une fois. */
+function getProfileDescription(profId){
+  if (S.cat === 'lumen') {
+    const lp = LUMEN_PROFILES.find(x => x.id === profId);
+    return lp ? lp.desc[LANG] : '';
+  }
+  if (S.cat === 'photo-part') {
+    const pp = PHOTO_PART_PROFILES.find(x => x.id === profId);
+    return pp ? pp.desc[LANG] : '';
+  }
+  return PROFILE_DESCRIPTIONS[profId] ? PROFILE_DESCRIPTIONS[profId][LANG] : '';
+}
+function showProfileDescription(profId){
+  const box = document.getElementById('profQBox');
+  if (!box) return;
+  box.style.display = 'block';
+  box.innerHTML = getProfileDescription(profId);
+}
+
+let _profAdvanceTimer = null;
 function renderProfiles(){
   const el = document.getElementById('profGrid');
   el.innerHTML = '';
@@ -1629,42 +1650,37 @@ function renderProfiles(){
     d.innerHTML = `
       <div class="prof-icon">${getIcon(p.icon)}</div>
       <div class="prof-name">${t(p.name)}</div>`;
+    /* Survol = simple aperçu, ne sélectionne rien : on peut comparer
+       librement les profils avant de choisir. En quittant la carte sans
+       cliquer, l'encadré revient à la sélection en cours (ou se masque
+       s'il n'y en a pas encore). */
+    d.addEventListener('mouseenter', () => showProfileDescription(p.id));
+    d.addEventListener('mouseleave', () => {
+      if (S.prof) showProfileDescription(S.prof);
+      else { const box = document.getElementById('profQBox'); if (box) box.style.display = 'none'; }
+    });
     d.onclick = () => {
       document.querySelectorAll('.prof-card').forEach(x => x.classList.remove('selected'));
       d.classList.add('selected');
       S.prof = p.id;
-      const box = document.getElementById('profQBox');
-      box.style.display = 'block';
-      if (S.cat === 'lumen') {
-        const lp = LUMEN_PROFILES.find(x => x.id === p.id);
-        box.innerHTML = lp ? lp.desc[LANG] : '';
-      } else if (S.cat === 'photo-part') {
-        const pp = PHOTO_PART_PROFILES.find(x => x.id === p.id);
-        box.innerHTML = pp ? pp.desc[LANG] : '';
-      } else {
-        box.innerHTML = PROFILE_DESCRIPTIONS[p.id] ? PROFILE_DESCRIPTIONS[p.id][LANG] : '';
-      }
-      setTimeout(() => goToTiers(), 820);
+      showProfileDescription(p.id);
+      /* Délai volontairement généreux (c'était 820ms, bien trop court
+         pour lire l'explication) : laisse le temps de lire avant
+         d'avancer automatiquement. clearTimeout évite d'empiler
+         plusieurs avances si on reclique vite sur une autre carte. */
+      clearTimeout(_profAdvanceTimer);
+      _profAdvanceTimer = setTimeout(() => goToTiers(), 2400);
     };
     el.appendChild(d);
   });
-  if (S.prof) {
-    const box = document.getElementById('profQBox');
-    box.style.display = 'block';
-    if (S.cat === 'lumen') {
-      const lp = LUMEN_PROFILES.find(x => x.id === S.prof);
-      box.innerHTML = lp ? lp.desc[LANG] : '';
-    } else if (S.cat === 'photo-part') {
-      const pp = PHOTO_PART_PROFILES.find(x => x.id === S.prof);
-      box.innerHTML = pp ? pp.desc[LANG] : '';
-    } else {
-      box.innerHTML = PROFILE_DESCRIPTIONS[S.prof] ? PROFILE_DESCRIPTIONS[S.prof][LANG] : '';
-    }
-  }
+  if (S.prof) showProfileDescription(S.prof);
 }
 
 function getIcon(type){
-  const stroke = 'fill="none" stroke="#0a0a0c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"';
+  /* currentColor plutôt qu'un hex figé : la couleur se pilote entièrement
+     depuis .prof-icon en CSS (blanc par défaut sur la bannière photo, ou
+     héritée du fond noir une fois la carte sélectionnée). */
+  const stroke = 'fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"';
   const icons = {
     agency:  `<svg width="52" height="52" viewBox="0 0 56 56" ${stroke}><rect x="10" y="16" width="36" height="30" rx="2"/><line x1="10" y1="26" x2="46" y2="26"/><line x1="22" y1="26" x2="22" y2="46"/><line x1="34" y1="26" x2="34" y2="46"/><line x1="16" y1="10" x2="16" y2="16"/><line x1="40" y1="10" x2="40" y2="16"/></svg>`,
     promo:   `<svg width="52" height="52" viewBox="0 0 56 56" ${stroke}><path d="M12 26 L28 12 L44 26"/><path d="M16 24 L16 44 L40 44 L40 24"/><rect x="24" y="32" width="8" height="12"/></svg>`,
