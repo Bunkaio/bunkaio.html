@@ -53,8 +53,6 @@
    │      photo-part/                                                  │
    │      mode/                                                        │
    │      event/                                                       │
-   │  videos/                                                          │
-   │    drone/                Vidéos projets drone (.mp4)             │
    └─────────────────────────────────────────────────────────────────┘
 
    NOTE : Les chemins ci-dessous pointent vers vos futurs fichiers locaux.
@@ -234,7 +232,12 @@ const IMG = {
    ═══════════════════════════════════════════════════════════════════
    Une entrée par projet drone, organisée par catégorie.
    ├─ thumb : miniature cliquable (format 640×400px, ratio 16:10)
-   └─ video : fichier vidéo (.mp4) lancé au clic sur la miniature
+   └─ video : fichier vidéo (.mp4) lancé au clic sur la miniature —
+     comme les autres médias, déposée directement via admin/media.html
+     (rubrique 4K Drone, repliée tant que la page est en pause). Tant
+     qu'aucun fichier n'existe à ce chemin, le clic sur la vignette
+     échoue silencieusement (404) — sans conséquence tant que la page
+     Drone elle-même est en "Bientôt disponible".
 
    Pour ajouter un projet : ajoutez un objet { thumb, video } dans
    le tableau de la catégorie correspondante.
@@ -243,25 +246,25 @@ const DRONE_MEDIA = {
 
   /* ① Immobilier & architecture */
   immo: [
-    { thumb: MEDIA_BASE + '/drone/immo-1.webp',    video: 'videos/drone/immo-1.mp4'    },  // Villa contemporaine — Hérault
-    { thumb: MEDIA_BASE + '/drone/immo-2.webp',    video: 'videos/drone/immo-2.mp4'    },  // Domaine viticole — vente prestige
+    { thumb: MEDIA_BASE + '/drone/immo-1.webp',    video: MEDIA_BASE + '/drone/immo-1.mp4'    },  // Villa contemporaine — Hérault
+    { thumb: MEDIA_BASE + '/drone/immo-2.webp',    video: MEDIA_BASE + '/drone/immo-2.mp4'    },  // Domaine viticole — vente prestige
   ],
 
   /* ② Piscines & paysages */
   outdoor: [
-    { thumb: MEDIA_BASE + '/drone/outdoor-1.webp', video: 'videos/drone/outdoor-1.mp4' },  // Piscine miroir
-    { thumb: MEDIA_BASE + '/drone/outdoor-2.webp', video: 'videos/drone/outdoor-2.mp4' },  // Jardin paysager méditerranéen
+    { thumb: MEDIA_BASE + '/drone/outdoor-1.webp', video: MEDIA_BASE + '/drone/outdoor-1.mp4' },  // Piscine miroir
+    { thumb: MEDIA_BASE + '/drone/outdoor-2.webp', video: MEDIA_BASE + '/drone/outdoor-2.mp4' },  // Jardin paysager méditerranéen
   ],
 
   /* ③ Événementiel */
   event: [
-    { thumb: MEDIA_BASE + '/drone/event-1.webp',   video: 'videos/drone/event-1.mp4'   },  // Réception privée — domaine
-    { thumb: MEDIA_BASE + '/drone/event-2.webp',   video: 'videos/drone/event-2.mp4'   },  // Événement corporate
+    { thumb: MEDIA_BASE + '/drone/event-1.webp',   video: MEDIA_BASE + '/drone/event-1.mp4'   },  // Réception privée — domaine
+    { thumb: MEDIA_BASE + '/drone/event-2.webp',   video: MEDIA_BASE + '/drone/event-2.mp4'   },  // Événement corporate
   ],
 
   /* ④ Marques & lifestyle */
   brand: [
-    { thumb: MEDIA_BASE + '/drone/brand-1.webp',   video: 'videos/drone/brand-1.mp4'   },  // Film de marque artisanale
-    { thumb: MEDIA_BASE + '/drone/brand-2.webp',   video: 'videos/drone/brand-2.mp4'   },  // Campagne lifestyle été
+    { thumb: MEDIA_BASE + '/drone/brand-1.webp',   video: MEDIA_BASE + '/drone/brand-1.mp4'   },  // Film de marque artisanale
+    { thumb: MEDIA_BASE + '/drone/brand-2.webp',   video: MEDIA_BASE + '/drone/brand-2.mp4'   },  // Campagne lifestyle été
   ],
 };
