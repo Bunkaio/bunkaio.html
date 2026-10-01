@@ -2074,6 +2074,37 @@
     .collab-img { aspect-ratio: 16/10; }
   }
 
+  /* Type de collaboration — cartes cliquables plutôt qu'un menu déroulant
+     discret : chaque catégorie reste visuellement dissociée, et la
+     sélection est reprise telle quelle (libellé exact) dans l'objet de
+     l'email reçu (voir sendCollab()), pour trier/filtrer les demandes
+     par catégorie côté boîte mail. */
+  .collab-type-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
+    gap: 10px;
+    margin-top: 4px;
+  }
+  .collab-type-card {
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    padding: 18px 12px;
+    font-family: inherit;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    cursor: pointer;
+    text-align: center;
+    background: rgba(255,255,255,0.6);
+    color: var(--black);
+    transition: border-color 0.25s var(--ease), background 0.25s var(--ease), transform 0.25s var(--ease);
+  }
+  .collab-type-card svg { width: 22px; height: 22px; flex-shrink: 0; }
+  .collab-type-card span { font-size: 11.5px; font-weight: 600; line-height: 1.35; }
+  .collab-type-card:hover { border-color: rgba(10,10,12,0.4); transform: translateY(-2px); }
+  .collab-type-card.active { background: var(--black); border-color: var(--black); color: var(--white); }
+  .collab-type-error { font-size: 12px; color: #c0392b; margin-top: 10px; }
+  @media (max-width: 600px) {
+    .collab-type-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
   /* ─── CTA FOOTER ─── */
   .footer-cta-row {
     display: flex; align-items: center;
