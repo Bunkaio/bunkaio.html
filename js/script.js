@@ -235,6 +235,47 @@ const I18N = {
     'acc-upsell-title':'Un nouveau projet en tête ?',
     'acc-upsell-text':'Estimez votre prochain projet en quelques minutes.',
     'acc-upsell-btn':'Estimer mon projet',
+    'acc-moodboards':'Mes moodboards',
+    'mb-toolbar-text':'Un moodboard par shooting pour partager votre vision avec l\'équipe Bunkaio — direction artistique, ambiance, inspirations.',
+    'mb-new-btn':'Nouveau moodboard',
+    'mb-empty-title':'Aucun moodboard pour le moment',
+    'mb-empty-text':'Créez votre premier moodboard pour exprimer vos idées et aider l\'équipe Bunkaio à visualiser votre projet avant le shooting.',
+    'mb-ref-future':'Projet à venir — pas encore réservé',
+    'mb-back':'← Retour à mes moodboards',
+    'mb-wizard-title-new':'Nouveau moodboard',
+    'mb-wizard-title-edit':'Modifier le moodboard',
+    'mb-step1-title':'Votre projet',
+    'mb-step1-sub':'Donnez un nom à ce moodboard et reliez-le à l\'un de vos shootings, ou laissez "Projet à venir" si vous n\'avez pas encore réservé.',
+    'mb-field-titre':'Titre du moodboard *',
+    'mb-field-titre-ph':'Ex. Shooting produit — automne',
+    'mb-field-commande':'Shooting lié',
+    'mb-step2-title':'Direction artistique',
+    'mb-step2-sub':'Choisissez l\'orientation qui parle le plus à votre projet.',
+    'mb-step3-title':'Ambiance',
+    'mb-step3-sub':'Sélectionnez tous les mots qui résonnent avec votre vision — autant que vous voulez.',
+    'mb-step4-title':'Palette de couleurs',
+    'mb-step4-sub':'La gamme de teintes qui se rapproche le plus de ce que vous imaginez.',
+    'mb-step5-title':'Inspirations',
+    'mb-step5-sub':'Un tableau Pinterest et/ou des liens vers des visuels qui vous inspirent — Instagram, un site, une image trouvée en ligne.',
+    'mb-field-pinterest':'Lien vers votre tableau Pinterest — optionnel',
+    'mb-field-refs':'Autres liens d\'inspiration',
+    'mb-ref-url-ph':'Lien (Instagram, image, site…)',
+    'mb-ref-note-ph':'Note — optionnel',
+    'mb-ref-add-btn':'+ Ajouter un lien',
+    'mb-step6-title':'Votre vision',
+    'mb-step6-sub':'Décrivez en quelques mots l\'ambiance recherchée, ce que vous aimez, ce que vous voulez éviter.',
+    'mb-field-notes-ph':'Décrivez votre vision en quelques mots…',
+    'mb-error':'Donnez au moins un titre à votre moodboard.',
+    'mb-save-btn':'Enregistrer les modifications',
+    'mb-create-btn':'Créer ce moodboard',
+    'mb-save-error':'Erreur lors de l\'enregistrement. Réessayez ou écrivez à contact@bunkaio.com',
+    'mb-edit-btn':'Modifier',
+    'mb-pinterest-link':'Voir le tableau Pinterest',
+    'mb-comments-title':'Échanges avec l\'équipe Bunkaio',
+    'mb-comments-empty':'Aucun commentaire pour le moment.',
+    'mb-comment-ph':'Ajouter un commentaire…',
+    'mb-comment-link-ph':'Lien à joindre — optionnel',
+    'mb-comment-btn':'Envoyer',
     'th-date':'Date','th-service':'Prestation','th-amount':'Montant','th-status':'Statut','th-ref':'Référence','th-method':'Méthode','th-invoice':'Facture','th-invoice-num':'Numéro',
     'empty-orders':'Aucune commande pour le moment. Vos prestations apparaîtront ici dès leur validation.',
     'empty-payments':'Aucun paiement enregistré pour le moment.',
@@ -479,6 +520,47 @@ const I18N = {
     'acc-upsell-title':'A new project in mind ?',
     'acc-upsell-text':'Estimate your next project in a few minutes.',
     'acc-upsell-btn':'Estimate my project',
+    'acc-moodboards':'My moodboards',
+    'mb-toolbar-text':'One moodboard per shoot to share your vision with the Bunkaio team — art direction, mood, inspirations.',
+    'mb-new-btn':'New moodboard',
+    'mb-empty-title':'No moodboard yet',
+    'mb-empty-text':'Create your first moodboard to express your ideas and help the Bunkaio team visualise your project before the shoot.',
+    'mb-ref-future':'Upcoming project — not booked yet',
+    'mb-back':'← Back to my moodboards',
+    'mb-wizard-title-new':'New moodboard',
+    'mb-wizard-title-edit':'Edit moodboard',
+    'mb-step1-title':'Your project',
+    'mb-step1-sub':'Name this moodboard and link it to one of your shoots, or leave "Upcoming project" if you haven\'t booked yet.',
+    'mb-field-titre':'Moodboard title *',
+    'mb-field-titre-ph':'E.g. Product shoot — autumn',
+    'mb-field-commande':'Linked shoot',
+    'mb-step2-title':'Art direction',
+    'mb-step2-sub':'Pick the direction that speaks most to your project.',
+    'mb-step3-title':'Mood',
+    'mb-step3-sub':'Select every word that resonates with your vision — as many as you like.',
+    'mb-step4-title':'Colour palette',
+    'mb-step4-sub':'The range of tones closest to what you have in mind.',
+    'mb-step5-title':'Inspirations',
+    'mb-step5-sub':'A Pinterest board and/or links to visuals that inspire you — Instagram, a website, an image found online.',
+    'mb-field-pinterest':'Link to your Pinterest board — optional',
+    'mb-field-refs':'Other inspiration links',
+    'mb-ref-url-ph':'Link (Instagram, image, website…)',
+    'mb-ref-note-ph':'Note — optional',
+    'mb-ref-add-btn':'+ Add a link',
+    'mb-step6-title':'Your vision',
+    'mb-step6-sub':'Describe in a few words the mood you\'re after, what you love, what to avoid.',
+    'mb-field-notes-ph':'Describe your vision in a few words…',
+    'mb-error':'Give your moodboard at least a title.',
+    'mb-save-btn':'Save changes',
+    'mb-create-btn':'Create this moodboard',
+    'mb-save-error':'Error while saving. Try again or write to contact@bunkaio.com',
+    'mb-edit-btn':'Edit',
+    'mb-pinterest-link':'View the Pinterest board',
+    'mb-comments-title':'Exchanges with the Bunkaio team',
+    'mb-comments-empty':'No comments yet.',
+    'mb-comment-ph':'Add a comment…',
+    'mb-comment-link-ph':'Link to attach — optional',
+    'mb-comment-btn':'Send',
     'th-date':'Date','th-service':'Service','th-amount':'Amount','th-status':'Status','th-ref':'Reference','th-method':'Method','th-invoice':'Invoice','th-invoice-num':'Number',
     'empty-orders':'No orders yet. Your services will appear here as soon as they are confirmed.',
     'empty-payments':'No payments recorded yet.',
@@ -2752,7 +2834,7 @@ function doLogout(){
 }
 
 function setAccountTab(tab){
-  ['orders','subs','payments','factures','portfolio','infos'].forEach(x => {
+  ['orders','subs','moodboards','payments','factures','portfolio','infos'].forEach(x => {
     document.getElementById('atab-' + x).classList.toggle('active', x === tab);
     document.getElementById('asec-' + x).classList.toggle('active', x === tab);
   });
@@ -2866,6 +2948,387 @@ function renderAccUpsell(){
     <button class="btn btn-solid" onclick="goView('quiz')"><span>${I18N[LANG][btnKey]}</span></button>`;
 }
 
+/* ═══════════════ ESPACE CLIENT — MES MOODBOARDS ═══════════════
+   Le client crée et gère lui-même ses moodboards (un par shooting, ou
+   "projet à venir" avant réservation) via un questionnaire guidé —
+   direction artistique, ambiance, palette, inspirations (dont un lien
+   Pinterest), vision libre — puis un fil de commentaires avec l'équipe
+   Bunkaio. Tout vit dans USER.moodboards, sauvegardé en entier à
+   chaque modification via /account-update (voir saveMoodboards()). */
+
+function escHtml(s){
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+}
+function mbNewId(){ return 'mb_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+function mbToday(){ return new Date().toLocaleDateString(LANG === 'fr' ? 'fr-FR' : 'en-GB'); }
+
+const MB_DIRECTIONS = [
+  { id:'epure', name:{fr:'Épuré & minimaliste', en:'Clean & minimal'}, desc:{fr:'Lignes nettes, espace négatif, lumière douce et neutre.', en:'Clean lines, negative space, soft neutral light.'} },
+  { id:'chaleureux', name:{fr:'Chaleureux & authentique', en:'Warm & authentic'}, desc:{fr:'Tons chauds, matières naturelles, lumière dorée.', en:'Warm tones, natural materials, golden light.'} },
+  { id:'editorial', name:{fr:'Éditorial & contrasté', en:'Editorial & bold'}, desc:{fr:'Noir et blanc ou contrastes marqués, composition graphique.', en:'Black and white or bold contrast, graphic composition.'} },
+  { id:'pastel', name:{fr:'Lumineux & pastel', en:'Bright & pastel'}, desc:{fr:'Teintes claires, ambiance aérienne, douceur.', en:'Light hues, airy mood, softness.'} },
+  { id:'brut', name:{fr:'Brut & architectural', en:'Raw & architectural'}, desc:{fr:'Béton, lignes industrielles, lumière dure.', en:'Concrete, industrial lines, hard light.'} },
+];
+const MB_AMBIANCES = [
+  { id:'naturel', name:{fr:'Naturel', en:'Natural'} },
+  { id:'luxueux', name:{fr:'Luxueux', en:'Luxurious'} },
+  { id:'intemporel', name:{fr:'Intemporel', en:'Timeless'} },
+  { id:'urbain', name:{fr:'Urbain', en:'Urban'} },
+  { id:'mineral', name:{fr:'Minéral', en:'Mineral'} },
+  { id:'vegetal', name:{fr:'Végétal', en:'Botanical'} },
+  { id:'dore', name:{fr:'Doré & chaleureux', en:'Golden & warm'} },
+  { id:'monochrome', name:{fr:'Monochrome', en:'Monochrome'} },
+  { id:'vintage', name:{fr:'Vintage', en:'Vintage'} },
+  { id:'graphique', name:{fr:'Graphique', en:'Graphic'} },
+  { id:'aerien', name:{fr:'Aérien', en:'Airy'} },
+  { id:'brut', name:{fr:'Brut', en:'Raw'} },
+];
+const MB_PALETTES = [
+  { id:'neutres', name:{fr:'Tons neutres & beiges', en:'Neutral & beige tones'}, colors:['#EDE6DA','#C9BBA3','#8C7A64','#3A332B'] },
+  { id:'nb', name:{fr:'Noir & blanc contrasté', en:'Bold black & white'}, colors:['#0A0A0C','#4A4A4A','#BFBFBF','#FFFFFF'] },
+  { id:'pastel', name:{fr:'Pastel doux', en:'Soft pastel'}, colors:['#F7E4E4','#E4EEF7','#F7F1E4','#E4F7EC'] },
+  { id:'terracotta', name:{fr:'Vert & terracotta', en:'Green & terracotta'}, colors:['#4A5C44','#8C5A3C','#D9B48F','#2E3A28'] },
+  { id:'dore', name:{fr:'Bleu profond & doré', en:'Deep blue & gold'}, colors:['#1B2A4A','#0A0A0C','#C9A24B','#EDE6DA'] },
+];
+
+let mbView = 'list'; // 'list' | 'wizard' | 'detail'
+let mbActiveId = null;
+
+function renderAccMoodboards(){
+  const el = document.getElementById('accMoodboardsContent');
+  if (!el || !USER) return;
+  if (mbView === 'wizard') renderMbWizard(el);
+  else if (mbView === 'detail') renderMbDetail(el);
+  else renderMbList(el);
+}
+
+function openMbWizard(editId){ mbActiveId = editId || null; mbView = 'wizard'; renderAccMoodboards(); }
+function openMbDetail(id){ mbActiveId = id; mbView = 'detail'; renderAccMoodboards(); }
+function backToMbList(){ mbView = 'list'; mbActiveId = null; renderAccMoodboards(); }
+
+/* Écrit le tableau complet des moodboards via /account-update, même
+   ré-authentification par USER_CODE que saveAccInfo(). Le front garde
+   toujours l'état courant (USER.moodboards) et renvoie tout le tableau
+   à chaque sauvegarde — création, édition, ou simple ajout de
+   commentaire passent tous par cette même fonction. */
+function saveMoodboards(list, onSuccess, onError){
+  fetch(ACCOUNTS_API_BASE + '/account-update', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ type: USER.type, email: USER.email, code: USER_CODE, moodboards: list })
+  }).then(r => r.json()).then(data => {
+    if (!data.ok || !data.account) { if (onError) onError(); return; }
+    USER = data.account;
+    if (onSuccess) onSuccess();
+  }).catch(() => { if (onError) onError(); });
+}
+
+function renderMbList(el){
+  const boards = USER.moodboards || [];
+  const cards = boards.map(mb => {
+    const palette = MB_PALETTES.find(p => p.id === mb.palette);
+    const swatches = palette ? palette.colors.map(c => `<div class="mb-swatch" style="background:${c}"></div>`).join('') : '';
+    const refLabel = (!mb.commandeRef || mb.commandeRef === 'future') ? I18N[LANG]['mb-ref-future'] : mb.commandeRef;
+    return `
+      <button type="button" class="mb-card" onclick="openMbDetail('${mb.id}')">
+        <div class="mb-card-title">${escHtml(mb.titre)}</div>
+        <div class="mb-card-ref">${escHtml(refLabel)}</div>
+        ${swatches ? `<div class="mb-card-swatches">${swatches}</div>` : ''}
+        <div class="mb-card-foot">
+          <span class="status-pill ${statusClass(mb.statut)}">${escHtml(mb.statut)}</span>
+          <span class="mb-card-date">${escHtml(mb.majLe)}</span>
+        </div>
+      </button>`;
+  }).join('');
+
+  el.innerHTML = `
+    <div class="mb-toolbar">
+      <p class="mb-toolbar-text">${I18N[LANG]['mb-toolbar-text']}</p>
+      <button class="btn btn-solid" onclick="openMbWizard()"><span>${I18N[LANG]['mb-new-btn']}</span></button>
+    </div>
+    ${boards.length ? `<div class="mb-list-grid">${cards}</div>` : `
+      <div class="acc-info-card acc-subs-empty">
+        <div class="acc-subs-empty-title">${I18N[LANG]['mb-empty-title']}</div>
+        <p class="acc-subs-empty-text">${I18N[LANG]['mb-empty-text']}</p>
+        <div class="btn-row" style="justify-content:center">
+          <button class="btn btn-solid" onclick="openMbWizard()"><span>${I18N[LANG]['mb-new-btn']}</span></button>
+        </div>
+      </div>`}
+  `;
+}
+
+function selectMbDirection(btn){
+  document.querySelectorAll('#mbDirectionGrid .mb-direction-card').forEach(c => c.classList.toggle('active', c === btn));
+  document.getElementById('mbDirection').value = btn.dataset.value;
+}
+function toggleMbAmbiance(btn){ btn.classList.toggle('active'); }
+function selectMbPalette(btn){
+  document.querySelectorAll('#mbPaletteGrid .mb-palette-card').forEach(c => c.classList.toggle('active', c === btn));
+  document.getElementById('mbPalette').value = btn.dataset.value;
+}
+
+/* Lignes de références ajoutées/retirées directement dans le DOM (pas de
+   re-rendu du formulaire) pour ne jamais perdre ce qui est déjà saisi
+   ailleurs dans le questionnaire — même logique que selectMbDirection()
+   ci-dessus, qui ne touche que ce qui change. */
+function addMbRefRow(url, note){
+  const container = document.getElementById('mbRefRows');
+  if (!container) return;
+  const row = document.createElement('div');
+  row.className = 'mb-ref-row';
+  row.innerHTML = `
+    <input type="text" class="mb-ref-url" placeholder="${I18N[LANG]['mb-ref-url-ph']}" value="${url ? escHtml(url) : ''}">
+    <input type="text" class="mb-ref-note" placeholder="${I18N[LANG]['mb-ref-note-ph']}" value="${note ? escHtml(note) : ''}">
+    <button type="button" onclick="this.closest('.mb-ref-row').remove()">✕</button>
+  `;
+  container.appendChild(row);
+}
+
+function renderMbWizard(el){
+  const editing = mbActiveId ? (USER.moodboards || []).find(m => m.id === mbActiveId) : null;
+  const commandOptions = (USER.commandes || []).map(c => c.prestation).filter(Boolean);
+
+  el.innerHTML = `
+    <div class="acc-info-card">
+      <button type="button" class="mb-back-link" onclick="backToMbList()">${I18N[LANG]['mb-back']}</button>
+      <h3 style="font-size:19px;font-weight:700;margin-bottom:28px">${editing ? I18N[LANG]['mb-wizard-title-edit'] : I18N[LANG]['mb-wizard-title-new']}</h3>
+
+      <div class="mb-wizard-section">
+        <div class="mb-wizard-title"><span class="mb-wizard-num">1</span>${I18N[LANG]['mb-step1-title']}</div>
+        <p class="mb-wizard-sub">${I18N[LANG]['mb-step1-sub']}</p>
+        <div style="margin-left:32px;max-width:420px">
+          <div class="fgroup">
+            <label>${I18N[LANG]['mb-field-titre']}</label>
+            <input type="text" id="mbTitre" placeholder="${I18N[LANG]['mb-field-titre-ph']}" value="${editing ? escHtml(editing.titre) : ''}">
+          </div>
+          <div class="fgroup" style="margin-bottom:0">
+            <label>${I18N[LANG]['mb-field-commande']}</label>
+            <select id="mbCommandeRef">
+              <option value="future">${I18N[LANG]['mb-ref-future']}</option>
+              ${commandOptions.map(c => `<option value="${escHtml(c)}"${editing && editing.commandeRef === c ? ' selected' : ''}>${escHtml(c)}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-wizard-section">
+        <div class="mb-wizard-title"><span class="mb-wizard-num">2</span>${I18N[LANG]['mb-step2-title']}</div>
+        <p class="mb-wizard-sub">${I18N[LANG]['mb-step2-sub']}</p>
+        <div class="mb-direction-grid" id="mbDirectionGrid">
+          ${MB_DIRECTIONS.map(d => `
+            <button type="button" class="mb-direction-card${editing && editing.direction === d.id ? ' active' : ''}" data-value="${d.id}" onclick="selectMbDirection(this)">
+              <div class="mb-direction-name">${t(d.name)}</div>
+              <div class="mb-direction-desc">${t(d.desc)}</div>
+            </button>`).join('')}
+        </div>
+        <input type="hidden" id="mbDirection" value="${editing && editing.direction ? editing.direction : ''}">
+      </div>
+
+      <div class="mb-wizard-section">
+        <div class="mb-wizard-title"><span class="mb-wizard-num">3</span>${I18N[LANG]['mb-step3-title']}</div>
+        <p class="mb-wizard-sub">${I18N[LANG]['mb-step3-sub']}</p>
+        <div class="mb-chip-grid" id="mbAmbianceGrid">
+          ${MB_AMBIANCES.map(a => `<button type="button" class="mb-chip${editing && (editing.ambiance || []).includes(a.id) ? ' active' : ''}" data-value="${a.id}" onclick="toggleMbAmbiance(this)">${t(a.name)}</button>`).join('')}
+        </div>
+      </div>
+
+      <div class="mb-wizard-section">
+        <div class="mb-wizard-title"><span class="mb-wizard-num">4</span>${I18N[LANG]['mb-step4-title']}</div>
+        <p class="mb-wizard-sub">${I18N[LANG]['mb-step4-sub']}</p>
+        <div class="mb-palette-grid" id="mbPaletteGrid">
+          ${MB_PALETTES.map(p => `
+            <button type="button" class="mb-palette-card${editing && editing.palette === p.id ? ' active' : ''}" data-value="${p.id}" onclick="selectMbPalette(this)">
+              <div class="mb-palette-swatches">${p.colors.map(c => `<div class="mb-swatch" style="background:${c}"></div>`).join('')}</div>
+              <div class="mb-palette-name">${t(p.name)}</div>
+            </button>`).join('')}
+        </div>
+        <input type="hidden" id="mbPalette" value="${editing && editing.palette ? editing.palette : ''}">
+      </div>
+
+      <div class="mb-wizard-section">
+        <div class="mb-wizard-title"><span class="mb-wizard-num">5</span>${I18N[LANG]['mb-step5-title']}</div>
+        <p class="mb-wizard-sub">${I18N[LANG]['mb-step5-sub']}</p>
+        <div class="mb-refs">
+          <div class="fgroup">
+            <label>${I18N[LANG]['mb-field-pinterest']}</label>
+            <input type="text" id="mbPinterest" placeholder="https://pinterest.com/votrecompte/votre-tableau" value="${editing && editing.pinterestUrl ? escHtml(editing.pinterestUrl) : ''}">
+          </div>
+          <label style="display:block;font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--grey);margin-bottom:7px">${I18N[LANG]['mb-field-refs']}</label>
+          <div id="mbRefRows"></div>
+          <button type="button" class="mb-ref-add" onclick="addMbRefRow()">${I18N[LANG]['mb-ref-add-btn']}</button>
+        </div>
+      </div>
+
+      <div class="mb-wizard-section">
+        <div class="mb-wizard-title"><span class="mb-wizard-num">6</span>${I18N[LANG]['mb-step6-title']}</div>
+        <p class="mb-wizard-sub">${I18N[LANG]['mb-step6-sub']}</p>
+        <div style="margin-left:32px">
+          <textarea id="mbNotes" style="min-height:120px" placeholder="${I18N[LANG]['mb-field-notes-ph']}">${editing ? escHtml(editing.notes || '') : ''}</textarea>
+        </div>
+      </div>
+
+      <div class="login-error" id="mbError" style="display:none">${I18N[LANG]['mb-error']}</div>
+      <div class="mb-wizard-actions">
+        <button type="button" class="btn btn-ghost" onclick="backToMbList()"><span>${I18N[LANG]['acc-info-cancel-btn']}</span></button>
+        <button type="button" class="btn btn-solid" id="mbSaveBtn" onclick="saveMbDraft()"><span>${editing ? I18N[LANG]['mb-save-btn'] : I18N[LANG]['mb-create-btn']}</span></button>
+      </div>
+    </div>
+  `;
+
+  const existingRefs = editing && editing.references && editing.references.length ? editing.references : [{ url:'', note:'' }];
+  existingRefs.forEach(r => addMbRefRow(r.url, r.note));
+}
+
+function saveMbDraft(){
+  const titre = document.getElementById('mbTitre').value.trim();
+  const err = document.getElementById('mbError');
+  if (!titre) { err.style.display = 'block'; return; }
+  err.style.display = 'none';
+
+  const ambiance = Array.from(document.querySelectorAll('#mbAmbianceGrid .mb-chip.active')).map(c => c.dataset.value);
+  const references = Array.from(document.querySelectorAll('.mb-ref-row')).map(row => ({
+    url: row.querySelector('.mb-ref-url').value.trim(),
+    note: row.querySelector('.mb-ref-note').value.trim(),
+  })).filter(r => r.url);
+
+  const now = mbToday();
+  const editing = mbActiveId ? (USER.moodboards || []).find(m => m.id === mbActiveId) : null;
+  const board = {
+    id: editing ? editing.id : mbNewId(),
+    titre,
+    commandeRef: document.getElementById('mbCommandeRef').value,
+    statut: editing ? editing.statut : 'Envoyé',
+    direction: document.getElementById('mbDirection').value || undefined,
+    ambiance,
+    palette: document.getElementById('mbPalette').value || undefined,
+    pinterestUrl: document.getElementById('mbPinterest').value.trim() || undefined,
+    references,
+    notes: document.getElementById('mbNotes').value.trim(),
+    commentaires: editing ? (editing.commentaires || []) : [],
+    creeLe: editing ? editing.creeLe : now,
+    majLe: now,
+  };
+
+  const list = USER.moodboards ? USER.moodboards.slice() : [];
+  if (editing) { list[list.findIndex(m => m.id === editing.id)] = board; }
+  else { list.unshift(board); }
+
+  const btn = document.getElementById('mbSaveBtn');
+  if (btn) btn.disabled = true;
+  saveMoodboards(list, () => {
+    mbActiveId = board.id;
+    mbView = 'detail';
+    renderAccMoodboards();
+  }, () => {
+    if (btn) btn.disabled = false;
+    err.textContent = I18N[LANG]['mb-save-error'];
+    err.style.display = 'block';
+  });
+}
+
+function renderMbDetail(el){
+  const mb = (USER.moodboards || []).find(m => m.id === mbActiveId);
+  if (!mb) { mbView = 'list'; renderMbList(el); return; }
+
+  const direction = MB_DIRECTIONS.find(d => d.id === mb.direction);
+  const palette = MB_PALETTES.find(p => p.id === mb.palette);
+  const ambianceLabels = (mb.ambiance || []).map(id => { const a = MB_AMBIANCES.find(x => x.id === id); return a ? t(a.name) : id; });
+  const refLabel = (!mb.commandeRef || mb.commandeRef === 'future') ? I18N[LANG]['mb-ref-future'] : mb.commandeRef;
+
+  const refCards = (mb.references || []).map(r => `
+    <a class="mb-ref-card" href="${escHtml(r.url)}" target="_blank" rel="noopener">
+      <div class="mb-ref-card-dot"></div>
+      <div>
+        <div class="mb-ref-card-url">${escHtml(r.url)}</div>
+        ${r.note ? `<div class="mb-ref-card-note">${escHtml(r.note)}</div>` : ''}
+      </div>
+    </a>`).join('');
+
+  const comments = (mb.commentaires || []).map(c => `
+    <div class="mb-comment${c.auteur === 'bunkaio' ? ' bunkaio' : ''}">
+      <div class="mb-comment-meta">${c.auteur === 'bunkaio' ? 'BUNKAIO' : escHtml(USER.nom || USER.email)} · ${escHtml(c.date || '')}</div>
+      <div class="mb-comment-text">${escHtml(c.texte)}</div>
+      ${c.lien ? `<a class="mb-comment-link" href="${escHtml(c.lien)}" target="_blank" rel="noopener">${escHtml(c.lien)}</a>` : ''}
+    </div>`).join('');
+
+  el.innerHTML = `
+    <div class="acc-info-card">
+      <button type="button" class="mb-back-link" onclick="backToMbList()">${I18N[LANG]['mb-back']}</button>
+      <div class="mb-detail-head">
+        <div>
+          <div class="mb-detail-title">${escHtml(mb.titre)}</div>
+          <div class="mb-detail-ref">${escHtml(refLabel)}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span class="status-pill ${statusClass(mb.statut)}">${escHtml(mb.statut)}</span>
+          <button type="button" class="btn btn-ghost" style="padding:10px 18px" onclick="openMbWizard('${mb.id}')"><span>${I18N[LANG]['mb-edit-btn']}</span></button>
+        </div>
+      </div>
+
+      ${(direction || ambianceLabels.length) ? `
+      <div class="mb-detail-block">
+        <div class="mb-detail-label">${I18N[LANG]['mb-step2-title']}</div>
+        <div class="mb-tag-row">
+          ${direction ? `<span class="mb-tag">${t(direction.name)}</span>` : ''}
+          ${ambianceLabels.map(l => `<span class="mb-tag">${escHtml(l)}</span>`).join('')}
+        </div>
+      </div>` : ''}
+
+      ${palette ? `
+      <div class="mb-detail-block">
+        <div class="mb-detail-label">${I18N[LANG]['mb-step4-title']}</div>
+        <div class="mb-detail-swatches">${palette.colors.map(c => `<div class="mb-swatch" style="background:${c}"></div>`).join('')}</div>
+      </div>` : ''}
+
+      ${mb.pinterestUrl ? `
+      <div class="mb-detail-block">
+        <a class="mb-pinterest-card" href="${escHtml(mb.pinterestUrl)}" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.24 2.65 7.86 6.37 9.29-.09-.79-.17-2 .04-2.86.19-.78 1.23-4.98 1.23-4.98s-.31-.63-.31-1.55c0-1.46.85-2.55 1.9-2.55.9 0 1.33.67 1.33 1.48 0 .9-.57 2.25-.87 3.5-.25 1.04.53 1.9 1.56 1.9 1.87 0 3.31-1.97 3.31-4.81 0-2.51-1.81-4.27-4.39-4.27-2.99 0-4.74 2.24-4.74 4.56 0 .9.35 1.87.78 2.39.09.1.1.2.07.3-.08.33-.26 1.04-.3 1.19-.05.19-.16.23-.37.14-1.38-.64-2.24-2.65-2.24-4.26 0-3.47 2.52-6.66 7.27-6.66 3.82 0 6.78 2.72 6.78 6.36 0 3.79-2.39 6.85-5.71 6.85-1.12 0-2.17-.58-2.53-1.27l-.69 2.62c-.25.96-.92 2.16-1.37 2.89.79.24 1.63.37 2.5.37 5.52 0 10-4.48 10-10S17.52 2 12 2z"/></svg>
+          <span>${I18N[LANG]['mb-pinterest-link']}</span>
+        </a>
+      </div>` : ''}
+
+      ${refCards ? `
+      <div class="mb-detail-block">
+        <div class="mb-detail-label">${I18N[LANG]['mb-step5-title']}</div>
+        <div class="mb-ref-cards">${refCards}</div>
+      </div>` : ''}
+
+      ${mb.notes ? `
+      <div class="mb-detail-block">
+        <div class="mb-detail-label">${I18N[LANG]['mb-step6-title']}</div>
+        <div class="mb-detail-vision">${escHtml(mb.notes)}</div>
+      </div>` : ''}
+
+      <div class="mb-detail-block" style="margin-bottom:0">
+        <div class="mb-detail-label">${I18N[LANG]['mb-comments-title']}</div>
+        ${comments ? `<div class="mb-comments">${comments}</div>` : `<p class="mb-comment-empty">${I18N[LANG]['mb-comments-empty']}</p>`}
+        <div class="mb-comment-form">
+          <textarea id="mbCommentText" placeholder="${I18N[LANG]['mb-comment-ph']}"></textarea>
+          <div class="mb-comment-form-row">
+            <input type="text" id="mbCommentLink" placeholder="${I18N[LANG]['mb-comment-link-ph']}">
+            <button type="button" class="btn btn-solid" id="mbCommentBtn" onclick="addMbComment()"><span>${I18N[LANG]['mb-comment-btn']}</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function addMbComment(){
+  const textEl = document.getElementById('mbCommentText');
+  const linkEl = document.getElementById('mbCommentLink');
+  const texte = textEl.value.trim();
+  if (!texte) return;
+  const mb = (USER.moodboards || []).find(m => m.id === mbActiveId);
+  if (!mb) return;
+  const comment = { auteur: 'client', texte, lien: linkEl.value.trim() || undefined, date: mbToday() };
+  const list = USER.moodboards.map(m => m.id === mb.id ? { ...m, commentaires: [...(m.commentaires || []), comment], majLe: mbToday() } : m);
+  const btn = document.getElementById('mbCommentBtn');
+  if (btn) btn.disabled = true;
+  saveMoodboards(list, () => { renderAccMoodboards(); }, () => { if (btn) btn.disabled = false; });
+}
+
 function renderAccount(){
   if (!USER) return;
   document.getElementById('accBadge').textContent =
@@ -2873,6 +3336,8 @@ function renderAccount(){
   document.getElementById('accName').textContent = USER.nom || USER.email;
   renderAccountStepper();
   renderAccSubs();
+  mbView = 'list'; mbActiveId = null;
+  renderAccMoodboards();
   renderAccUpsell();
   const ob = document.getElementById('ordersBody');
   const orders = USER.commandes || [];

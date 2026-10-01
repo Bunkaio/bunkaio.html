@@ -117,6 +117,36 @@ function isValidAuthLoginPayload(body: unknown): body is AuthLoginPayload {
   );
 }
 
+/**
+ * Validation légère des moodboards — le client (pas seulement l'admin) écrit
+ * ce champ via /account-update, donc contrairement à commandes/paiements/
+ * factures (simples Array.isArray, remplis uniquement par l'admin) on vérifie
+ * ici la forme minimale de chaque entrée pour éviter d'écrire n'importe quoi
+ * en base depuis le front.
+ */
+function isValidMoodboardArray(value: unknown): boolean {
+  if (!Array.isArray(value)) return false;
+  return value.every((m) => {
+    if (typeof m !== 'object' || m === null) return false;
+    const mb = m as Record<string, unknown>;
+    return (
+      typeof mb.id === 'string' && mb.id.length > 0 &&
+      typeof mb.titre === 'string' &&
+      typeof mb.statut === 'string' &&
+      typeof mb.creeLe === 'string' &&
+      typeof mb.majLe === 'string' &&
+      (mb.commandeRef === undefined || typeof mb.commandeRef === 'string') &&
+      (mb.direction === undefined || typeof mb.direction === 'string') &&
+      (mb.ambiance === undefined || Array.isArray(mb.ambiance)) &&
+      (mb.palette === undefined || typeof mb.palette === 'string') &&
+      (mb.pinterestUrl === undefined || typeof mb.pinterestUrl === 'string') &&
+      (mb.references === undefined || Array.isArray(mb.references)) &&
+      (mb.notes === undefined || typeof mb.notes === 'string') &&
+      (mb.commentaires === undefined || Array.isArray(mb.commentaires))
+    );
+  });
+}
+
 function isValidAccountSelfUpdatePayload(body: unknown): body is AccountSelfUpdatePayload {
   if (typeof body !== 'object' || body === null) return false;
   const b = body as Record<string, unknown>;
@@ -126,7 +156,8 @@ function isValidAccountSelfUpdatePayload(body: unknown): body is AccountSelfUpda
     typeof b.code === 'string' && b.code.trim().length > 0 &&
     (b.nom === undefined || typeof b.nom === 'string') &&
     (b.telephone === undefined || typeof b.telephone === 'string') &&
-    (b.adresse === undefined || typeof b.adresse === 'string')
+    (b.adresse === undefined || typeof b.adresse === 'string') &&
+    (b.moodboards === undefined || isValidMoodboardArray(b.moodboards))
   );
 }
 
@@ -145,7 +176,8 @@ function isValidAdminAccountUpsertPayload(body: unknown): body is AdminAccountUp
     (b.commandes === undefined || Array.isArray(b.commandes)) &&
     (b.paiements === undefined || Array.isArray(b.paiements)) &&
     (b.factures === undefined || Array.isArray(b.factures)) &&
-    (b.abonnement === undefined || b.abonnement === null || typeof b.abonnement === 'object')
+    (b.abonnement === undefined || b.abonnement === null || typeof b.abonnement === 'object') &&
+    (b.moodboards === undefined || isValidMoodboardArray(b.moodboards))
   );
 }
 
@@ -210,6 +242,7 @@ async function handleAccountUpdate(request: Request, env: Env, headers: Record<s
     nom: body.nom ?? account.nom,
     telephone: body.telephone ?? account.telephone,
     adresse: body.adresse ?? account.adresse,
+    moodboards: body.moodboards ?? account.moodboards,
   };
   await putAccount(env, updated);
   console.log('[account-update] informations mises à jour', { type: body.type, email: body.email });

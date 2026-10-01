@@ -131,6 +131,39 @@ export interface AccountSubscription {
   utilisation?: Record<string, AccountSubscriptionUsage>;
 }
 
+/** Un lien de référence/inspiration dans un moodboard (Pinterest, Instagram, image…). */
+export interface MoodboardReference {
+  url: string;
+  note?: string;
+}
+
+/** Un commentaire dans le fil d'échange d'un moodboard — client ou équipe Bunkaio.
+    `lien` permet d'attacher une référence (ex. un pin Pinterest précis) au commentaire. */
+export interface MoodboardComment {
+  auteur: 'client' | 'bunkaio';
+  texte: string;
+  lien?: string;
+  date: string;
+}
+
+/** Onglet "Mes moodboards" — un moodboard par shooting (ou "à venir"), construit par le
+    client via le questionnaire interactif (voir renderMoodboardWizard() dans js/script.js). */
+export interface Moodboard {
+  id: string;
+  titre: string;
+  commandeRef?: string; // libellé d'une commande existante, ou 'future' si pas encore réservé
+  statut: string; // 'Brouillon' | 'Envoyé' | 'Validé' | 'À ajuster'
+  direction?: string;
+  ambiance?: string[];
+  palette?: string;
+  pinterestUrl?: string;
+  references?: MoodboardReference[];
+  notes?: string;
+  commentaires?: MoodboardComment[];
+  creeLe: string;
+  majLe: string;
+}
+
 /** Enregistrement complet d'un compte, tel que stocké dans ACCOUNTS_KV. */
 export interface AccountRecord {
   type: AccountType;
@@ -145,6 +178,7 @@ export interface AccountRecord {
   paiements?: AccountPayment[];
   factures?: AccountInvoice[];
   abonnement?: AccountSubscription;
+  moodboards?: Moodboard[];
 }
 
 /** Version du compte renvoyée au front — jamais le hash du code. */
@@ -157,7 +191,11 @@ export interface AuthLoginPayload {
   code: string;
 }
 
-/** Payload de /account-update — le client ré-authentifie avec son code actuel. */
+/** Payload de /account-update — le client ré-authentifie avec son code actuel.
+    `moodboards`, fourni en entier à chaque sauvegarde (le front garde l'état
+    courant en mémoire et renvoie tout le tableau), remplace la liste existante
+    — c'est aussi par ce même champ que le client ajoute un commentaire ou crée
+    un nouveau moodboard, pas de route dédiée. */
 export interface AccountSelfUpdatePayload {
   type: AccountType;
   email: string;
@@ -165,6 +203,7 @@ export interface AccountSelfUpdatePayload {
   nom?: string;
   telephone?: string;
   adresse?: string;
+  moodboards?: Moodboard[];
 }
 
 /** Payload de POST /accounts (admin) — crée ou met à jour un compte. `code` est optionnel
@@ -182,6 +221,7 @@ export interface AdminAccountUpsertPayload {
   paiements?: AccountPayment[];
   factures?: AccountInvoice[];
   abonnement?: AccountSubscription | null;
+  moodboards?: Moodboard[];
 }
 
 /** Ligne légère renvoyée par GET /accounts (sans le détail commandes/paiements/etc.). */

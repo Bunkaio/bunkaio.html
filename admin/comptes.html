@@ -185,6 +185,14 @@
     </div>
   </div>
 
+  <div class="section">
+    <div class="section-title">Mes moodboards (JSON)</div>
+    <div class="fgroup">
+      <textarea id="fMoodboards" style="min-height:140px" placeholder='[{"id":"mb_abc123","titre":"Shooting produit automne","statut":"Envoyé","commandeRef":"Formule Signature — Shooting produit","direction":"epure","ambiance":["naturel","mineral"],"palette":"neutres","pinterestUrl":"https://pinterest.com/...","references":[{"url":"https://...","note":"Cadrage serré"}],"notes":"...","commentaires":[{"auteur":"client","texte":"...","date":"2026-09-20"}],"creeLe":"2026-09-18","majLe":"2026-09-20"}]'></textarea>
+      <div class="hint">Créés par le client depuis son espace (questionnaire "Nouveau moodboard"). Pour répondre en tant que Bunkaio, ajoute un objet dans "commentaires" avec "auteur":"bunkaio" — voir server/README.md pour le détail des champs.</div>
+    </div>
+  </div>
+
   <button id="saveBtn" onclick="saveAccount()" style="width:100%">Enregistrer ce compte</button>
   <div id="result"></div>
 </div>
@@ -249,6 +257,7 @@ document.getElementById('accountPicker').addEventListener('change', async (e) =>
     document.getElementById('fPaiements').value = acc.paiements ? JSON.stringify(acc.paiements, null, 2) : '';
     document.getElementById('fFactures').value = acc.factures ? JSON.stringify(acc.factures, null, 2) : '';
     document.getElementById('fAbonnement').value = acc.abonnement ? JSON.stringify(acc.abonnement, null, 2) : '';
+    document.getElementById('fMoodboards').value = acc.moodboards ? JSON.stringify(acc.moodboards, null, 2) : '';
   } catch {
     alert('Erreur réseau lors du chargement du compte.');
   }
@@ -265,7 +274,7 @@ async function saveAccount() {
   const email = document.getElementById('fEmail').value.trim();
   if (!email || !email.includes('@')) { result.className = 'err'; result.textContent = 'Email invalide.'; return; }
 
-  let commandes, paiements, factures, abonnement;
+  let commandes, paiements, factures, abonnement, moodboards;
   try { commandes = jsonFieldValue('fCommandes'); }
   catch { result.className = 'err'; result.textContent = 'JSON invalide dans "Mes commandes".'; return; }
   try { paiements = jsonFieldValue('fPaiements'); }
@@ -274,6 +283,8 @@ async function saveAccount() {
   catch { result.className = 'err'; result.textContent = 'JSON invalide dans "Mes factures".'; return; }
   try { abonnement = jsonFieldValue('fAbonnement'); }
   catch { result.className = 'err'; result.textContent = 'JSON invalide dans "Mon abonnement".'; return; }
+  try { moodboards = jsonFieldValue('fMoodboards'); }
+  catch { result.className = 'err'; result.textContent = 'JSON invalide dans "Mes moodboards".'; return; }
 
   localStorage.setItem('bunkaio_admin_token', token);
   btn.disabled = true;
@@ -286,7 +297,7 @@ async function saveAccount() {
     adresse: document.getElementById('fAdresse').value.trim() || undefined,
     etapeActuelle: document.getElementById('fEtape').value ? Number(document.getElementById('fEtape').value) : undefined,
     lightroomUrl: document.getElementById('fLightroom').value.trim() || undefined,
-    commandes, paiements, factures,
+    commandes, paiements, factures, moodboards,
     abonnement: abonnement ?? null,
   };
   const code = document.getElementById('fCode').value.trim();
