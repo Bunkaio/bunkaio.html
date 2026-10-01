@@ -862,19 +862,84 @@
   <div class="partners-page">
     <h1 class="page-title" data-lang="partners-title">Programme Partenaires Fondateurs</h1>
 
-    <!-- Carousel logos -->
-    <div class="trust-section rv">
-      <div class="trust-label" data-lang="p-trust">Ils nous ont fait confiance</div>
-      <div class="logo-carousel"><div class="logo-track" id="logoTrack"></div></div>
+    <div class="svc-tabs">
+      <button class="svc-tab active" id="ptab-program" onclick="setPartnersTab('program')" data-lang="ptab-program">Programme Partenaires</button>
+      <button class="svc-tab" id="ptab-collab" onclick="setPartnersTab('collab')" data-lang="ptab-collab">Collaboration</button>
     </div>
 
-    <!-- Accordéon partenaires -->
-    <div id="partnersAccordion"></div>
+    <!-- Programme Partenaires Fondateurs -->
+    <div id="psec-program">
+      <!-- Carousel logos -->
+      <div class="trust-section rv">
+        <div class="trust-label" data-lang="p-trust">Ils nous ont fait confiance</div>
+        <div class="logo-carousel"><div class="logo-track" id="logoTrack"></div></div>
+      </div>
 
-    <div class="partner-cta rv">
-      <div class="partner-cta-title" data-lang="p-cta-title">Rejoindre Bunkaio</div>
-      <div class="partner-cta-text" data-lang="p-cta-text">Bunkaio n'a pas vocation à travailler avec tout le monde. Nous recherchons des projets qui ont quelque chose à raconter. Si vous pensez que votre histoire mérite d'être racontée, nous serons heureux de la découvrir.</div>
-      <button class="partner-cta-btn" onclick="goView('quiz')" data-lang="p-cta-btn">Candidater</button>
+      <!-- Accordéon partenaires -->
+      <div id="partnersAccordion"></div>
+
+      <div class="partner-cta rv">
+        <div class="partner-cta-title" data-lang="p-cta-title">Rejoindre Bunkaio</div>
+        <div class="partner-cta-text" data-lang="p-cta-text">Bunkaio n'a pas vocation à travailler avec tout le monde. Nous recherchons des projets qui ont quelque chose à raconter. Si vous pensez que votre histoire mérite d'être racontée, nous serons heureux de la découvrir.</div>
+        <button class="partner-cta-btn" onclick="goView('quiz')" data-lang="p-cta-btn">Candidater</button>
+      </div>
+    </div>
+
+    <!-- Collaboration — marques, lieux, médias, autres créateur·rice·s -->
+    <div id="psec-collab" style="display:none">
+      <h2 class="collab-title" data-lang="collab-title">Proposer une collaboration</h2>
+      <p class="ct-sub collab-sub-full" data-lang="collab-sub">Marque, lieu, média, autre créateur·rice — BUNKAIO est ouvert aux collaborations qui ont du sens avec son univers, en dehors de ses prestations sur-mesure habituelles.</p>
+      <div class="collab-grid">
+        <div>
+          <div class="side-img ph collab-img"><img loading="lazy" src="" id="img-collab-side" alt="Bunkaio — collaboration"></div>
+          <div class="ct-info-block">
+            <div class="ct-info-label" data-lang="collab-select-label">Une sélection au cas par cas</div>
+            <div class="ct-info-value" data-lang="collab-select-value">BUNKAIO se réserve le choix de ses collaborations : chaque proposition est étudiée individuellement selon le projet, sa cohérence avec notre univers et nos disponibilités du moment. Vous recevez une réponse personnalisée, y compris en cas de refus.</div>
+          </div>
+          <div class="ct-info-block">
+            <div class="ct-info-label" data-lang="collab-delay-label">Délai de réponse</div>
+            <div class="ct-info-value" data-lang="collab-delay-value">Sous 5 jours ouvrés.</div>
+          </div>
+        </div>
+        <div>
+          <form id="collabForm" onsubmit="sendCollab(event)">
+            <div class="fgroup">
+              <label data-lang="name-label">Nom / Société *</label>
+              <input type="text" id="collabName" required placeholder="Votre nom ou votre marque">
+            </div>
+            <div class="fgroup">
+              <label data-lang="email-label">Email *</label>
+              <input type="email" id="collabEmail" required placeholder="vous@societe.fr">
+            </div>
+            <div class="fgroup">
+              <label data-lang="collab-web-label">Site web / réseaux sociaux</label>
+              <input type="text" id="collabWeb" placeholder="instagram.com/votremarque">
+            </div>
+            <div class="fgroup">
+              <label data-lang="collab-type-label">Type de collaboration *</label>
+              <select id="collabType" required>
+                <option value="" data-lang="collab-type-opt0">Sélectionnez…</option>
+                <option value="Partenariat de marque" data-lang="collab-type-opt1">Partenariat de marque</option>
+                <option value="Échange lieu / prestation" data-lang="collab-type-opt2">Échange lieu / prestation</option>
+                <option value="Co-création avec un·e créateur·rice" data-lang="collab-type-opt3">Co-création avec un·e créateur·rice</option>
+                <option value="Relation presse / média" data-lang="collab-type-opt4">Relation presse / média</option>
+                <option value="Autre" data-lang="collab-type-opt5">Autre</option>
+              </select>
+            </div>
+            <div class="fgroup">
+              <label data-lang="collab-project-label">Présentez votre projet *</label>
+              <textarea id="collabProject" required placeholder="Décrivez votre proposition : contexte, ce que vous imaginez, ce que vous proposez en échange…" style="min-height:140px"></textarea>
+            </div>
+            <div class="btn-row" style="margin-top:34px">
+              <button type="submit" class="btn btn-solid"><span data-lang="collab-btn">Envoyer ma proposition</span></button>
+            </div>
+          </form>
+          <div class="success-box" id="collabSuccess" style="display:none; margin-top: 10px;">
+            <h3 data-lang="collab-success-title">Proposition envoyée</h3>
+            <p data-lang="collab-success-text">Merci pour votre proposition. Nous l'étudions et revenons vers vous sous 5 jours ouvrés.</p>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

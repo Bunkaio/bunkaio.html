@@ -129,6 +129,13 @@ const IMG = {
   devis: MEDIA_BASE + '/devis/illustration.webp',
   devisVideo: '',   // Vidéo optionnelle à la place de l'illustration (ex. 'videos/devis-process.mp4') — vide = illustration fixe utilisée
 
+  /* ──────────────────────────────────────────────────────────────────
+     ILLUSTRATION LATÉRALE — PARTENAIRES → ONGLET "COLLABORATION"
+     Visible dans Partenaires → onglet "Collaboration", en haut de la
+     colonne de gauche. Format : portrait ou paysage, ~900×1100px.
+     ────────────────────────────────────────────────────────────────── */
+  collab: MEDIA_BASE + '/partners/collaboration.webp',
+
   /* (Interne — graine pour les placeholders portfolio, ne pas modifier) */
   portfolioSeed: 'bk-pf',
 

@@ -171,6 +171,19 @@ const I18N = {
     'p-cta-title':'Rejoindre Bunkaio',
     'p-cta-text':'Bunkaio n\'a pas vocation à travailler avec tout le monde. Nous recherchons des projets qui ont quelque chose à raconter. Si vous pensez que votre histoire mérite d\'être racontée, nous serons heureux de la découvrir.',
     'p-cta-btn':'Candidater',
+    'ptab-program':'Programme Partenaires','ptab-collab':'Collaboration',
+    'collab-title':'Proposer une collaboration',
+    'collab-sub':'Marque, lieu, média, autre créateur·rice — BUNKAIO est ouvert aux collaborations qui ont du sens avec son univers, en dehors de ses prestations sur-mesure habituelles.',
+    'collab-select-label':'Une sélection au cas par cas',
+    'collab-select-value':'BUNKAIO se réserve le choix de ses collaborations : chaque proposition est étudiée individuellement selon le projet, sa cohérence avec notre univers et nos disponibilités du moment. Vous recevez une réponse personnalisée, y compris en cas de refus.',
+    'collab-delay-label':'Délai de réponse','collab-delay-value':'Sous 5 jours ouvrés.',
+    'collab-web-label':'Site web / réseaux sociaux',
+    'collab-type-label':'Type de collaboration *',
+    'collab-type-opt0':'Sélectionnez…','collab-type-opt1':'Partenariat de marque','collab-type-opt2':'Échange lieu / prestation','collab-type-opt3':'Co-création avec un·e créateur·rice','collab-type-opt4':'Relation presse / média','collab-type-opt5':'Autre',
+    'collab-project-label':'Présentez votre projet *',
+    'collab-btn':'Envoyer ma proposition',
+    'collab-success-title':'Proposition envoyée',
+    'collab-success-text':'Merci pour votre proposition. Nous l\'étudions et revenons vers vous sous 5 jours ouvrés.',
     'footer-claim':'Nous révélons ce qui rend vos projets uniques.',
     'access-client':'Accès client','access-partner':'Accès partenaire','nav-connect':'Connexion',
     'login-title-client':'Espace client','login-title-partner':'Espace partenaire',
@@ -357,6 +370,19 @@ const I18N = {
     'p-cta-title':'Join Bunkaio',
     'p-cta-text':'Bunkaio was never meant to work with everyone. We look for projects that have something to say. If you believe your story deserves to be told, we would be delighted to discover it.',
     'p-cta-btn':'Apply',
+    'ptab-program':'Partner Programme','ptab-collab':'Collaboration',
+    'collab-title':'Propose a collaboration',
+    'collab-sub':'Brand, venue, media, another creator — BUNKAIO is open to collaborations that make sense with its universe, outside of its usual bespoke services.',
+    'collab-select-label':'Reviewed case by case',
+    'collab-select-value':'BUNKAIO reserves the choice of its collaborations: each proposal is reviewed individually based on the project, its fit with our universe and our current availability. You\'ll receive a personal reply either way.',
+    'collab-delay-label':'Response time','collab-delay-value':'Within 5 working days.',
+    'collab-web-label':'Website / social media',
+    'collab-type-label':'Type of collaboration *',
+    'collab-type-opt0':'Select…','collab-type-opt1':'Brand partnership','collab-type-opt2':'Venue / service exchange','collab-type-opt3':'Co-creation with another creator','collab-type-opt4':'Press / media','collab-type-opt5':'Other',
+    'collab-project-label':'Tell us about your project *',
+    'collab-btn':'Send my proposal',
+    'collab-success-title':'Proposal sent',
+    'collab-success-text':'Thank you for your proposal. We\'re reviewing it and will get back to you within 5 working days.',
     'footer-claim':'We reveal what makes your projects unique.',
     'access-client':'Client area','access-partner':'Partner area','nav-connect':'Sign in',
     'login-title-client':'Client area','login-title-partner':'Partner area',
@@ -1214,7 +1240,11 @@ function goView(v){
     if (v === 'services') { renderServices(); setSvcTab('catalogue'); }
     if (v === 'drone') { renderDroneCats(); renderDroneProjects(activeDroneCat); }
     if (v === 'portfolio' && !pfLoaded) { renderPfTabs(); selectPfTab(PF_CATS[0].id); pfLoaded = true; }
-    if (v === 'partners') { renderPartnersAccordion(); renderLogoCarousel(); const img = document.getElementById('img-partners-banner'); if (img && !img.src) img.src = IMG.partners; }
+    if (v === 'partners') {
+      renderPartnersAccordion(); renderLogoCarousel(); setPartnersTab('program');
+      const img = document.getElementById('img-partners-banner'); if (img && !img.src) img.src = IMG.partners;
+      const imgCollab = document.getElementById('img-collab-side'); if (imgCollab && !imgCollab.src) imgCollab.src = IMG.collab;
+    }
     if (v === 'legal') { renderFaqAccordion(); renderPrivacyAccordion(); setLegalTab('faq'); }
     /* Anime au scroll tous les éléments .rv de la vue active — cohérent
        sur l'ensemble du site, plus besoin de le câbler page par page.
@@ -2366,6 +2396,37 @@ function sendShare(e){
   });
 }
 
+/* ═══════════════ PARTENAIRES — PROPOSER UNE COLLABORATION ═══════════════ */
+function sendCollab(e){
+  e.preventDefault();
+  const n = document.getElementById('collabName').value.trim();
+  const em = document.getElementById('collabEmail').value.trim();
+  const web = document.getElementById('collabWeb').value.trim();
+  const type = document.getElementById('collabType').value;
+  const proj = document.getElementById('collabProject').value.trim();
+  const btn = document.querySelector('#collabForm .btn-solid');
+  if (btn) btn.disabled = true;
+  fetch(FORMSPREE_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify({
+      _subject: 'PROPOSITION DE COLLABORATION — ' + n,
+      _replyto: em,
+      nom_societe: n,
+      email: em,
+      site_reseaux: web || 'Non renseigné',
+      type_collaboration: type,
+      projet: proj
+    })
+  }).then(() => {
+    document.getElementById('collabForm').style.display = 'none';
+    document.getElementById('collabSuccess').style.display = 'block';
+  }).catch(() => {
+    document.getElementById('collabForm').style.display = 'none';
+    document.getElementById('collabSuccess').style.display = 'block';
+  });
+}
+
 /* ═══════════════ ESPACE CLIENT / PARTENAIRE ═══════════════ */
 const ACCOUNTS_URL = 'comptes.json';
 let loginType = 'client';
@@ -2689,6 +2750,14 @@ function initHomeClaimVideo(){
     }, { threshold: 0 });
     reassureIO.observe(reassureEl);
   }
+}
+
+/* ═══════════════ PARTENAIRES — onglets ═══════════════ */
+function setPartnersTab(tab){
+  document.getElementById('ptab-program').classList.toggle('active', tab === 'program');
+  document.getElementById('ptab-collab').classList.toggle('active', tab === 'collab');
+  document.getElementById('psec-program').style.display = tab === 'program' ? 'block' : 'none';
+  document.getElementById('psec-collab').style.display = tab === 'collab' ? 'block' : 'none';
 }
 
 /* ═══════════════ ACCORDÉON PARTENAIRES ═══════════════ */
