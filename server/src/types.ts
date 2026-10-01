@@ -186,6 +186,17 @@ export interface Moodboard {
   majLe: string;
 }
 
+/** Onglet "Mon partenariat" — uniquement pour les comptes type 'partner'
+    (Programme Partenaires Fondateurs). `secteur` reprend les identifiants
+    du formulaire de candidature (voir PARTNER_SECTORS dans js/script.js) :
+    architecture, amenagement, artisanat, marques, evenementiel. */
+export interface AccountPartnerInfo {
+  secteur?: string;
+  statut?: string; // 'En attente' | 'Actif' | 'Terminé'
+  dateAdhesion?: string;
+  articleUrl?: string; // lien vers leur mise en avant éditoriale, une fois publiée
+}
+
 /** Enregistrement complet d'un compte, tel que stocké dans ACCOUNTS_KV. */
 export interface AccountRecord {
   type: AccountType;
@@ -201,6 +212,7 @@ export interface AccountRecord {
   factures?: AccountInvoice[];
   abonnement?: AccountSubscription;
   moodboards?: Moodboard[];
+  partenariat?: AccountPartnerInfo;
 }
 
 /** Version du compte renvoyée au front — jamais le hash du code. */
@@ -244,6 +256,7 @@ export interface AdminAccountUpsertPayload {
   factures?: AccountInvoice[];
   abonnement?: AccountSubscription | null;
   moodboards?: Moodboard[];
+  partenariat?: AccountPartnerInfo | null;
 }
 
 /** Ligne légère renvoyée par GET /accounts (sans le détail commandes/paiements/etc.). */

@@ -180,7 +180,8 @@ function isValidAdminAccountUpsertPayload(body: unknown): body is AdminAccountUp
     (b.paiements === undefined || Array.isArray(b.paiements)) &&
     (b.factures === undefined || Array.isArray(b.factures)) &&
     (b.abonnement === undefined || b.abonnement === null || typeof b.abonnement === 'object') &&
-    (b.moodboards === undefined || isValidMoodboardArray(b.moodboards))
+    (b.moodboards === undefined || isValidMoodboardArray(b.moodboards)) &&
+    (b.partenariat === undefined || b.partenariat === null || typeof b.partenariat === 'object')
   );
 }
 

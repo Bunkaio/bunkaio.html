@@ -193,6 +193,14 @@
     </div>
   </div>
 
+  <div class="section">
+    <div class="section-title">Mon partenariat (JSON — uniquement pour un compte Partenaire)</div>
+    <div class="fgroup">
+      <textarea id="fPartenariat" placeholder='{"secteur":"architecture","statut":"Actif","dateAdhesion":"01/06/2026","articleUrl":"https://bunkaio.com/..."}'></textarea>
+      <div class="hint">secteur : architecture, amenagement, artisanat, marques ou evenementiel. statut : En attente, Actif ou Terminé. articleUrl optionnel, à renseigner une fois leur mise en avant éditoriale publiée.</div>
+    </div>
+  </div>
+
   <button id="saveBtn" onclick="saveAccount()" style="width:100%">Enregistrer ce compte</button>
   <div id="result"></div>
 </div>
@@ -258,6 +266,7 @@ document.getElementById('accountPicker').addEventListener('change', async (e) =>
     document.getElementById('fFactures').value = acc.factures ? JSON.stringify(acc.factures, null, 2) : '';
     document.getElementById('fAbonnement').value = acc.abonnement ? JSON.stringify(acc.abonnement, null, 2) : '';
     document.getElementById('fMoodboards').value = acc.moodboards ? JSON.stringify(acc.moodboards, null, 2) : '';
+    document.getElementById('fPartenariat').value = acc.partenariat ? JSON.stringify(acc.partenariat, null, 2) : '';
   } catch {
     alert('Erreur réseau lors du chargement du compte.');
   }
@@ -274,7 +283,7 @@ async function saveAccount() {
   const email = document.getElementById('fEmail').value.trim();
   if (!email || !email.includes('@')) { result.className = 'err'; result.textContent = 'Email invalide.'; return; }
 
-  let commandes, paiements, factures, abonnement, moodboards;
+  let commandes, paiements, factures, abonnement, moodboards, partenariat;
   try { commandes = jsonFieldValue('fCommandes'); }
   catch { result.className = 'err'; result.textContent = 'JSON invalide dans "Mes commandes".'; return; }
   try { paiements = jsonFieldValue('fPaiements'); }
@@ -285,6 +294,8 @@ async function saveAccount() {
   catch { result.className = 'err'; result.textContent = 'JSON invalide dans "Mon abonnement".'; return; }
   try { moodboards = jsonFieldValue('fMoodboards'); }
   catch { result.className = 'err'; result.textContent = 'JSON invalide dans "Mes moodboards".'; return; }
+  try { partenariat = jsonFieldValue('fPartenariat'); }
+  catch { result.className = 'err'; result.textContent = 'JSON invalide dans "Mon partenariat".'; return; }
 
   localStorage.setItem('bunkaio_admin_token', token);
   btn.disabled = true;
@@ -299,6 +310,7 @@ async function saveAccount() {
     lightroomUrl: document.getElementById('fLightroom').value.trim() || undefined,
     commandes, paiements, factures, moodboards,
     abonnement: abonnement ?? null,
+    partenariat: partenariat ?? null,
   };
   const code = document.getElementById('fCode').value.trim();
   if (code) payload.code = code;

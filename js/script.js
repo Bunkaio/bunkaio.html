@@ -236,6 +236,15 @@ const I18N = {
     'acc-upsell-text':'Estimez votre prochain projet en quelques minutes.',
     'acc-upsell-btn':'Estimer mon projet',
     'acc-moodboards':'Mes moodboards',
+    'acc-partenariat':'Mon partenariat',
+    'partner-no-sector':'Secteur non renseigné',
+    'partner-since':'Partenaire Fondateur depuis le',
+    'partner-pending-sub':'Candidature en cours d\'étude',
+    'partner-statut-attente':'En attente',
+    'partner-article-label':'Votre mise en lumière éditoriale',
+    'partner-article-link':'Voir votre article',
+    'partner-benefits-label':'Les avantages du programme',
+    'partner-places-label':'Places disponibles',
     'mb-toolbar-text':'Un moodboard par shooting pour partager votre vision avec l\'équipe Bunkaio — direction artistique, ambiance, inspirations.',
     'mb-new-btn':'Nouveau moodboard',
     'mb-empty-title':'Aucun moodboard pour le moment',
@@ -535,6 +544,15 @@ const I18N = {
     'acc-upsell-text':'Estimate your next project in a few minutes.',
     'acc-upsell-btn':'Estimate my project',
     'acc-moodboards':'My moodboards',
+    'acc-partenariat':'My partnership',
+    'partner-no-sector':'Sector not set',
+    'partner-since':'Founding Partner since',
+    'partner-pending-sub':'Application under review',
+    'partner-statut-attente':'Pending',
+    'partner-article-label':'Your editorial spotlight',
+    'partner-article-link':'View your article',
+    'partner-benefits-label':'Programme benefits',
+    'partner-places-label':'Available places',
     'mb-toolbar-text':'One moodboard per shoot to share your vision with the Bunkaio team — art direction, mood, inspirations.',
     'mb-new-btn':'New moodboard',
     'mb-empty-title':'No moodboard yet',
@@ -2878,7 +2896,7 @@ function doLogout(){
 }
 
 function setAccountTab(tab){
-  ['orders','subs','moodboards','payments','factures','portfolio','infos'].forEach(x => {
+  ['orders','partenariat','subs','moodboards','payments','factures','portfolio','infos'].forEach(x => {
     document.getElementById('atab-' + x).classList.toggle('active', x === tab);
     document.getElementById('asec-' + x).classList.toggle('active', x === tab);
   });
@@ -2990,6 +3008,64 @@ function renderAccUpsell(){
       <div class="acc-help-sub">${I18N[LANG][textKey]}</div>
     </div>
     <button class="btn btn-solid" onclick="goView('quiz')"><span>${I18N[LANG][btnKey]}</span></button>`;
+}
+
+/* ═══════════════ ESPACE PARTENAIRE — MON PARTENARIAT ═══════════════
+   Onglet visible uniquement pour USER.type === 'partner' (voir le
+   toggle dans renderAccount()). Mêmes identifiants de secteur que le
+   formulaire de candidature (Partenaires → Candidater). Les 4 avantages
+   et la mention des places disponibles reprennent tels quels le
+   contenu statique de l'accordéon "Programme Partenaires" — un seul
+   texte de référence pour ces informations, pas de duplication. */
+const PARTNER_SECTORS = [
+  { id:'architecture', name:{fr:'Architecture & habitat', en:'Architecture & living'} },
+  { id:'amenagement', name:{fr:'Aménagement & design', en:'Fittings & design'} },
+  { id:'artisanat', name:{fr:'Artisanat d\'exception', en:'Exceptional craftsmanship'} },
+  { id:'marques', name:{fr:'Marques & lifestyle', en:'Brands & lifestyle'} },
+  { id:'evenementiel', name:{fr:'Événementiel & lieux', en:'Events & venues'} },
+];
+
+function renderAccPartner(){
+  const el = document.getElementById('accPartnerContent');
+  if (!el || !USER) return;
+  const info = USER.partenariat || {};
+  const sector = PARTNER_SECTORS.find(s => s.id === info.secteur);
+  const statut = info.statut || I18N[LANG]['partner-statut-attente'];
+
+  el.innerHTML = `
+    <div class="acc-info-card">
+      <div class="mb-detail-head">
+        <div>
+          <div class="mb-detail-title">${sector ? t(sector.name) : I18N[LANG]['partner-no-sector']}</div>
+          <div class="mb-detail-ref">${info.dateAdhesion ? I18N[LANG]['partner-since'] + ' ' + escHtml(info.dateAdhesion) : I18N[LANG]['partner-pending-sub']}</div>
+        </div>
+        <span class="status-pill ${statusClass(statut)}">${escHtml(statut)}</span>
+      </div>
+
+      ${info.articleUrl ? `
+      <div class="mb-detail-block">
+        <div class="mb-detail-label">${I18N[LANG]['partner-article-label']}</div>
+        <a class="mb-ref-card" href="${escHtml(info.articleUrl)}" target="_blank" rel="noopener">
+          <div class="mb-ref-card-dot"></div>
+          <div class="mb-ref-card-url">${I18N[LANG]['partner-article-link']}</div>
+        </a>
+      </div>` : ''}
+
+      <div class="mb-detail-block">
+        <div class="mb-detail-label">${I18N[LANG]['partner-benefits-label']}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
+          <div class="cred-card"><div class="cred-num">01</div><div class="cred-title">${I18N[LANG]['p-b1-title']}</div><div class="cred-text">${I18N[LANG]['p-b1-text']}</div></div>
+          <div class="cred-card"><div class="cred-num">02</div><div class="cred-title">${I18N[LANG]['p-b2-title']}</div><div class="cred-text">${I18N[LANG]['p-b2-text']}</div></div>
+          <div class="cred-card"><div class="cred-num">03</div><div class="cred-title">${I18N[LANG]['p-b3-title']}</div><div class="cred-text">${I18N[LANG]['p-b3-text']}</div></div>
+          <div class="cred-card"><div class="cred-num">04</div><div class="cred-title">${I18N[LANG]['p-b4-title']}</div><div class="cred-text">${I18N[LANG]['p-b4-text']}</div></div>
+        </div>
+      </div>
+
+      <div class="mb-detail-block" style="margin-bottom:0">
+        <div class="mb-detail-label">${I18N[LANG]['partner-places-label']}</div>
+        <div class="mb-detail-vision">${I18N[LANG]['p-places-text']}</div>
+      </div>
+    </div>`;
 }
 
 /* ═══════════════ ESPACE CLIENT — MES MOODBOARDS ═══════════════
@@ -3515,6 +3591,11 @@ function renderAccount(){
   document.getElementById('accBadge').textContent =
     I18N[LANG][USER.type === 'client' ? 'acc-client-badge' : 'acc-partner-badge'];
   document.getElementById('accName').textContent = USER.nom || USER.email;
+  const partnerTab = document.getElementById('atab-partenariat');
+  if (partnerTab) {
+    partnerTab.style.display = USER.type === 'partner' ? '' : 'none';
+    if (USER.type === 'partner') renderAccPartner();
+  }
   renderAccountStepper();
   renderAccSubs();
   mbView = 'list'; mbActiveId = null;
@@ -3539,7 +3620,9 @@ function renderAccount(){
   if (lrBtn) lrBtn.href = USER.lightroomUrl || 'https://lightroom.adobe.com';
   renderAccInfoView();
   toggleAccInfoEdit(false);
-  setAccountTab('orders');
+  /* Un compte partenaire atterrit directement sur son onglet dédié —
+     "Mes commandes" n'a pas vraiment de sens pour lui par défaut. */
+  setAccountTab(USER.type === 'partner' ? 'partenariat' : 'orders');
 }
 
 /* ═══════════════ ESPACE CLIENT — MES INFORMATIONS ═══════════════ */

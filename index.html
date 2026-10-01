@@ -22,7 +22,7 @@
 <meta name="twitter:image" content="https://bunkaio.com/images/logo.webp">
 
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='80' font-family='serif'>⊹</text></svg>">
-<link rel="stylesheet" href="css/style.css?v=202610022">
+<link rel="stylesheet" href="css/style.css?v=202610023">
 
 <script type="application/ld+json">
 {
@@ -1160,6 +1160,7 @@
 
     <div class="account-tabs">
       <button class="pf-cat-tab active" id="atab-orders" onclick="setAccountTab('orders')" data-lang="acc-orders">Mes commandes</button>
+      <button class="pf-cat-tab" id="atab-partenariat" onclick="setAccountTab('partenariat')" data-lang="acc-partenariat" style="display:none">Mon partenariat</button>
       <button class="pf-cat-tab" id="atab-subs" onclick="setAccountTab('subs')" data-lang="acc-subs">Mes abonnements</button>
       <button class="pf-cat-tab" id="atab-moodboards" onclick="setAccountTab('moodboards')" data-lang="acc-moodboards">Mes moodboards</button>
       <button class="pf-cat-tab" id="atab-payments" onclick="setAccountTab('payments')" data-lang="acc-payments">Mes paiements</button>
@@ -1182,6 +1183,10 @@
           <tbody id="ordersBody"></tbody>
         </table>
       </div>
+    </div>
+
+    <div class="account-section" id="asec-partenariat">
+      <div id="accPartnerContent"></div>
     </div>
 
     <div class="account-section" id="asec-subs">
@@ -1351,7 +1356,7 @@
   </div>
 </footer>
 
-<script src="config/media.js?v=202610022"></script>
-<script src="js/script.js?v=202610022"></script>
+<script src="config/media.js?v=202610023"></script>
+<script src="js/script.js?v=202610023"></script>
 </body>
 </html>

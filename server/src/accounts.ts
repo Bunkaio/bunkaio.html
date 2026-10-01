@@ -104,6 +104,7 @@ export async function upsertAccountFromAdmin(env: Env, payload: AdminAccountUpse
     factures: payload.factures ?? existing?.factures,
     abonnement: payload.abonnement === null ? undefined : payload.abonnement ?? existing?.abonnement,
     moodboards: payload.moodboards ?? existing?.moodboards,
+    partenariat: payload.partenariat === null ? undefined : payload.partenariat ?? existing?.partenariat,
   };
   await putAccount(env, record);
   return record;
