@@ -6,6 +6,8 @@
       "email": "demo@bunkaio.com",
       "code": "BKO-DEMO",
       "nom": "Maison Lumière",
+      "telephone": "06 12 34 56 78",
+      "adresse": "12 rue des Ateliers, 75011 Paris",
       "etapeActuelle": 3,
       "lightroomUrl": "https://lightroom.adobe.com/shares/EXEMPLE-A-REMPLACER",
       "commandes": [
@@ -45,6 +47,28 @@
           "montant": "890 € HT",
           "statut": "Payé",
           "factureUrl": "https://invoice.stripe.com/i/EXEMPLE-SOLDE"
+        }
+      ],
+      "factures": [
+        {
+          "numero": "FAC-2026-0142-A",
+          "date": "12/09/2026",
+          "montant": "720 € HT",
+          "statut": "Payée",
+          "url": "https://invoice.stripe.com/i/EXEMPLE-ACOMPTE"
+        },
+        {
+          "numero": "FAC-2026-0142-B",
+          "date": "—",
+          "montant": "1 680 € HT",
+          "statut": "En attente"
+        },
+        {
+          "numero": "FAC-2026-0098",
+          "date": "03/06/2026",
+          "montant": "890 € HT",
+          "statut": "Payée",
+          "url": "https://invoice.stripe.com/i/EXEMPLE-SOLDE"
         }
       ]
     }
