@@ -921,6 +921,146 @@
   .acc-sub-manage-text { font-size: 12px; color: var(--grey); }
   @media (max-width: 600px) { .acc-subs-empty { padding: 40px 24px; } }
 
+  /* ─── MES MOODBOARDS ─── */
+  .mb-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
+  .mb-toolbar-text { font-size: 12.5px; color: var(--grey); max-width: 480px; line-height: 1.7; }
+
+  .mb-list-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 18px; }
+  .mb-card {
+    text-align: left; cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.5);
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+    border-radius: 8px; padding: 24px;
+    font-family: inherit; display: block; width: 100%;
+    transition: transform 0.3s var(--ease);
+  }
+  .mb-card:hover { transform: translateY(-3px); }
+  .mb-card-title { font-size: 15.5px; font-weight: 700; margin-bottom: 6px; }
+  .mb-card-ref { font-size: 11.5px; color: var(--grey); margin-bottom: 14px; }
+  .mb-card-swatches { display: flex; gap: 5px; margin-bottom: 14px; }
+  .mb-card-foot { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+  .mb-card-date { font-size: 10.5px; color: var(--grey); }
+
+  .mb-swatch { width: 16px; height: 16px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.08); flex-shrink: 0; }
+
+  /* Questionnaire de création — sections guidées à l'intérieur d'une
+     carte "verre dépoli" unique (pas de navigation étape par étape :
+     tout est visible, dans l'esprit d'un brief créatif qu'on remplit
+     dans l'ordre sans se perdre). */
+  .mb-wizard-section { margin-bottom: 40px; }
+  .mb-wizard-section:last-of-type { margin-bottom: 30px; }
+  .mb-wizard-num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--black); color: var(--white);
+    font-size: 10.5px; font-weight: 700; margin-right: 10px;
+  }
+  .mb-wizard-title { font-size: 14.5px; font-weight: 700; display: inline-flex; align-items: center; margin-bottom: 4px; }
+  .mb-wizard-sub { font-size: 12px; color: var(--grey); margin: 6px 0 16px 32px; line-height: 1.7; }
+
+  .mb-direction-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin-left: 32px; }
+  .mb-direction-card {
+    text-align: left; font-family: inherit; cursor: pointer;
+    border: 1px solid var(--line); border-radius: 10px;
+    background: rgba(255,255,255,0.6); padding: 16px 18px;
+    transition: border-color 0.25s var(--ease), background 0.25s var(--ease), transform 0.25s var(--ease);
+  }
+  .mb-direction-card:hover { border-color: rgba(10,10,12,0.4); transform: translateY(-2px); }
+  .mb-direction-card.active { background: var(--black); border-color: var(--black); color: var(--white); }
+  .mb-direction-name { font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+  .mb-direction-desc { font-size: 11.5px; line-height: 1.6; opacity: 0.75; }
+
+  .mb-chip-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-left: 32px; }
+  .mb-chip {
+    font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer;
+    border: 1px solid var(--line); border-radius: 100px;
+    background: rgba(255,255,255,0.6); color: var(--black);
+    padding: 9px 16px;
+    transition: all 0.25s var(--ease);
+  }
+  .mb-chip:hover { border-color: rgba(10,10,12,0.4); }
+  .mb-chip.active { background: var(--black); border-color: var(--black); color: var(--white); }
+
+  .mb-palette-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; margin-left: 32px; }
+  .mb-palette-card {
+    display: flex; align-items: center; gap: 12px; text-align: left;
+    font-family: inherit; cursor: pointer;
+    border: 1px solid var(--line); border-radius: 10px;
+    background: rgba(255,255,255,0.6); padding: 12px 14px;
+    transition: border-color 0.25s var(--ease), transform 0.25s var(--ease);
+  }
+  .mb-palette-card:hover { border-color: rgba(10,10,12,0.4); transform: translateY(-2px); }
+  .mb-palette-card.active { border-color: var(--black); background: rgba(255,255,255,0.9); }
+  .mb-palette-card.active .mb-palette-name { font-weight: 700; }
+  .mb-palette-swatches { display: flex; flex-shrink: 0; }
+  .mb-palette-swatches .mb-swatch { width: 20px; height: 20px; border-radius: 50%; margin-left: -6px; border: 2px solid rgba(255,255,255,0.9); }
+  .mb-palette-swatches .mb-swatch:first-child { margin-left: 0; }
+  .mb-palette-name { font-size: 12.5px; color: var(--black); }
+
+  .mb-refs { margin-left: 32px; }
+  .mb-ref-row { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+  .mb-ref-row input { flex: 1 1 200px; }
+  .mb-ref-row button { flex-shrink: 0; width: auto; padding: 0 16px; background: transparent; color: var(--grey); border: 1px solid var(--line); }
+  .mb-ref-add { font-size: 12px; font-weight: 600; color: var(--black); background: none; border: none; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; padding: 4px 0; }
+
+  .mb-wizard-actions { display: flex; gap: 12px; margin-left: 32px; }
+
+  /* Vue détail d'un moodboard existant */
+  .mb-detail-head { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px; margin-bottom: 8px; }
+  .mb-detail-title { font-size: 19px; font-weight: 700; }
+  .mb-detail-ref { font-size: 12px; color: var(--grey); margin-bottom: 22px; }
+  .mb-detail-block { margin-bottom: 28px; }
+  .mb-detail-label { font-size: 10px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--grey); margin-bottom: 12px; }
+  .mb-tag-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .mb-tag { font-size: 11.5px; font-weight: 600; border: 1px solid var(--line); border-radius: 100px; padding: 6px 13px; color: var(--black); }
+  .mb-detail-swatches { display: flex; gap: 8px; }
+  .mb-detail-swatches .mb-swatch { width: 28px; height: 28px; }
+  .mb-detail-vision { font-size: 13.5px; line-height: 1.9; color: #3a3544; white-space: pre-line; }
+
+  .mb-ref-cards { display: flex; flex-direction: column; gap: 8px; }
+  .mb-ref-card {
+    display: flex; align-items: center; gap: 10px;
+    border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px;
+    text-decoration: none; color: var(--black);
+    transition: border-color 0.25s var(--ease);
+  }
+  .mb-ref-card:hover { border-color: rgba(10,10,12,0.4); }
+  .mb-ref-card-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--grey); flex-shrink: 0; }
+  .mb-ref-card-url { font-size: 12.5px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .mb-ref-card-note { font-size: 11.5px; color: var(--grey); margin-top: 2px; }
+
+  .mb-pinterest-card {
+    display: flex; align-items: center; gap: 12px;
+    border: 1px solid #e60023; border-radius: 8px; padding: 14px 16px;
+    text-decoration: none; color: #e60023; font-size: 13px; font-weight: 700;
+    background: rgba(230,0,35,0.05);
+  }
+  .mb-pinterest-card svg { width: 22px; height: 22px; flex-shrink: 0; }
+
+  .mb-comments { display: flex; flex-direction: column; gap: 14px; margin-bottom: 20px; }
+  .mb-comment { max-width: 82%; border-radius: 10px; padding: 14px 16px; background: rgba(0,0,0,0.035); }
+  .mb-comment.bunkaio { align-self: flex-end; background: var(--black); color: var(--white); }
+  .mb-comment-meta { font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.55; margin-bottom: 6px; }
+  .mb-comment-text { font-size: 13px; line-height: 1.7; }
+  .mb-comment-link { display: inline-block; font-size: 11.5px; margin-top: 8px; text-decoration: underline; text-underline-offset: 2px; opacity: 0.85; }
+  .mb-comment-empty { font-size: 12.5px; color: var(--grey); margin-bottom: 20px; }
+
+  .mb-comment-form { display: flex; flex-direction: column; gap: 10px; }
+  .mb-comment-form textarea { min-height: 70px; }
+  .mb-comment-form-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .mb-comment-form-row input { flex: 1 1 200px; }
+  .mb-comment-form-row button { flex-shrink: 0; width: auto; padding: 0 22px; }
+
+  .mb-back-link { font-size: 12px; font-weight: 600; color: var(--grey); background: none; border: none; cursor: pointer; margin-bottom: 20px; padding: 0; text-decoration: underline; text-underline-offset: 3px; }
+
+  @media (max-width: 640px) {
+    .mb-direction-grid, .mb-chip-grid, .mb-palette-grid, .mb-refs, .mb-wizard-actions { margin-left: 0; }
+    .mb-wizard-sub { margin-left: 0; }
+    .mb-comment { max-width: 100%; }
+  }
+
   /* ─── MES INFORMATIONS — carte "verre dépoli", même traitement que
      .table-wrap/.lr-box/.acc-help-card ci-dessus ─── */
   .acc-info-card {

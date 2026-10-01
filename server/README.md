@@ -402,6 +402,23 @@ encore un système de session complet — raisonnable pour un espace de
 suivi de commande, à revoir si l'espace client gagne des fonctionnalités
 plus sensibles.
 
+### Neuvième brique : Mes moodboards
+
+Le client crée et modifie lui-même ses moodboards (un par shooting) depuis
+l'espace client, via `/account-update` — le champ `moodboards` fonctionne
+comme `nom`/`telephone`/`adresse` : fourni, il remplace la liste existante en
+entier (le front garde l'état courant et renvoie tout le tableau à chaque
+sauvegarde, y compris pour ajouter un simple commentaire). Rien de nouveau à
+déployer côté Cloudflare (pas de nouveau namespace ni de nouvelle route) : un
+simple `npm run deploy` suffit après avoir récupéré le code à jour.
+
+Pour répondre à un moodboard en tant que Bunkaio (ajouter un commentaire côté
+équipe, changer son statut en "Validé"...), c'est admin/comptes.html → champ
+"Moodboards (JSON)" : charge le compte, édite le tableau à la main (ajoute un
+objet `{"auteur":"bunkaio","texte":"...","date":"..."}` dans `commentaires`),
+réenregistre. Pas d'interface dédiée pour l'instant côté admin — à construire
+si ce fil d'échange devient un usage quotidien.
+
 ## Voir les logs en production
 
 ```bash
