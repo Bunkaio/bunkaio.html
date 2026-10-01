@@ -136,11 +136,14 @@ function isValidMoodboardArray(value: unknown): boolean {
       typeof mb.creeLe === 'string' &&
       typeof mb.majLe === 'string' &&
       (mb.commandeRef === undefined || typeof mb.commandeRef === 'string') &&
+      (mb.typeProjet === undefined || typeof mb.typeProjet === 'string') &&
       (mb.direction === undefined || typeof mb.direction === 'string') &&
       (mb.ambiance === undefined || Array.isArray(mb.ambiance)) &&
       (mb.palette === undefined || typeof mb.palette === 'string') &&
       (mb.pinterestUrl === undefined || typeof mb.pinterestUrl === 'string') &&
       (mb.references === undefined || Array.isArray(mb.references)) &&
+      (mb.produits === undefined || Array.isArray(mb.produits)) &&
+      (mb.collaborateurs === undefined || Array.isArray(mb.collaborateurs)) &&
       (mb.notes === undefined || typeof mb.notes === 'string') &&
       (mb.commentaires === undefined || Array.isArray(mb.commentaires))
     );

@@ -249,6 +249,20 @@ const I18N = {
     'mb-field-titre':'Titre du moodboard *',
     'mb-field-titre-ph':'Ex. Shooting produit — automne',
     'mb-field-commande':'Shooting lié',
+    'mb-field-type-projet':'Type de projet',
+    'mb-type-particulier':'Particulier',
+    'mb-type-marque':'Marque / Entreprise',
+    'mb-field-products':'Collection / produits à présenter',
+    'mb-field-products-sub':'Listez les pièces à mettre en avant lors du shooting — vêtements, produits cosmétiques, accessoires…',
+    'mb-product-add-btn':'+ Ajouter un produit',
+    'mb-product-nom-ph':'Nom de la pièce / du produit',
+    'mb-product-lien-ph':'Lien ou référence — optionnel',
+    'mb-step-collab-title':'Collaborateurs & prestataires',
+    'mb-step-collab-sub':'Si d\'autres prestataires sont impliqués dans ce projet (styliste, maquilleuse, traiteur, lieu…), indiquez-les ici avec leur domaine.',
+    'mb-collab-add-btn':'+ Ajouter un collaborateur',
+    'mb-collab-nom-ph':'Nom du prestataire',
+    'mb-collab-domaine-ph':'Domaine…',
+    'mb-collab-role-ph':'Rôle — optionnel (ex. maquilleuse, traiteur)',
     'mb-step2-title':'Direction artistique',
     'mb-step2-sub':'Choisissez l\'orientation qui parle le plus à votre projet.',
     'mb-step3-title':'Ambiance',
@@ -534,6 +548,20 @@ const I18N = {
     'mb-field-titre':'Moodboard title *',
     'mb-field-titre-ph':'E.g. Product shoot — autumn',
     'mb-field-commande':'Linked shoot',
+    'mb-field-type-projet':'Project type',
+    'mb-type-particulier':'Individual',
+    'mb-type-marque':'Brand / Business',
+    'mb-field-products':'Collection / products to feature',
+    'mb-field-products-sub':'List the pieces to feature during the shoot — clothing, cosmetic products, accessories…',
+    'mb-product-add-btn':'+ Add a product',
+    'mb-product-nom-ph':'Product / piece name',
+    'mb-product-lien-ph':'Link or reference — optional',
+    'mb-step-collab-title':'Collaborators & vendors',
+    'mb-step-collab-sub':'If other vendors are involved in this project (stylist, makeup artist, caterer, venue…), list them here with their domain.',
+    'mb-collab-add-btn':'+ Add a collaborator',
+    'mb-collab-nom-ph':'Vendor name',
+    'mb-collab-domaine-ph':'Domain…',
+    'mb-collab-role-ph':'Role — optional (e.g. makeup artist, caterer)',
     'mb-step2-title':'Art direction',
     'mb-step2-sub':'Pick the direction that speaks most to your project.',
     'mb-step3-title':'Mood',
@@ -2990,6 +3018,19 @@ const MB_PALETTES = [
   { id:'terracotta', name:{fr:'Vert & terracotta', en:'Green & terracotta'}, colors:['#4A5C44','#8C5A3C','#D9B48F','#2E3A28'] },
   { id:'dore', name:{fr:'Bleu profond & doré', en:'Deep blue & gold'}, colors:['#1B2A4A','#0A0A0C','#C9A24B','#EDE6DA'] },
 ];
+const MB_PRODUCT_TYPES = [
+  { id:'vetement', name:{fr:'Vêtement', en:'Clothing'} },
+  { id:'cosmetique', name:{fr:'Cosmétique', en:'Cosmetics'} },
+  { id:'accessoire', name:{fr:'Accessoire', en:'Accessory'} },
+  { id:'bijou', name:{fr:'Bijou', en:'Jewellery'} },
+  { id:'autre', name:{fr:'Autre', en:'Other'} },
+];
+/* Domaines proposés aux collaborateurs externes (styliste, traiteur, lieu…) —
+   reprend volontairement les mêmes identifiants que CATS (le questionnaire
+   de devis) plutôt qu'une taxonomie propre au moodboard : une seule liste
+   de référence à tenir à jour sur tout le site. CATS est déjà défini plus
+   haut dans ce fichier au moment où ce tableau est évalué. */
+const MB_DOMAINES = CATS.map(c => ({ id: c.id, name: c.name }));
 
 let mbView = 'list'; // 'list' | 'wizard' | 'detail'
 let mbActiveId = null;
@@ -3035,7 +3076,10 @@ function renderMbList(el){
         <div class="mb-card-ref">${escHtml(refLabel)}</div>
         ${swatches ? `<div class="mb-card-swatches">${swatches}</div>` : ''}
         <div class="mb-card-foot">
-          <span class="status-pill ${statusClass(mb.statut)}">${escHtml(mb.statut)}</span>
+          <span style="display:flex;align-items:center;gap:8px">
+            ${mb.typeProjet === 'marque' ? `<span class="mb-tag">${I18N[LANG]['mb-type-marque']}</span>` : ''}
+            <span class="status-pill ${statusClass(mb.statut)}">${escHtml(mb.statut)}</span>
+          </span>
           <span class="mb-card-date">${escHtml(mb.majLe)}</span>
         </div>
       </button>`;
@@ -3101,13 +3145,26 @@ function renderMbWizard(el){
             <label>${I18N[LANG]['mb-field-titre']}</label>
             <input type="text" id="mbTitre" placeholder="${I18N[LANG]['mb-field-titre-ph']}" value="${editing ? escHtml(editing.titre) : ''}">
           </div>
-          <div class="fgroup" style="margin-bottom:0">
+          <div class="fgroup">
             <label>${I18N[LANG]['mb-field-commande']}</label>
             <select id="mbCommandeRef">
               <option value="future">${I18N[LANG]['mb-ref-future']}</option>
               ${commandOptions.map(c => `<option value="${escHtml(c)}"${editing && editing.commandeRef === c ? ' selected' : ''}>${escHtml(c)}</option>`).join('')}
             </select>
           </div>
+          <div class="fgroup" style="margin-bottom:0">
+            <label>${I18N[LANG]['mb-field-type-projet']}</label>
+            <select id="mbTypeProjet" onchange="toggleMbProductsModule()">
+              <option value="particulier"${editing && editing.typeProjet === 'marque' ? '' : ' selected'}>${I18N[LANG]['mb-type-particulier']}</option>
+              <option value="marque"${editing && editing.typeProjet === 'marque' ? ' selected' : ''}>${I18N[LANG]['mb-type-marque']}</option>
+            </select>
+          </div>
+        </div>
+        <div class="mb-refs" id="mbProductsModule" style="display:none;margin-top:22px">
+          <label style="display:block;font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--grey);margin-bottom:7px">${I18N[LANG]['mb-field-products']}</label>
+          <p class="mb-wizard-sub" style="margin:0 0 14px">${I18N[LANG]['mb-field-products-sub']}</p>
+          <div id="mbProductRows"></div>
+          <button type="button" class="mb-ref-add" onclick="addMbProductRow()">${I18N[LANG]['mb-product-add-btn']}</button>
         </div>
       </div>
 
@@ -3160,7 +3217,16 @@ function renderMbWizard(el){
       </div>
 
       <div class="mb-wizard-section">
-        <div class="mb-wizard-title"><span class="mb-wizard-num">6</span>${I18N[LANG]['mb-step6-title']}</div>
+        <div class="mb-wizard-title"><span class="mb-wizard-num">6</span>${I18N[LANG]['mb-step-collab-title']}</div>
+        <p class="mb-wizard-sub">${I18N[LANG]['mb-step-collab-sub']}</p>
+        <div class="mb-refs">
+          <div id="mbCollabRows"></div>
+          <button type="button" class="mb-ref-add" onclick="addMbCollabRow()">${I18N[LANG]['mb-collab-add-btn']}</button>
+        </div>
+      </div>
+
+      <div class="mb-wizard-section">
+        <div class="mb-wizard-title"><span class="mb-wizard-num">7</span>${I18N[LANG]['mb-step6-title']}</div>
         <p class="mb-wizard-sub">${I18N[LANG]['mb-step6-sub']}</p>
         <div style="margin-left:32px">
           <textarea id="mbNotes" style="min-height:120px" placeholder="${I18N[LANG]['mb-field-notes-ph']}">${editing ? escHtml(editing.notes || '') : ''}</textarea>
@@ -3177,6 +3243,57 @@ function renderMbWizard(el){
 
   const existingRefs = editing && editing.references && editing.references.length ? editing.references : [{ url:'', note:'' }];
   existingRefs.forEach(r => addMbRefRow(r.url, r.note));
+
+  const existingProducts = editing && editing.produits && editing.produits.length ? editing.produits : [{ nom:'', type:'vetement', lien:'', note:'' }];
+  existingProducts.forEach(p => addMbProductRow(p.nom, p.type, p.lien, p.note));
+  toggleMbProductsModule();
+
+  const existingCollabs = editing && editing.collaborateurs && editing.collaborateurs.length ? editing.collaborateurs : [{ nom:'', domaine:'', role:'' }];
+  existingCollabs.forEach(c => addMbCollabRow(c.nom, c.domaine, c.role));
+}
+
+/* Module "Collection / Produits" — visible uniquement si le projet est
+   pour une marque (voir #mbTypeProjet). N'efface jamais les lignes déjà
+   saisies : seule la visibilité du bloc change. */
+function toggleMbProductsModule(){
+  const typeEl = document.getElementById('mbTypeProjet');
+  const module = document.getElementById('mbProductsModule');
+  if (!typeEl || !module) return;
+  module.style.display = typeEl.value === 'marque' ? 'block' : 'none';
+}
+
+function addMbProductRow(nom, type, lien, note){
+  const container = document.getElementById('mbProductRows');
+  if (!container) return;
+  const row = document.createElement('div');
+  row.className = 'mb-ref-row';
+  row.innerHTML = `
+    <input type="text" class="mb-product-nom" placeholder="${I18N[LANG]['mb-product-nom-ph']}" value="${nom ? escHtml(nom) : ''}">
+    <select class="mb-product-type">
+      ${MB_PRODUCT_TYPES.map(pt => `<option value="${pt.id}"${type === pt.id ? ' selected' : ''}>${t(pt.name)}</option>`).join('')}
+    </select>
+    <input type="text" class="mb-product-lien" placeholder="${I18N[LANG]['mb-product-lien-ph']}" value="${lien ? escHtml(lien) : ''}">
+    <input type="text" class="mb-product-note" placeholder="${I18N[LANG]['mb-ref-note-ph']}" value="${note ? escHtml(note) : ''}">
+    <button type="button" onclick="this.closest('.mb-ref-row').remove()">✕</button>
+  `;
+  container.appendChild(row);
+}
+
+function addMbCollabRow(nom, domaine, role){
+  const container = document.getElementById('mbCollabRows');
+  if (!container) return;
+  const row = document.createElement('div');
+  row.className = 'mb-ref-row';
+  row.innerHTML = `
+    <input type="text" class="mb-collab-nom" placeholder="${I18N[LANG]['mb-collab-nom-ph']}" value="${nom ? escHtml(nom) : ''}">
+    <select class="mb-collab-domaine">
+      <option value="">${I18N[LANG]['mb-collab-domaine-ph']}</option>
+      ${MB_DOMAINES.map(d => `<option value="${d.id}"${domaine === d.id ? ' selected' : ''}>${t(d.name)}</option>`).join('')}
+    </select>
+    <input type="text" class="mb-collab-role" placeholder="${I18N[LANG]['mb-collab-role-ph']}" value="${role ? escHtml(role) : ''}">
+    <button type="button" onclick="this.closest('.mb-ref-row').remove()">✕</button>
+  `;
+  container.appendChild(row);
 }
 
 function saveMbDraft(){
@@ -3186,10 +3303,24 @@ function saveMbDraft(){
   err.style.display = 'none';
 
   const ambiance = Array.from(document.querySelectorAll('#mbAmbianceGrid .mb-chip.active')).map(c => c.dataset.value);
-  const references = Array.from(document.querySelectorAll('.mb-ref-row')).map(row => ({
+  const references = Array.from(document.querySelectorAll('#mbRefRows .mb-ref-row')).map(row => ({
     url: row.querySelector('.mb-ref-url').value.trim(),
     note: row.querySelector('.mb-ref-note').value.trim(),
   })).filter(r => r.url);
+  const typeProjet = document.getElementById('mbTypeProjet').value;
+  const produits = typeProjet === 'marque'
+    ? Array.from(document.querySelectorAll('#mbProductRows .mb-ref-row')).map(row => ({
+        nom: row.querySelector('.mb-product-nom').value.trim(),
+        type: row.querySelector('.mb-product-type').value,
+        lien: row.querySelector('.mb-product-lien').value.trim(),
+        note: row.querySelector('.mb-product-note').value.trim(),
+      })).filter(p => p.nom)
+    : [];
+  const collaborateurs = Array.from(document.querySelectorAll('#mbCollabRows .mb-ref-row')).map(row => ({
+    nom: row.querySelector('.mb-collab-nom').value.trim(),
+    domaine: row.querySelector('.mb-collab-domaine').value,
+    role: row.querySelector('.mb-collab-role').value.trim(),
+  })).filter(c => c.nom);
 
   const now = mbToday();
   const editing = mbActiveId ? (USER.moodboards || []).find(m => m.id === mbActiveId) : null;
@@ -3198,11 +3329,14 @@ function saveMbDraft(){
     titre,
     commandeRef: document.getElementById('mbCommandeRef').value,
     statut: editing ? editing.statut : 'Envoyé',
+    typeProjet,
     direction: document.getElementById('mbDirection').value || undefined,
     ambiance,
     palette: document.getElementById('mbPalette').value || undefined,
     pinterestUrl: document.getElementById('mbPinterest').value.trim() || undefined,
     references,
+    produits,
+    collaborateurs,
     notes: document.getElementById('mbNotes').value.trim(),
     commentaires: editing ? (editing.commentaires || []) : [],
     creeLe: editing ? editing.creeLe : now,
@@ -3244,6 +3378,24 @@ function renderMbDetail(el){
       </div>
     </a>`).join('');
 
+  const productCards = (mb.produits || []).map(p => {
+    const pt = MB_PRODUCT_TYPES.find(x => x.id === p.type);
+    return `
+    <div class="mb-ref-card" style="cursor:default">
+      <div class="mb-ref-card-dot"></div>
+      <div>
+        <div class="mb-ref-card-url">${escHtml(p.nom)}${pt ? ` — ${t(pt.name)}` : ''}</div>
+        ${p.lien ? `<div class="mb-ref-card-note"><a href="${escHtml(p.lien)}" target="_blank" rel="noopener">${escHtml(p.lien)}</a></div>` : ''}
+        ${p.note ? `<div class="mb-ref-card-note">${escHtml(p.note)}</div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+
+  const collabTags = (mb.collaborateurs || []).map(c => {
+    const dom = MB_DOMAINES.find(d => d.id === c.domaine);
+    return `<span class="mb-tag">${escHtml(c.nom)}${dom ? ` · ${t(dom.name)}` : ''}${c.role ? ` · ${escHtml(c.role)}` : ''}</span>`;
+  }).join('');
+
   const comments = (mb.commentaires || []).map(c => `
     <div class="mb-comment${c.auteur === 'bunkaio' ? ' bunkaio' : ''}">
       <div class="mb-comment-meta">${c.auteur === 'bunkaio' ? 'BUNKAIO' : escHtml(USER.nom || USER.email)} · ${escHtml(c.date || '')}</div>
@@ -3260,6 +3412,7 @@ function renderMbDetail(el){
           <div class="mb-detail-ref">${escHtml(refLabel)}</div>
         </div>
         <div style="display:flex;align-items:center;gap:10px">
+          ${mb.typeProjet === 'marque' ? `<span class="mb-tag">${I18N[LANG]['mb-type-marque']}</span>` : ''}
           <span class="status-pill ${statusClass(mb.statut)}">${escHtml(mb.statut)}</span>
           <button type="button" class="btn btn-ghost" style="padding:10px 18px" onclick="openMbWizard('${mb.id}')"><span>${I18N[LANG]['mb-edit-btn']}</span></button>
         </div>
@@ -3292,6 +3445,18 @@ function renderMbDetail(el){
       <div class="mb-detail-block">
         <div class="mb-detail-label">${I18N[LANG]['mb-step5-title']}</div>
         <div class="mb-ref-cards">${refCards}</div>
+      </div>` : ''}
+
+      ${productCards ? `
+      <div class="mb-detail-block">
+        <div class="mb-detail-label">${I18N[LANG]['mb-field-products']}</div>
+        <div class="mb-ref-cards">${productCards}</div>
+      </div>` : ''}
+
+      ${collabTags ? `
+      <div class="mb-detail-block">
+        <div class="mb-detail-label">${I18N[LANG]['mb-step-collab-title']}</div>
+        <div class="mb-tag-row">${collabTags}</div>
       </div>` : ''}
 
       ${mb.notes ? `
