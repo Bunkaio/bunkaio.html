@@ -748,7 +748,35 @@
   .account-section { display: none; }
   .account-section.active { display: block; animation: viewIn 0.6s var(--ease) both; }
 
-  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: rgba(255,255,255,0.55); }
+  /* ─── FOND SOMBRE DE L'ESPACE CLIENT ───
+     Dégradé noir profond teinté de violet (cohérent avec --violet-deep
+     utilisé ailleurs sur le site) plutôt qu'un noir neutre plat. Les
+     éléments de chrome (nom, badge, onglets, déconnexion) passent en
+     clair ; les cartes de contenu (tableaux, Lightroom, infos, aide)
+     restent des panneaux clairs "verre dépoli" par-dessus — voir
+     .table-wrap/.lr-box/.acc-help-card/.acc-info-card plus bas, dont le
+     texte interne reste donc inchangé (déjà pensé pour un fond clair). */
+  #view-account {
+    background: radial-gradient(ellipse 140% 65% at 50% -8%, #241c32 0%, #0d0b12 45%, #000000 100%);
+  }
+  #view-account .account-head { border-bottom-color: rgba(255,255,255,0.2); }
+  #view-account .account-type-badge { border-color: rgba(255,255,255,0.5); color: var(--white); }
+  #view-account .account-name { color: var(--white); }
+  #view-account .account-logout { border-color: rgba(255,255,255,0.3); color: var(--white); }
+  #view-account .account-logout:hover { border-color: var(--white); background: rgba(255,255,255,0.08); }
+  #view-account .account-tabs { border-bottom-color: rgba(255,255,255,0.16); }
+  #view-account .pf-cat-tab { color: rgba(255,255,255,0.5); }
+  #view-account .pf-cat-tab.active,
+  #view-account .pf-cat-tab:hover { color: var(--white); }
+  #view-account .pf-cat-tab::after { background: var(--white); }
+
+  .table-wrap {
+    overflow-x: auto; border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.5);
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+  }
   .data-table { width: 100%; border-collapse: collapse; font-size: 13.5px; min-width: 560px; }
   .data-table th {
     text-align: left;
@@ -778,8 +806,10 @@
   .empty-note { font-size: 13.5px; color: var(--grey); padding: 36px 24px; line-height: 1.8; }
 
   .lr-box {
-    border: 1px solid var(--line);
-    background: rgba(255, 255, 255, 0.55);
+    border: 1px solid rgba(255,255,255,0.5);
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.35);
     border-radius: 8px;
     padding: 56px 40px;
     text-align: center;
@@ -788,7 +818,11 @@
   .lr-box p { font-size: 13.5px; color: var(--grey); line-height: 1.9; max-width: 420px; margin: 0 auto 30px; }
 
   /* ─── SUIVI DE PROJET — repère visuel sur l'avancement du projet le plus
-     récent du client (USER.etapeActuelle dans comptes.json) ─── */
+     récent du client (USER.etapeActuelle dans comptes.json). Couleurs
+     pensées directement pour le fond sombre de l'espace client (seul
+     endroit où ce composant est utilisé) : pastilles à traits clairs
+     tant que l'étape n'est pas atteinte, pleines (blanc ou violet)
+     dès qu'elle l'est. ─── */
   .status-stepper {
     display: flex; justify-content: space-between;
     position: relative;
@@ -797,7 +831,7 @@
   }
   .status-stepper::before {
     content: ''; position: absolute; top: 17px; left: 6px; right: 6px;
-    height: 1px; background: var(--line); z-index: 0;
+    height: 1px; background: rgba(255,255,255,0.18); z-index: 0;
   }
   .ss-step {
     display: flex; flex-direction: column; align-items: center; gap: 10px;
@@ -805,32 +839,56 @@
   }
   .ss-dot {
     width: 34px; height: 34px; border-radius: 50%;
-    border: 1px solid var(--line); background: var(--white);
+    border: 1px solid rgba(255,255,255,0.32); background: transparent;
     display: flex; align-items: center; justify-content: center;
-    font-size: 12px; font-weight: 700; color: var(--grey);
+    font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.55);
     transition: all 0.35s var(--ease);
   }
-  .ss-step.done .ss-dot { background: var(--black); border-color: var(--black); color: var(--white); }
+  .ss-step.done .ss-dot { background: var(--white); border-color: var(--white); color: var(--black); }
   .ss-step.current .ss-dot { background: var(--violet-deep); border-color: var(--violet-deep); color: var(--black); }
-  .ss-label { font-size: 11px; font-weight: 600; color: var(--grey); max-width: 110px; line-height: 1.4; }
-  .ss-step.done .ss-label, .ss-step.current .ss-label { color: var(--black); }
+  .ss-label { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.5); max-width: 110px; line-height: 1.4; }
+  .ss-step.done .ss-label, .ss-step.current .ss-label { color: var(--white); }
   @media (max-width: 640px) {
     .ss-label { font-size: 9.5px; max-width: 72px; }
     .ss-dot { width: 28px; height: 28px; font-size: 10px; }
     .status-stepper::before { top: 14px; }
   }
 
-  /* ─── AIDE RAPIDE — bande persistante en bas de l'espace client ─── */
+  /* ─── AIDE RAPIDE — bande persistante en bas de l'espace client, même
+     traitement "verre dépoli" que .table-wrap/.lr-box ci-dessus ─── */
   .acc-help-card {
     display: flex; align-items: center; justify-content: space-between;
     flex-wrap: wrap; gap: 18px;
-    border: 1px solid var(--line);
+    border: 1px solid rgba(255,255,255,0.5);
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.35);
     border-radius: 8px;
     padding: 26px 30px;
     margin-top: 44px;
   }
   .acc-help-title { font-size: 14.5px; font-weight: 700; margin-bottom: 4px; }
   .acc-help-sub { font-size: 12.5px; color: var(--grey); }
+
+  /* ─── MES INFORMATIONS — carte "verre dépoli", même traitement que
+     .table-wrap/.lr-box/.acc-help-card ci-dessus ─── */
+  .acc-info-card {
+    border: 1px solid rgba(255,255,255,0.5);
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+    border-radius: 8px;
+    padding: 40px 44px;
+  }
+  .acc-info-row { padding: 18px 0; border-bottom: 1px solid var(--line); }
+  .acc-info-row:last-child { border-bottom: none; }
+  .acc-info-label {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--grey); margin-bottom: 8px;
+  }
+  .acc-info-value { font-size: 14.5px; color: var(--black); line-height: 1.6; white-space: pre-line; }
+  .acc-info-note { font-size: 12.5px; color: var(--grey); line-height: 1.8; margin-bottom: 26px; }
+  @media (max-width: 600px) { .acc-info-card { padding: 30px 24px; } }
 
   /* ─── CROSS-SELL COMMUNICATION (Agency Nascimento) ─── */
   .comm-box {

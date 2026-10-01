@@ -220,16 +220,25 @@ const I18N = {
     'register-success-text':'Votre demande de création de compte a bien été transmise. Vous recevrez votre code d\'accès personnel par email sous 24 heures.',
     'logout':'Déconnexion',
     'acc-client-badge':'Espace client','acc-partner-badge':'Espace partenaire',
-    'acc-orders':'Mes commandes','acc-payments':'Mes paiements','acc-portfolio':'Mon portfolio',
-    'th-date':'Date','th-service':'Prestation','th-amount':'Montant','th-status':'Statut','th-ref':'Référence','th-method':'Méthode','th-invoice':'Facture',
+    'acc-orders':'Mes commandes','acc-payments':'Mes paiements','acc-factures':'Mes factures','acc-portfolio':'Mon portfolio','acc-infos':'Mes informations',
+    'th-date':'Date','th-service':'Prestation','th-amount':'Montant','th-status':'Statut','th-ref':'Référence','th-method':'Méthode','th-invoice':'Facture','th-invoice-num':'Numéro',
     'empty-orders':'Aucune commande pour le moment. Vos prestations apparaîtront ici dès leur validation.',
     'empty-payments':'Aucun paiement enregistré pour le moment.',
+    'empty-factures':'Aucune facture pour le moment.',
     'acc-invoice-view':'Voir',
     'lr-title':'Votre portfolio sur Adobe Lightroom',
     'lr-text':'Vos livrables sont hébergés sur Adobe Lightroom. Connectez-vous avec les identifiants qui vous ont été transmis pour consulter et télécharger vos images.',
     'lr-btn':'Accéder à Lightroom',
     'acc-step-devis':'Devis confirmé','acc-step-shoot':'Shooting planifié','acc-step-post':'Post-production','acc-step-livre':'Livré',
     'acc-help-title':'Une question sur votre projet ?','acc-help-sub':'Votre interlocuteur BUNKAIO vous répond directement.','acc-help-btn':'Nous écrire',
+    'acc-info-address':'Adresse de facturation — optionnel',
+    'acc-info-not-set':'Non renseigné',
+    'acc-info-edit-btn':'Modifier mes informations',
+    'acc-info-save-btn':'Enregistrer les modifications',
+    'acc-info-cancel-btn':'Annuler',
+    'acc-info-note':'Ces informations sont transmises à notre équipe et prises en compte sous 24h.',
+    'acc-info-success-title':'Modifications transmises',
+    'acc-info-success-text':'Votre demande de mise à jour a bien été reçue. Elle sera prise en compte sous 24 heures.',
     'comm-kicker':'Pour aller plus loin',
     'comm-title':'Besoin d\'accompagnement en communication digitale\u00a0?',
     'comm-text':'Notre partenaire Agency Nascimento accompagne les clients BUNKAIO au-delà de l\'image : création de site web, référencement (SEO), publicité en ligne (SEA, Ads), stratégie réseaux sociaux et analyse de données.',
@@ -441,16 +450,25 @@ const I18N = {
     'register-success-text':'Your account request has been sent successfully. You will receive your personal access code by email within 24 hours.',
     'logout':'Sign out',
     'acc-client-badge':'Client area','acc-partner-badge':'Partner area',
-    'acc-orders':'My orders','acc-payments':'My payments','acc-portfolio':'My portfolio',
-    'th-date':'Date','th-service':'Service','th-amount':'Amount','th-status':'Status','th-ref':'Reference','th-method':'Method','th-invoice':'Invoice',
+    'acc-orders':'My orders','acc-payments':'My payments','acc-factures':'My invoices','acc-portfolio':'My portfolio','acc-infos':'My information',
+    'th-date':'Date','th-service':'Service','th-amount':'Amount','th-status':'Status','th-ref':'Reference','th-method':'Method','th-invoice':'Invoice','th-invoice-num':'Number',
     'empty-orders':'No orders yet. Your services will appear here as soon as they are confirmed.',
     'empty-payments':'No payments recorded yet.',
+    'empty-factures':'No invoices yet.',
     'acc-invoice-view':'View',
     'lr-title':'Your portfolio on Adobe Lightroom',
     'lr-text':'Your deliverables are hosted on Adobe Lightroom. Sign in with the credentials provided to you to view and download your images.',
     'lr-btn':'Go to Lightroom',
     'acc-step-devis':'Quote confirmed','acc-step-shoot':'Shoot scheduled','acc-step-post':'Post-production','acc-step-livre':'Delivered',
     'acc-help-title':'Any question about your project ?','acc-help-sub':'Your BUNKAIO contact replies to you directly.','acc-help-btn':'Write to us',
+    'acc-info-address':'Billing address — optional',
+    'acc-info-not-set':'Not provided',
+    'acc-info-edit-btn':'Edit my information',
+    'acc-info-save-btn':'Save changes',
+    'acc-info-cancel-btn':'Cancel',
+    'acc-info-note':'This information is sent to our team and taken into account within 24h.',
+    'acc-info-success-title':'Changes submitted',
+    'acc-info-success-text':'Your update request has been received. It will be taken into account within 24 hours.',
     'comm-kicker':'Going further',
     'comm-title':'Need support with your digital communication\u00a0?',
     'comm-text':'Our partner Agency Nascimento supports BUNKAIO clients beyond imagery: website creation, search engine optimisation (SEO), online advertising (SEA, Ads), social media strategy and data analysis.',
@@ -2702,7 +2720,7 @@ function doLogout(){
 }
 
 function setAccountTab(tab){
-  ['orders','payments','portfolio'].forEach(x => {
+  ['orders','payments','factures','portfolio','infos'].forEach(x => {
     document.getElementById('atab-' + x).classList.toggle('active', x === tab);
     document.getElementById('asec-' + x).classList.toggle('active', x === tab);
   });
@@ -2749,9 +2767,86 @@ function renderAccount(){
   pb.innerHTML = payments.length
     ? payments.map(p => `<tr><td>${p.date||'—'}</td><td>${p.reference||'—'}</td><td>${p.methode||'—'}</td><td>${p.montant||'—'}</td><td><span class="status-pill ${statusClass(p.statut)}">${p.statut||'—'}</span></td><td>${p.factureUrl ? `<a href="${p.factureUrl}" target="_blank" rel="noopener">${I18N[LANG]['acc-invoice-view']}</a>` : '—'}</td></tr>`).join('')
     : `<tr><td colspan="6"><div class="empty-note">${I18N[LANG]['empty-payments']}</div></td></tr>`;
+  const fb = document.getElementById('facturesBody');
+  const factures = USER.factures || [];
+  fb.innerHTML = factures.length
+    ? factures.map(f => `<tr><td>${f.numero||'—'}</td><td>${f.date||'—'}</td><td>${f.montant||'—'}</td><td><span class="status-pill ${statusClass(f.statut)}">${f.statut||'—'}</span></td><td>${f.url ? `<a href="${f.url}" target="_blank" rel="noopener">${I18N[LANG]['acc-invoice-view']}</a>` : '—'}</td></tr>`).join('')
+    : `<tr><td colspan="5"><div class="empty-note">${I18N[LANG]['empty-factures']}</div></td></tr>`;
   const lrBtn = document.getElementById('accLightroomBtn');
   if (lrBtn) lrBtn.href = USER.lightroomUrl || 'https://lightroom.adobe.com';
+  renderAccInfoView();
+  toggleAccInfoEdit(false);
   setAccountTab('orders');
+}
+
+/* ═══════════════ ESPACE CLIENT — MES INFORMATIONS ═══════════════ */
+function renderAccInfoView(){
+  if (!USER) return;
+  const notSet = I18N[LANG]['acc-info-not-set'];
+  document.getElementById('accInfoName').textContent = USER.nom || notSet;
+  document.getElementById('accInfoEmail').textContent = USER.email || notSet;
+  document.getElementById('accInfoPhone').textContent = USER.telephone || notSet;
+  document.getElementById('accInfoAddress').textContent = USER.adresse || notSet;
+}
+
+/* Bascule lecture/édition. Les champs d'édition sont toujours repris
+   depuis USER (jamais vidés), pour que l'utilisateur puisse revenir en
+   arrière avec "Annuler" sans perdre ce qui était déjà enregistré. */
+function toggleAccInfoEdit(edit){
+  document.getElementById('accInfoView').style.display = edit ? 'none' : 'block';
+  document.getElementById('accInfoEdit').style.display = edit ? 'block' : 'none';
+  document.getElementById('accInfoSuccess').style.display = 'none';
+  document.getElementById('accInfoError').style.display = 'none';
+  if (edit && USER) {
+    document.getElementById('accEditName').value = USER.nom || '';
+    document.getElementById('accEditEmail').value = USER.email || '';
+    document.getElementById('accEditPhone').value = USER.telephone || '';
+    document.getElementById('accEditAddress').value = USER.adresse || '';
+  }
+}
+
+/* Pas de backend d'écriture pour comptes.json (fichier statique, voir
+   note de sécurité plus haut) : la "modification" est transmise par
+   email à l'équipe Bunkaio pour prise en compte manuelle, comme pour
+   la création de compte (doRegister()). On reflète quand même la
+   saisie côté client dans cette session (USER en mémoire) pour une
+   confirmation visuelle immédiate — un rechargement de page revient
+   aux données de comptes.json tant que la demande n'a pas été traitée. */
+function saveAccInfo(){
+  const n  = document.getElementById('accEditName').value.trim();
+  const em = document.getElementById('accEditEmail').value.trim();
+  const ph = document.getElementById('accEditPhone').value.trim();
+  const ad = document.getElementById('accEditAddress').value.trim();
+  const err = document.getElementById('accInfoError');
+  if (!n || !em || !em.includes('@')) { err.style.display = 'block'; return; }
+  err.style.display = 'none';
+  const btn = document.querySelector('#accInfoEdit .btn-solid');
+  if (btn) btn.disabled = true;
+  fetch(FORMSPREE_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify({
+      _subject: 'MISE À JOUR INFOS CLIENT — ' + n,
+      _replyto: em,
+      email_compte: USER.email,
+      nom_precedent: USER.nom || '',
+      nom_nouveau: n,
+      email_nouveau: em,
+      telephone_nouveau: ph || 'Non renseigné',
+      adresse_nouvelle: ad || 'Non renseignée',
+      action_requise: 'Mettre à jour cette entrée dans comptes.json sur GitHub'
+    })
+  }).then(() => {
+    USER.nom = n; USER.email = em; USER.telephone = ph; USER.adresse = ad;
+    document.getElementById('accName').textContent = USER.nom || USER.email;
+    renderAccInfoView();
+    toggleAccInfoEdit(false);
+    document.getElementById('accInfoSuccess').style.display = 'block';
+  }).catch(() => {
+    if (btn) btn.disabled = false;
+    err.textContent = 'Erreur lors de l\'envoi. Écrivez à contact@bunkaio.com';
+    err.style.display = 'block';
+  });
 }
 
 /* ═══════════════ COMM BOX ═══════════════ */
