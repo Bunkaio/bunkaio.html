@@ -2047,6 +2047,33 @@
   }
   .partner-cta-btn:hover { transform: translateY(-3px); }
 
+  /* ─── PARTENAIRES — onglet "Collaboration" ───
+     Titre + chapô en en-tête pleine largeur (pour que les deux colonnes
+     démarrent réellement à la même hauteur), puis deux colonnes
+     (illustration + réassurance / formulaire) — même logique que
+     .ct-page (Contact) mais sans son padding de page complète puisqu'elle
+     vit déjà dans .partners-page. */
+  .collab-title {
+    font-size: clamp(24px, 3.2vw, 32px);
+    font-weight: 700; letter-spacing: -0.02em; line-height: 1.2;
+    margin-bottom: 14px;
+    max-width: 620px;
+  }
+  .collab-sub-full { max-width: 620px; margin-bottom: 46px; }
+  .collab-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: start;
+  }
+  .collab-img {
+    aspect-ratio: 4/5;
+    margin-bottom: 30px;
+  }
+  @media (max-width: 920px) {
+    .collab-grid { grid-template-columns: 1fr; gap: 40px; }
+    .collab-img { aspect-ratio: 16/10; }
+  }
+
   /* ─── CTA FOOTER ─── */
   .footer-cta-row {
     display: flex; align-items: center;
