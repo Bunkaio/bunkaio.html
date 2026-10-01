@@ -176,6 +176,34 @@
   .pf-img-card img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; }
   .pf-img-label { font-size: 10px; color: var(--grey); padding: 4px 8px; }
 
+  /* ── Rubriques désactivées (accordéon, grisé, replié) ── */
+  .disabled-accordion {
+    margin-top: 56px;
+    border: 1.5px dashed var(--line);
+    border-radius: 10px;
+    background: #f4f3f0;
+  }
+  .disabled-accordion-header {
+    display: flex; align-items: center; gap: 10px;
+    padding: 16px 20px;
+    cursor: pointer; user-select: none;
+  }
+  .disabled-accordion-header:hover .disabled-accordion-title { color: var(--black); }
+  .disabled-accordion-chevron {
+    width: 9px; height: 9px;
+    border-right: 1.5px solid var(--grey); border-bottom: 1.5px solid var(--grey);
+    transform: rotate(-45deg); transform-origin: center; flex-shrink: 0;
+    transition: transform 0.2s;
+  }
+  .disabled-accordion.open .disabled-accordion-chevron { transform: rotate(45deg); }
+  .disabled-accordion-title { font-size: 14px; font-weight: 700; color: var(--grey); transition: color 0.18s; }
+  .disabled-accordion-count { font-size: 11px; color: #aaa; }
+  .disabled-accordion-body { display: none; padding: 4px 20px 24px; }
+  .disabled-accordion.open .disabled-accordion-body { display: block; }
+  .disabled-accordion-body .section { opacity: 0.55; filter: grayscale(0.4); }
+  .disabled-accordion-body .section:first-child { margin-top: 12px; }
+  .disabled-accordion-body .pf-section { border-color: #ddd; }
+
   @media (max-width: 600px) {
     .header { padding: 12px 16px; }
     .page { padding: 24px 16px 60px; }
@@ -204,7 +232,7 @@
   <p class="page-sub">
     Glisse-dépose tes photos (et vidéos, tout en haut de page) directement sur chaque emplacement, ou clique dessus pour ouvrir le sélecteur de fichiers.<br>
     Tout est uploadé en direct sur le site — aucune manipulation de code nécessaire.<br>
-    <em>Exceptions — ces quelques fichiers sont gérés directement dans le code du site (pas via ce panel) : les vidéos de fond de l'accueil et de la page Partenaires, les vidéos des projets 4K Drone, et le logo. Dis-le moi directement si tu veux les changer, je m'en occupe.</em>
+    <em>Exceptions — ces quelques fichiers sont gérés directement dans le code du site (pas via ce panel) : les vidéos de fond de l'accueil et de la page Partenaires, et le logo. Dis-le moi directement si tu veux les changer, je m'en occupe.</em>
   </p>
   <div id="sections"></div>
 </div>
@@ -247,6 +275,20 @@ const VIDEO_SECTIONS = [
       'Poids conseillé : 8 à 15 Mo maximum',
     ],
   },
+];
+
+// ── Vidéos projets 4K Drone — rubrique en pause, repliée plus bas ──────────────
+// Une vidéo par projet, lancée en plein écran au clic sur sa vignette (voir
+// section "4K Drone — vignettes projets" ci-dessous). Format : paysage 16:9.
+const DRONE_VIDEO_SECTIONS = [
+  { id: 'drone-video-immo-1',    label: 'Immobilier — projet 1 — vidéo',           path: 'drone/immo-1.mp4',    params: ['Format vidéo : .mp4 (H.264)', 'Cadrage : paysage 16:9', 'Poids conseillé : 15 à 40 Mo maximum'] },
+  { id: 'drone-video-immo-2',    label: 'Immobilier — projet 2 — vidéo',           path: 'drone/immo-2.mp4',    params: ['Format vidéo : .mp4 (H.264)', 'Cadrage : paysage 16:9', 'Poids conseillé : 15 à 40 Mo maximum'] },
+  { id: 'drone-video-outdoor-1', label: 'Piscines & paysages — projet 1 — vidéo',  path: 'drone/outdoor-1.mp4', params: ['Format vidéo : .mp4 (H.264)', 'Cadrage : paysage 16:9', 'Poids conseillé : 15 à 40 Mo maximum'] },
+  { id: 'drone-video-outdoor-2', label: 'Piscines & paysages — projet 2 — vidéo',  path: 'drone/outdoor-2.mp4', params: ['Format vidéo : .mp4 (H.264)', 'Cadrage : paysage 16:9', 'Poids conseillé : 15 à 40 Mo maximum'] },
+  { id: 'drone-video-event-1',   label: 'Événementiel — projet 1 — vidéo',         path: 'drone/event-1.mp4',   params: ['Format vidéo : .mp4 (H.264)', 'Cadrage : paysage 16:9', 'Poids conseillé : 15 à 40 Mo maximum'] },
+  { id: 'drone-video-event-2',   label: 'Événementiel — projet 2 — vidéo',         path: 'drone/event-2.mp4',   params: ['Format vidéo : .mp4 (H.264)', 'Cadrage : paysage 16:9', 'Poids conseillé : 15 à 40 Mo maximum'] },
+  { id: 'drone-video-brand-1',   label: 'Marques & lifestyle — projet 1 — vidéo',  path: 'drone/brand-1.mp4',   params: ['Format vidéo : .mp4 (H.264)', 'Cadrage : paysage 16:9', 'Poids conseillé : 15 à 40 Mo maximum'] },
+  { id: 'drone-video-brand-2',   label: 'Marques & lifestyle — projet 2 — vidéo',  path: 'drone/brand-2.mp4',   params: ['Format vidéo : .mp4 (H.264)', 'Cadrage : paysage 16:9', 'Poids conseillé : 15 à 40 Mo maximum'] },
 ];
 
 // ── Slots fixes ──────────────────────────────────────────────────────────────
@@ -308,32 +350,6 @@ const SECTIONS = [
     slots: [{ path: 'devis/illustration.webp', label: 'Illustration' }],
   },
 
-  // ── 4K Drone ─────────────────────────────────────────────────────────────
-  {
-    id: 'drone-hero',
-    title: '🚁 4K Drone — bannière en haut de page',
-    desc: '1920 × 820 px, paysage 21:9. Rubrique en "Bientôt disponible" — pas urgent.',
-    slots: [
-      { path: 'hero/drone-1.webp', label: 'Photo 1' },
-      { path: 'hero/drone-2.webp', label: 'Photo 2' },
-    ],
-  },
-  {
-    id: 'drone-thumbs',
-    title: '🚁 4K Drone — vignettes projets',
-    desc: '640 × 400 px, paysage 16:10 — miniature cliquable par projet. Pas urgent tant que la rubrique est en pause.',
-    slots: [
-      { path: 'drone/immo-1.webp', label: 'Immobilier — projet 1' },
-      { path: 'drone/immo-2.webp', label: 'Immobilier — projet 2' },
-      { path: 'drone/outdoor-1.webp', label: 'Piscines & paysages — projet 1' },
-      { path: 'drone/outdoor-2.webp', label: 'Piscines & paysages — projet 2' },
-      { path: 'drone/event-1.webp', label: 'Événementiel — projet 1' },
-      { path: 'drone/event-2.webp', label: 'Événementiel — projet 2' },
-      { path: 'drone/brand-1.webp', label: 'Marques & lifestyle — projet 1' },
-      { path: 'drone/brand-2.webp', label: 'Marques & lifestyle — projet 2' },
-    ],
-  },
-
   // ── Contact & Partenaires ────────────────────────────────────────────────
   {
     id: 'contact-hero',
@@ -371,7 +387,13 @@ const SECTIONS = [
     ],
   },
 
-  // ── Catégories archivées ─────────────────────────────────────────────────
+];
+
+// ── Catégories & rubriques désactivées — repliées plus bas, grisées ────────────
+// Catalogue désactivé (non visible dans le filtre Services en ligne) ou
+// rubrique en pause (4K Drone : page "Bientôt disponible"). Pas urgent à
+// alimenter tant que ce n'est pas réactivé.
+const DISABLED_SECTIONS = [
   {
     id: 'services-cats-archive',
     title: '🗄 Catégories archivées — non utilisées actuellement',
@@ -384,6 +406,30 @@ const SECTIONS = [
       { path: 'services/artisan.webp', label: 'Artisanat' },
     ],
   },
+  {
+    id: 'drone-hero',
+    title: '🚁 4K Drone — bannière en haut de page',
+    desc: '1920 × 820 px, paysage 21:9. Rubrique en "Bientôt disponible" — pas urgent.',
+    slots: [
+      { path: 'hero/drone-1.webp', label: 'Photo 1' },
+      { path: 'hero/drone-2.webp', label: 'Photo 2' },
+    ],
+  },
+  {
+    id: 'drone-thumbs',
+    title: '🚁 4K Drone — vignettes projets',
+    desc: '640 × 400 px, paysage 16:10 — miniature cliquable par projet. Pas urgent tant que la rubrique est en pause.',
+    slots: [
+      { path: 'drone/immo-1.webp', label: 'Immobilier — projet 1' },
+      { path: 'drone/immo-2.webp', label: 'Immobilier — projet 2' },
+      { path: 'drone/outdoor-1.webp', label: 'Piscines & paysages — projet 1' },
+      { path: 'drone/outdoor-2.webp', label: 'Piscines & paysages — projet 2' },
+      { path: 'drone/event-1.webp', label: 'Événementiel — projet 1' },
+      { path: 'drone/event-2.webp', label: 'Événementiel — projet 2' },
+      { path: 'drone/brand-1.webp', label: 'Marques & lifestyle — projet 1' },
+      { path: 'drone/brand-2.webp', label: 'Marques & lifestyle — projet 2' },
+    ],
+  },
 ];
 
 // ── Portfolio categories ─────────────────────────────────────────────────────
@@ -393,6 +439,10 @@ const PF_CATS = [
   { id: 'commercial', label: 'Commercial & produits' },
   { id: 'event', label: 'Événementiel' },
   { id: 'lumen', label: 'Lumen' },
+];
+
+// Catégories portfolio archivées — repliées dans l'accordéon plus bas.
+const PF_CATS_DISABLED = [
   { id: 'immobilier', label: 'Immobilier (archivé)' },
   { id: 'archi', label: 'Architecture (archivé)' },
   { id: 'artisan', label: 'Artisanat (archivé)' },
@@ -713,56 +763,103 @@ function makePfCategory(cat) {
   return wrap;
 }
 
+// ── Build UI — helpers ───────────────────────────────────────────────────────
+function buildSlotSection(section) {
+  const wrap = document.createElement('div');
+  wrap.className = 'section';
+  wrap.innerHTML = `
+    <div class="section-header">
+      <div class="section-title">${section.title}</div>
+      <div class="section-desc">${section.desc}</div>
+    </div>
+  `;
+  const grid = document.createElement('div');
+  grid.className = 'slots-grid';
+  section.slots.forEach((slot) => grid.appendChild(makeSlotCard(slot)));
+  wrap.appendChild(grid);
+  return wrap;
+}
+
+function buildVideoSection(title, desc, videos) {
+  const wrap = document.createElement('div');
+  wrap.className = 'section';
+  wrap.innerHTML = `
+    <div class="section-header">
+      <div class="section-title">${title}</div>
+      <div class="section-desc">${desc}</div>
+    </div>
+  `;
+  const grid = document.createElement('div');
+  grid.style.cssText = 'display:flex;flex-direction:column;gap:16px;';
+  videos.forEach((video) => grid.appendChild(makeVideoCard(video)));
+  wrap.appendChild(grid);
+  return wrap;
+}
+
+function buildPfSection(title, desc, cats) {
+  const wrap = document.createElement('div');
+  wrap.className = 'section';
+  wrap.innerHTML = `
+    <div class="section-header">
+      <div class="section-title">${title}</div>
+      <div class="section-desc">${desc}</div>
+    </div>
+  `;
+  const inner = document.createElement('div');
+  inner.className = 'pf-section';
+  cats.forEach((cat) => inner.appendChild(makePfCategory(cat)));
+  wrap.appendChild(inner);
+  return wrap;
+}
+
 // ── Build UI ─────────────────────────────────────────────────────────────────
 function buildUI() {
   const container = document.getElementById('sections');
 
   // Vidéos de fond plein écran — catégorie distincte, en tête de page
-  const videoWrap = document.createElement('div');
-  videoWrap.className = 'section';
-  videoWrap.innerHTML = `
-    <div class="section-header">
-      <div class="section-title">🎬 Vidéos de fond plein écran</div>
-      <div class="section-desc">Une vidéo déposée ici remplace automatiquement les photos de bannière de la même rubrique, partout sur le site — respecte les paramètres indiqués sous chaque emplacement pour un rendu net et un chargement rapide.</div>
-    </div>
-  `;
-  const videoGrid = document.createElement('div');
-  videoGrid.style.cssText = 'display:flex;flex-direction:column;gap:16px;';
-  VIDEO_SECTIONS.forEach((video) => videoGrid.appendChild(makeVideoCard(video)));
-  videoWrap.appendChild(videoGrid);
-  container.appendChild(videoWrap);
+  container.appendChild(buildVideoSection(
+    '🎬 Vidéos de fond plein écran',
+    'Une vidéo déposée ici remplace automatiquement les photos de bannière de la même rubrique, partout sur le site — respecte les paramètres indiqués sous chaque emplacement pour un rendu net et un chargement rapide.',
+    VIDEO_SECTIONS
+  ));
 
-  // Fixed slots
-  SECTIONS.forEach((section) => {
-    const wrap = document.createElement('div');
-    wrap.className = 'section';
-    wrap.innerHTML = `
-      <div class="section-header">
-        <div class="section-title">${section.title}</div>
-        <div class="section-desc">${section.desc}</div>
-      </div>
-    `;
-    const grid = document.createElement('div');
-    grid.className = 'slots-grid';
-    section.slots.forEach((slot) => grid.appendChild(makeSlotCard(slot)));
-    wrap.appendChild(grid);
-    container.appendChild(wrap);
+  // Slots fixes actifs
+  SECTIONS.forEach((section) => container.appendChild(buildSlotSection(section)));
+
+  // Portfolio — catégories actives
+  container.appendChild(buildPfSection(
+    'Portfolio — Réalisations',
+    'Clique sur "+ Ajouter" pour charger les photos existantes d\'une catégorie et en ajouter de nouvelles. Format recommandé : portrait 900 × 1200 px.',
+    PF_CATS
+  ));
+
+  // ── Catégories & rubriques désactivées — accordéon replié, grisé ──────────
+  const accordion = document.createElement('div');
+  accordion.className = 'disabled-accordion';
+  accordion.innerHTML = `
+    <div class="disabled-accordion-header">
+      <div class="disabled-accordion-chevron"></div>
+      <div class="disabled-accordion-title">Catégories et rubriques désactivées</div>
+      <div class="disabled-accordion-count">(${DISABLED_SECTIONS.length + PF_CATS_DISABLED.length + DRONE_VIDEO_SECTIONS.length} emplacements, inactifs sur le site)</div>
+    </div>
+    <div class="disabled-accordion-body"></div>
+  `;
+  const accBody = accordion.querySelector('.disabled-accordion-body');
+  DISABLED_SECTIONS.forEach((section) => accBody.appendChild(buildSlotSection(section)));
+  accBody.appendChild(buildVideoSection(
+    '🚁 4K Drone — vidéos projets',
+    'Rubrique en pause ("Bientôt disponible" sur le site) — pas urgent à remplir. Une vidéo par vignette ci-dessus, lancée en plein écran au clic.',
+    DRONE_VIDEO_SECTIONS
+  ));
+  accBody.appendChild(buildPfSection(
+    'Portfolio — catégories archivées',
+    'Catégories retirées du catalogue Services en ligne ; conservées ici pour mémoire, pas urgent à alimenter.',
+    PF_CATS_DISABLED
+  ));
+  accordion.querySelector('.disabled-accordion-header').addEventListener('click', () => {
+    accordion.classList.toggle('open');
   });
-
-  // Portfolio
-  const pfWrap = document.createElement('div');
-  pfWrap.className = 'section';
-  pfWrap.innerHTML = `
-    <div class="section-header">
-      <div class="section-title">Portfolio — Réalisations</div>
-      <div class="section-desc">Clique sur "+ Ajouter" pour charger les photos existantes d'une catégorie et en ajouter de nouvelles. Format recommandé : portrait 900 × 1200 px.</div>
-    </div>
-  `;
-  const pfInner = document.createElement('div');
-  pfInner.className = 'pf-section';
-  PF_CATS.forEach((cat) => pfInner.appendChild(makePfCategory(cat)));
-  pfWrap.appendChild(pfInner);
-  container.appendChild(pfWrap);
+  container.appendChild(accordion);
 }
 
 buildUI();
