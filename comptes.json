@@ -1,0 +1,52 @@
+{
+  "_comment": "Fichier servi publiquement (dépôt GitHub public, pas d'authentification serveur) — compte de DÉMONSTRATION uniquement. Ne pas ajouter de vrais clients ici tant que l'accès n'est pas sécurisé côté serveur. Voir le commentaire au-dessus de ACCOUNTS_URL dans js/script.js.",
+  "comptes": [
+    {
+      "type": "client",
+      "email": "demo@bunkaio.com",
+      "code": "BKO-DEMO",
+      "nom": "Maison Lumière",
+      "etapeActuelle": 3,
+      "lightroomUrl": "https://lightroom.adobe.com/shares/EXEMPLE-A-REMPLACER",
+      "commandes": [
+        {
+          "date": "12/09/2026",
+          "prestation": "Formule Signature — Shooting produit",
+          "montant": "2 400 € HT",
+          "statut": "En production"
+        },
+        {
+          "date": "03/06/2026",
+          "prestation": "Formule Découverte — Portrait d'équipe",
+          "montant": "890 € HT",
+          "statut": "Livré"
+        }
+      ],
+      "paiements": [
+        {
+          "date": "12/09/2026",
+          "reference": "ACPT-2026-0142",
+          "methode": "Carte bancaire",
+          "montant": "720 € HT",
+          "statut": "Payé",
+          "factureUrl": "https://invoice.stripe.com/i/EXEMPLE-ACOMPTE"
+        },
+        {
+          "date": "—",
+          "reference": "SOLDE-2026-0142",
+          "methode": "—",
+          "montant": "1 680 € HT",
+          "statut": "En attente"
+        },
+        {
+          "date": "03/06/2026",
+          "reference": "PAY-2026-0098",
+          "methode": "Prélèvement automatique",
+          "montant": "890 € HT",
+          "statut": "Payé",
+          "factureUrl": "https://invoice.stripe.com/i/EXEMPLE-SOLDE"
+        }
+      ]
+    }
+  ]
+}

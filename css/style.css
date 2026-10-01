@@ -787,6 +787,51 @@
   .lr-box h3 { font-size: 18px; font-weight: 700; margin-bottom: 14px; }
   .lr-box p { font-size: 13.5px; color: var(--grey); line-height: 1.9; max-width: 420px; margin: 0 auto 30px; }
 
+  /* ─── SUIVI DE PROJET — repère visuel sur l'avancement du projet le plus
+     récent du client (USER.etapeActuelle dans comptes.json) ─── */
+  .status-stepper {
+    display: flex; justify-content: space-between;
+    position: relative;
+    margin-bottom: 48px;
+    padding: 0 6px;
+  }
+  .status-stepper::before {
+    content: ''; position: absolute; top: 17px; left: 6px; right: 6px;
+    height: 1px; background: var(--line); z-index: 0;
+  }
+  .ss-step {
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    position: relative; z-index: 1; flex: 1; text-align: center;
+  }
+  .ss-dot {
+    width: 34px; height: 34px; border-radius: 50%;
+    border: 1px solid var(--line); background: var(--white);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; color: var(--grey);
+    transition: all 0.35s var(--ease);
+  }
+  .ss-step.done .ss-dot { background: var(--black); border-color: var(--black); color: var(--white); }
+  .ss-step.current .ss-dot { background: var(--violet-deep); border-color: var(--violet-deep); color: var(--black); }
+  .ss-label { font-size: 11px; font-weight: 600; color: var(--grey); max-width: 110px; line-height: 1.4; }
+  .ss-step.done .ss-label, .ss-step.current .ss-label { color: var(--black); }
+  @media (max-width: 640px) {
+    .ss-label { font-size: 9.5px; max-width: 72px; }
+    .ss-dot { width: 28px; height: 28px; font-size: 10px; }
+    .status-stepper::before { top: 14px; }
+  }
+
+  /* ─── AIDE RAPIDE — bande persistante en bas de l'espace client ─── */
+  .acc-help-card {
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 18px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 26px 30px;
+    margin-top: 44px;
+  }
+  .acc-help-title { font-size: 14.5px; font-weight: 700; margin-bottom: 4px; }
+  .acc-help-sub { font-size: 12.5px; color: var(--grey); }
+
   /* ─── CROSS-SELL COMMUNICATION (Agency Nascimento) ─── */
   .comm-box {
     border: 1px solid var(--line);
@@ -848,6 +893,19 @@
     transition: transform 0.4s var(--ease);
   }
   .comm-redirect a:hover { transform: translateY(-3px); }
+
+  /* CTA secondaire — programme Partenaires, sur l'écran de confirmation du
+     devis. Volontairement plus discret que .comm-redirect (bordure plutôt
+     que fond plein) : c'est une opportunité annexe, pas l'objet de l'écran. */
+  .partner-redirect {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 34px 36px;
+    margin-top: 30px;
+    text-align: center;
+  }
+  .partner-redirect h3 { font-size: 15.5px; font-weight: 700; margin-bottom: 10px; max-width: 520px; margin-left: auto; margin-right: auto; }
+  .partner-redirect p { font-size: 13px; line-height: 1.8; color: var(--grey); margin-bottom: 20px; max-width: 480px; margin-left: auto; margin-right: auto; }
 
   .rv {
     opacity: 0; transform: translateY(28px);
