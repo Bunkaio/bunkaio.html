@@ -22,7 +22,7 @@
 <meta name="twitter:image" content="https://bunkaio.com/images/logo.webp">
 
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='80' font-family='serif'>⊹</text></svg>">
-<link rel="stylesheet" href="css/style.css?v=202610015">
+<link rel="stylesheet" href="css/style.css?v=202610016">
 
 <script type="application/ld+json">
 {
@@ -477,6 +477,14 @@
         <div class="gallery" id="pfPrevGallery"></div>
       </div>
 
+      <!-- CTA secondaire — programme Partenaires Fondateurs (placement stratégique :
+           après la confirmation de devis, avant les boutons de sortie de page) -->
+      <div class="partner-redirect rv">
+        <h3 data-lang="partner-redirect-title">Vous êtes aussi un professionnel dont le travail mérite d'être raconté ?</h3>
+        <p data-lang="partner-redirect-text">BUNKAIO sélectionne chaque année un nombre limité de Partenaires Fondateurs — architecture, aménagement, artisanat, marques, événementiel. Découvrez le programme et candidatez.</p>
+        <button class="btn btn-ghost" onclick="goView('partners','apply')" data-lang="partner-redirect-btn">Découvrir le programme partenaires</button>
+      </div>
+
       <div class="btn-row" style="margin-top: 52px">
         <button class="btn btn-ghost" onclick="goView('portfolio')"><span data-lang="see-portfolio">Voir tout le portfolio</span></button>
         <button class="btn btn-solid" onclick="goView('home')"><span data-lang="home-btn">Retour à l'accueil</span></button>
@@ -864,6 +872,7 @@
 
     <div class="svc-tabs">
       <button class="svc-tab active" id="ptab-program" onclick="setPartnersTab('program')" data-lang="ptab-program">Programme Partenaires</button>
+      <button class="svc-tab" id="ptab-apply" onclick="setPartnersTab('apply')" data-lang="ptab-apply">Candidater</button>
       <button class="svc-tab" id="ptab-collab" onclick="setPartnersTab('collab')" data-lang="ptab-collab">Collaboration</button>
     </div>
 
@@ -879,9 +888,93 @@
       <div id="partnersAccordion"></div>
 
       <div class="partner-cta rv">
-        <div class="partner-cta-title" data-lang="p-cta-title">Rejoindre Bunkaio</div>
+        <div class="partner-cta-title" data-lang="p-cta-title">Rejoindre le réseau de partenaires BUNKAIO</div>
         <div class="partner-cta-text" data-lang="p-cta-text">Bunkaio n'a pas vocation à travailler avec tout le monde. Nous recherchons des projets qui ont quelque chose à raconter. Si vous pensez que votre histoire mérite d'être racontée, nous serons heureux de la découvrir.</div>
-        <button class="partner-cta-btn" onclick="goView('quiz')" data-lang="p-cta-btn">Candidater</button>
+        <button class="partner-cta-btn" onclick="goView('partners','apply')" data-lang="p-cta-btn">Candidater</button>
+      </div>
+    </div>
+
+    <!-- Candidater — formulaire de candidature au programme Partenaires Fondateurs -->
+    <div id="psec-apply" style="display:none">
+      <h2 class="collab-title" data-lang="apply-title">Candidature — Partenaire Fondateur</h2>
+      <p class="ct-sub collab-sub-full" data-lang="apply-sub">Complétez ce formulaire pour candidater au programme Partenaires Fondateurs. Chaque candidature est étudiée individuellement — réponse personnalisée sous 5 jours ouvrés.</p>
+      <div class="collab-grid">
+        <div>
+          <div class="ct-info-block">
+            <div class="ct-info-label" data-lang="apply-who-label">Qui peut candidater</div>
+            <div class="ct-info-value" data-lang="apply-who-value">Les entreprises et professionnels dont les réalisations correspondent à l'univers Bunkaio — architecture, aménagement, artisanat d'exception, marques & lifestyle, événementiel.</div>
+          </div>
+          <div class="ct-info-block">
+            <div class="ct-info-label" data-lang="apply-eval-label">Ce qui est évalué</div>
+            <div class="ct-info-value" data-lang="apply-eval-value">La qualité de vos réalisations et la cohérence avec la ligne éditoriale Bunkaio. 10 places par univers, 60 partenaires fondateurs au total.</div>
+          </div>
+          <div class="ct-info-block">
+            <div class="ct-info-label" data-lang="collab-delay-label">Délai de réponse</div>
+            <div class="ct-info-value" data-lang="apply-delay-value">Sous 5 jours ouvrés.</div>
+          </div>
+        </div>
+        <div>
+          <form id="applyForm" onsubmit="sendApply(event)">
+            <div class="fgroup">
+              <label data-lang="name-label">Nom / Société *</label>
+              <input type="text" id="applyName" required placeholder="Votre nom ou votre société">
+            </div>
+            <div class="fgroup">
+              <label data-lang="email-label">Email *</label>
+              <input type="email" id="applyEmail" required placeholder="vous@societe.fr">
+            </div>
+            <div class="fgroup">
+              <label data-lang="phone-label-opt">Téléphone — optionnel</label>
+              <input type="tel" id="applyPhone" placeholder="06 00 00 00 00">
+            </div>
+            <div class="fgroup">
+              <label data-lang="apply-web-label">Site web / réseaux sociaux *</label>
+              <input type="text" id="applyWeb" required placeholder="votresite.fr ou instagram.com/votrecompte">
+            </div>
+            <div class="fgroup">
+              <label data-lang="apply-sector-label">Secteur d'activité *</label>
+              <div class="collab-type-grid" id="applySectorGrid">
+                <button type="button" class="collab-type-card" data-value="Architecture &amp; habitat" onclick="selectApplySector(this)">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v10h13V10"/><path d="M10 20v-6h4v6"/></svg>
+                  <span data-lang="apply-sector-opt1">Architecture &amp; habitat</span>
+                </button>
+                <button type="button" class="collab-type-card" data-value="Aménagement &amp; design" onclick="selectApplySector(this)">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="9" height="9" rx="1.5"/><circle cx="16.5" cy="16.5" r="4.5"/></svg>
+                  <span data-lang="apply-sector-opt2">Aménagement &amp; design</span>
+                </button>
+                <button type="button" class="collab-type-card" data-value="Artisanat d'exception" onclick="selectApplySector(this)">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 3.5 20.5 9.5 17 13 11 7Z"/><path d="M11 7 3.5 14.5a2 2 0 0 0 0 2.8l2.2 2.2a2 2 0 0 0 2.8 0L16 12"/></svg>
+                  <span data-lang="apply-sector-opt3">Artisanat d'exception</span>
+                </button>
+                <button type="button" class="collab-type-card" data-value="Marques &amp; lifestyle" onclick="selectApplySector(this)">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 12l9 9 11-11V2z"/><circle cx="7.5" cy="6.5" r="1.3" fill="currentColor" stroke="none"/></svg>
+                  <span data-lang="apply-sector-opt4">Marques &amp; lifestyle</span>
+                </button>
+                <button type="button" class="collab-type-card" data-value="Événementiel &amp; lieux" onclick="selectApplySector(this)">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.5 7-12a7 7 0 0 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="9" r="2.4"/></svg>
+                  <span data-lang="apply-sector-opt5">Événementiel &amp; lieux</span>
+                </button>
+                <button type="button" class="collab-type-card" data-value="Autre" onclick="selectApplySector(this)">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v6M12 15v6M3 12h6M15 12h6"/></svg>
+                  <span data-lang="collab-type-opt5">Autre</span>
+                </button>
+              </div>
+              <input type="hidden" id="applySector" value="">
+              <div class="collab-type-error" id="applySectorError" style="display:none" data-lang="apply-sector-error">Sélectionnez un secteur d'activité ci-dessus.</div>
+            </div>
+            <div class="fgroup">
+              <label data-lang="apply-project-label">Présentez votre activité et vos réalisations *</label>
+              <textarea id="applyProject" required placeholder="Décrivez votre activité, vos réalisations marquantes, ce que vous recherchez dans ce partenariat…" style="min-height:140px"></textarea>
+            </div>
+            <div class="btn-row" style="margin-top:34px">
+              <button type="submit" class="btn btn-solid"><span data-lang="apply-btn">Envoyer ma candidature</span></button>
+            </div>
+          </form>
+          <div class="success-box" id="applySuccess" style="display:none; margin-top: 10px;">
+            <h3 data-lang="apply-success-title">Candidature envoyée</h3>
+            <p data-lang="apply-success-text">Merci pour votre candidature. Nous l'étudions selon notre processus de sélection et revenons vers vous sous 5 jours ouvrés.</p>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -1062,6 +1155,9 @@
       <button class="account-logout" onclick="doLogout()" data-lang="logout">Déconnexion</button>
     </div>
 
+    <!-- Où en est votre projet — repère visuel sur le projet le plus récent -->
+    <div class="status-stepper" id="accStepper" style="display:none"></div>
+
     <div class="account-tabs">
       <button class="pf-cat-tab active" id="atab-orders" onclick="setAccountTab('orders')" data-lang="acc-orders">Mes commandes</button>
       <button class="pf-cat-tab" id="atab-payments" onclick="setAccountTab('payments')" data-lang="acc-payments">Mes paiements</button>
@@ -1094,6 +1190,7 @@
               <th data-lang="th-method">Méthode</th>
               <th data-lang="th-amount">Montant</th>
               <th data-lang="th-status">Statut</th>
+              <th data-lang="th-invoice">Facture</th>
             </tr>
           </thead>
           <tbody id="paymentsBody"></tbody>
@@ -1105,8 +1202,17 @@
       <div class="lr-box">
         <h3 data-lang="lr-title">Votre portfolio sur Adobe Lightroom</h3>
         <p data-lang="lr-text">Vos livrables sont hébergés sur Adobe Lightroom. Connectez-vous avec les identifiants qui vous ont été transmis pour consulter et télécharger vos images.</p>
-        <a class="ct-follow" href="https://lightroom.adobe.com" target="_blank" rel="noopener"><span data-lang="lr-btn">Accéder à Lightroom</span></a>
+        <a class="ct-follow" id="accLightroomBtn" href="https://lightroom.adobe.com" target="_blank" rel="noopener"><span data-lang="lr-btn">Accéder à Lightroom</span></a>
       </div>
+    </div>
+
+    <!-- Aide rapide — toujours visible, quel que soit l'onglet actif -->
+    <div class="acc-help-card">
+      <div class="acc-help-text">
+        <div class="acc-help-title" data-lang="acc-help-title">Une question sur votre projet&nbsp;?</div>
+        <div class="acc-help-sub" data-lang="acc-help-sub">Votre interlocuteur BUNKAIO vous répond directement.</div>
+      </div>
+      <a class="btn btn-ghost" href="mailto:contact@bunkaio.com"><span data-lang="acc-help-btn">Nous écrire</span></a>
     </div>
   </div>
 </div>
@@ -1156,7 +1262,7 @@
   </div>
 </footer>
 
-<script src="config/media.js?v=202610015"></script>
-<script src="js/script.js?v=202610015"></script>
+<script src="config/media.js?v=202610016"></script>
+<script src="js/script.js?v=202610016"></script>
 </body>
 </html>

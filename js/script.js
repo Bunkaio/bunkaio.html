@@ -168,10 +168,28 @@ const I18N = {
     'p-step2':'<strong>Étape 2 — Étude de la candidature.</strong> Chaque projet est analysé selon la qualité des réalisations, la cohérence avec l\'univers Bunkaio, le potentiel éditorial et les valeurs de l\'entreprise.',
     'p-step3':'<strong>Étape 3 — Réponse.</strong> Projet sélectionné, projet compatible (collaboration ponctuelle) ou projet réorienté vers une autre solution, notamment via Agency Nascimento.',
     'p-step4':'<strong>Étape 4 — Lancement.</strong> Onboarding personnalisé, feuille de route éditoriale et accompagnement adapté à votre activité.',
-    'p-cta-title':'Rejoindre Bunkaio',
+    'p-cta-title':'Rejoindre le réseau de partenaires BUNKAIO',
     'p-cta-text':'Bunkaio n\'a pas vocation à travailler avec tout le monde. Nous recherchons des projets qui ont quelque chose à raconter. Si vous pensez que votre histoire mérite d\'être racontée, nous serons heureux de la découvrir.',
     'p-cta-btn':'Candidater',
-    'ptab-program':'Programme Partenaires','ptab-collab':'Collaboration',
+    'ptab-program':'Programme Partenaires','ptab-apply':'Candidater','ptab-collab':'Collaboration',
+    'apply-title':'Candidature — Partenaire Fondateur',
+    'apply-sub':'Complétez ce formulaire pour candidater au programme Partenaires Fondateurs. Chaque candidature est étudiée individuellement — réponse personnalisée sous 5 jours ouvrés.',
+    'apply-who-label':'Qui peut candidater',
+    'apply-who-value':'Les entreprises et professionnels dont les réalisations correspondent à l\'univers Bunkaio — architecture, aménagement, artisanat d\'exception, marques & lifestyle, événementiel.',
+    'apply-eval-label':'Ce qui est évalué',
+    'apply-eval-value':'La qualité de vos réalisations et la cohérence avec la ligne éditoriale Bunkaio. 10 places par univers, 60 partenaires fondateurs au total.',
+    'apply-delay-value':'Sous 5 jours ouvrés.',
+    'apply-web-label':'Site web / réseaux sociaux *',
+    'apply-sector-label':'Secteur d\'activité *',
+    'apply-sector-opt1':'Architecture & habitat','apply-sector-opt2':'Aménagement & design','apply-sector-opt3':'Artisanat d\'exception','apply-sector-opt4':'Marques & lifestyle','apply-sector-opt5':'Événementiel & lieux',
+    'apply-sector-error':'Sélectionnez un secteur d\'activité ci-dessus.',
+    'apply-project-label':'Présentez votre activité et vos réalisations *',
+    'apply-btn':'Envoyer ma candidature',
+    'apply-success-title':'Candidature envoyée',
+    'apply-success-text':'Merci pour votre candidature. Nous l\'étudions selon notre processus de sélection et revenons vers vous sous 5 jours ouvrés.',
+    'partner-redirect-title':'Vous êtes aussi un professionnel dont le travail mérite d\'être raconté ?',
+    'partner-redirect-text':'BUNKAIO sélectionne chaque année un nombre limité de Partenaires Fondateurs — architecture, aménagement, artisanat, marques, événementiel. Découvrez le programme et candidatez.',
+    'partner-redirect-btn':'Découvrir le programme partenaires',
     'collab-title':'Proposer une collaboration',
     'collab-sub':'Marque, lieu, média, autre créateur·rice — BUNKAIO est ouvert aux collaborations qui ont du sens avec son univers, en dehors de ses prestations sur-mesure habituelles.',
     'collab-select-label':'Une sélection au cas par cas',
@@ -203,12 +221,15 @@ const I18N = {
     'logout':'Déconnexion',
     'acc-client-badge':'Espace client','acc-partner-badge':'Espace partenaire',
     'acc-orders':'Mes commandes','acc-payments':'Mes paiements','acc-portfolio':'Mon portfolio',
-    'th-date':'Date','th-service':'Prestation','th-amount':'Montant','th-status':'Statut','th-ref':'Référence','th-method':'Méthode',
+    'th-date':'Date','th-service':'Prestation','th-amount':'Montant','th-status':'Statut','th-ref':'Référence','th-method':'Méthode','th-invoice':'Facture',
     'empty-orders':'Aucune commande pour le moment. Vos prestations apparaîtront ici dès leur validation.',
     'empty-payments':'Aucun paiement enregistré pour le moment.',
+    'acc-invoice-view':'Voir',
     'lr-title':'Votre portfolio sur Adobe Lightroom',
     'lr-text':'Vos livrables sont hébergés sur Adobe Lightroom. Connectez-vous avec les identifiants qui vous ont été transmis pour consulter et télécharger vos images.',
     'lr-btn':'Accéder à Lightroom',
+    'acc-step-devis':'Devis confirmé','acc-step-shoot':'Shooting planifié','acc-step-post':'Post-production','acc-step-livre':'Livré',
+    'acc-help-title':'Une question sur votre projet ?','acc-help-sub':'Votre interlocuteur BUNKAIO vous répond directement.','acc-help-btn':'Nous écrire',
     'comm-kicker':'Pour aller plus loin',
     'comm-title':'Besoin d\'accompagnement en communication digitale\u00a0?',
     'comm-text':'Notre partenaire Agency Nascimento accompagne les clients BUNKAIO au-delà de l\'image : création de site web, référencement (SEO), publicité en ligne (SEA, Ads), stratégie réseaux sociaux et analyse de données.',
@@ -368,10 +389,28 @@ const I18N = {
     'p-step2':'<strong>Step 2 — Application review.</strong> Each project is assessed on the quality of its work, its fit with the Bunkaio universe, its editorial potential and the company\'s values.',
     'p-step3':'<strong>Step 3 — Response.</strong> Project selected, project compatible (one-off collaboration), or project redirected towards another solution, notably through Agency Nascimento.',
     'p-step4':'<strong>Step 4 — Launch.</strong> Personalised onboarding, an editorial roadmap and support tailored to your business.',
-    'p-cta-title':'Join Bunkaio',
+    'p-cta-title':'Join the BUNKAIO partner network',
     'p-cta-text':'Bunkaio was never meant to work with everyone. We look for projects that have something to say. If you believe your story deserves to be told, we would be delighted to discover it.',
     'p-cta-btn':'Apply',
-    'ptab-program':'Partner Programme','ptab-collab':'Collaboration',
+    'ptab-program':'Partner Programme','ptab-apply':'Apply','ptab-collab':'Collaboration',
+    'apply-title':'Application — Founding Partner',
+    'apply-sub':'Fill in this form to apply to the Founding Partners programme. Every application is reviewed individually — a personal reply within 5 working days.',
+    'apply-who-label':'Who can apply',
+    'apply-who-value':'Companies and professionals whose work aligns with the Bunkaio universe — architecture, fittings & design, exceptional craftsmanship, brands & lifestyle, events & venues.',
+    'apply-eval-label':'What we assess',
+    'apply-eval-value':'The quality of your work and its fit with the Bunkaio editorial line. 10 places per universe, 60 founding partners in total.',
+    'apply-delay-value':'Within 5 working days.',
+    'apply-web-label':'Website / social media *',
+    'apply-sector-label':'Business sector *',
+    'apply-sector-opt1':'Architecture & living','apply-sector-opt2':'Fittings & design','apply-sector-opt3':'Exceptional craftsmanship','apply-sector-opt4':'Brands & lifestyle','apply-sector-opt5':'Events & venues',
+    'apply-sector-error':'Please select a business sector above.',
+    'apply-project-label':'Tell us about your business and your work *',
+    'apply-btn':'Send my application',
+    'apply-success-title':'Application sent',
+    'apply-success-text':'Thank you for your application. We\'re reviewing it as part of our selection process and will get back to you within 5 working days.',
+    'partner-redirect-title':'Are you also a professional whose work deserves to be told ?',
+    'partner-redirect-text':'Every year BUNKAIO selects a limited number of Founding Partners — architecture, fittings, craftsmanship, brands, events. Discover the programme and apply.',
+    'partner-redirect-btn':'Discover the partner programme',
     'collab-title':'Propose a collaboration',
     'collab-sub':'Brand, venue, media, another creator — BUNKAIO is open to collaborations that make sense with its universe, outside of its usual bespoke services.',
     'collab-select-label':'Reviewed case by case',
@@ -403,12 +442,15 @@ const I18N = {
     'logout':'Sign out',
     'acc-client-badge':'Client area','acc-partner-badge':'Partner area',
     'acc-orders':'My orders','acc-payments':'My payments','acc-portfolio':'My portfolio',
-    'th-date':'Date','th-service':'Service','th-amount':'Amount','th-status':'Status','th-ref':'Reference','th-method':'Method',
+    'th-date':'Date','th-service':'Service','th-amount':'Amount','th-status':'Status','th-ref':'Reference','th-method':'Method','th-invoice':'Invoice',
     'empty-orders':'No orders yet. Your services will appear here as soon as they are confirmed.',
     'empty-payments':'No payments recorded yet.',
+    'acc-invoice-view':'View',
     'lr-title':'Your portfolio on Adobe Lightroom',
     'lr-text':'Your deliverables are hosted on Adobe Lightroom. Sign in with the credentials provided to you to view and download your images.',
     'lr-btn':'Go to Lightroom',
+    'acc-step-devis':'Quote confirmed','acc-step-shoot':'Shoot scheduled','acc-step-post':'Post-production','acc-step-livre':'Delivered',
+    'acc-help-title':'Any question about your project ?','acc-help-sub':'Your BUNKAIO contact replies to you directly.','acc-help-btn':'Write to us',
     'comm-kicker':'Going further',
     'comm-title':'Need support with your digital communication\u00a0?',
     'comm-text':'Our partner Agency Nascimento supports BUNKAIO clients beyond imagery: website creation, search engine optimisation (SEO), online advertising (SEA, Ads), social media strategy and data analysis.',
@@ -1243,7 +1285,8 @@ function goView(v, subTab){
     if (v === 'drone') { renderDroneCats(); renderDroneProjects(activeDroneCat); }
     if (v === 'portfolio' && !pfLoaded) { renderPfTabs(); selectPfTab(PF_CATS[0].id); pfLoaded = true; }
     if (v === 'partners') {
-      renderPartnersAccordion(); renderLogoCarousel(); setPartnersTab(subTab === 'collab' ? 'collab' : 'program');
+      renderPartnersAccordion(); renderLogoCarousel();
+      setPartnersTab(subTab === 'collab' || subTab === 'apply' ? subTab : 'program');
       const img = document.getElementById('img-partners-banner'); if (img && !img.src) img.src = IMG.partners;
       const imgCollab = document.getElementById('img-collab-side'); if (imgCollab && !imgCollab.src) imgCollab.src = IMG.collab;
     }
@@ -2503,7 +2546,65 @@ function sendCollab(e){
   });
 }
 
+/* ═══════════════ PARTENAIRES — CANDIDATER (Partenaire Fondateur) ═══════════════ */
+/* Même logique que selectCollabType()/sendCollab() ci-dessus : cartes
+   cliquables pour le secteur, repris dans le champ caché #applySector. */
+function selectApplySector(btn){
+  document.querySelectorAll('#applySectorGrid .collab-type-card').forEach(c => c.classList.toggle('active', c === btn));
+  document.getElementById('applySector').value = btn.dataset.value;
+  const err = document.getElementById('applySectorError');
+  if (err) err.style.display = 'none';
+}
+
+function sendApply(e){
+  e.preventDefault();
+  const n = document.getElementById('applyName').value.trim();
+  const em = document.getElementById('applyEmail').value.trim();
+  const ph = document.getElementById('applyPhone').value.trim();
+  const web = document.getElementById('applyWeb').value.trim();
+  const sector = document.getElementById('applySector').value;
+  const proj = document.getElementById('applyProject').value.trim();
+  if (!sector) {
+    const err = document.getElementById('applySectorError');
+    if (err) err.style.display = 'block';
+    document.getElementById('applySectorGrid').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+  const btn = document.querySelector('#applyForm .btn-solid');
+  if (btn) btn.disabled = true;
+  fetch(FORMSPREE_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify({
+      /* Secteur en tête de l'objet du mail, même convention que les
+         demandes de collaboration : tri/filtrage des candidatures par
+         secteur directement depuis la boîte mail. */
+      _subject: 'CANDIDATURE PARTENAIRE [' + sector + '] — ' + n,
+      _replyto: em,
+      secteur_activite: sector,
+      nom_societe: n,
+      email: em,
+      telephone: ph || 'Non renseigné',
+      site_reseaux: web,
+      activite_realisations: proj
+    })
+  }).then(() => {
+    document.getElementById('applyForm').style.display = 'none';
+    document.getElementById('applySuccess').style.display = 'block';
+  }).catch(() => {
+    document.getElementById('applyForm').style.display = 'none';
+    document.getElementById('applySuccess').style.display = 'block';
+  });
+}
+
 /* ═══════════════ ESPACE CLIENT / PARTENAIRE ═══════════════ */
+/* ⚠️ comptes.json est un fichier statique servi publiquement (le dépôt
+   GitHub est public) : n'importe qui peut l'ouvrir directement sur
+   bunkaio.com/comptes.json, sans connexion. Tant que l'authentification
+   ne passe pas par un backend sécurisé (Worker + stockage protégé),
+   ce fichier doit rester un compte de DÉMONSTRATION uniquement — ne pas
+   y ajouter de vrais clients (noms, emails, montants, lien Lightroom
+   réel) avant d'avoir sécurisé l'accès. */
 const ACCOUNTS_URL = 'comptes.json';
 let loginType = 'client';
 let USER = null;
@@ -2615,11 +2716,29 @@ function statusClass(statut){
   return '';
 }
 
+/* Repère d'avancement affiché en haut de l'espace client, basé sur
+   USER.etapeActuelle (1 à 4) dans comptes.json. Reflète le projet le
+   plus récent du client — absent ou hors de cette plage, le repère
+   reste masqué plutôt que d'afficher un état incorrect. */
+const ACCOUNT_STEPS = ['acc-step-devis', 'acc-step-shoot', 'acc-step-post', 'acc-step-livre'];
+function renderAccountStepper(){
+  const el = document.getElementById('accStepper');
+  const n = USER && USER.etapeActuelle;
+  if (!el || !n || n < 1 || n > ACCOUNT_STEPS.length) { if (el) el.style.display = 'none'; return; }
+  el.style.display = 'flex';
+  el.innerHTML = ACCOUNT_STEPS.map((key, i) => {
+    const step = i + 1;
+    const state = step < n ? 'done' : step === n ? 'current' : '';
+    return `<div class="ss-step ${state}"><div class="ss-dot">${step < n ? '✓' : step}</div><div class="ss-label">${I18N[LANG][key]}</div></div>`;
+  }).join('');
+}
+
 function renderAccount(){
   if (!USER) return;
   document.getElementById('accBadge').textContent =
     I18N[LANG][USER.type === 'client' ? 'acc-client-badge' : 'acc-partner-badge'];
   document.getElementById('accName').textContent = USER.nom || USER.email;
+  renderAccountStepper();
   const ob = document.getElementById('ordersBody');
   const orders = USER.commandes || [];
   ob.innerHTML = orders.length
@@ -2628,8 +2747,10 @@ function renderAccount(){
   const pb = document.getElementById('paymentsBody');
   const payments = USER.paiements || [];
   pb.innerHTML = payments.length
-    ? payments.map(p => `<tr><td>${p.date||'—'}</td><td>${p.reference||'—'}</td><td>${p.methode||'—'}</td><td>${p.montant||'—'}</td><td><span class="status-pill ${statusClass(p.statut)}">${p.statut||'—'}</span></td></tr>`).join('')
-    : `<tr><td colspan="5"><div class="empty-note">${I18N[LANG]['empty-payments']}</div></td></tr>`;
+    ? payments.map(p => `<tr><td>${p.date||'—'}</td><td>${p.reference||'—'}</td><td>${p.methode||'—'}</td><td>${p.montant||'—'}</td><td><span class="status-pill ${statusClass(p.statut)}">${p.statut||'—'}</span></td><td>${p.factureUrl ? `<a href="${p.factureUrl}" target="_blank" rel="noopener">${I18N[LANG]['acc-invoice-view']}</a>` : '—'}</td></tr>`).join('')
+    : `<tr><td colspan="6"><div class="empty-note">${I18N[LANG]['empty-payments']}</div></td></tr>`;
+  const lrBtn = document.getElementById('accLightroomBtn');
+  if (lrBtn) lrBtn.href = USER.lightroomUrl || 'https://lightroom.adobe.com';
   setAccountTab('orders');
 }
 
@@ -2831,8 +2952,10 @@ function initHomeClaimVideo(){
 /* ═══════════════ PARTENAIRES — onglets ═══════════════ */
 function setPartnersTab(tab){
   document.getElementById('ptab-program').classList.toggle('active', tab === 'program');
+  document.getElementById('ptab-apply').classList.toggle('active', tab === 'apply');
   document.getElementById('ptab-collab').classList.toggle('active', tab === 'collab');
   document.getElementById('psec-program').style.display = tab === 'program' ? 'block' : 'none';
+  document.getElementById('psec-apply').style.display = tab === 'apply' ? 'block' : 'none';
   document.getElementById('psec-collab').style.display = tab === 'collab' ? 'block' : 'none';
 }
 
