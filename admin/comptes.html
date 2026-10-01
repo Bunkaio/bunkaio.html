@@ -188,8 +188,8 @@
   <div class="section">
     <div class="section-title">Mes moodboards (JSON)</div>
     <div class="fgroup">
-      <textarea id="fMoodboards" style="min-height:140px" placeholder='[{"id":"mb_abc123","titre":"Shooting produit automne","statut":"Envoyé","commandeRef":"Formule Signature — Shooting produit","direction":"epure","ambiance":["naturel","mineral"],"palette":"neutres","pinterestUrl":"https://pinterest.com/...","references":[{"url":"https://...","note":"Cadrage serré"}],"notes":"...","commentaires":[{"auteur":"client","texte":"...","date":"2026-09-20"}],"creeLe":"2026-09-18","majLe":"2026-09-20"}]'></textarea>
-      <div class="hint">Créés par le client depuis son espace (questionnaire "Nouveau moodboard"). Pour répondre en tant que Bunkaio, ajoute un objet dans "commentaires" avec "auteur":"bunkaio" — voir server/README.md pour le détail des champs.</div>
+      <textarea id="fMoodboards" style="min-height:140px" placeholder='[{"id":"mb_abc123","titre":"Shooting produit automne","statut":"Envoyé","typeProjet":"marque","commandeRef":"Formule Signature — Shooting produit","direction":"epure","ambiance":["naturel","mineral"],"palette":"neutres","pinterestUrl":"https://pinterest.com/...","references":[{"url":"https://...","note":"Cadrage serré"}],"produits":[{"nom":"Robe été","type":"vetement","lien":"https://...","note":"Taille 38"}],"collaborateurs":[{"nom":"Atelier Fleur","domaine":"event","role":"Décoration"}],"notes":"...","commentaires":[{"auteur":"client","texte":"...","date":"2026-09-20"}],"creeLe":"2026-09-18","majLe":"2026-09-20"}]'></textarea>
+      <div class="hint">Créés par le client depuis son espace (questionnaire "Nouveau moodboard"). Pour répondre en tant que Bunkaio, ajoute un objet dans "commentaires" avec "auteur":"bunkaio". "produits" n'apparaît que pour un projet "marque" ; "collaborateurs[].domaine" reprend les mêmes identifiants que les catégories du devis (photo-part, mode, commercial, event, lumen). Voir server/README.md pour le détail des champs.</div>
     </div>
   </div>
 

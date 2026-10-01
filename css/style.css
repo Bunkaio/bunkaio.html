@@ -1001,7 +1001,7 @@
 
   .mb-refs { margin-left: 32px; }
   .mb-ref-row { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
-  .mb-ref-row input { flex: 1 1 200px; }
+  .mb-ref-row input, .mb-ref-row select { flex: 1 1 160px; }
   .mb-ref-row button { flex-shrink: 0; width: auto; padding: 0 16px; background: transparent; color: var(--grey); border: 1px solid var(--line); }
   .mb-ref-add { font-size: 12px; font-weight: 600; color: var(--black); background: none; border: none; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; padding: 4px 0; }
 

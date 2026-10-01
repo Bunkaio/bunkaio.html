@@ -146,6 +146,25 @@ export interface MoodboardComment {
   date: string;
 }
 
+/** Un produit/pièce de la collection à mettre en avant (module "marque" du moodboard). */
+export interface MoodboardProduct {
+  nom: string;
+  type?: string; // 'vetement' | 'cosmetique' | 'accessoire' | 'bijou' | 'autre'
+  lien?: string;
+  note?: string;
+}
+
+/** Un prestataire externe impliqué dans le projet (traiteur, lieu, styliste…).
+    `domaine` reprend volontairement les mêmes identifiants que CATS dans
+    js/script.js (les domaines du questionnaire de devis) plutôt qu'une
+    taxonomie propre au moodboard — une seule liste de référence à tenir
+    à jour sur tout le site. */
+export interface MoodboardCollaborator {
+  nom: string;
+  domaine?: string;
+  role?: string;
+}
+
 /** Onglet "Mes moodboards" — un moodboard par shooting (ou "à venir"), construit par le
     client via le questionnaire interactif (voir renderMoodboardWizard() dans js/script.js). */
 export interface Moodboard {
@@ -153,11 +172,14 @@ export interface Moodboard {
   titre: string;
   commandeRef?: string; // libellé d'une commande existante, ou 'future' si pas encore réservé
   statut: string; // 'Brouillon' | 'Envoyé' | 'Validé' | 'À ajuster'
+  typeProjet?: string; // 'particulier' | 'marque'
   direction?: string;
   ambiance?: string[];
   palette?: string;
   pinterestUrl?: string;
   references?: MoodboardReference[];
+  produits?: MoodboardProduct[]; // module "marque" — collection à présenter
+  collaborateurs?: MoodboardCollaborator[];
   notes?: string;
   commentaires?: MoodboardComment[];
   creeLe: string;

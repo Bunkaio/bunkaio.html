@@ -419,6 +419,16 @@ objet `{"auteur":"bunkaio","texte":"...","date":"..."}` dans `commentaires`),
 réenregistre. Pas d'interface dédiée pour l'instant côté admin — à construire
 si ce fil d'échange devient un usage quotidien.
 
+Deux modules optionnels s'ajoutent selon le type de projet choisi par le
+client (champ `typeProjet`, 'particulier' ou 'marque') :
+- `produits` — pour une marque, la collection/les produits à mettre en
+  avant (vêtements, cosmétiques…).
+- `collaborateurs` — les prestataires externes impliqués (styliste,
+  traiteur, lieu…), chacun tagué avec un `domaine` qui reprend
+  volontairement les mêmes identifiants que `CATS` dans js/script.js
+  (les domaines du questionnaire de devis) plutôt qu'une liste propre au
+  moodboard — une seule taxonomie à tenir à jour sur tout le site.
+
 ## Voir les logs en production
 
 ```bash
