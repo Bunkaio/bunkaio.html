@@ -204,7 +204,7 @@
   <p class="page-sub">
     Glisse-dépose tes photos (et vidéos, tout en haut de page) directement sur chaque emplacement, ou clique dessus pour ouvrir le sélecteur de fichiers.<br>
     Tout est uploadé en direct sur le site — aucune manipulation de code nécessaire.<br>
-    <em>Exception : les vidéos de fond de l'accueil et de la page Partenaires (hors catalogue ci-dessous) ne passent pas encore par ce panel — dis-le moi directement, je m'en occupe.</em>
+    <em>Exceptions — ces quelques fichiers sont gérés directement dans le code du site (pas via ce panel) : les vidéos de fond de l'accueil et de la page Partenaires, les vidéos des projets 4K Drone, et le logo. Dis-le moi directement si tu veux les changer, je m'en occupe.</em>
   </p>
   <div id="sections"></div>
 </div>
@@ -232,6 +232,19 @@ const VIDEO_SECTIONS = [
       'Cadrage : paysage 16:9, 1920 × 1080 px minimum',
       'Boucle courte et fluide, SANS son (lue automatiquement en muet, en boucle) — 8 à 20 secondes idéalement',
       'Poids conseillé : 10 à 20 Mo maximum, pour un chargement rapide même en 4G',
+    ],
+  },
+  {
+    id: 'devis-video',
+    view: 'services',
+    label: 'Services — illustration "Devis & déroulé" (vidéo optionnelle)',
+    path: 'devis/illustration-video.mp4',
+    params: [
+      'Optionnelle : remplace automatiquement l\'illustration fixe du même onglet dès qu\'un fichier existe ici',
+      'Format vidéo : .mp4 (H.264)',
+      'Cadrage : paysage 9:7, même cadrage que l\'illustration fixe',
+      'Boucle courte et fluide, SANS son — 8 à 15 secondes idéalement',
+      'Poids conseillé : 8 à 15 Mo maximum',
     ],
   },
 ];
@@ -382,8 +395,6 @@ const PF_CATS = [
   { id: 'lumen', label: 'Lumen' },
   { id: 'immobilier', label: 'Immobilier (archivé)' },
   { id: 'archi', label: 'Architecture (archivé)' },
-  { id: 'cuisine', label: 'Cuisines (archivé)' },
-  { id: 'piscine', label: 'Piscines (archivé)' },
   { id: 'artisan', label: 'Artisanat (archivé)' },
 ];
 

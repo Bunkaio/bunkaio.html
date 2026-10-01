@@ -47,7 +47,6 @@ const I18N = {
     'estimate':'Devis','services':'Services','portfolio':'Portfolio','drone':'4K Drone','contact':'Contact','partners':'Partenaires','nav-legal':'FAQ',
     'hero-kicker':'Portrait · Signature · Studio','hero-word1':'Estimez','hero-word2':'votre','hero-word3':'projet','start':'Estimer mon projet',
     'step-cat':'01 — Catégorie','q-cat':'Quel est votre domaine\u00a0?','q-cat-sub':'Sélectionnez l\'univers de votre projet.',
-    'q-cat-collab-name':'Collaboration','q-cat-collab-tag':'Marque, lieu, média, créateur·rice',
     'step-prof':'02 — Profil','q-prof':'Quel profil êtes-vous\u00a0?','q-prof-sub':'Identifiez-vous pour que nous comprenions précisément votre besoin.',
     'step-tier':'03 — Prestation','q-tier':'Quel niveau de prestation\u00a0?',
     'step-recap':'04 — Votre prestation','q-recap':'Ce qui est inclus','q-recap-sub':'Le détail de votre prestation, et les options pour aller plus loin.',
@@ -248,7 +247,6 @@ const I18N = {
     'estimate':'Quote','services':'Services','portfolio':'Portfolio','drone':'4K Drone','contact':'Contact','partners':'Partners','nav-legal':'FAQ',
     'hero-kicker':'Portrait · Signature · Studio','hero-word1':'Estimate','hero-word2':'your','hero-word3':'project','start':'Estimate My Project',
     'step-cat':'01 — Category','q-cat':'What is your field\u00a0?','q-cat-sub':'Select the universe your project belongs to.',
-    'q-cat-collab-name':'Collaboration','q-cat-collab-tag':'Brand, venue, media, another creator',
     'step-prof':'02 — Profile','q-prof':'Which profile are you\u00a0?','q-prof-sub':'Tell us who you are so we can understand exactly what you need.',
     'step-tier':'03 — Service level','q-tier':'Which level of service\u00a0?',
     'step-recap':'04 — Your package','q-recap':'What\'s included','q-recap-sub':'The full details of your package, plus options to take it further.',
@@ -1407,10 +1405,10 @@ function renderCats(){
   collabItem.innerHTML = `
     <div class="cat-left">
       <div class="cat-photo"${collabPhotoUrl ? ` style="background-image:url('${collabPhotoUrl}')"` : ''}></div>
-      <div class="cat-name" data-lang="q-cat-collab-name">Collaboration</div>
+      <div class="cat-name">${t({ fr: 'Collaboration', en: 'Collaboration' })}</div>
     </div>
     <div class="cat-right">
-      <div class="cat-tag" data-lang="q-cat-collab-tag">Marque, lieu, média, créateur·rice</div>
+      <div class="cat-tag">${t({ fr: 'Marque, lieu, média, créateur·rice', en: 'Brand, venue, media, another creator' })}</div>
       <div class="cat-arrow"></div>
     </div>`;
   collabItem.onclick = () => goView('partners', 'collab');
@@ -1999,25 +1997,11 @@ function renderQuizPortfolio(){
   document.getElementById('pfPrevSub').textContent =
     LANG === 'fr' ? 'Un aperçu de notre travail dans votre univers.' : 'A glimpse of our work in your universe.';
   const g = document.getElementById('pfPrevGallery');
-  g.innerHTML = '';
-  const photos = (IMG.portfolioMedia && IMG.portfolioMedia[S.cat]) || [];
-  if (photos.length === 0){
-    const empty = document.createElement('div');
-    empty.className = 'pf-empty rv';
-    empty.textContent = LANG === 'fr'
-      ? `Visuels « ${t(cat.name)} » à venir — contactez-nous pour des exemples.`
-      : `"${t(cat.name)}" visuals coming soon — get in touch for examples.`;
-    g.appendChild(empty);
-    observe(empty);
-  } else {
-    photos.slice(0, 6).forEach((src, i) => {
-      const ph = document.createElement('div');
-      ph.className = 'ph rv';
-      ph.innerHTML = `<img loading="lazy" src="${src}" alt="${LANG === 'fr' ? 'Photographie' : 'Photography'} ${t(cat.name)} — Bunkaio ${i + 1}">`;
-      g.appendChild(ph);
-      observe(ph);
-    });
-  }
+  const catLabelPrev = t(cat.name);
+  const emptyTextPrev = LANG === 'fr'
+    ? `Visuels « ${catLabelPrev} » à venir — contactez-nous pour des exemples.`
+    : `"${catLabelPrev}" visuals coming soon — get in touch for examples.`;
+  renderPfGalleryInto(g, S.cat, catLabelPrev, 6, emptyTextPrev);
   document.querySelectorAll('#qs-6 .rv:not(.ph)').forEach(el => { el.classList.remove('in'); observe(el); });
 }
 
@@ -2258,19 +2242,32 @@ function renderProcessSteps(){
       </div>
     </div>`;
   el.querySelectorAll('.rv').forEach(observe);
-  /* Illustration latérale : vidéo si IMG.devisVideo est renseignée
-     (voir config/media.js), sinon l'image fixe habituelle — même
-     principe de repli que le fond vidéo de l'accueil (IMG.homeVideo). */
+  /* Illustration latérale : vidéo si IMG.devisVideo pointe vers un
+     fichier existant (voir config/media.js — chemin pré-câblé vers R2,
+     déposé via admin/media.html), sinon l'image fixe habituelle. Le
+     chemin est toujours défini (non vide) pour permettre l'activation
+     sans toucher au code ; sans fichier réel à ce chemin, la vidéo
+     échoue silencieusement (404) et on retombe sur l'image — même
+     principe de repli que IMG.servicesVideo. */
   const sideImgBox = document.querySelector('#ssec-devis .side-img');
   if (sideImgBox) {
-    if (IMG.devisVideo) {
-      if (!sideImgBox.querySelector('video')) {
-        sideImgBox.innerHTML = '';
-        sideImgBox.appendChild(createBgVideo(IMG.devisVideo));
+    const showImg = () => {
+      sideImgBox.querySelectorAll('video').forEach(v => v.remove());
+      let img = document.getElementById('img-devis-side');
+      if (!img) {
+        img = document.createElement('img');
+        img.loading = 'lazy'; img.id = 'img-devis-side'; img.alt = 'Bunkaio — processus';
+        sideImgBox.appendChild(img);
       }
-    } else {
-      const img = document.getElementById('img-devis-side');
-      if (img && !img.src) img.src = IMG.devis;
+      if (!img.src) img.src = IMG.devis;
+    };
+    if (IMG.devisVideo && !sideImgBox.querySelector('video')) {
+      const vid = createBgVideo(IMG.devisVideo);
+      vid.addEventListener('error', showImg, { once: true });
+      sideImgBox.innerHTML = '';
+      sideImgBox.appendChild(vid);
+    } else if (!IMG.devisVideo) {
+      showImg();
     }
   }
 }
@@ -2331,6 +2328,57 @@ function closeVideoModal(){
 /* ═══════════════ PORTFOLIO ═══════════════ */
 let pfLoaded = false;
 
+/* Galerie portfolio — chargement dynamique, sans liste à maintenir dans
+   config/media.js : on tente simplement de charger 1.webp, 2.webp...
+   (le nommage déjà utilisé par admin/media.html à l'upload) jusqu'à
+   max, et on ne garde que celles qui existent réellement (certaines
+   peuvent 404 si moins de photos ont été déposées — comportement normal,
+   pas une erreur). Déposer un fichier dans l'admin suffit donc à le
+   faire apparaître ici, sans aucune autre manipulation. Un petit cache
+   évite de re-sonder le réseau à chaque navigation entre onglets. */
+const _pfGalleryCache = {};
+function probeImageExists(src){
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => resolve(true);
+    img.onerror = () => resolve(false);
+    img.src = src;
+  });
+}
+async function loadPortfolioPhotos(catId, max){
+  if (_pfGalleryCache[catId]) return _pfGalleryCache[catId];
+  const candidates = Array.from({ length: max }, (_, i) => MEDIA_BASE + '/portfolio/' + catId + '/' + (i + 1) + '.webp');
+  const found = await Promise.all(candidates.map(probeImageExists));
+  const photos = candidates.filter((_, i) => found[i]);
+  _pfGalleryCache[catId] = photos;
+  return photos;
+}
+/* Rend la galerie dans `container` une fois les photos trouvées — le
+   DOM est mis à jour au retour de la sonde réseau (asynchrone), sans
+   bloquer le reste de la page pendant ce temps. */
+function renderPfGalleryInto(container, catId, catLabel, max, emptyText){
+  container.innerHTML = '';
+  loadPortfolioPhotos(catId, max).then(photos => {
+    if (!container.isConnected) return; /* vue quittée entre-temps */
+    container.innerHTML = '';
+    if (photos.length === 0){
+      const empty = document.createElement('div');
+      empty.className = 'pf-empty rv';
+      empty.textContent = emptyText;
+      container.appendChild(empty);
+      observe(empty);
+      return;
+    }
+    photos.forEach((src, i) => {
+      const ph = document.createElement('div');
+      ph.className = 'ph rv';
+      ph.innerHTML = `<img loading="lazy" src="${src}" alt="${LANG === 'fr' ? 'Photographie' : 'Photography'} ${catLabel} — Bunkaio ${i + 1}">`;
+      container.appendChild(ph);
+      observe(ph);
+    });
+  });
+}
+
 function renderPfTabs(){
   const el = document.getElementById('pfTabs');
   el.innerHTML = '';
@@ -2347,26 +2395,11 @@ function renderPfTabs(){
 function selectPfTab(id){
   document.querySelectorAll('.pf-cat-tab').forEach(tab => tab.classList.toggle('active', tab.dataset.cat === id));
   const grid = document.getElementById('pfGrid');
-  grid.innerHTML = '';
   const catLabel = t(PF_CATS.find(c => c.id === id)?.label || {});
-  const photos = (IMG.portfolioMedia && IMG.portfolioMedia[id]) || [];
-  if (photos.length === 0){
-    const empty = document.createElement('div');
-    empty.className = 'pf-empty rv';
-    empty.textContent = LANG === 'fr'
-      ? `Visuels « ${catLabel} » à venir — contactez-nous pour des exemples.`
-      : `"${catLabel}" visuals coming soon — get in touch for examples.`;
-    grid.appendChild(empty);
-    observe(empty);
-    return;
-  }
-  photos.forEach((src, i) => {
-    const ph = document.createElement('div');
-    ph.className = 'ph rv';
-    ph.innerHTML = `<img loading="lazy" src="${src}" alt="${LANG === 'fr' ? 'Photographie' : 'Photography'} ${catLabel} — Bunkaio ${i + 1}">`;
-    grid.appendChild(ph);
-    observe(ph);
-  });
+  const emptyText = LANG === 'fr'
+    ? `Visuels « ${catLabel} » à venir — contactez-nous pour des exemples.`
+    : `"${catLabel}" visuals coming soon — get in touch for examples.`;
+  renderPfGalleryInto(grid, id, catLabel, 24, emptyText);
 }
 
 /* ═══════════════ CONTACT ═══════════════ */
