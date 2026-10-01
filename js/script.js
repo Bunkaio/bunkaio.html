@@ -47,6 +47,7 @@ const I18N = {
     'estimate':'Devis','services':'Services','portfolio':'Portfolio','drone':'4K Drone','contact':'Contact','partners':'Partenaires','nav-legal':'FAQ',
     'hero-kicker':'Portrait · Signature · Studio','hero-word1':'Estimez','hero-word2':'votre','hero-word3':'projet','start':'Estimer mon projet',
     'step-cat':'01 — Catégorie','q-cat':'Quel est votre domaine\u00a0?','q-cat-sub':'Sélectionnez l\'univers de votre projet.',
+    'q-cat-collab-name':'Collaboration','q-cat-collab-tag':'Marque, lieu, média, créateur·rice',
     'step-prof':'02 — Profil','q-prof':'Quel profil êtes-vous\u00a0?','q-prof-sub':'Identifiez-vous pour que nous comprenions précisément votre besoin.',
     'step-tier':'03 — Prestation','q-tier':'Quel niveau de prestation\u00a0?',
     'step-recap':'04 — Votre prestation','q-recap':'Ce qui est inclus','q-recap-sub':'Le détail de votre prestation, et les options pour aller plus loin.',
@@ -247,6 +248,7 @@ const I18N = {
     'estimate':'Quote','services':'Services','portfolio':'Portfolio','drone':'4K Drone','contact':'Contact','partners':'Partners','nav-legal':'FAQ',
     'hero-kicker':'Portrait · Signature · Studio','hero-word1':'Estimate','hero-word2':'your','hero-word3':'project','start':'Estimate My Project',
     'step-cat':'01 — Category','q-cat':'What is your field\u00a0?','q-cat-sub':'Select the universe your project belongs to.',
+    'q-cat-collab-name':'Collaboration','q-cat-collab-tag':'Brand, venue, media, another creator',
     'step-prof':'02 — Profile','q-prof':'Which profile are you\u00a0?','q-prof-sub':'Tell us who you are so we can understand exactly what you need.',
     'step-tier':'03 — Service level','q-tier':'Which level of service\u00a0?',
     'step-recap':'04 — Your package','q-recap':'What\'s included','q-recap-sub':'The full details of your package, plus options to take it further.',
@@ -1213,7 +1215,7 @@ function initHeroCarousel(viewKey){
   showHeroImages();
 }
 
-function goView(v){
+function goView(v, subTab){
   const veil = document.getElementById('veil');
   veil.classList.remove('sweep');
   void veil.offsetWidth;
@@ -1243,7 +1245,7 @@ function goView(v){
     if (v === 'drone') { renderDroneCats(); renderDroneProjects(activeDroneCat); }
     if (v === 'portfolio' && !pfLoaded) { renderPfTabs(); selectPfTab(PF_CATS[0].id); pfLoaded = true; }
     if (v === 'partners') {
-      renderPartnersAccordion(); renderLogoCarousel(); setPartnersTab('program');
+      renderPartnersAccordion(); renderLogoCarousel(); setPartnersTab(subTab === 'collab' ? 'collab' : 'program');
       const img = document.getElementById('img-partners-banner'); if (img && !img.src) img.src = IMG.partners;
       const imgCollab = document.getElementById('img-collab-side'); if (imgCollab && !imgCollab.src) imgCollab.src = IMG.collab;
     }
@@ -1393,6 +1395,26 @@ function renderCats(){
     };
     el.appendChild(d);
   });
+
+  /* "Collaboration" — pas une prestation du catalogue (n'entre pas dans
+     CATS, pour ne pas polluer la grille Services ni le carrousel
+     accueil) : renvoie directement vers Partenaires → onglet
+     Collaboration plutôt que de continuer le questionnaire de devis. */
+  const collabItem = document.createElement('div');
+  collabItem.className = 'cat-item stagger';
+  collabItem.style.animationDelay = (0.28 + CATS.length * 0.07) + 's';
+  const collabPhotoUrl = IMG.collab;
+  collabItem.innerHTML = `
+    <div class="cat-left">
+      <div class="cat-photo"${collabPhotoUrl ? ` style="background-image:url('${collabPhotoUrl}')"` : ''}></div>
+      <div class="cat-name" data-lang="q-cat-collab-name">Collaboration</div>
+    </div>
+    <div class="cat-right">
+      <div class="cat-tag" data-lang="q-cat-collab-tag">Marque, lieu, média, créateur·rice</div>
+      <div class="cat-arrow"></div>
+    </div>`;
+  collabItem.onclick = () => goView('partners', 'collab');
+  el.appendChild(collabItem);
 }
 
 function renderProfiles(){
