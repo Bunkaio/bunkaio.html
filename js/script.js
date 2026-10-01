@@ -179,7 +179,8 @@ const I18N = {
     'collab-delay-label':'Délai de réponse','collab-delay-value':'Sous 5 jours ouvrés.',
     'collab-web-label':'Site web / réseaux sociaux',
     'collab-type-label':'Type de collaboration *',
-    'collab-type-opt0':'Sélectionnez…','collab-type-opt1':'Partenariat de marque','collab-type-opt2':'Échange lieu / prestation','collab-type-opt3':'Co-création avec un·e créateur·rice','collab-type-opt4':'Relation presse / média','collab-type-opt5':'Autre',
+    'collab-type-opt1':'Partenariat de marque','collab-type-opt2':'Échange lieu / prestation','collab-type-opt3':'Co-création avec un·e créateur·rice','collab-type-opt4':'Relation presse / média','collab-type-opt5':'Autre',
+    'collab-type-error':'Sélectionnez un type de collaboration ci-dessus.',
     'collab-project-label':'Présentez votre projet *',
     'collab-btn':'Envoyer ma proposition',
     'collab-success-title':'Proposition envoyée',
@@ -378,7 +379,8 @@ const I18N = {
     'collab-delay-label':'Response time','collab-delay-value':'Within 5 working days.',
     'collab-web-label':'Website / social media',
     'collab-type-label':'Type of collaboration *',
-    'collab-type-opt0':'Select…','collab-type-opt1':'Brand partnership','collab-type-opt2':'Venue / service exchange','collab-type-opt3':'Co-creation with another creator','collab-type-opt4':'Press / media','collab-type-opt5':'Other',
+    'collab-type-opt1':'Brand partnership','collab-type-opt2':'Venue / service exchange','collab-type-opt3':'Co-creation with another creator','collab-type-opt4':'Press / media','collab-type-opt5':'Other',
+    'collab-type-error':'Please select a collaboration type above.',
     'collab-project-label':'Tell us about your project *',
     'collab-btn':'Send my proposal',
     'collab-success-title':'Proposal sent',
@@ -2397,6 +2399,16 @@ function sendShare(e){
 }
 
 /* ═══════════════ PARTENAIRES — PROPOSER UNE COLLABORATION ═══════════════ */
+/* Cartes cliquables (pas un simple menu déroulant) : chaque catégorie
+   reste visuellement dissociée. Un seul type actif à la fois, repris
+   dans le champ caché #collabType utilisé par sendCollab(). */
+function selectCollabType(btn){
+  document.querySelectorAll('.collab-type-card').forEach(c => c.classList.toggle('active', c === btn));
+  document.getElementById('collabType').value = btn.dataset.value;
+  const err = document.getElementById('collabTypeError');
+  if (err) err.style.display = 'none';
+}
+
 function sendCollab(e){
   e.preventDefault();
   const n = document.getElementById('collabName').value.trim();
@@ -2404,18 +2416,27 @@ function sendCollab(e){
   const web = document.getElementById('collabWeb').value.trim();
   const type = document.getElementById('collabType').value;
   const proj = document.getElementById('collabProject').value.trim();
+  if (!type) {
+    const err = document.getElementById('collabTypeError');
+    if (err) err.style.display = 'block';
+    document.getElementById('collabTypeGrid').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
   const btn = document.querySelector('#collabForm .btn-solid');
   if (btn) btn.disabled = true;
   fetch(FORMSPREE_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
     body: JSON.stringify({
-      _subject: 'PROPOSITION DE COLLABORATION — ' + n,
+      /* Catégorie en tête de l'objet du mail : permet de trier/filtrer
+         les propositions par type directement depuis la boîte mail
+         (règle de filtrage sur "[Type…]" dans le logiciel de messagerie). */
+      _subject: 'COLLABORATION [' + type + '] — ' + n,
       _replyto: em,
+      type_de_collaboration: type,
       nom_societe: n,
       email: em,
       site_reseaux: web || 'Non renseigné',
-      type_collaboration: type,
       projet: proj
     })
   }).then(() => {
