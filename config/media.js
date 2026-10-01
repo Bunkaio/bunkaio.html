@@ -29,7 +29,6 @@
    │  Héros carrousel      1920 × 820 px   (ratio 21:9, paysage)     │
    │                       → toutes les autres rubriques (Services,  │
    │                         Drone, Portfolio, Contact, Partenaires) │
-   │  Marquee accueil      600 × 750 px   (ratio 4:5, portrait)     │
    │  Photos services      900 × 1200 px  (ratio 3:4, portrait)     │
    │  Illustration devis   900 × 700 px   (ratio 9:7, paysage)      │
    │  Vignettes drone      640 × 400 px   (ratio 16:10, paysage)    │
@@ -42,7 +41,6 @@
    │    logo.png              Logo principal (fichier à la racine de  │
    │                          images/ — 42×42px ou SVG recommandé)   │
    │    hero/                 Carrousels d'en-tête (21:9)            │
-   │    marquee/              Bande défilante page d'accueil (4:5)   │
    │    services/             Photo par catégorie (filtre services)   │
    │    devis/                Illustration section Devis & déroulé   │
    │    drone/                Vignettes miniatures projets drone      │
@@ -105,29 +103,17 @@ const IMG = {
   account:   MEDIA_BASE + '/hero/account-1.webp',    // Fond page Espace client
 
   /* ──────────────────────────────────────────────────────────────────
-     BANDE DÉFILANTE — PAGE D'ACCUEIL (section sous le héros)
-     8 images en format portrait — défilement automatique en boucle.
-     Pour changer le nombre d'images : ajoutez ou supprimez des lignes.
-     Format : portrait, ~600×750px
-     ────────────────────────────────────────────────────────────────── */
-  marquee: [
-    MEDIA_BASE + '/marquee/1.webp',   // Marquee image 1
-    MEDIA_BASE + '/marquee/2.webp',   // Marquee image 2
-    MEDIA_BASE + '/marquee/3.webp',   // Marquee image 3
-    MEDIA_BASE + '/marquee/4.webp',   // Marquee image 4
-    MEDIA_BASE + '/marquee/5.webp',   // Marquee image 5
-    MEDIA_BASE + '/marquee/6.webp',   // Marquee image 6
-    MEDIA_BASE + '/marquee/7.webp',   // Marquee image 7
-    MEDIA_BASE + '/marquee/8.webp',   // Marquee image 8
-  ],
-
-  /* ──────────────────────────────────────────────────────────────────
      ILLUSTRATION LATÉRALE — SECTION "DEVIS & DÉROULÉ"
      Visible dans Services → onglet "Devis & déroulé", colonne de droite.
      Format : paysage, ~900×700px
      ────────────────────────────────────────────────────────────────── */
   devis: MEDIA_BASE + '/devis/illustration.webp',
-  devisVideo: '',   // Vidéo optionnelle à la place de l'illustration (ex. 'videos/devis-process.mp4') — vide = illustration fixe utilisée
+  /* Vidéo optionnelle à la place de l'illustration ci-dessus — chemin
+     pré-câblé vers R2 : déposez le fichier depuis admin/media.html
+     (rubrique "Vidéos de fond") pour l'activer, rien à modifier ici.
+     Tant qu'aucun fichier n'existe à ce chemin, repli automatique et
+     silencieux sur l'illustration fixe ci-dessus. */
+  devisVideo: MEDIA_BASE + '/devis/illustration-video.mp4',
 
   /* ──────────────────────────────────────────────────────────────────
      ILLUSTRATION LATÉRALE — PARTENAIRES → ONGLET "COLLABORATION"
@@ -230,24 +216,16 @@ const IMG = {
 
   /* ──────────────────────────────────────────────────────────────────
      GRILLE PORTFOLIO — RÉALISATIONS PAR CATÉGORIE
-     Photos affichées dans l'onglet Portfolio et dans l'aperçu du quiz
-     ("Réalisations — [catégorie]"). Une catégorie vide ([]) affiche un
-     message "Visuels à venir" au lieu d'images aléatoires.
-     Nommez vos fichiers 1.webp, 2.webp, ... dans le dossier correspondant
-     (images/portfolio/<catégorie>/) puis listez-les ci-dessous, dans
-     l'ordre d'affichage souhaité. Format : portrait, ~900×1200px.
+     RIEN À CONFIGURER ICI : contrairement aux autres sections de ce
+     fichier, le portfolio ne se liste pas manuellement. Le site
+     détecte automatiquement les photos présentes à chaque chemin
+     portfolio/<catégorie>/1.webp, 2.webp, 3.webp… (jusqu'à 24) — déposez
+     vos fichiers dans admin/media.html → section Portfolio, numérotés
+     dans l'ordre d'affichage souhaité, et ils apparaissent directement
+     sur le site, sans toucher à ce fichier. Une catégorie sans aucune
+     photo affiche "Visuels à venir" à la place. Format : portrait,
+     ~900×1200px.
      ────────────────────────────────────────────────────────────────── */
-  portfolioMedia: {
-    immobilier:   [], // images/portfolio/immobilier/1.webp, 2.webp, ...
-    archi:        [], // images/portfolio/archi/1.webp, 2.webp, ...
-    cuisine:      [], // images/portfolio/cuisine/1.webp, 2.webp, ...
-    piscine:      [], // images/portfolio/piscine/1.webp, 2.webp, ...
-    artisan:      [], // images/portfolio/artisan/1.webp, 2.webp, ...
-    'photo-part': [], // images/portfolio/photo-part/1.webp, 2.webp, ...
-    mode:         [], // images/portfolio/mode/1.webp, 2.webp, ...
-    commercial:   [], // images/portfolio/commercial/1.webp, 2.webp, ...
-    event:        [], // images/portfolio/event/1.webp, 2.webp, ...
-  },
 };
 
 
