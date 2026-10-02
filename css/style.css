@@ -3955,3 +3955,17 @@ body:not([data-view="home"]) .scroll-hint { display: none; }
 }
 .cs-float-paid { top: -14px; }
 @media (max-width: 860px) { .cs-visual { padding-top: 22px; } .cs-float-paid { top: 6px; } }
+
+/* ─── Pied de page sombre : le logo officiel (clair) s'affiche avec ses vraies couleurs ─── */
+footer { background: linear-gradient(180deg, #0c0b10 0%, #0a0a0c 100%); border-top: 1px solid rgba(255,255,255,0.08); color: #fff; backdrop-filter: none; -webkit-backdrop-filter: none; }
+footer .ft-brand-logo-img { width: 150px; height: auto; }
+footer .ft-brand-studio, footer .ft-follow-label, footer .ft-col-title { color: rgba(255,255,255,0.55); }
+footer .ft-claim, footer .ft-tag { color: rgba(255,255,255,0.62); }
+footer .ft-list button, footer .ft-list a { color: rgba(255,255,255,0.92); }
+footer .ft-list button::after, footer .ft-list a::after { background: #fff; }
+footer .footer-cta-row, footer .footer-bottom { border-color: rgba(255,255,255,0.12); }
+footer .footer-cta-headline { color: #fff; }
+footer .ft-social { color: #fff; border-color: rgba(255,255,255,0.25); }
+footer .ft-social:hover { background: #fff; color: #0a0a0c; border-color: #fff; }
+footer .ft-brand-logo { color: #fff; }
+footer .ft-brand-logo-img { animation: none; opacity: 1; }
