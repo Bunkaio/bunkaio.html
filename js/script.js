@@ -45,7 +45,7 @@ let LANG = 'fr';
 const I18N = {
   fr: {
     'estimate':'Devis','services':'Services','portfolio':'Portfolio','drone':'4K Drone','contact':'Contact','partners':'Partenaires','nav-legal':'FAQ',
-    'hero-kicker':'Portrait · Signature · Studio','hero-word1':'Estimez','hero-word2':'votre','hero-word3':'projet','start':'Estimer mon projet',
+    'hero-kicker':'Photographe professionnel · Occitanie','quiz-h1':'Devis photo en ligne','hero-word1':'Estimez','hero-word2':'votre','hero-word3':'projet','start':'Estimer mon projet',
     'step-cat':'01 — Catégorie','q-cat':'Quel est votre domaine\u00a0?','q-cat-sub':'Sélectionnez l\'univers de votre projet.',
     'step-prof':'02 — Profil','q-prof':'Quel profil êtes-vous\u00a0?','q-prof-sub':'Identifiez-vous pour que nous comprenions précisément votre besoin.',
     'step-tier':'03 — Prestation','q-tier':'Quel niveau de prestation\u00a0?',
@@ -61,7 +61,7 @@ const I18N = {
     'success-text2':'Chaque demande est évaluée individuellement et n\'est acceptée que si elle correspond à la <strong>ligne éditoriale de BUNKAIO</strong>. Nous travaillons uniquement avec des projets qui résonnent avec notre univers — c\'est ce qui garantit la qualité de chaque collaboration.',
     'success-text3':'Une fois votre devis confirmé, direction votre espace client : vous pourrez y construire votre <strong>moodboard</strong> pour partager votre vision — direction artistique, ambiance, inspirations — et nous arriver parfaitement alignés le jour du shooting.',
     'home-btn':'Retour à l\'accueil','see-portfolio':'Voir tout le portfolio',
-    'svc-reserve':'Je réserve ma séance','services-title':'Services','services-sub':'Photographe professionnel : des images haut de gamme, en HD, pour mettre en valeur votre projet. Nos prestations et leurs tarifs, par univers.',
+    'svc-reserve':'Je réserve ma séance','services-title':'Prestations & tarifs photo','services-sub':'Photographe professionnel : des images haut de gamme, en HD, pour mettre en valeur votre projet. Nos prestations et leurs tarifs, par univers.',
     'svc-all':'Tous','svc-cta':'Estimer ce projet →','svc-sub-label':'Abonnement mensuel',
     'svc-trust1-title':'Réponse sous 48h','svc-trust1-text':'Chaque demande est étudiée puis traitée personnellement — jamais de réponse automatique.',
     'svc-trust2-title':'Un parcours accompagné','svc-trust2-text':'De la demande à la livraison, 7 étapes claires — dont la création de votre moodboard pour partager votre vision — <span class="svc-trust-link" onclick="goToProcess()">voir le déroulé complet</span>.',
@@ -81,8 +81,8 @@ const I18N = {
     'cred4-title':'Un matériel professionnel','cred4-text':'Drone DJI Mavic 3 Pro — capteur 4/3 Hasselblad, vidéo 4K HDR. Boîtier hybride Sony Alpha 7 III et optiques G Master pour la photo et la vidéo au sol.',
     'gear-label':'Équipement','gear-cert':'Certifié A1/A3 · A2',
     'drone-explore':'Explorez nos productions',
-    'portfolio-title':'Portfolio','portfolio-sub':'Une sélection de projets réalisés par le studio, classés par univers.',
-    'contact-title':'Contact','contact-sub':'Une question, un projet, une collaboration\u00a0? Écrivez-nous — nous répondons sous 24h.',
+    'portfolio-title':'Portfolio photo','portfolio-sub':'Une sélection de projets réalisés par le studio, classés par univers.',
+    'contact-title':'Contacter votre photographe','contact-sub':'Une question, un projet, une collaboration\u00a0? Écrivez-nous — nous répondons sous 24h.',
     'company-label':'Entreprise','follow-label':'Suivez-nous','contact-btn':'Nous contacter',
     'ct-success-title':'Message envoyé','ct-success-text':'Merci pour votre message. Nous reviendrons vers vous sous 24 heures.',
     'partners-title':'Partenariat et collaboration',
@@ -355,7 +355,7 @@ const I18N = {
   },
   en: {
     'estimate':'Quote','services':'Services','portfolio':'Portfolio','drone':'4K Drone','contact':'Contact','partners':'Partners','nav-legal':'FAQ',
-    'hero-kicker':'Portrait · Signature · Studio','hero-word1':'Estimate','hero-word2':'your','hero-word3':'project','start':'Estimate My Project',
+    'hero-kicker':'Professional photographer · Occitanie','quiz-h1':'Online photo quote','hero-word1':'Estimate','hero-word2':'your','hero-word3':'project','start':'Estimate My Project',
     'step-cat':'01 — Category','q-cat':'What is your field\u00a0?','q-cat-sub':'Select the universe your project belongs to.',
     'step-prof':'02 — Profile','q-prof':'Which profile are you\u00a0?','q-prof-sub':'Tell us who you are so we can understand exactly what you need.',
     'step-tier':'03 — Service level','q-tier':'Which level of service\u00a0?',
@@ -371,7 +371,7 @@ const I18N = {
     'success-text2':'Every request is assessed individually and is only accepted if it aligns with <strong>BUNKAIO\'s editorial line</strong>. We work exclusively with projects that resonate with our universe — this is what guarantees the quality of every collaboration.',
     'success-text3':'Once your quote is confirmed, head to your client space : you\'ll be able to build your <strong>moodboard</strong> there to share your vision — art direction, mood, inspirations — so we arrive on the day perfectly aligned with your project.',
     'home-btn':'Back to home','see-portfolio':'View the full portfolio',
-    'svc-reserve':'Book my session','services-title':'Services','services-sub':'Professional photographer: premium, high-definition images that showcase your project. Our services and rates, by universe.',
+    'svc-reserve':'Book my session','services-title':'Photography services & rates','services-sub':'Professional photographer: premium, high-definition images that showcase your project. Our services and rates, by universe.',
     'svc-all':'All','svc-cta':'Get a quote for this →','svc-sub-label':'Monthly plan',
     'svc-trust1-title':'Reply within 48h','svc-trust1-text':'Every request is reviewed and handled personally — never an automated reply.',
     'svc-trust2-title':'A guided journey','svc-trust2-text':'From request to delivery, 7 clear steps — including building your moodboard to share your vision — <span class="svc-trust-link" onclick="goToProcess()">see the full process</span>.',
@@ -391,8 +391,8 @@ const I18N = {
     'cred4-title':'Professional-grade equipment','cred4-text':'DJI Mavic 3 Pro drone — 4/3 Hasselblad sensor, 4K HDR video. Sony Alpha 7 III mirrorless body and G Master lenses for ground photography and video.',
     'gear-label':'Equipment','gear-cert':'Certified A1/A3 · A2',
     'drone-explore':'Explore our work',
-    'portfolio-title':'Portfolio','portfolio-sub':'A selection of projects produced by the studio, organised by universe.',
-    'contact-title':'Contact','contact-sub':'A question, a project, a collaboration\u00a0? Write to us — we reply within 24 hours.',
+    'portfolio-title':'Photography portfolio','portfolio-sub':'A selection of projects produced by the studio, organised by universe.',
+    'contact-title':'Contact your photographer','contact-sub':'A question, a project, a collaboration\u00a0? Write to us — we reply within 24 hours.',
     'company-label':'Company','follow-label':'Follow us','contact-btn':'Get in touch',
     'ct-success-title':'Message sent','ct-success-text':'Thank you for your message. We will get back to you within 24 hours.',
     'partners-title':'Partnership & collaboration',
@@ -689,6 +689,7 @@ function updateLang(){
     if (I18N[LANG][key] !== undefined) el.innerHTML = I18N[LANG][key];
   });
   document.documentElement.lang = LANG;
+  applySeoMeta(currentView);
   document.querySelectorAll('.lang-toggle').forEach(el => el.textContent = LANG === 'fr' ? 'EN' : 'FR');
   updatePlaceholders();
   refreshDynamic();
@@ -1472,12 +1473,56 @@ function initHeroCarousel(viewKey){
   showHeroImages();
 }
 
-function goView(v, subTab){
-  const veil = document.getElementById('veil');
-  veil.classList.remove('sweep');
-  void veil.offsetWidth;
-  veil.classList.add('sweep');
-  setTimeout(() => {
+/* ═══════════════ ROUTES (URL réelles) ═══════════════
+   config/routes.js (SEO_ROUTES) associe chaque vue à une URL propre, avec
+   son titre et sa description. goView() met à jour l'URL (History API) et
+   les balises <head> ; les pages HTML statiques générées par
+   tools/build-routes.mjs servent les mêmes URL aux moteurs de recherche. */
+let currentView = 'home';
+function seoRouteFor(v){ return typeof SEO_ROUTES !== 'undefined' ? SEO_ROUTES.find(r => r.view === v) || null : null; }
+function seoRouteForPath(path){
+  if (typeof SEO_ROUTES === 'undefined') return null;
+  const p = path.replace(/index\.html$/, '');
+  return SEO_ROUTES.find(r => r.path === p) || null;
+}
+function setHeadAttr(sel, attr, val){ const el = document.querySelector(sel); if (el) el.setAttribute(attr, val); }
+function applySeoMeta(v){
+  const r = seoRouteFor(v);
+  if (!r) return;
+  const en = LANG === 'en';
+  const title = en && r.titleEn ? r.titleEn : r.title;
+  const desc = en && r.descriptionEn ? r.descriptionEn : r.description;
+  document.title = title;
+  setHeadAttr('meta[name="description"]', 'content', desc);
+  setHeadAttr('link[rel="canonical"]', 'href', 'https://bunkaio.com' + r.path);
+  setHeadAttr('meta[property="og:url"]', 'content', 'https://bunkaio.com' + r.path);
+  setHeadAttr('meta[property="og:title"]', 'content', title);
+  setHeadAttr('meta[property="og:description"]', 'content', desc);
+  setHeadAttr('meta[name="twitter:title"]', 'content', title);
+  setHeadAttr('meta[name="twitter:description"]', 'content', desc);
+  setHeadAttr('meta[name="robots"]', 'content', r.index ? 'index, follow' : 'noindex, nofollow');
+}
+/* Clic sur un vrai lien <a href> : navigation SPA, sauf clic modifié (nouvel onglet). */
+function navLink(e, v, subTab){
+  if (e && (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button === 1)) return true;
+  closeMobileMenu();
+  goView(v, subTab);
+  return false;
+}
+window.addEventListener('popstate', () => {
+  const r = seoRouteForPath(location.pathname);
+  goView(r ? r.view : 'home', null, { fromPop: true });
+});
+
+function goView(v, subTab, opts){
+  opts = opts || {};
+  currentView = v;
+  const route = seoRouteFor(v);
+  if (route && !opts.fromPop && !opts.initial && location.pathname.replace(/index\.html$/, '') !== route.path) {
+    history.pushState({ v }, '', route.path);
+  }
+  applySeoMeta(v);
+  const run = () => {
     document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
     document.getElementById('view-' + v).classList.add('active');
     document.querySelectorAll('.nav-link').forEach(l => l.classList.toggle('active', l.dataset.view === v));
@@ -1514,7 +1559,13 @@ function goView(v, subTab){
        pour que l'animation soit visible plutôt que déjà terminée. */
     document.querySelectorAll('#view-' + v + ' .rv:not(.in):not(.reassure-section)').forEach(observe);
     document.querySelectorAll('#view-' + v + ' .reassure-section:not(.in)').forEach(observeLate);
-  }, 420);
+  };
+  if (opts.initial) { run(); return; }
+  const veil = document.getElementById('veil');
+  veil.classList.remove('sweep');
+  void veil.offsetWidth;
+  veil.classList.add('sweep');
+  setTimeout(run, 420);
 }
 
 /* ═══════════════ QUIZ ═══════════════ */
@@ -3104,6 +3155,7 @@ function restoreSession(){
       if (data && data.ok && data.account) {
         USER = data.account; USER_CODE = saved.code;
         updateNavLogin();
+        if (location.pathname === '/espace-client/') { renderAccount(); goView('account', null, { initial: true }); }
         if (document.getElementById('view-account').classList.contains('active')) renderAccount();
       } else if (data && data.ok === false) clearSession();
     })
@@ -4879,9 +4931,13 @@ function renderFooterServices(){
   el.innerHTML = '';
   CATS.forEach(c => {
     const li = document.createElement('li');
-    const b = document.createElement('button');
+    const b = document.createElement('a');
+    b.href = '/services/';
     b.textContent = t(c.name);
-    b.onclick = () => { activeServiceFilter = c.id; goView('services'); };
+    b.onclick = (e) => {
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return true;
+      activeServiceFilter = c.id; goView('services'); return false;
+    };
     li.appendChild(b);
     el.appendChild(li);
   });
@@ -4934,5 +4990,15 @@ syncNavHeight();
 window.addEventListener('resize', () => { syncNavHeight(); if (window.innerWidth > 1180) closeMobileMenu(); });
 initHeroScrollFx();
 initNavScrollState();
+
+/* Route d'entrée : la page statique servie correspond déjà à la vue ; on
+   aligne l'état JavaScript (sans animation de transition). */
+(function initRoute(){
+  const r = seoRouteForPath(location.pathname);
+  const v = r ? r.view : 'home';
+  history.replaceState({ v }, '', location.pathname + location.hash);
+  if (v === 'home') { applySeoMeta('home'); return; }
+  goView(v === 'account' ? 'login' : v, null, { initial: true });
+})();
 
 restoreSession();

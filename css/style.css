@@ -3677,3 +3677,8 @@
   }
   .filter-btn:hover { border-color: var(--white); background: rgba(10,10,12,0.55); }
   .filter-btn.active { background: var(--white); color: var(--black); border-color: var(--white); text-shadow: none; }
+
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+  a.nav-link { display: inline-block; text-decoration: none; }
+  a.mobile-link { display: block; text-align: center; text-decoration: none; }
+  .ft-list a[href^="/"] { display: inline-block; }
