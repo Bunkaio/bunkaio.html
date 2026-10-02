@@ -3621,3 +3621,5 @@
     .svc-chip-plus { margin-left: auto; }
     .svc-assure { margin-bottom: 24px; }
   }
+
+  .cs-spotlight.cs-novisual { grid-template-columns: 1fr; }

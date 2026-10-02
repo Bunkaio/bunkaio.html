@@ -3116,8 +3116,9 @@ function renderClientSpotlights(){
   const act = `<button type="button" class="cs-btn" onclick="${open ? "renderAccount();goView('account')" : "openLogin('client')"}">${cta}</button>`;
   slots.forEach(el => {
     const compact = el.dataset.variant === 'compact';
+    const noVisual = compact || el.dataset.visual === 'off';
     el.innerHTML = `
-      <section class="cs-spotlight ${compact ? 'cs-compact' : ''} rv in">
+      <section class="cs-spotlight ${compact ? 'cs-compact' : ''} ${noVisual && !compact ? 'cs-novisual' : ''} rv in">
         <div class="cs-main">
           <div class="cs-kicker">${t({fr:'Votre espace client', en:'Your client area'})}</div>
           <h3 class="cs-title">${t({fr:'Une commande, un moodboard personnalisé', en:'One order, one personalised moodboard'})}</h3>
@@ -3125,7 +3126,7 @@ function renderClientSpotlights(){
           ${compact ? '' : `<ul class="cs-points">${points.map(x => `<li>${check}<span>${x}</span></li>`).join('')}</ul>`}
           <div class="cs-actions">${act}${compact || open ? '' : `<button type="button" class="cta-primary" onclick="goView('quiz')">${t({fr:'Estimer mon projet', en:'Estimate my project'})}</button>`}</div>
         </div>
-        ${compact ? '' : `
+        ${noVisual ? '' : `
         <div class="cs-visual" aria-hidden="true">
           <div class="cs-board">
             <div class="cs-board-head"><span>${t({fr:'Moodboard', en:'Moodboard'})}</span><em>${t({fr:'Commande n°1', en:'Order #1'})}</em></div>
