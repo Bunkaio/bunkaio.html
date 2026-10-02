@@ -293,3 +293,6 @@ const DRONE_MEDIA = {
     { thumb: MEDIA_BASE + '/drone/brand-2.webp',   video: MEDIA_BASE + '/drone/brand-2.mp4'   },  // Campagne lifestyle été
   ],
 };
+
+/* Lien « laisser un avis » de la fiche Google Business Profile (https://g.page/r/.../review). Vide = aucun bouton affiché. */
+const GOOGLE_REVIEW_URL = '';

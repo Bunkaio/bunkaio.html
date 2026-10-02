@@ -125,14 +125,14 @@ const I18N = {
     'about-p1':'Aya Nascimento est photographe portraitiste professionnelle, diplômée de l\'ETPA (BTS Photographie, 2018). Elle est la photographe de BUNKAIO.',
     'about-p2':'Spécialisée en photographie de mode, de produit, corporate et événementielle, elle accompagne les particuliers, les marques et les entreprises avec des images premium en haute définition, retouchées avec soin.',
     'about-h-zone':'Un studio mobile en Occitanie',
-    'about-zone-text':'BUNKAIO se déplace : pas d\'adresse de studio, mais une intervention à Béziers, Montpellier et Toulouse. Pour un projet ailleurs, chaque demande est étudiée avec des frais de déplacement calculés selon la distance.',
+    'about-zone-text':'BUNKAIO est basé à Montpellier et se déplace : pas d\'adresse de studio, mais une intervention à Béziers, Montpellier et Toulouse. Pour un projet ailleurs, chaque demande est étudiée avec des frais de déplacement calculés selon la distance.',
     'about-stat1':'ans d\'expérience','about-stat2':'projets réalisés','about-stat3':'diplômée de l\'ETPA · BTS Photographie',
     'about-h-spec':'Spécialités',
     'about-spec1':'Portrait & lifestyle','about-spec2':'Mode, agences et mannequins','about-spec3':'Photo de produit & commercial','about-spec4':'Corporate & entreprises','about-spec5':'Événementiel & mariage (Lumen)',
     'about-h-method':'Comment ça se passe',
     'about-step1':'Devis personnalisé sous 48 h','about-step2':'Shooting à la date convenue','about-step3':'Retouche et post-production','about-step4':'Livraison en HD dans une galerie privée, depuis votre espace client',
     'about-cta-portfolio':'Voir le portfolio','about-cta-contact':'Contacter BUNKAIO',
-    'ft-about':'À propos','ft-privacy':'Confidentialité et mentions légales','legal-title-privacy':'Politique de confidentialité et mentions légales','acc-h1':'Mon espace','ft-advice':'Conseils photo','cred-about-link':'Qui est derrière BUNKAIO ? →',
+    'ft-about':'À propos','ft-privacy':'Confidentialité et mentions légales','legal-title-privacy':'Politique de confidentialité et mentions légales','acc-h1':'Mon espace','ft-advice':'Conseils photo','ft-review':'Laisser un avis Google','cred-about-link':'Qui est derrière BUNKAIO ? →',
     'zone-label':'Zone d\'intervention','zone-value':'Photographe mobile — Béziers, Montpellier, Toulouse',
     'share-sub':'Vous avez travaillé avec BUNKAIO ? Votre retour aide d\'autres clients à se projeter — et compte énormément pour nous.',
     'share-info-label':'Comment ça marche',
@@ -460,14 +460,14 @@ const I18N = {
     'about-p1':'Aya Nascimento is a professional portrait photographer, a graduate of ETPA (BTS Photography, 2018). She is the photographer of BUNKAIO.',
     'about-p2':'Specialised in fashion, product, corporate and event photography, she works with individuals, brands and companies, delivering premium high-definition images, carefully retouched.',
     'about-h-zone':'A mobile studio in Occitanie',
-    'about-zone-text':'BUNKAIO travels to you: no studio address, but shoots in Béziers, Montpellier and Toulouse. For a project elsewhere, every request is reviewed with travel costs based on distance.',
+    'about-zone-text':'BUNKAIO is based in Montpellier and travels to you: no studio address, but shoots in Béziers, Montpellier and Toulouse. For a project elsewhere, every request is reviewed with travel costs based on distance.',
     'about-stat1':'years of experience','about-stat2':'projects completed','about-stat3':'ETPA graduate · BTS Photography',
     'about-h-spec':'Specialities',
     'about-spec1':'Portrait & lifestyle','about-spec2':'Fashion, agencies and models','about-spec3':'Product & commercial photography','about-spec4':'Corporate & businesses','about-spec5':'Events & weddings (Lumen)',
     'about-h-method':'How it works',
     'about-step1':'Personalised quote within 48 hours','about-step2':'Shoot on the agreed date','about-step3':'Retouching and post-production','about-step4':'HD delivery in a private gallery, from your client area',
     'about-cta-portfolio':'See the portfolio','about-cta-contact':'Contact BUNKAIO',
-    'ft-about':'About','ft-privacy':'Privacy and legal notice','legal-title-privacy':'Privacy policy and legal notice','acc-h1':'My space','ft-advice':'Photo advice','cred-about-link':'Who is behind BUNKAIO? →',
+    'ft-about':'About','ft-privacy':'Privacy and legal notice','legal-title-privacy':'Privacy policy and legal notice','acc-h1':'My space','ft-advice':'Photo advice','ft-review':'Leave a Google review','cred-about-link':'Who is behind BUNKAIO? →',
     'zone-label':'Service area','zone-value':'Mobile photographer — Béziers, Montpellier, Toulouse',
     'share-sub':'Have you worked with BUNKAIO? Your feedback helps other clients picture what to expect — and it means a great deal to us.',
     'share-info-label':'How it works',
@@ -819,6 +819,8 @@ function closeMobileMenu(){
 function refreshDynamic(){
   renderClientSpotlights();
   if (currentView === 'portfolio') renderPortfolioLinks();
+  if (currentView === 'services') renderServiceLinks();
+  renderGoogleReview();
   if (currentView === 'service') renderServicePage(currentSub);
   if (currentView === 'article') renderArticlePage(currentSub);
   if (currentView === 'advice') renderAdvicePage();
@@ -1002,28 +1004,18 @@ const CATS = [
    Prix volontairement inférieurs à la formule Signature individuelle.
    ════════════════════════════════════════════════════════════════ */
 const SUBS = {
-  immobilier: {
-    price: 550,
-    name:{fr:'Studio Continu — Immobilier', en:'Studio Continu — Real Estate'},
-    items:{
-      fr:['1 reportage photo par mois (jusqu\'à 25 photos HD, 1 ou 2 biens)','1 Reel vertical par mois (annonces + réseaux)','Priorité planning 48h — vos biens en avant-première','Options supplémentaires au tarif partenaire (-20%)'],
-      en:['1 photo shoot per month (up to 25 HD photos, 1 or 2 properties)','1 vertical Reel per month (listings + social)','48-hour priority scheduling on every new listing','All add-ons at partner rate (-20%)'] }
-  },
-  artisan: {
-    price: 350,
-    name:{fr:'Studio Continu — Atelier', en:'Studio Continu — Workshop'},
-    items:{
-      fr:['1 session atelier par mois (jusqu\'à 20 photos HD)','1 Reel storytelling : le geste, la matière, la pièce','Votre fil Instagram devient un carnet de création vivant','Options supplémentaires au tarif partenaire (-20%)'],
-      en:['1 workshop session per month (up to 20 HD photos)','1 storytelling Reel: the craft, the material, the piece','Your Instagram feed becomes a living creative journal','All add-ons at partner rate (-20%)'] }
-  },
+  /* Studio Continu : proposé uniquement aux modèles émergents et mannequins (voir SUB_PROFILES). */
   mode: {
     price: 750,
-    name:{fr:'Studio Continu — Marque', en:'Studio Continu — Brand'},
+    audience:{fr:'modèles et mannequins', en:'models'},
+    name:{fr:'Studio Continu — Modèles & mannequins', en:'Studio Continu — Models'},
     items:{
-      fr:['1 session lifestyle ou lookbook par mois (jusqu\'à 25 photos HD)','2 Reels verticaux par mois, prêts pour vos campagnes','Direction artistique continue — cohérence visuelle toute l\'année','Options supplémentaires au tarif partenaire (-20%)'],
-      en:['1 lifestyle or lookbook session per month (up to 25 HD photos)','2 vertical Reels per month, ready for your campaigns','Ongoing art direction — full-year visual consistency','All add-ons at partner rate (-20%)'] }
+      fr:['1 session lifestyle ou lookbook par mois (jusqu\'à 25 photos HD)','2 Reels verticaux par mois, prêts pour vos réseaux et vos candidatures','Direction artistique continue — cohérence visuelle toute l\'année','Options supplémentaires au tarif partenaire (-20%)'],
+      en:['1 lifestyle or lookbook session per month (up to 25 HD photos)','2 vertical Reels per month, ready for your social channels and applications','Ongoing art direction — full-year visual consistency','All add-ons at partner rate (-20%)'] }
   }
 };
+const SUB_PROFILES = ['modele', 'mannequin'];
+const subAvailable = cat => !!SUBS[cat] && (!SUB_PROFILES.length || cat !== 'mode' || SUB_PROFILES.includes(S.prof));
 
 /* Formule spécialisée "Polas" — uniquement Mode & créateurs. Studio obligatoire (+60€, voir computeTotal).
    Polas (digitals) = photos brutes et sans retouche, destinées exclusivement aux agences pour évaluer
@@ -1144,6 +1136,11 @@ const PROFILES = [
   { id:'promo',    name:{fr:'Propriétaire / promoteur',  en:'Owner / developer'},       icon:'promo'   },
   { id:'marque',   name:{fr:'Marque / label',            en:'Brand / label'},           icon:'marque'  },
   { id:'artisan',  name:{fr:'Artisan / créateur',        en:'Artisan / maker'},         icon:'artisan' },
+  { id:'modele',   name:{fr:'Modèle émergent(e)',        en:'Emerging model'},          icon:'person'  },
+  { id:'mannequin',name:{fr:'Mannequin',                 en:'Model'},                   icon:'marque'  },
+  { id:'createur', name:{fr:'Créateur(trice) de contenu',en:'Content creator'},         icon:'camera'  },
+  { id:'entrepreneur', name:{fr:'Entrepreneur(se)',      en:'Entrepreneur'},            icon:'product' },
+  { id:'ei',       name:{fr:'Entreprise individuelle',   en:'Sole proprietorship'},     icon:'artisan' },
   { id:'gastro',   name:{fr:'Restaurateur / hôtelier',   en:'Restaurant / hotel owner'},icon:'gastro'  },
   { id:'paysage',  name:{fr:'Pisciniste / paysagiste',   en:'Pool builder / landscaper'},icon:'paysage'},
   { id:'event',    name:{fr:'Agence événementielle',     en:'Event agency'},            icon:'event'   },
@@ -1155,8 +1152,8 @@ const CAT_PROFILES = {
   immobilier: ['agence', 'promo', 'marque', 'autre'],
   archi:      ['agence', 'promo', 'marque', 'autre'],
   artisan:    ['artisan', 'marque', 'autre'],
-  mode:       ['marque', 'agence', 'artisan', 'autre'],
-  commercial: ['marque', 'agence', 'gastro', 'artisan', 'autre'],
+  mode:       ['modele', 'mannequin', 'createur', 'marque', 'agence', 'autre'],
+  commercial: ['marque', 'agence', 'entrepreneur', 'ei', 'gastro', 'artisan', 'autre'],
   event:      ['event', 'agence', 'marque', 'autre']
 };
 
@@ -1173,6 +1170,26 @@ const PHOTO_PART_PROFILES = [
 ];
 
 const PROFILE_DESCRIPTIONS = {
+  modele: {
+    fr:'Vous débutez et construisez votre book. Nous vous aidons à vous présenter sous votre meilleur jour : des images naturelles et soignées, pensées pour convaincre agences et marques.',
+    en:'You are starting out and building your portfolio. We help you show your best side: natural, polished images designed to win over agencies and brands.'
+  },
+  mannequin: {
+    fr:'Vous travaillez avec des agences et des marques. Nous produisons des images précises et élégantes pour mettre à jour votre book et valoriser votre polyvalence.',
+    en:'You work with agencies and brands. We produce precise, elegant images to refresh your portfolio and showcase your versatility.'
+  },
+  createur: {
+    fr:'Vous publiez régulièrement et votre image est votre outil de travail. Nous créons des visuels cohérents avec votre univers, pour vos réseaux, votre marque personnelle et vos collaborations.',
+    en:'You publish regularly and your image is your working tool. We create visuals consistent with your universe, for your social channels, personal brand and collaborations.'
+  },
+  entrepreneur: {
+    fr:'Vous incarnez votre activité. Des visuels professionnels et crédibles, pour votre site, vos réseaux et vos présentations, qui donnent confiance avant même le premier échange.',
+    en:'You embody your business. Credible, professional visuals for your website, social channels and presentations, building trust before the first conversation.'
+  },
+  ei: {
+    fr:'Vous êtes à votre compte et votre image fait partie de votre offre. Produits, portrait de marque, vitrine : des images soignées à la mesure de votre activité.',
+    en:'You work for yourself and your image is part of your offer. Products, personal-brand portraits, storefront: polished images that fit your business.'
+  },
   agence: {
     fr:'Vous concevez des espaces, des identités, des projets. Vos réalisations méritent une documentation à la hauteur de votre exigence créative : des images précises, fidèles à vos intentions, que vous pourrez présenter à vos clients, à la presse ou en concours.',
     en:'You design spaces, identities, projects. Your work deserves documentation that matches your creative standards: precise images, faithful to your intentions, that you can present to clients, the press or competitions alike.'
@@ -1625,7 +1642,8 @@ function goView(v, subTab, opts){
     /* Revenir sur une vue peut avoir mis en pause ses vidéos de fond
        (navigateurs mobiles) — on les relance systématiquement. */
     resumeAllBgVideos();
-    if (v === 'services') { renderServices(); setSvcTab('catalogue'); }
+    if (v === 'services') { renderServices(); renderServiceLinks(); setSvcTab('catalogue'); }
+    if (v === 'share') renderGoogleReview();
     if (v === 'drone') { renderDroneCats(); renderDroneProjects(activeDroneCat); }
     if (v === 'portfolio' && !pfLoaded) { renderPfTabs(); selectPfTab(PF_CATS[0].id); pfLoaded = true; }
     if (v === 'portfolio') renderPortfolioLinks();
@@ -1876,7 +1894,7 @@ function renderProfiles(){
     ? LUMEN_PROFILES
     : S.cat === 'photo-part'
     ? PHOTO_PART_PROFILES
-    : (CAT_PROFILES[S.cat] ? PROFILES.filter(p => CAT_PROFILES[S.cat].includes(p.id)) : PROFILES);
+    : (CAT_PROFILES[S.cat] ? CAT_PROFILES[S.cat].map(id => PROFILES.find(p => p.id === id)).filter(Boolean) : PROFILES);
   profiles.forEach((p, i) => {
     const d = document.createElement('div');
     d.className = 'prof-card stagger' + (S.prof === p.id ? ' selected' : '');
@@ -2027,7 +2045,8 @@ function renderTiersBase(){
     d.onclick = () => { S.tier = tier.id; renderRecap(); renderOptions(); quizStep(4); };
     el.appendChild(d);
   });
-  if (SUBS[S.cat]) {
+  if (S.tier === 'sub' && !subAvailable(S.cat)) S.tier = null;
+  if (subAvailable(S.cat)) {
     const sub = SUBS[S.cat];
     const d = document.createElement('div');
     d.className = 'tier-card sub-card stagger';
@@ -2614,6 +2633,8 @@ function renderServicePage(catId){
       a: `<p>${t({fr:'Des photos brutes, sans retouche, destinées aux agences de mannequins : séance en studio sur fond blanc, visage, profils et plans en pied, fichiers HD livrés sous 24 h. Tarif : ', en:'Raw, unretouched photos made for model agencies: studio session on a white background, face, profiles and full-body shots, HD files delivered within 24 hours. Rate: '})}${price(POLAS[catId].price)} + ${price(60)} ${t({fr:'de studio.', en:'for the studio.'})}</p><p><a href="/conseils/polas-mannequin-digitals-agence/" data-nav="article:polas-mannequin-digitals-agence">${t({fr:'Polas et digitals de mannequin : à quoi servent-elles ?', en:'Polas and model digitals: what are they for?'})}</a></p>` }] : []),
     ...(catId === 'photo-part' ? [{ q: t({fr:'Peut-on faire une séance en couple ou en groupe ?', en:'Can we book a couple or group session?'}),
       a: `<p>${t({fr:'Oui : la séance se fait en solo, en couple ou en groupe, en extérieur ou en studio. Choisissez la formule selon la durée et le nombre de photos souhaités ; pour vous aider à préparer vos tenues, lisez ', en:'Yes: sessions are available solo, as a couple or in a group, outdoors or in the studio. Pick the package according to the session length and number of photos you want; to prepare your outfits, read '})}<a href="/conseils/que-porter-seance-photo/" data-nav="article:que-porter-seance-photo">${t({fr:'Que porter pour une séance photo ?', en:'What to wear for a photo session?'})}</a>.</p>` }] : []),
+    ...(catId === 'photo-part' ? [{ q: t({fr:'Réalisez-vous des portraits professionnels ?', en:'Do you shoot professional portraits?'}),
+      a: `<p>${t({fr:'Oui : photo de profil, site web, présentation d\'équipe. Les formules de séance portrait s\'appliquent, avec des droits d\'utilisation commerciale cédés sans limite de durée. Plus de détails dans le guide ', en:'Yes: profile photo, website, team presentation. Portrait session packages apply, with commercial usage rights transferred with no time limit. More details in the guide '})}<a href="/conseils/portrait-professionnel-photo-profil-linkedin/" data-nav="article:portrait-professionnel-photo-profil-linkedin">${t({fr:'Portrait professionnel', en:'Professional portrait'})}</a>.</p>` }] : []),
     { q: t({fr:'Que comprend chaque formule ?', en:'What does each package include?'}),
       a: tiers.map(tt => `<p><strong>${t(tt.name)}</strong></p><ul class="svcp-list">${(en ? tt.items.en : tt.items.fr).map(i => `<li>${escHtml(i)}</li>`).join('')}</ul>`).join('') },
   ];
@@ -2863,7 +2884,7 @@ function renderServices(){
     card.className = 'service-card rv';
     const subRow = SUBS[c.id] ? `
       <div class="service-sub-row">
-        <span class="service-sub-label">${I18N[LANG]['svc-sub-label']}${SUBS[c.id].promo ? `<span class="service-tier-promo">${t(SUBS[c.id].promo)}</span>` : ''}</span>
+        <span class="service-sub-label">${I18N[LANG]['svc-sub-label']}${SUBS[c.id].audience ? ' — ' + t(SUBS[c.id].audience) : ''}${SUBS[c.id].promo ? `<span class="service-tier-promo">${t(SUBS[c.id].promo)}</span>` : ''}</span>
         <span class="service-sub-price">${SUBS[c.id].price.toLocaleString('fr-FR')}€<small> HT/${LANG === 'fr' ? 'mois' : 'mo'}</small></span>
       </div>` : '';
     card.innerHTML = `
@@ -3116,6 +3137,27 @@ function renderPortfolioLinks(){
   el.innerHTML = `<section class="read-panel svcp-panel pf-links"><h2>${t({fr:'Découvrir chaque prestation', en:'Explore each service'})}</h2>
     <p class="svcp-text">${t({fr:'Chaque univers a sa page avec les formules, les tarifs et les délais : portrait, mode, produits, événementiel et photobooth Lumen, à Béziers, Montpellier et Toulouse.', en:'Each universe has its own page with packages, rates and timelines: portrait, fashion, products, events and the Lumen photobooth, in Béziers, Montpellier and Toulouse.'})}</p>
     <div class="svcp-others-row">${CATS.filter(c => seoRouteFor('service', c.id)).map(c => `<a class="svcp-chip" href="${servicePath(c.id)}" data-nav="service:${c.id}">${t(c.name)}</a>`).join('')}</div></section>`;
+}
+/* Même bandeau côté « Prestations » : accès direct à la page détaillée de chaque univers. */
+function renderServiceLinks(){
+  const el = document.getElementById('svcLinks');
+  if (!el) return;
+  el.innerHTML = `<section class="read-panel svcp-panel pf-links"><h2>${t({fr:'Découvrir chaque prestation', en:'Explore each service'})}</h2>
+    <p class="svcp-text">${t({fr:'Ouvrez la page de chaque univers pour le détail des formules, les questions fréquentes et les conseils associés : portrait, mode, produits, événementiel et photobooth Lumen.', en:'Open each universe page for package details, frequently asked questions and related advice: portrait, fashion, products, events and the Lumen photobooth.'})}</p>
+    <div class="svcp-others-row">${CATS.filter(c => seoRouteFor('service', c.id)).map(c => `<a class="svcp-chip" href="${servicePath(c.id)}" data-nav="service:${c.id}">${t(c.name)}</a>`).join('')}</div></section>`;
+}
+
+/* Avis Google : le lien (config/media.js → GOOGLE_REVIEW_URL) est renseigné une fois la fiche Google Business Profile créée.
+   Tant qu'il est vide, aucun bouton n'est affiché. */
+function renderGoogleReview(){
+  const url = typeof GOOGLE_REVIEW_URL !== 'undefined' ? GOOGLE_REVIEW_URL : '';
+  const btn = `<a class="cta-primary" href="${url}" target="_blank" rel="noopener"><span>${t({fr:'Laisser un avis sur Google', en:'Leave a Google review'})}</span></a>`;
+  const box = document.getElementById('gReview');
+  if (box) box.innerHTML = url ? `<div class="read-panel g-review"><h3>${t({fr:'Votre avis sur Google', en:'Your Google review'})}</h3><p>${t({fr:'Un avis sur Google aide d\'autres clients à nous trouver et à nous faire confiance. Cela prend moins d\'une minute.', en:'A Google review helps other clients find and trust us. It takes less than a minute.'})}</p>${btn}</div>` : '';
+  const done = document.getElementById('gReviewDone');
+  if (done) done.innerHTML = url ? `<p>${t({fr:'Si vous avez 1 minute, votre avis public sur Google nous aide énormément :', en:'If you have a minute, a public Google review helps us enormously:'})}</p>${btn}` : '';
+  const li = document.getElementById('ftReviewLi');
+  if (li) { li.hidden = !url; const a = li.querySelector('a'); if (a && url) a.href = url; }
 }
 function selectPfTab(id){
   document.querySelectorAll('.pf-cat-tab').forEach(tab => tab.classList.toggle('active', tab.dataset.cat === id));
@@ -3572,9 +3614,9 @@ function renderAccountStepper(){
 }
 
 /* ═══════════════ ESPACE CLIENT — MES ABONNEMENTS ═══════════════
-   Studio Continu (voir SUBS plus haut) : seules les catégories
-   immobilier/artisan/mode proposent l'option abonnement dans le
-   questionnaire de devis. USER.abonnement (depuis la base de comptes)
+   Studio Continu (voir SUBS plus haut) : seule la catégorie mode,
+   pour les profils modèle et mannequin, propose l'option abonnement
+   dans le questionnaire de devis. USER.abonnement (depuis la base de comptes)
    référence juste l'une de ces clés + statut/usage — le contenu du
    plan (nom, prix, inclus) est toujours lu depuis SUBS, jamais dupliqué
    dans le compte, pour rester automatiquement à jour si l'offre change. */

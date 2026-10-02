@@ -27,7 +27,7 @@
 
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='80' font-family='serif'>⊹</text></svg>">
 <link rel="preload" href="fonts/dm-sans-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/style.min.css?v=bf0161c4">
+<link rel="stylesheet" href="css/style.min.css?v=bf0761a7">
 
 <script type="application/ld+json">
 {
@@ -55,6 +55,7 @@
       },
       "address": {
         "@type": "PostalAddress",
+        "addressLocality": "Montpellier",
         "addressRegion": "Occitanie",
         "addressCountry": "FR"
       },
@@ -725,7 +726,7 @@
   <div class="services-page">
     <h2 data-pageh1 class="page-title" data-lang="services-title">Prestations & tarifs photo</h2>
     <p class="page-sub" data-lang="services-sub">Photographe professionnel à Béziers, Montpellier et Toulouse : des images haut de gamme, en HD, pour mettre en valeur votre projet. Nos prestations et leurs tarifs, par univers.</p>
-    <div class="svc-cta-row"><button type="button" class="cta-primary" onclick="goToCatalogue()"><span data-lang="svc-reserve">Je réserve ma séance</span></button></div>
+    <div class="svc-cta-row"><a class="cta-primary" href="/devis/" data-quiz=""><span data-lang="svc-reserve">Je réserve ma séance</span></a></div>
     <div class="svc-tabs">
       <button class="svc-tab active" id="stab-catalogue" onclick="setSvcTab('catalogue')" data-lang="stab-catalogue">Catalogue & prix</button>
       <button class="svc-tab" id="stab-devis" onclick="setSvcTab('devis')" data-lang="stab-devis">Devis & déroulé</button>
@@ -758,6 +759,7 @@
         </div>
         <div class="services-grid" id="servicesGrid"><!--snap--><!--/snap--></div>
       </div>
+      <div id="svcLinks"><!--snap--><!--/snap--></div>
       <div class="payment-flex-strip">
         <div class="payment-flex-icon">💳</div>
         <div class="payment-flex-body">
@@ -1068,7 +1070,7 @@
           <p data-lang="about-p1">Aya Nascimento est photographe portraitiste professionnelle, diplômée de l'ETPA (BTS Photographie, 2018). Elle est la photographe de BUNKAIO.</p>
           <p data-lang="about-p2">Spécialisée en photographie de mode, de produit, corporate et événementielle, elle accompagne les particuliers, les marques et les entreprises avec des images premium en haute définition, retouchées avec soin.</p>
           <h2 data-lang="about-h-zone">Un studio mobile en Occitanie</h2>
-          <p data-lang="about-zone-text">BUNKAIO se déplace : pas d'adresse de studio, mais une intervention à Béziers, Montpellier et Toulouse. Pour un projet ailleurs, chaque demande est étudiée avec des frais de déplacement calculés selon la distance.</p>
+          <p data-lang="about-zone-text">BUNKAIO est basé à Montpellier et se déplace : pas d'adresse de studio, mais une intervention à Béziers, Montpellier et Toulouse. Pour un projet ailleurs, chaque demande est étudiée avec des frais de déplacement calculés selon la distance.</p>
         </div>
         <div class="about-stats">
           <div class="about-stat"><div class="about-stat-n">8+</div><div class="about-stat-l" data-lang="about-stat1">ans d'expérience</div></div>
@@ -1123,6 +1125,7 @@
         <div class="ct-info-label" data-lang="share-info-label">Comment ça marche</div>
         <div class="ct-info-value" data-lang="share-info-value">Votre message nous est envoyé directement. Avec votre accord, il pourra être publié (de façon anonymisée si vous le souhaitez) dans la section témoignages du site.</div>
       </div>
+      <div id="gReview"></div>
     </div>
     <div>
       <form id="shareForm" onsubmit="sendShare(event)">
@@ -1156,6 +1159,7 @@
       <div class="success-box" id="shSuccess" style="display:none; margin-top: 10px;">
         <h3 data-lang="share-success-title">Merci pour votre retour</h3>
         <p data-lang="share-success-text">Votre témoignage a bien été reçu. Nous vous recontacterons si nous souhaitons le publier.</p>
+        <div id="gReviewDone"></div>
       </div>
     </div>
   </div>
@@ -1627,6 +1631,7 @@
         <ul class="ft-list">
           <li><a href="/a-propos/" onclick="return navLink(event,'about')" data-lang="ft-about">À propos</a></li>
           <li><a href="/conseils/" onclick="return navLink(event,'advice')" data-lang="ft-advice">Conseils photo</a></li>
+          <li id="ftReviewLi" hidden><a href="#" target="_blank" rel="noopener" data-lang="ft-review">Laisser un avis Google</a></li>
           <li><a href="/portfolio/" onclick="return navLink(event,'portfolio')" data-lang="portfolio">Portfolio</a></li>
           <li><button onclick="goView('drone')" data-lang="drone">4K Drone</button></li>
           <li><a href="/partenaires/" onclick="return navLink(event,'partners')" data-lang="partners">Partenaires</a></li>
@@ -1648,9 +1653,9 @@
 
 <script src="config/analytics.js?v=eff8bde4"></script>
 <script src="js/analytics.js?v=e0edf83d"></script>
-<script src="config/articles.js?v=76173cde"></script>
+<script src="config/articles.js?v=284cfcb8"></script>
 <script src="config/routes.js?v=e7f1684e"></script>
-<script src="config/media.js?v=7c78aacd"></script>
-<script src="js/script.min.js?v=04630c2d"></script>
+<script src="config/media.js?v=fbc742f3"></script>
+<script src="js/script.min.js?v=851a07cf"></script>
 </body>
 </html>

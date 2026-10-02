@@ -27,7 +27,7 @@
 
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='80' font-family='serif'>⊹</text></svg>">
 <link rel="preload" href="fonts/dm-sans-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/style.min.css?v=bf0161c4">
+<link rel="stylesheet" href="css/style.min.css?v=bf0761a7">
 
 <script type="application/ld+json">
 {
@@ -55,6 +55,7 @@
       },
       "address": {
         "@type": "PostalAddress",
+        "addressLocality": "Montpellier",
         "addressRegion": "Occitanie",
         "addressCountry": "FR"
       },
@@ -726,7 +727,7 @@
   <div class="services-page">
     <h1 data-pageh1 class="page-title" data-lang="services-title">Prestations & tarifs photo</h1>
     <p class="page-sub" data-lang="services-sub">Photographe professionnel à Béziers, Montpellier et Toulouse : des images haut de gamme, en HD, pour mettre en valeur votre projet. Nos prestations et leurs tarifs, par univers.</p>
-    <div class="svc-cta-row"><button type="button" class="cta-primary" onclick="goToCatalogue()"><span data-lang="svc-reserve">Je réserve ma séance</span></button></div>
+    <div class="svc-cta-row"><a class="cta-primary" href="/devis/" data-quiz=""><span data-lang="svc-reserve">Je réserve ma séance</span></a></div>
     <div class="svc-tabs">
       <button class="svc-tab active" id="stab-catalogue" onclick="setSvcTab('catalogue')" data-lang="stab-catalogue">Catalogue & prix</button>
       <button class="svc-tab" id="stab-devis" onclick="setSvcTab('devis')" data-lang="stab-devis">Devis & déroulé</button>
@@ -757,7 +758,7 @@
         <div class="svc-cat-photo" id="svcCatPhoto" style="display:none">
           <img id="svcCatPhotoImg" src="" alt="">
         </div>
-        <div class="services-grid" id="servicesGrid"><!--snap--><div class="service-card rv">
+        <div class="services-grid" id="servicesGrid"><!--snap--><div class="service-card rv in">
       <div class="service-head">
         <div class="service-icon"><svg width="52" height="52" viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 20h6l3-5h18l3 5h6a2 2 0 0 1 2 2v20a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2V22a2 2 0 0 1 2-2z"></path><circle cx="28" cy="32" r="8"></circle></svg></div>
         <div class="service-name">Séance photo — particuliers</div>
@@ -785,7 +786,7 @@
       </div>
       
       <button class="service-cta">Estimer ce projet →</button>
-      <a class="service-more" href="/services/seance-photo-particuliers/" onclick="return navLink(event,'service','photo-part')">Séance photo — particuliers : détails et tarifs →</a></div><div class="service-card rv">
+      <a class="service-more" href="/services/seance-photo-particuliers/" onclick="return navLink(event,'service','photo-part')">Séance photo — particuliers : détails et tarifs →</a></div><div class="service-card rv in">
       <div class="service-head">
         <div class="service-icon"><svg width="52" height="52" viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 14 L38 14 L42 22 L28 46 L14 22 Z"></path><line x1="14" y1="22" x2="42" y2="22"></line><line x1="22" y1="14" x2="28" y2="46"></line><line x1="34" y1="14" x2="28" y2="46"></line></svg></div>
         <div class="service-name">Mode, agence et mannequins</div>
@@ -813,11 +814,11 @@
       </div>
       
       <div class="service-sub-row">
-        <span class="service-sub-label">Abonnement mensuel</span>
+        <span class="service-sub-label">Abonnement mensuel — modèles et mannequins</span>
         <span class="service-sub-price">750€<small> HT/mois</small></span>
       </div>
       <button class="service-cta">Estimer ce projet →</button>
-      <a class="service-more" href="/services/photographe-mode-mannequins/" onclick="return navLink(event,'service','mode')">Mode, agence et mannequins : détails et tarifs →</a></div><div class="service-card rv">
+      <a class="service-more" href="/services/photographe-mode-mannequins/" onclick="return navLink(event,'service','mode')">Mode, agence et mannequins : détails et tarifs →</a></div><div class="service-card rv in">
       <div class="service-head">
         <div class="service-icon"><svg width="52" height="52" viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 20 L28 12 L42 20 L42 38 L28 46 L14 38 Z"></path><path d="M14 20 L28 28 L42 20"></path><line x1="28" y1="28" x2="28" y2="46"></line></svg></div>
         <div class="service-name">Commercial &amp; produits</div>
@@ -845,7 +846,7 @@
       </div>
       
       <button class="service-cta">Estimer ce projet →</button>
-      <a class="service-more" href="/services/photo-produits-packshots/" onclick="return navLink(event,'service','commercial')">Commercial &amp; produits : détails et tarifs →</a></div><div class="service-card rv">
+      <a class="service-more" href="/services/photo-produits-packshots/" onclick="return navLink(event,'service','commercial')">Commercial &amp; produits : détails et tarifs →</a></div><div class="service-card rv in">
       <div class="service-head">
         <div class="service-icon"><svg width="52" height="52" viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M28 10 L32 22 L44 22 L34 30 L38 42 L28 34 L18 42 L22 30 L12 22 L24 22 Z"></path></svg></div>
         <div class="service-name">Événementiel</div>
@@ -899,6 +900,7 @@
       <button class="service-cta">Estimer ce projet →</button>
       <a class="service-more" href="/services/photobooth-ia-mariage-lumen/" onclick="return navLink(event,'service','lumen')">Lumen : détails et tarifs →</a></div><!--/snap--></div>
       </div>
+      <div id="svcLinks"><!--snap--><!--/snap--></div>
       <div class="payment-flex-strip">
         <div class="payment-flex-icon">💳</div>
         <div class="payment-flex-body">
@@ -1328,7 +1330,7 @@
           <p data-lang="about-p1">Aya Nascimento est photographe portraitiste professionnelle, diplômée de l'ETPA (BTS Photographie, 2018). Elle est la photographe de BUNKAIO.</p>
           <p data-lang="about-p2">Spécialisée en photographie de mode, de produit, corporate et événementielle, elle accompagne les particuliers, les marques et les entreprises avec des images premium en haute définition, retouchées avec soin.</p>
           <h2 data-lang="about-h-zone">Un studio mobile en Occitanie</h2>
-          <p data-lang="about-zone-text">BUNKAIO se déplace : pas d'adresse de studio, mais une intervention à Béziers, Montpellier et Toulouse. Pour un projet ailleurs, chaque demande est étudiée avec des frais de déplacement calculés selon la distance.</p>
+          <p data-lang="about-zone-text">BUNKAIO est basé à Montpellier et se déplace : pas d'adresse de studio, mais une intervention à Béziers, Montpellier et Toulouse. Pour un projet ailleurs, chaque demande est étudiée avec des frais de déplacement calculés selon la distance.</p>
         </div>
         <div class="about-stats">
           <div class="about-stat"><div class="about-stat-n">8+</div><div class="about-stat-l" data-lang="about-stat1">ans d'expérience</div></div>
@@ -1383,6 +1385,7 @@
         <div class="ct-info-label" data-lang="share-info-label">Comment ça marche</div>
         <div class="ct-info-value" data-lang="share-info-value">Votre message nous est envoyé directement. Avec votre accord, il pourra être publié (de façon anonymisée si vous le souhaitez) dans la section témoignages du site.</div>
       </div>
+      <div id="gReview"></div>
     </div>
     <div>
       <form id="shareForm" onsubmit="sendShare(event)">
@@ -1416,6 +1419,7 @@
       <div class="success-box" id="shSuccess" style="display:none; margin-top: 10px;">
         <h3 data-lang="share-success-title">Merci pour votre retour</h3>
         <p data-lang="share-success-text">Votre témoignage a bien été reçu. Nous vous recontacterons si nous souhaitons le publier.</p>
+        <div id="gReviewDone"></div>
       </div>
     </div>
   </div>
@@ -1887,6 +1891,7 @@
         <ul class="ft-list">
           <li><a href="/a-propos/" onclick="return navLink(event,'about')" data-lang="ft-about">À propos</a></li>
           <li><a href="/conseils/" onclick="return navLink(event,'advice')" data-lang="ft-advice">Conseils photo</a></li>
+          <li id="ftReviewLi" hidden><a href="#" target="_blank" rel="noopener" data-lang="ft-review">Laisser un avis Google</a></li>
           <li><a href="/portfolio/" onclick="return navLink(event,'portfolio')" data-lang="portfolio">Portfolio</a></li>
           <li><button onclick="goView('drone')" data-lang="drone">4K Drone</button></li>
           <li><a href="/partenaires/" onclick="return navLink(event,'partners')" data-lang="partners">Partenaires</a></li>
@@ -1908,9 +1913,9 @@
 
 <script src="config/analytics.js?v=eff8bde4"></script>
 <script src="js/analytics.js?v=e0edf83d"></script>
-<script src="config/articles.js?v=76173cde"></script>
+<script src="config/articles.js?v=284cfcb8"></script>
 <script src="config/routes.js?v=e7f1684e"></script>
-<script src="config/media.js?v=7c78aacd"></script>
-<script src="js/script.min.js?v=04630c2d"></script>
+<script src="config/media.js?v=fbc742f3"></script>
+<script src="js/script.min.js?v=851a07cf"></script>
 </body>
 </html>

@@ -127,7 +127,7 @@ function buildJsonLd(route, meta) {
     logo: b.logo, image: b.logo, description: b.description,
     telephone: b.telephone, email: b.email, priceRange: b.priceRange, sameAs: b.sameAs,
     identifier: { '@type': 'PropertyValue', propertyID: 'SIRET', value: b.siret },
-    address: { '@type': 'PostalAddress', addressRegion: b.region, addressCountry: 'FR' },
+    address: { '@type': 'PostalAddress', addressLocality: b.baseCity, addressRegion: b.region, addressCountry: 'FR' },
     areaServed: [...b.cities.map((c) => ({ '@type': 'City', name: c })), { '@type': 'AdministrativeArea', name: b.region }],
     knowsAbout: per.knowsAbout,
     ...(hasPerson ? { employee: { '@id': personId } } : {}),
