@@ -3888,3 +3888,6 @@ body:not([data-view="home"]) .scroll-hint { display: none; }
 /* Logo de l'en-tête : à la taille réelle du logo recadré (plus de marge vide au-dessus/au-dessous du « BK »), « STUDIO » remonte */
 .nav-logo-img { width: 48px; height: 22px; object-fit: contain; display: block; }
 .nav-brand { gap: 5px; }
+
+/* Logo du pied de page : version foncée sur fond transparent, plus grande (plus de carré noir) */
+.ft-brand-logo-img { width: 130px; height: auto; background: none; border-radius: 0; padding: 0; margin-bottom: 10px; object-fit: contain; }
