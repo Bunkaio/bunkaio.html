@@ -35,9 +35,9 @@ bucket_name = "bunkaio-media"
 # Comptes espace client/partenaire (remplace l'ancien comptes.json public).
 # Namespace à créer une seule fois avec :
 #   npx wrangler kv namespace create ACCOUNTS_KV
-# puis remplace "REMPLACER_PAR_L_ID_DU_NAMESPACE" ci-dessous par l'id que
+# puis remplace "54d15558b88840f3af99b6c6e30c6ef7" ci-dessous par l'id que
 # la commande affiche. Voir README.md de ce dossier pour la procédure
 # complète (création + migration du compte de démo).
 [[kv_namespaces]]
 binding = "ACCOUNTS_KV"
-id = "REMPLACER_PAR_L_ID_DU_NAMESPACE"
+id = "54d15558b88840f3af99b6c6e30c6ef7"
