@@ -1,3 +1,4 @@
+import { getBusinessAddress } from './config';
 import Stripe from 'stripe';
 import type { BalanceInvoiceResult, DepositInvoiceInput, DepositInvoiceResult, LeadSummary, QuizLeadPayload, UpsertResult } from './types';
 
@@ -179,9 +180,9 @@ async function createFractionalInvoice(
     // auto-marquée payée. C'est la cause des anciennes factures de test à 0€.
     pending_invoice_items_behavior: 'include',
     // Mention légale obligatoire : entreprise en franchise en base de TVA.
-    footer: customerLang === 'en'
+    footer: addressLine() + (customerLang === 'en'
       ? 'VAT not applicable, art. 293 B of the French Tax Code. The assignment of usage rights is subject to payment in full of the price. Professional customers: in case of late payment, penalties at three times the legal interest rate and a fixed recovery fee of EUR 40 (art. L441-10 of the French Commercial Code).'
-      : "TVA non applicable, art. 293 B du CGI. La cession des droits d'utilisation est subordonnée au paiement intégral du prix. Clients professionnels : en cas de retard de paiement, pénalités au taux de trois fois le taux d'intérêt légal et indemnité forfaitaire de recouvrement de 40 € (art. L441-10 du Code de commerce).",
+      : "TVA non applicable, art. 293 B du CGI. La cession des droits d'utilisation est subordonnée au paiement intégral du prix. Clients professionnels : en cas de retard de paiement, pénalités au taux de trois fois le taux d'intérêt légal et indemnité forfaitaire de recouvrement de 40 € (art. L441-10 du Code de commerce)."),
 
     metadata: {
       type: metadataType,
@@ -316,4 +317,10 @@ export async function verifyWebhookEvent(
 ): Promise<Stripe.Event> {
   const cryptoProvider = Stripe.createSubtleCryptoProvider();
   return stripe.webhooks.constructEventAsync(payload, signature, secret, undefined, cryptoProvider);
+}
+
+/** Ligne d'adresse légale en tête du pied de facture (vide si BUSINESS_ADDRESS n'est pas défini). */
+function addressLine(): string {
+  const a = getBusinessAddress();
+  return a ? `BUNKAIO — SIRET 951 547 587 00034 — ${a}. ` : '';
 }

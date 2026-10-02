@@ -2,6 +2,7 @@ import type Stripe from 'stripe';
 import { adminAccountView, getAccount, listAccounts, putAccount, sanitizeAccount, upsertAccountFromAdmin, verifyLogin } from './accounts';
 import { handleCollect, handleStats, purgeOldAnalytics } from './analytics';
 import { appendJournal, diffAccountActivity, flushActivityNotifications, queueActivityNotification } from './activity';
+import { configureBusiness } from './config';
 import { claimAckSlot, markBalanceInvoiced, markDepositPaid, markInvoiced, markLead, runDailyAutomations } from './automations';
 import {
   buildAdminAlertEmail,
@@ -1073,6 +1074,7 @@ async function handleDeleteMedia(request: Request, env: Env, headers: Record<str
 
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+    configureBusiness(env);
     const headers = corsHeaders(resolveAllowedOrigin(request.headers.get('Origin'), env.ALLOWED_ORIGINS));
 
     // Préflight CORS — le navigateur l'envoie avant le vrai POST.
@@ -1134,6 +1136,7 @@ export default {
   },
 
   async scheduled(event: ScheduledEvent, env: Env): Promise<void> {
+    configureBusiness(env);
     // Cron "*/5" : envoi des récapitulatifs d'activité clients. Cron quotidien : relances de factures.
     if (event.cron === '*/5 * * * *') {
       await flushActivityNotifications(env);

@@ -11,6 +11,8 @@ export interface Env {
   EMAIL_FROM: string;
   ADMIN_NOTIFICATION_EMAIL: string;
   GOOGLE_REVIEW_URL: string;
+  /** Adresse légale (secret Cloudflare) — jamais dans le dépôt ni sur le site. */
+  BUSINESS_ADDRESS?: string;
   MEDIA_BUCKET: R2Bucket;
   ACCOUNTS_KV: KVNamespace;
   ANALYTICS_DB?: D1Database; // mesure d'audience — optionnelle (voir migrations/0001_analytics.sql)
