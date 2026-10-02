@@ -1334,6 +1334,13 @@ document.addEventListener('visibilitychange', () => {
 window.addEventListener('pageshow', resumeAllBgVideos);
 window.addEventListener('focus', resumeAllBgVideos);
 
+/* Pas de vidéo de fond en mode économie de données ou sur connexion très lente
+   (le fond noir du hero reste lisible) : évite plusieurs dizaines de Mo inutiles. */
+function bgVideoAllowed(){
+  const c = navigator.connection;
+  return !(c && (c.saveData || /(^|-)2g$/.test(c.effectiveType || '')));
+}
+
 function createBgVideo(src){
   const vid = document.createElement('video');
   /* Attributs posés AVANT le src : requis par Safari/iOS pour autoriser
@@ -1442,6 +1449,13 @@ function initHeroCarousel(viewKey){
     const vd = v.querySelector('video');
     if (vd && !on) vd.pause();
   });
+
+  if (viewKey === 'home' && IMG.homeVideo && !bgVideoAllowed()) {
+    wrap.classList.add('is-dark');
+    wrap.style.display = '';
+    showOnlyVideoWrap(null);
+    return;
+  }
 
   if (viewKey === 'home' && IMG.homeVideo) {
     wrap.classList.add('is-dark');
@@ -2775,13 +2789,17 @@ let pfLoaded = false;
    faire apparaître ici, sans aucune autre manipulation. Un petit cache
    évite de re-sonder le réseau à chaque navigation entre onglets. */
 const _pfGalleryCache = {};
+/* Test d'existence par requête HEAD (aucun octet d'image téléchargé) ; repli sur
+   le chargement de l'image si le navigateur refuse la requête. */
 function probeImageExists(src){
-  return new Promise(resolve => {
-    const img = new Image();
-    img.onload = () => resolve(true);
-    img.onerror = () => resolve(false);
-    img.src = src;
-  });
+  return fetch(src, { method: 'HEAD' })
+    .then(r => r.ok)
+    .catch(() => new Promise(resolve => {
+      const img = new Image();
+      img.onload = () => resolve(true);
+      img.onerror = () => resolve(false);
+      img.src = src;
+    }));
 }
 async function loadPortfolioPhotos(catId, max){
   if (_pfGalleryCache[catId]) return _pfGalleryCache[catId];

@@ -35,6 +35,7 @@ const SNAPS_BY_VIEW = {
 };
 const SNAPS_ALL = ['ftServices'];
 const ENTITY = JSON.parse(fs.readFileSync(path.join(ROOT, 'config/entity.json'), 'utf8'));
+const IMG = vm.runInNewContext(fs.readFileSync(path.join(ROOT, 'config/media.js'), 'utf8') + ';IMG', {});
 const ALL_SNAP_IDS = [...new Set([...Object.values(SNAPS_BY_VIEW).flat(), ...SNAPS_ALL])];
 
 const MIME = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.webp': 'image/webp', '.mp4': 'video/mp4', '.json': 'application/json', '.xml': 'application/xml' };
@@ -128,6 +129,16 @@ function buildPage(template, route, snaps) {
   html = setMeta(html, /<meta property="og:description" content="[^"]*">/, '<meta property="og:description" content="' + esc(route.description) + '">');
   html = setMeta(html, /<meta name="twitter:title" content="[^"]*">/, '<meta name="twitter:title" content="' + esc(route.title) + '">');
   html = setMeta(html, /<meta name="twitter:description" content="[^"]*">/, '<meta name="twitter:description" content="' + esc(route.description) + '">');
+
+  // Image de fond de la page : déclarée dès le HTML (variable CSS) et préchargée, pour que le
+  // navigateur la télécharge sans attendre l'exécution du JavaScript (meilleur LCP).
+  const heroUrl = (IMG[route.view] && typeof IMG[route.view] === 'string') ? IMG[route.view] : '';
+  html = html.replace(/<html lang="fr"[^>]*>/, heroUrl ? '<html lang="fr" style="--page-bg-url:url(\'' + heroUrl + '\')">' : '<html lang="fr">');
+  html = html.replace(/<!--hero-preload-->[\s\S]*?<!--\/hero-preload-->\n?/, '');
+  if (heroUrl) {
+    const origin = new URL(heroUrl).origin;
+    html = html.replace('</head>', '<!--hero-preload--><link rel="preconnect" href="' + origin + '"><link rel="preload" as="image" href="' + heroUrl + '" fetchpriority="high"><!--/hero-preload-->\n</head>');
+  }
 
   html = html.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/, buildJsonLd(route));
 
