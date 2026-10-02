@@ -3722,3 +3722,32 @@
     .about-cta .btn, .about-cta .cta-primary { width: 100%; text-align: center; justify-content: center; }
   }
   a.btn { text-decoration: none; display: inline-block; text-align: center; }
+
+  /* ─── PAGE D'UNE PRESTATION ─── */
+  .service-page { max-width: 1100px; }
+  .breadcrumb { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 12.5px; color: rgba(255,255,255,0.85); margin-bottom: 18px; text-shadow: 0 1px 6px rgba(0,0,0,0.5); }
+  .breadcrumb a { color: var(--white); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(255,255,255,0.5); }
+  .svcp-cta-row { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; margin: -26px 0 36px; }
+  .svcp-panel { margin-bottom: 22px; color: var(--black); }
+  .svcp-panel h2, .svcp-others h2 { font-size: clamp(20px, 2.6vw, 26px); font-weight: 700; letter-spacing: -0.02em; margin: 0 0 16px; }
+  .svcp-others h2 { color: var(--white); text-shadow: 0 1px 8px rgba(0,0,0,0.5); font-size: 18px; }
+  .svcp-tiers { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; }
+  .svcp-tier { border: 1px solid var(--line); border-radius: 12px; padding: 18px; background: #fff; display: flex; flex-direction: column; gap: 6px; }
+  .svcp-tier h3 { font-size: 16px; font-weight: 700; margin: 0; }
+  .svcp-badge { align-self: flex-start; font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; background: var(--violet-deep); border-radius: 999px; padding: 4px 10px; }
+  .svcp-price { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; }
+  .svcp-delay { font-size: 12px; color: var(--grey); margin-bottom: 6px; }
+  .svcp-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 7px; font-size: 13px; line-height: 1.55; color: #3a3544; }
+  .svcp-list li { padding-left: 16px; position: relative; } .svcp-list li::before { content: '—'; position: absolute; left: 0; color: var(--grey); }
+  .svcp-note { margin: 18px 0 0; font-size: 13.5px; color: #3a3544; }
+  .svcp-two { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(24px, 4vw, 56px); }
+  .svcp-text { font-size: 14px; line-height: 1.85; color: #3a3544; margin: 0 0 12px; }
+  .svcp-link { font-size: 13px; font-weight: 700; color: var(--black); text-decoration: underline; text-underline-offset: 4px; }
+  .svcp-others-row { display: flex; flex-wrap: wrap; gap: 10px; }
+  .svcp-chip { font-size: 12.5px; font-weight: 600; color: var(--black); text-decoration: none; background: rgba(255,255,255,0.85); border: 1px solid rgba(255,255,255,0.7); border-radius: 999px; padding: 9px 16px; transition: background 0.3s var(--ease); }
+  .svcp-chip:hover { background: #fff; }
+  .service-more { display: inline-block; margin-top: 12px; font-size: 12px; font-weight: 600; color: var(--black); text-decoration: underline; text-underline-offset: 3px; }
+  @media (max-width: 760px) { .svcp-two { grid-template-columns: 1fr; } .svcp-cta-row { margin-top: -30px; } .svcp-cta-row .cta-primary, .svcp-cta-row .btn { width: 100%; } }
+  .svcp-others h2 { color: var(--black); text-shadow: none; font-size: clamp(20px, 2.6vw, 26px); }
+  .svcp-chip { background: var(--violet); border-color: var(--violet-deep); }
+  .svcp-chip:hover { background: var(--violet-deep); }

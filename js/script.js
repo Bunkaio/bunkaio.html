@@ -719,7 +719,7 @@ function updateLang(){
     if (I18N[LANG][key] !== undefined) el.innerHTML = I18N[LANG][key];
   });
   document.documentElement.lang = LANG;
-  applySeoMeta(currentView);
+  applySeoMeta(currentView, currentSub);
   document.querySelectorAll('.lang-toggle').forEach(el => el.textContent = LANG === 'fr' ? 'EN' : 'FR');
   updatePlaceholders();
   refreshDynamic();
@@ -798,6 +798,7 @@ function closeMobileMenu(){
 
 function refreshDynamic(){
   renderClientSpotlights();
+  if (currentView === 'service') renderServicePage(currentSub);
   renderSvcAssure();
   renderCats();
   renderMissionServices();
@@ -1523,15 +1524,22 @@ function initHeroCarousel(viewKey){
    les balises <head> ; les pages HTML statiques générées par
    tools/build-routes.mjs servent les mêmes URL aux moteurs de recherche. */
 let currentView = 'home';
-function seoRouteFor(v){ return typeof SEO_ROUTES !== 'undefined' ? SEO_ROUTES.find(r => r.view === v) || null : null; }
+let currentSub = null;
+function seoRouteFor(v, sub){
+  if (typeof SEO_ROUTES === 'undefined') return null;
+  if (v === 'service') return SEO_ROUTES.find(r => r.view === 'service' && r.cat === sub) || null;
+  return SEO_ROUTES.find(r => r.view === v) || null;
+}
+/* Lien crawlable vers la page d'une prestation (repli sur /services/ si inconnue). */
+function servicePath(catId){ const r = seoRouteFor('service', catId); return r ? r.path : '/services/'; }
 function seoRouteForPath(path){
   if (typeof SEO_ROUTES === 'undefined') return null;
   const p = path.replace(/index\.html$/, '');
   return SEO_ROUTES.find(r => r.path === p) || null;
 }
 function setHeadAttr(sel, attr, val){ const el = document.querySelector(sel); if (el) el.setAttribute(attr, val); }
-function applySeoMeta(v){
-  const r = seoRouteFor(v);
+function applySeoMeta(v, sub){
+  const r = seoRouteFor(v, sub);
   if (!r) return;
   const en = LANG === 'en';
   const title = en && r.titleEn ? r.titleEn : r.title;
@@ -1555,22 +1563,23 @@ function navLink(e, v, subTab){
 }
 window.addEventListener('popstate', () => {
   const r = seoRouteForPath(location.pathname);
-  goView(r ? r.view : 'home', null, { fromPop: true });
+  goView(r ? r.view : 'home', r ? r.cat : null, { fromPop: true });
 });
 
 function goView(v, subTab, opts){
   opts = opts || {};
   currentView = v;
-  const route = seoRouteFor(v);
+  currentSub = v === 'service' ? subTab : null;
+  const route = seoRouteFor(v, subTab);
   if (route && !opts.fromPop && !opts.initial && location.pathname.replace(/index\.html$/, '') !== route.path) {
     history.pushState({ v }, '', route.path);
   }
-  applySeoMeta(v);
+  applySeoMeta(v, subTab);
   if (!opts.initial && window.track) track('pageview');
   const run = () => {
     document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
     document.getElementById('view-' + v).classList.add('active');
-    document.querySelectorAll('.nav-link').forEach(l => l.classList.toggle('active', l.dataset.view === v));
+    document.querySelectorAll('.nav-link').forEach(l => l.classList.toggle('active', l.dataset.view === (v === 'service' ? 'services' : v)));
     window.scrollTo({ top:0, behavior:'instant' });
     updateHeroScrollFx();
     updateNavScrollState();
@@ -1597,6 +1606,7 @@ function goView(v, subTab, opts){
       const img = document.getElementById('img-partners-banner'); if (img && !img.src) img.src = IMG.partners;
       const imgCollab = document.getElementById('img-collab-side'); if (imgCollab && !imgCollab.src) imgCollab.src = IMG.collab;
     }
+    if (v === 'service') renderServicePage(subTab);
     if (v === 'legal') { renderFaqAccordion(); renderPrivacyAccordion(); setLegalTab('faq'); }
     if (v === 'about') { const ph = document.getElementById('img-about'); if (ph && IMG.aboutPhoto && !ph.getAttribute('src')) { ph.src = IMG.aboutPhoto; ph.hidden = false; } }
     /* Anime au scroll tous les éléments .rv de la vue active — cohérent
@@ -2524,6 +2534,93 @@ function goToProcess(){
   if (tabs) window.scrollTo({ top: tabs.getBoundingClientRect().top + window.scrollY - (parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav-h'), 10) || 90) - 16, behavior: 'smooth' });
 }
 
+/* Page d'une prestation (/services/<prestation>/) : tout est calculé depuis le catalogue
+   (CATS / LUMEN_TIERS) — tarifs, délais, contenu des formules — pour rester exact. */
+function renderServicePage(catId){
+  const el = document.getElementById('servicePageContent');
+  if (!el) return;
+  const c = CATS.find(x => x.id === catId);
+  const route = seoRouteFor('service', catId);
+  if (!c || !route) { el.innerHTML = ''; return; }
+  const en = LANG === 'en';
+  const price = n => n.toLocaleString(en ? 'en-GB' : 'fr-FR') + ' € ' + (en ? 'excl. VAT' : 'HT');
+  const tiers = c.lumen
+    ? LUMEN_TIERS.map(lt => ({ name: lt.name, badge: lt.badge, quote: lt.id === 'surm', price: lt.price, delay: lt.delay, items: lt.items }))
+    : TIERS.map(tr => ({ name: tr.name, badge: tr.badge, price: c.tiers[tr.id].price, delay: c.tiers[tr.id].delay, items: c.tiers[tr.id].items }));
+  const others = CATS.filter(x => x.id !== catId && seoRouteFor('service', x.id));
+  const h1 = en && route.h1En ? route.h1En : route.h1;
+  const sub = SUBS[catId];
+  const steps = ['about-step1', 'about-step2', 'about-step3', 'about-step4'];
+  const priceLine = tt => tt.quote ? t({fr:'Sur devis', en:'On quote'}) : price(tt.price);
+
+  const faq = [
+    { q: t({fr:'Quels sont les tarifs ?', en:'What are the rates?'}),
+      a: '<ul class="svcp-list">' + tiers.map(tt => `<li><strong>${t(tt.name)}</strong> — ${priceLine(tt)}</li>`).join('') + '</ul>' + (sub ? `<p>${t({fr:'Abonnement ', en:'Subscription '})}${t(sub.name)} : ${sub.price.toLocaleString(en ? 'en-GB' : 'fr-FR')} € ${t({fr:'HT par mois', en:'excl. VAT per month'})}.</p>` : '') },
+    { q: t({fr:'Dans quels délais reçoit-on les photos ?', en:'How soon are the photos delivered?'}),
+      a: '<ul class="svcp-list">' + tiers.map(tt => `<li><strong>${t(tt.name)}</strong> — ${t(tt.delay)}</li>`).join('') + '</ul><p>' + t({fr:'Les délais démarrent à la date du shooting, hors demandes de retouches complémentaires.', en:'Timelines start on the shoot date, excluding additional retouching requests.'}) + '</p>' },
+    { q: t({fr:'Que comprend chaque formule ?', en:'What does each package include?'}),
+      a: tiers.map(tt => `<p><strong>${t(tt.name)}</strong></p><ul class="svcp-list">${(en ? tt.items.en : tt.items.fr).map(i => `<li>${escHtml(i)}</li>`).join('')}</ul>`).join('') },
+    { q: t({fr:'Où intervenez-vous ?', en:'Where do you work?'}),
+      a: '<p>' + t({fr:'En déplacement à <strong>Béziers, Montpellier et Toulouse</strong>, et plus largement en Occitanie. Pour un projet ailleurs, la demande est étudiée avec des frais de déplacement calculés selon la distance.', en:'We travel to <strong>Béziers, Montpellier and Toulouse</strong>, and more broadly across Occitanie. For a project elsewhere, the request is reviewed with travel costs based on distance.'}) + '</p>' },
+    { q: t({fr:'Puis-je utiliser les photos à titre commercial ?', en:'Can I use the photos commercially?'}),
+      a: '<p>' + t({fr:'Oui : l\'ensemble des droits d\'utilisation des visuels livrés vous est cédé pour un usage commercial, sans limite de durée (détail dans la FAQ).', en:'Yes: all usage rights to the delivered visuals are transferred to you for commercial use, with no time limit (details in the FAQ).'}) + '</p>' },
+  ];
+
+  el.innerHTML = `
+    <nav class="breadcrumb" aria-label="${t({fr:'Fil d\'Ariane', en:'Breadcrumb'})}">
+      <a href="/" onclick="return navLink(event,'home')">${t({fr:'Accueil', en:'Home'})}</a><span aria-hidden="true">›</span>
+      <a href="/services/" onclick="return navLink(event,'services')">Services</a><span aria-hidden="true">›</span>
+      <span>${t(c.name)}</span>
+    </nav>
+    <h1 data-pageh1 class="page-title">${h1}</h1>
+    <p class="page-sub">${t(c.tag)}${c.pitch ? ' — ' + t(c.pitch) : ''}</p>
+    <div class="svcp-cta-row">
+      <button type="button" class="cta-primary" onclick="goToQuizCategory('${catId}')">${t({fr:'Estimer ce projet', en:'Estimate this project'})}</button>
+      <a class="btn btn-ghost" href="/portfolio/" onclick="return navLink(event,'portfolio')"><span>${t({fr:'Voir le portfolio', en:'See the portfolio'})}</span></a>
+    </div>
+
+    <section class="read-panel svcp-panel">
+      <h2>${t({fr:'Formules et tarifs', en:'Packages and rates'})}</h2>
+      <div class="svcp-tiers">
+        ${tiers.map(tt => `
+          <div class="svcp-tier">
+            ${tt.badge ? `<div class="svcp-badge">${t(tt.badge)}</div>` : ''}
+            <h3>${t(tt.name)}</h3>
+            <div class="svcp-price">${priceLine(tt)}</div>
+            <div class="svcp-delay">${t(tt.delay)}</div>
+            <ul class="svcp-list">${(en ? tt.items.en : tt.items.fr).map(i => `<li>${escHtml(i)}</li>`).join('')}</ul>
+          </div>`).join('')}
+      </div>
+      ${sub ? `<p class="svcp-note">${t({fr:'Besoin régulier ? ', en:'Regular need? '})}<strong>${t(sub.name)}</strong> — ${sub.price.toLocaleString(en ? 'en-GB' : 'fr-FR')} € ${t({fr:'HT / mois', en:'excl. VAT / month'})}.</p>` : ''}
+    </section>
+
+    <section class="read-panel svcp-panel svcp-two">
+      <div>
+        <h2>${t({fr:'Comment ça se passe', en:'How it works'})}</h2>
+        <ol class="about-list about-steps">${steps.map(k => `<li>${I18N[LANG][k]}</li>`).join('')}</ol>
+      </div>
+      <div>
+        <h2>${t({fr:'La photographe', en:'The photographer'})}</h2>
+        <p class="svcp-text">${t({fr:'Aya Nascimento, photographe portraitiste professionnelle diplômée de l\'ETPA (BTS Photographie, 2018) : plus de 8 ans d\'expérience et plus de 200 projets réalisés.', en:'Aya Nascimento, professional portrait photographer, ETPA graduate (BTS Photography, 2018): more than 8 years of experience and more than 200 projects completed.'})}</p>
+        <a class="svcp-link" href="/a-propos/" onclick="return navLink(event,'about')">${t({fr:'En savoir plus sur Aya →', en:'More about Aya →'})}</a>
+      </div>
+    </section>
+
+    <section class="read-panel svcp-panel">
+      <h2>${t({fr:'Questions fréquentes', en:'Frequently asked questions'})}</h2>
+      <div id="servicePageFaq"></div>
+    </section>
+
+    <section class="read-panel svcp-panel svcp-others">
+      <h2>${t({fr:'Autres prestations', en:'Other services'})}</h2>
+      <div class="svcp-others-row">
+        ${others.map(o => `<a class="svcp-chip" href="${servicePath(o.id)}" onclick="return navLink(event,'service','${o.id}')">${t(o.name)}</a>`).join('')}
+        <a class="svcp-chip" href="/services/" onclick="return navLink(event,'services')">${t({fr:'Tout le catalogue', en:'Full catalogue'})}</a>
+      </div>
+    </section>`;
+  renderAccordionInto('servicePageFaq', faq.map(f => ({ title: f.q, body: f.a })), { exclusive: true });
+}
+
 /* Garanties de la page Services : 4 puces, une seule ouverte à la fois. */
 let svcAssureOpen = 0;
 function toggleSvcAssure(i){ svcAssureOpen = svcAssureOpen === i ? 0 : i; renderSvcAssure(); }
@@ -2631,7 +2728,8 @@ function renderServices(){
               </div>`).join('')}
       </div>
       ${subRow}
-      <button class="service-cta">${I18N[LANG]['svc-cta']}</button>`;
+      <button class="service-cta">${I18N[LANG]['svc-cta']}</button>
+      <a class="service-more" href="${servicePath(c.id)}" onclick="return navLink(event,'service','${c.id}')">${t({fr:'Voir le détail de la prestation →', en:'See the full service details →'})}</a>`;
     card.querySelector('.service-cta').onclick = () => {
       S.cat = c.id; S.tier = null; S.prof = null;
       /* profNext removed */
@@ -4990,12 +5088,9 @@ function renderFooterServices(){
   CATS.forEach(c => {
     const li = document.createElement('li');
     const b = document.createElement('a');
-    b.href = '/services/';
+    b.href = servicePath(c.id);
     b.textContent = t(c.name);
-    b.onclick = (e) => {
-      if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return true;
-      activeServiceFilter = c.id; goView('services'); return false;
-    };
+    b.onclick = (e) => navLink(e, 'service', c.id);
     li.appendChild(b);
     el.appendChild(li);
   });
@@ -5057,7 +5152,7 @@ initNavScrollState();
   history.replaceState({ v }, '', location.pathname + location.hash);
   if (window.track) track('pageview');
   if (v === 'home') { applySeoMeta('home'); return; }
-  goView(v === 'account' ? 'login' : v, null, { initial: true });
+  goView(v === 'account' ? 'login' : v, r ? r.cat : null, { initial: true });
 })();
 
 restoreSession();

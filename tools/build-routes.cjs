@@ -32,6 +32,7 @@ const SNAPS_BY_VIEW = {
   services: ['servicesFilters', 'servicesGrid', 'processSteps'],
   legal: ['faqAccordion', 'privacyAccordion'],
   partners: ['partnersPitch', 'partnersAccordion', 'applyBenefitsAccordion'],
+  service: ['servicePageContent'],
 };
 const SNAPS_ALL = ['ftServices'];
 const ENTITY = JSON.parse(fs.readFileSync(path.join(ROOT, 'config/entity.json'), 'utf8'));
@@ -73,7 +74,7 @@ function setMeta(html, re, replacement) { return re.test(html) ? html.replace(re
 
 /* Données structurées (JSON-LD) : un @graph par page, construit uniquement à partir de
    config/entity.json et des routes — aucune donnée inventée (pas d'avis, pas de note). */
-function buildJsonLd(route) {
+function buildJsonLd(route, meta) {
   const b = ENTITY.brand, per = ENTITY.person;
   const bizId = SITE + '/#business', siteId = SITE + '/#website', personId = SITE + '/a-propos/#aya';
   const url = SITE + route.path;
@@ -102,22 +103,32 @@ function buildJsonLd(route) {
       knowsAbout: per.knowsAbout,
     });
   }
+  if (route.cat && meta) {
+    const priced = meta.tiers.filter((t) => !t.quote && t.price);
+    graph.push({
+      '@type': 'Service', '@id': url + '#service', name: route.h1 || meta.name, serviceType: meta.name,
+      description: route.description, provider: { '@id': bizId },
+      areaServed: b.cities.map((c) => ({ '@type': 'City', name: c })),
+      offers: { '@type': 'AggregateOffer', priceCurrency: 'EUR', lowPrice: Math.min(...priced.map((t) => t.price)), highPrice: Math.max(...priced.map((t) => t.price)), offerCount: meta.tiers.length },
+    });
+  }
   const pageType = route.view === 'about' ? 'AboutPage' : route.view === 'contact' ? 'ContactPage' : 'WebPage';
   const page = { '@type': pageType, '@id': url + '#webpage', url, name: route.title, description: route.description, inLanguage: 'fr-FR', isPartOf: { '@id': siteId }, about: { '@id': bizId } };
   if (route.view === 'about') page.mainEntity = { '@id': personId };
+  if (route.cat) page.mainEntity = { '@id': url + '#service' };
   if (route.path !== '/') page.breadcrumb = { '@id': url + '#breadcrumb' };
   graph.push(page);
   if (route.path !== '/') {
-    const name = route.title.split('|')[0].trim();
-    graph.push({ '@type': 'BreadcrumbList', '@id': url + '#breadcrumb', itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Accueil', item: SITE + '/' },
-      { '@type': 'ListItem', position: 2, name, item: url },
-    ] });
+    const name = route.cat && meta ? meta.name : route.title.split('|')[0].trim();
+    const crumbs = [{ '@type': 'ListItem', position: 1, name: 'Accueil', item: SITE + '/' }];
+    if (route.cat) crumbs.push({ '@type': 'ListItem', position: 2, name: 'Services', item: SITE + '/services/' });
+    crumbs.push({ '@type': 'ListItem', position: crumbs.length + 1, name, item: url });
+    graph.push({ '@type': 'BreadcrumbList', '@id': url + '#breadcrumb', itemListElement: crumbs });
   }
   return '<script type="application/ld+json">\n' + JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }, null, 2) + '\n</script>';
 }
 
-function buildPage(template, route, snaps) {
+function buildPage(template, route, snaps, meta) {
   let html = template;
   const url = SITE + route.path;
   html = html.replace(/<title>[\s\S]*?<\/title>/, '<title>' + esc(route.title) + '</title>');
@@ -140,11 +151,11 @@ function buildPage(template, route, snaps) {
     html = html.replace('</head>', '<!--hero-preload--><link rel="preconnect" href="' + origin + '"><link rel="preload" as="image" href="' + heroUrl + '" fetchpriority="high"><!--/hero-preload-->\n</head>');
   }
 
-  html = html.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/, buildJsonLd(route));
+  html = html.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/, buildJsonLd(route, meta));
 
   // Vue active = celle de la route
   html = html.replace(/<div class="view( active)?" id="view-([a-z]+)"/g, (m, act, v) => '<div class="view' + (v === route.view ? ' active' : '') + '" id="view-' + v + '"');
-  html = html.replace(/<(a|button) class="nav-link( mobile-link)?( active)?" data-view="([a-z]+)"/g, (m, tag, mob, act, v) => '<' + tag + ' class="nav-link' + (mob || '') + (v === route.view ? ' active' : '') + '" data-view="' + v + '"');
+  html = html.replace(/<(a|button) class="nav-link( mobile-link)?( active)?" data-view="([a-z]+)"/g, (m, tag, mob, act, v) => '<' + tag + ' class="nav-link' + (mob || '') + (v === (route.view === 'service' ? 'services' : route.view) ? ' active' : '') + '" data-view="' + v + '"');
 
   // Un seul <h1> : celui de la vue de la page ; les autres deviennent <h2>
   let current = null;
@@ -184,13 +195,25 @@ function buildPage(template, route, snaps) {
   await grab(['faqAccordion', 'privacyAccordion']);
   await page.evaluate(() => { goView('partners', null, { initial: true }); renderApplyBenefits(); });
   await grab(['partnersPitch', 'partnersAccordion', 'applyBenefitsAccordion']);
+  // Pages de prestation : contenu rendu + données pour le JSON-LD
+  const serviceSnaps = {}, serviceMeta = {};
+  for (const r of ROUTES.filter((x) => x.view === 'service')) {
+    await page.evaluate((c) => goView('service', c, { initial: true }), r.cat);
+    serviceSnaps[r.cat] = await page.evaluate(() => document.getElementById('servicePageContent').innerHTML);
+    serviceMeta[r.cat] = await page.evaluate((c) => {
+      const cat = CATS.find((x) => x.id === c);
+      const tiers = cat.lumen ? LUMEN_TIERS.map((t) => ({ name: t.name.fr, price: t.price, quote: t.id === 'surm' })) : TIERS.map((t) => ({ name: t.name.fr, price: cat.tiers[t.id].price }));
+      return { name: cat.name.fr, tiers };
+    }, r.cat);
+  }
   await browser.close();
   srv.close();
 
   // 2. Génération des pages
   const template = normalize(fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8'));
   for (const route of ROUTES) {
-    const out = buildPage(template, route, snaps);
+    const sn = route.cat ? { ...snaps, servicePageContent: serviceSnaps[route.cat] } : snaps;
+    const out = buildPage(template, route, sn, serviceMeta[route.cat]);
     const file = route.path === '/' ? path.join(ROOT, 'index.html') : path.join(ROOT, route.path, 'index.html');
     fs.mkdirSync(path.dirname(file), { recursive: true });
     fs.writeFileSync(file, out);

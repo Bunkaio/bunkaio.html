@@ -96,6 +96,7 @@ const IMG = {
   portfolio: MEDIA_BASE + '/hero/portfolio-1.webp',  // Fond page Portfolio
   contact:   MEDIA_BASE + '/hero/contact-1.webp',    // Fond page Contact
   about:     MEDIA_BASE + '/hero/contact-1.webp',    // Fond page À propos
+  service:   MEDIA_BASE + '/hero/services-1.webp',   // Fond des pages de prestation (/services/…)
   aboutPhoto: '',                                     // Portrait de la photographe (À propos) — ex. MEDIA_BASE + '/about/aya.webp' après dépôt dans l'admin média
   partners:  MEDIA_BASE + '/hero/partners-1.webp',   // Fond page Partenaires
   legal:     MEDIA_BASE + '/hero/contact-1.webp',    // Fond page FAQ & confidentialité
@@ -165,6 +166,11 @@ const IMG = {
       MEDIA_BASE + '/hero/portfolio-1.webp',
       MEDIA_BASE + '/hero/portfolio-2.webp',
       MEDIA_BASE + '/hero/portfolio-3.webp',
+    ],
+
+    /* Pages de prestation — même fond que Services */
+    service: [
+      MEDIA_BASE + '/hero/services-1.webp',
     ],
 
     /* ⑥-bis À propos — même fond que Contact ; la photo de portrait de la
