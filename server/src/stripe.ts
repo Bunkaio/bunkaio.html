@@ -324,3 +324,35 @@ function addressLine(): string {
   const a = getBusinessAddress();
   return a ? `BUNKAIO — SIRET 951 547 587 00034 — ${a}. ` : '';
 }
+
+/**
+ * Reporte les coordonnées de facturation du compte sur la fiche client Stripe, pour que les
+ * factures portent le nom, l'adresse, le SIRET et la TVA du client. Best-effort : sans fiche
+ * Stripe (le client n'a pas encore fait de devis) il n'y a rien à mettre à jour.
+ */
+export async function syncCustomerBilling(
+  stripe: Stripe,
+  account: { email: string; nom?: string; telephone?: string; facturation?: { contact?: string; rue: string; codePostal: string; ville: string; pays: string; siret?: string; tvaIntra?: string } },
+): Promise<void> {
+  const f = account.facturation;
+  if (!f) return;
+  const found = await stripe.customers.list({ email: account.email, limit: 1 });
+  const customer = found.data[0];
+  if (!customer) return;
+  const country = /^[A-Za-z]{2}$/.test(f.pays.trim()) ? f.pays.trim().toUpperCase() : /france/i.test(f.pays) ? 'FR' : undefined;
+  await stripe.customers.update(customer.id, {
+    name: account.nom,
+    phone: account.telephone,
+    address: { line1: f.rue, postal_code: f.codePostal, city: f.ville, ...(country ? { country } : {}) },
+    metadata: { ...(f.siret ? { siret: f.siret } : {}), ...(f.contact ? { contact: f.contact } : {}) },
+    invoice_settings: { custom_fields: f.siret ? [{ name: 'SIRET', value: f.siret }] : '' },
+  });
+  if (f.tvaIntra) {
+    try {
+      const existing = await stripe.customers.listTaxIds(customer.id, { limit: 10 });
+      if (!existing.data.some((t) => t.value === f.tvaIntra)) await stripe.customers.createTaxId(customer.id, { type: 'eu_vat', value: f.tvaIntra });
+    } catch (err) {
+      console.error('[stripe] numéro de TVA non enregistré', err);
+    }
+  }
+}

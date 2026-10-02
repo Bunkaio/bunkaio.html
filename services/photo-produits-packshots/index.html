@@ -31,7 +31,7 @@
 <link rel="icon" type="image/png" sizes="64x64" href="/images/favicon-64.png">
 <link rel="apple-touch-icon" href="/images/apple-touch-icon.png"><text y='0.9em' font-size='80' font-family='serif'>⊹</text></svg>">
 <link rel="preload" href="fonts/dm-sans-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/style.min.css?v=d6575e33">
+<link rel="stylesheet" href="css/style.min.css?v=d44c496f">
 
 <script type="application/ld+json">
 {
@@ -1747,25 +1747,19 @@
     </div>
 
     <div class="account-section" id="asec-infos">
+      <div class="login-error" id="accInfoBanner" data-lang="acc-info-banner" style="display:none">Pour valider votre espace, complétez vos informations : elles servent à établir vos devis et vos factures.</div>
       <div class="acc-info-card">
         <!-- Vue lecture -->
         <div id="accInfoView">
-          <div class="acc-info-row">
-            <div class="acc-info-label" data-lang="name-label">Nom / Société *</div>
-            <div class="acc-info-value" id="accInfoName">—</div>
-          </div>
-          <div class="acc-info-row">
-            <div class="acc-info-label" data-lang="email-label">Email *</div>
-            <div class="acc-info-value" id="accInfoEmail">—</div>
-          </div>
-          <div class="acc-info-row">
-            <div class="acc-info-label" data-lang="phone-label-opt">Téléphone — optionnel</div>
-            <div class="acc-info-value" id="accInfoPhone">—</div>
-          </div>
-          <div class="acc-info-row">
-            <div class="acc-info-label" data-lang="acc-info-address">Adresse de facturation — optionnel</div>
-            <div class="acc-info-value" id="accInfoAddress">—</div>
-          </div>
+          <div class="acc-info-row"><div class="acc-info-label" data-lang="acc-info-status">Statut de votre espace</div><div class="acc-info-value" id="accInfoStatus">—</div></div>
+          <div class="acc-info-row"><div class="acc-info-label" data-lang="acc-info-profile">Type de client *</div><div class="acc-info-value" id="accInfoProfile">—</div></div>
+          <div class="acc-info-row"><div class="acc-info-label"><span class="only-part" data-lang="acc-info-name-part">Nom et prénom *</span><span class="only-pro" data-lang="acc-info-name-pro">Raison sociale *</span></div><div class="acc-info-value" id="accInfoName">—</div></div>
+          <div class="acc-info-row only-pro"><div class="acc-info-label" data-lang="acc-info-contact">Contact (prénom et nom) *</div><div class="acc-info-value" id="accInfoContact">—</div></div>
+          <div class="acc-info-row"><div class="acc-info-label" data-lang="email-label">Email *</div><div class="acc-info-value" id="accInfoEmail">—</div></div>
+          <div class="acc-info-row"><div class="acc-info-label" data-lang="acc-info-phone">Téléphone *</div><div class="acc-info-value" id="accInfoPhone">—</div></div>
+          <div class="acc-info-row"><div class="acc-info-label" data-lang="acc-info-address">Adresse de facturation *</div><div class="acc-info-value" id="accInfoAddress">—</div></div>
+          <div class="acc-info-row only-pro"><div class="acc-info-label"><span id="accSiretLabelView" data-lang="acc-info-siret-opt">SIRET — optionnel</span></div><div class="acc-info-value" id="accInfoSiret">—</div></div>
+          <div class="acc-info-row only-pro"><div class="acc-info-label" data-lang="acc-info-vat">N° de TVA intracommunautaire — optionnel</div><div class="acc-info-value" id="accInfoVat">—</div></div>
           <div class="btn-row" style="margin-top:30px">
             <button class="btn btn-ghost" onclick="toggleAccInfoEdit(true)"><span data-lang="acc-info-edit-btn">Modifier mes informations</span></button>
           </div>
@@ -1773,22 +1767,50 @@
 
         <!-- Vue édition -->
         <div id="accInfoEdit" style="display:none">
+          <p class="acc-info-note" data-lang="acc-info-req-note">Ces informations servent à établir vos devis et vos factures. Tous les champs marqués d'un * sont obligatoires pour valider votre espace.</p>
+          <div class="fgroup" id="accEditProfileWrap">
+            <label data-lang="acc-info-profile">Type de client *</label>
+            <select id="accEditProfile" onchange="refreshAccInfoProfile()">
+              <option value="particulier" data-lang="acc-info-profile-part">Particulier</option>
+              <option value="professionnel" data-lang="acc-info-profile-pro">Professionnel (société, indépendant, association)</option>
+            </select>
+          </div>
+          <div class="fgroup">
+            <label><span class="only-part" data-lang="acc-info-name-part">Nom et prénom *</span><span class="only-pro" data-lang="acc-info-name-pro">Raison sociale *</span></label>
+            <input type="text" id="accEditName" autocomplete="organization">
+          </div>
+          <div class="fgroup only-pro">
+            <label data-lang="acc-info-contact">Contact (prénom et nom) *</label>
+            <input type="text" id="accEditContact" autocomplete="name">
+          </div>
+          <div class="fgroup">
+            <label data-lang="acc-info-phone">Téléphone *</label>
+            <input type="tel" id="accEditPhone" autocomplete="tel">
+          </div>
+          <div class="fgroup">
+            <label data-lang="acc-info-street">Adresse (numéro et rue) *</label>
+            <input type="text" id="accEditStreet" autocomplete="street-address">
+          </div>
+          <div class="fgrid">
+            <div class="fgroup"><label data-lang="acc-info-zip">Code postal *</label><input type="text" id="accEditZip" autocomplete="postal-code"></div>
+            <div class="fgroup"><label data-lang="acc-info-city">Ville *</label><input type="text" id="accEditCity" autocomplete="address-level2"></div>
+          </div>
+          <div class="fgroup">
+            <label data-lang="acc-info-country">Pays *</label>
+            <input type="text" id="accEditCountry" autocomplete="country-name" value="France">
+          </div>
+          <div class="fgroup only-pro">
+            <label id="accSiretLabel" data-lang="acc-info-siret-opt">SIRET — optionnel</label>
+            <input type="text" id="accEditSiret" inputmode="numeric" placeholder="14 chiffres">
+          </div>
+          <div class="fgroup only-pro">
+            <label data-lang="acc-info-vat">N° de TVA intracommunautaire — optionnel</label>
+            <input type="text" id="accEditVat" placeholder="FR12345678901">
+          </div>
           <p class="acc-info-note" data-lang="acc-info-note">Pour changer votre email de connexion, contactez-nous directement.</p>
-          <div class="fgroup">
-            <label data-lang="name-label">Nom / Société *</label>
-            <input type="text" id="accEditName">
-          </div>
-          <div class="fgroup">
-            <label data-lang="phone-label-opt">Téléphone — optionnel</label>
-            <input type="tel" id="accEditPhone">
-          </div>
-          <div class="fgroup">
-            <label data-lang="acc-info-address">Adresse de facturation — optionnel</label>
-            <textarea id="accEditAddress" style="min-height:90px"></textarea>
-          </div>
           <div class="login-error" id="accInfoError" data-lang="register-error">Merci de remplir tous les champs obligatoires.</div>
           <div class="btn-row" style="margin-top:30px">
-            <button class="btn btn-ghost" onclick="toggleAccInfoEdit(false)"><span data-lang="acc-info-cancel-btn">Annuler</span></button>
+            <button class="btn btn-ghost" id="accInfoCancelBtn" onclick="toggleAccInfoEdit(false)"><span data-lang="acc-info-cancel-btn">Annuler</span></button>
             <button class="btn btn-solid" onclick="saveAccInfo()"><span data-lang="acc-info-save-btn">Enregistrer les modifications</span></button>
           </div>
         </div>
@@ -1884,6 +1906,6 @@
 <script src="config/articles.en.js?v=d9d06c7d"></script>
 <script src="config/routes.js?v=28af006b"></script>
 <script src="config/media.js?v=4c55fc7b"></script>
-<script src="js/script.min.js?v=4f2be8f8"></script>
+<script src="js/script.min.js?v=2f6e7ed4"></script>
 </body>
 </html>

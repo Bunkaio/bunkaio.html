@@ -1,3 +1,4 @@
+import { billingErrors, cleanBilling, composeAddress } from './billing';
 import type {
   AccountRecord,
   AdminAccountRecord,
@@ -41,6 +42,7 @@ export async function getAccount(env: Env, type: AccountType, email: string): Pr
 /** Écrit le compte et met à jour sa métadonnée de liste (type/email/nom), lue par listAccounts()
     sans avoir à relire chaque valeur complète — évite un fetch par compte pour la liste admin. */
 export async function putAccount(env: Env, record: AccountRecord): Promise<void> {
+  record.infosCompletes = billingErrors(record.type, record.nom, record.telephone, record.facturation).length === 0;
   await env.ACCOUNTS_KV.put(accountKey(record.type, record.email), JSON.stringify(record), {
     metadata: { type: record.type, email: record.email, nom: record.nom ?? '', derniereActivite: record.derniereActivite ?? '' },
   });
@@ -106,10 +108,11 @@ export async function upsertAccountFromAdmin(env: Env, payload: AdminAccountUpse
     codeHash,
     nom: payload.nom ?? existing?.nom,
     telephone: payload.telephone ?? existing?.telephone,
-    adresse: payload.adresse ?? existing?.adresse,
+    adresse: payload.facturation ? composeAddress(payload.facturation) : payload.adresse ?? existing?.adresse,
     etapeActuelle: payload.etapeActuelle ?? existing?.etapeActuelle,
     lightroomUrl: payload.lightroomUrl ?? existing?.lightroomUrl,
     lang: payload.lang ?? existing?.lang,
+    facturation: payload.facturation ? cleanBilling(payload.type, payload.facturation) : existing?.facturation,
     photosAcces: payload.photosAcces ?? existing?.photosAcces,
     seance: payload.seance === null ? undefined : payload.seance ?? existing?.seance,
     commandes: payload.commandes ?? existing?.commandes,

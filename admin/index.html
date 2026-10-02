@@ -123,8 +123,9 @@
 
       if (res.ok && data.ok && data.emailSent) {
         result.className = 'ok';
+        const infoWarn = data.infosIncomplete ? '<br><strong>⚠ Coordonnées de facturation incomplètes</strong> : le client n\'a pas validé son espace (nom, adresse, téléphone, SIRET…). Complète-les dans Comptes avant de finaliser le devis et la facture.' : '';
         const lrWarn = (kind === 'balance' && data.lightroomMissing) ? '<br><strong>⚠ Aucun lien Lightroom dans le compte de ce client</strong> : saisis-le dans Comptes avant qu\'il ne paie, sinon il ne recevra pas son accès (tu seras alerté).' : '';
-        result.innerHTML = 'Facture envoyée par email au client.<br>Montant ' + cfg.amountLabel + ' : <strong>' + data[cfg.amountField] + '€</strong><br>Lien : <a href="' + data.hostedInvoiceUrl + '" target="_blank">' + data.hostedInvoiceUrl + '</a>' + lrWarn;
+        result.innerHTML = 'Facture envoyée par email au client.<br>Montant ' + cfg.amountLabel + ' : <strong>' + data[cfg.amountField] + '€</strong><br>Lien : <a href="' + data.hostedInvoiceUrl + '" target="_blank">' + data.hostedInvoiceUrl + '</a>' + lrWarn + infoWarn;
       } else if (res.ok && data.ok && !data.emailSent) {
         result.className = 'err';
         result.innerHTML = 'Facture créée dans Stripe, mais l\'email n\'a pas pu être envoyé automatiquement.<br>Montant ' + cfg.amountLabel + ' : <strong>' + data[cfg.amountField] + '€</strong><br>Transmets ce lien toi-même au client : <a href="' + data.hostedInvoiceUrl + '" target="_blank">' + data.hostedInvoiceUrl + '</a>';

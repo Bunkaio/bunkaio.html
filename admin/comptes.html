@@ -177,7 +177,25 @@
       </div>
     </div>
     <div class="fgroup">
-      <label for="fAdresse">Adresse de facturation</label>
+      <div id="infosStatus" class="hint" style="margin-bottom:8px">Informations de facturation : —</div>
+      <div class="hint">Remplies par le client dans son espace (obligatoires pour valider l'espace) ; modifiables ici. SIRET optionnel pour un client, obligatoire pour un partenaire.</div>
+    </div>
+    <div class="fgrid">
+      <div class="fgroup"><label for="fProfil">Type de client</label><select id="fProfil"><option value="">—</option><option value="particulier">Particulier</option><option value="professionnel">Professionnel</option></select></div>
+      <div class="fgroup"><label for="fContact">Contact (professionnel)</label><input type="text" id="fContact"></div>
+    </div>
+    <div class="fgroup"><label for="fRue">Rue</label><input type="text" id="fRue"></div>
+    <div class="fgrid">
+      <div class="fgroup"><label for="fCp">Code postal</label><input type="text" id="fCp"></div>
+      <div class="fgroup"><label for="fVille">Ville</label><input type="text" id="fVille"></div>
+    </div>
+    <div class="fgrid">
+      <div class="fgroup"><label for="fPays">Pays</label><input type="text" id="fPays" placeholder="France"></div>
+      <div class="fgroup"><label for="fSiret">SIRET</label><input type="text" id="fSiret"></div>
+    </div>
+    <div class="fgroup"><label for="fTva">N° TVA intracommunautaire</label><input type="text" id="fTva"></div>
+    <div class="fgroup">
+      <label for="fAdresse">Adresse (ancien champ libre, repris automatiquement)</label>
       <textarea id="fAdresse" style="min-height:60px;font-family:inherit;font-size:14px"></textarea>
     </div>
     <div class="fgroup">
@@ -376,6 +394,16 @@ document.getElementById('accountPicker').addEventListener('change', async (e) =>
     document.getElementById('fAdresse').value = acc.adresse || '';
     document.getElementById('fLightroom').value = acc.lightroomUrl || '';
     document.getElementById('fLang').value = acc.lang || 'fr';
+    const fb = acc.facturation || {};
+    document.getElementById('fProfil').value = fb.profil || '';
+    document.getElementById('fContact').value = fb.contact || '';
+    document.getElementById('fRue').value = fb.rue || '';
+    document.getElementById('fCp').value = fb.codePostal || '';
+    document.getElementById('fVille').value = fb.ville || '';
+    document.getElementById('fPays').value = fb.pays || '';
+    document.getElementById('fSiret').value = fb.siret || '';
+    document.getElementById('fTva').value = fb.tvaIntra || '';
+    document.getElementById('infosStatus').textContent = 'Informations de facturation : ' + (acc.infosCompletes ? 'COMPLÈTES (espace validé)' : 'INCOMPLÈTES (espace non validé)');
     document.getElementById('photosStatus').textContent = 'Accès aux photos : ' + (acc.photosAcces ? 'OUVERT (lien visible par le client)' : 'fermé');
     const se = acc.seance || {};
     document.getElementById('fSeDate').value = se.date || '';
@@ -458,6 +486,10 @@ async function saveAccount() {
   const code = document.getElementById('fCode').value.trim();
   if (code) payload.code = code;
   payload.lang = document.getElementById('fLang').value;
+  const gv = id => document.getElementById(id).value.trim();
+  if (gv('fProfil') || gv('fRue')) {
+    payload.facturation = { profil: gv('fProfil') || (type === 'partner' ? 'professionnel' : 'particulier'), contact: gv('fContact') || undefined, rue: gv('fRue'), codePostal: gv('fCp'), ville: gv('fVille'), pays: gv('fPays'), siret: gv('fSiret') || undefined, tvaIntra: gv('fTva') || undefined };
+  }
   const seDate = document.getElementById('fSeDate').value;
   const seDateOriginal = window.__seDate || '';
   payload.seance = seDate ? {
@@ -496,6 +528,7 @@ async function saveAccount() {
       if (em.photos === 'no_lightroom_url') msg += ' ⚠ Mail photos non envoyé : renseigne le lien Lightroom.';
       if (em.photos === false) msg += ' ⚠ Mail photos non envoyé (erreur).';
       result.textContent = msg;
+      document.getElementById('infosStatus').textContent = 'Informations de facturation : ' + (data.account.infosCompletes ? 'COMPLÈTES (espace validé)' : 'INCOMPLÈTES (espace non validé)');
       document.getElementById('photosStatus').textContent = 'Accès aux photos : ' + (data.account.photosAcces ? 'OUVERT (lien visible par le client)' : 'fermé');
       document.getElementById('fCode').value = '';
       document.getElementById('fSendAccess').checked = false;

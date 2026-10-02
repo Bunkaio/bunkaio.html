@@ -2,6 +2,7 @@ import type Stripe from 'stripe';
 import { adminAccountView, getAccount, listAccounts, putAccount, sanitizeAccount, upsertAccountFromAdmin, verifyLogin } from './accounts';
 import { handleCollect, handleStats, purgeOldAnalytics } from './analytics';
 import { appendJournal, diffAccountActivity, flushActivityNotifications, queueActivityNotification } from './activity';
+import { billingErrors, cleanBilling, composeAddress } from './billing';
 import { configureBusiness } from './config';
 import { claimAckSlot, markBalanceInvoiced, markDepositPaid, markInvoiced, markLead, runDailyAutomations } from './automations';
 import {
@@ -23,6 +24,7 @@ import {
   createBalanceInvoice,
   createDepositInvoice,
   createStripeClient,
+  syncCustomerBilling,
   findOverdueInvoices,
   getCustomerLang,
   grantReviewDiscount,
@@ -204,6 +206,13 @@ function isValidCollaborationReponses(value: unknown): boolean {
   });
 }
 
+function isValidBillingShape(v: unknown): boolean {
+  if (typeof v !== 'object' || v === null) return false;
+  const f = v as Record<string, unknown>;
+  const s = (x: unknown): boolean => x === undefined || (typeof x === 'string' && x.length <= 200);
+  return (f.profil === 'particulier' || f.profil === 'professionnel') && s(f.contact) && s(f.rue) && s(f.codePostal) && s(f.ville) && s(f.pays) && s(f.siret) && s(f.tvaIntra);
+}
+
 function isValidAccountSelfUpdatePayload(body: unknown): body is AccountSelfUpdatePayload {
   if (typeof body !== 'object' || body === null) return false;
   const b = body as Record<string, unknown>;
@@ -214,6 +223,7 @@ function isValidAccountSelfUpdatePayload(body: unknown): body is AccountSelfUpda
     (b.nom === undefined || typeof b.nom === 'string') &&
     (b.telephone === undefined || typeof b.telephone === 'string') &&
     (b.adresse === undefined || typeof b.adresse === 'string') &&
+    (b.facturation === undefined || isValidBillingShape(b.facturation)) &&
     (b.moodboards === undefined || isValidMoodboardArray(b.moodboards)) &&
     (b.partenariat === undefined || isValidSelfPartenariat(b.partenariat)) &&
     (b.reseau === undefined || isValidSelfReseau(b.reseau)) &&
@@ -238,6 +248,7 @@ function isValidAdminAccountUpsertPayload(body: unknown): body is AdminAccountUp
     (b.photosAcces === undefined || typeof b.photosAcces === 'boolean') &&
     (b.revokePhotos === undefined || typeof b.revokePhotos === 'boolean') &&
     (b.lang === undefined || b.lang === 'fr' || b.lang === 'en') &&
+    (b.facturation === undefined || isValidBillingShape(b.facturation)) &&
     (b.seance === undefined || b.seance === null || (typeof b.seance === 'object' && typeof (b.seance as Record<string, unknown>).date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(String((b.seance as Record<string, unknown>).date)))) &&
     (b.sendSeanceMail === undefined || b.sendSeanceMail === 'confirmation' || b.sendSeanceMail === 'report' || b.sendSeanceMail === 'cancel') &&
     (b.motif === undefined || typeof b.motif === 'string') &&
@@ -335,14 +346,24 @@ async function handleAccountUpdate(request: Request, env: Env, headers: Record<s
     ? { ...account.partenariat, ...selfPartenariat }
     : account.partenariat;
 
+  const nom = body.nom ?? account.nom;
+  const telephone = body.telephone ?? account.telephone;
+  const facturation = body.facturation ? cleanBilling(body.type, body.facturation) : account.facturation;
+  // Le formulaire d'informations envoie toujours les coordonnées de facturation : elles doivent être complètes.
+  if (body.facturation) {
+    const missing = billingErrors(body.type, nom, telephone, facturation);
+    if (missing.length) return jsonResponse({ ok: false, error: 'incomplete_info', fields: missing }, 400, headers);
+  }
+
   const updated = {
     ...account,
     reseau,
     collaborations,
     partenariat,
-    nom: body.nom ?? account.nom,
-    telephone: body.telephone ?? account.telephone,
-    adresse: body.adresse ?? account.adresse,
+    nom,
+    telephone,
+    facturation,
+    adresse: body.facturation && facturation ? composeAddress(facturation) : body.adresse ?? account.adresse,
     moodboards: body.moodboards ?? account.moodboards,
   };
   const entries = diffAccountActivity(account, updated, new Date().toISOString());
@@ -350,6 +371,7 @@ async function handleAccountUpdate(request: Request, env: Env, headers: Record<s
   await putAccount(env, withJournal);
   // File d'attente de l'email récapitulatif : un échec ne doit jamais faire échouer l'enregistrement du client.
   if (entries.length) ctx.waitUntil(queueActivityNotification(env, withJournal, entries).catch((err) => console.error('[activity] mise en file impossible', err)));
+  if (body.facturation) ctx.waitUntil(syncCustomerBilling(createStripeClient(env.STRIPE_SECRET_KEY), withJournal).catch((err) => console.error('[account-update] synchro Stripe', err)));
   console.log('[account-update] informations mises à jour', { type: body.type, email: body.email, changes: entries.length });
   return jsonResponse({ ok: true, account: sanitizeAccount(withJournal) }, 200, headers);
 }
@@ -396,6 +418,7 @@ async function handleAdminAccounts(request: Request, env: Env, headers: Record<s
     }
     try {
       const account = await upsertAccountFromAdmin(env, body);
+      if (body.facturation) await syncCustomerBilling(createStripeClient(env.STRIPE_SECRET_KEY), account).catch((err) => console.error('[accounts] synchro Stripe', err));
       if (body.revokePhotos && account.photosAcces) {
         account.photosAcces = false;
         await putAccount(env, account);
@@ -511,6 +534,16 @@ async function findSeance(env: Env, email: string): Promise<{ date: string; heur
 }
 
 /** Vrai si aucun lien Lightroom n'est saisi dans le compte du client : à la réception du solde il n'aurait pas son accès. */
+/** Vrai si le client n'a pas de compte validé (coordonnées de facturation incomplètes) au moment d'émettre une facture. */
+async function infosIncomplete(env: Env, email: string): Promise<boolean> {
+  try {
+    const account = (await getAccount(env, 'client', email)) ?? (await getAccount(env, 'partner', email));
+    return !account?.infosCompletes;
+  } catch {
+    return true;
+  }
+}
+
 async function lightroomMissing(env: Env, email: string): Promise<boolean> {
   try {
     const account = (await getAccount(env, 'client', email)) ?? (await getAccount(env, 'partner', email));
@@ -611,7 +644,7 @@ async function handleCreateDepositInvoice(request: Request, env: Env, headers: R
       });
       await sendEmail(env, body.email, subject, html, text);
       console.log('[create-deposit-invoice] email envoyé au client');
-      return jsonResponse({ ok: true, ...result, emailSent: true }, 200, headers);
+      return jsonResponse({ ok: true, ...result, emailSent: true, infosIncomplete: await infosIncomplete(env, body.email) }, 200, headers);
     } catch (emailErr) {
       // La facture existe déjà côté Stripe même si l'email échoue : on le
       // signale au front pour qu'il affiche le lien à transmettre à la main.
@@ -669,7 +702,7 @@ async function handleCreateBalanceInvoice(request: Request, env: Env, headers: R
       });
       await sendEmail(env, body.email, subject, html, text);
       console.log('[create-balance-invoice] email envoyé au client');
-      return jsonResponse({ ok: true, ...result, emailSent: true, lightroomMissing: await lightroomMissing(env, body.email) }, 200, headers);
+      return jsonResponse({ ok: true, ...result, emailSent: true, lightroomMissing: await lightroomMissing(env, body.email), infosIncomplete: await infosIncomplete(env, body.email) }, 200, headers);
     } catch (emailErr) {
       console.error("[create-balance-invoice] facture créée mais email non envoyé", emailErr);
       return jsonResponse({ ok: true, ...result, emailSent: false }, 200, headers);

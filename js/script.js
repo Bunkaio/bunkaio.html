@@ -353,7 +353,14 @@ const I18N = {
     'lr-btn':'Accéder à Lightroom',
     'acc-step-devis':'Devis confirmé','acc-step-shoot':'Shooting planifié','acc-step-post':'Post-production','acc-step-livre':'Livré',
     'acc-help-title':'Une question sur votre projet ?','acc-help-sub':'Votre interlocuteur BUNKAIO vous répond directement.','acc-help-btn':'Nous écrire',
-    'acc-info-address':'Adresse de facturation — optionnel',
+    'acc-info-status':'Statut de votre espace','acc-info-valid':'Espace validé','acc-info-incomplete':'Informations à compléter',
+    'acc-info-banner':'Pour valider votre espace, complétez vos informations : elles servent à établir vos devis et vos factures.',
+    'acc-info-profile':'Type de client *','acc-info-profile-part':'Particulier','acc-info-profile-pro':'Professionnel (société, indépendant, association)',
+    'acc-info-name-part':'Nom et prénom *','acc-info-name-pro':'Raison sociale *','acc-info-contact':'Contact (prénom et nom) *',
+    'acc-info-phone':'Téléphone *','acc-info-street':'Adresse (numéro et rue) *','acc-info-zip':'Code postal *','acc-info-city':'Ville *','acc-info-country':'Pays *',
+    'acc-info-siret-opt':'SIRET — optionnel','acc-info-siret-req':'SIRET *','acc-info-vat':'N° de TVA intracommunautaire — optionnel',
+    'acc-info-req-note':'Ces informations servent à établir vos devis et vos factures. Tous les champs marqués d\'un * sont obligatoires pour valider votre espace.',
+    'acc-info-address':'Adresse de facturation *',
     'acc-info-not-set':'Non renseigné',
     'acc-info-edit-btn':'Modifier mes informations',
     'acc-info-save-btn':'Enregistrer les modifications',
@@ -693,7 +700,14 @@ const I18N = {
     'lr-btn':'Go to Lightroom',
     'acc-step-devis':'Quote confirmed','acc-step-shoot':'Shoot scheduled','acc-step-post':'Post-production','acc-step-livre':'Delivered',
     'acc-help-title':'Any question about your project?','acc-help-sub':'Your BUNKAIO contact replies to you directly.','acc-help-btn':'Write to us',
-    'acc-info-address':'Billing address — optional',
+    'acc-info-status':'Your area status','acc-info-valid':'Area validated','acc-info-incomplete':'Information to complete',
+    'acc-info-banner':'To validate your area, please complete your information: it is used to prepare your quotes and invoices.',
+    'acc-info-profile':'Client type *','acc-info-profile-part':'Individual','acc-info-profile-pro':'Business (company, freelancer, association)',
+    'acc-info-name-part':'First and last name *','acc-info-name-pro':'Company name *','acc-info-contact':'Contact (first and last name) *',
+    'acc-info-phone':'Phone *','acc-info-street':'Address (number and street) *','acc-info-zip':'Postal code *','acc-info-city':'City *','acc-info-country':'Country *',
+    'acc-info-siret-opt':'SIRET — optional','acc-info-siret-req':'SIRET *','acc-info-vat':'EU VAT number — optional',
+    'acc-info-req-note':'This information is used to prepare your quotes and invoices. All fields marked with * are required to validate your area.',
+    'acc-info-address':'Billing address *',
     'acc-info-not-set':'Not provided',
     'acc-info-edit-btn':'Edit my information',
     'acc-info-save-btn':'Save changes',
@@ -4095,6 +4109,7 @@ function updateNavLogin(){
 }
 
 function setAccountTab(tab){
+  if (tab !== 'infos' && enforceAccInfoGate()) return;
   ['orders','partenariat','promotions','reseau','collabs','subs','moodboards','payments','factures','portfolio','infos'].forEach(x => {
     document.getElementById('atab-' + x).classList.toggle('active', x === tab);
     document.getElementById('asec-' + x).classList.toggle('active', x === tab);
@@ -5253,13 +5268,67 @@ function renderAccount(){
 }
 
 /* ═══════════════ ESPACE CLIENT — MES INFORMATIONS ═══════════════ */
+/* Champs nécessaires à l'édition d'un devis et d'une facture. Obligatoires pour valider l'espace.
+   SIRET : optionnel pour un client, obligatoire pour un partenaire (toujours professionnel). */
+function accProfile(){
+  if (USER && USER.type === 'partner') return 'professionnel';
+  const sel = document.getElementById('accEditProfile');
+  const editing = document.getElementById('accInfoEdit').style.display === 'block';
+  if (editing && sel) return sel.value;
+  return (USER && USER.facturation && USER.facturation.profil) || 'particulier';
+}
+function applyAccInfoProfile(profil){
+  ['accInfoView','accInfoEdit'].forEach(id => { const el = document.getElementById(id); if (el) el.setAttribute('data-profil', profil); });
+  const partner = USER && USER.type === 'partner';
+  const wrap = document.getElementById('accEditProfileWrap');
+  if (wrap) wrap.style.display = partner ? 'none' : '';
+  const key = partner ? 'acc-info-siret-req' : 'acc-info-siret-opt';
+  ['accSiretLabel','accSiretLabelView'].forEach(id => { const el = document.getElementById(id); if (el) { el.setAttribute('data-lang', key); el.textContent = I18N[LANG][key]; } });
+}
+function refreshAccInfoProfile(){ applyAccInfoProfile(document.getElementById('accEditProfile').value); }
+
+/* Liste des champs manquants ou invalides (mêmes règles que le Worker : server/src/billing.ts). */
+function accInfoMissing(u){
+  const f = (u && u.facturation) || {};
+  const partner = u && u.type === 'partner';
+  const profil = partner ? 'professionnel' : f.profil;
+  const m = [];
+  if (!(u && u.nom && u.nom.trim())) m.push('nom');
+  if (!(u && u.telephone && u.telephone.replace(/\D/g,'').length >= 6)) m.push('telephone');
+  if (profil !== 'particulier' && profil !== 'professionnel') m.push('profil');
+  if (profil === 'professionnel' && !(f.contact && f.contact.trim())) m.push('contact');
+  if (!(f.rue && f.rue.trim())) m.push('rue');
+  if (!(f.codePostal && f.codePostal.trim())) m.push('codePostal');
+  if (!(f.ville && f.ville.trim())) m.push('ville');
+  if (!(f.pays && f.pays.trim())) m.push('pays');
+  const siret = (f.siret || '').replace(/\s/g,'');
+  if ((partner && !siret) || (siret && !/^\d{14}$/.test(siret))) m.push('siret');
+  const tva = (f.tvaIntra || '').replace(/\s/g,'');
+  if (tva && !/^[A-Za-z]{2}[0-9A-Za-z]{2,12}$/.test(tva)) m.push('tvaIntra');
+  return m;
+}
+function accInfoComplete(){ return !!USER && accInfoMissing(USER).length === 0; }
+
 function renderAccInfoView(){
   if (!USER) return;
   const notSet = I18N[LANG]['acc-info-not-set'];
+  const f = USER.facturation || {};
+  const profil = USER.type === 'partner' ? 'professionnel' : (f.profil || 'particulier');
+  applyAccInfoProfile(profil);
+  document.getElementById('accInfoProfile').textContent = profil === 'professionnel' ? I18N[LANG]['acc-info-profile-pro'] : I18N[LANG]['acc-info-profile-part'];
   document.getElementById('accInfoName').textContent = USER.nom || notSet;
+  document.getElementById('accInfoContact').textContent = f.contact || notSet;
   document.getElementById('accInfoEmail').textContent = USER.email || notSet;
   document.getElementById('accInfoPhone').textContent = USER.telephone || notSet;
-  document.getElementById('accInfoAddress').textContent = USER.adresse || notSet;
+  document.getElementById('accInfoAddress').textContent = (f.rue ? [f.rue, [f.codePostal, f.ville].filter(Boolean).join(' '), f.pays].filter(Boolean).join(', ') : USER.adresse) || notSet;
+  document.getElementById('accInfoSiret').textContent = f.siret || notSet;
+  document.getElementById('accInfoVat').textContent = f.tvaIntra || notSet;
+  const ok = accInfoComplete();
+  const st = document.getElementById('accInfoStatus');
+  st.textContent = ok ? '✓ ' + I18N[LANG]['acc-info-valid'] : I18N[LANG]['acc-info-incomplete'];
+  st.style.fontWeight = '600';
+  document.getElementById('accInfoBanner').style.display = ok ? 'none' : 'block';
+  document.getElementById('accInfoBanner').textContent = I18N[LANG]['acc-info-banner'];
 }
 
 /* Bascule lecture/édition. Les champs d'édition sont toujours repris
@@ -5271,10 +5340,35 @@ function toggleAccInfoEdit(edit){
   document.getElementById('accInfoSuccess').style.display = 'none';
   document.getElementById('accInfoError').style.display = 'none';
   if (edit && USER) {
+    const f = USER.facturation || {};
+    document.getElementById('accEditProfile').value = USER.type === 'partner' ? 'professionnel' : (f.profil || 'particulier');
     document.getElementById('accEditName').value = USER.nom || '';
+    document.getElementById('accEditContact').value = f.contact || '';
     document.getElementById('accEditPhone').value = USER.telephone || '';
-    document.getElementById('accEditAddress').value = USER.adresse || '';
+    document.getElementById('accEditStreet').value = f.rue || '';
+    document.getElementById('accEditZip').value = f.codePostal || '';
+    document.getElementById('accEditCity').value = f.ville || '';
+    document.getElementById('accEditCountry').value = f.pays || 'France';
+    document.getElementById('accEditSiret').value = f.siret || '';
+    document.getElementById('accEditVat').value = f.tvaIntra || '';
+    applyAccInfoProfile(document.getElementById('accEditProfile').value);
+    /* Tant que l'espace n'est pas validé, on ne peut pas annuler l'édition. */
+    document.getElementById('accInfoCancelBtn').style.display = accInfoComplete() ? '' : 'none';
   }
+}
+
+/* Verrou de validation : tant que les informations ne sont pas complètes, seul l'onglet
+   « Mes informations » est accessible (en mode édition). */
+function enforceAccInfoGate(){
+  if (!USER || accInfoComplete()) return false;
+  ['orders','partenariat','promotions','reseau','collabs','subs','moodboards','payments','factures','portfolio','infos'].forEach(x => {
+    const tb = document.getElementById('atab-' + x), sc = document.getElementById('asec-' + x);
+    if (tb) tb.classList.toggle('active', x === 'infos');
+    if (sc) sc.classList.toggle('active', x === 'infos');
+  });
+  renderAccInfoView();
+  toggleAccInfoEdit(true);
+  return true;
 }
 
 /* Écrit directement dans la base de comptes via /account-update (voir
@@ -5284,22 +5378,35 @@ function toggleAccInfoEdit(edit){
    l'appel — l'email de connexion n'est volontairement pas modifiable
    ici (c'est la clé d'identité du compte). */
 function saveAccInfo(){
-  const n  = document.getElementById('accEditName').value.trim();
-  const ph = document.getElementById('accEditPhone').value.trim();
-  const ad = document.getElementById('accEditAddress').value.trim();
+  const partner = USER.type === 'partner';
+  const profil = partner ? 'professionnel' : document.getElementById('accEditProfile').value;
+  const val = id => document.getElementById(id).value.trim();
+  const facturation = {
+    profil: profil,
+    contact: profil === 'professionnel' ? val('accEditContact') : '',
+    rue: val('accEditStreet'), codePostal: val('accEditZip'), ville: val('accEditCity'), pays: val('accEditCountry'),
+    siret: profil === 'professionnel' ? val('accEditSiret').replace(/\s/g,'') : '',
+    tvaIntra: profil === 'professionnel' ? val('accEditVat').replace(/\s/g,'').toUpperCase() : ''
+  };
+  const draft = Object.assign({}, USER, { nom: val('accEditName'), telephone: val('accEditPhone'), facturation: facturation });
+  const missing = accInfoMissing(draft);
   const err = document.getElementById('accInfoError');
-  if (!n) { err.style.display = 'block'; return; }
+  if (missing.length) {
+    err.textContent = I18N[LANG]['register-error'] + (missing.includes('siret') ? (partner ? ' ' + (LANG === 'fr' ? 'SIRET : 14 chiffres, obligatoire pour un partenaire.' : 'SIRET: 14 digits, required for a partner.') : ' ' + (LANG === 'fr' ? 'SIRET : 14 chiffres.' : 'SIRET: 14 digits.')) : '') + (missing.includes('tvaIntra') ? ' ' + (LANG === 'fr' ? 'Numéro de TVA invalide.' : 'Invalid VAT number.') : '');
+    err.style.display = 'block';
+    return;
+  }
   err.style.display = 'none';
   const btn = document.querySelector('#accInfoEdit .btn-solid');
   if (btn) btn.disabled = true;
   fetch(ACCOUNTS_API_BASE + '/account-update', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ type: USER.type, email: USER.email, code: USER_CODE, nom: n, telephone: ph, adresse: ad })
+    body: JSON.stringify({ type: USER.type, email: USER.email, code: USER_CODE, nom: draft.nom, telephone: draft.telephone, facturation: facturation })
   }).then(r => r.json()).then(data => {
     if (btn) btn.disabled = false;
     if (!data.ok || !data.account) {
-      err.textContent = 'Erreur lors de l\'enregistrement. Écrivez à contact@bunkaio.com';
+      err.textContent = data.error === 'incomplete_info' ? I18N[LANG]['register-error'] : 'Erreur lors de l\'enregistrement. Écrivez à contact@bunkaio.com';
       err.style.display = 'block';
       return;
     }

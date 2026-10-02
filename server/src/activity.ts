@@ -57,6 +57,11 @@ export function diffAccountActivity(before: AccountRecord, after: AccountRecord,
   for (const [key, label] of fields) {
     if ((before[key] ?? '') !== (after[key] ?? '')) infoChanges.push(`${label} : ${short(after[key]) || '(vide)'}`);
   }
+  const bB = before.facturation; const bA = after.facturation;
+  const billingFields: Array<[keyof NonNullable<typeof bA>, string]> = [['profil', 'Type de client'], ['contact', 'Contact'], ['rue', 'Rue'], ['codePostal', 'Code postal'], ['ville', 'Ville'], ['pays', 'Pays'], ['siret', 'SIRET'], ['tvaIntra', 'TVA intracommunautaire']];
+  for (const [key, label] of billingFields) {
+    if ((bB?.[key] ?? '') !== (bA?.[key] ?? '')) infoChanges.push(`${label} : ${short(bA?.[key]) || '(vide)'}`);
+  }
   if (infoChanges.length) push('infos', 'Coordonnées modifiées', infoChanges);
 
   const prevCollab = new Map((before.collaborations ?? []).map((c) => [c.id, c]));

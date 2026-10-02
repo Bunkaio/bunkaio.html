@@ -249,10 +249,27 @@ export interface CollaborationResponse {
 }
 
 /** Enregistrement complet d'un compte, tel que stocké dans ACCOUNTS_KV. */
+/** Coordonnées de facturation structurées (devis et factures). */
+export interface AccountBilling {
+  profil: 'particulier' | 'professionnel';
+  /** Prénom et nom du contact (professionnels : `nom` est alors la raison sociale). */
+  contact?: string;
+  rue: string;
+  codePostal: string;
+  ville: string;
+  pays: string;
+  /** Optionnel pour un client, obligatoire pour un partenaire. */
+  siret?: string;
+  tvaIntra?: string;
+}
+
 export interface AccountSeance { /** Date de livraison estimée des photos (AAAA-MM-JJ), saisie admin. */ livraison?: string; date: string; heure?: string; lieu?: string; prestation?: string; statut?: 'prevue' | 'annulee' }
 
 export interface AccountRecord {
   type: AccountType;
+  /** Coordonnées de facturation complètes — l'espace n'est validé que lorsqu'elles sont toutes renseignées. */
+  facturation?: AccountBilling;
+  infosCompletes?: boolean;
   email: string;
   codeHash: string;
   nom?: string;
@@ -324,6 +341,7 @@ export interface AccountSelfUpdatePayload {
   nom?: string;
   telephone?: string;
   adresse?: string;
+  facturation?: AccountBilling;
   moodboards?: Moodboard[];
   /** Partenaires uniquement — seuls ces 3 champs de `partenariat` sont modifiables par le partenaire. */
   partenariat?: Pick<AccountPartnerInfo, 'typePrestataire' | 'disponibleCollab' | 'visibleInDirectory' | 'presentation'>;
@@ -347,6 +365,7 @@ export interface AdminAccountUpsertPayload {
   sendAccessMail?: boolean;
   sendPhotosMail?: boolean;
   lang?: 'fr' | 'en';
+  facturation?: AccountBilling;
   photosAcces?: boolean;
   /** Referme l'accès aux photos : le lien Lightroom disparaît de l'espace du client. */
   revokePhotos?: boolean;
