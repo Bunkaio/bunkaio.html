@@ -61,7 +61,7 @@ const I18N = {
     'success-text2':'Chaque demande est évaluée individuellement et n\'est acceptée que si elle correspond à la <strong>ligne éditoriale de BUNKAIO</strong>. Nous travaillons uniquement avec des projets qui résonnent avec notre univers — c\'est ce qui garantit la qualité de chaque collaboration.',
     'success-text3':'Une fois votre devis confirmé, direction votre espace client : vous pourrez y construire votre <strong>moodboard</strong> pour partager votre vision — direction artistique, ambiance, inspirations — et nous arriver parfaitement alignés le jour du shooting.',
     'home-btn':'Retour à l\'accueil','see-portfolio':'Voir tout le portfolio',
-    'svc-reserve':'Je réserve ma séance','services-title':'Prestations & tarifs photo','services-sub':'Photographe professionnel : des images haut de gamme, en HD, pour mettre en valeur votre projet. Nos prestations et leurs tarifs, par univers.',
+    'svc-reserve':'Je réserve ma séance','services-title':'Prestations & tarifs photo','services-sub':'Photographe professionnel à Béziers, Montpellier et Toulouse : des images haut de gamme, en HD, pour mettre en valeur votre projet. Nos prestations et leurs tarifs, par univers.',
     'svc-all':'Tous','svc-cta':'Estimer ce projet →','svc-sub-label':'Abonnement mensuel',
     'svc-trust1-title':'Réponse sous 48h','svc-trust1-text':'Chaque demande est étudiée puis traitée personnellement — jamais de réponse automatique.',
     'svc-trust2-title':'Un parcours accompagné','svc-trust2-text':'De la demande à la livraison, 7 étapes claires — dont la création de votre moodboard pour partager votre vision — <span class="svc-trust-link" onclick="goToProcess()">voir le déroulé complet</span>.',
@@ -86,7 +86,7 @@ const I18N = {
     'company-label':'Entreprise','follow-label':'Suivez-nous','contact-btn':'Nous contacter',
     'ct-success-title':'Message envoyé','ct-success-text':'Merci pour votre message. Nous reviendrons vers vous sous 24 heures.',
     'partners-title':'Partenariat et collaboration',
-    'legal-title':'FAQ & politique de confidentialité',
+    'legal-title':'FAQ : questions fréquentes',
     'legal-sub':'Les réponses aux questions les plus fréquentes, ainsi que nos engagements en matière de confidentialité et de droits d\'utilisation des visuels.',
     'legaltab-faq':'FAQ','legaltab-privacy':'Politique de confidentialité',
     'p-why':'Pourquoi Bunkaio existe',
@@ -110,6 +110,16 @@ const I18N = {
     'testi-share-btn':'Partager mon expérience',
     'share-title':'Partager mon expérience',
     'about-title':'Aya Nascimento, photographe portraitiste professionnelle',
+    'about-partner-h':'Vous êtes un professionnel de l\'image, de la beauté ou de l\'événementiel ?',
+    'about-partner-p':'Coiffeurs, maquilleurs, stylistes, agences, wedding planners, lieux de réception : BUNKAIO propose un <a href="/partenaires/" data-nav="partners">programme de partenariat</a> avec un tarif partenaire permanent, des missions collaboratives et un réseau de professionnels.',
+    'about-cta-quote':'Estimer mon projet',
+    'ct-extra-h':'Pour recevoir une réponse rapide',
+    'ct-extra-intro':'Précisez dans votre message :',
+    'ct-extra-1':'le type de projet (portrait, mode, produits, événement…)',
+    'ct-extra-2':'la date souhaitée et le lieu (Béziers, Montpellier, Toulouse ou autre)',
+    'ct-extra-3':'l\'usage prévu des photos (personnel, réseaux, site, publicité)',
+    'ct-extra-4':'un budget indicatif, si vous en avez un',
+    'ct-extra-links':'Vous préférez une estimation immédiate ? Utilisez le <a href="/devis/" data-nav="quiz">devis en ligne</a> (2 minutes) ou consultez la <a href="/faq/" data-nav="faq">FAQ</a>.',
     'about-sub':'La photographe derrière BUNKAIO : des images haut de gamme, en HD, pour mettre en valeur vos projets.',
     'about-h-bio':'Une photographe, un regard',
     'about-p1':'Aya Nascimento est photographe portraitiste professionnelle, diplômée de l\'ETPA (BTS Photographie, 2018). Elle est la photographe de BUNKAIO.',
@@ -122,7 +132,7 @@ const I18N = {
     'about-h-method':'Comment ça se passe',
     'about-step1':'Devis personnalisé sous 48 h','about-step2':'Shooting à la date convenue','about-step3':'Retouche et post-production','about-step4':'Livraison en HD dans une galerie privée, depuis votre espace client',
     'about-cta-portfolio':'Voir le portfolio','about-cta-contact':'Contacter BUNKAIO',
-    'ft-about':'À propos','acc-h1':'Mon espace','ft-advice':'Conseils photo','cred-about-link':'Qui est derrière BUNKAIO ? →',
+    'ft-about':'À propos','ft-privacy':'Confidentialité et mentions légales','legal-title-privacy':'Politique de confidentialité et mentions légales','acc-h1':'Mon espace','ft-advice':'Conseils photo','cred-about-link':'Qui est derrière BUNKAIO ? →',
     'zone-label':'Zone d\'intervention','zone-value':'Photographe mobile — Béziers, Montpellier, Toulouse',
     'share-sub':'Vous avez travaillé avec BUNKAIO ? Votre retour aide d\'autres clients à se projeter — et compte énormément pour nous.',
     'share-info-label':'Comment ça marche',
@@ -386,7 +396,7 @@ const I18N = {
     'success-text2':'Every request is assessed individually and is only accepted if it aligns with <strong>BUNKAIO\'s editorial line</strong>. We work exclusively with projects that resonate with our universe — this is what guarantees the quality of every collaboration.',
     'success-text3':'Once your quote is confirmed, head to your client space : you\'ll be able to build your <strong>moodboard</strong> there to share your vision — art direction, mood, inspirations — so we arrive on the day perfectly aligned with your project.',
     'home-btn':'Back to home','see-portfolio':'View the full portfolio',
-    'svc-reserve':'Book my session','services-title':'Photography services & rates','services-sub':'Professional photographer: premium, high-definition images that showcase your project. Our services and rates, by universe.',
+    'svc-reserve':'Book my session','services-title':'Photography services & rates','services-sub':'Professional photographer in Béziers, Montpellier and Toulouse: premium, high-definition images that showcase your project. Our services and rates, by universe.',
     'svc-all':'All','svc-cta':'Get a quote for this →','svc-sub-label':'Monthly plan',
     'svc-trust1-title':'Reply within 48h','svc-trust1-text':'Every request is reviewed and handled personally — never an automated reply.',
     'svc-trust2-title':'A guided journey','svc-trust2-text':'From request to delivery, 7 clear steps — including building your moodboard to share your vision — <span class="svc-trust-link" onclick="goToProcess()">see the full process</span>.',
@@ -411,7 +421,7 @@ const I18N = {
     'company-label':'Company','follow-label':'Follow us','contact-btn':'Get in touch',
     'ct-success-title':'Message sent','ct-success-text':'Thank you for your message. We will get back to you within 24 hours.',
     'partners-title':'Partnership & collaboration',
-    'legal-title':'FAQ & privacy policy',
+    'legal-title':'FAQ: frequently asked questions',
     'legal-sub':'Answers to the most frequently asked questions, along with our commitments on data privacy and image/video usage rights.',
     'legaltab-faq':'FAQ','legaltab-privacy':'Privacy policy',
     'p-why':'Why Bunkaio exists',
@@ -435,6 +445,16 @@ const I18N = {
     'testi-share-btn':'Share my experience',
     'share-title':'Share my experience',
     'about-title':'Aya Nascimento, professional portrait photographer',
+    'about-partner-h':'Are you an image, beauty or events professional?',
+    'about-partner-p':'Hairstylists, make-up artists, stylists, agencies, wedding planners, venues: BUNKAIO offers a <a href="/partenaires/" data-nav="partners">partnership programme</a> with a permanent partner rate, collaborative missions and a professional network.',
+    'about-cta-quote':'Estimate my project',
+    'ct-extra-h':'To get a quick reply',
+    'ct-extra-intro':'Please mention in your message:',
+    'ct-extra-1':'the type of project (portrait, fashion, products, event…)',
+    'ct-extra-2':'the desired date and place (Béziers, Montpellier, Toulouse or elsewhere)',
+    'ct-extra-3':'the intended use of the photos (personal, social, website, advertising)',
+    'ct-extra-4':'an indicative budget, if you have one',
+    'ct-extra-links':'Prefer an instant estimate? Use the <a href="/devis/" data-nav="quiz">online quote</a> (2 minutes) or read the <a href="/faq/" data-nav="faq">FAQ</a>.',
     'about-sub':'The photographer behind BUNKAIO: premium, high-definition images that showcase your projects.',
     'about-h-bio':'One photographer, one eye',
     'about-p1':'Aya Nascimento is a professional portrait photographer, a graduate of ETPA (BTS Photography, 2018). She is the photographer of BUNKAIO.',
@@ -447,7 +467,7 @@ const I18N = {
     'about-h-method':'How it works',
     'about-step1':'Personalised quote within 48 hours','about-step2':'Shoot on the agreed date','about-step3':'Retouching and post-production','about-step4':'HD delivery in a private gallery, from your client area',
     'about-cta-portfolio':'See the portfolio','about-cta-contact':'Contact BUNKAIO',
-    'ft-about':'About','acc-h1':'My space','ft-advice':'Photo advice','cred-about-link':'Who is behind BUNKAIO? →',
+    'ft-about':'About','ft-privacy':'Privacy and legal notice','legal-title-privacy':'Privacy policy and legal notice','acc-h1':'My space','ft-advice':'Photo advice','cred-about-link':'Who is behind BUNKAIO? →',
     'zone-label':'Service area','zone-value':'Mobile photographer — Béziers, Montpellier, Toulouse',
     'share-sub':'Have you worked with BUNKAIO? Your feedback helps other clients picture what to expect — and it means a great deal to us.',
     'share-info-label':'How it works',
@@ -1535,7 +1555,8 @@ function seoRouteFor(v, sub){
   if (typeof SEO_ROUTES === 'undefined') return null;
   if (v === 'service') return SEO_ROUTES.find(r => r.view === 'service' && r.cat === sub) || null;
   if (v === 'article') return SEO_ROUTES.find(r => r.view === 'article' && r.slug === sub) || null;
-  return SEO_ROUTES.find(r => r.view === v) || null;
+  const same = SEO_ROUTES.filter(r => r.view === v);
+  return same.find(r => (r.sub || null) === (sub || null)) || same.find(r => !r.sub) || null;
 }
 /* Lien crawlable vers la page d'une prestation (repli sur /services/ si inconnue). */
 function servicePath(catId){ const r = seoRouteFor('service', catId); return r ? r.path : '/services/'; }
@@ -1559,7 +1580,7 @@ function applySeoMeta(v, sub){
   setHeadAttr('meta[property="og:description"]', 'content', desc);
   setHeadAttr('meta[name="twitter:title"]', 'content', title);
   setHeadAttr('meta[name="twitter:description"]', 'content', desc);
-  setHeadAttr('meta[name="robots"]', 'content', r.index ? 'index, follow' : 'noindex, nofollow');
+  setHeadAttr('meta[name="robots"]', 'content', r.index ? 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' : 'noindex, nofollow');
 }
 /* Clic sur un vrai lien <a href> : navigation SPA, sauf clic modifié (nouvel onglet). */
 function navLink(e, v, subTab){
@@ -1570,13 +1591,13 @@ function navLink(e, v, subTab){
 }
 window.addEventListener('popstate', () => {
   const r = seoRouteForPath(location.pathname);
-  goView(r ? r.view : 'home', r ? (r.cat || r.slug || null) : null, { fromPop: true });
+  goView(r ? r.view : 'home', r ? (r.cat || r.slug || r.sub || null) : null, { fromPop: true });
 });
 
 function goView(v, subTab, opts){
   opts = opts || {};
   currentView = v;
-  currentSub = (v === 'service' || v === 'article') ? subTab : null;
+  currentSub = (v === 'service' || v === 'article' || v === 'legal') ? (subTab || null) : null;
   const route = seoRouteFor(v, subTab);
   if (route && !opts.fromPop && !opts.initial && location.pathname.replace(/index\.html$/, '') !== route.path) {
     history.pushState({ v }, '', route.path);
@@ -1617,7 +1638,7 @@ function goView(v, subTab, opts){
     if (v === 'service') renderServicePage(subTab);
     if (v === 'article') renderArticlePage(subTab);
     if (v === 'advice') renderAdvicePage();
-    if (v === 'legal') { renderFaqAccordion(); renderPrivacyAccordion(); setLegalTab('faq'); }
+    if (v === 'legal') { renderFaqAccordion(); renderPrivacyAccordion(); setLegalTab(subTab === 'privacy' ? 'privacy' : 'faq', true); }
     if (v === 'about') { const ph = document.getElementById('img-about'); if (ph && IMG.aboutPhoto && !ph.getAttribute('src')) { ph.src = IMG.aboutPhoto; ph.hidden = false; } }
     /* Anime au scroll tous les éléments .rv de la vue active — cohérent
        sur l'ensemble du site, plus besoin de le câbler page par page.
@@ -2563,18 +2584,44 @@ function renderServicePage(catId){
   const steps = ['about-step1', 'about-step2', 'about-step3', 'about-step4'];
   const priceLine = tt => tt.quote ? t({fr:'Sur devis', en:'On quote'}) : price(tt.price);
 
+  /* Questions propres à chaque prestation : calculées à partir du contenu réel des formules. */
+  const FEATURES = [
+    { fr: /(\d+)\s+(?:photos?|visuels)/i, en: /(\d+)\s+(?:retouched\s+)?(?:HD\s+)?photos?/i,
+      q: t({fr:'Combien de photos sont livrées ?', en:'How many photos are delivered?'}) },
+    { fr: /(reel|film|vidéo)/i, en: /(reel|film|video)/i,
+      q: t({fr:'Quelles formules incluent de la vidéo ?', en:'Which packages include video?'}) },
+    { fr: /(\d+\s?h\b|heures?|demi-journée|journée)/i, en: /(\d+\s?h\b|hours?|half-day|full day)/i,
+      q: t({fr:'Combien de temps dure la prestation ?', en:'How long does the service last?'}) },
+    { fr: /(tenue|ambiance|lieu)/i, en: /(outfit|mood|location|venue)/i,
+      q: t({fr:'Peut-on prévoir plusieurs tenues, ambiances ou lieux ?', en:'Can I plan several outfits, moods or locations?'}) },
+    { fr: /impression/i, en: /print/i,
+      q: t({fr:'Les impressions sont-elles incluses ?', en:'Are prints included?'}) },
+  ];
+  const featureFaq = FEATURES.map(f => {
+    const rows = tiers.map(tt => {
+      const item = (en ? tt.items.en : tt.items.fr).find(i => (en ? f.en : f.fr).test(i));
+      return item ? `<li><strong>${t(tt.name)}</strong> — ${escHtml(item)}</li>` : '';
+    }).filter(Boolean);
+    return rows.length ? { q: f.q, a: '<ul class="svcp-list">' + rows.join('') + '</ul>' } : null;
+  }).filter(Boolean).slice(0, 3);
   const faq = [
     { q: t({fr:'Quels sont les tarifs ?', en:'What are the rates?'}),
       a: '<ul class="svcp-list">' + tiers.map(tt => `<li><strong>${t(tt.name)}</strong> — ${priceLine(tt)}</li>`).join('') + '</ul>' + (sub ? `<p>${t({fr:'Abonnement ', en:'Subscription '})}${t(sub.name)} : ${sub.price.toLocaleString(en ? 'en-GB' : 'fr-FR')} € ${t({fr:'HT par mois', en:'excl. VAT per month'})}.</p>` : '') },
     { q: t({fr:'Dans quels délais reçoit-on les photos ?', en:'How soon are the photos delivered?'}),
       a: '<ul class="svcp-list">' + tiers.map(tt => `<li><strong>${t(tt.name)}</strong> — ${t(tt.delay)}</li>`).join('') + '</ul><p>' + t({fr:'Les délais démarrent à la date du shooting, hors demandes de retouches complémentaires.', en:'Timelines start on the shoot date, excluding additional retouching requests.'}) + '</p>' },
+    ...featureFaq,
     { q: t({fr:'Que comprend chaque formule ?', en:'What does each package include?'}),
       a: tiers.map(tt => `<p><strong>${t(tt.name)}</strong></p><ul class="svcp-list">${(en ? tt.items.en : tt.items.fr).map(i => `<li>${escHtml(i)}</li>`).join('')}</ul>`).join('') },
-    { q: t({fr:'Où intervenez-vous ?', en:'Where do you work?'}),
-      a: '<p>' + t({fr:'En déplacement à <strong>Béziers, Montpellier et Toulouse</strong>, et plus largement en Occitanie. Pour un projet ailleurs, la demande est étudiée avec des frais de déplacement calculés selon la distance.', en:'We travel to <strong>Béziers, Montpellier and Toulouse</strong>, and more broadly across Occitanie. For a project elsewhere, the request is reviewed with travel costs based on distance.'}) + '</p>' },
-    { q: t({fr:'Puis-je utiliser les photos à titre commercial ?', en:'Can I use the photos commercially?'}),
-      a: '<p>' + t({fr:'Oui : l\'ensemble des droits d\'utilisation des visuels livrés vous est cédé pour un usage commercial, sans limite de durée (détail dans la FAQ).', en:'Yes: all usage rights to the delivered visuals are transferred to you for commercial use, with no time limit (details in the FAQ).'}) + '</p>' },
   ];
+  const PARTNER_HINT = {
+    mode: { fr: 'Créateur, styliste, agence de mannequins ou maquilleur·se ? Découvrez le <a href="/partenaires/" data-nav="partners">partenariat BUNKAIO</a>.', en: 'Designer, stylist, model agency or make-up artist? Discover the <a href="/partenaires/" data-nav="partners">BUNKAIO partnership</a>.' },
+    event: { fr: 'Lieu de réception, traiteur, décorateur ou organisateur ? Découvrez le <a href="/partenaires/" data-nav="partners">partenariat BUNKAIO</a>.', en: 'Venue, caterer, decorator or planner? Discover the <a href="/partenaires/" data-nav="partners">BUNKAIO partnership</a>.' },
+    lumen: { fr: 'Wedding planner, domaine ou fleuriste ? Découvrez le <a href="/partenaires/" data-nav="partners">partenariat BUNKAIO</a>.', en: 'Wedding planner, estate or florist? Discover the <a href="/partenaires/" data-nav="partners">BUNKAIO partnership</a>.' },
+  };
+  const hint = PARTNER_HINT[catId];
+  const practical = t({
+    fr: 'Nous intervenons à <strong>Béziers, Montpellier et Toulouse</strong>. Les droits d\'utilisation commerciale des visuels vous sont cédés sans limite de durée. Toutes les réponses sont dans la <a href="/faq/" data-nav="faq">FAQ</a>, et pour une question précise, <a href="/contact/" data-nav="contact">contactez-nous</a>.',
+    en: 'We work in <strong>Béziers, Montpellier and Toulouse</strong>. Commercial usage rights to the visuals are transferred to you with no time limit. All the answers are in the <a href="/faq/" data-nav="faq">FAQ</a>, and for a specific question, <a href="/contact/" data-nav="contact">get in touch</a>.' });
 
   el.innerHTML = `
     <div class="breadcrumb" role="navigation" aria-label="${t({fr:'Fil d\'Ariane', en:'Breadcrumb'})}">
@@ -2585,7 +2632,7 @@ function renderServicePage(catId){
     <h1 data-pageh1 class="page-title">${h1}</h1>
     <p class="page-sub">${t(c.tag)}${c.pitch ? ' — ' + t(c.pitch) : ''}</p>
     <div class="svcp-cta-row">
-      <button type="button" class="cta-primary" onclick="goToQuizCategory('${catId}')">${t({fr:'Estimer ce projet', en:'Estimate this project'})}</button>
+      ${quizLink(catId, t({fr:'Estimer ce projet', en:'Estimate this project'}))}
       <a class="btn btn-ghost" href="/portfolio/" onclick="return navLink(event,'portfolio')"><span>${t({fr:'Voir le portfolio', en:'See the portfolio'})}</span></a>
     </div>
 
@@ -2619,6 +2666,7 @@ function renderServicePage(catId){
     <section class="read-panel svcp-panel">
       <h2>${t({fr:'Questions fréquentes', en:'Frequently asked questions'})}</h2>
       <div id="servicePageFaq"></div>
+      <p class="svcp-note">${practical}${hint ? ' ' + t(hint) : ''}</p>
     </section>
 
     ${(typeof ARTICLES !== 'undefined' && ARTICLES.some(a => a.cat === catId)) ? `
@@ -2660,7 +2708,7 @@ function renderAdviceTeaser(){
         </div>
         <a class="svcp-link" href="/conseils/" data-nav="advice">${t({fr:'Tous les conseils →', en:'All advice →'})}</a>
       </div>
-      <div class="advice-grid">${ARTICLES.slice(0, 3).map(a => adviceCard(a)).join('')}</div>
+      <div class="advice-grid">${ARTICLES.filter((a, i, arr) => arr.findIndex(b => b.cat === a.cat) === i).slice(0, 3).map(a => adviceCard(a)).join('')}</div>
     </section>`;
 }
 function renderAdvicePage(){
@@ -2697,9 +2745,9 @@ function renderArticlePage(slug){
     </article>
     <section class="read-panel svcp-panel article-cta">
       <h2>${t({fr:'Un projet de séance ou de shooting ?', en:'Planning a session or a shoot?'})}</h2>
-      <p class="svcp-text">${t({fr:'Estimez votre projet en quelques minutes : réponse personnalisée sous 48 h.', en:'Estimate your project in a few minutes: personal reply within 48 hours.'})}</p>
+      <p class="svcp-text">${t({fr:'Estimez votre projet en quelques minutes : réponse personnalisée sous 48 h. Une question avant de vous lancer ? Consultez la <a href="/faq/" data-nav="faq">FAQ</a> ou <a href="/contact/" data-nav="contact">contactez-nous</a>.', en:'Estimate your project in a few minutes: personal reply within 48 hours. A question first? See the <a href="/faq/" data-nav="faq">FAQ</a> or <a href="/contact/" data-nav="contact">get in touch</a>.'})}</p>
       <div class="svcp-cta-row" style="margin:0">
-        <button type="button" class="cta-primary" onclick="${a.cat ? `goToQuizCategory('${a.cat}')` : `goView('quiz')`}">${t({fr:'Estimer mon projet', en:'Estimate my project'})}</button>
+        ${quizLink(a.cat, t({fr:'Estimer mon projet', en:'Estimate my project'}))}
         ${cat ? `<a class="btn btn-ghost" href="${servicePath(a.cat)}" data-nav="service:${a.cat}"><span>${t(cat.name)}</span></a>` : ''}
       </div>
     </section>
@@ -2710,6 +2758,17 @@ function renderArticlePage(slug){
 /* Liens internes déclarés par data-nav="vue[:sous-page]" (articles, cartes…) : navigation SPA
    sans rechargement, tout en gardant un vrai href pour les moteurs et le clic droit. */
 const NAV_ALIASES = { faq: 'legal', conseils: 'advice' };
+/* Lien vers le devis : un vrai <a href="/devis/"> (crawlable, ancre explicite) qui présélectionne l'univers. */
+function quizLink(catId, label, cls){ return `<a class="${cls || 'cta-primary'}" href="/devis/" data-quiz="${catId || ''}">${label}</a>`; }
+document.addEventListener('click', (e) => {
+  const a = e.target.closest ? e.target.closest('a[data-quiz]') : null;
+  if (!a) return;
+  if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button === 1) return;
+  e.preventDefault();
+  closeMobileMenu();
+  const cat = a.dataset.quiz;
+  if (cat) goToQuizCategory(cat); else goView('quiz');
+});
 document.addEventListener('click', (e) => {
   const a = e.target.closest ? e.target.closest('a[data-nav]') : null;
   if (!a) return;
@@ -2825,7 +2884,7 @@ function renderServices(){
       </div>
       ${subRow}
       <button class="service-cta">${I18N[LANG]['svc-cta']}</button>
-      <a class="service-more" href="${servicePath(c.id)}" onclick="return navLink(event,'service','${c.id}')">${t({fr:'Voir le détail de la prestation →', en:'See the full service details →'})}</a>`;
+      <a class="service-more" href="${servicePath(c.id)}" onclick="return navLink(event,'service','${c.id}')">${t(c.name)} : ${t({fr:'détails et tarifs →', en:'details and rates →'})}</a>`;
     card.querySelector('.service-cta').onclick = () => {
       S.cat = c.id; S.tier = null; S.prof = null;
       /* profNext removed */
@@ -5074,11 +5133,21 @@ function toggleAccordion(btn){
 }
 
 /* ═══════════════ FAQ & POLITIQUE DE CONFIDENTIALITÉ ═══════════════ */
-function setLegalTab(tab){
+function setLegalTab(tab, fromRoute){
   document.getElementById('legaltab-faq').classList.toggle('active', tab === 'faq');
   document.getElementById('legaltab-privacy').classList.toggle('active', tab === 'privacy');
   document.getElementById('lsec-faq').style.display = tab === 'faq' ? 'block' : 'none';
   document.getElementById('lsec-privacy').style.display = tab === 'privacy' ? 'block' : 'none';
+  /* Chaque onglet a sa propre adresse : /faq/ et /confidentialite/ */
+  const h1 = document.querySelector('#view-legal h1');
+  if (h1) { const key = tab === 'privacy' ? 'legal-title-privacy' : 'legal-title'; h1.setAttribute('data-lang', key); h1.innerHTML = I18N[LANG][key]; }
+  if (!fromRoute) {
+    currentSub = tab === 'privacy' ? 'privacy' : null;
+    const route = seoRouteFor('legal', currentSub);
+    if (route && location.pathname !== route.path) history.pushState({ v: 'legal' }, '', route.path);
+    applySeoMeta('legal', currentSub);
+    if (window.track) track('pageview');
+  }
 }
 
 function renderAccordionInto(elId, sections, opts){
@@ -5257,7 +5326,7 @@ initNavScrollState();
   history.replaceState({ v }, '', location.pathname + location.hash);
   if (window.track) track('pageview');
   if (v === 'home') { applySeoMeta('home'); return; }
-  goView(v === 'account' ? 'login' : v, r ? (r.cat || r.slug || null) : null, { initial: true });
+  goView(v === 'account' ? 'login' : v, r ? (r.cat || r.slug || r.sub || null) : null, { initial: true });
 })();
 
 restoreSession();

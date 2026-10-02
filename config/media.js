@@ -97,6 +97,8 @@ const IMG = {
   contact:   MEDIA_BASE + '/hero/contact-1.webp',    // Fond page Contact
   about:     MEDIA_BASE + '/hero/contact-1.webp',    // Fond page À propos
   service:   MEDIA_BASE + '/hero/services-1.webp',   // Fond des pages de prestation (/services/…)
+  advice:    MEDIA_BASE + '/hero/services-1.webp',   // Fond de la page Conseils
+  article:   MEDIA_BASE + '/hero/services-1.webp',   // Fond des articles
   /* Textes alternatifs du portfolio (SEO images) : un tableau par catégorie, dans l'ORDRE d'affichage des photos.
      Décrivez ce qu'on voit, sans bourrer de mots-clés. Ex. : 'photo-part': ['Portrait en lumière naturelle d'une femme sur un pont à Béziers', ...]
      Si une entrée manque, un texte générique est utilisé. */
@@ -171,6 +173,10 @@ const IMG = {
       MEDIA_BASE + '/hero/portfolio-2.webp',
       MEDIA_BASE + '/hero/portfolio-3.webp',
     ],
+
+    /* Conseils et articles — même fond que Services */
+    advice: [MEDIA_BASE + '/hero/services-1.webp'],
+    article: [MEDIA_BASE + '/hero/services-1.webp'],
 
     /* Pages de prestation — même fond que Services */
     service: [

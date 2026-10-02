@@ -9,6 +9,30 @@
    ═══════════════════════════════════════════════════════════ */
 const ARTICLES = [
   {
+    slug: 'combien-coute-une-seance-photo',
+    cat: 'photo-part',
+    title: 'Combien coûte une séance photo ? Tarifs et facteurs | BUNKAIO',
+    description: 'Durée, lieu, nombre de photos retouchées, droits : ce qui fait varier le prix d\'une séance photo, avec nos tarifs réels.',
+    h1: 'Combien coûte une séance photo ?',
+    excerpt: 'Ce qui fait varier le prix d\'une séance photo portrait, nos tarifs réels et les questions à poser pour comparer deux devis.',
+    date: '2026-10-02', minutes: 5,
+    summary: ['Le prix dépend surtout de la durée, du lieu, du nombre de photos retouchées et des droits d\'utilisation.', 'Chez BUNKAIO, une séance portrait commence à 230 € HT et va jusqu\'à 990 € HT.', 'Comparez deux devis sur les mêmes critères : durée, photos retouchées, délais, droits, déplacement.', 'Le devis en ligne donne une estimation en 2 minutes, avec une réponse personnalisée sous 48 h.'],
+    related: ['preparer-seance-photo-portrait', 'que-porter-seance-photo'],
+    sections: [
+      { h: 'Ce qui fait varier le prix d\'une séance photo', html: '<ul><li><strong>La durée</strong> : une heure de séance ne coûte pas autant qu\'une demi-journée ou une journée complète.</li><li><strong>Le lieu</strong> : extérieur ou studio, nombre de lieux différents, frais de déplacement.</li><li><strong>Le nombre de photos retouchées</strong> livrées : la retouche représente un temps de travail important après la séance.</li><li><strong>Le nombre de tenues ou d\'ambiances</strong> prévues.</li><li><strong>La direction artistique</strong> : accompagnement sur les poses, le style, la préparation.</li><li><strong>Les droits d\'utilisation</strong> : usage personnel ou commercial, durée.</li><li><strong>Les délais</strong> de livraison.</li></ul>' },
+      { h: 'Les tarifs d\'une séance portrait chez BUNKAIO', html: '<p>Notre catalogue <a href="/services/seance-photo-particuliers/" data-nav="service:photo-part">Séance photo particuliers</a> compte quatre formules, tarifs hors taxes :</p><ul><li><strong>Découverte, 230 € HT</strong> : 1 h de séance, 8 photos HD retouchées, sélection guidée, livraison en 5 jours ouvrés.</li><li><strong>Signature, 390 € HT</strong> : 2 h de séance, 15 photos HD retouchées, direction de pose, livraison en 7 jours ouvrés.</li><li><strong>Premium, 590 € HT</strong> : demi-journée, jusqu\'à 2 ambiances, 25 photos HD retouchées, 2 tenues, livraison en 7 jours ouvrés.</li><li><strong>Éditorial Bunkaio, 990 € HT</strong> : journée complète, 4 lieux et 4 tenues différentes, 30 photos HD retouchées, un film court, livraison en 10 jours ouvrés.</li></ul><p>Toutes comprennent une galerie privée de téléchargement. Le studio en supplément de l\'extérieur est de 60 € sur la formule Découverte.</p>' },
+      { h: 'Séance de particuliers ou séance professionnelle : ce qui change', html: '<p>Une séance pour vous, votre couple ou votre famille se concentre sur la relation et le naturel. Un projet professionnel (marque, entreprise, produits) demande en plus un brief, des formats précis et des droits d\'usage commerciaux. Nos formules <a href="/services/photo-produits-packshots/" data-nav="service:commercial">Commercial & produits</a> et <a href="/services/photographe-mode-mannequins/" data-nav="service:mode">Mode</a> répondent à ces besoins avec leurs propres tarifs.</p>' },
+      { h: 'Les questions à poser pour comparer deux devis', html: '<ul><li>Quelle est la <strong>durée</strong> de la séance ?</li><li>Combien de photos <strong>retouchées</strong> sont livrées, et en quelle résolution ?</li><li>Quel est le <strong>délai de livraison</strong> ?</li><li>Quels <strong>droits d\'utilisation</strong> sont cédés (usage commercial, durée) ?</li><li>Y a-t-il des <strong>frais de déplacement</strong> ?</li><li>Quelles sont les <strong>modalités de paiement</strong> et d\'annulation ?</li></ul>' },
+      { h: 'Paiement et annulation chez BUNKAIO', html: '<p>Un acompte de 30 % est versé à la commande (signature du devis) et le solde à la livraison. Le paiement peut se faire par carte bancaire, prélèvement automatique ou en 3 fois sans frais avec Klarna. Après la validation du devis, l\'acompte reste acquis à BUNKAIO en cas d\'annulation de votre part. Plus de détails dans la <a href="/faq/" data-nav="faq">FAQ</a>.</p>' },
+      { h: 'Obtenir une estimation précise', html: '<p>Le plus simple est de passer par notre <a href="/devis/" data-nav="quiz">devis en ligne</a> : en 2 minutes, vous choisissez votre univers, votre formule et vos options, et vous recevez une réponse personnalisée sous 48 h, sans engagement.</p>' },
+    ],
+    faq: [
+      { q: 'Le studio est-il en supplément ?', a: 'Sur la formule Découverte, la séance se fait en extérieur ou en studio, avec un supplément de 60 € pour le studio.' },
+      { q: 'Peut-on payer en plusieurs fois ?', a: 'Oui : carte bancaire, prélèvement automatique ou 3 fois sans frais avec Klarna.' },
+      { q: 'Les photos sont-elles utilisables à titre commercial ?', a: 'Oui : les droits d\'utilisation commerciale vous sont cédés sans limite de durée.' },
+    ],
+  },
+  {
     slug: 'preparer-seance-photo-portrait',
     cat: 'photo-part',
     title: 'Préparer sa séance photo portrait : guide complet | BUNKAIO',
@@ -65,9 +89,9 @@ const ARTICLES = [
   {
     slug: 'preparer-shooting-photo-produit',
     cat: 'commercial',
-    title: 'Photo de produit : préparer son shooting packshot | BUNKAIO',
-    description: 'Packshot ou mise en situation, fond, formats, préparation des produits : comment préparer un shooting photo produit efficace.',
-    h1: 'Photo de produit : comment préparer son shooting packshot',
+    title: 'Préparer un shooting photo produit : check-list | BUNKAIO',
+    description: 'Brief, préparation des produits, formats, erreurs à éviter : la check-list pour réussir votre prochain shooting photo produit.',
+    h1: 'Préparer un shooting photo produit : brief, produits et erreurs à éviter',
     excerpt: 'Packshot, mise en situation, brief, préparation des produits : les étapes pour un shooting photo produit efficace.',
     date: '2026-10-02', minutes: 5,
     summary: ['Décidez où vos photos seront utilisées : boutique, marketplace, réseaux, catalogue.', 'Distinguez packshot (fond neutre) et mise en situation.', 'Préparez des produits propres, complets et identiques d\'une pièce à l\'autre.', 'Rédigez un brief : liste des produits, angles, fond, cohérence de série.', 'Vérifiez la livraison en haute définition et les droits d\'utilisation.'],
@@ -117,9 +141,9 @@ const ARTICLES = [
   {
     slug: 'choisir-photographe-evenementiel',
     cat: 'event',
-    title: 'Choisir un photographe événementiel : critères | BUNKAIO',
-    description: 'Domaine, entreprise, réception : les critères pour choisir votre photographe d\'événement et la check-list pour préparer la couverture photo.',
-    h1: 'Photographe événementiel : bien le choisir et bien préparer',
+    title: 'Comment choisir son photographe d\'événement ? | BUNKAIO',
+    description: 'Critères, questions à poser au prestataire et check-list de préparation pour choisir la bonne couverture photo de votre événement.',
+    h1: 'Comment choisir son photographe d\'événement ?',
     excerpt: 'Critères de choix, questions à poser, déroulé et check-list : pour une couverture photo d\'événement sans mauvaise surprise.',
     date: '2026-10-02', minutes: 5,
     summary: ['Définissez les moments clés et l\'usage des photos (souvenirs, communication).', 'Comparez les portfolios sur des événements similaires au vôtre.', 'Vérifiez le devis : durée, délais, droits d\'utilisation, déplacement.', 'Transmettez un déroulé et une liste de personnes ou moments à ne pas manquer.', 'Prévenez les invités et les contraintes du lieu (lumière, accès).'],

@@ -30,10 +30,10 @@ const ROUTES = vm.runInNewContext(fs.readFileSync(path.join(ROOT, 'config/articl
 
 /* Conteneurs remplis par le JavaScript, à pré-rendre dans le HTML. */
 const SNAPS_BY_VIEW = {
-  home: ['missionServicesTrack', 'adviceTeaser'],
-  quiz: ['catList'],
+  home: ['missionServicesTrack', 'adviceTeaser', 'catShowcaseTrack', 'csSlotHome'],
+  quiz: ['catList', 'csSlotQuiz'],
   portfolio: ['pfTabs', 'pfLinks'],
-  services: ['servicesFilters', 'servicesGrid', 'processSteps'],
+  services: ['servicesFilters', 'servicesGrid', 'processSteps', 'csSlotServices'],
   legal: ['faqAccordion', 'privacyAccordion'],
   partners: ['partnersPitch', 'partnersAccordion', 'applyBenefitsAccordion'],
   service: ['servicePageContent'],
@@ -75,6 +75,41 @@ function setSnap(html, id, content) {
   }
   return html.slice(0, end) + '<!--snap-->' + content + '<!--/snap-->' + html.slice(end);
 }
+/* Les éléments traduits (data-lang) portent dans le HTML un texte de secours : on le remplace par le
+   français actuellement affiché (I18N.fr), pour que le HTML brut et la page rendue disent la même chose. */
+let I18N_FR = {};
+function syncDataLang(html) {
+  const VOID = new Set(['br', 'img', 'input', 'hr', 'meta', 'link', 'source']);
+  const start = /<([a-z][a-z0-9]*)\b[^>]*\sdata-lang="([^"]+)"[^>]*>/gi;
+  let out = '', last = 0, m;
+  while ((m = start.exec(html))) {
+    const tag = m[1].toLowerCase(), key = m[2];
+    if (VOID.has(tag) || typeof I18N_FR[key] !== 'string' || m.index < last) continue;
+    const open = new RegExp('<' + tag + '\\b[^>]*>|</' + tag + '>', 'gi');
+    open.lastIndex = m.index + m[0].length;
+    let depth = 1, end = -1, t;
+    while ((t = open.exec(html))) {
+      if (t[0][1] === '/') { depth--; if (!depth) { end = t.index; break; } } else if (!/\/>$/.test(t[0])) depth++;
+    }
+    if (end < 0) continue;
+    out += html.slice(last, m.index + m[0].length) + I18N_FR[key];
+    last = end;
+    start.lastIndex = end;
+  }
+  return out + html.slice(last);
+}
+const OG_FONT_B64 = fs.readFileSync(path.join(ROOT, 'fonts/dm-sans-latin-opsz-normal.woff2')).toString('base64');
+function ogCard(kicker, title) {
+  const safe = (v) => v.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+  return `<!doctype html><html><head><meta charset="utf-8"><style>
+@font-face{font-family:'DM Sans';src:url('data:font/woff2;base64,${OG_FONT_B64}') format('woff2');font-weight:100 1000}
+*{box-sizing:border-box;margin:0}body{width:1200px;height:630px;background:radial-gradient(ellipse 80% 70% at 85% 0%,#3a2d55 0%,transparent 60%),linear-gradient(160deg,#241c32 0%,#0d0b12 55%,#000 100%);color:#fff;font-family:'DM Sans',sans-serif;display:flex;flex-direction:column;justify-content:space-between;padding:70px 80px}
+.top{display:flex;align-items:baseline;gap:20px}.word{font-size:46px;font-weight:700;letter-spacing:.14em}.kick{font-size:20px;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,255,255,.7);font-weight:600}
+h1{font-size:${title.length > 60 ? 58 : title.length > 40 ? 68 : 80}px;line-height:1.08;letter-spacing:-.03em;font-weight:700;max-width:1000px}
+.bar{display:flex;justify-content:space-between;align-items:flex-end;border-top:1px solid rgba(255,255,255,.25);padding-top:26px;font-size:24px;color:rgba(255,255,255,.85)}.bar b{font-weight:700;letter-spacing:.08em}
+</style></head><body><div class="top"><div class="word">BUNKAIO</div><div class="kick">${safe(kicker)}</div></div><h1>${safe(title)}</h1>
+<div class="bar"><span>Photographe professionnel · Béziers · Montpellier · Toulouse</span><b>bunkaio.com</b></div></body></html>`;
+}
 function esc(v) { return v.replace(/&/g, '&amp;').replace(/"/g, '&quot;'); }
 function setMeta(html, re, replacement) { return re.test(html) ? html.replace(re, replacement) : html; }
 
@@ -85,22 +120,24 @@ function buildJsonLd(route, meta) {
   const bizId = SITE + '/#business', siteId = SITE + '/#website', personId = SITE + '/a-propos/#aya';
   const url = SITE + route.path;
   const graph = [];
+  const hasPerson = route.view === 'home' || route.view === 'about';
   graph.push({
     '@type': 'ProfessionalService', '@id': bizId,
     name: b.name, alternateName: b.alternateName, url: SITE + '/',
     logo: b.logo, image: b.logo, description: b.description,
     telephone: b.telephone, email: b.email, priceRange: b.priceRange, sameAs: b.sameAs,
+    identifier: { '@type': 'PropertyValue', propertyID: 'SIRET', value: b.siret },
     address: { '@type': 'PostalAddress', addressRegion: b.region, addressCountry: 'FR' },
     areaServed: [...b.cities.map((c) => ({ '@type': 'City', name: c })), { '@type': 'AdministrativeArea', name: b.region }],
     knowsAbout: per.knowsAbout,
-    employee: { '@id': personId },
+    ...(hasPerson ? { employee: { '@id': personId } } : {}),
     hasOfferCatalog: {
       '@type': 'OfferCatalog', name: 'Prestations de photographie',
-      itemListElement: b.services.map((sv) => ({ '@type': 'Offer', itemOffered: { '@type': 'Service', name: sv.name, description: sv.description, provider: { '@id': bizId }, areaServed: b.cities.map((c) => ({ '@type': 'City', name: c })) } })),
+      itemListElement: b.services.map((sv) => ({ '@type': 'Offer', itemOffered: { '@type': 'Service', name: sv.name, description: sv.description, url: SITE + sv.path, provider: { '@id': bizId }, areaServed: b.cities.map((c) => ({ '@type': 'City', name: c })) } })),
     },
   });
-  graph.push({ '@type': 'WebSite', '@id': siteId, url: SITE + '/', name: b.name, inLanguage: 'fr-FR', publisher: { '@id': bizId } });
-  if (route.view === 'home' || route.view === 'about') {
+  graph.push({ '@type': 'WebSite', '@id': siteId, url: SITE + '/', name: b.name, alternateName: b.siteAlternateNames, inLanguage: 'fr-FR', publisher: { '@id': bizId } });
+  if (hasPerson) {
     graph.push({
       '@type': 'Person', '@id': personId, name: per.name, jobTitle: per.jobTitle, description: per.description,
       url: SITE + '/a-propos/', worksFor: { '@id': bizId },
@@ -124,7 +161,7 @@ function buildJsonLd(route, meta) {
       '@type': 'Article', '@id': url + '#article', headline: art.h1, description: art.description,
       datePublished: art.date, dateModified: art.date, inLanguage: 'fr-FR',
       author: { '@id': bizId }, publisher: { '@id': bizId }, mainEntityOfPage: { '@id': url + '#webpage' },
-      image: SITE + '/images/og-default.jpg', articleSection: 'Conseils photo',
+      image: SITE + (route.ogImage || '/images/og-default.jpg'), articleSection: 'Conseils photo',
     });
   }
   if (route.view === 'advice') {
@@ -154,7 +191,12 @@ function buildPage(template, route, snaps, meta) {
   const url = SITE + route.path;
   html = html.replace(/<title>[\s\S]*?<\/title>/, '<title>' + esc(route.title) + '</title>');
   html = setMeta(html, /<meta name="description" content="[^"]*">/, '<meta name="description" content="' + esc(route.description) + '">');
-  html = setMeta(html, /<meta name="robots" content="[^"]*">/, '<meta name="robots" content="' + (route.index ? 'index, follow' : 'noindex, nofollow') + '">');
+  html = setMeta(html, /<meta name="robots" content="[^"]*">/, '<meta name="robots" content="' + (route.index ? 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' : 'noindex, nofollow') + '">');
+  const ogImg = SITE + (route.ogImage || '/images/og-default.jpg');
+  html = setMeta(html, /<meta property="og:image" content="[^"]*">/, '<meta property="og:image" content="' + ogImg + '">');
+  html = setMeta(html, /<meta name="twitter:image" content="[^"]*">/, '<meta name="twitter:image" content="' + ogImg + '">');
+  html = setMeta(html, /<meta property="og:image:alt" content="[^"]*">/, '<meta property="og:image:alt" content="' + esc(route.h1 || route.title.split('|')[0].trim()) + ' — BUNKAIO">');
+  html = syncDataLang(html);
   html = setMeta(html, /<link rel="canonical" href="[^"]*">/, '<link rel="canonical" href="' + url + '">');
   html = setMeta(html, /<meta property="og:url" content="[^"]*">/, '<meta property="og:url" content="' + url + '">');
   html = setMeta(html, /<meta property="og:title" content="[^"]*">/, '<meta property="og:title" content="' + esc(route.title) + '">');
@@ -193,7 +235,15 @@ function buildPage(template, route, snaps, meta) {
 
   // Contenu pré-rendu
   for (const id of ALL_SNAP_IDS) html = setSnap(html, id, '');
-  const ids = [...(SNAPS_BY_VIEW[route.view] || []), ...SNAPS_ALL];
+  let ids = [...(SNAPS_BY_VIEW[route.view] || []), ...SNAPS_ALL];
+  if (route.view === 'legal') {
+    const privacy = route.sub === 'privacy';
+    ids = ids.filter((id) => id !== (privacy ? 'faqAccordion' : 'privacyAccordion'));
+    html = html.replace(/<div id="lsec-faq"[^>]*>/, '<div id="lsec-faq"' + (privacy ? ' style="display:none"' : '') + '>');
+    html = html.replace(/<div id="lsec-privacy"[^>]*>/, '<div id="lsec-privacy"' + (privacy ? '' : ' style="display:none"') + '>');
+    html = html.replace(/id="legaltab-faq"/, 'id="legaltab-faq"').replace(/class="svc-tab( active)?" id="legaltab-(faq|privacy)"/g, (m0, a, t) => 'class="svc-tab' + ((t === 'privacy') === privacy ? ' active' : '') + '" id="legaltab-' + t + '"');
+    if (privacy) html = html.replace(/(data-pageh1[^>]*data-lang=")legal-title(">)[^<]*/, '$1legal-title-privacy$2' + I18N_FR['legal-title-privacy']);
+  }
   for (const id of ids) if (snaps[id]) html = setSnap(html, id, snaps[id]);
   return html;
 }
@@ -227,17 +277,25 @@ function pinAssets(html) {
 
   // 1. Récupération du HTML rendu par le JavaScript, vue par vue (français)
   const snaps = {};
+  I18N_FR = await page.evaluate(() => I18N.fr);
+  const srvPort = port;
+  const ogPage = await browser.newPage({ viewport: { width: 1200, height: 630 } });
   const grab = async (ids) => {
     const out = await page.evaluate((list) => Object.fromEntries(list.map((id) => [id, (document.getElementById(id) || {}).innerHTML || ''])), ids);
     Object.assign(snaps, out);
   };
-  await grab(['missionServicesTrack', 'ftServices']);
+  await grab(['missionServicesTrack', 'ftServices', 'catShowcaseTrack', 'csSlotHome', 'csSlotServices', 'csSlotQuiz']);
   await page.evaluate(() => goView('services', null, { initial: true }));
   await page.evaluate(() => { setSvcTab('devis'); });
   await page.waitForTimeout(300);
   await grab(['servicesFilters', 'servicesGrid', 'processSteps']);
   await page.evaluate(() => goView('legal', null, { initial: true }));
   await grab(['faqAccordion', 'privacyAccordion']);
+  await page.evaluate(() => goView('portfolio', null, { initial: true }));
+  await page.waitForTimeout(400);
+  await grab(['pfTabs', 'pfLinks']);
+  await page.evaluate(() => goView('quiz', null, { initial: true }));
+  await grab(['catList']);
   await page.evaluate(() => { goView('partners', null, { initial: true }); renderApplyBenefits(); });
   await grab(['partnersPitch', 'partnersAccordion', 'applyBenefitsAccordion']);
   // Pages de prestation : contenu rendu + données pour le JSON-LD
@@ -260,6 +318,25 @@ function pinAssets(html) {
   }
   await page.evaluate(() => goView('home', null, { initial: true }));
   await grab(['adviceTeaser']);
+  // 1 bis. Image de partage 1200×630 par page (cache par contenu dans tools/og-cache.json)
+  const ogCacheFile = path.join(ROOT, 'tools/og-cache.json');
+  const ogCache = fs.existsSync(ogCacheFile) ? JSON.parse(fs.readFileSync(ogCacheFile, 'utf8')) : {};
+  fs.mkdirSync(path.join(ROOT, 'images/og'), { recursive: true });
+  for (const r of ROUTES.filter((x) => x.index && x.path !== '/')) {
+    const name = r.path.replace(/^\/|\/$/g, '').replace(/\//g, '-');
+    const kicker = r.view === 'article' ? 'Conseils photo' : r.view === 'service' ? 'Prestation' : 'BUNKAIO';
+    const title = r.h1 || r.title.split('|')[0].trim();
+    const key = crypto.createHash('sha1').update(kicker + '|' + title).digest('hex');
+    const rel = 'images/og/' + name + '.jpg';
+    r.ogImage = '/' + rel;
+    if (ogCache[name] === key && fs.existsSync(path.join(ROOT, rel))) continue;
+    await ogPage.setContent(ogCard(kicker, title));
+    await ogPage.waitForTimeout(250);
+    await ogPage.screenshot({ path: path.join(ROOT, rel), type: 'jpeg', quality: 84 });
+    ogCache[name] = key;
+  }
+  fs.writeFileSync(ogCacheFile, JSON.stringify(ogCache, null, 2) + '\n');
+
   await browser.close();
   srv.close();
 

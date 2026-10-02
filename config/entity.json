@@ -6,7 +6,7 @@
     "description": "BUNKAIO, photographe professionnel mobile en Occitanie (Béziers, Montpellier, Toulouse) : portrait, mode, produit, corporate et événementiel, avec des images haut de gamme en HD.",
     "telephone": "+33758573161",
     "email": "contact@bunkaio.com",
-    "priceRange": "À partir de 230 €",
+    "priceRange": "230-2390 EUR",
     "sameAs": [
       "https://instagram.com/bunkaio"
     ],
@@ -19,24 +19,33 @@
     "services": [
       {
         "name": "Séance photo — particuliers",
-        "description": "Portrait et lifestyle en extérieur ou en studio, solo, couple ou groupe."
+        "description": "Portrait et lifestyle en extérieur ou en studio, solo, couple ou groupe.",
+        "path": "/services/seance-photo-particuliers/"
       },
       {
         "name": "Mode, agence et mannequins",
-        "description": "Lookbooks, books mannequins et visuels de marque pour agences et créateurs."
+        "description": "Lookbooks, books mannequins et visuels de marque pour agences et créateurs.",
+        "path": "/services/photographe-mode-mannequins/"
       },
       {
         "name": "Commercial & produits",
-        "description": "Packshots et photographie de produits pour marques, artisans et entreprises."
+        "description": "Packshots et photographie de produits pour marques, artisans et entreprises.",
+        "path": "/services/photo-produits-packshots/"
       },
       {
         "name": "Événementiel",
-        "description": "Reportage photo d'événements : domaines, entreprises, réceptions."
+        "description": "Reportage photo d'événements : domaines, entreprises, réceptions.",
+        "path": "/services/photographe-evenementiel/"
       },
       {
         "name": "Lumen — photobooth IA",
-        "description": "Photobooth IA pour mariages et événements haut de gamme."
+        "description": "Photobooth IA pour mariages et événements haut de gamme.",
+        "path": "/services/photobooth-ia-mariage-lumen/"
       }
+    ],
+    "siret": "95154758700034",
+    "siteAlternateNames": [
+      "bunkaio.com"
     ]
   },
   "person": {
