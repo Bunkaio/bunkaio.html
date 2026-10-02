@@ -48,6 +48,8 @@ export async function putAccount(env: Env, record: AccountRecord): Promise<void>
 
 export function sanitizeAccount(record: AccountRecord): PublicAccountRecord {
   const { codeHash: _codeHash, journal: _journal, derniereActivite: _derniere, ...publicRecord } = record;
+  // Le lien Lightroom n'est exposé qu'une fois le solde payé (ou débloqué manuellement par l'admin).
+  if (!record.photosAcces) delete publicRecord.lightroomUrl;
   return publicRecord;
 }
 
@@ -108,6 +110,7 @@ export async function upsertAccountFromAdmin(env: Env, payload: AdminAccountUpse
     etapeActuelle: payload.etapeActuelle ?? existing?.etapeActuelle,
     lightroomUrl: payload.lightroomUrl ?? existing?.lightroomUrl,
     lang: payload.lang ?? existing?.lang,
+    photosAcces: payload.photosAcces ?? existing?.photosAcces,
     seance: payload.seance === null ? undefined : payload.seance ?? existing?.seance,
     commandes: payload.commandes ?? existing?.commandes,
     paiements: payload.paiements ?? existing?.paiements,

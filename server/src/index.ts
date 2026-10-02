@@ -2,7 +2,7 @@ import type Stripe from 'stripe';
 import { adminAccountView, getAccount, listAccounts, putAccount, sanitizeAccount, upsertAccountFromAdmin, verifyLogin } from './accounts';
 import { handleCollect, handleStats, purgeOldAnalytics } from './analytics';
 import { appendJournal, diffAccountActivity, flushActivityNotifications, queueActivityNotification } from './activity';
-import { claimAckSlot, markDepositPaid, markInvoiced, markLead, runDailyAutomations } from './automations';
+import { claimAckSlot, markBalanceInvoiced, markReviewDue, markDepositPaid, markInvoiced, markLead, runDailyAutomations } from './automations';
 import {
   buildAcknowledgementEmail,
   buildSeanceEmail,
@@ -234,6 +234,7 @@ function isValidAdminAccountUpsertPayload(body: unknown): body is AdminAccountUp
     (b.lightroomUrl === undefined || typeof b.lightroomUrl === 'string') &&
     (b.sendAccessMail === undefined || typeof b.sendAccessMail === 'boolean') &&
     (b.sendPhotosMail === undefined || typeof b.sendPhotosMail === 'boolean') &&
+    (b.photosAcces === undefined || typeof b.photosAcces === 'boolean') &&
     (b.lang === undefined || b.lang === 'fr' || b.lang === 'en') &&
     (b.seance === undefined || b.seance === null || (typeof b.seance === 'object' && typeof (b.seance as Record<string, unknown>).date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(String((b.seance as Record<string, unknown>).date)))) &&
     (b.sendSeanceMail === undefined || b.sendSeanceMail === 'confirmation' || b.sendSeanceMail === 'report' || b.sendSeanceMail === 'cancel') &&
@@ -409,6 +410,10 @@ async function handleAdminAccounts(request: Request, env: Env, headers: Record<s
         emails.access = false; // le code n'est connu qu'à la saisie : impossible de l'envoyer sans le retaper
       }
       if (body.sendPhotosMail) {
+        if (account.lightroomUrl && !account.photosAcces) {
+          account.photosAcces = true;
+          await putAccount(env, account);
+        }
         if (!account.lightroomUrl) {
           emails.photos = 'no_lightroom_url';
         } else {
@@ -633,6 +638,7 @@ async function handleCreateBalanceInvoice(request: Request, env: Env, headers: R
   try {
     const stripe = createStripeClient(env.STRIPE_SECRET_KEY);
     const result = await createBalanceInvoice(stripe, body);
+    await markBalanceInvoiced(env, body.email).catch((err) => console.error('[create-balance-invoice] marqueur', err));
     console.log('[create-balance-invoice] facture créée', result);
 
     try {
@@ -720,23 +726,44 @@ async function handleStripeWebhook(request: Request, env: Env, headers: Record<s
     await markDepositPaid(env, customerEmail, customerName, customerLang).catch((err) => console.error('[stripe-webhook] marqueur acompte', err));
   }
 
+  let lightroomMissing = false;
   if (customerEmail) {
-    try {
-      const { subject, html, text } = buildPaymentConfirmationEmail({ customerName, description, amountEur, invoiceType: kind, lang: customerLang, space: await detectSpace(env, customerEmail), seance: kind === 'acompte' ? await findSeance(env, customerEmail) : undefined });
-      await sendEmail(env, customerEmail, subject, html, text);
-    } catch (err) {
-      console.error('[stripe-webhook] échec email de confirmation client', err);
+    const space = await detectSpace(env, customerEmail);
+    // Solde payé : l'accès à l'album s'ouvre. Le lien Lightroom (saisi dans le compte) est envoyé dans le même email
+    // que la confirmation de paiement, puis rendu visible dans l'espace du client (« Mon portfolio »).
+    let accessSent = false;
+    if (kind === 'solde') {
+      try {
+        const account = (await getAccount(env, 'client', customerEmail)) ?? (await getAccount(env, 'partner', customerEmail));
+        if (account) {
+          account.photosAcces = true;
+          await putAccount(env, account);
+        }
+        if (account?.lightroomUrl) {
+          const m = buildPhotosReadyEmail({ customerName, lightroomUrl: account.lightroomUrl, space: account.type, lang: normalizeLang(account.lang ?? customerLang), amountEur });
+          await sendEmail(env, customerEmail, m.subject, m.html, m.text);
+          accessSent = true;
+        } else {
+          lightroomMissing = true;
+        }
+      } catch (err) {
+        console.error("[stripe-webhook] échec email d'accès aux photos", err);
+        lightroomMissing = true;
+      }
+    }
+    if (!accessSent) {
+      try {
+        const { subject, html, text } = buildPaymentConfirmationEmail({ customerName, description, amountEur, invoiceType: kind, lang: customerLang, space, seance: kind === 'acompte' ? await findSeance(env, customerEmail) : undefined });
+        await sendEmail(env, customerEmail, subject, html, text);
+      } catch (err) {
+        console.error('[stripe-webhook] échec email de confirmation client', err);
+      }
     }
 
-    // Le solde payé marque la fin du projet : on en profite pour demander un avis.
     // La réduction de 15 % est offerte à TOUS les clients dont le projet est
-    // entièrement réglé, qu'ils cliquent ou non sur le lien d'avis — jamais en
-    // échange d'un avis (ce que Google interdit explicitement). Elle est donc
-    // accordée ici, immédiatement, indépendamment de tout clic.
-    // Le lien pointe vers notre propre passerelle (/avis) plutôt que directement
-    // vers Google : elle se contente d'enregistrer le clic à titre de mesure
-    // d'engagement avant de rediriger (voir handleReviewGateway) — sans rien
-    // accorder, ni conditionner quoi que ce soit à ce clic.
+    // entièrement réglé, jamais en échange d'un avis (ce que Google interdit).
+    // La demande d'avis part plus tard (cron, 7 jours après l'accès aux photos) :
+    // le lien passe par notre passerelle (/avis) qui ne fait qu'enregistrer le clic.
     if (kind === 'solde') {
       if (customerId) {
         try {
@@ -748,12 +775,7 @@ async function handleStripeWebhook(request: Request, env: Env, headers: Record<s
       const reviewGatewayUrl = customerId
         ? `${new URL(request.url).origin}${REVIEW_GATEWAY_ROUTE}?c=${encodeURIComponent(customerId)}`
         : env.GOOGLE_REVIEW_URL;
-      try {
-        const { subject, html, text } = buildReviewRequestEmail({ customerName, reviewUrl: reviewGatewayUrl, lang: customerLang, space: await detectSpace(env, customerEmail) });
-        await sendEmail(env, customerEmail, subject, html, text);
-      } catch (err) {
-        console.error("[stripe-webhook] échec email de demande d'avis", err);
-      }
+      await markReviewDue(env, customerEmail, customerName, customerLang, reviewGatewayUrl).catch((err) => console.error('[stripe-webhook] marqueur avis', err));
     }
   }
 
@@ -765,6 +787,7 @@ async function handleStripeWebhook(request: Request, env: Env, headers: Record<s
       amountEur,
       invoiceType: kind,
       invoiceId: invoice.id,
+      lightroomMissing,
     });
     await sendEmail(env, env.ADMIN_NOTIFICATION_EMAIL, subject, html, text);
   } catch (err) {

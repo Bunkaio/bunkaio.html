@@ -1,5 +1,8 @@
 import { getAccount, listAccounts } from './accounts';
 import {
+  buildAdminAlertEmail,
+  buildAfterSessionEmail,
+  buildReviewRequestEmail,
   buildMoodboardReminderEmail,
   buildQuoteFollowUpEmail,
   buildSeanceEmail,
@@ -32,6 +35,15 @@ export async function markInvoiced(env: Env, email: string): Promise<void> {
 export async function markDepositPaid(env: Env, email: string, name: string, lang: string): Promise<void> {
   const marker: LeadMarker = { name, lang, date: new Date().toISOString() };
   await env.ACCOUNTS_KV.put(`dep:${norm(email)}`, JSON.stringify(marker), { expirationTtl: 90 * DAY / 1000 });
+}
+
+/** Facture de solde créée : on sait que la livraison est en cours (évite l'alerte admin). */
+export async function markBalanceInvoiced(env: Env, email: string): Promise<void> {
+  await env.ACCOUNTS_KV.put(`bal:${norm(email)}`, '1', { expirationTtl: 120 * DAY / 1000 });
+}
+/** Solde payé : la demande d'avis part 7 jours plus tard (cron). */
+export async function markReviewDue(env: Env, email: string, name: string, lang: string, url: string): Promise<void> {
+  await env.ACCOUNTS_KV.put(`rev:${norm(email)}`, JSON.stringify({ name, lang, date: new Date().toISOString(), url }), { expirationTtl: 60 * DAY / 1000 });
 }
 
 /** Date du jour à Paris au format AAAA-MM-JJ, décalée de `offsetDays`. */
@@ -108,8 +120,77 @@ async function sendQuoteFollowUps(env: Env): Promise<void> {
   }
 }
 
+/** Lendemain de la séance : remerciement + date de livraison estimée. */
+async function sendAfterSessionMails(env: Env): Promise<void> {
+  const target = parisDate(-1);
+  for (const summary of await listAccounts(env)) {
+    const account = await getAccount(env, summary.type, summary.email);
+    const s = account?.seance;
+    if (!account || !s || s.statut === 'annulee' || s.date !== target) continue;
+    const flag = `thx:${norm(account.email)}:${s.date}`;
+    if (await env.ACCOUNTS_KV.get(flag)) continue;
+    try {
+      const m = buildAfterSessionEmail({ customerName: account.nom ?? '', livraison: s.livraison, space: account.type, lang: normalizeLang(account.lang) });
+      await sendEmail(env, account.email, m.subject, m.html, m.text);
+      await env.ACCOUNTS_KV.put(flag, '1', { expirationTtl: 30 * DAY / 1000 });
+    } catch (err) {
+      console.error('[automatisation] échec mail après séance', err);
+    }
+  }
+}
+
+/** Alertes pour l'admin : livraison à échéance sans facture de solde, ou séance passée sans date de livraison. */
+async function sendAdminDeliveryAlerts(env: Env): Promise<void> {
+  const today = parisDate(0);
+  const twoDaysAgo = parisDate(-2);
+  for (const summary of await listAccounts(env)) {
+    const account = await getAccount(env, summary.type, summary.email);
+    const s = account?.seance;
+    if (!account || !s || s.statut === 'annulee' || account.photosAcces) continue;
+    const who = `${account.nom || account.email} <${account.email}>`;
+    const invoiced = !!(await env.ACCOUNTS_KV.get(`bal:${norm(account.email)}`));
+    let alert: { key: string; subject: string; lines: string[] } | null = null;
+    if (s.livraison && s.livraison <= today && !invoiced) {
+      alert = { key: `alv:${norm(account.email)}:${s.livraison}`, subject: `Livraison à faire — ${account.nom || account.email}`,
+        lines: [`La livraison estimée (${s.livraison}) est arrivée pour ${who}.`, "Aucune facture de solde n'a été créée : crée-la dans l'admin quand les photos sont prêtes (le client reçoit le mail « Vos photos sont prêtes »)."] };
+    } else if (!s.livraison && s.date === twoDaysAgo) {
+      alert = { key: `adt:${norm(account.email)}:${s.date}`, subject: `Date de livraison à saisir — ${account.nom || account.email}`,
+        lines: [`La séance de ${who} a eu lieu le ${s.date}.`, "Aucune date de livraison estimée n'est saisie dans son compte (section Séance)."] };
+    }
+    if (!alert || (await env.ACCOUNTS_KV.get(alert.key))) continue;
+    try {
+      const m = buildAdminAlertEmail({ subject: alert.subject, lines: alert.lines });
+      await sendEmail(env, env.ADMIN_NOTIFICATION_EMAIL, m.subject, m.html, m.text);
+      await env.ACCOUNTS_KV.put(alert.key, '1', { expirationTtl: 30 * DAY / 1000 });
+    } catch (err) {
+      console.error('[automatisation] échec alerte admin', err);
+    }
+  }
+}
+
+/** Demande d'avis + rappel de la remise de 15 %, 7 jours après l'accès aux photos. */
+async function sendReviewRequests(env: Env): Promise<void> {
+  const list = await env.ACCOUNTS_KV.list({ prefix: 'rev:', limit: 1000 });
+  for (const k of list.keys) {
+    const email = k.name.slice(4);
+    const raw = await env.ACCOUNTS_KV.get(k.name);
+    if (!raw) continue;
+    let marker: { name: string; lang: string; date: string; url: string };
+    try { marker = JSON.parse(raw); } catch { continue; }
+    if (Date.now() - Date.parse(marker.date) < 7 * DAY) continue;
+    try {
+      const isPartner = !!(await getAccount(env, 'partner', email));
+      const m = buildReviewRequestEmail({ customerName: marker.name, reviewUrl: marker.url, lang: normalizeLang(marker.lang), space: isPartner ? 'partner' : 'client' });
+      await sendEmail(env, email, m.subject, m.html, m.text);
+      await env.ACCOUNTS_KV.delete(k.name);
+    } catch (err) {
+      console.error('[automatisation] échec demande d\'avis', err);
+    }
+  }
+}
+
 export async function runDailyAutomations(env: Env): Promise<void> {
-  for (const job of [sendSeanceReminders, sendMoodboardReminders, sendQuoteFollowUps]) {
+  for (const job of [sendSeanceReminders, sendAfterSessionMails, sendAdminDeliveryAlerts, sendMoodboardReminders, sendQuoteFollowUps, sendReviewRequests]) {
     try { await job(env); } catch (err) { console.error('[automatisation] tâche en échec', job.name, err); }
   }
 }

@@ -143,11 +143,34 @@ const deliveryNote = (lang: Lang): string => tr(lang,
 const greet = (lang: Lang, name: string): string => (name ? tr(lang, `Bonjour ${name},`, `Hello ${name},`) : tr(lang, 'Bonjour,', 'Hello,'));
 const payLineFor = (lang: Lang, amount: number): string => {
   const threeX = (amount / 3).toFixed(2);
+  const threeXFr = threeX.replace('.', ',');
   return tr(lang,
-    `Soit 3 × ${threeX} € sans frais avec Klarna — ou par carte bancaire, par prélèvement automatique, au choix sur la page de paiement.`,
+    `Soit 3 × ${threeXFr} € sans frais avec Klarna — ou par carte bancaire, par prélèvement automatique, au choix sur la page de paiement.`,
     `That is 3 × €${threeX} interest-free with Klarna — or by bank card or direct debit, as you prefer on the payment page.`);
 };
 const btnStyle = 'display:inline-block;background:#0a0a0c;color:#ffffff;text-decoration:none;padding:14px 28px;border-radius:4px;font-weight:600;font-size:15px;';
+
+
+/** Encadré « comment fonctionne votre album Lightroom » : rassure sur la démarche et rappelle les droits cédés. */
+function lightroomExplainer(lang: Lang): { html: string; text: string } {
+  const t = (fr: string, en: string): string => tr(lang, fr, en);
+  const title = t('Comment accéder à vos photos', 'How to access your photos');
+  const points = [
+    t("Une seule démarche : créer un compte Adobe Lightroom pour ouvrir votre album privé. Rien d'autre à faire.", 'One simple step: create an Adobe Lightroom account to open your private album. Nothing else to do.'),
+    t("Vous accédez à vos photos dès la fin de la post-production. Elle reste interactive : des ajustements peuvent être apportés si nécessaire.", 'You access your photos as soon as post-production is complete. It stays interactive: adjustments can be made if needed.'),
+    t("Vous exportez vos visuels dans les formats de votre choix, en toute autonomie.", 'You export your visuals in the formats you choose, on your own.'),
+    t("L'accès à votre album et l'usage de vos visuels suivent les droits cédés négociés dans votre devis signé.", 'Access to your album and the use of your visuals follow the assigned rights negotiated in your signed quote.'),
+  ];
+  const lis = points.map((p) => `<li style="margin:0 0 8px;">${p}</li>`).join('');
+  const html = `
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:26px 0 8px;">
+      <tr><td style="background:#f6f1fc;border-radius:10px;padding:20px 22px 12px;">
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#6e5aa8;margin-bottom:10px;font-family:${FONT};">${title}</div>
+        <ul style="margin:0;padding:0 0 0 18px;font-size:13.5px;line-height:1.65;color:#3a3544;font-family:${FONT};">${lis}</ul>
+      </td></tr>
+    </table>`;
+  return { html, text: `${title.toUpperCase()}\n${points.map((p) => `- ${p}`).join('\n')}` };
+}
 
 /** Email envoyé au client avec le lien de paiement de l'acompte (remplace l'envoi Stripe bloqué). */
 export function buildDepositInvoiceEmail(params: {
@@ -212,7 +235,7 @@ ${spaceText(lang, params.space, 'deposit')}`;
   return finalize(lang, { subject: tr(lang, `Bunkaio — Votre facture d'acompte (${amount})`, `Bunkaio — Your deposit invoice (${amount})`), html, text });
 }
 
-/** Email envoyé au client avec le lien de paiement du solde (remplace l'envoi Stripe bloqué). */
+/** « Vos photos sont prêtes » : envoyé à la création de la facture de solde. Le paiement du solde ouvre l'accès à l'album Lightroom. */
 export function buildBalanceInvoiceEmail(params: {
   customerName: string;
   description: string;
@@ -225,45 +248,39 @@ export function buildBalanceInvoiceEmail(params: {
   const greeting = greet(lang, params.customerName);
   const payLine = payLineFor(lang, params.balanceAmountEur);
   const amount = eur(lang, params.balanceAmountEur);
+  const t = (fr: string, en: string): string => tr(lang, fr, en);
+  const intro = t(`Bonne nouvelle : la post-production de votre projet <strong>${params.description}</strong> est terminée et vos photos sont prêtes.`,
+    `Good news: post-production on your project <strong>${params.description}</strong> is complete and your photos are ready.`);
+  const how = t("Pour y accéder, il suffit de régler le solde (70 %) de votre commande. Dès le paiement confirmé, vous recevez immédiatement par email le lien vers votre album.",
+    'To access them, simply pay the balance (70%) of your order. As soon as payment is confirmed, you immediately receive the link to your album by email.');
+  const lr = lightroomExplainer(lang);
   const html = emailShell(`
-    <h1 style="font-size:20px;margin:0 0 16px;">${tr(lang, 'Votre facture de solde', 'Your balance invoice')}</h1>
+    <h1 style="font-size:22px;margin:0 0 16px;">${t('Vos photos sont prêtes', 'Your photos are ready')}</h1>
     <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">${greeting}</p>
-    <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">
-      ${tr(lang, 'Voici votre facture de solde (70 %) pour :', 'Here is your balance invoice (70%) for:')} <strong>${params.description}</strong>.
-    </p>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 16px;">${intro}</p>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">${how}</p>
     <p style="font-size:24px;font-weight:700;margin:0 0 12px;">${amount}</p>
-    <p style="font-size:13px;color:#76717f;margin:0 0 28px;">
-      ${payLine}
-    </p>
-    <a href="${params.hostedInvoiceUrl}" style="${btnStyle}">
-      ${tr(lang, 'Voir et payer la facture', 'View and pay the invoice')}
-    </a>
-    <p style="font-size:13px;color:#76717f;margin:28px 0 0;">
-      ${tr(lang, 'Si le bouton ne fonctionne pas, copiez ce lien dans votre navigateur :', 'If the button does not work, copy this link into your browser:')}<br>
-      <a href="${params.hostedInvoiceUrl}" style="color:#76717f;">${params.hostedInvoiceUrl}</a>
-    </p>
+    <p style="font-size:13px;color:#76717f;margin:0 0 24px;">${payLine}</p>
+    <a href="${params.hostedInvoiceUrl}" style="${btnStyle}">${t('Régler le solde et accéder à mes photos', 'Pay the balance and access my photos')}</a>
+    <p style="font-size:13px;color:#76717f;margin:20px 0 0;">${t('Si le bouton ne fonctionne pas, copiez ce lien dans votre navigateur :', 'If the button does not work, copy this link into your browser:')}<br><a href="${params.hostedInvoiceUrl}" style="color:#76717f;">${params.hostedInvoiceUrl}</a></p>
+    ${lr.html}
     ${spaceBlock(lang, params.space, 'balance')}
   `, lang);
-  const text = lang === 'en' ? `${greeting}
+  const text = `${greeting}
 
-Here is your balance invoice (70%) for: ${params.description}.
+${intro.replace(/<[^>]+>/g, '')}
 
-Amount: ${amount}
+${how}
+
+${t('Montant', 'Amount')} : ${amount}
 ${payLine}
 
-View and pay the invoice: ${params.hostedInvoiceUrl}
+${t('Régler le solde et accéder à mes photos', 'Pay the balance and access my photos')} : ${params.hostedInvoiceUrl}
 
-${spaceText(lang, params.space, 'balance')}` : `${greeting}
-
-Voici votre facture de solde (70 %) pour : ${params.description}.
-
-Montant : ${amount}
-${payLine}
-
-Voir et payer la facture : ${params.hostedInvoiceUrl}
+${lr.text}
 
 ${spaceText(lang, params.space, 'balance')}`;
-  return finalize(lang, { subject: tr(lang, `Bunkaio — Votre facture de solde (${amount})`, `Bunkaio — Your balance invoice (${amount})`), html, text });
+  return finalize(lang, { subject: t(`Bunkaio — Vos photos sont prêtes (solde ${amount})`, `Bunkaio — Your photos are ready (balance ${amount})`), html, text });
 }
 
 /** Email envoyé au client dès que Stripe confirme le paiement d'une facture (acompte ou solde), via le webhook. */
@@ -324,6 +341,8 @@ export function buildAdminPaymentNotificationEmail(params: {
   amountEur: number;
   invoiceType: 'acompte' | 'solde';
   invoiceId: string;
+  /** Solde payé mais aucun lien Lightroom dans le compte : le client n'a pas reçu son accès. */
+  lightroomMissing?: boolean;
 }): { subject: string; html: string; text: string } {
   const label = params.invoiceType === 'acompte' ? 'Acompte (30 %)' : 'Solde (70 %)';
   const lines = [
@@ -332,6 +351,7 @@ export function buildAdminPaymentNotificationEmail(params: {
     `Type : ${label}`,
     `Montant réglé : ${params.amountEur.toFixed(2)} €`,
     `Facture Stripe : ${params.invoiceId}`,
+    ...(params.lightroomMissing ? ['⚠ ACTION REQUISE : aucun lien Lightroom dans le compte — le client n\'a PAS reçu son accès. Saisis le lien dans admin/comptes puis coche « Envoyer le mail d\'accès aux photos ».'] : []),
   ];
   const html = `<p style="font-family:${FONT};font-size:14px;line-height:1.6;color:#0a0a0c;">
     💰 <strong>Paiement reçu</strong><br><br>
@@ -426,7 +446,7 @@ export function buildOverdueReminderEmail(params: {
   const amount = eur(lang, params.amountEur);
   const threeX = (params.amountEur / 3).toFixed(2);
   const payLine = tr(lang,
-    `Rappel : soit 3 × ${threeX} € sans frais avec Klarna, par carte bancaire ou par prélèvement automatique.`,
+    `Rappel : soit 3 × ${threeX.replace('.', ',')} € sans frais avec Klarna, par carte bancaire ou par prélèvement automatique.`,
     `Reminder: that is 3 × €${threeX} interest-free with Klarna, by bank card or by direct debit.`);
   const html = emailShell(`
     <h1 style="font-size:20px;margin:0 0 16px;">${tr(lang, 'Petit rappel', 'A quick reminder')}</h1>
@@ -609,34 +629,67 @@ ${spaceText(lang, params.space, 'access')}`;
   return finalize(lang, { subject: tr(lang, `Bunkaio — Vos accès à votre ${area}`, `Bunkaio — Your ${area} access`), html, text });
 }
 
-/** Email « vos photos sont prêtes » : envoyé depuis l'admin, avec le lien de l'album Lightroom partagé. */
-export function buildPhotosReadyEmail(params: { customerName: string; lightroomUrl: string; space: Space; lang?: Lang }): { subject: string; html: string; text: string } {
+/** Accès aux photos : envoyé dès le solde payé (ou renvoyé depuis l'admin), avec le lien d'album Lightroom permanent. */
+export function buildPhotosReadyEmail(params: { customerName: string; lightroomUrl: string; space: Space; lang?: Lang; amountEur?: number }): { subject: string; html: string; text: string } {
   const lang = params.lang ?? 'fr';
   const greeting = greet(lang, params.customerName);
-  const intro = tr(lang,
-    'Vos photos sont prêtes ! Votre album est disponible en ligne : vous pouvez le parcourir et télécharger vos fichiers HD quand vous le souhaitez.',
-    'Your photos are ready! Your album is available online: browse it and download your HD files whenever you like.');
-  const note = tr(lang,
-    "Retrouvez ce lien à tout moment dans votre espace, rubrique « Mon portfolio ». Un retour ou une retouche à signaler ? Répondez simplement à cet email.",
-    'You can find this link at any time in your area, under “My portfolio”. Any feedback or retouch request? Simply reply to this email.');
+  const t = (fr: string, en: string): string => tr(lang, fr, en);
+  const paid = params.amountEur !== undefined ? t(`Votre solde de ${eur(lang, params.amountEur)} est bien réglé, merci !`, `Your balance of ${eur(lang, params.amountEur)} is paid, thank you!`) : '';
+  const intro = t("Votre album est ouvert : vous pouvez dès maintenant consulter vos photos et les exporter dans les formats de votre choix.", 'Your album is now open: you can view your photos right away and export them in the formats you choose.');
+  const perm = t("Ce lien est permanent : vous le retrouvez à tout moment dans votre espace, rubrique « Mon portfolio ».", 'This link is permanent: you can find it at any time in your area, under “My portfolio”.');
+  const lr = lightroomExplainer(lang);
   const html = emailShell(`
-    <h1 style="font-size:20px;margin:0 0 16px;">${tr(lang, 'Vos photos sont prêtes', 'Your photos are ready')}</h1>
+    <h1 style="font-size:22px;margin:0 0 16px;">${t('Votre album est accessible', 'Your album is open')}</h1>
     <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">${greeting}</p>
+    ${paid ? `<p style="font-size:15px;line-height:1.6;margin:0 0 12px;">${paid}</p>` : ''}
     <p style="font-size:15px;line-height:1.6;margin:0 0 24px;">${intro}</p>
-    <a href="${params.lightroomUrl}" style="${btnStyle}">${tr(lang, 'Voir mes photos', 'View my photos')}</a>
-    <p style="font-size:13px;line-height:1.6;color:#76717f;margin:24px 0 0;">${note}</p>
+    <a href="${params.lightroomUrl}" style="${btnStyle}">${t('Accéder à mes photos', 'Access my photos')}</a>
+    <p style="font-size:13px;line-height:1.6;color:#76717f;margin:20px 0 0;">${perm}</p>
+    ${lr.html}
     ${spaceBlock(lang, params.space, 'delivered')}
   `, lang);
   const text = `${greeting}
 
-${intro}
+${paid ? paid + '\n\n' : ''}${intro}
 
-${tr(lang, 'Voir mes photos', 'View my photos')} : ${params.lightroomUrl}
+${t('Accéder à mes photos', 'Access my photos')} : ${params.lightroomUrl}
 
-${note}
+${perm}
+
+${lr.text}
 
 ${spaceText(lang, params.space, 'delivered')}`;
-  return finalize(lang, { subject: tr(lang, 'Bunkaio — Vos photos sont prêtes', 'Bunkaio — Your photos are ready'), html, text });
+  return finalize(lang, { subject: t('Bunkaio — Votre album photo est accessible', 'Bunkaio — Your photo album is open'), html, text });
+}
+
+/** Remerciement envoyé le lendemain de la séance, avec la date de livraison estimée si elle est connue. */
+export function buildAfterSessionEmail(params: { customerName: string; livraison?: string; space?: Space; lang?: Lang }): { subject: string; html: string; text: string } {
+  const lang = params.lang ?? 'fr';
+  const greeting = greet(lang, params.customerName);
+  const t = (fr: string, en: string): string => tr(lang, fr, en);
+  const thanks = t("Merci pour cette séance, c'était un plaisir de travailler avec vous. La post-production (tri, retouche) démarre maintenant.", 'Thank you for this session, it was a pleasure working with you. Post-production (selection, retouching) starts now.');
+  const delay = params.livraison
+    ? t(`Vos photos seront prêtes autour du <strong>${fmtDate('fr', params.livraison)}</strong>.`, `Your photos will be ready around <strong>${fmtDate('en', params.livraison)}</strong>.`)
+    : t("Vos photos seront prêtes dans le délai indiqué sur votre formule (de 3 à 10 jours ouvrés selon la formule), à compter de la date du shooting.", 'Your photos will be ready within the time stated on your package (3 to 10 working days depending on the package), counted from the shoot date.');
+  const next = t("Dès qu'elles sont prêtes, vous recevez un email avec le lien pour régler le solde (70 %) : le paiement ouvre aussitôt l'accès à votre album Lightroom privé.", 'As soon as they are ready, you receive an email with the link to pay the balance (70%): payment immediately opens access to your private Lightroom album.');
+  const lr = lightroomExplainer(lang);
+  const html = emailShell(`
+    <h1 style="font-size:20px;margin:0 0 16px;">${t('Merci pour votre séance', 'Thank you for your session')}</h1>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">${greeting}</p>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 16px;">${thanks}</p>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 16px;">${delay}</p>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 8px;">${next}</p>
+    ${lr.html}
+    ${spaceBlock(lang, params.space, 'balance')}
+  `, lang);
+  const text = `${greeting}\n\n${thanks}\n\n${delay.replace(/<[^>]+>/g, '')}\n\n${next}\n\n${lr.text}\n\n${spaceText(lang, params.space, 'balance')}`;
+  return finalize(lang, { subject: t('Bunkaio — Merci pour votre séance', 'Bunkaio — Thank you for your session'), html, text });
+}
+
+/** Alerte interne : une livraison arrive à échéance (ou un point reste à traiter). */
+export function buildAdminAlertEmail(params: { subject: string; lines: string[] }): { subject: string; html: string; text: string } {
+  const html = `<p style="font-family:${FONT};font-size:14px;line-height:1.6;color:#0a0a0c;">${params.lines.map(escapeHtml).join('<br>')}</p>`;
+  return { subject: params.subject, html, text: params.lines.join('\n') };
 }
 
 const fmtDate = (lang: Lang, iso: string): string => {

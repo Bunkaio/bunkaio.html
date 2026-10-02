@@ -141,7 +141,7 @@
       <div class="hint">Le code n'est jamais stocké en clair : il ne peut être envoyé que s'il est saisi dans ce champ au moment de l'enregistrement.</div>
     </div>
     <div class="fgroup">
-      <label><input type="checkbox" id="fSendPhotos" style="width:auto;margin-right:8px"> Envoyer le mail « Vos photos sont prêtes » (avec le lien Lightroom ci-dessous)</label>
+      <label><input type="checkbox" id="fSendPhotos" style="width:auto;margin-right:8px"> Débloquer et envoyer l'accès aux photos (lien Lightroom ci-dessus). Normal : c'est automatique au paiement du solde — à utiliser pour renvoyer ou débloquer à la main.</label>
     </div>
     <div class="fgroup">
       <label for="fLang">Langue des mails</label>
@@ -176,8 +176,9 @@
       <textarea id="fAdresse" style="min-height:60px;font-family:inherit;font-size:14px"></textarea>
     </div>
     <div class="fgroup">
-      <label for="fLightroom">Lien Lightroom personnel</label>
+      <label for="fLightroom">Lien Lightroom personnel (album partagé)</label>
       <input type="text" id="fLightroom" placeholder="https://lightroom.adobe.com/shares/...">
+      <div class="hint">À saisir AVANT la facture de solde. Le client ne le voit dans son espace et ne le reçoit par mail qu'une fois le solde payé.</div>
     </div>
   </div>
 
@@ -188,6 +189,7 @@
       <div class="fgroup"><label for="fSeHeure">Heure</label><input type="text" id="fSeHeure" placeholder="14h30"></div>
     </div>
     <div class="fgroup"><label for="fSeLieu">Lieu</label><input type="text" id="fSeLieu" placeholder="Adresse exacte du rendez-vous"></div>
+    <div class="fgroup"><label for="fSeLivraison">Date de livraison estimée des photos</label><input type="date" id="fSeLivraison"><div class="hint">Citée dans le mail du lendemain de la séance. Tu reçois une alerte à cette date si la facture de solde n'a pas été créée.</div></div>
     <div class="fgroup"><label for="fSePresta">Prestation</label><input type="text" id="fSePresta" placeholder="Portrait corporate — Formule Signature"></div>
     <div class="fgroup">
       <label for="fSeMail">Envoyer un mail de séance à l'enregistrement</label>
@@ -372,6 +374,7 @@ document.getElementById('accountPicker').addEventListener('change', async (e) =>
     const se = acc.seance || {};
     document.getElementById('fSeDate').value = se.date || '';
     document.getElementById('fSeHeure').value = se.heure || '';
+    document.getElementById('fSeLivraison').value = se.livraison || '';
     document.getElementById('fSeLieu').value = se.lieu || '';
     document.getElementById('fSePresta').value = se.prestation || '';
     document.getElementById('fSeMail').value = '';
@@ -447,6 +450,7 @@ async function saveAccount() {
   payload.seance = seDate ? {
     date: seDate,
     heure: document.getElementById('fSeHeure').value.trim() || undefined,
+    livraison: document.getElementById('fSeLivraison').value || undefined,
     lieu: document.getElementById('fSeLieu').value.trim() || undefined,
     prestation: document.getElementById('fSePresta').value.trim() || undefined,
     statut: window.__seStatut === 'annulee' && seDateOriginal === seDate ? 'annulee' : 'prevue',

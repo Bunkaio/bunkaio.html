@@ -247,7 +247,7 @@ export interface CollaborationResponse {
 }
 
 /** Enregistrement complet d'un compte, tel que stocké dans ACCOUNTS_KV. */
-export interface AccountSeance { date: string; heure?: string; lieu?: string; prestation?: string; statut?: 'prevue' | 'annulee' }
+export interface AccountSeance { /** Date de livraison estimée des photos (AAAA-MM-JJ), saisie admin. */ livraison?: string; date: string; heure?: string; lieu?: string; prestation?: string; statut?: 'prevue' | 'annulee' }
 
 export interface AccountRecord {
   type: AccountType;
@@ -260,6 +260,8 @@ export interface AccountRecord {
   lightroomUrl?: string;
   /** Langue des emails envoyés à ce compte. */
   lang?: 'fr' | 'en';
+  /** Vrai une fois le solde payé : le lien Lightroom n'est alors exposé au client dans son espace. */
+  photosAcces?: boolean;
   /** Prochaine séance (saisie admin) : alimente rappel J-2, confirmation, report et annulation. */
   seance?: AccountSeance;
   commandes?: AccountOrder[];
@@ -343,6 +345,7 @@ export interface AdminAccountUpsertPayload {
   sendAccessMail?: boolean;
   sendPhotosMail?: boolean;
   lang?: 'fr' | 'en';
+  photosAcces?: boolean;
   seance?: AccountSeance | null;
   /** Envoie l'email de séance correspondant (confirmation, report ou annulation) à l'enregistrement. */
   sendSeanceMail?: 'confirmation' | 'report' | 'cancel';

@@ -348,7 +348,8 @@ const I18N = {
     'empty-factures':'Aucune facture pour le moment.',
     'acc-invoice-view':'Voir',
     'lr-title':'Votre portfolio sur Adobe Lightroom',
-    'lr-text':'Vos livrables sont hébergés sur Adobe Lightroom. Connectez-vous avec les identifiants qui vous ont été transmis pour consulter et télécharger vos images.',
+    'lr-text':'Votre album est hébergé sur Adobe Lightroom : il vous suffit de créer un compte Adobe Lightroom pour l\'ouvrir. Vos photos restent accessibles à tout moment ; la post-production reste interactive, des ajustements peuvent être apportés si besoin, et vous exportez vos visuels dans les formats de votre choix en toute autonomie. L\'usage de vos visuels suit les droits cédés négociés dans votre devis signé.',
+    'lr-locked':'Votre album s\'ouvre dès le règlement du solde : vous recevez alors le lien par email et il apparaît ici, de façon permanente.',
     'lr-btn':'Accéder à Lightroom',
     'acc-step-devis':'Devis confirmé','acc-step-shoot':'Shooting planifié','acc-step-post':'Post-production','acc-step-livre':'Livré',
     'acc-help-title':'Une question sur votre projet ?','acc-help-sub':'Votre interlocuteur BUNKAIO vous répond directement.','acc-help-btn':'Nous écrire',
@@ -688,7 +689,8 @@ const I18N = {
     'empty-factures':'No invoices yet.',
     'acc-invoice-view':'View',
     'lr-title':'Your portfolio on Adobe Lightroom',
-    'lr-text':'Your deliverables are hosted on Adobe Lightroom. Sign in with the credentials provided to you to view and download your images.',
+    'lr-text':'Your album is hosted on Adobe Lightroom: you only need to create an Adobe Lightroom account to open it. Your photos stay available at any time; post-production remains interactive, adjustments can be made if needed, and you export your visuals in the formats of your choice, on your own. The use of your visuals follows the assigned rights negotiated in your signed quote.',
+    'lr-locked':'Your album opens as soon as the balance is paid: you then receive the link by email and it appears here, permanently.',
     'lr-btn':'Go to Lightroom',
     'acc-step-devis':'Quote confirmed','acc-step-shoot':'Shoot scheduled','acc-step-post':'Post-production','acc-step-livre':'Delivered',
     'acc-help-title':'Any question about your project?','acc-help-sub':'Your BUNKAIO contact replies to you directly.','acc-help-btn':'Write to us',
@@ -5238,7 +5240,13 @@ function renderAccount(){
     ? factures.map(f => `<tr><td>${f.numero||'—'}</td><td>${f.date||'—'}</td><td>${f.montant||'—'}</td><td><span class="status-pill ${statusClass(f.statut)}">${f.statut||'—'}</span></td><td>${f.url ? `<a href="${f.url}" target="_blank" rel="noopener">${I18N[LANG]['acc-invoice-view']}</a>` : '—'}</td></tr>`).join('')
     : `<tr><td colspan="5"><div class="empty-note">${I18N[LANG]['empty-factures']}</div></td></tr>`;
   const lrBtn = document.getElementById('accLightroomBtn');
-  if (lrBtn) lrBtn.href = USER.lightroomUrl || 'https://lightroom.adobe.com';
+  if (lrBtn) {
+    const hasLr = !!USER.lightroomUrl;
+    if (hasLr) lrBtn.href = USER.lightroomUrl;
+    lrBtn.style.display = hasLr ? '' : 'none';
+    const lrLocked = document.getElementById('accLightroomLocked');
+    if (lrLocked) lrLocked.style.display = hasLr ? 'none' : '';
+  }
   renderAccInfoView();
   toggleAccInfoEdit(false);
   /* Un compte partenaire atterrit directement sur son onglet dédié —
