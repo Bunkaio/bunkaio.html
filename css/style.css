@@ -3450,3 +3450,76 @@
     .cs-spotlight { grid-template-columns: 1fr; }
     .cs-board { transform: none; }
   }
+
+
+  /* ─── CONNEXION : panneau blanc dépoli derrière tout le formulaire ─── */
+  .login-panel { padding: clamp(22px, 5vw, 40px); }
+  .login-panel .page-title { color: var(--black); text-shadow: none; font-size: clamp(28px, 7vw, 40px); margin-bottom: 10px; }
+  .login-panel .page-sub { color: #3a3544; text-shadow: none; margin-bottom: 28px !important; max-width: none; }
+
+  /* ─── ESPACE CLIENT : rubriques en pastilles centrées et aérées ─── */
+  #view-account .account-tabs {
+    display: flex; flex-wrap: wrap; justify-content: center; align-items: center;
+    gap: 10px 8px; border-bottom: none; margin-bottom: 40px; padding: 0;
+  }
+  #view-account .pf-cat-tab {
+    font-size: 10.5px; letter-spacing: 0.12em; line-height: 1.2; white-space: nowrap;
+    padding: 11px 18px; border-radius: 999px;
+    color: rgba(255,255,255,0.72); background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.2);
+    transition: background 0.3s var(--ease), color 0.3s var(--ease), border-color 0.3s var(--ease);
+  }
+  #view-account .pf-cat-tab::after { display: none; }
+  #view-account .pf-cat-tab:hover { color: var(--white); border-color: rgba(255,255,255,0.5); background: rgba(255,255,255,0.1); }
+  #view-account .pf-cat-tab.active { background: var(--white); color: var(--black); border-color: var(--white); }
+  @media (max-width: 600px) {
+    #view-account .account-tabs { gap: 8px 6px; margin-bottom: 32px; }
+    #view-account .pf-cat-tab { font-size: 10px; letter-spacing: 0.1em; padding: 10px 14px; }
+  }
+
+  /* ─── MOODBOARD : questionnaire responsive (mobile + desktop) ─── */
+  .mb-wizard { padding: clamp(18px, 4vw, 40px); }
+  .mb-wizard-heading { font-size: clamp(18px, 3.4vw, 22px); font-weight: 700; margin-bottom: 24px; }
+  .mb-wizard .mb-wizard-section {
+    margin-bottom: 16px; padding: clamp(16px, 3vw, 26px);
+    border: 1px solid var(--line); border-radius: 14px; background: rgba(255,255,255,0.6);
+  }
+  .mb-wizard .mb-wizard-section:last-of-type { margin-bottom: 20px; }
+  .mb-wizard .mb-wizard-title { margin-bottom: 6px; line-height: 1.3; }
+  .mb-wizard .mb-wizard-sub { margin: 0 0 18px; font-size: 12.5px; }
+  .mb-wizard .mb-direction-grid, .mb-wizard .mb-chip-grid, .mb-wizard .mb-palette-grid,
+  .mb-wizard .mb-refs, .mb-wizard .mb-wizard-actions { margin-left: 0; }
+  .mb-wizard .mb-direction-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); }
+  .mb-wizard .mb-palette-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); }
+  .mb-wizard .mb-direction-card, .mb-wizard .mb-palette-card, .mb-wizard .mb-chip { background: #fff; }
+  .mb-wizard .mb-direction-card.active, .mb-wizard .mb-chip.active { background: var(--black); }
+  .mb-wizard .mb-chip { padding: 10px 16px; }
+  .mb-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 0 22px; }
+  .mb-fields .fgroup:first-child { grid-column: 1 / -1; }
+  .mb-fields .fgroup:last-child { margin-bottom: 0; }
+  .mb-wizard .fgroup input, .mb-wizard .fgroup select, .mb-wizard .fgroup textarea,
+  .mb-wizard textarea, .mb-wizard .mb-ref-row input, .mb-wizard .mb-ref-row select {
+    width: 100%; min-width: 0; font-family: inherit; font-size: 16px; color: var(--black);
+    background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; line-height: 1.4;
+    -webkit-backdrop-filter: none; backdrop-filter: none;
+  }
+  .mb-wizard .fgroup input:focus, .mb-wizard .fgroup select:focus, .mb-wizard textarea:focus,
+  .mb-wizard .mb-ref-row input:focus, .mb-wizard .mb-ref-row select:focus { outline: none; border-color: var(--black); }
+  .mb-wizard .fgroup select { background-position: right 14px center; padding-right: 36px; }
+  .mb-wizard .mb-ref-row {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; align-items: center;
+    padding: 12px; margin-bottom: 10px; border: 1px solid var(--line); border-radius: 12px; background: rgba(255,255,255,0.6);
+  }
+  .mb-wizard .mb-ref-row button { width: 40px; height: 40px; padding: 0; justify-self: end; border-radius: 8px; background: #fff; }
+  .mb-wizard .mb-ref-add { font-size: 12.5px; padding: 8px 0; }
+  .mb-wizard .mb-wizard-actions { display: flex; gap: 12px; justify-content: flex-end; flex-wrap: wrap; margin-top: 8px; }
+  @media (max-width: 640px) {
+    .mb-fields { grid-template-columns: 1fr; }
+    .mb-wizard .mb-ref-row { grid-template-columns: 1fr; }
+    .mb-wizard .mb-wizard-actions {
+      position: sticky; bottom: 0; z-index: 5; flex-direction: column-reverse; justify-content: stretch;
+      margin: 0 -4px; padding: 14px 4px max(14px, env(safe-area-inset-bottom));
+      background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.96) 28%);
+    }
+    .mb-wizard .mb-wizard-actions .btn { width: 100%; }
+  }

@@ -268,10 +268,10 @@ const I18N = {
     'mb-product-nom-ph':'Nom de la pièce / du produit',
     'mb-product-lien-ph':'Lien ou référence — optionnel',
     'mb-step-collab-title':'Collaborateurs & prestataires',
-    'mb-step-collab-sub':'Si d\'autres prestataires sont impliqués dans ce projet (styliste, maquilleuse, traiteur, lieu…), indiquez-les ici avec leur domaine.',
+    'mb-step-collab-sub':'Si d\'autres prestataires sont impliqués dans ce projet (styliste, maquilleuse, traiteur, lieu…), indiquez-les ici avec leur type de prestataire.',
     'mb-collab-add-btn':'+ Ajouter un collaborateur',
     'mb-collab-nom-ph':'Nom du prestataire',
-    'mb-collab-domaine-ph':'Domaine…',
+    'mb-collab-domaine-ph':'Type de prestataire…',
     'mb-collab-role-ph':'Rôle — optionnel (ex. maquilleuse, traiteur)',
     'mb-step2-title':'Direction artistique',
     'mb-step2-sub':'Choisissez l\'orientation qui parle le plus à votre projet.',
@@ -580,7 +580,7 @@ const I18N = {
     'mb-step-collab-sub':'If other vendors are involved in this project (stylist, makeup artist, caterer, venue…), list them here with their domain.',
     'mb-collab-add-btn':'+ Add a collaborator',
     'mb-collab-nom-ph':'Vendor name',
-    'mb-collab-domaine-ph':'Domain…',
+    'mb-collab-domaine-ph':'Provider type…',
     'mb-collab-role-ph':'Role — optional (e.g. makeup artist, caterer)',
     'mb-step2-title':'Art direction',
     'mb-step2-sub':'Pick the direction that speaks most to your project.',
@@ -1267,12 +1267,29 @@ function observeLate(el){ ioLate.observe(el); }
    globalement (changement d'onglet, retour sur une vue, etc.). */
 const _bgVideos = [];
 
+/* Relance toutes les vidéos de fond. Un navigateur mobile peut figer une
+   vidéo masquée (display:none) sans la marquer « en pause » : on vérifie
+   donc aussi que le temps de lecture avance et, sinon, on recharge la
+   vidéo (déjà en cache) puis on relance la lecture. */
 function resumeAllBgVideos(){
   _bgVideos.forEach(vid => {
-    if (vid.isConnected && vid.paused) {
+    if (!vid.isConnected) return;
+    /* Une vidéo masquée reste en pause (économie de batterie, et elle repart
+       d'un état propre quand on la ré-affiche). */
+    if (vid.getClientRects().length === 0) return;
+    if (vid.paused) {
       const p = vid.play();
       if (p && p.catch) p.catch(() => {});
     }
+    const t0 = vid.currentTime;
+    setTimeout(() => {
+      if (!vid.isConnected || vid.getClientRects().length === 0) return;
+      if (vid.readyState >= 2 && vid.currentTime === t0) {
+        try { vid.load(); } catch (e) {}
+        const q = vid.play();
+        if (q && q.catch) q.catch(() => {});
+      }
+    }, 900);
   });
 }
 /* Mobile : quitter l'onglet/l'app ou verrouiller l'écran met en pause les
@@ -1383,6 +1400,14 @@ function initHeroCarousel(viewKey){
      se marcher dessus au fil de la navigation. */
   const allVideoWraps = () => wrap.querySelectorAll('.hero-video-wrap');
   const videoWrapFor = (key) => wrap.querySelector('.hero-video-wrap[data-view="' + key + '"]');
+  /* Affiche un seul calque vidéo et met les autres réellement en pause :
+     au retour, play() repart d'un état propre au lieu d'une vidéo figée. */
+  const showOnlyVideoWrap = (active) => allVideoWraps().forEach(v => {
+    const on = v === active;
+    v.style.display = on ? '' : 'none';
+    const vd = v.querySelector('video');
+    if (vd && !on) vd.pause();
+  });
 
   if (viewKey === 'home' && IMG.homeVideo) {
     wrap.classList.add('is-dark');
@@ -1398,7 +1423,7 @@ function initHeroCarousel(viewKey){
       const overlay = wrap.querySelector('.page-hero-overlay');
       wrap.insertBefore(vw, overlay || null);
     }
-    allVideoWraps().forEach(v => { v.style.display = (v === vw) ? '' : 'none'; });
+    showOnlyVideoWrap(vw);
     wrap.querySelectorAll('.hero-slide').forEach(s => s.remove());
     resumeAllBgVideos();
     return;
@@ -1432,7 +1457,7 @@ function initHeroCarousel(viewKey){
       const overlay = wrap.querySelector('.page-hero-overlay');
       wrap.insertBefore(gvw, overlay || null);
     }
-    allVideoWraps().forEach(v => { v.style.display = (v === gvw) ? '' : 'none'; });
+    showOnlyVideoWrap(gvw);
     wrap.querySelectorAll('.hero-slide').forEach(s => s.remove());
     resumeAllBgVideos();
     return;
@@ -1440,7 +1465,7 @@ function initHeroCarousel(viewKey){
 
   wrap.classList.toggle('is-dark', false);
   if (viewEl) viewEl.classList.remove('has-bg-video');
-  allVideoWraps().forEach(v => { v.style.display = 'none'; });
+  showOnlyVideoWrap(null);
   showHeroImages();
 }
 
@@ -3732,12 +3757,24 @@ const MB_PRODUCT_TYPES = [
   { id:'bijou', name:{fr:'Bijou', en:'Jewellery'} },
   { id:'autre', name:{fr:'Autre', en:'Other'} },
 ];
-/* Domaines proposés aux collaborateurs externes (styliste, traiteur, lieu…) —
-   reprend volontairement les mêmes identifiants que CATS (le questionnaire
-   de devis) plutôt qu'une taxonomie propre au moodboard : une seule liste
-   de référence à tenir à jour sur tout le site. CATS est déjà défini plus
-   haut dans ce fichier au moment où ce tableau est évalué. */
-const MB_DOMAINES = CATS.map(c => ({ id: c.id, name: c.name }));
+/* Domaine d'un collaborateur externe = un type de prestataire (mêmes
+   catégories que PARTNER_PROVIDER_TYPES, regroupées par univers). Les
+   anciens moodboards qui stockaient une prestation du catalogue (CATS)
+   restent lisibles grâce au repli de mbDomainName(). */
+function mbDomainName(id){
+  const pt = partnerProviderType(id);
+  if (pt) return t(pt.name);
+  const cat = CATS.find(c => c.id === id);
+  return cat ? t(cat.name) : '';
+}
+function mbDomainOptions(selected){
+  const legacy = selected && !partnerProviderType(selected) ? CATS.find(c => c.id === selected) : null;
+  return PARTNER_SECTORS.map(sec => `
+      <optgroup label="${escHtml(t(sec.name))}">
+        ${PARTNER_PROVIDER_TYPES.filter(p => p.sector === sec.id).map(p => `<option value="${p.id}"${selected === p.id ? ' selected' : ''}>${escHtml(t(p.name))}</option>`).join('')}
+      </optgroup>`).join('') +
+    (legacy ? `<option value="${legacy.id}" selected>${escHtml(t(legacy.name))}</option>` : '');
+}
 
 let mbView = 'list'; // 'list' | 'wizard' | 'detail'
 let mbActiveId = null;
@@ -3840,14 +3877,14 @@ function renderMbWizard(el){
   const commandOptions = (USER.commandes || []).map(c => c.prestation).filter(Boolean);
 
   el.innerHTML = `
-    <div class="acc-info-card">
+    <div class="acc-info-card mb-wizard">
       <button type="button" class="mb-back-link" onclick="backToMbList()">${I18N[LANG]['mb-back']}</button>
-      <h3 style="font-size:19px;font-weight:700;margin-bottom:28px">${editing ? I18N[LANG]['mb-wizard-title-edit'] : I18N[LANG]['mb-wizard-title-new']}</h3>
+      <h3 class="mb-wizard-heading">${editing ? I18N[LANG]['mb-wizard-title-edit'] : I18N[LANG]['mb-wizard-title-new']}</h3>
 
       <div class="mb-wizard-section">
         <div class="mb-wizard-title"><span class="mb-wizard-num">1</span>${I18N[LANG]['mb-step1-title']}</div>
         <p class="mb-wizard-sub">${I18N[LANG]['mb-step1-sub']}</p>
-        <div style="margin-left:32px;max-width:420px">
+        <div class="mb-fields">
           <div class="fgroup">
             <label>${I18N[LANG]['mb-field-titre']}</label>
             <input type="text" id="mbTitre" placeholder="${I18N[LANG]['mb-field-titre-ph']}" value="${editing ? escHtml(editing.titre) : ''}">
@@ -3935,7 +3972,7 @@ function renderMbWizard(el){
       <div class="mb-wizard-section">
         <div class="mb-wizard-title"><span class="mb-wizard-num">7</span>${I18N[LANG]['mb-step6-title']}</div>
         <p class="mb-wizard-sub">${I18N[LANG]['mb-step6-sub']}</p>
-        <div style="margin-left:32px">
+        <div>
           <textarea id="mbNotes" style="min-height:120px" placeholder="${I18N[LANG]['mb-field-notes-ph']}">${editing ? escHtml(editing.notes || '') : ''}</textarea>
         </div>
       </div>
@@ -3995,7 +4032,7 @@ function addMbCollabRow(nom, domaine, role){
     <input type="text" class="mb-collab-nom" placeholder="${I18N[LANG]['mb-collab-nom-ph']}" value="${nom ? escHtml(nom) : ''}">
     <select class="mb-collab-domaine">
       <option value="">${I18N[LANG]['mb-collab-domaine-ph']}</option>
-      ${MB_DOMAINES.map(d => `<option value="${d.id}"${domaine === d.id ? ' selected' : ''}>${t(d.name)}</option>`).join('')}
+      ${mbDomainOptions(domaine)}
     </select>
     <input type="text" class="mb-collab-role" placeholder="${I18N[LANG]['mb-collab-role-ph']}" value="${role ? escHtml(role) : ''}">
     <button type="button" onclick="this.closest('.mb-ref-row').remove()">✕</button>
@@ -4099,8 +4136,8 @@ function renderMbDetail(el){
   }).join('');
 
   const collabTags = (mb.collaborateurs || []).map(c => {
-    const dom = MB_DOMAINES.find(d => d.id === c.domaine);
-    return `<span class="mb-tag">${escHtml(c.nom)}${dom ? ` · ${t(dom.name)}` : ''}${c.role ? ` · ${escHtml(c.role)}` : ''}</span>`;
+    const dom = mbDomainName(c.domaine);
+    return `<span class="mb-tag">${escHtml(c.nom)}${dom ? ` · ${escHtml(dom)}` : ''}${c.role ? ` · ${escHtml(c.role)}` : ''}</span>`;
   }).join('');
 
   const comments = (mb.commentaires || []).map(c => `
