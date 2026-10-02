@@ -286,7 +286,7 @@ function minifyAssets() {
 }
 const hash8 = (file) => crypto.createHash('sha1').update(fs.readFileSync(path.join(ROOT, file))).digest('hex').slice(0, 8);
 function pinAssets(html) {
-  const files = { 'css/style.min.css': 'css/style\\.(?:min\\.)?css', 'js/script.min.js': 'js/script\\.(?:min\\.)?js', 'js/analytics.js': 'js/analytics\\.js', 'config/analytics.js': 'config/analytics\\.js', 'config/articles.js': 'config/articles\\.js', 'config/routes.js': 'config/routes\\.js', 'config/media.js': 'config/media\\.js' };
+  const files = { 'css/style.min.css': 'css/style\\.(?:min\\.)?css', 'js/script.min.js': 'js/script\\.(?:min\\.)?js', 'js/analytics.js': 'js/analytics\\.js', 'config/analytics.js': 'config/analytics\\.js', 'config/articles.js': 'config/articles\\.js', 'config/articles.en.js': 'config/articles\\.en\\.js', 'config/routes.js': 'config/routes\\.js', 'config/media.js': 'config/media\\.js' };
   for (const [file, pattern] of Object.entries(files)) {
     html = html.replace(new RegExp('(?:' + pattern + ')\\?v=[^"\']*', 'g'), file + '?v=' + hash8(file));
   }
@@ -418,10 +418,10 @@ function pinAssets(html) {
   // 4. 404.html
   fs.writeFileSync(path.join(ROOT, '404.html'), `<!DOCTYPE html>
 <html lang="fr"><head><meta charset="UTF-8"><base href="/"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Page introuvable | BUNKAIO</title><meta name="robots" content="noindex, nofollow">
+<title>Page introuvable · Page not found | BUNKAIO</title><meta name="robots" content="noindex, nofollow">
 <style>body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0a0a0c;color:#fff;font-family:'DM Sans',system-ui,sans-serif;text-align:center;padding:24px}
 h1{font-size:clamp(28px,6vw,44px);margin:0 0 12px}p{color:rgba(255,255,255,.7);margin:0 0 24px}a{color:#fff;margin:0 10px;font-size:14px}</style></head>
-<body><main><h1>Page introuvable</h1><p>Cette page n'existe pas ou a été déplacée.</p>
-<a href="/">Accueil</a><a href="/services/">Prestations</a><a href="/portfolio/">Portfolio</a><a href="/devis/">Devis</a><a href="/contact/">Contact</a></main></body></html>\n`);
+<body><main><h1>Page introuvable <small>· Page not found</small></h1><p>Cette page n'existe pas ou a été déplacée.<br>This page does not exist or has been moved.</p>
+<a href="/">Accueil · Home</a><a href="/services/">Prestations · Services</a><a href="/portfolio/">Portfolio</a><a href="/devis/">Devis · Quote</a><a href="/contact/">Contact</a></main></body></html>\n`);
   console.log('sitemap.xml et 404.html écrits');
 })();

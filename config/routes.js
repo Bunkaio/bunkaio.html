@@ -47,11 +47,11 @@ const SEO_ROUTES = [
     titleEn:'Event photographer: estates, companies, receptions | BUNKAIO',
     descriptionEn:'Event photo coverage: estates, companies, receptions, in Béziers, Montpellier and Toulouse. Packages from €390, retouched photos delivered in 3 to 10 working days.' },
   { view:'service', cat:'lumen', path:'/services/photobooth-ia-mariage-lumen/', index:true,
-    h1:'Lumen, le photobooth IA pour mariages et événements', h1En:'Lumen, the IA photobooth for weddings and events',
+    h1:'Lumen, le photobooth IA pour mariages et événements', h1En:'Lumen, the AI photobooth for weddings and events',
     title:'Lumen : photobooth IA pour mariages et événements | BUNKAIO',
     description:'Photobooth IA haut de gamme pour mariages et événements : impressions illimitées, galerie privée. Dès 550 €. Béziers, Montpellier, Toulouse.',
-    titleEn:'Lumen: IA photobooth for weddings and events | BUNKAIO',
-    descriptionEn:'Premium IA photobooth for weddings and events: set-up, unlimited prints, private gallery. Packages from €550. Béziers, Montpellier, Toulouse.' },
+    titleEn:'Lumen: AI photobooth for weddings and events | BUNKAIO',
+    descriptionEn:'Premium AI photobooth for weddings and events: set-up, unlimited prints, private gallery. Packages from €550. Béziers, Montpellier, Toulouse.' },
   { view:'discover', path:'/decouvrir-chaque-prestation/', index:true,
     h1:'Découvrir chaque prestation', h1En:'Explore each service',
     title:'Découvrir chaque prestation photo à Montpellier | BUNKAIO',
@@ -120,5 +120,8 @@ if (typeof ARTICLES !== 'undefined') {
     titleEn:'Photo advice: prepare your session, shoot or event | BUNKAIO',
     descriptionEn:'Practical guides from a professional photographer: preparing a portrait session, choosing outfits, planning a product, fashion or event shoot.' });
   ARTICLES.forEach(a => SEO_ROUTES.push({ view:'article', slug:a.slug, path:'/conseils/' + a.slug + '/', index:true,
-    title:a.title, description:a.description, h1:a.h1, titleEn:a.title, descriptionEn:a.description }));
+    title:a.title, description:a.description, h1:a.h1,
+    titleEn:(typeof ARTICLES_EN !== 'undefined' && ARTICLES_EN[a.slug]) ? ARTICLES_EN[a.slug].title : a.title,
+    descriptionEn:(typeof ARTICLES_EN !== 'undefined' && ARTICLES_EN[a.slug]) ? ARTICLES_EN[a.slug].description : a.description,
+    h1En:(typeof ARTICLES_EN !== 'undefined' && ARTICLES_EN[a.slug]) ? ARTICLES_EN[a.slug].h1 : a.h1 }));
 }

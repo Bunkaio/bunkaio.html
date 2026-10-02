@@ -359,7 +359,7 @@
       <button class="lang-toggle" onclick="toggleLang()" id="langBtn">EN</button>
       <button class="nav-connect" onclick="openLogin('client')"><span data-lang="nav-connect">Connexion</span></button>
       <button class="nav-cta" onclick="goView('quiz')" data-lang="start">Estimer mon projet</button>
-      <button class="nav-burger" id="navBurger" aria-label="Menu" aria-expanded="false" onclick="toggleMobileMenu()">
+      <button class="nav-burger" id="navBurger" aria-label="Menu" data-lang-aria="aria-menu" aria-expanded="false" onclick="toggleMobileMenu()">
         <span class="nav-burger-glyph">⊹</span>
       </button>
     </div>
@@ -400,9 +400,9 @@
     <div class="home-claim-kicker mission-kicker" data-lang="home-claim-kicker">Le studio</div>
     <div class="home-claim-text mission-text" data-lang="home-claim-text">Nous ne documentons pas des projets. Nous révélons ce qui les rend uniques.</div>
     <div class="mission-services" id="missionServices">
-      <button type="button" class="mission-arrow" id="missionPrev" aria-label="Précédent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <button type="button" class="mission-arrow" id="missionPrev" aria-label="Précédent" data-lang-aria="aria-prev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
       <div class="mission-services-viewport" id="missionServicesViewport"><div class="mission-services-track" id="missionServicesTrack"><!--snap--><!--/snap--></div></div>
-      <button type="button" class="mission-arrow" id="missionNext" aria-label="Suivant"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+      <button type="button" class="mission-arrow" id="missionNext" aria-label="Suivant" data-lang-aria="aria-next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
     </div>
     <button class="hero-start home-claim-cta" onclick="goView('quiz')"><span data-lang="start">Estimer mon projet</span></button>
   </div>
@@ -414,11 +414,11 @@
      pose un transform sur l'ancêtre, qui devient le référentiel de tout
      descendant fixed. Visibilité pilotée par goView() (v === 'quiz'). -->
 <div class="quiz-nav-row" id="quizNavRow" style="display:none">
-  <button class="quiz-nav-btn" onclick="quizGoBack()" aria-label="Retour">
+  <button class="quiz-nav-btn" onclick="quizGoBack()" aria-label="Retour" data-lang-aria="aria-back">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
     <span data-lang="quiz-back">Retour</span>
   </button>
-  <button class="quiz-nav-btn quiz-nav-home" onclick="goView('home')" aria-label="Accueil">
+  <button class="quiz-nav-btn quiz-nav-home" onclick="goView('home')" aria-label="Accueil" data-lang-aria="aria-home">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
     <span data-lang="quiz-home">Accueil</span>
   </button>
@@ -451,10 +451,10 @@
        en JS (voir initCatShowcase(), ordre = CATS dans js/script.js). -->
   <section class="cat-showcase" id="catShowcase">
     <div class="cat-showcase-track" id="catShowcaseTrack"><!--snap--><!--/snap--></div>
-    <button class="cat-showcase-arrow cat-showcase-arrow-left" id="catShowcaseArrowPrev" aria-label="Précédent">
+    <button class="cat-showcase-arrow cat-showcase-arrow-left" id="catShowcaseArrowPrev" aria-label="Précédent" data-lang-aria="aria-prev">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
     </button>
-    <button class="cat-showcase-arrow cat-showcase-arrow-right" id="catShowcaseArrowNext" aria-label="Suivant">
+    <button class="cat-showcase-arrow cat-showcase-arrow-right" id="catShowcaseArrowNext" aria-label="Suivant" data-lang-aria="aria-next">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
     </button>
     <div class="cat-showcase-dots" id="catShowcaseDots"></div>
@@ -532,8 +532,8 @@
     </div>
     <div class="testi-arrows-row">
       <div class="testi-arrows">
-        <button class="testi-arrow" onclick="testiScroll(-1)" aria-label="Précédent">‹</button>
-        <button class="testi-arrow" onclick="testiScroll(1)" aria-label="Suivant">›</button>
+        <button class="testi-arrow" onclick="testiScroll(-1)" aria-label="Précédent" data-lang-aria="aria-prev">‹</button>
+        <button class="testi-arrow" onclick="testiScroll(1)" aria-label="Suivant" data-lang-aria="aria-next">›</button>
       </div>
     </div>
     <div class="testi-carousel" id="testiCarousel">
@@ -848,11 +848,11 @@
     <div class="pf-cta-band" onclick="goView('quiz')">
       <div class="pf-cta-left">
         <div class="pf-cta-kicker">Travaillons ensemble</div>
-        <div class="pf-cta-title">Prêt à donner vie à votre projet&nbsp;?</div>
-        <div class="pf-cta-sub">Chaque collaboration commence par une estimation — simple, rapide, sans engagement.</div>
+        <div class="pf-cta-title" data-lang="pf-cta-title">Prêt à donner vie à votre projet&nbsp;?</div>
+        <div class="pf-cta-sub" data-lang="pf-cta-sub">Chaque collaboration commence par une estimation — simple, rapide, sans engagement.</div>
       </div>
       <div class="pf-cta-right">
-        <a class="pf-cta-btn" href="/devis/" data-nav="quiz">Recevoir mon devis personnalisé <span class="pf-cta-arrow">→</span></a>
+        <a class="pf-cta-btn" href="/devis/" data-nav="quiz"><span data-lang="pf-cta-btn">Recevoir mon devis personnalisé</span> <span class="pf-cta-arrow">→</span></a>
       </div>
     </div>
   </div>
@@ -987,11 +987,11 @@
     <div class="pf-cta-band" onclick="goView('quiz')">
       <div class="pf-cta-left">
         <div class="pf-cta-kicker">Travaillons ensemble</div>
-        <div class="pf-cta-title">Prêt à donner vie à votre projet&nbsp;?</div>
-        <div class="pf-cta-sub">Chaque collaboration commence par une estimation — simple, rapide, sans engagement.</div>
+        <div class="pf-cta-title" data-lang="pf-cta-title">Prêt à donner vie à votre projet&nbsp;?</div>
+        <div class="pf-cta-sub" data-lang="pf-cta-sub">Chaque collaboration commence par une estimation — simple, rapide, sans engagement.</div>
       </div>
       <div class="pf-cta-right">
-        <button class="pf-cta-btn">Recevoir mon devis personnalisé <span class="pf-cta-arrow">→</span></button>
+        <button class="pf-cta-btn"><span data-lang="pf-cta-btn">Recevoir mon devis personnalisé</span> <span class="pf-cta-arrow">→</span></button>
       </div>
     </div>
   </div>
@@ -1016,11 +1016,11 @@
     <div class="pf-cta-band" onclick="goView('quiz')">
       <div class="pf-cta-left">
         <div class="pf-cta-kicker">Travaillons ensemble</div>
-        <div class="pf-cta-title">Prêt à donner vie à votre projet&nbsp;?</div>
-        <div class="pf-cta-sub">Chaque collaboration commence par une estimation — simple, rapide, sans engagement.</div>
+        <div class="pf-cta-title" data-lang="pf-cta-title">Prêt à donner vie à votre projet&nbsp;?</div>
+        <div class="pf-cta-sub" data-lang="pf-cta-sub">Chaque collaboration commence par une estimation — simple, rapide, sans engagement.</div>
       </div>
       <div class="pf-cta-right">
-        <button class="pf-cta-btn">Recevoir mon devis personnalisé <span class="pf-cta-arrow">→</span></button>
+        <button class="pf-cta-btn"><span data-lang="pf-cta-btn">Recevoir mon devis personnalisé</span> <span class="pf-cta-arrow">→</span></button>
       </div>
     </div>
   </div>
@@ -1643,7 +1643,7 @@
 </div>
 <footer>
   <div class="footer-cta-row">
-    <div class="footer-cta-headline">Un projet en tête&nbsp;?</div>
+    <div class="footer-cta-headline" data-lang="footer-cta-headline">Un projet en tête&nbsp;?</div>
     <button class="hero-start cta-onlight" onclick="goView('quiz')"><span data-lang="start">Estimer mon projet</span></button>
   </div>
   <div class="footer-grid">
@@ -1695,8 +1695,9 @@
 <script src="config/analytics.js?v=eff8bde4"></script>
 <script src="js/analytics.js?v=e0edf83d"></script>
 <script src="config/articles.js?v=0c31bdd3"></script>
-<script src="config/routes.js?v=78f5403f"></script>
+<script src="config/articles.en.js?v=a4a41ec2"></script>
+<script src="config/routes.js?v=28af006b"></script>
 <script src="config/media.js?v=4c55fc7b"></script>
-<script src="js/script.min.js?v=0713fc7d"></script>
+<script src="js/script.min.js?v=e2c7e9ee"></script>
 </body>
 </html>

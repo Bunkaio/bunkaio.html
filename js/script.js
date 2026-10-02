@@ -61,6 +61,8 @@ const I18N = {
     'success-text2':'Chaque demande est évaluée individuellement et n\'est acceptée que si elle correspond à la <strong>ligne éditoriale de BUNKAIO</strong>. Nous travaillons uniquement avec des projets qui résonnent avec notre univers — c\'est ce qui garantit la qualité de chaque collaboration.',
     'success-text3':'Une fois votre devis confirmé, direction votre espace client : vous pourrez y construire votre <strong>moodboard</strong> pour partager votre vision — direction artistique, ambiance, inspirations — et nous arriver parfaitement alignés le jour du shooting.',
     'home-btn':'Retour à l\'accueil','see-portfolio':'Voir tout le portfolio',
+    'pf-cta-title':'Prêt à donner vie à votre projet&nbsp;?','pf-cta-sub':'Chaque collaboration commence par une estimation — simple, rapide, sans engagement.','pf-cta-btn':'Recevoir mon devis personnalisé','footer-cta-headline':'Un projet en tête&nbsp;?',
+    'aria-next':'Suivant','aria-prev':'Précédent','aria-back':'Retour','aria-menu':'Menu','aria-home':'Accueil',
     'svc-reserve':'Je réserve ma séance','svc-discover':'Découvrir chaque prestation','ft-discover':'Découvrir chaque prestation','scroll-hint':'Scroll','services-title':'Prestations & tarifs photo','services-sub':'Photographe professionnel à Béziers, Montpellier et Toulouse : des images haut de gamme, en HD, pour mettre en valeur votre projet. Nos prestations et leurs tarifs, par univers.',
     'svc-all':'Tous','svc-cta':'Estimer ce projet →','svc-sub-label':'Abonnement mensuel',
     'svc-trust1-title':'Réponse sous 48h','svc-trust1-text':'Chaque demande est étudiée puis traitée personnellement — jamais de réponse automatique.',
@@ -383,10 +385,10 @@ const I18N = {
   },
   en: {
     'estimate':'Quote','services':'Services','portfolio':'Portfolio','drone':'4K Drone','contact':'Contact','partners':'Collaboration','nav-legal':'FAQ',
-    'hero-kicker':'Professional photographer · Occitanie','cred-lead':'BUNKAIO is a mobile professional photography studio based in Montpellier: portrait sessions, professional portraits, fashion and models, product photography, events and the Lumen IA photobooth, in Béziers, Montpellier and Toulouse. Browse each <a href="/services/" data-nav="services">service and its rates</a>.','quiz-h1':'Online photo quote','hero-word1':'Estimate','hero-word2':'your','hero-word3':'project','start':'Estimate My Project',
-    'step-cat':'01 — Category','q-cat':'What is your field\u00a0?','q-cat-sub':'Select the universe your project belongs to.',
-    'step-prof':'02 — Profile','q-prof':'Which profile are you\u00a0?','q-prof-sub':'Tell us who you are so we can understand exactly what you need.',
-    'step-tier':'03 — Service level','q-tier':'Which level of service\u00a0?',
+    'hero-kicker':'Professional photographer · Occitanie','cred-lead':'BUNKAIO is a mobile professional photography studio based in Montpellier: portrait sessions, professional portraits, fashion and models, product photography, events and the Lumen AI photobooth, in Béziers, Montpellier and Toulouse. Browse each <a href="/services/" data-nav="services">service and its rates</a>.','quiz-h1':'Online photo quote','hero-word1':'Estimate','hero-word2':'your','hero-word3':'project','start':'Estimate my project',
+    'step-cat':'01 — Category','q-cat':'What is your field?','q-cat-sub':'Select the universe your project belongs to.',
+    'step-prof':'02 — Profile','q-prof':'Which profile are you?','q-prof-sub':'Tell us who you are so we can understand exactly what you need.',
+    'step-tier':'03 — Service level','q-tier':'Which level of service?',
     'step-recap':'04 — Your package','q-recap':'What\'s included','q-recap-sub':'The full details of your package, plus options to take it further.',
     'options':'Additional options',
     'step-coords':'05 — Your details','q-coords':'Your details','q-coords-sub':'Every request is reviewed personally. We reply within 48 hours.',
@@ -397,8 +399,10 @@ const I18N = {
     'success-label':'Request received','success-title':'Your request has been sent',
     'success-text1':'Thank you for your trust. Your quote request is in our hands: it will be carefully reviewed and you will receive a reply within <strong>48 hours</strong>.',
     'success-text2':'Every request is assessed individually and is only accepted if it aligns with <strong>BUNKAIO\'s editorial line</strong>. We work exclusively with projects that resonate with our universe — this is what guarantees the quality of every collaboration.',
-    'success-text3':'Once your quote is confirmed, head to your client space : you\'ll be able to build your <strong>moodboard</strong> there to share your vision — art direction, mood, inspirations — so we arrive on the day perfectly aligned with your project.',
+    'success-text3':'Once your quote is confirmed, head to your client area: you\'ll be able to build your <strong>moodboard</strong> there to share your vision — art direction, mood, inspirations — so we arrive on the day perfectly aligned with your project.',
     'home-btn':'Back to home','see-portfolio':'View the full portfolio',
+    'pf-cta-title':'Ready to bring your project to life?','pf-cta-sub':'Every collaboration starts with an estimate — simple, quick, no commitment.','pf-cta-btn':'Get my personalised quote','footer-cta-headline':'Got a project in mind?',
+    'aria-next':'Next','aria-prev':'Previous','aria-back':'Back','aria-menu':'Menu','aria-home':'Home',
     'svc-reserve':'Book my session','svc-discover':'Explore each service','ft-discover':'Explore each service','scroll-hint':'Scroll','services-title':'Photography services & rates','services-sub':'Professional photographer in Béziers, Montpellier and Toulouse: premium, high-definition images that showcase your project. Our services and rates, by universe.',
     'svc-all':'All','svc-cta':'Get a quote for this →','svc-sub-label':'Monthly plan',
     'svc-trust1-title':'Reply within 48h','svc-trust1-text':'Every request is reviewed and handled personally — never an automated reply.',
@@ -420,7 +424,7 @@ const I18N = {
     'gear-label':'Equipment','gear-cert':'Certified A1/A3 · A2',
     'drone-explore':'Explore our work',
     'portfolio-title':'Photography portfolio','portfolio-sub':'A selection of projects produced by the studio, organised by universe.',
-    'contact-title':'Contact your photographer','contact-sub':'A question, a project, a collaboration\u00a0? Write to us — we reply within 24 hours.',
+    'contact-title':'Contact your photographer','contact-sub':'A question, a project, a collaboration? Write to us — we reply within 24 hours.',
     'company-label':'Company','follow-label':'Follow us','contact-btn':'Get in touch',
     'ct-success-title':'Message sent','ct-success-text':'Thank you for your message. We will get back to you within 24 hours.',
     'partners-title':'Partnership & collaboration',
@@ -514,8 +518,8 @@ const I18N = {
     'testi8-tag':'Events',
     'testi8-text':'What I appreciated most is that I never had to direct anyone. The best moments of the evening were captured without anyone noticing. That\'s the real difference.',
     'testi8-role':'Corporate event organiser · Marseille',
-    'p-who':'Who can become a Founding Partner\u00a0?',
-    'p-who-text':'The Founding Partners programme is reserved for companies and professionals whose work, values and standards align with the Bunkaio universe. We are particularly looking for\u00a0:',
+    'p-who':'Who can become a Founding Partner?',
+    'p-who-text':'The Founding Partners programme is reserved for companies and professionals whose work, values and standards align with the Bunkaio universe. We are particularly looking for:',
     'p-list-1':'Portrait & lifestyle — hairstylists, make-up artists, image coaches, wellness studios, studios',
     'p-list-2':'Fashion & models — designers, model agencies, stylists, jewellers',
     'p-list-3':'Commercial & products — brands, artisans, cosmetics, restaurateurs, agencies',
@@ -528,7 +532,7 @@ const I18N = {
     'p-b3-title':'A privileged relationship.','p-b3-text':'Priority access to our schedule, preferential launch rates and a long-term working relationship.',
     'p-b4-title':'Belonging to an ecosystem.','p-b4-text':'Joining Bunkaio means entering a circle of professionals who share the same high standards, eye for detail and love of work well done.',
     'p-places':'Available places',
-    'p-places-text':'To preserve the quality of every collaboration, the number of founding partners is deliberately limited\u00a0: 10 places per universe (portrait & lifestyle, fashion & models, commercial & products, events, weddings & Lumen), for a maximum of <strong>60 founding partners</strong> nationwide.',
+    'p-places-text':'To preserve the quality of every collaboration, the number of founding partners is deliberately limited: 10 places per universe (portrait & lifestyle, fashion & models, commercial & products, events, weddings & Lumen), for a maximum of <strong>60 founding partners</strong> nationwide.',
     'p-places-note':'Once this quota is reached, new applications will be placed on a waiting list.',
     'p-process':'The selection process',
     'p-step1':'<strong>Step 1 — Presenting your project.</strong> The candidate completes the Bunkaio questionnaire and presents their activity, their work, their goals and their universe.',
@@ -554,7 +558,7 @@ const I18N = {
     'apply-btn':'Send my application',
     'apply-success-title':'Application sent',
     'apply-success-text':'Thank you for your application. We\'re reviewing it as part of our selection process and will get back to you within 5 working days.',
-    'partner-redirect-title':'Are you also a professional whose work deserves to be told ?',
+    'partner-redirect-title':'Are you also a professional whose work deserves to be told?',
     'partner-redirect-text':'Every year BUNKAIO selects a limited number of Founding Partners — portrait, fashion, commercial, events, weddings. Discover the programme and apply.',
     'partner-redirect-btn':'Discover the partner programme',
     'collab-title':'Propose a collaboration',
@@ -578,11 +582,11 @@ const I18N = {
     'tab-client':'Client','tab-partner':'Partner',
     'login-code':'Access code *','login-btn':'Sign in',
     'login-error':'Account not found. Please check your email and access code, or create an account below.',
-    'login-no-account':'No account yet\u00a0?','login-create':'Create an account',
+    'login-no-account':'No account yet?','login-create':'Create an account',
     'register-info':'Fill in this form: your request is sent to us directly and you will receive your <strong>personal access code by email within 24 hours</strong>.',
     'register-activity':'Your business *','register-btn':'Request my access',
     'register-error':'Please fill in all required fields.',
-    'register-has-account':'Already have an account\u00a0?','register-login':'Sign in',
+    'register-has-account':'Already have an account?','register-login':'Sign in',
     'register-success-title':'Request sent',
     'register-success-text':'Your account request has been sent successfully. You will receive your personal access code by email within 24 hours.',
     'logout':'Sign out',
@@ -593,13 +597,13 @@ const I18N = {
     'acc-subs-discover-btn':'Discover Studio Continu',
     'acc-subs-since':'Subscribed since','acc-subs-next':'Next invoice on','acc-subs-month':'/month',
     'acc-subs-included':'Included this month','acc-subs-usage':'Current month usage',
-    'acc-subs-manage-title':'Need to adjust your subscription ?',
+    'acc-subs-manage-title':'Need to adjust your subscription?',
     'acc-subs-manage-text':'Pause, cancel or change plan — write to us directly.',
     'acc-subs-manage-btn':'Write to us',
-    'acc-subs-upsell-title':'A one-off project alongside your subscription ?',
+    'acc-subs-upsell-title':'A one-off project alongside your subscription?',
     'acc-subs-upsell-text':'Your add-ons are billed at partner rate (-20%).',
     'acc-subs-upsell-btn':'Estimate a project',
-    'acc-upsell-title':'A new project in mind ?',
+    'acc-upsell-title':'A new project in mind?',
     'acc-upsell-text':'Estimate your next project in a few minutes.',
     'acc-upsell-btn':'Estimate my project',
     'acc-moodboards':'My moodboards',
@@ -675,7 +679,7 @@ const I18N = {
     'lr-text':'Your deliverables are hosted on Adobe Lightroom. Sign in with the credentials provided to you to view and download your images.',
     'lr-btn':'Go to Lightroom',
     'acc-step-devis':'Quote confirmed','acc-step-shoot':'Shoot scheduled','acc-step-post':'Post-production','acc-step-livre':'Delivered',
-    'acc-help-title':'Any question about your project ?','acc-help-sub':'Your BUNKAIO contact replies to you directly.','acc-help-btn':'Write to us',
+    'acc-help-title':'Any question about your project?','acc-help-sub':'Your BUNKAIO contact replies to you directly.','acc-help-btn':'Write to us',
     'acc-info-address':'Billing address — optional',
     'acc-info-not-set':'Not provided',
     'acc-info-edit-btn':'Edit my information',
@@ -685,7 +689,7 @@ const I18N = {
     'acc-info-success-title':'Changes saved',
     'acc-info-success-text':'Your information has been updated.',
     'comm-kicker':'Going further',
-    'comm-title':'Need support with your digital communication\u00a0?',
+    'comm-title':'Need support with your digital communication?',
     'comm-text':'Our partner Agency Nascimento supports BUNKAIO clients beyond imagery: website creation, search engine optimisation (SEO), online advertising (SEA, Ads), social media strategy and data analysis.',
     'comm-check':'I may be interested',
     'comm-redirect-title':'Your digital communication, with our partner',
@@ -744,6 +748,7 @@ function updateLang(){
     const key = el.getAttribute('data-lang');
     if (I18N[LANG][key] !== undefined) el.innerHTML = I18N[LANG][key];
   });
+  document.querySelectorAll('[data-lang-aria]').forEach(el => { const v = I18N[LANG][el.getAttribute('data-lang-aria')]; if (v) el.setAttribute('aria-label', v); });
   document.documentElement.lang = LANG;
   applySeoMeta(currentView, currentSub);
   document.querySelectorAll('.lang-toggle').forEach(el => el.textContent = LANG === 'fr' ? 'EN' : 'FR');
@@ -832,6 +837,7 @@ function refreshDynamic(){
   if (currentView === 'advice') renderAdvicePage();
   if (currentView === 'discover') renderDiscoverPage();
   renderAdviceTeaser();
+  refreshCatShowcase();
   renderSvcAssure();
   renderCats();
   renderMissionServices();
@@ -1018,7 +1024,7 @@ const CATS = [
   { id:'lumen',
     lumen: true,
     name:{fr:'Lumen', en:'Lumen'},
-    tag:{fr:'Photobooth IA — mariages haut de gamme', en:'IA Photobooth — luxury weddings'},
+    tag:{fr:'Photobooth IA — mariages haut de gamme', en:'AI Photobooth — luxury weddings'},
     pitch:{fr:'Un souvenir unique, généré par IA en quelques secondes, sans jamais sacrifier l\'élégance de votre réception. Vos invités repartent avec bien plus qu\'une photo.',
       en:'A one-of-a-kind keepsake, AI-generated in seconds, without ever compromising the elegance of your event. Your guests leave with far more than a photo.'},
     icon:'lumen',
@@ -1111,7 +1117,7 @@ const LUMEN_TIERS = [
     delay:{fr:'7 jours ouvrés', en:'7 working days'},
     items:{
       fr:['Photobooth IA installé et opérationnel','Jusqu\'à 4 heures de prestation','Impressions illimitées incluses','Galerie privée livrée sous 7 jours'],
-      en:['IA photobooth set up and ready','Up to 4 hours service','Unlimited prints included','Private gallery delivered within 7 days'] }
+      en:['AI photobooth set up and ready','Up to 4 hours service','Unlimited prints included','Private gallery delivered within 7 days'] }
   },
   { id:'sig',  name:{fr:'Signature',  en:'Signature'},
     badge:{fr:'Le plus choisi', en:'Most popular'},
@@ -1119,7 +1125,7 @@ const LUMEN_TIERS = [
     delay:{fr:'5 jours ouvrés', en:'5 working days'},
     items:{
       fr:['Photobooth IA installé et opérationnel','Jusqu\'à 6 heures de prestation','Style personnalisé (fond, habillage, palette)','Impressions illimitées incluses','Galerie privée livrée sous 5 jours'],
-      en:['IA photobooth set up and ready','Up to 6 hours service','Custom style (backdrop, branding, palette)','Unlimited prints included','Private gallery delivered within 5 days'] }
+      en:['AI photobooth set up and ready','Up to 6 hours service','Custom style (backdrop, branding, palette)','Unlimited prints included','Private gallery delivered within 5 days'] }
   },
   { id:'surm', name:{fr:'Sur-mesure', en:'Bespoke'},
     badge:{fr:'Entièrement personnalisé', en:'Fully bespoke'},
@@ -1134,7 +1140,7 @@ const LUMEN_TIERS = [
 const LUMEN_PROFILES = [
   { id:'mariage', name:{fr:'Mariage',                       en:'Wedding'},               icon:'couple',
     desc:{fr:'Vous préparez votre mariage et souhaitez offrir une expérience mémorable à vos invités. Lumen installe un photobooth IA élégant et discret, adapté à l\'ambiance de votre réception.',
-          en:'You are planning your wedding and want to offer your guests a memorable experience. Lumen sets up an elegant, discreet IA photobooth suited to your reception atmosphere.'} },
+          en:'You are planning your wedding and want to offer your guests a memorable experience. Lumen sets up an elegant, discreet AI photobooth suited to your reception atmosphere.'} },
   { id:'wedding-planner', name:{fr:'Wedding planner / agence', en:'Wedding planner / agency'}, icon:'agency',
     desc:{fr:'Vous organisez des mariages pour le compte de vos clients. Lumen s\'intègre à votre offre premium comme une option haut de gamme, sans contrainte logistique pour vous.',
           en:'You organise weddings on behalf of your clients. Lumen integrates into your premium offering as a high-end option, with no logistical burden on your side.'} },
@@ -2651,7 +2657,7 @@ function goToProcess(){
 const SERVICE_COPY = {
   'photo-part': {
     lead:{fr:'BUNKAIO réalise des séances photo portrait et lifestyle pour les particuliers à Béziers, Montpellier et Toulouse : en extérieur ou en studio, en solo, en couple ou en groupe. Nous vous mettons en confiance et vous guidons sur les poses pour que les images vous ressemblent. La séance peut aussi servir un usage professionnel (<a href="/services/portrait-professionnel-corporate/" data-nav="service:corporate">portraits corporate pour LinkedIn, site ou équipe</a>), et nous vous aidons à <a href="/conseils/lieux-seance-photo-montpellier-beziers-toulouse/" data-nav="article:lieux-seance-photo-montpellier-beziers-toulouse">choisir le lieu</a> selon l\'ambiance recherchée.',
-          en:'BUNKAIO shoots portrait and lifestyle sessions for individuals in Béziers, Montpellier and Toulouse: outdoors or in the studio, solo, as a couple or in a group. We put you at ease and guide your poses so the images look like you. A session can also serve a professional purpose (profile, website or team portraits).'},
+          en:'BUNKAIO shoots portrait and lifestyle sessions for individuals in Béziers, Montpellier and Toulouse: outdoors or in the studio, solo, as a couple or in a group. We put you at ease and guide your poses so the images look like you. A session can also serve a professional purpose (<a href="/services/portrait-professionnel-corporate/" data-nav="service:corporate">corporate portraits for LinkedIn, your website or your team</a>), and we help you <a href="/conseils/lieux-seance-photo-montpellier-beziers-toulouse/" data-nav="article:lieux-seance-photo-montpellier-beziers-toulouse">choose the location</a> to suit the mood you want.'},
     choose:[
       {fr:'pour un portrait ciblé, par exemple une photo de profil : 1 h de séance et 8 photos retouchées.', en:'for a targeted portrait, such as a profile photo: a 1-hour session and 8 retouched photos.'},
       {fr:'pour varier les poses et les cadrages : 2 h de séance, 15 photos retouchées et direction de pose.', en:'to vary poses and framing: a 2-hour session, 15 retouched photos and posing guidance.'},
@@ -2661,7 +2667,7 @@ const SERVICE_COPY = {
   },
   'corporate': {
     lead:{fr:'BUNKAIO réalise des portraits professionnels pour les dirigeants, les indépendants, les entrepreneurs et les équipes à Béziers, Montpellier et Toulouse : photo de profil LinkedIn, site web, présentation d\'équipe, communication. La séance se fait en extérieur ou en studio, avec une direction de pose pour des images naturelles. Pour une équipe, précisez le nombre de personnes dans votre demande ; pour bien vous préparer, voir <a href="/conseils/portrait-professionnel-photo-profil-linkedin/" data-nav="article:portrait-professionnel-photo-profil-linkedin">comment réussir son portrait professionnel</a>.',
-          en:'BUNKAIO shoots professional portraits for executives, freelancers, entrepreneurs and teams in Béziers, Montpellier and Toulouse: LinkedIn profile photo, website, team presentation, communication. Sessions are outdoors or in the studio, with posing guidance for natural images. For a team, state the number of people in your request.'},
+          en:'BUNKAIO shoots professional portraits for executives, freelancers, entrepreneurs and teams in Béziers, Montpellier and Toulouse: LinkedIn profile photo, website, team presentation, communication. Sessions are outdoors or in the studio, with posing guidance for natural images. For a team, state the number of people in your request; to prepare, see <a href="/conseils/portrait-professionnel-photo-profil-linkedin/" data-nav="article:portrait-professionnel-photo-profil-linkedin">how to get a great professional portrait</a>.'},
     choose:[
       {fr:'pour une photo de profil ou de signature de mail : 1 h de séance et 8 photos retouchées.', en:'for a profile or email-signature photo: a 1-hour session and 8 retouched photos.'},
       {fr:'pour varier les cadrages (profil, site, presse) : 2 h de séance, 15 photos retouchées et direction de pose.', en:'to vary framing (profile, website, press): a 2-hour session, 15 retouched photos and posing guidance.'},
@@ -2671,7 +2677,7 @@ const SERVICE_COPY = {
   },
   'mode': {
     lead:{fr:'BUNKAIO photographie la mode pour les marques, les créateurs, les agences et les mannequins : lookbooks, visuels e-commerce et books, avec direction artistique. Pour présenter un profil à une agence, la formule <a href="/conseils/polas-mannequin-digitals-agence/" data-nav="article:polas-mannequin-digitals-agence">Polas</a> propose des photos brutes en studio ; les modèles et mannequins qui veulent des images régulières peuvent opter pour l\'abonnement Studio Continu. Séances à Béziers, Montpellier et Toulouse.',
-          en:'BUNKAIO shoots fashion for brands, designers, agencies and models: lookbooks, e-commerce visuals and portfolios, with art direction. To present a profile to an agency, the Polas package offers raw studio photos; models who want regular images can choose the Studio Continu subscription. Sessions in Béziers, Montpellier and Toulouse.'},
+          en:'BUNKAIO shoots fashion for brands, designers, agencies and models: lookbooks, e-commerce visuals and portfolios, with art direction. To present a profile to an agency, the <a href="/conseils/polas-mannequin-digitals-agence/" data-nav="article:polas-mannequin-digitals-agence">Polas</a> package offers raw studio photos; models who want regular images can choose the Studio Continu subscription. Sessions in Béziers, Montpellier and Toulouse.'},
     choose:[
       {fr:'pour une première série sur un produit ou une silhouette : mini-série de 8 photos.', en:'for a first series on one product or silhouette: a mini-series of 8 photos.'},
       {fr:'pour un lookbook de 20 photos accompagné d\'un Reel vertical pour les réseaux.', en:'for a 20-photo lookbook with a vertical Reel for social media.'},
@@ -2681,7 +2687,7 @@ const SERVICE_COPY = {
   },
   'commercial': {
     lead:{fr:'BUNKAIO réalise des packshots et des photos de produits pour les marques, les artisans, les entrepreneurs et les entreprises à Béziers, Montpellier et Toulouse. Le fond neutre convient aux fiches produit, la mise en scène aux réseaux et à la communication : voir <a href="/conseils/packshot-ou-mise-en-scene-photo-produit/" data-nav="article:packshot-ou-mise-en-scene-photo-produit">packshot ou mise en scène, comment choisir</a>, et notre <a href="/conseils/preparer-shooting-photo-produit/" data-nav="article:preparer-shooting-photo-produit">check-list pour préparer le shooting</a>.',
-          en:'BUNKAIO shoots packshots and product photos for brands, artisans, entrepreneurs and businesses in Béziers, Montpellier and Toulouse. A neutral backdrop suits product listings; styled setups suit social media and communication.'},
+          en:'BUNKAIO shoots packshots and product photos for brands, artisans, entrepreneurs and businesses in Béziers, Montpellier and Toulouse. A neutral backdrop suits product listings; styled setups suit social media and communication: see <a href="/conseils/packshot-ou-mise-en-scene-photo-produit/" data-nav="article:packshot-ou-mise-en-scene-photo-produit">packshot or styled shot, how to choose</a>, and our <a href="/conseils/preparer-shooting-photo-produit/" data-nav="article:preparer-shooting-photo-produit">checklist to prepare the shoot</a>.'},
     choose:[
       {fr:'pour quelques produits sur fond neutre, adaptés aux fiches produit : jusqu\'à 5 produits, 10 photos.', en:'for a few products on a neutral backdrop, suited to product listings: up to 5 products, 10 photos.'},
       {fr:'pour mettre en scène vos produits : jusqu\'à 12 produits, 20 photos.', en:'to style your products: up to 12 products, 20 photos.'},
@@ -2691,7 +2697,7 @@ const SERVICE_COPY = {
   },
   'event': {
     lead:{fr:'BUNKAIO couvre en photo les événements — domaines, entreprises, réceptions — à Béziers, Montpellier et Toulouse, avec discrétion pour que vous puissiez vivre la journée. La couverture se choisit selon la durée : 2 h pour l\'essentiel, 4 h pour l\'ambiance, ou l\'événement complet. Pour comparer les prestataires, voir <a href="/conseils/choisir-photographe-evenementiel/" data-nav="article:choisir-photographe-evenementiel">comment choisir son photographe d\'événement</a> ; pour un mariage ou une réception, le photobooth <a href="/services/photobooth-ia-mariage-lumen/" data-nav="service:lumen">Lumen</a> complète la couverture.',
-          en:'BUNKAIO covers events — estates, companies, receptions — in Béziers, Montpellier and Toulouse, discreetly so you can enjoy the day. Coverage is chosen by duration: 2 hours for the essentials, 4 hours for the atmosphere, or the full event.'},
+          en:'BUNKAIO covers events — estates, companies, receptions — in Béziers, Montpellier and Toulouse, discreetly so you can enjoy the day. Coverage is chosen by duration: 2 hours for the essentials, 4 hours for the atmosphere, or the full event. To compare providers, see <a href="/conseils/choisir-photographe-evenementiel/" data-nav="article:choisir-photographe-evenementiel">how to choose your event photographer</a>; for a wedding or reception, the <a href="/services/photobooth-ia-mariage-lumen/" data-nav="service:lumen">Lumen</a> photobooth complements the coverage.'},
     choose:[
       {fr:'pour les moments essentiels : couverture de 2 h et 20 photos.', en:'for the key moments: 2 hours of coverage and 20 photos.'},
       {fr:'pour les moments clés et l\'ambiance : couverture jusqu\'à 4 h et 40 photos.', en:'for key moments and atmosphere: up to 4 hours of coverage and 40 photos.'},
@@ -2701,7 +2707,7 @@ const SERVICE_COPY = {
   },
   'lumen': {
     lead:{fr:'Lumen est le photobooth IA de BUNKAIO pour les mariages et les événements haut de gamme : un souvenir généré par IA en quelques secondes pour chaque invité, avec impressions illimitées et galerie privée selon la formule. Pour bien le choisir : <a href="/conseils/photobooth-mariage-bien-choisir/" data-nav="article:photobooth-mariage-bien-choisir">les critères à comparer</a>.',
-          en:'Lumen is BUNKAIO\'s IA photobooth for weddings and high-end events: a keepsake generated by AI in seconds for each guest, with unlimited prints and a private gallery depending on the package.'}
+          en:'Lumen is BUNKAIO\'s AI photobooth for weddings and high-end events: a keepsake generated by AI in seconds for each guest, with unlimited prints and a private gallery depending on the package. To choose well: <a href="/conseils/photobooth-mariage-bien-choisir/" data-nav="article:photobooth-mariage-bien-choisir">the criteria to compare</a>.'}
   }
 };
 
@@ -2789,7 +2795,7 @@ function renderDiscoverPage(){
       <span>${t({fr:'Découvrir chaque prestation', en:'Explore each service'})}</span>
     </div>
     <h1 data-pageh1 class="page-title">${t({fr:'Découvrir chaque prestation', en:'Explore each service'})}</h1>
-    <p class="page-sub" data-tw data-tw-delay="200">${t({fr:'Portrait, corporate, mode, produit, événementiel et photobooth IA : une prestation pour chaque besoin, à Montpellier, Béziers et Toulouse. Ouvrez celle qui vous correspond.', en:'Portrait, corporate, fashion, product, events and IA photobooth: a service for every need, in Montpellier, Béziers and Toulouse. Open the one that suits you.'})}</p>
+    <p class="page-sub" data-tw data-tw-delay="200">${t({fr:'Portrait, corporate, mode, produit, événementiel et photobooth IA : une prestation pour chaque besoin, à Montpellier, Béziers et Toulouse. Ouvrez celle qui vous correspond.', en:'Portrait, corporate, fashion, product, events and AI photobooth: a service for every need, in Montpellier, Béziers and Toulouse. Open the one that suits you.'})}</p>
     <div class="svcp-cta-row">
       ${quizLink('', t({fr:'Estimer mon projet', en:'Estimate my project'}))}
       <a class="btn btn-ghost" href="/services/" data-nav="services"><span>${t({fr:'Voir les tarifs détaillés', en:'See detailed rates'})}</span></a>
@@ -2905,7 +2911,7 @@ function renderServicePage(catId){
     mode: {fr:'Exemple de photographie de mode réalisée par BUNKAIO', en:'Example of fashion photography by BUNKAIO'},
     commercial: {fr:'Exemple de photographie de produit réalisée par BUNKAIO', en:'Example of product photography by BUNKAIO'},
     event: {fr:'Exemple de reportage d\'événement réalisé par BUNKAIO', en:'Example of event photography by BUNKAIO'},
-    lumen: {fr:'Lumen, le photobooth IA de BUNKAIO pour mariages et événements', en:'Lumen, the BUNKAIO IA photobooth for weddings and events'}
+    lumen: {fr:'Lumen, le photobooth IA de BUNKAIO pour mariages et événements', en:'Lumen, the BUNKAIO AI photobooth for weddings and events'}
   };
   const svcPhoto = IMG.servicePhotos && IMG.servicePhotos[catId];
   const svcAlt = (IMG.serviceAlt && IMG.serviceAlt[catId]) || (SERVICE_ALT_DEFAULT[catId] ? t(SERVICE_ALT_DEFAULT[catId]) : '');
@@ -2982,10 +2988,12 @@ function renderServicePage(catId){
 }
 
 /* ═══════════════ CONSEILS PHOTO (config/articles.js) ═══════════════ */
-const ADVICE_NOTE = { fr: 'Articles rédigés en français.', en: 'Articles are written in French.' };
 function articlePath(slug){ const r = seoRouteFor('article', slug); return r ? r.path : '/conseils/'; }
 function fmtDate(iso){ return new Date(iso + 'T12:00:00').toLocaleDateString(LANG === 'en' ? 'en-GB' : 'fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }); }
-function adviceCard(a){
+/* Article dans la langue courante (textes anglais dans config/articles.en.js ; repli sur le français). */
+function artL(a){ return (LANG === 'en' && typeof ARTICLES_EN !== 'undefined' && ARTICLES_EN[a.slug]) ? Object.assign({}, a, ARTICLES_EN[a.slug]) : a; }
+function adviceCard(a0){
+  const a = artL(a0);
   return `<a class="advice-card" href="${articlePath(a.slug)}" data-nav="article:${a.slug}">
     <span class="advice-card-meta">${a.minutes} ${t({fr:'min de lecture', en:'min read'})}</span>
     <span class="advice-card-title">${a.h1}</span>
@@ -3021,7 +3029,7 @@ function renderAdvicePage(){
       <a href="/" data-nav="home">${t({fr:'Accueil', en:'Home'})}</a><span aria-hidden="true">›</span><span>${t({fr:'Conseils photo', en:'Photo advice'})}</span>
     </div>
     <h1 data-pageh1 class="page-title">${t({fr:'Conseils photo', en:'Photo advice'})}</h1>
-    <p class="page-sub">${t({fr:'Des guides pratiques pour préparer une séance portrait, choisir ses tenues, organiser un shooting produit, mode ou événementiel.', en:'Practical guides to prepare a portrait session, choose outfits, and plan a product, fashion or event shoot.'})}${LANG === 'en' ? ' ' + ADVICE_NOTE.en : ''}</p>
+    <p class="page-sub">${t({fr:'Des guides pratiques pour préparer une séance portrait, choisir ses tenues, organiser un shooting produit, mode ou événementiel.', en:'Practical guides to prepare a portrait session, choose outfits, and plan a product, fashion or event shoot.'})}</p>
     <section class="read-panel svcp-panel"><div class="advice-grid">${ARTICLES.map(a => adviceCard(a)).join('')}</div></section>`;
 }
 /* Illustrations des articles : pictogrammes au trait aux couleurs du site, choisis selon le sujet de chaque section. */
@@ -3084,14 +3092,15 @@ const ART_ALT = {
   mode: {fr:'Exemple de photographie de mode réalisée par BUNKAIO', en:'Example of fashion photography by BUNKAIO'},
   commercial: {fr:'Exemple de photographie de produit réalisée par BUNKAIO', en:'Example of product photography by BUNKAIO'},
   event: {fr:'Exemple de reportage d\'événement réalisé par BUNKAIO', en:'Example of event photography by BUNKAIO'},
-  lumen: {fr:'Lumen, le photobooth IA de BUNKAIO', en:'Lumen, the BUNKAIO IA photobooth'}
+  lumen: {fr:'Lumen, le photobooth IA de BUNKAIO', en:'Lumen, the BUNKAIO AI photobooth'}
 };
 
 function renderArticlePage(slug){
   const el = document.getElementById('articlePageContent');
   if (!el || typeof ARTICLES === 'undefined') return;
-  const a = ARTICLES.find(x => x.slug === slug);
-  if (!a) { el.innerHTML = ''; return; }
+  const a0 = ARTICLES.find(x => x.slug === slug);
+  if (!a0) { el.innerHTML = ''; return; }
+  const a = artL(a0);
   const related = (a.related || []).map(sl => ARTICLES.find(x => x.slug === sl)).filter(Boolean);
   const cat = a.cat ? CATS.find(c => c.id === a.cat) : null;
   const heroSrc = IMG.servicePhotos && IMG.servicePhotos[a.cat];
@@ -3299,7 +3308,7 @@ const PROCESS_STEPS = {
     { title:'Getting in touch',            text:'We get back to you within 48 working hours to discuss your project.', badge:'Within 48h' },
     { title:'Personalised proposal',       text:'We send you a proposal tailored to your needs and your budget.' },
     { title:'Deposit & booking confirmed', text:'A 30% deposit secures the booking of your session date.', badge:'30% deposit' },
-    { title:'Your moodboard',              text:'In your client space, you share your vision — art direction, mood, inspirations — so we arrive on the day perfectly aligned with your project.', badge:'Optional' },
+    { title:'Your moodboard',              text:'In your client area, you share your vision — art direction, mood, inspirations — so we arrive on the day perfectly aligned with your project.', badge:'Optional' },
     { title:'Session & delivery',          text:'After the shoot, the remaining 70% is due on delivery of your order. File access opens as soon as payment is received.', badge:'70% balance' },
   ]
 };
@@ -5324,6 +5333,15 @@ function renderCommBox(){
    navigateur via scroll-snap — le même mécanisme fiable que n'importe
    quel carrousel "stories" sur mobile. */
 let _catShowcaseInit = false;
+/* Met à jour les textes du carrousel d'accueil quand la langue change (les slides sont créées une seule fois). */
+function refreshCatShowcase(){
+  document.querySelectorAll('.cat-showcase-slide').forEach(sl => {
+    const cat = CATS.find(c => c.id === sl.dataset.cat); if (!cat) return;
+    const n = sl.querySelector('.cat-showcase-name'), g = sl.querySelector('.cat-showcase-tag'), b = sl.querySelector('.hero-start span');
+    if (n) n.textContent = t(cat.name); if (g) g.textContent = t(cat.tag);
+    if (b) b.textContent = t({fr:'Découvrir cette prestation', en:'Discover this service'});
+  });
+}
 function initCatShowcase(){
   const root = document.getElementById('catShowcase');
   const track = document.getElementById('catShowcaseTrack');
@@ -5751,7 +5769,7 @@ function renderFaqAccordion(){
     { title:'Comment devenir partenaire, et que propose l\'espace partenaire ?', body:`<p>Candidatez depuis la page <strong>Partenariat et collaboration</strong> : réponse personnalisée sous 5 jours ouvrés. Une fois admis, votre espace partenaire vous donne <strong>-20 % permanent</strong> sur le catalogue, des promotions, des <strong>missions collaboratives rémunérées</strong> que vous acceptez ou déclinez en un clic, et l'accès au réseau de professionnels. Vous choisissez d'être référencé·e ou non dans l'annuaire.</p>` },
     { title:'Qu\'est-ce que Lumen by Bunkaio ?', body:`<p>Lumen est le photobooth IA de Bunkaio, conçu pour les mariages haut de gamme et les événements : il offre aux invités une expérience mémorable et aux mariés des souvenirs durables. Trois formules — Essentiel, Signature et Sur-mesure — selon la durée et la personnalisation souhaitées.</p>` },
   ] : [
-    { title:'What services do you offer?', body:`<p>Bunkaio is a professional photographer: we produce premium, high-definition images for <strong>portrait & lifestyle</strong>, <strong>fashion, agencies and models</strong>, <strong>commercial & products</strong>, <strong>events</strong>, and <strong>Lumen</strong>, the IA photobooth for weddings. Each universe has its packages detailed in our <strong>catalogue & rates</strong>.</p>` },
+    { title:'What services do you offer?', body:`<p>Bunkaio is a professional photographer: we produce premium, high-definition images for <strong>portrait & lifestyle</strong>, <strong>fashion, agencies and models</strong>, <strong>commercial & products</strong>, <strong>events</strong>, and <strong>Lumen</strong>, the AI photobooth for weddings. Each universe has its packages detailed in our <strong>catalogue & rates</strong>.</p>` },
     { title:'What is the quality of the delivered images?', body:`<p><strong>High-definition, carefully retouched</strong> photos, ready to publish or print. They are delivered in a <strong>private gallery</strong> you can download from your client area, with commercial usage rights.</p>` },
     { title:'How does a project run, from request to delivery?', body:`<p>Four simple steps: a personalised <strong>quote</strong> within 48h, the <strong>shoot</strong> on the agreed date, <strong>post-production</strong> (selection, retouching, editing), then <strong>delivery</strong> via your client area. Full details are under the "Quote & process" tab on the Services page.</p>` },
     { title:'I\'m not comfortable in front of the camera — is that a problem?', body:`<p>Not at all: it's our job to put you at ease. We guide you on poses and mood so the photos truly look like you. To get ready, see our guide <a href="/conseils/preparer-seance-photo-portrait/" data-nav="article:preparer-seance-photo-portrait">Preparing your portrait photo session</a> (in French).</p>` },
@@ -5764,7 +5782,7 @@ function renderFaqAccordion(){
     { title:'Are my details and images safe?', body:`<p>Your space is protected by your email and a <strong>personal access code</strong>, stored in encrypted form. Your data is only used to carry out your project, and your visuals are delivered in a private gallery. Details are in the "Privacy policy" tab.</p>` },
     { title:'Where do you work?', body:`<p>BUNKAIO is based in <strong>Montpellier</strong> and travels to <strong>Montpellier, Béziers and Toulouse</strong>, and more broadly across Occitanie. Travel is free in Montpellier and Béziers; it is charged in Toulouse and in any other city in France (quoted by distance).</p>` },
     { title:'How do I become a partner, and what does the partner area offer?', body:`<p>Apply from the <strong>Partnership & collaboration</strong> page: a personal reply within 5 working days. Once admitted, your partner area gives you a <strong>permanent 20% discount</strong> on the catalogue, promotions, <strong>paid collaborative missions</strong> you accept or decline in one click, and access to the professional network. You choose whether to be listed in the directory.</p>` },
-    { title:'What is Lumen by Bunkaio?', body:`<p>Lumen is Bunkaio's IA photobooth, designed for luxury weddings and events: it gives guests a memorable experience and couples lasting memories. Three packages — Essentials, Signature and Bespoke — depending on duration and customisation.</p>` },
+    { title:'What is Lumen by Bunkaio?', body:`<p>Lumen is Bunkaio's AI photobooth, designed for luxury weddings and events: it gives guests a memorable experience and couples lasting memories. Three packages — Essentials, Signature and Bespoke — depending on duration and customisation.</p>` },
   ];
   renderAccordionInto('faqAccordion', sections, { exclusive: true });
 }
