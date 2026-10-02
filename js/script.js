@@ -3001,7 +3001,7 @@ function renderAccSubs(){
         </div>
         <div style="text-align:right">
           <span class="status-pill ${statusClass(sub.statut)}" style="margin-bottom:10px;display:inline-block">${sub.statut || '—'}</span>
-          <div class="acc-sub-price">${plan.price}€<small>${I18N[LANG]['acc-subs-month']}</small></div>
+          <div class="acc-sub-price">${pp(plan.price)}€<small>${I18N[LANG]['acc-subs-month']}</small></div>
         </div>
       </div>
       <div class="acc-sub-section-title">${I18N[LANG]['acc-subs-included']}</div>
@@ -4316,19 +4316,124 @@ function setPartnersTab(tab){
 }
 
 /* ═══════════════ ACCORDÉON PARTENAIRES ═══════════════ */
+/* ═══════════════ PAGE PARTENAIRES — ARGUMENTAIRE ═══════════════
+   Bloc d'accroche au-dessus de l'accordéon : proposition de valeur,
+   chiffres clés, avantages concrets, univers et parcours. Les chiffres
+   (-20%, 60 places) viennent de PARTNER_DISCOUNT / du texte du
+   programme ; l'exemple de prix est calculé depuis CATS. */
+function renderPartnersPitch(){
+  const el = document.getElementById('partnersPitch');
+  if (!el) return;
+  const ex = CATS.find(c => c.id === 'commercial');
+  const exPrice = ex && ex.tiers && ex.tiers.sig && ex.tiers.sig.price;
+  const benefits = [
+    { n:'01', icon:'<path d="M12 3l2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.6 6.6 19.5l1.2-6L3.3 9.3l6.1-.7z"/>',
+      title:{fr:'Une mise en lumière éditoriale', en:'An editorial spotlight'},
+      text:{fr:'Votre savoir-faire n\'est pas vendu comme une prestation : il est raconté. Un récit visuel signé Bunkaio, publié et durable.', en:'Your craft isn\'t sold as a service: it is told. A visual story signed by Bunkaio, published and lasting.'} },
+    { n:'02', icon:'<path d="M5 19 19 5"/><circle cx="7" cy="7" r="2.4"/><circle cx="17" cy="17" r="2.4"/>', hl:'-' + PARTNER_DISCOUNT + '%',
+      title:{fr:'-' + PARTNER_DISCOUNT + '% sur tout le catalogue', en:'-' + PARTNER_DISCOUNT + '% across the catalogue'},
+      text:{fr:'Un tarif partenaire permanent sur chaque prestation Bunkaio, options et abonnements compris. Il s\'applique automatiquement à vos devis.', en:'A permanent partner rate on every Bunkaio service, add-ons and subscriptions included. It applies automatically to your quotes.'} },
+    { n:'03', icon:'<circle cx="12" cy="12" r="8.5"/><path d="M14.8 9.2c-.5-.8-1.5-1.2-2.8-1.2-1.6 0-2.7.8-2.7 2 0 3 5.6 1.4 5.6 4.2 0 1.2-1.1 2-2.9 2-1.4 0-2.5-.5-3-1.4M12 6.5V8m0 8v1.5"/>',
+      title:{fr:'Des missions collaboratives rémunérées', en:'Paid collaborative missions'},
+      text:{fr:'Selon votre métier, Bunkaio vous sollicite sur des projets clients. Vous acceptez ou déclinez, depuis votre espace, en un clic.', en:'Depending on your trade, Bunkaio calls on you for client projects. You accept or decline from your space in one click.'} },
+    { n:'04', icon:'<circle cx="12" cy="12" r="3"/><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/>',
+      title:{fr:'Une visibilité renforcée', en:'Enhanced visibility'},
+      text:{fr:'Présence privilégiée sur le site Bunkaio, les réseaux sociaux et les futurs supports éditoriaux de la marque.', en:'A privileged presence on the Bunkaio website, social channels and the brand\'s future editorial publications.'} },
+    { n:'05', icon:'<circle cx="6" cy="7" r="2.4"/><circle cx="18" cy="7" r="2.4"/><circle cx="12" cy="18" r="2.4"/><path d="M8 8.5l3 7M16 8.5l-3 7M8.4 7h7.2"/>',
+      title:{fr:'Un réseau de professionnels', en:'A professional network'},
+      text:{fr:'Un annuaire de partenaires triés sur le volet et des mises en relation par l\'équipe : traiteurs, lieux, architectes, artisans.', en:'A directory of hand-picked partners and introductions by the team: caterers, venues, architects, craftspeople.'} },
+    { n:'06', icon:'<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 9.5h16M9.5 9.5V20"/>',
+      title:{fr:'Un espace partenaire dédié', en:'A dedicated partner space'},
+      text:{fr:'Vos promotions, votre réseau, vos collaborations et vos moodboards au même endroit. Plus un accès prioritaire à nos disponibilités.', en:'Your promotions, network, collaborations and moodboards in one place. Plus priority access to our schedule.'} },
+  ];
+  const universes = [
+    { id:'architecture', name:{fr:'Architecture & habitat', en:'Architecture & living'}, who:{fr:'Architectes, architectes d\'intérieur, constructeurs, promoteurs', en:'Architects, interior architects, builders, developers'} },
+    { id:'amenagement', name:{fr:'Aménagement & design', en:'Fittings & design'}, who:{fr:'Cuisinistes, agenceurs, paysagistes, piscinistes', en:'Kitchen specialists, fitters, landscapers, pool builders'} },
+    { id:'artisanat', name:{fr:'Artisanat d\'exception', en:'Exceptional craftsmanship'}, who:{fr:'Artisans d\'art, ébénistes, céramistes, joailliers', en:'Master artisans, cabinetmakers, ceramicists, jewellers'} },
+    { id:'marques', name:{fr:'Marques & lifestyle', en:'Brands & lifestyle'}, who:{fr:'Créateurs, marques premium, cosmétique, déco', en:'Designers, premium brands, cosmetics, home'} },
+    { id:'evenementiel', name:{fr:'Événementiel & lieux', en:'Events & venues'}, who:{fr:'Domaines, lieux de réception, traiteurs, fleuristes', en:'Estates, venues, caterers, florists'} },
+  ];
+  const steps = [
+    { n:'1', title:{fr:'Candidatez', en:'Apply'}, text:{fr:'Présentez votre activité et vos réalisations.', en:'Present your business and your work.'} },
+    { n:'2', title:{fr:'Étude', en:'Review'}, text:{fr:'Réponse personnalisée sous 5 jours ouvrés.', en:'A personal reply within 5 working days.'} },
+    { n:'3', title:{fr:'Choisissez votre statut', en:'Pick your status'}, text:{fr:'Sélectionnez votre type de prestataire dans votre espace.', en:'Select your provider type in your space.'} },
+    { n:'4', title:{fr:'Profitez', en:'Benefit'}, text:{fr:'Tarif partenaire, missions, visibilité, réseau.', en:'Partner rate, missions, visibility, network.'} },
+  ];
+  const svg = d => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
+
+  el.innerHTML = `
+    <section class="pp-hero rv">
+      <div class="pp-kicker">${t({fr:'Programme Partenaires Fondateurs · 60 places', en:'Founding Partners Programme · 60 places'})}</div>
+      <h2 class="pp-title">${t({fr:'Votre savoir-faire mérite mieux qu\'une simple prestation.', en:'Your craft deserves more than a simple service.'})}</h2>
+      <p class="pp-lead">${t({fr:'Rejoignez le cercle restreint des professionnels que Bunkaio met en lumière. Une mise en valeur éditoriale, un tarif partenaire permanent, des missions rémunérées et un réseau d\'exception.', en:'Join the select circle of professionals Bunkaio puts in the spotlight. Editorial storytelling, a permanent partner rate, paid missions and an exceptional network.'})}</p>
+      <div class="pp-cta-row">
+        <button class="partner-cta-btn" onclick="goView('partners','apply')">${t({fr:'Candidater', en:'Apply'})}</button>
+        <a class="pp-ghost" href="#pp-benefits" onclick="event.preventDefault();document.getElementById('pp-benefits').scrollIntoView({behavior:'smooth'})">${t({fr:'Découvrir les avantages', en:'See the benefits'})}</a>
+      </div>
+      <div class="pp-stats">
+        <div><div class="pp-stat-num">-${PARTNER_DISCOUNT}%</div><div class="pp-stat-label">${t({fr:'permanent sur le catalogue', en:'permanent on the catalogue'})}</div></div>
+        <div><div class="pp-stat-num">60</div><div class="pp-stat-label">${t({fr:'partenaires fondateurs maximum', en:'founding partners maximum'})}</div></div>
+        <div><div class="pp-stat-num">5</div><div class="pp-stat-label">${t({fr:'univers · 10 places chacun', en:'universes · 10 places each'})}</div></div>
+        <div><div class="pp-stat-num">€</div><div class="pp-stat-label">${t({fr:'missions rémunérées', en:'paid missions'})}</div></div>
+      </div>
+    </section>
+
+    <section class="pp-section rv" id="pp-benefits">
+      <div class="pp-section-label">${t({fr:'Ce que vous obtenez', en:'What you get'})}</div>
+      <h3 class="pp-h3">${t({fr:'Six avantages concrets, dès votre admission.', en:'Six concrete benefits from the day you are admitted.'})}</h3>
+      <div class="pp-benefits">
+        ${benefits.map(b => `
+          <div class="pp-benefit">
+            <div class="pp-benefit-top"><span class="pp-benefit-icon">${svg(b.icon)}</span><span class="pp-benefit-num">${b.n}</span></div>
+            <div class="pp-benefit-title">${t(b.title)}</div>
+            <div class="pp-benefit-text">${t(b.text)}</div>
+          </div>`).join('')}
+      </div>
+      ${exPrice ? `
+      <div class="pp-example">
+        <div class="pp-example-label">${t({fr:'Un exemple concret', en:'A concrete example'})}</div>
+        <div class="pp-example-body">
+          <div>${t({fr:'Pack Signature — Commercial & produits', en:'Signature package — Commercial & products'})}</div>
+          <div class="pp-example-prices"><span class="pt-price-old">${eur(exPrice)} ${t({fr:'HT', en:'excl. VAT'})}</span><strong>${eur(partnerPrice(exPrice))} ${t({fr:'HT', en:'excl. VAT'})}</strong><em>${t({fr:'vous économisez', en:'you save'})} ${eur(exPrice - partnerPrice(exPrice))}</em></div>
+        </div>
+      </div>` : ''}
+    </section>
+
+    <section class="pp-section rv">
+      <div class="pp-section-label">${t({fr:'Pour qui', en:'Who it is for'})}</div>
+      <h3 class="pp-h3">${t({fr:'Cinq univers, dix places chacun.', en:'Five universes, ten places each.'})}</h3>
+      <div class="pp-universes">
+        ${universes.map(u => `
+          <div class="pp-universe">
+            <div class="pp-universe-name">${t(u.name)}</div>
+            <div class="pp-universe-who">${t(u.who)}</div>
+            <div class="pp-universe-spots">${t({fr:'10 places', en:'10 places'})}</div>
+          </div>`).join('')}
+      </div>
+      <p class="pp-note">${t({fr:'Le programme n\'est pas ouvert à tous : chaque candidature est étudiée individuellement pour préserver la cohérence éditoriale de Bunkaio. Une fois les places pourvues, les nouvelles candidatures rejoignent une liste d\'attente.', en:'The programme is not open to everyone: each application is reviewed individually to preserve Bunkaio\'s editorial coherence. Once places are filled, new applications join a waiting list.'})}</p>
+    </section>
+
+    <section class="pp-section rv">
+      <div class="pp-section-label">${t({fr:'Comment ça marche', en:'How it works'})}</div>
+      <div class="pp-steps">
+        ${steps.map(st => `
+          <div class="pp-step"><div class="pp-step-num">${st.n}</div><div class="pp-step-title">${t(st.title)}</div><div class="pp-step-text">${t(st.text)}</div></div>`).join('')}
+      </div>
+    </section>`;
+}
+
 function renderPartnersAccordion(){
+  renderPartnersPitch();
   const el = document.getElementById('partnersAccordion');
   if (!el) return;
   const sections = LANG === 'fr' ? [
     { title:'Pourquoi Bunkaio existe', body:`<p>Nous vivons dans un monde où les contenus se multiplient, mais où les histoires se raréfient. Derrière chaque lieu, chaque objet et chaque réalisation se cache une histoire qui mérite d'être racontée.</p><p><strong>Nous ne documentons pas des projets. Nous révélons ce qui les rend uniques.</strong></p>` },
     { title:'Qui peut devenir Partenaire Fondateur ?', body:`<p>Le programme est réservé aux entreprises et professionnels dont les réalisations correspondent à l'univers Bunkaio.</p><ul class="ft-list" style="margin-top:18px"><li style="margin-bottom:12px">⊹ Architecture & habitat</li><li style="margin-bottom:12px">⊹ Aménagement & design</li><li style="margin-bottom:12px">⊹ Artisanat d'exception</li><li style="margin-bottom:12px">⊹ Marques & lifestyle</li><li>⊹ Événementiel & lieux</li></ul>` },
-    { title:'Les avantages du programme', body:`<div style="display:grid;grid-template-columns:1fr 1fr;gap:18px"><div class="cred-card"><div class="cred-num">01</div><div class="cred-title">Mise en lumière éditoriale</div><div class="cred-text">Votre activité racontée selon la méthode Bunkaio — Découverte, Vision, Défi, Savoir-Faire, Mon Regard, Révélation.</div></div><div class="cred-card"><div class="cred-num">02</div><div class="cred-title">Visibilité renforcée</div><div class="cred-text">Présence sur le site, les réseaux et les futurs supports éditoriaux de la marque.</div></div><div class="cred-card"><div class="cred-num">03</div><div class="cred-title">Relation privilégiée</div><div class="cred-text">Accès prioritaire aux disponibilités et offres préférentielles.</div></div><div class="cred-card"><div class="cred-num">04</div><div class="cred-title">Un écosystème</div><div class="cred-text">Un cercle de professionnels partageant l'exigence et l'amour du travail bien fait.</div></div></div>` },
     { title:'Les places disponibles', body:`<p>10 places par univers, soit un maximum de <strong>60 partenaires fondateurs</strong>. Une fois ce quota atteint, les nouvelles candidatures seront placées sur liste d'attente.</p>` },
     { title:'Le processus de sélection', body:`<div class="process-steps" style="margin-top:0"><div class="process-step"><div class="ps-num">01</div><div><div class="ps-title">Présentation</div><div class="ps-text">Compléter le questionnaire Bunkaio — activité, réalisations, objectifs.</div></div></div><div class="process-step"><div class="ps-num">02</div><div><div class="ps-title">Étude</div><div class="ps-text">Analyse selon la qualité des réalisations et la cohérence éditoriale.</div></div></div><div class="process-step"><div class="ps-num">03</div><div><div class="ps-title">Réponse</div><div class="ps-text">Sélectionné, compatible (ponctuel) ou réorienté selon les besoins.</div></div></div><div class="process-step" style="border-bottom:none"><div class="ps-num">04</div><div><div class="ps-title">Lancement</div><div class="ps-text">Onboarding personnalisé et feuille de route éditoriale.</div></div></div></div>` }
   ] : [
     { title:'Why Bunkaio exists', body:`<p>We live in a world where content keeps multiplying, yet stories are becoming rare. Behind every place, every object and every achievement lies a story that deserves to be told.</p><p><strong>We don't document projects. We reveal what makes them unique.</strong></p>` },
     { title:'Who can become a Founding Partner?', body:`<p>The programme is reserved for companies and professionals whose work aligns with the Bunkaio universe.</p><ul class="ft-list" style="margin-top:18px"><li style="margin-bottom:12px">⊹ Architecture & living</li><li style="margin-bottom:12px">⊹ Fittings & design</li><li style="margin-bottom:12px">⊹ Exceptional craftsmanship</li><li style="margin-bottom:12px">⊹ Brands & lifestyle</li><li>⊹ Events & venues</li></ul>` },
-    { title:'Programme benefits', body:`<div style="display:grid;grid-template-columns:1fr 1fr;gap:18px"><div class="cred-card"><div class="cred-num">01</div><div class="cred-title">An editorial spotlight</div><div class="cred-text">Your work told as a story — Discovery, Vision, Challenge, Craftsmanship, My Perspective, Revelation.</div></div><div class="cred-card"><div class="cred-num">02</div><div class="cred-title">Enhanced visibility</div><div class="cred-text">Privileged presence on the Bunkaio website, social channels and future publications.</div></div><div class="cred-card"><div class="cred-num">03</div><div class="cred-title">A privileged relationship</div><div class="cred-text">Priority scheduling and preferential rates.</div></div><div class="cred-card"><div class="cred-num">04</div><div class="cred-title">An ecosystem</div><div class="cred-text">A circle of professionals sharing the same high standards and love of work well done.</div></div></div>` },
     { title:'Available places', body:`<p>10 places per universe, for a maximum of <strong>60 founding partners</strong>. Once this quota is reached, new applications will be placed on a waiting list.</p>` },
     { title:'The selection process', body:`<div class="process-steps" style="margin-top:0"><div class="process-step"><div class="ps-num">01</div><div><div class="ps-title">Presentation</div><div class="ps-text">Complete the Bunkaio questionnaire — your activity, work, goals.</div></div></div><div class="process-step"><div class="ps-num">02</div><div><div class="ps-title">Review</div><div class="ps-text">Assessment based on quality of work and editorial fit.</div></div></div><div class="process-step"><div class="ps-num">03</div><div><div class="ps-title">Response</div><div class="ps-text">Selected, compatible (one-off), or redirected according to your needs.</div></div></div><div class="process-step" style="border-bottom:none"><div class="ps-num">04</div><div><div class="ps-title">Launch</div><div class="ps-text">Personalised onboarding and editorial roadmap.</div></div></div></div>` }
   ];
