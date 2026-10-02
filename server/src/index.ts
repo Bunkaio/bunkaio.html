@@ -509,6 +509,16 @@ async function findSeance(env: Env, email: string): Promise<{ date: string; heur
   }
 }
 
+/** Vrai si aucun lien Lightroom n'est saisi dans le compte du client : à la réception du solde il n'aurait pas son accès. */
+async function lightroomMissing(env: Env, email: string): Promise<boolean> {
+  try {
+    const account = (await getAccount(env, 'client', email)) ?? (await getAccount(env, 'partner', email));
+    return !account?.lightroomUrl;
+  } catch {
+    return true;
+  }
+}
+
 async function handleQuizLead(request: Request, env: Env, headers: Record<string, string>): Promise<Response> {
   if (request.method !== 'POST') {
     return jsonResponse({ ok: false, error: 'method_not_allowed' }, 405, headers);
@@ -658,7 +668,7 @@ async function handleCreateBalanceInvoice(request: Request, env: Env, headers: R
       });
       await sendEmail(env, body.email, subject, html, text);
       console.log('[create-balance-invoice] email envoyé au client');
-      return jsonResponse({ ok: true, ...result, emailSent: true }, 200, headers);
+      return jsonResponse({ ok: true, ...result, emailSent: true, lightroomMissing: await lightroomMissing(env, body.email) }, 200, headers);
     } catch (emailErr) {
       console.error("[create-balance-invoice] facture créée mais email non envoyé", emailErr);
       return jsonResponse({ ok: true, ...result, emailSent: false }, 200, headers);

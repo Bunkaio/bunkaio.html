@@ -96,6 +96,7 @@
     const description = document.getElementById('description').value.trim();
     const result = document.getElementById('result');
     const btn = document.getElementById(cfg.btnId);
+    if (kind === 'balance' && !window.confirm('Envoyer maintenant « Vos photos sont prêtes » avec la facture du solde ? À réserver au moment où la post-production est terminée.')) return;
 
     result.className = '';
 
@@ -122,7 +123,8 @@
 
       if (res.ok && data.ok && data.emailSent) {
         result.className = 'ok';
-        result.innerHTML = 'Facture envoyée par email au client.<br>Montant ' + cfg.amountLabel + ' : <strong>' + data[cfg.amountField] + '€</strong><br>Lien : <a href="' + data.hostedInvoiceUrl + '" target="_blank">' + data.hostedInvoiceUrl + '</a>';
+        const lrWarn = (kind === 'balance' && data.lightroomMissing) ? '<br><strong>⚠ Aucun lien Lightroom dans le compte de ce client</strong> : saisis-le dans Comptes avant qu\'il ne paie, sinon il ne recevra pas son accès (tu seras alerté).' : '';
+        result.innerHTML = 'Facture envoyée par email au client.<br>Montant ' + cfg.amountLabel + ' : <strong>' + data[cfg.amountField] + '€</strong><br>Lien : <a href="' + data.hostedInvoiceUrl + '" target="_blank">' + data.hostedInvoiceUrl + '</a>' + lrWarn;
       } else if (res.ok && data.ok && !data.emailSent) {
         result.className = 'err';
         result.innerHTML = 'Facture créée dans Stripe, mais l\'email n\'a pas pu être envoyé automatiquement.<br>Montant ' + cfg.amountLabel + ' : <strong>' + data[cfg.amountField] + '€</strong><br>Transmets ce lien toi-même au client : <a href="' + data.hostedInvoiceUrl + '" target="_blank">' + data.hostedInvoiceUrl + '</a>';
