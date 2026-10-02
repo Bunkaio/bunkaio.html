@@ -298,4 +298,4 @@ const DRONE_MEDIA = {
 };
 
 /* Lien « laisser un avis » de la fiche Google Business Profile (https://g.page/r/.../review). Vide = aucun bouton affiché. */
-const GOOGLE_REVIEW_URL = '';
+const GOOGLE_REVIEW_URL = 'https://g.page/r/CaRPlLV6GmYlECE/review';
