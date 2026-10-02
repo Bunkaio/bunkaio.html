@@ -26,7 +26,8 @@
 <meta name="twitter:image" content="https://bunkaio.com/images/og/services.jpg">
 <meta name="twitter:image:alt" content="Prestations photo et tarifs — BUNKAIO">
 
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='80' font-family='serif'>⊹</text></svg>">
+<link rel="icon" type="image/png" sizes="64x64" href="/images/favicon-64.png">
+<link rel="apple-touch-icon" href="/images/apple-touch-icon.png"><text y='0.9em' font-size='80' font-family='serif'>⊹</text></svg>">
 <link rel="preload" href="fonts/dm-sans-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="css/style.min.css?v=04952f0e">
 
@@ -40,8 +41,18 @@
       "name": "BUNKAIO",
       "alternateName": "Studio BUNKAIO",
       "url": "https://bunkaio.com/",
-      "logo": "https://bunkaio.com/images/logo.webp",
-      "image": "https://bunkaio.com/images/logo.webp",
+      "logo": {
+        "@type": "ImageObject",
+        "@id": "https://bunkaio.com/#logo",
+        "url": "https://bunkaio.com/images/logo-bunkaio-512.png",
+        "contentUrl": "https://bunkaio.com/images/logo-bunkaio-512.png",
+        "width": 512,
+        "height": 512,
+        "caption": "BUNKAIO"
+      },
+      "image": {
+        "@id": "https://bunkaio.com/#logo"
+      },
       "description": "BUNKAIO, photographe professionnel basé à Montpellier, mobile en Occitanie (Béziers, Montpellier, Toulouse) : portrait, mode, produit, corporate et événementiel, avec des images haut de gamme en HD.",
       "telephone": "+33758573161",
       "email": "contact@bunkaio.com",
@@ -302,7 +313,7 @@
 <nav>
   <div class="nav-inner">
     <div class="nav-brand" role="link" tabindex="0" aria-label="BUNKAIO — accueil" onclick="goView('home')" onkeydown="if(event.key==='Enter')goView('home')">
-      <img class="nav-logo-img" src="images/logo.webp" alt="Bunkaio"
+      <img class="nav-logo-img" src="images/logo.webp?v=2" alt="Bunkaio"
            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
       <div class="nav-logo-fallback">B ⊹</div>
       <div class="nav-studio">studio</div>
@@ -486,7 +497,7 @@
 
   <div class="testimonials-section">
     <div class="testi-heading rv">
-      <img class="testi-logo-img" src="images/logo.webp" alt="Bunkaio"
+      <img class="testi-logo-img" src="images/logo.webp?v=2" alt="Bunkaio"
            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
       <div class="testi-logo-fallback">B ⊹</div>
       <div class="testi-quote-mark">
@@ -774,7 +785,7 @@
         <div class="svc-cat-photo" id="svcCatPhoto" style="display:none">
           <img id="svcCatPhotoImg" alt="">
         </div>
-        <div class="services-grid" id="servicesGrid"><!--snap--><div class="service-card rv in">
+        <div class="services-grid" id="servicesGrid"><!--snap--><div class="service-card rv">
       <div class="service-head">
         <div class="service-icon"><svg width="52" height="52" viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 20h6l3-5h18l3 5h6a2 2 0 0 1 2 2v20a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2V22a2 2 0 0 1 2-2z"></path><circle cx="28" cy="32" r="8"></circle></svg></div>
         <div class="service-name">Séance photo — particuliers</div>
@@ -802,7 +813,7 @@
       </div>
       
       <button class="service-cta">Estimer ce projet →</button>
-      <a class="service-more" href="/services/seance-photo-particuliers/" onclick="return navLink(event,'service','photo-part')">Séance photo — particuliers : détails et tarifs →</a></div><div class="service-card rv in">
+      <a class="service-more" href="/services/seance-photo-particuliers/" onclick="return navLink(event,'service','photo-part')">Séance photo — particuliers : détails et tarifs →</a></div><div class="service-card rv">
       <div class="service-head">
         <div class="service-icon"><svg width="52" height="52" viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 14 L38 14 L42 22 L28 46 L14 22 Z"></path><line x1="14" y1="22" x2="42" y2="22"></line><line x1="22" y1="14" x2="28" y2="46"></line><line x1="34" y1="14" x2="28" y2="46"></line></svg></div>
         <div class="service-name">Mode, agence et mannequins</div>
@@ -834,7 +845,7 @@
         <span class="service-sub-price">750€<small> HT/mois</small></span>
       </div>
       <button class="service-cta">Estimer ce projet →</button>
-      <a class="service-more" href="/services/photographe-mode-mannequins/" onclick="return navLink(event,'service','mode')">Mode, agence et mannequins : détails et tarifs →</a></div><div class="service-card rv in">
+      <a class="service-more" href="/services/photographe-mode-mannequins/" onclick="return navLink(event,'service','mode')">Mode, agence et mannequins : détails et tarifs →</a></div><div class="service-card rv">
       <div class="service-head">
         <div class="service-icon"><svg width="52" height="52" viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 20 L28 12 L42 20 L42 38 L28 46 L14 38 Z"></path><path d="M14 20 L28 28 L42 20"></path><line x1="28" y1="28" x2="28" y2="46"></line></svg></div>
         <div class="service-name">Commercial &amp; produits</div>
@@ -862,7 +873,7 @@
       </div>
       
       <button class="service-cta">Estimer ce projet →</button>
-      <a class="service-more" href="/services/photo-produits-packshots/" onclick="return navLink(event,'service','commercial')">Commercial &amp; produits : détails et tarifs →</a></div><div class="service-card rv in">
+      <a class="service-more" href="/services/photo-produits-packshots/" onclick="return navLink(event,'service','commercial')">Commercial &amp; produits : détails et tarifs →</a></div><div class="service-card rv">
       <div class="service-head">
         <div class="service-icon"><svg width="52" height="52" viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M28 10 L32 22 L44 22 L34 30 L38 42 L28 34 L18 42 L22 30 L12 22 L24 22 Z"></path></svg></div>
         <div class="service-name">Événementiel</div>
@@ -1891,7 +1902,7 @@
   </div>
   <div class="footer-grid">
     <div>
-      <img class="ft-brand-logo-img" src="images/logo.webp" alt="Bunkaio"
+      <img class="ft-brand-logo-img" src="images/logo.webp?v=2" alt="Bunkaio"
            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
       <div class="ft-brand-logo" style="display:none">B ⊹</div>
       <div class="ft-brand-studio">studio</div>

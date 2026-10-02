@@ -26,7 +26,8 @@
 <meta name="twitter:image" content="https://bunkaio.com/images/og/devis.jpg">
 <meta name="twitter:image:alt" content="Devis photo en ligne en 2 minutes — BUNKAIO">
 
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='80' font-family='serif'>⊹</text></svg>">
+<link rel="icon" type="image/png" sizes="64x64" href="/images/favicon-64.png">
+<link rel="apple-touch-icon" href="/images/apple-touch-icon.png"><text y='0.9em' font-size='80' font-family='serif'>⊹</text></svg>">
 <link rel="preload" href="fonts/dm-sans-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="css/style.min.css?v=04952f0e">
 
@@ -40,8 +41,18 @@
       "name": "BUNKAIO",
       "alternateName": "Studio BUNKAIO",
       "url": "https://bunkaio.com/",
-      "logo": "https://bunkaio.com/images/logo.webp",
-      "image": "https://bunkaio.com/images/logo.webp",
+      "logo": {
+        "@type": "ImageObject",
+        "@id": "https://bunkaio.com/#logo",
+        "url": "https://bunkaio.com/images/logo-bunkaio-512.png",
+        "contentUrl": "https://bunkaio.com/images/logo-bunkaio-512.png",
+        "width": 512,
+        "height": 512,
+        "caption": "BUNKAIO"
+      },
+      "image": {
+        "@id": "https://bunkaio.com/#logo"
+      },
       "description": "BUNKAIO, photographe professionnel basé à Montpellier, mobile en Occitanie (Béziers, Montpellier, Toulouse) : portrait, mode, produit, corporate et événementiel, avec des images haut de gamme en HD.",
       "telephone": "+33758573161",
       "email": "contact@bunkaio.com",
@@ -302,7 +313,7 @@
 <nav>
   <div class="nav-inner">
     <div class="nav-brand" role="link" tabindex="0" aria-label="BUNKAIO — accueil" onclick="goView('home')" onkeydown="if(event.key==='Enter')goView('home')">
-      <img class="nav-logo-img" src="images/logo.webp" alt="Bunkaio"
+      <img class="nav-logo-img" src="images/logo.webp?v=2" alt="Bunkaio"
            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
       <div class="nav-logo-fallback">B ⊹</div>
       <div class="nav-studio">studio</div>
@@ -486,7 +497,7 @@
 
   <div class="testimonials-section">
     <div class="testi-heading rv">
-      <img class="testi-logo-img" src="images/logo.webp" alt="Bunkaio"
+      <img class="testi-logo-img" src="images/logo.webp?v=2" alt="Bunkaio"
            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
       <div class="testi-logo-fallback">B ⊹</div>
       <div class="testi-quote-mark">
@@ -1688,7 +1699,7 @@
   </div>
   <div class="footer-grid">
     <div>
-      <img class="ft-brand-logo-img" src="images/logo.webp" alt="Bunkaio"
+      <img class="ft-brand-logo-img" src="images/logo.webp?v=2" alt="Bunkaio"
            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
       <div class="ft-brand-logo" style="display:none">B ⊹</div>
       <div class="ft-brand-studio">studio</div>

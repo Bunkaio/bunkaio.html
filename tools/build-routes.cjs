@@ -124,7 +124,7 @@ function buildJsonLd(route, meta, snaps) {
   graph.push({
     '@type': 'ProfessionalService', '@id': bizId,
     name: b.name, alternateName: b.alternateName, url: SITE + '/',
-    logo: b.logo, image: b.logo, description: b.description,
+    logo: { '@type': 'ImageObject', '@id': SITE + '/#logo', url: b.logo, contentUrl: b.logo, width: 512, height: 512, caption: b.name }, image: { '@id': SITE + '/#logo' }, description: b.description,
     telephone: b.telephone, email: b.email, priceRange: b.priceRange, sameAs: b.sameAs,
     identifier: { '@type': 'PropertyValue', propertyID: 'SIRET', value: b.siret },
     address: { '@type': 'PostalAddress', addressLocality: b.baseCity, addressRegion: b.region, addressCountry: 'FR' },
