@@ -81,8 +81,10 @@ const IMG = {
      Format : paysage large, ~1920×1080px minimum
      ────────────────────────────────────────────────────────────────── */
   home:      '',                                       // Fond page Accueil — vide car la vidéo (homeVideo) est utilisée exclusivement
-  homeVideo: 'videos/home-bg.mp4?v=3',                // Vidéo de fond Accueil — incrémenter ?v=X à chaque remplacement pour casser le cache mobile
-  missionVideo: 'videos/mission-bg.mp4?v=1',           // Vidéo de fond section "Pourquoi Bunkaio existe" (page Partenaires) — incrémenter ?v=X à chaque remplacement pour casser le cache mobile
+  homeVideo: 'videos/home-bg.mp4?v=4',                // Vidéo de fond Accueil (HD, ≈ 3 Mo) — incrémenter ?v=X à chaque remplacement pour casser le cache mobile
+  homeVideoMobile: 'videos/home-bg-m.mp4?v=1',        // Même vidéo allégée (854 px, ≈ 0,7 Mo) servie sur petit écran (≤ 820 px)
+  missionVideo: 'videos/mission-bg.mp4?v=2',          // Vidéo de fond de la section « Pourquoi Bunkaio existe » (accueil, HD ≈ 4,7 Mo) — chargée seulement quand la section approche
+  missionVideoMobile: 'videos/mission-bg-m.mp4?v=1',  // Version allégée (854 px, ≈ 1,1 Mo) sur petit écran
   quiz:      MEDIA_BASE + '/hero/quiz-1.webp',       // Fond page Questionnaire devis
   services:  MEDIA_BASE + '/hero/services-1.webp',   // Fond page Services
   /* Vidéo de fond plein écran optionnelle de la page Services — remplace

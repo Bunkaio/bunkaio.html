@@ -1385,6 +1385,11 @@ function bgVideoAllowed(){
   return !(c && (c.saveData || /(^|-)2g$/.test(c.effectiveType || '')));
 }
 
+/* Version allégée (≈ 0,7–1 Mo) sur petit écran, version HD sur ordinateur. */
+function pickBgVideo(desktop, mobile){
+  return (mobile && window.matchMedia && window.matchMedia('(max-width: 820px)').matches) ? mobile : desktop;
+}
+
 function createBgVideo(src){
   const vid = document.createElement('video');
   /* Attributs posés AVANT le src : requis par Safari/iOS pour autoriser
@@ -1510,7 +1515,7 @@ function initHeroCarousel(viewKey){
       vw = document.createElement('div');
       vw.className = 'hero-video-wrap';
       vw.dataset.view = 'home';
-      const vid = createBgVideo(IMG.homeVideo);
+      const vid = createBgVideo(pickBgVideo(IMG.homeVideo, IMG.homeVideoMobile));
       vw.appendChild(vid);
       const overlay = wrap.querySelector('.page-hero-overlay');
       wrap.insertBefore(vw, overlay || null);
@@ -5024,8 +5029,17 @@ function initHomeClaimVideo(){
   if (!box || !wrap || !trigger || _homeClaimVideoInit) return;
   if (!IMG.missionVideo) return; /* pas de vidéo définie -> fond noir uni du CSS */
   _homeClaimVideoInit = true;
-  const vid = createBgVideo(IMG.missionVideo);
-  box.appendChild(vid);
+  /* La vidéo (plusieurs Mo) n'est chargée que lorsque la section approche de l'écran : elle ne concurrence plus
+     l'affichage initial de la page (LCP) et n'est pas téléchargée avec « économie de données » ou en 2G. */
+  let missionVid = null;
+  const ensureMissionVideo = () => {
+    if (missionVid || !bgVideoAllowed()) return;
+    missionVid = createBgVideo(pickBgVideo(IMG.missionVideo, IMG.missionVideoMobile));
+    box.appendChild(missionVid);
+  };
+  new IntersectionObserver((entries, io) => {
+    if (entries.some(e => e.isIntersecting)) { ensureMissionVideo(); io.disconnect(); }
+  }, { rootMargin: '300px 0px' }).observe(trigger);
 
   /* Activation : dès que le déclencheur (100vh) entre à l'écran.
      Désactivation : dès que la section blanche suivante (réassurance)
