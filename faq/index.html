@@ -27,7 +27,7 @@
 
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='80' font-family='serif'>⊹</text></svg>">
 <link rel="preload" href="fonts/dm-sans-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/style.css?v=202610039">
+<link rel="stylesheet" href="css/style.css?v=202610040">
 
 <script type="application/ld+json">
 {
@@ -1462,11 +1462,11 @@
     </div>
     <div class="accordion-item">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
-        <span>Cookies et traceurs</span>
+        <span>Cookies et mesure d'audience</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
       <div class="accordion-body ">
-        <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>Ce site n'utilise aucun cookie publicitaire ni traceur tiers, et ne dépose aucun cookie de suivi. Aucune donnée de navigation n'est collectée à des fins d'analyse ou de profilage.</p></div>
+        <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>Ce site n'utilise aucun cookie publicitaire ni traceur tiers. Nous mesurons l'audience de façon <strong>anonyme et sans cookie</strong>, avec un outil développé et hébergé par nos soins (sur notre compte Cloudflare) : pages vues, domaine de provenance, type d'appareil et clics sur les boutons principaux. Aucune adresse IP ni identifiant n'est conservé, aucune donnée n'est transmise à un service de mesure tiers, et les données sont supprimées au bout de 13 mois.</p><p>Cette mesure respecte l'option « Ne pas me suivre » de votre navigateur. Vous pouvez aussi la désactiver sur cet appareil : <button type="button" class="pt-link" onclick="toggleTracking()">Activer / désactiver la mesure</button> <span id="trackToggleState" style="font-size:12px;color:var(--grey)"></span></p></div>
       </div>
     </div>
     <div class="accordion-item">
@@ -1808,8 +1808,10 @@
   </div>
 </footer>
 
-<script src="config/routes.js?v=202610039"></script>
-<script src="config/media.js?v=202610039"></script>
-<script src="js/script.js?v=202610039"></script>
+<script src="config/analytics.js?v=202610040"></script>
+<script src="js/analytics.js?v=202610040"></script>
+<script src="config/routes.js?v=202610040"></script>
+<script src="config/media.js?v=202610040"></script>
+<script src="js/script.js?v=202610040"></script>
 </body>
 </html>

@@ -1,5 +1,6 @@
 import type Stripe from 'stripe';
 import { adminAccountView, getAccount, listAccounts, putAccount, sanitizeAccount, upsertAccountFromAdmin, verifyLogin } from './accounts';
+import { handleCollect, handleStats, purgeOldAnalytics } from './analytics';
 import { appendJournal, diffAccountActivity, flushActivityNotifications, queueActivityNotification } from './activity';
 import {
   buildAdminPaymentNotificationEmail,
@@ -890,6 +891,12 @@ export default {
     if (url.pathname === ACCOUNT_UPDATE_ROUTE) {
       return handleAccountUpdate(request, env, headers, ctx);
     }
+    if (url.pathname === '/collect') {
+      return handleCollect(request, env, headers);
+    }
+    if (url.pathname === '/stats') {
+      return handleStats(request, env, headers);
+    }
     if (url.pathname === ACCOUNTS_ROUTE) {
       return handleAdminAccounts(request, env, headers);
     }
@@ -906,6 +913,7 @@ export default {
       await flushActivityNotifications(env);
       return;
     }
+    await purgeOldAnalytics(env);
     try {
       await sendOverdueInvoiceReminders(env);
     } catch (err) {

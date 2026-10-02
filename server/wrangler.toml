@@ -41,3 +41,13 @@ bucket_name = "bunkaio-media"
 [[kv_namespaces]]
 binding = "ACCOUNTS_KV"
 id = "54d15558b88840f3af99b6c6e30c6ef7"
+
+# Mesure d'audience (anonyme, sans cookie) — À ACTIVER après création de la base :
+#   npx wrangler d1 create bunkaio-analytics
+#   (copier le database_id affiché ci-dessous, puis décommenter)
+#   npx wrangler d1 execute bunkaio-analytics --remote --file=./migrations/0001_analytics.sql
+#   npm run deploy
+# [[d1_databases]]
+# binding = "ANALYTICS_DB"
+# database_name = "bunkaio-analytics"
+# database_id = "COLLER-ICI-LE-DATABASE-ID"

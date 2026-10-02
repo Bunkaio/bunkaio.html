@@ -1566,6 +1566,7 @@ function goView(v, subTab, opts){
     history.pushState({ v }, '', route.path);
   }
   applySeoMeta(v);
+  if (!opts.initial && window.track) track('pageview');
   const run = () => {
     document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
     document.getElementById('view-' + v).classList.add('active');
@@ -1619,6 +1620,7 @@ function setProgress(p){ document.getElementById('progressFill').style.width = p
 
 function quizStep(n){
   currentStep = n;
+  if (n >= 2 && n <= 5 && window.track) track('quiz_step', String(n));
   document.querySelectorAll('.qstep').forEach(s => s.classList.remove('active'));
   document.getElementById('qs-' + n).classList.add('active');
   setProgress(n / 6 * 100);
@@ -2488,6 +2490,7 @@ function submitQuiz(e){
     interetCommunication: S.comm
   });
 
+  if (window.track) track('quiz_submit', cat.name.fr);
   fetch(FORMSPREE_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
@@ -2861,6 +2864,7 @@ function selectPfTab(id){
 /* ═══════════════ CONTACT ═══════════════ */
 function sendContact(e){
   e.preventDefault();
+  if (window.track) track('contact_submit');
   const n = document.getElementById('ctName').value.trim();
   const em = document.getElementById('ctEmail').value.trim();
   const ph = document.getElementById('ctPhone').value.trim();
@@ -2883,6 +2887,7 @@ function sendContact(e){
 /* ═══════════════ PARTAGER MON EXPÉRIENCE (témoignage) ═══════════════ */
 function sendShare(e){
   e.preventDefault();
+  if (window.track) track('share_submit');
   const n = document.getElementById('shName').value.trim();
   const em = document.getElementById('shEmail').value.trim();
   const spe = document.getElementById('shSpecialty').value;
@@ -2922,6 +2927,7 @@ function selectCollabType(btn){
 
 function sendCollab(e){
   e.preventDefault();
+  if (window.track) track('collab_submit');
   const n = document.getElementById('collabName').value.trim();
   const em = document.getElementById('collabEmail').value.trim();
   const web = document.getElementById('collabWeb').value.trim();
@@ -3023,6 +3029,7 @@ function renderApplyBenefits(){
 
 function sendApply(e){
   e.preventDefault();
+  if (window.track) track('apply_submit');
   const n = document.getElementById('applyName').value.trim();
   const em = document.getElementById('applyEmail').value.trim();
   const ph = document.getElementById('applyPhone').value.trim();
@@ -3122,6 +3129,7 @@ function doLogin(){
       USER = data.account;
       USER_CODE = code;
       saveSession();
+      if (window.track) track('login', USER.type);
       updateNavLogin();
       renderAccount();
       goView('account');
@@ -3130,6 +3138,7 @@ function doLogin(){
 }
 
 function doRegister(){
+  if (window.track) track('account_request', loginType);
   const n   = document.getElementById('regName').value.trim();
   const em  = document.getElementById('regEmail').value.trim();
   const ph  = document.getElementById('regPhone').value.trim();
@@ -4925,7 +4934,7 @@ function renderPrivacyAccordion(){
     { title:'Responsable du traitement des données', body:`<p>Ce site est édité par <strong>BUNKAIO</strong>, Entreprise Individuelle, SIRET 951 547 587 00034, France. Pour toute question relative à vos données personnelles, contactez-nous à <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a>.</p>` },
     { title:'Données collectées et finalités', body:`<p>Nous collectons uniquement les données que vous nous transmettez volontairement : nom, email, téléphone et informations relatives à votre projet via le formulaire de contact, le questionnaire de devis ou votre espace client/partenaire.</p><p>Ces données sont utilisées exclusivement pour répondre à vos demandes, établir vos devis et gérer votre compte. Elles ne sont ni vendues, ni cédées, ni partagées avec des tiers à des fins commerciales.</p>` },
     { title:'Base légale et durée de conservation', body:`<p>Le traitement repose sur l'exécution de la relation commerciale ou précontractuelle (devis, prestation) et sur notre intérêt légitime à répondre à vos demandes.</p><p>Vos données sont conservées pendant la durée de la relation commerciale, puis archivées le temps imposé par nos obligations légales et comptables, avant suppression ou anonymisation.</p>` },
-    { title:'Cookies et traceurs', body:`<p>Ce site n'utilise aucun cookie publicitaire ni traceur tiers, et ne dépose aucun cookie de suivi. Aucune donnée de navigation n'est collectée à des fins d'analyse ou de profilage.</p>` },
+    { title:'Cookies et mesure d\'audience', body:`<p>Ce site n'utilise aucun cookie publicitaire ni traceur tiers. Nous mesurons l'audience de façon <strong>anonyme et sans cookie</strong>, avec un outil développé et hébergé par nos soins (sur notre compte Cloudflare) : pages vues, domaine de provenance, type d'appareil et clics sur les boutons principaux. Aucune adresse IP ni identifiant n'est conservé, aucune donnée n'est transmise à un service de mesure tiers, et les données sont supprimées au bout de 13 mois.</p><p>Cette mesure respecte l'option « Ne pas me suivre » de votre navigateur. Vous pouvez aussi la désactiver sur cet appareil : <button type="button" class="pt-link" onclick="toggleTracking()">Activer / désactiver la mesure</button> <span id="trackToggleState" style="font-size:12px;color:var(--grey)"></span></p>` },
     { title:'Vos droits', body:`<p>Conformément au RGPD et à la loi Informatique et Libertés, vous disposez d'un droit d'accès, de rectification, d'effacement, de limitation, d'opposition et de portabilité sur vos données.</p><p>Vous pouvez exercer ces droits à tout moment en écrivant à <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a>. Vous disposez également du droit d'introduire une réclamation auprès de la CNIL (<a href="https://www.cnil.fr" target="_blank" rel="noopener">www.cnil.fr</a>).</p>` },
     { title:'Hébergement et sécurité des données', body:`<p>Ce site est hébergé par GitHub, Inc. Les échanges sont sécurisés (HTTPS). Aucune base de données client n'est publiquement accessible : les informations transmises via nos formulaires sont traitées de façon confidentielle par BUNKAIO.</p>` },
     { title:'Politique d\'annulation et acompte', body:`<p>L'<strong>acompte de 30 %</strong> versé à la signature du devis réserve votre date et votre créneau. En cas d'<strong>annulation de votre part après la validation du devis</strong>, cet acompte reste acquis à BUNKAIO et n'est pas remboursé. Le solde n'est exigible qu'à la livraison des livrables.</p><p>Pour toute question, écrivez-nous à <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a>.</p>` },
@@ -4935,7 +4944,7 @@ function renderPrivacyAccordion(){
     { title:'Data controller', body:`<p>This site is published by <strong>BUNKAIO</strong>, a French sole proprietorship (Entreprise Individuelle), SIRET 951 547 587 00034, France. For any question regarding your personal data, contact us at <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a>.</p>` },
     { title:'Data collected and purposes', body:`<p>We only collect the data you voluntarily provide: name, email, phone number and project details, via the contact form, the quote questionnaire, or your client/partner area.</p><p>This data is used exclusively to respond to your enquiries, prepare your quotes and manage your account. It is never sold, transferred or shared with third parties for commercial purposes.</p>` },
     { title:'Legal basis and retention period', body:`<p>Processing is based on the performance of the (pre-)contractual relationship (quote, service) and on our legitimate interest in responding to your requests.</p><p>Your data is kept for the duration of the business relationship, then archived for the period required by our legal and accounting obligations, before deletion or anonymisation.</p>` },
-    { title:'Cookies and trackers', body:`<p>This site uses no advertising cookies and no third-party trackers, and sets no tracking cookies. No browsing data is collected for analytics or profiling purposes.</p>` },
+    { title:'Cookies and audience measurement', body:`<p>This site uses no advertising cookies and no third-party trackers. We measure audience <strong>anonymously and without cookies</strong>, with a tool built and hosted by us (on our own Cloudflare account): page views, referring domain, device type and clicks on the main buttons. No IP address or identifier is kept, no data is shared with a third-party measurement service, and data is deleted after 13 months.</p><p>This measurement honours your browser's "Do Not Track" setting. You can also turn it off on this device: <button type="button" class="pt-link" onclick="toggleTracking()">Turn measurement on / off</button> <span id="trackToggleState" style="font-size:12px;color:var(--grey)"></span></p>` },
     { title:'Your rights', body:`<p>In accordance with the GDPR and French data protection law, you have the right to access, rectify, erase, restrict, object to, and port your data.</p><p>You may exercise these rights at any time by writing to <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a>. You also have the right to lodge a complaint with the CNIL (<a href="https://www.cnil.fr" target="_blank" rel="noopener">www.cnil.fr</a>).</p>` },
     { title:'Hosting and data security', body:`<p>This site is hosted by GitHub, Inc. All exchanges are secured (HTTPS). No client database is publicly accessible: information submitted via our forms is handled confidentially by BUNKAIO.</p>` },
     { title:'Cancellation policy and deposit', body:`<p>The <strong>30% deposit</strong> paid when the quote is signed reserves your date and time slot. If <strong>you cancel after the quote has been accepted</strong>, the deposit is retained by BUNKAIO and is non-refundable. The balance is only due on delivery of the deliverables.</p><p>For any question, write to us at <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a>.</p>` },
@@ -5046,6 +5055,7 @@ initNavScrollState();
   const r = seoRouteForPath(location.pathname);
   const v = r ? r.view : 'home';
   history.replaceState({ v }, '', location.pathname + location.hash);
+  if (window.track) track('pageview');
   if (v === 'home') { applySeoMeta('home'); return; }
   goView(v === 'account' ? 'login' : v, null, { initial: true });
 })();
