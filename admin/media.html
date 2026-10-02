@@ -257,7 +257,7 @@
   <p class="page-sub">
     Glisse-dépose tes photos (et vidéos, tout en haut de page) directement sur chaque emplacement, ou clique dessus pour ouvrir le sélecteur de fichiers.<br>
     Tout est uploadé en direct sur le site — aucune manipulation de code nécessaire. Les photos sont automatiquement converties en WebP (2400 px max, métadonnées EXIF retirées) avant l'envoi.<br>
-    <em>Exceptions — ces quelques fichiers sont gérés directement dans le code du site (pas via ce panel) : les vidéos de fond de l'accueil et de la page Partenaires, et le logo. Dis-le moi directement si tu veux les changer, je m'en occupe.</em>
+    <em>Exceptions — ces quelques fichiers sont gérés directement dans le code du site (pas via ce panel) : les vidéos de fond de l'accueil (qualité d'origine + version allégée pour connexions lentes), le logo et le favicon (images/), le portrait d'Aya (images/about/). Dis-le moi directement si tu veux les changer, je m'en occupe.</em>
   </p>
   <details class="export-box" open>
     <summary>📋 Fiche d'export — photos et vidéos (à lire avant d'envoyer un fichier)</summary>
@@ -274,11 +274,11 @@
       <h3>Emplacements — dimensions et poids</h3>
       <table>
         <tr><th>Emplacement</th><th>Dimensions</th><th>Ratio</th><th>Poids cible</th><th>Où sur le site</th></tr>
-        <tr><td>Bannières (hero/…)</td><td>1920 × 820 px</td><td>21:9 paysage</td><td>≤ 250 Ko</td><td>Haut des pages Devis, Portfolio, Services, Contact, Partenaires, Connexion, Espace client. <code>contact-1</code> sert aussi de fond à À propos et FAQ ; <code>services-1</code> de fond aux pages prestation, conseils et articles.</td></tr>
+        <tr><td>Bannières (hero/…)</td><td>1920 × 820 px</td><td>21:9 paysage</td><td>≤ 250 Ko</td><td>Haut des pages Devis, Portfolio, Services, Contact, Collaboration, Connexion, Espace client. <code>contact-1</code> sert aussi de fond à À propos et FAQ ; <code>services-1</code> de fond aux pages prestation, « Découvrir chaque prestation », conseils et articles.</td></tr>
         <tr><td>Photos prestations (services/…)</td><td>1600 × 2000 px</td><td>portrait 4:5, sujet centré</td><td>≤ 350 Ko</td><td>Carrousel d'accueil, filtre Services, formulaire de devis <strong>et photo de la page de chaque prestation</strong> (recadrée 3:4, avec texte alternatif)</td></tr>
         <tr><td>Portfolio (portfolio/&lt;catégorie&gt;/N.webp)</td><td>≈ 900 × 1200 px</td><td>portrait</td><td>≤ 300 Ko</td><td>Galerie du Portfolio, 24 photos max par catégorie</td></tr>
         <tr><td>Illustration « Devis &amp; déroulé »</td><td>900 × 700 px</td><td>9:7</td><td>≤ 150 Ko</td><td>Services → onglet Devis &amp; déroulé</td></tr>
-        <tr><td>Illustration « Collaboration »</td><td>900 × 1100 px</td><td>portrait</td><td>≤ 150 Ko</td><td>Partenaires → onglet Collaboration</td></tr>
+        <tr><td>Illustration « Collaboration »</td><td>900 × 1100 px</td><td>portrait</td><td>≤ 150 Ko</td><td>Page Collaboration → onglet Collaboration</td></tr>
         <tr><td>Vignettes 4K Drone</td><td>640 × 400 px</td><td>16:10</td><td>≤ 80 Ko</td><td>Rubrique en pause</td></tr>
       </table>
 
@@ -427,7 +427,7 @@ const SECTIONS = [
     slots: [{ path: 'devis/illustration.webp', label: 'Illustration' }],
   },
 
-  // ── Contact & Partenaires ────────────────────────────────────────────────
+  // ── Contact & Collaboration ────────────────────────────────────────────────
   {
     id: 'contact-hero',
     title: '✉️ Contact — bannière en haut de page',
@@ -439,7 +439,7 @@ const SECTIONS = [
   },
   {
     id: 'partners-hero',
-    title: '🤝 Partenaires — bannière en haut de page',
+    title: '🤝 Collaboration — bannière en haut de page',
     desc: '1920 × 820 px, paysage 21:9.',
     slots: [
       { path: 'hero/partners-1.webp', label: 'Photo 1' },
@@ -448,7 +448,7 @@ const SECTIONS = [
   },
   {
     id: 'partners-collab',
-    title: '🤝 Partenaires — illustration "Collaboration"',
+    title: '🤝 Collaboration — illustration (onglet « Collaboration »)',
     desc: '900 × 1100 px, portrait. Visible dans l\'onglet Collaboration, en haut de la colonne de gauche.',
     slots: [{ path: 'partners/collaboration.webp', label: 'Illustration' }],
   },

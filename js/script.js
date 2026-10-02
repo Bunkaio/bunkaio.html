@@ -2740,30 +2740,31 @@ function renderDiscoverPage(){
   const cats = CATS.filter(c => seoRouteFor('service', c.id));
   const facts = Object.fromEntries(cats.map(c => [c.id, catFacts(c)]));
   const allMin = Math.min(...cats.map(c => facts[c.id].dMin)), allMax = Math.max(...cats.map(c => facts[c.id].dMax));
-  const cheapest = Math.min(...cats.map(c => facts[c.id].from));
   const steps = ['about-step1', 'about-step2', 'about-step3', 'about-step4'];
-  const dly = f => f.dMin === f.dMax ? (f.dMin + ' ' + t({fr:'jours ouvrés', en:'working days'})) : (f.dMin + ' ' + t({fr:'à', en:'to'}) + ' ' + f.dMax + ' ' + t({fr:'jours ouvrés', en:'working days'}));
-  const phs = f => f.pMax ? (f.pMin === f.pMax ? f.pMin : f.pMin + ' ' + t({fr:'à', en:'to'}) + ' ' + f.pMax) + ' ' + t({fr:'photos retouchées', en:'retouched photos'}) : '';
-  const cards = cats.map(c => {
+  const wd = t({fr:'jours ouvrés', en:'working days'}), to = t({fr:'à', en:'to'});
+  const dly = f => (f.dMin === f.dMax ? f.dMin : f.dMin + ' ' + to + ' ' + f.dMax) + ' ' + wd;
+  const phs = f => f.pMax ? (f.pMin === f.pMax ? f.pMin : f.pMin + ' ' + to + ' ' + f.pMax) + ' ' + t({fr:'photos retouchées', en:'retouched photos'}) : '';
+  const rows = cats.map((c, k) => {
     const f = facts[c.id], cp = DISCOVER_COPY[c.id] || { for:{fr:'', en:''}, why:{fr:'', en:''} };
-    return `<article class="discover-card">
-      <h3>${t(c.name)}</h3>
-      <p class="discover-for"><strong>${t({fr:'Pour qui', en:'Who it is for'})} :</strong> ${t(cp.for)}</p>
-      <p class="svcp-text">${t(cp.why)}</p>
-      <ul class="discover-facts">
-        <li>${t({fr:'À partir de', en:'From'})} <strong>${money(f.from)}</strong></li>
-        <li>${t({fr:'Livraison en', en:'Delivery in'})} ${dly(f)}</li>
-        ${phs(f) ? `<li>${phs(f)}</li>` : ''}
-        ${f.hasVideo ? `<li>${t({fr:'Vidéo ou Reels selon la formule', en:'Video or Reels depending on the package'})}</li>` : ''}
-      </ul>
-      <div class="discover-actions">
-        <a class="btn btn-ghost" href="${servicePath(c.id)}" data-nav="service:${c.id}"><span>${t({fr:'Découvrir la prestation', en:'Explore this service'})}</span></a>
-        ${quizLink(c.id, t({fr:'Estimer ce projet', en:'Estimate this project'}))}
-      </div>
-    </article>`;
+    return `<li class="cs-acc-item${k === 0 ? ' open' : ''}">
+      <button type="button" class="cs-acc-head" aria-expanded="${k === 0}">
+        <b class="disc-num">${String(k + 1).padStart(2, '0')}</b>
+        <span class="disc-name">${t(c.name)}</span>
+        <em class="disc-from">${t({fr:'dès', en:'from'})} ${money(f.from)}</em>
+        <i class="cs-acc-chev" aria-hidden="true"></i>
+      </button>
+      <div class="cs-acc-panel"><div class="disc-panel">
+        <p class="discover-for"><strong>${t({fr:'Pour qui', en:'For'})} :</strong> ${t(cp.for)}</p>
+        <p class="svcp-text">${t(cp.why)}</p>
+        <ul class="disc-chips"><li>${dly(f)}</li>${phs(f) ? `<li>${phs(f)}</li>` : ''}${f.hasVideo ? `<li>${t({fr:'Vidéo / Reels', en:'Video / Reels'})}</li>` : ''}</ul>
+        <div class="discover-actions">
+          <a class="btn btn-ghost" href="${servicePath(c.id)}" data-nav="service:${c.id}"><span>${t({fr:'Voir la prestation', en:'See the service'})}</span></a>
+          ${quizLink(c.id, t({fr:'Estimer ce projet', en:'Estimate this project'}))}
+        </div>
+      </div></div>
+    </li>`;
   }).join('');
-  const rows = cats.map(c => { const f = facts[c.id], cp = DISCOVER_COPY[c.id] || { for:{fr:'', en:''} };
-    return `<tr><th scope="row"><a href="${servicePath(c.id)}" data-nav="service:${c.id}">${t(c.name)}</a></th><td>${t(cp.for)}</td><td>${money(f.from)}</td><td>${dly(f)}</td></tr>`; }).join('');
+  const stepItems = steps.map((k, i) => `<li class="disc-step"><b>${String(i + 1).padStart(2, '0')}</b><span>${I18N[LANG][k]}</span></li>`).join('');
 
   el.innerHTML = `
     <div class="breadcrumb" role="navigation" aria-label="${t({fr:'Fil d\'Ariane', en:'Breadcrumb'})}">
@@ -2772,42 +2773,27 @@ function renderDiscoverPage(){
       <span>${t({fr:'Découvrir chaque prestation', en:'Explore each service'})}</span>
     </div>
     <h1 data-pageh1 class="page-title">${t({fr:'Découvrir chaque prestation', en:'Explore each service'})}</h1>
-    <p class="page-sub">${t({fr:'Portrait, corporate, mode, produit, événementiel et photobooth IA : une prestation pour chaque besoin, à Montpellier, Béziers et Toulouse. Trouvez celle qui correspond à votre projet.', en:'Portrait, corporate, fashion, product, events and IA photobooth: a service for every need, in Montpellier, Béziers and Toulouse. Find the one that fits your project.'})}</p>
+    <p class="page-sub" data-tw data-tw-delay="200">${t({fr:'Portrait, corporate, mode, produit, événementiel et photobooth IA : une prestation pour chaque besoin, à Montpellier, Béziers et Toulouse. Ouvrez celle qui vous correspond.', en:'Portrait, corporate, fashion, product, events and IA photobooth: a service for every need, in Montpellier, Béziers and Toulouse. Open the one that suits you.'})}</p>
     <div class="svcp-cta-row">
       ${quizLink('', t({fr:'Estimer mon projet', en:'Estimate my project'}))}
       <a class="btn btn-ghost" href="/services/" data-nav="services"><span>${t({fr:'Voir les tarifs détaillés', en:'See detailed rates'})}</span></a>
     </div>
 
-    <section class="read-panel svcp-panel">
+    <section class="read-panel svcp-panel disc-live-box">
       <h2>${t({fr:'Quelle prestation pour quel besoin ?', en:'Which service for which need?'})}</h2>
-      <p class="svcp-text">${t({fr:'BUNKAIO est un studio de photographie professionnelle mobile basé à Montpellier. Chaque prestation répond à un usage précis : voici pour qui elle est conçue, ce qu\'elle apporte, et ce qu\'elle coûte à partir de.', en:'BUNKAIO is a mobile professional photography studio based in Montpellier. Each service answers a specific use: here is who it is designed for, what it brings, and what it costs from.'})}</p>
-      <div class="discover-grid">${cards}</div>
+      <ul class="cs-acc disc-acc">${rows}</ul>
     </section>
 
     <section class="read-panel svcp-panel">
-      <h2>${t({fr:'Comparer en un coup d\'œil', en:'Compare at a glance'})}</h2>
-      <div class="discover-table-wrap"><table class="discover-table">
-        <thead><tr><th scope="col">${t({fr:'Prestation', en:'Service'})}</th><th scope="col">${t({fr:'Pour', en:'For'})}</th><th scope="col">${t({fr:'À partir de', en:'From'})}</th><th scope="col">${t({fr:'Livraison', en:'Delivery'})}</th></tr></thead>
-        <tbody>${rows}</tbody>
-      </table></div>
-    </section>
-
-    <section class="read-panel svcp-panel svcp-two">
-      <div>
-        <h2>${t({fr:'Comment ça se passe', en:'How it works'})}</h2>
-        <ol class="about-list about-steps">${steps.map(k => `<li>${I18N[LANG][k]}</li>`).join('')}</ol>
-      </div>
-      <div>
-        <h2>${t({fr:'Pourquoi choisir BUNKAIO', en:'Why choose BUNKAIO'})}</h2>
-        <ul class="svcp-list">
-          <li>${t({fr:'Basé à Montpellier, mobile à Béziers et Toulouse : déplacements offerts à Montpellier et Béziers.', en:'Based in Montpellier, mobile in Béziers and Toulouse: travel is free in Montpellier and Béziers.'})}</li>
-          <li>${t({fr:'Photos retouchées en HD, galerie privée de téléchargement, livraison en ' + allMin + ' à ' + allMax + ' jours ouvrés.', en:'Retouched HD photos, private download gallery, delivery in ' + allMin + ' to ' + allMax + ' working days.'})}</li>
-          <li>${t({fr:'Droits d\'utilisation commerciale cédés sans limite de durée.', en:'Commercial usage rights transferred with no time limit.'})}</li>
-          <li>${t({fr:'Devis en ligne en 2 minutes, réponse personnalisée sous 48 h, sans engagement.', en:'Online quote in 2 minutes, personalised reply within 48 hours, no commitment.'})}</li>
-          <li>${t({fr:'Paiement en plusieurs fois possible : acompte de 30 % puis solde, ou 3 fois sans frais avec Klarna.', en:'Flexible payment: 30% deposit then balance, or 3 interest-free instalments with Klarna.'})}</li>
-          <li>${t({fr:'Une photographe diplômée de l\'ETPA (BTS Photographie, 2018), plus de 8 ans d\'expérience et plus de 200 projets : ', en:'A photographer trained at ETPA (BTS Photography, 2018), with over 8 years of experience and 200+ projects: '})}<a href="/a-propos/" data-nav="about">${t({fr:'découvrir Aya Nascimento', en:'meet Aya Nascimento'})}</a>.</li>
-        </ul>
-      </div>
+      <h2>${t({fr:'Comment ça se passe', en:'How it works'})}</h2>
+      <ol class="disc-steps">${stepItems}</ol>
+      <ul class="disc-why">
+        <li>${t({fr:'Déplacements offerts à Montpellier et Béziers', en:'Free travel in Montpellier and Béziers'})}</li>
+        <li>${t({fr:'Droits d\'utilisation commerciale cédés sans limite de durée', en:'Commercial usage rights with no time limit'})}</li>
+        <li>${t({fr:'Livraison HD en ' + allMin + ' à ' + allMax + ' jours ouvrés', en:'HD delivery in ' + allMin + ' to ' + allMax + ' working days'})}</li>
+        <li>${t({fr:'Acompte de 30 %, paiement en 3 fois sans frais possible', en:'30% deposit, 3 interest-free instalments available'})}</li>
+      </ul>
+      <p class="svcp-text disc-author">${t({fr:'Par Aya Nascimento, photographe diplômée de l\'ETPA (BTS Photographie, 2018), plus de 8 ans d\'expérience et plus de 200 projets : ', en:'By Aya Nascimento, ETPA graduate (BTS Photography, 2018), 8+ years of experience and 200+ projects: '})}<a href="/a-propos/" data-nav="about">${t({fr:'en savoir plus', en:'learn more'})}</a>.</p>
     </section>
 
     <section class="read-panel svcp-panel">
@@ -2815,29 +2801,23 @@ function renderDiscoverPage(){
       <div id="discoverFaq"></div>
     </section>
 
-    <section class="read-panel svcp-panel">
-      <h2>${t({fr:'Nos conseils pour choisir et préparer', en:'Our tips to choose and prepare'})}</h2>
-      <div class="advice-grid">${['combien-coute-une-seance-photo', 'lieux-seance-photo-montpellier-beziers-toulouse', 'choisir-photographe-evenementiel'].map(sl => ARTICLES.find(a => a.slug === sl)).filter(Boolean).map(a => adviceCard(a)).join('')}</div>
-    </section>
-
     <section class="read-panel svcp-panel article-cta">
       <h2>${t({fr:'Prêt à lancer votre projet ?', en:'Ready to start your project?'})}</h2>
-      <p class="svcp-text">${t({fr:'Dites-nous ce dont vous avez besoin : vous recevez une proposition chiffrée sous 48 h, sans engagement. Une question avant ? Écrivez-nous via la page ', en:'Tell us what you need: you will receive a priced proposal within 48 hours, no commitment. A question first? Write to us on the '})}<a href="/contact/" data-nav="contact">${t({fr:'contact', en:'contact page'})}</a>.</p>
+      <p class="svcp-text">${t({fr:'Proposition chiffrée sous 48 h, sans engagement. Un doute ? Lisez nos guides, comme ', en:'Priced proposal within 48 hours, no commitment. In doubt? Read our guides, such as '})}<a href="/conseils/combien-coute-une-seance-photo/" data-nav="article:combien-coute-une-seance-photo">${t({fr:'combien coûte une séance photo', en:'how much a photo session costs'})}</a>${t({fr:', ou ', en:', or '})}<a href="/contact/" data-nav="contact">${t({fr:'écrivez-nous', en:'write to us'})}</a>.</p>
       <div class="svcp-cta-row" style="margin:0">${quizLink('', t({fr:'Estimer mon projet', en:'Estimate my project'}))}</div>
     </section>`;
 
   renderAccordionInto('discoverFaq', [
     { title: t({fr:'Comment choisir ma prestation ?', en:'How do I choose my service?'}),
       body: '<ul class="svcp-list">' + cats.map(c => `<li><strong>${t(c.name)}</strong> — ${t((DISCOVER_COPY[c.id] || { for:{fr:'', en:''} }).for)}</li>`).join('') + '</ul><p>' + t({fr:'Un doute entre deux prestations ? Le devis en ligne vous guide en quelques questions.', en:'Unsure between two services? The online quote guides you in a few questions.'}) + '</p>' },
-    { title: t({fr:'Combien coûtent les prestations ?', en:'How much do the services cost?'}),
-      body: '<ul class="svcp-list">' + cats.map(c => `<li><strong>${t(c.name)}</strong> — ${t({fr:'à partir de', en:'from'})} ${money(facts[c.id].from)}</li>`).join('') + '</ul><p>' + t({fr:'Les formules complètes sont détaillées sur la page ', en:'Full packages are detailed on the '}) + '<a href="/services/" data-nav="services">' + t({fr:'Services', en:'Services page'}) + '</a>.</p>' },
-    { title: t({fr:'Dans quels délais reçoit-on les photos ?', en:'How soon are the photos delivered?'}),
-      body: '<p>' + t({fr:'Entre ' + allMin + ' et ' + allMax + ' jours ouvrés selon la prestation et la formule, à compter de la date du shooting.', en:'Between ' + allMin + ' and ' + allMax + ' working days depending on the service and package, counted from the shoot date.'}) + '</p>' },
+    { title: t({fr:'Quels sont les délais et les tarifs ?', en:'What are the timelines and rates?'}),
+      body: '<p>' + t({fr:'Livraison entre ' + allMin + ' et ' + allMax + ' jours ouvrés après le shooting, selon la prestation. Tarifs de départ : ', en:'Delivery between ' + allMin + ' and ' + allMax + ' working days after the shoot, depending on the service. Starting rates: '}) + cats.map(c => `${t(c.name)} ${t({fr:'dès', en:'from'})} ${money(facts[c.id].from)}`).join(' · ') + '. <a href="/services/" data-nav="services">' + t({fr:'Voir les formules', en:'See the packages'}) + '</a>.</p>' },
     { title: t({fr:'Où intervenez-vous ?', en:'Where do you work?'}),
-      body: '<p>' + t({fr:'BUNKAIO est basé à Montpellier et intervient à Montpellier, Béziers et Toulouse. Les déplacements sont offerts à Montpellier et à Béziers ; ils sont facturés à Toulouse et dans toute autre ville de France.', en:'BUNKAIO is based in Montpellier and works in Montpellier, Béziers and Toulouse. Travel is free in Montpellier and Béziers; it is charged in Toulouse and in any other city in France.'}) + '</p>' },
-    { title: t({fr:'Les photos sont-elles utilisables pour mon activité ?', en:'Can I use the photos for my business?'}),
-      body: '<p>' + t({fr:'Oui : les droits d\'utilisation commerciale vous sont cédés sans limite de durée.', en:'Yes: commercial usage rights are transferred to you with no time limit.'}) + '</p>' }
+      body: '<p>' + t({fr:'BUNKAIO est basé à Montpellier et intervient à Montpellier, Béziers et Toulouse. Les déplacements sont offerts à Montpellier et à Béziers ; ils sont facturés à Toulouse et dans toute autre ville de France.', en:'BUNKAIO is based in Montpellier and works in Montpellier, Béziers and Toulouse. Travel is free in Montpellier and Béziers; it is charged in Toulouse and in any other city in France.'}) + '</p>' }
   ], { exclusive: true });
+  initReassureLoop();
+  const live = el.querySelector('.disc-acc');
+  if (live) { if (window.IntersectionObserver && !REDUCED_MOTION) { const io = new IntersectionObserver((es) => es.forEach(e => { if (e.isIntersecting) { live.classList.add('disc-live'); io.disconnect(); } }), { threshold: 0.15 }); io.observe(live); } else live.classList.add('disc-live'); }
 }
 
 function renderServicePage(catId){
@@ -3853,9 +3833,9 @@ function bindTypewriters(){
 
 /* Section « arguments numérotés » : animation permanente — l'argument mis en avant change toutes les 2,8 s tant que la section est visible. */
 function initReassureLoop(){
-  document.querySelectorAll('.reassure-section').forEach(sec => {
+  document.querySelectorAll('.reassure-section, .disc-steps').forEach(sec => {
     if (sec.dataset.loopBound) return; sec.dataset.loopBound = '1';
-    const items = [...sec.querySelectorAll('.reassure-item')];
+    const items = [...sec.querySelectorAll('.reassure-item, .disc-step')];
     if (!items.length || REDUCED_MOTION) return;
     let i = -1, timer = null;
     const step = () => { i = (i + 1) % items.length; items.forEach((it, k) => it.classList.toggle('is-lit', k === i)); };
