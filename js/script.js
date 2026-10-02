@@ -1733,6 +1733,11 @@ function getIcon(type){
 }
 
 function renderTiers(){
+  renderTiersBase();
+  const list = document.getElementById('tierList');
+  if (list) list.insertAdjacentHTML('afterbegin', partnerQuizNotice());
+}
+function renderTiersBase(){
   const cat = CATS.find(c => c.id === S.cat);
   if (!cat) return;
   const subEl = document.getElementById('tierSub');
@@ -1747,15 +1752,15 @@ function renderTiers(){
       const isSurm = lt.id === 'surm';
       const priceStr = isSurm
         ? (LANG === 'fr' ? 'À partir de ' : 'From ') + lt.price.toLocaleString('fr-FR') + '€'
-        : lt.price.toLocaleString('fr-FR') + '€';
+        : pp(lt.price).toLocaleString('fr-FR') + '€';
       const chfLine = (LANG === 'en' && lt.priceUSD)
         ? `<div style="font-size:12px;color:var(--grey);margin-top:4px">$${lt.priceUSD.toLocaleString('en-US')}</div>`
         : '';
       const payLine = isSurm
         ? (LANG === 'fr' ? 'Devis personnalisé — réponse sous 48h ouvrées' : 'Personalised quote — reply within 48 working hours')
         : (LANG === 'fr'
-            ? `Soit 3 × ${Math.round(lt.price / 3).toLocaleString('fr-FR')}€ sans frais`
-            : `That's 3 × €${Math.round(lt.price / 3).toLocaleString('fr-FR')} interest-free`);
+            ? `Soit 3 × ${Math.round(pp(lt.price) / 3).toLocaleString('fr-FR')}€ sans frais`
+            : `That's 3 × €${Math.round(pp(lt.price) / 3).toLocaleString('fr-FR')} interest-free`);
       const d = document.createElement('div');
       d.className = 'tier-card stagger';
       d.style.animationDelay = (0.24 + idx * 0.1) + 's';
@@ -1783,7 +1788,7 @@ function renderTiers(){
   let slot = 0;
   if (POLAS[S.cat]) {
     const polas = POLAS[S.cat];
-    const total = polas.price + 60;
+    const total = pp(polas.price + 60);
     const threeX = Math.round(total / 3).toLocaleString('fr-FR');
     const payLine = LANG === 'fr' ? `Soit 3 × ${threeX}€ sans frais` : `That's 3 × €${threeX} interest-free`;
     const badge = LANG === 'fr' ? 'Spécial mannequins' : 'For models';
@@ -1804,7 +1809,7 @@ function renderTiers(){
   }
   TIERS.forEach((tier) => {
     const td = cat.tiers[tier.id];
-    const threeX = Math.round(td.price / 3).toLocaleString('fr-FR');
+    const threeX = Math.round(pp(td.price) / 3).toLocaleString('fr-FR');
     const payLine = LANG === 'fr' ? `Soit 3 × ${threeX}€ sans frais` : `That's 3 × €${threeX} interest-free`;
     const d = document.createElement('div');
     d.className = 'tier-card stagger';
@@ -1813,7 +1818,7 @@ function renderTiers(){
       ${td.promo ? `<div class="tier-promo">${t(td.promo)}</div>` : ''}${tier.badge ? `<div class="tier-badge">${t(tier.badge)}</div>` : ''}
       <div class="tier-head">
         <div class="tier-name">${t(tier.name)}</div>
-        <div class="tier-price">${td.price.toLocaleString('fr-FR')}€<small>HT</small></div>
+        <div class="tier-price">${pp(td.price).toLocaleString('fr-FR')}€<small>HT</small></div>
       </div>
       <div class="tier-pay-line">${payLine}</div>
       <div class="tier-detail">${t(td.items).join(' · ')}</div>`;
@@ -1842,6 +1847,11 @@ function renderTiers(){
 }
 
 function renderRecap(){
+  renderRecapBase();
+  const box = document.getElementById('recapBox');
+  if (box) box.insertAdjacentHTML('beforeend', partnerQuizNotice());
+}
+function renderRecapBase(){
   const cat = CATS.find(c => c.id === S.cat);
   const selLabel = LANG === 'fr' ? 'Votre sélection' : 'Your selection';
   const box = document.getElementById('recapBox');
@@ -1868,7 +1878,7 @@ function renderRecap(){
   }
   if (S.tier === 'polas') {
     const polas = POLAS[S.cat];
-    const total = polas.price + 60;
+    const total = pp(polas.price + 60);
     const threeX = Math.round(total / 3).toLocaleString('fr-FR');
     const payLine = LANG === 'fr'
       ? `💳 Soit 3 × ${threeX}€ sans frais avec Klarna — ou carte bancaire, prélèvement automatique, acompte 30 % + solde.`
@@ -1894,7 +1904,7 @@ function renderRecap(){
     const isSurm = lt.id === 'surm';
     const chfLine = (LANG === 'en' && lt.priceUSD) ? ` / $${lt.priceUSD.toLocaleString('en-US')}` : '';
     const pricePrefix = isSurm ? (LANG === 'fr' ? 'À partir de ' : 'From ') : '';
-    const threeX = Math.round(lt.price / 3).toLocaleString('fr-FR');
+    const threeX = Math.round(pp(lt.price) / 3).toLocaleString('fr-FR');
     const payLine = isSurm
       ? (LANG === 'fr'
           ? '💳 Devis personnalisé — nous vous revenons sous 48h ouvrées.'
@@ -1906,7 +1916,7 @@ function renderRecap(){
       <div class="recap-label">${selLabel}</div>
       <div class="recap-title">
         <span>Lumen — ${t(lt.name)}</span>
-        <span>${pricePrefix}${lt.price.toLocaleString('fr-FR')}€${chfLine} HT</span>
+        <span>${pricePrefix}${(isSurm ? lt.price : pp(lt.price)).toLocaleString('fr-FR')}€${chfLine} HT</span>
       </div>
       <div class="recap-payment">${payLine}</div>
       <ul class="recap-items">
@@ -1919,7 +1929,7 @@ function renderRecap(){
   const td = cat.tiers[S.tier];
   const delivLabel = LANG === 'fr' ? 'Livraison' : 'Delivery';
   const studioSupplement = (S.cat === 'photo-part' && S.studio) ? ' + 60€ studio' : '';
-  const threeX = Math.round(td.price / 3).toLocaleString('fr-FR');
+  const threeX = Math.round(pp(td.price) / 3).toLocaleString('fr-FR');
   const payLine = LANG === 'fr'
     ? `💳 Soit 3 × ${threeX}€ sans frais avec Klarna — ou carte bancaire, prélèvement automatique, acompte 30 % + solde.`
     : `💳 That's 3 × €${threeX} interest-free with Klarna — or credit card, direct debit, 30% deposit + balance.`;
@@ -1927,7 +1937,7 @@ function renderRecap(){
     <div class="recap-label">${selLabel}</div>
     <div class="recap-title">
       <span>${t(cat.name)} — ${t(tier.name)}</span>
-      <span>${td.price.toLocaleString('fr-FR')}€${studioSupplement} HT</span>
+      <span>${pp(td.price).toLocaleString('fr-FR')}€${studioSupplement} HT</span>
     </div>
     <div class="recap-payment">${payLine}</div>
     <ul class="recap-items">
@@ -1987,7 +1997,7 @@ function renderOptions(){
       d.className = 'opt-item stagger';
       d.style.animationDelay = (0.42 + i * 0.08) + 's';
       const priceDisplay = typeof o.price === 'number'
-        ? '+' + o.price + '€'
+        ? '+' + pp(o.price) + '€'
         : (LANG === 'fr' ? 'Inclus' : 'Included');
       d.innerHTML = `
         <div class="opt-icon">${o.icon}</div>
@@ -2058,12 +2068,12 @@ function renderOptions(){
             ${o.packs.map(pk => `
               <div class="photo-pack" data-pack="${pk.id}" onclick="selectPhotoPack(event,'${o.id}','${pk.id}')">
                 <span>${t(pk.label)}</span>
-                <span class="photo-pack-price">${typeof pk.price==='number' ? '+'+pk.price+'€' : (LANG==='fr'?'Sur devis':'On request')}</span>
+                <span class="photo-pack-price">${typeof pk.price==='number' ? '+'+pp(pk.price)+'€' : (LANG==='fr'?'Sur devis':'On request')}</span>
               </div>`).join('')}
           </div>
         </div>`;
     } else {
-      const priceDisplay = typeof o.price === 'number' ? '+' + o.price + '€' : (o.price === '+20%' ? o.price : (LANG==='fr'?'Sur devis':'On request'));
+      const priceDisplay = typeof o.price === 'number' ? '+' + pp(o.price) + '€' : (o.price === '+20%' ? o.price : (LANG==='fr'?'Sur devis':'On request'));
       d.innerHTML = `
         <div class="opt-icon">${o.icon}</div>
         <div class="opt-check"></div>
@@ -2145,7 +2155,7 @@ function checkQuizForm(){
 
 function computeTotal(){
   if (S.tier === 'sub') return { amount: SUBS[S.cat].price, surDevis: false };
-  if (S.tier === 'polas') return { amount: POLAS[S.cat].price + 60, surDevis: false };
+  if (S.tier === 'polas') return { amount: pp(POLAS[S.cat].price + 60), surDevis: false };
   if (S.cat === 'lumen') {
     const lt = LUMEN_TIERS.find(x => x.id === S.tier);
     if (!lt) return { amount: 0, surDevis: true };
@@ -2156,7 +2166,7 @@ function computeTotal(){
       if (o && typeof o.price === 'number') total += o.price;
       else if (o) hasSurDevis = true;
     });
-    return { amount: total, surDevis: hasSurDevis };
+    return { amount: lt.id === 'surm' ? total : pp(total), surDevis: hasSurDevis };
   }
   const cat = CATS.find(c => c.id === S.cat);
   let total = cat.tiers[S.tier].price;
@@ -2171,7 +2181,7 @@ function computeTotal(){
     else hasSurDevis = true;
   });
   if (express) total = Math.round(total * 1.2);
-  return { amount: total, surDevis: hasSurDevis };
+  return { amount: pp(total), surDevis: hasSurDevis };
 }
 
 
@@ -2277,19 +2287,20 @@ function submitQuiz(e){
   } else if (S.cat === 'lumen') {
     const lt = LUMEN_TIERS.find(x => x.id === S.tier);
     const res = computeTotal();
-    const priceStr = lt.id === 'surm' ? 'à partir de 1800€ HT' : lt.price + '€ HT';
+    const priceStr = lt.id === 'surm' ? 'à partir de 1800€ HT' : pp(lt.price) + '€ HT';
     formuleLabel = 'Lumen — ' + lt.name.fr + ' (' + priceStr + ')';
     montantLabel = lt.id === 'surm'
       ? 'Sur devis (à partir de 1800€ HT)'
       : res.amount + '€ HT' + (res.surDevis ? ' + options sur devis' : '');
-    budgetMontantEur = lt.price;
+    budgetMontantEur = lt.id === 'surm' ? lt.price : pp(lt.price);
   } else {
     const tier = TIERS.find(x => x.id === S.tier);
     const res = computeTotal();
-    formuleLabel = tier.name.fr + ' (' + cat.tiers[S.tier].price + (S.studio?' +60€ studio':'') + '€ HT)';
+    formuleLabel = tier.name.fr + ' (' + res.amount + '€ HT' + (S.studio?', dont 60€ studio':'') + ')';
     montantLabel = res.amount + '€ HT' + (res.surDevis ? ' + options sur devis' : '');
     budgetMontantEur = res.amount;
   }
+  if (isPartnerUser() && S.tier !== 'sub' && !(S.cat === 'lumen' && S.tier === 'surm')) formuleLabel += ' — TARIF PARTENAIRE -' + PARTNER_DISCOUNT + '% (compte ' + USER.email + ')';
   const allOpts = S.cat === 'lumen'
     ? LUMEN_OPTIONS
     : [...OPTIONS, ...((SPECIAL_OPTIONS[S.cat+'_'+S.tier])||[])];
@@ -3237,6 +3248,15 @@ function savePartnerPresentation(){
    tableau sont calculés depuis CATS (jamais dupliqués). Les promotions
    additionnelles viennent de USER.promotions, renseignées par l'admin. */
 function partnerPrice(price){ return Math.round(price * (100 - PARTNER_DISCOUNT) / 100); }
+/* Remise partenaire appliquée au questionnaire de devis : -20% sur les
+   prestations ponctuelles et leurs options pour un partenaire connecté
+   (pas sur les abonnements ni sur la formule Lumen "Sur-mesure", sur devis). */
+function isPartnerUser(){ return !!(USER && USER.type === 'partner'); }
+function pp(price){ return isPartnerUser() && typeof price === 'number' ? partnerPrice(price) : price; }
+function partnerQuizNotice(){
+  if (!isPartnerUser() || S.tier === 'sub' || (S.cat === 'lumen' && S.tier === 'surm')) return '';
+  return `<div class="pt-quiz-notice">${t({fr:'Tarif partenaire -' + PARTNER_DISCOUNT + '% appliqué à cette sélection.', en:'Partner rate -' + PARTNER_DISCOUNT + '% applied to this selection.'})}</div>`;
+}
 function eur(n){ return n.toLocaleString(LANG === 'fr' ? 'fr-FR' : 'en-GB') + ' €'; }
 
 function renderAccPromos(){
@@ -3297,6 +3317,7 @@ function renderAccReseau(){
   const all = USER.reseau || [];
   const introduced = all.filter(c => c.origine === 'bunkaio');
   const own = all.filter(c => c.origine !== 'bunkaio');
+  const ownNames = new Set(all.map(c => c.nom.toLowerCase()));
 
   const card = (c, removable) => `
     <div class="pt-contact">
@@ -3338,7 +3359,64 @@ function renderAccReseau(){
     </div>` : ''}
 
     ${own.length ? `<div class="pt-contact-grid">${own.map(c => card(c, true)).join('')}</div>`
-      : (reseauAdding ? '' : `<div class="acc-info-card"><div class="empty-note">${t({fr:'Votre réseau est vide. Ajoutez les professionnels avec qui vous travaillez — traiteurs, lieux, décorateurs, stylistes — pour les retrouver dans vos futures collaborations.', en:'Your network is empty. Add the professionals you work with — caterers, venues, decorators, stylists — to find them in future collaborations.'})}</div></div>`)}`;
+      : (reseauAdding ? '' : `<div class="acc-info-card"><div class="empty-note">${t({fr:'Votre réseau est vide. Ajoutez les professionnels avec qui vous travaillez — traiteurs, lieux, décorateurs, stylistes — pour les retrouver dans vos futures collaborations.', en:'Your network is empty. Add the professionals you work with — caterers, venues, decorators, stylists — to find them in future collaborations.'})}</div></div>`)}
+    ${renderNetworkDirectory(ownNames)}`;
+}
+
+/* Annuaire du réseau Bunkaio — DONNÉES FICTIVES (démo), à remplacer par
+   les vrais partenaires consentants (une route Worker dédiée) avant
+   publication. Les ids de type reprennent PARTNER_PROVIDER_TYPES. */
+const NETWORK_DIRECTORY_DEMO = [
+  { nom:'Atelier Mérel',        type:'archi-interieur', ville:'Lyon',        desc:{fr:'Architecture d\'intérieur résidentielle et boutiques.', en:'Residential and retail interior architecture.'} },
+  { nom:'Studio Valmont',       type:'architecte',      ville:'Bordeaux',    desc:{fr:'Maisons d\'architecte contemporaines, bois et béton.', en:'Contemporary architect-designed homes, timber and concrete.'} },
+  { nom:'Maison Orsini',        type:'constructeur',    ville:'Nice',        desc:{fr:'Maîtrise d\'œuvre de villas haut de gamme.', en:'Project management for high-end villas.'} },
+  { nom:'Cuisines Delaunay',    type:'cuisiniste',      ville:'Paris',       desc:{fr:'Cuisines sur mesure, ateliers en Île-de-France.', en:'Bespoke kitchens, workshops in Île-de-France.'} },
+  { nom:'Jardins Aubrac',       type:'paysagiste',      ville:'Toulouse',    desc:{fr:'Jardins et terrasses contemporains.', en:'Contemporary gardens and terraces.'} },
+  { nom:'Bleu Piscine',         type:'pisciniste',      ville:'Cannes',      desc:{fr:'Piscines à débordement et miroirs d\'eau.', en:'Infinity pools and reflecting pools.'} },
+  { nom:'Ébénisterie Lacroix',  type:'ebeniste',        ville:'Annecy',      desc:{fr:'Mobilier en bois massif, pièces uniques.', en:'Solid-wood furniture, one-off pieces.'} },
+  { nom:'Terre & Feu',          type:'ceramiste',       ville:'Aix-en-Provence', desc:{fr:'Céramique d\'art et arts de la table.', en:'Art ceramics and tableware.'} },
+  { nom:'Maison Élise Varenne', type:'createur-mode',   ville:'Paris',       desc:{fr:'Prêt-à-porter féminin éthique.', en:'Ethical womenswear.'} },
+  { nom:'Lumière Cosmétiques',  type:'cosmetique',      ville:'Grasse',      desc:{fr:'Soins naturels, parfumerie de niche.', en:'Natural skincare, niche perfumery.'} },
+  { nom:'Domaine des Oliviers', type:'lieu',            ville:'Luberon',     desc:{fr:'Lieu de réception pour mariages et séminaires.', en:'Venue for weddings and seminars.'} },
+  { nom:'Maison Gaspard Traiteur', type:'traiteur',     ville:'Lyon',        desc:{fr:'Cuisine de saison pour réceptions de 20 à 300 convives.', en:'Seasonal catering for 20 to 300 guests.'} },
+  { nom:'Fleurs d\'Ysée',       type:'fleuriste',       ville:'Paris',       desc:{fr:'Décors floraux événementiels.', en:'Event floral design.'} },
+  { nom:'Camille Roux — Make-up', type:'beaute',        ville:'Marseille',   desc:{fr:'Maquillage et coiffure pour shootings et mariages.', en:'Make-up and hair for shoots and weddings.'} },
+];
+let networkDirSector = 'all';
+
+function renderNetworkDirectory(ownNames){
+  const sectors = PARTNER_SECTORS.map(sec => `<button type="button" class="mb-chip ${networkDirSector === sec.id ? 'active' : ''}" onclick="setNetworkDirSector('${sec.id}')">${t(sec.name)}</button>`).join('');
+  const rows = NETWORK_DIRECTORY_DEMO.filter(m => {
+    const pt = partnerProviderType(m.type);
+    return networkDirSector === 'all' || (pt && pt.sector === networkDirSector);
+  }).map(m => {
+    const pt = partnerProviderType(m.type);
+    const added = ownNames.has(m.nom.toLowerCase());
+    return `
+    <div class="pt-contact">
+      <div class="pt-contact-main">
+        <div class="pt-contact-name">${escHtml(m.nom)}</div>
+        <div class="pt-contact-role">${pt ? escHtml(t(pt.name)) : ''} · ${escHtml(m.ville)}</div>
+        <div class="pt-contact-line">${escHtml(t(m.desc))}</div>
+      </div>
+      <button type="button" class="pt-link" ${added ? 'disabled' : ''} onclick="addDirectoryContact('${escHtml(m.nom.replace(/'/g, "\\'"))}')">${added ? t({fr:'Ajouté', en:'Added'}) : t({fr:'Ajouter', en:'Add'})}</button>
+    </div>`;
+  }).join('');
+  return `
+    <div class="pt-section-label">${t({fr:'Annuaire du réseau Bunkaio', en:'Bunkaio network directory'})}</div>
+    <div class="pt-demo-flag">${t({fr:'Aperçu — profils fictifs à titre d\'exemple', en:'Preview — fictional example profiles'})}</div>
+    <div class="mb-chip-grid pt-chips pt-dir-filter">
+      <button type="button" class="mb-chip ${networkDirSector === 'all' ? 'active' : ''}" onclick="setNetworkDirSector('all')">${t({fr:'Tous', en:'All'})}</button>${sectors}
+    </div>
+    <div class="pt-contact-grid">${rows}</div>`;
+}
+function setNetworkDirSector(id){ networkDirSector = id; renderAccReseau(); }
+function addDirectoryContact(nom){
+  const m = NETWORK_DIRECTORY_DEMO.find(x => x.nom === nom);
+  if (!m) return;
+  const pt = partnerProviderType(m.type);
+  const contact = { id:'nw_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7), nom:m.nom, domaine: pt ? t(pt.name) : undefined, role:m.ville };
+  savePartnerData({ reseau: [...networkOwnPayload(USER.reseau || []), contact] }, () => { renderAccReseau(); });
 }
 
 function toggleNetworkForm(open){ reseauAdding = open; renderAccReseau(); }
