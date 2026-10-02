@@ -261,7 +261,7 @@ const ARTICLES = [
   },
   {
     slug: 'portrait-professionnel-photo-profil-linkedin',
-    cat: 'photo-part',
+    cat: 'corporate',
     title: 'Portrait professionnel : photo de profil, site, équipe | BUNKAIO',
     description: 'Photo de profil LinkedIn, site web, équipe : comment réussir son portrait professionnel, quoi porter et quelle formule choisir.',
     h1: 'Portrait professionnel : réussir sa photo de profil et de présentation',
@@ -274,7 +274,7 @@ const ARTICLES = [
       { h: 'Définir les usages avant la séance', html: '<ul><li><strong>Profil en ligne</strong> : cadrage serré sur le visage et les épaules.</li><li><strong>Site web</strong> : cadrage plus large, éventuellement avec un décor lié à votre activité.</li><li><strong>Équipe</strong> : un style homogène pour toutes les personnes, en séance individuelle ou en <a href="/services/seance-photo-particuliers/" data-nav="service:photo-part">groupe</a>.</li><li><strong>Presse et communication</strong> : formats horizontaux et verticaux.</li></ul>' },
       { h: 'Que porter ?', html: '<p>Choisissez une tenue sobre, confortable et proche de ce que vous portez au travail. Les couleurs unies fonctionnent bien ; évitez les motifs trop contrastés. Notre guide <a href="/conseils/que-porter-seance-photo/" data-nav="article:que-porter-seance-photo">Que porter pour une séance photo ?</a> détaille les couleurs et les matières.</p>' },
       { h: 'Extérieur ou studio ?', html: '<p>L\'extérieur donne un rendu vivant et lumineux ; le studio offre un fond maîtrisé et homogène, utile pour une équipe. Sur la formule Découverte, le studio est proposé avec un supplément de 60 €. Pour choisir un lieu, voir <a href="/conseils/lieux-seance-photo-montpellier-beziers-toulouse/" data-nav="article:lieux-seance-photo-montpellier-beziers-toulouse">nos idées de lieux à Montpellier, Béziers et Toulouse</a>.</p>' },
-      { h: 'Quelle formule choisir ?', html: '<p>Pour un portrait professionnel, deux formules suffisent souvent : <strong>Découverte, 230 € HT</strong> (1 h de séance, 8 photos HD retouchées, sélection guidée, livraison en 5 jours ouvrés) ou <strong>Signature, 390 € HT</strong> (2 h de séance, 15 photos HD retouchées, direction de pose, livraison en 7 jours ouvrés). Les droits d\'utilisation commerciale vous sont cédés sans limite de durée. Retrouvez toutes les formules sur la page <a href="/services/seance-photo-particuliers/" data-nav="service:photo-part">Séance photo particuliers</a>.</p>' },
+      { h: 'Quelle formule choisir ?', html: '<p>Pour un portrait professionnel, deux formules suffisent souvent : <strong>Découverte, 230 € HT</strong> (1 h de séance, 8 photos HD retouchées, sélection guidée, livraison en 5 jours ouvrés) ou <strong>Signature, 390 € HT</strong> (2 h de séance, 15 photos HD retouchées, direction de pose, livraison en 7 jours ouvrés). Les droits d\'utilisation commerciale vous sont cédés sans limite de durée. Retrouvez toutes les formules sur la page <a href="/services/portrait-professionnel-corporate/" data-nav="service:corporate">Corporate — portraits professionnels</a>.</p>' },
       { h: 'Obtenir une estimation', html: '<p>Le <a href="/devis/" data-nav="quiz">devis en ligne</a> prend 2 minutes : vous recevez une réponse personnalisée sous 48 h, sans engagement. Précisez que le portrait est destiné à un usage professionnel.</p>' },
     ],
     faq: [

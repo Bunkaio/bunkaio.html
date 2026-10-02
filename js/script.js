@@ -45,7 +45,7 @@ let LANG = 'fr';
 const I18N = {
   fr: {
     'estimate':'Devis','services':'Services','portfolio':'Portfolio','drone':'4K Drone','contact':'Contact','partners':'Partenaires','nav-legal':'FAQ',
-    'hero-kicker':'Photographe professionnel · Occitanie','cred-lead':'BUNKAIO est un studio de photographie professionnelle mobile, basé à Montpellier : séances portrait, mode et mannequins, photo de produit, événementiel et photobooth IA Lumen, à Béziers, Montpellier et Toulouse. Retrouvez chaque <a href="/services/" data-nav="services">prestation et ses tarifs</a>.','quiz-h1':'Devis photo en ligne','hero-word1':'Estimez','hero-word2':'votre','hero-word3':'projet','start':'Estimer mon projet',
+    'hero-kicker':'Photographe professionnel · Occitanie','cred-lead':'BUNKAIO est un studio de photographie professionnelle mobile, basé à Montpellier : séances portrait, portraits professionnels, mode et mannequins, photo de produit, événementiel et photobooth IA Lumen, à Béziers, Montpellier et Toulouse. Retrouvez chaque <a href="/services/" data-nav="services">prestation et ses tarifs</a>.','quiz-h1':'Devis photo en ligne','hero-word1':'Estimez','hero-word2':'votre','hero-word3':'projet','start':'Estimer mon projet',
     'step-cat':'01 — Catégorie','q-cat':'Quel est votre domaine\u00a0?','q-cat-sub':'Sélectionnez l\'univers de votre projet.',
     'step-prof':'02 — Profil','q-prof':'Quel profil êtes-vous\u00a0?','q-prof-sub':'Identifiez-vous pour que nous comprenions précisément votre besoin.',
     'step-tier':'03 — Prestation','q-tier':'Quel niveau de prestation\u00a0?',
@@ -380,7 +380,7 @@ const I18N = {
   },
   en: {
     'estimate':'Quote','services':'Services','portfolio':'Portfolio','drone':'4K Drone','contact':'Contact','partners':'Partners','nav-legal':'FAQ',
-    'hero-kicker':'Professional photographer · Occitanie','cred-lead':'BUNKAIO is a mobile professional photography studio based in Montpellier: portrait sessions, fashion and models, product photography, events and the Lumen IA photobooth, in Béziers, Montpellier and Toulouse. Browse each <a href="/services/" data-nav="services">service and its rates</a>.','quiz-h1':'Online photo quote','hero-word1':'Estimate','hero-word2':'your','hero-word3':'project','start':'Estimate My Project',
+    'hero-kicker':'Professional photographer · Occitanie','cred-lead':'BUNKAIO is a mobile professional photography studio based in Montpellier: portrait sessions, professional portraits, fashion and models, product photography, events and the Lumen IA photobooth, in Béziers, Montpellier and Toulouse. Browse each <a href="/services/" data-nav="services">service and its rates</a>.','quiz-h1':'Online photo quote','hero-word1':'Estimate','hero-word2':'your','hero-word3':'project','start':'Estimate My Project',
     'step-cat':'01 — Category','q-cat':'What is your field\u00a0?','q-cat-sub':'Select the universe your project belongs to.',
     'step-prof':'02 — Profile','q-prof':'Which profile are you\u00a0?','q-prof-sub':'Tell us who you are so we can understand exactly what you need.',
     'step-tier':'03 — Service level','q-tier':'Which level of service\u00a0?',
@@ -928,6 +928,26 @@ const CATS = [
         fr:['Journée complète — 4 lieux différents','4 tenues différentes','30 photos HD retouchées','1 film court (30 secondes)','Direction artistique & stylisme','Publication sur les supports Bunkaio'],
         en:['Full day — 4 different locations','4 different outfits','30 retouched HD photos','1 short film (30 seconds)','Art direction & styling','Featured on Bunkaio channels'] } }
     }},
+  { id:'corporate',
+    name:{fr:'Corporate — portraits professionnels', en:'Corporate — professional portraits'},
+    tag:{fr:'Profil LinkedIn · site web · équipe · dirigeants', en:'LinkedIn profile · website · team · executives'},
+    pitch:{fr:'Une image professionnelle naturelle et soignée, qui inspire confiance dès le premier regard : photo de profil, site web, présentation d\'équipe.',
+      en:'A natural, polished professional image that builds trust at first glance: profile photo, website, team presentation.'},
+    icon:'agency',
+    tiers:{
+      deco:{ price:230, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
+        fr:['1h de séance — extérieur ou studio (+60€)','8 photos HD retouchées','Sélection guidée incluse','Galerie privée de téléchargement'],
+        en:['1h session — outdoor or studio (+€60)','8 retouched HD photos','Guided selection included','Private download gallery'] } },
+      sig:{ price:390, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
+        fr:['2h de séance','15 photos HD retouchées','Direction de pose incluse','Galerie privée de téléchargement'],
+        en:['2h session','15 retouched HD photos','Posing guidance included','Private download gallery'] } },
+      prem:{ price:590, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
+        fr:['Demi-journée (4h) — jusqu\'à 2 ambiances','25 photos HD retouchées','2 tenues différentes','Direction artistique complète','Galerie privée de téléchargement'],
+        en:['Half-day (4h) — up to 2 moods','25 retouched HD photos','2 different outfits','Full art direction','Private download gallery'] } },
+      edit:{ price:990, delay:{fr:'10 jours ouvrés',en:'10 working days'}, items:{
+        fr:['Journée complète — 4 lieux différents','4 tenues différentes','30 photos HD retouchées','1 film court (30 secondes)','Direction artistique & stylisme','Publication sur les supports Bunkaio'],
+        en:['Full day — 4 different locations','4 different outfits','30 retouched HD photos','1 short film (30 seconds)','Art direction & styling','Featured on Bunkaio channels'] } }
+    }},
   { id:'mode',
     name:{fr:'Mode, agence et mannequins', en:'Fashion, agencies & models'},
     tag:{fr:'Marques · agences · e-commerce · lookbook', en:'Brands · agencies · e-commerce · lookbook'},
@@ -1141,6 +1161,7 @@ const PROFILES = [
   { id:'createur', name:{fr:'Créateur(trice) de contenu',en:'Content creator'},         icon:'camera'  },
   { id:'entrepreneur', name:{fr:'Entrepreneur(se)',      en:'Entrepreneur'},            icon:'product' },
   { id:'ei',       name:{fr:'Entreprise individuelle',   en:'Sole proprietorship'},     icon:'artisan' },
+  { id:'equipe',   name:{fr:'Équipe / entreprise',       en:'Team / company'},          icon:'agency'  },
   { id:'gastro',   name:{fr:'Restaurateur / hôtelier',   en:'Restaurant / hotel owner'},icon:'gastro'  },
   { id:'paysage',  name:{fr:'Pisciniste / paysagiste',   en:'Pool builder / landscaper'},icon:'paysage'},
   { id:'event',    name:{fr:'Agence événementielle',     en:'Event agency'},            icon:'event'   },
@@ -1152,6 +1173,7 @@ const CAT_PROFILES = {
   immobilier: ['agence', 'promo', 'marque', 'autre'],
   archi:      ['agence', 'promo', 'marque', 'autre'],
   artisan:    ['artisan', 'marque', 'autre'],
+  corporate:  ['entrepreneur', 'ei', 'equipe', 'autre'],
   mode:       ['modele', 'mannequin', 'createur', 'marque', 'agence', 'autre'],
   commercial: ['marque', 'agence', 'entrepreneur', 'ei', 'gastro', 'artisan', 'autre'],
   event:      ['event', 'agence', 'marque', 'autre']
@@ -1170,6 +1192,10 @@ const PHOTO_PART_PROFILES = [
 ];
 
 const PROFILE_DESCRIPTIONS = {
+  equipe: {
+    fr:'Vous représentez une entreprise ou une équipe. Des portraits cohérents entre eux, pour votre site, vos présentations et vos recrutements : même lumière, même esprit, chacun à son avantage.',
+    en:'You represent a company or a team. Consistent portraits for your website, presentations and recruitment: the same light, the same spirit, everyone at their best.'
+  },
   modele: {
     fr:'Vous débutez et construisez votre book. Nous vous aidons à vous présenter sous votre meilleur jour : des images naturelles et soignées, pensées pour convaincre agences et marques.',
     en:'You are starting out and building your portfolio. We help you show your best side: natural, polished images designed to win over agencies and brands.'
@@ -1247,6 +1273,7 @@ const TIERS = [
      { id:'artisan',    label:{fr:'Artisanat', en:'Craftsmanship'} } */
 const PF_CATS = [
   { id:'photo-part',  label:{fr:'Séance photo',en:'Portrait'} },
+  { id:'corporate',   label:{fr:'Corporate',   en:'Corporate'} },
   { id:'mode',        label:{fr:'Mode',        en:'Fashion'} },
   { id:'commercial',  label:{fr:'Commercial',  en:'Commercial'} },
   { id:'event',       label:{fr:'Événementiel',en:'Events'} },
@@ -2154,7 +2181,7 @@ function renderRecapBase(){
   const tier = TIERS.find(x => x.id === S.tier);
   const td = cat.tiers[S.tier];
   const delivLabel = LANG === 'fr' ? 'Livraison' : 'Delivery';
-  const studioSupplement = (S.cat === 'photo-part' && S.studio) ? ' + 60€ studio' : '';
+  const studioSupplement = ((S.cat === 'photo-part' || S.cat === 'corporate') && S.studio) ? ' + 60€ studio' : '';
   const threeX = Math.round(pp(td.price) / 3).toLocaleString('fr-FR');
   const payLine = LANG === 'fr'
     ? `💳 Soit 3 × ${threeX}€ sans frais avec Klarna — ou carte bancaire, prélèvement automatique, acompte 30 % + solde.`
@@ -2175,7 +2202,7 @@ function renderRecapBase(){
 function commEligible(){
   if (S.cat === 'lumen') return false;
   if (S.cat === 'mode') return false;
-  if (S.cat === 'photo-part') return false;
+  if (S.cat === 'photo-part' || S.cat === 'corporate') return false;
   return ['immobilier','archi','cuisine','piscine','event','commercial'].includes(S.cat) || S.prof === 'marque';
 }
 
@@ -2244,8 +2271,8 @@ function renderOptions(){
     return;
   }
 
-  /* ─── Studio ou extérieur (photo-part seulement) ─── */
-  if (S.cat === 'photo-part') {
+  /* ─── Studio ou extérieur (séance photo et corporate) ─── */
+  if (S.cat === 'photo-part' || S.cat === 'corporate') {
     const studioDiv = document.createElement('div');
     studioDiv.className = 'stagger';
     studioDiv.style.cssText = 'animation-delay:0.38s; margin-bottom:28px';
@@ -2398,7 +2425,7 @@ function computeTotal(){
   let total = cat.tiers[S.tier].price;
   let express = false;
   let hasSurDevis = false;
-  if (S.cat === 'photo-part' && S.studio) total += 60;
+  if ((S.cat === 'photo-part' || S.cat === 'corporate') && S.studio) total += 60;
   S.opts.forEach(id => {
     const allOpts = [...OPTIONS, ...((SPECIAL_OPTIONS[S.cat+'_'+S.tier])||[])];
     const o = allOpts.find(x => x.id === id);
@@ -2533,7 +2560,7 @@ function submitQuiz(e){
   const optNames = (S.tier !== 'sub' && S.opts.length)
     ? S.opts.map(id => { const o = allOpts.find(x => x.id === id); return o ? o.name.fr : id; }).filter(Boolean).join(' · ')
     : (S.tier === 'sub' ? '— (abonné : tarif partenaire -20% sur options)' : 'Aucune');
-  const studioNote = (S.cat === 'photo-part') ? (S.studio ? 'Studio (+60€)' : 'Extérieur') : (S.tier === 'polas' ? 'Studio inclus (+60€)' : '');
+  const studioNote = (S.cat === 'photo-part' || S.cat === 'corporate') ? (S.studio ? 'Studio (+60€)' : 'Extérieur') : (S.tier === 'polas' ? 'Studio inclus (+60€)' : '');
   document.getElementById('successName').textContent = S.name;
   document.getElementById('commRedirect').style.display = S.comm ? 'block' : 'none';
   document.getElementById('qSubmit').disabled = true;
@@ -2595,12 +2622,22 @@ function goToProcess(){
    Uniquement des faits du catalogue ci-dessus. `choose` suit l'ordre des formules (Découverte → Éditorial). */
 const SERVICE_COPY = {
   'photo-part': {
-    lead:{fr:'BUNKAIO réalise des séances photo portrait et lifestyle pour les particuliers à Béziers, Montpellier et Toulouse : en extérieur ou en studio, en solo, en couple ou en groupe. Nous vous mettons en confiance et vous guidons sur les poses pour que les images vous ressemblent. La séance peut aussi servir un usage professionnel (<a href="/conseils/portrait-professionnel-photo-profil-linkedin/" data-nav="article:portrait-professionnel-photo-profil-linkedin">portrait pour LinkedIn, site ou équipe</a>), et nous vous aidons à <a href="/conseils/lieux-seance-photo-montpellier-beziers-toulouse/" data-nav="article:lieux-seance-photo-montpellier-beziers-toulouse">choisir le lieu</a> selon l\'ambiance recherchée.',
+    lead:{fr:'BUNKAIO réalise des séances photo portrait et lifestyle pour les particuliers à Béziers, Montpellier et Toulouse : en extérieur ou en studio, en solo, en couple ou en groupe. Nous vous mettons en confiance et vous guidons sur les poses pour que les images vous ressemblent. La séance peut aussi servir un usage professionnel (<a href="/services/portrait-professionnel-corporate/" data-nav="service:corporate">portraits corporate pour LinkedIn, site ou équipe</a>), et nous vous aidons à <a href="/conseils/lieux-seance-photo-montpellier-beziers-toulouse/" data-nav="article:lieux-seance-photo-montpellier-beziers-toulouse">choisir le lieu</a> selon l\'ambiance recherchée.',
           en:'BUNKAIO shoots portrait and lifestyle sessions for individuals in Béziers, Montpellier and Toulouse: outdoors or in the studio, solo, as a couple or in a group. We put you at ease and guide your poses so the images look like you. A session can also serve a professional purpose (profile, website or team portraits).'},
     choose:[
       {fr:'pour un portrait ciblé, par exemple une photo de profil : 1 h de séance et 8 photos retouchées.', en:'for a targeted portrait, such as a profile photo: a 1-hour session and 8 retouched photos.'},
       {fr:'pour varier les poses et les cadrages : 2 h de séance, 15 photos retouchées et direction de pose.', en:'to vary poses and framing: a 2-hour session, 15 retouched photos and posing guidance.'},
       {fr:'pour changer d\'ambiance et de tenue : une demi-journée, jusqu\'à 2 ambiances, 2 tenues et 25 photos.', en:'to change mood and outfit: a half-day, up to 2 moods, 2 outfits and 25 photos.'},
+      {fr:'pour une série complète : une journée, 4 lieux, 4 tenues, 30 photos et un film court de 30 secondes.', en:'for a complete series: a full day, 4 locations, 4 outfits, 30 photos and a 30-second short film.'}
+    ]
+  },
+  'corporate': {
+    lead:{fr:'BUNKAIO réalise des portraits professionnels pour les dirigeants, les indépendants, les entrepreneurs et les équipes à Béziers, Montpellier et Toulouse : photo de profil LinkedIn, site web, présentation d\'équipe, communication. La séance se fait en extérieur ou en studio, avec une direction de pose pour des images naturelles. Pour une équipe, précisez le nombre de personnes dans votre demande ; pour bien vous préparer, voir <a href="/conseils/portrait-professionnel-photo-profil-linkedin/" data-nav="article:portrait-professionnel-photo-profil-linkedin">comment réussir son portrait professionnel</a>.',
+          en:'BUNKAIO shoots professional portraits for executives, freelancers, entrepreneurs and teams in Béziers, Montpellier and Toulouse: LinkedIn profile photo, website, team presentation, communication. Sessions are outdoors or in the studio, with posing guidance for natural images. For a team, state the number of people in your request.'},
+    choose:[
+      {fr:'pour une photo de profil ou de signature de mail : 1 h de séance et 8 photos retouchées.', en:'for a profile or email-signature photo: a 1-hour session and 8 retouched photos.'},
+      {fr:'pour varier les cadrages (profil, site, presse) : 2 h de séance, 15 photos retouchées et direction de pose.', en:'to vary framing (profile, website, press): a 2-hour session, 15 retouched photos and posing guidance.'},
+      {fr:'pour couvrir plusieurs usages et tenues : une demi-journée, jusqu\'à 2 ambiances, 2 tenues et 25 photos.', en:'to cover several uses and outfits: a half-day, up to 2 moods, 2 outfits and 25 photos.'},
       {fr:'pour une série complète : une journée, 4 lieux, 4 tenues, 30 photos et un film court de 30 secondes.', en:'for a complete series: a full day, 4 locations, 4 outfits, 30 photos and a 30-second short film.'}
     ]
   },
@@ -2688,7 +2725,7 @@ function renderServicePage(catId){
     ...(catId === 'photo-part' ? [{ q: t({fr:'Peut-on faire une séance en couple ou en groupe ?', en:'Can we book a couple or group session?'}),
       a: `<p>${t({fr:'Oui : la séance se fait en solo, en couple ou en groupe, en extérieur ou en studio. Choisissez la formule selon la durée et le nombre de photos souhaités ; pour vous aider à préparer vos tenues, lisez ', en:'Yes: sessions are available solo, as a couple or in a group, outdoors or in the studio. Pick the package according to the session length and number of photos you want; to prepare your outfits, read '})}<a href="/conseils/que-porter-seance-photo/" data-nav="article:que-porter-seance-photo">${t({fr:'Que porter pour une séance photo ?', en:'What to wear for a photo session?'})}</a>.</p>` }] : []),
     ...(catId === 'photo-part' ? [{ q: t({fr:'Réalisez-vous des portraits professionnels ?', en:'Do you shoot professional portraits?'}),
-      a: `<p>${t({fr:'Oui : photo de profil, site web, présentation d\'équipe. Les formules de séance portrait s\'appliquent, avec des droits d\'utilisation commerciale cédés sans limite de durée. Plus de détails dans le guide ', en:'Yes: profile photo, website, team presentation. Portrait session packages apply, with commercial usage rights transferred with no time limit. More details in the guide '})}<a href="/conseils/portrait-professionnel-photo-profil-linkedin/" data-nav="article:portrait-professionnel-photo-profil-linkedin">${t({fr:'Portrait professionnel', en:'Professional portrait'})}</a>.</p>` }] : []),
+      a: `<p>${t({fr:'Oui : photo de profil, site web, présentation d\'équipe. Ils ont leur propre page, avec les mêmes formules adaptées à l\'usage professionnel : ', en:'Yes: profile photo, website, team presentation. They have their own page, with the same packages adapted to professional use: '})}<a href="/services/portrait-professionnel-corporate/" data-nav="service:corporate">${t({fr:'portraits corporate', en:'corporate portraits'})}</a>.</p>` }] : []),
   ];
   const PARTNER_HINT = {
     mode: { fr: 'Créateur, styliste, agence de mannequins ou maquilleur·se ? Découvrez le <a href="/partenaires/" data-nav="partners">partenariat BUNKAIO</a>.', en: 'Designer, stylist, model agency or make-up artist? Discover the <a href="/partenaires/" data-nav="partners">BUNKAIO partnership</a>.' },
@@ -2699,6 +2736,7 @@ function renderServicePage(catId){
   const copyBlock = SERVICE_COPY[catId];
   /* Visuel de la prestation : vrai <img> (indexable par Google Images), texte alternatif modifiable via IMG.serviceAlt. */
   const SERVICE_ALT_DEFAULT = {
+    corporate: {fr:'Exemple de portrait professionnel réalisé par BUNKAIO', en:'Example of a professional portrait by BUNKAIO'},
     'photo-part': {fr:'Exemple de séance photo portrait réalisée par BUNKAIO', en:'Example of a portrait photo session by BUNKAIO'},
     mode: {fr:'Exemple de photographie de mode réalisée par BUNKAIO', en:'Example of fashion photography by BUNKAIO'},
     commercial: {fr:'Exemple de photographie de produit réalisée par BUNKAIO', en:'Example of product photography by BUNKAIO'},

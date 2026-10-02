@@ -107,7 +107,7 @@ const IMG = {
   portfolioAlt: {},
   /* Texte alternatif de la photo de chaque page prestation (clé = id de la catégorie : 'photo-part', 'mode', 'commercial', 'event', 'lumen').
      Décrivez ce que montre réellement l'image. Vide = texte générique « Exemple de … réalisé par BUNKAIO ». */
-  serviceAlt: {},
+  serviceAlt: { corporate: 'Aya Nascimento, photographe, assise dans son studio, un appareil photo Sony à la main' },
   aboutPhoto: '',                                     // Portrait de la photographe (À propos) — ex. MEDIA_BASE + '/about/aya.webp' après dépôt dans l'admin média
   partners:  MEDIA_BASE + '/hero/partners-1.webp',   // Fond page Partenaires
   legal:     MEDIA_BASE + '/hero/contact-1.webp',    // Fond page FAQ & confidentialité
@@ -236,6 +236,7 @@ const IMG = {
     piscine:      MEDIA_BASE + '/services/piscine.webp',       // Piscines & extérieurs
     artisan:      MEDIA_BASE + '/services/artisan.webp',       // Artisanat d'art
     'photo-part': MEDIA_BASE + '/services/photo-part.webp',   // Séance photo particuliers
+    corporate:    '/images/about/aya-nascimento-photographe-studio.webp',  // Corporate — provisoire (portrait d'Aya) ; pour une photo dédiée : déposer services/corporate.webp dans l'admin média puis remplacer par MEDIA_BASE + '/services/corporate.webp'
     mode:         MEDIA_BASE + '/services/mode.webp',          // Mode, agence et mannequins
     commercial:   MEDIA_BASE + '/services/commercial.webp',    // Commercial & produits
     event:        MEDIA_BASE + '/services/event.webp',         // Événementiel

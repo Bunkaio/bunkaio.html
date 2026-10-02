@@ -24,6 +24,11 @@
         "path": "/services/seance-photo-particuliers/"
       },
       {
+        "name": "Corporate — portraits professionnels",
+        "description": "Portraits professionnels pour dirigeants, indépendants et équipes : profil LinkedIn, site web, présentation.",
+        "path": "/services/portrait-professionnel-corporate/"
+      },
+      {
         "name": "Mode, agence et mannequins",
         "description": "Lookbooks, books mannequins et visuels de marque pour agences et créateurs.",
         "path": "/services/photographe-mode-mannequins/"
