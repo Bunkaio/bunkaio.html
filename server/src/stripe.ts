@@ -179,7 +179,10 @@ async function createFractionalInvoice(
     // auto-marquée payée. C'est la cause des anciennes factures de test à 0€.
     pending_invoice_items_behavior: 'include',
     // Mention légale obligatoire : entreprise en franchise en base de TVA.
-    footer: customerLang === 'en' ? 'VAT not applicable, art. 293 B of the French Tax Code' : 'TVA non applicable, art. 293 B du CGI',
+    footer: customerLang === 'en'
+      ? 'VAT not applicable, art. 293 B of the French Tax Code. The assignment of usage rights is subject to payment in full of the price. Professional customers: in case of late payment, penalties at three times the legal interest rate and a fixed recovery fee of EUR 40 (art. L441-10 of the French Commercial Code).'
+      : "TVA non applicable, art. 293 B du CGI. La cession des droits d'utilisation est subordonnée au paiement intégral du prix. Clients professionnels : en cas de retard de paiement, pénalités au taux de trois fois le taux d'intérêt légal et indemnité forfaitaire de recouvrement de 40 € (art. L441-10 du Code de commerce).",
+
     metadata: {
       type: metadataType,
       description: input.description,
