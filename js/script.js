@@ -1837,7 +1837,7 @@ function renderTiersBase(){
       ${sub.promo ? `<div class="tier-promo">${t(sub.promo)}</div>` : ''}<div class="tier-badge">${badge}</div>
       <div class="tier-head">
         <div class="tier-name">${t(sub.name)}</div>
-        <div class="tier-price">${sub.price.toLocaleString('fr-FR')}€<small>HT/${LANG === 'fr' ? 'mois' : 'mo'}</small></div>
+        <div class="tier-price">${pp(sub.price).toLocaleString('fr-FR')}€<small>HT/${LANG === 'fr' ? 'mois' : 'mo'}</small></div>
       </div>
       <div class="tier-detail">${t(sub.items).join(' · ')}</div>
       <div class="sub-engagement">${engagement} · ${saving}</div>`;
@@ -1867,7 +1867,7 @@ function renderRecapBase(){
       <div class="recap-label">${selLabel}</div>
       <div class="recap-title">
         <span>${t(sub.name)}</span>
-        <span>${sub.price.toLocaleString('fr-FR')}€ HT/${LANG === 'fr' ? 'mois' : 'mo'}</span>
+        <span>${pp(sub.price).toLocaleString('fr-FR')}€ HT/${LANG === 'fr' ? 'mois' : 'mo'}</span>
       </div>
       <div class="recap-payment">${payLine}</div>
       <ul class="recap-items">
@@ -2154,7 +2154,7 @@ function checkQuizForm(){
 }
 
 function computeTotal(){
-  if (S.tier === 'sub') return { amount: SUBS[S.cat].price, surDevis: false };
+  if (S.tier === 'sub') return { amount: pp(SUBS[S.cat].price), surDevis: false };
   if (S.tier === 'polas') return { amount: pp(POLAS[S.cat].price + 60), surDevis: false };
   if (S.cat === 'lumen') {
     const lt = LUMEN_TIERS.find(x => x.id === S.tier);
@@ -2195,7 +2195,7 @@ function animatePriceCalc(){
 
   let targetAmount, isSub = false, surDevis = false, monthlyLabel = '';
   if (S.tier === 'sub') {
-    targetAmount = SUBS[S.cat] ? SUBS[S.cat].price : 0;
+    targetAmount = SUBS[S.cat] ? pp(SUBS[S.cat].price) : 0;
     isSub = true;
     monthlyLabel = LANG === 'fr' ? '/mois' : '/mo';
   } else {
@@ -2275,9 +2275,9 @@ function submitQuiz(e){
   let formuleLabel, montantLabel, budgetMontantEur;
   if (S.tier === 'sub') {
     const sub = SUBS[S.cat];
-    formuleLabel = 'ABONNEMENT — ' + sub.name.fr + ' (' + sub.price + '€ HT/mois, engagement 6 mois)';
-    montantLabel = sub.price + '€ HT/mois';
-    budgetMontantEur = sub.price;
+    formuleLabel = 'ABONNEMENT — ' + sub.name.fr + ' (' + pp(sub.price) + '€ HT/mois, engagement 6 mois)';
+    montantLabel = pp(sub.price) + '€ HT/mois';
+    budgetMontantEur = pp(sub.price);
   } else if (S.tier === 'polas') {
     const polas = POLAS[S.cat];
     const res = computeTotal();
@@ -2300,7 +2300,7 @@ function submitQuiz(e){
     montantLabel = res.amount + '€ HT' + (res.surDevis ? ' + options sur devis' : '');
     budgetMontantEur = res.amount;
   }
-  if (isPartnerUser() && S.tier !== 'sub' && !(S.cat === 'lumen' && S.tier === 'surm')) formuleLabel += ' — TARIF PARTENAIRE -' + PARTNER_DISCOUNT + '% (compte ' + USER.email + ')';
+  if (isPartnerUser() && !(S.cat === 'lumen' && S.tier === 'surm')) formuleLabel += ' — TARIF PARTENAIRE -' + PARTNER_DISCOUNT + '% (compte ' + USER.email + ')';
   const allOpts = S.cat === 'lumen'
     ? LUMEN_OPTIONS
     : [...OPTIONS, ...((SPECIAL_OPTIONS[S.cat+'_'+S.tier])||[])];
@@ -3249,12 +3249,12 @@ function savePartnerPresentation(){
    additionnelles viennent de USER.promotions, renseignées par l'admin. */
 function partnerPrice(price){ return Math.round(price * (100 - PARTNER_DISCOUNT) / 100); }
 /* Remise partenaire appliquée au questionnaire de devis : -20% sur les
-   prestations ponctuelles et leurs options pour un partenaire connecté
-   (pas sur les abonnements ni sur la formule Lumen "Sur-mesure", sur devis). */
+   prestations, abonnements et options pour un partenaire connecté
+   (abonnements inclus, sauf la formule Lumen "Sur-mesure", sur devis). */
 function isPartnerUser(){ return !!(USER && USER.type === 'partner'); }
 function pp(price){ return isPartnerUser() && typeof price === 'number' ? partnerPrice(price) : price; }
 function partnerQuizNotice(){
-  if (!isPartnerUser() || S.tier === 'sub' || (S.cat === 'lumen' && S.tier === 'surm')) return '';
+  if (!isPartnerUser() || (S.cat === 'lumen' && S.tier === 'surm')) return '';
   return `<div class="pt-quiz-notice">${t({fr:'Tarif partenaire -' + PARTNER_DISCOUNT + '% appliqué à cette sélection.', en:'Partner rate -' + PARTNER_DISCOUNT + '% applied to this selection.'})}</div>`;
 }
 function eur(n){ return n.toLocaleString(LANG === 'fr' ? 'fr-FR' : 'en-GB') + ' €'; }
