@@ -165,6 +165,7 @@ function isValidSelfPartenariat(value: unknown): boolean {
   return (
     (v.typePrestataire === undefined || (typeof v.typePrestataire === 'string' && PROVIDER_TYPE_IDS.has(v.typePrestataire))) &&
     (v.disponibleCollab === undefined || typeof v.disponibleCollab === 'boolean') &&
+    (v.visibleInDirectory === undefined || typeof v.visibleInDirectory === 'boolean') &&
     (v.presentation === undefined || (typeof v.presentation === 'string' && v.presentation.length <= 600))
   );
 }
@@ -302,8 +303,16 @@ async function handleAccountUpdate(request: Request, env: Env, headers: Record<s
         return r && c.statut === 'Proposée' ? { ...c, statut: r.statut } : c;
       })
     : account.collaborations;
-  const partenariat = isPartner && body.partenariat
-    ? { ...account.partenariat, ...body.partenariat }
+  // Liste blanche : un partenaire ne peut pas s'attribuer statut, date d'adhésion, article, etc.
+  const selfPartenariat = body.partenariat
+    ? Object.fromEntries(
+        (['typePrestataire', 'disponibleCollab', 'visibleInDirectory', 'presentation'] as const)
+          .filter((k) => body.partenariat![k] !== undefined)
+          .map((k) => [k, body.partenariat![k]]),
+      )
+    : undefined;
+  const partenariat = isPartner && selfPartenariat
+    ? { ...account.partenariat, ...selfPartenariat }
     : account.partenariat;
 
   const updated = {

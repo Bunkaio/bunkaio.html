@@ -197,6 +197,7 @@ export interface AccountPartnerInfo {
   articleUrl?: string; // lien vers leur mise en avant éditoriale, une fois publiée
   typePrestataire?: string; // id d'un type de PARTNER_PROVIDER_TYPES (js/script.js) — choisi par le partenaire
   disponibleCollab?: boolean; // ouvert aux prestations collaboratives rémunérées
+  visibleInDirectory?: boolean; // coché par le partenaire pour figurer dans l'annuaire BUNKAIO (absent = non référencé)
   presentation?: string; // courte présentation affichée à l'équipe Bunkaio
 }
 
@@ -284,7 +285,7 @@ export interface AccountSelfUpdatePayload {
   adresse?: string;
   moodboards?: Moodboard[];
   /** Partenaires uniquement — seuls ces 3 champs de `partenariat` sont modifiables par le partenaire. */
-  partenariat?: Pick<AccountPartnerInfo, 'typePrestataire' | 'disponibleCollab' | 'presentation'>;
+  partenariat?: Pick<AccountPartnerInfo, 'typePrestataire' | 'disponibleCollab' | 'visibleInDirectory' | 'presentation'>;
   /** Partenaires uniquement — remplace les contacts ajoutés par le partenaire ; ceux de Bunkaio sont conservés. */
   reseau?: NetworkContact[];
   collaborationReponses?: CollaborationResponse[];

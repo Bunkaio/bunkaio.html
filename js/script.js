@@ -85,7 +85,7 @@ const I18N = {
     'contact-title':'Contact','contact-sub':'Une question, un projet, une collaboration\u00a0? Écrivez-nous — nous répondons sous 24h.',
     'company-label':'Entreprise','follow-label':'Suivez-nous','contact-btn':'Nous contacter',
     'ct-success-title':'Message envoyé','ct-success-text':'Merci pour votre message. Nous reviendrons vers vous sous 24 heures.',
-    'partners-title':'Programme Partenaires Fondateurs',
+    'partners-title':'Partenariat et collaboration',
     'legal-title':'FAQ & politique de confidentialité',
     'legal-sub':'Les réponses aux questions les plus fréquentes, ainsi que nos engagements en matière de confidentialité et de droits d\'utilisation des visuels.',
     'legaltab-faq':'FAQ','legaltab-privacy':'Politique de confidentialité',
@@ -205,7 +205,7 @@ const I18N = {
     'collab-success-title':'Proposition envoyée',
     'collab-success-text':'Merci pour votre proposition. Nous l\'étudions et revenons vers vous sous 5 jours ouvrés.',
     'footer-claim':'Nous révélons ce qui rend vos projets uniques.',
-    'access-client':'Accès client','access-partner':'Accès partenaire','nav-connect':'Connexion',
+    'access-client':'Accès client','access-partner':'Accès partenaire','nav-connect':'Connexion','nav-account-client':'Espace client','nav-account-partner':'Espace partenaire',
     'login-title-client':'Espace client','login-title-partner':'Espace partenaire',
     'login-title':'Espace client',
     'login-sub':'Connectez-vous avec votre email et le code d\'accès qui vous a été transmis par BUNKAIO.',
@@ -394,7 +394,7 @@ const I18N = {
     'contact-title':'Contact','contact-sub':'A question, a project, a collaboration\u00a0? Write to us — we reply within 24 hours.',
     'company-label':'Company','follow-label':'Follow us','contact-btn':'Get in touch',
     'ct-success-title':'Message sent','ct-success-text':'Thank you for your message. We will get back to you within 24 hours.',
-    'partners-title':'Founding Partners Programme',
+    'partners-title':'Partnership & collaboration',
     'legal-title':'FAQ & privacy policy',
     'legal-sub':'Answers to the most frequently asked questions, along with our commitments on data privacy and image/video usage rights.',
     'legaltab-faq':'FAQ','legaltab-privacy':'Privacy policy',
@@ -514,7 +514,7 @@ const I18N = {
     'collab-success-title':'Proposal sent',
     'collab-success-text':'Thank you for your proposal. We\'re reviewing it and will get back to you within 5 working days.',
     'footer-claim':'We reveal what makes your projects unique.',
-    'access-client':'Client area','access-partner':'Partner area','nav-connect':'Sign in',
+    'access-client':'Client area','access-partner':'Partner area','nav-connect':'Sign in','nav-account-client':'Client area','nav-account-partner':'Partner area',
     'login-title-client':'Client area','login-title-partner':'Partner area',
     'login-title':'Client area',
     'login-sub':'Sign in with your email and the access code provided to you by BUNKAIO.',
@@ -2827,6 +2827,7 @@ let USER = null;
 let USER_CODE = null;
 
 function openLogin(type){
+  if (USER) { renderAccount(); goView('account'); return; }
   setLoginType(type);
   toggleLoginMode(false);
   document.getElementById('registerSuccess').style.display = 'none';
@@ -2869,7 +2870,7 @@ function doLogin(){
       if (!data.ok || !data.account) { err.style.display = 'block'; return; }
       USER = data.account;
       USER_CODE = code;
-      try { localStorage.setItem('bunkaio_user', JSON.stringify({ user: USER, code: USER_CODE })); } catch(e) {}
+      saveSession();
       updateNavLogin();
       renderAccount();
       goView('account');
@@ -2919,25 +2920,52 @@ function doRegister(){
 function doLogout(){
   USER = null;
   USER_CODE = null;
-  try { localStorage.removeItem('bunkaio_user'); } catch(e) {}
+  clearSession();
   document.getElementById('logEmail').value = '';
   document.getElementById('logCode').value = '';
   updateNavLogin();
   goView('home');
 }
 
+/* Session persistante : on ne garde que les identifiants (type, email, code
+   d'accès — les mêmes que ceux saisis au login) ; le compte est rechargé
+   depuis le Worker à chaque ouverture du site pour ne jamais afficher de
+   données périmées. */
+const SESSION_KEY = 'bunkaio_session';
+function saveSession(){
+  try { localStorage.setItem(SESSION_KEY, JSON.stringify({ type: USER.type, email: USER.email, code: USER_CODE })); } catch(e) {}
+}
+function clearSession(){
+  try { localStorage.removeItem(SESSION_KEY); localStorage.removeItem('bunkaio_user'); } catch(e) {}
+}
+function restoreSession(){
+  let saved = null;
+  try { saved = JSON.parse(localStorage.getItem(SESSION_KEY) || 'null'); } catch(e) {}
+  try { localStorage.removeItem('bunkaio_user'); } catch(e) {}
+  if (!saved || !saved.type || !saved.email || !saved.code) return;
+  fetch(ACCOUNTS_API_BASE + '/auth-login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ type: saved.type, email: saved.email, code: saved.code })
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (data && data.ok && data.account) {
+        USER = data.account; USER_CODE = saved.code;
+        updateNavLogin();
+        if (document.getElementById('view-account').classList.contains('active')) renderAccount();
+      } else if (data && data.ok === false) clearSession();
+    })
+    .catch(() => {});
+}
+
 function updateNavLogin(){
-  const btns = document.querySelectorAll('.nav-connect');
-  btns.forEach(btn => {
-    if (USER) {
-      const label = USER.type === 'partner' ? 'Espace partenaire' : 'Espace client';
-      btn.innerHTML = `<span>${label}</span>`;
-      btn.onclick = () => { goView('account'); closeMobileMenu(); };
-    } else {
-      btn.innerHTML = '<span data-lang="nav-connect">Connexion</span>';
-      btn.onclick = () => { openLogin('client'); closeMobileMenu(); };
-    }
+  const key = !USER ? 'nav-connect' : USER.type === 'partner' ? 'nav-account-partner' : 'nav-account-client';
+  document.querySelectorAll('.nav-connect span').forEach(span => {
+    span.setAttribute('data-lang', key);
+    span.innerHTML = I18N[LANG][key];
   });
+  syncNavHeight();
 }
 
 function setAccountTab(tab){
@@ -3187,14 +3215,12 @@ function renderAccPartner(){
       </div>
 
       <div class="mb-detail-block">
-        <div class="mb-detail-label">${t({fr:'Visibilité dans l\'annuaire', en:'Directory visibility'})}</div>
-        <div class="fgroup" style="margin-bottom:0">
-          <label style="display: flex; align-items: center; gap: 12px; font-size: 14px; font-weight: normal; text-transform: none; letter-spacing: normal;">
-            <input type="checkbox" id="ptDirectoryCheckbox" ${info.visibleInDirectory !== false ? 'checked' : ''} onchange="setDirectoryVisibility(this.checked)" style="width: 18px; height: 18px; cursor: pointer;">
-            <span>${t({fr:'Être référencé dans l\'annuaire BUNKAIO', en:'Be listed in the BUNKAIO directory'})}</span>
-          </label>
-          <p class="acc-info-note" style="margin-top:8px">${t({fr:'Les autres partenaires Bunkaio pourront vous contacter et découvrir votre profil via l\'annuaire réseau.', en:'Other Bunkaio partners can find and contact you through the network directory.'})}</p>
-        </div>
+        <div class="mb-detail-label">${t({fr:'Annuaire BUNKAIO', en:'BUNKAIO directory'})}</div>
+        <label class="pt-check">
+          <input type="checkbox" id="ptDirectoryCheckbox" ${info.visibleInDirectory === true ? 'checked' : ''} onchange="setDirectoryVisibility(this.checked)">
+          <span>${t({fr:'Je souhaite être référencé·e dans l\'annuaire BUNKAIO', en:'I would like to be listed in the BUNKAIO directory'})}</span>
+        </label>
+        <p class="acc-info-note" style="margin-top:10px">${t({fr:'Les autres partenaires pourront ainsi vous trouver et vous contacter. Vous pouvez décocher à tout moment.', en:'Other partners will be able to find and contact you. You can untick at any time.'})}</p>
       </div>
 
       <div class="mb-detail-block">
@@ -3270,7 +3296,7 @@ function setCollabAvailability(value){
   savePartnerData({ partenariat: { disponibleCollab: value } }, () => { renderAccPartner(); });
 }
 function setDirectoryVisibility(visible){
-  savePartnerData({ partenariat: { visibleInDirectory: visible } }, () => { renderAccPartner(); });
+  savePartnerData({ partenariat: { visibleInDirectory: visible } }, () => { renderAccPartner(); }, () => { renderAccPartner(); });
 }
 function savePartnerPresentation(){
   const btn = document.getElementById('ptPresBtn');
@@ -4683,15 +4709,4 @@ window.addEventListener('resize', () => { syncNavHeight(); if (window.innerWidth
 initHeroScrollFx();
 initNavScrollState();
 
-/* Charger l'utilisateur depuis localStorage s'il y est */
-try {
-  const stored = localStorage.getItem('bunkaio_user');
-  if (stored) {
-    const data = JSON.parse(stored);
-    if (data.user && data.code) {
-      USER = data.user;
-      USER_CODE = data.code;
-    }
-  }
-} catch(e) {}
-updateNavLogin();
+restoreSession();
