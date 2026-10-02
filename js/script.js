@@ -3174,7 +3174,8 @@ function renderPfGalleryInto(container, catId, catLabel, max, emptyText){
     photos.forEach((src, i) => {
       const ph = document.createElement('div');
       ph.className = 'ph rv';
-      const customAlt = IMG.portfolioAlt && IMG.portfolioAlt[catId] && IMG.portfolioAlt[catId][i];
+      const fileNum = parseInt((src.match(/\/(\d+)\.webp/) || [])[1], 10) || (i + 1); /* l'ALT suit le numéro du fichier : supprimer une photo ne décale pas les autres */
+      const customAlt = IMG.portfolioAlt && IMG.portfolioAlt[catId] && IMG.portfolioAlt[catId][fileNum - 1];
       ph.innerHTML = `<img loading="lazy" decoding="async" src="${src}" alt="${escHtml(customAlt || ((LANG === 'fr' ? 'Réalisation BUNKAIO — ' : 'BUNKAIO work — ') + catLabel.toLowerCase() + ' (' + (i + 1) + '/' + photos.length + ')'))}">`;
       container.appendChild(ph);
       observe(ph);

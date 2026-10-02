@@ -176,6 +176,29 @@
   .pf-img-card img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; }
   .pf-img-label { font-size: 10px; color: var(--grey); padding: 4px 8px; }
 
+  .pf-img-card .pf-thumb { cursor: pointer; display: block; position: relative; }
+  .pf-img-card .pf-thumb:hover::after { content: 'Remplacer'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(10,10,12,0.55); color: #fff; font-size: 11px; font-weight: 600; }
+  .pf-img-foot { display: flex; align-items: center; justify-content: space-between; gap: 6px; padding: 4px 6px 5px 8px; }
+  .pf-img-foot .pf-img-label { padding: 0; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pf-img-label.heavy { color: #c25b00; font-weight: 600; }
+  .pf-del { border: 0; background: #fdecea; color: var(--red); border-radius: 4px; width: 22px; height: 22px; font-size: 13px; line-height: 1; cursor: pointer; flex-shrink: 0; }
+  .pf-del:hover { background: var(--red); color: #fff; }
+  .pf-count { font-weight: 400; color: #aaa; font-size: 11px; margin-left: 6px; }
+
+  /* ── Fiche d'export ── */
+  .export-box { border: 1px solid var(--line); border-radius: 10px; background: #fff; margin-bottom: 40px; }
+  .export-box > summary { cursor: pointer; padding: 16px 20px; font-size: 15px; font-weight: 700; list-style: none; }
+  .export-box > summary::-webkit-details-marker { display: none; }
+  .export-body { padding: 0 20px 20px; font-size: 12.5px; line-height: 1.7; color: #333; }
+  .export-body h3 { font-size: 13px; margin: 18px 0 6px; }
+  .export-body table { width: 100%; border-collapse: collapse; font-size: 12px; display: block; overflow-x: auto; }
+  .export-body th, .export-body td { text-align: left; padding: 6px 12px 6px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .export-body th { color: var(--grey); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .export-body code, .export-body pre { background: #f4f3f0; border-radius: 4px; font-size: 11.5px; }
+  .export-body code { padding: 1px 5px; }
+  .export-body pre { padding: 10px 12px; overflow-x: auto; margin: 6px 0; white-space: pre-wrap; word-break: break-all; }
+  .export-body ul { padding-left: 18px; }
+
   /* ── Rubriques désactivées (accordéon, grisé, replié) ── */
   .disabled-accordion {
     margin-top: 56px;
@@ -233,9 +256,60 @@
   <h2 class="page-title">Gérer les médias</h2>
   <p class="page-sub">
     Glisse-dépose tes photos (et vidéos, tout en haut de page) directement sur chaque emplacement, ou clique dessus pour ouvrir le sélecteur de fichiers.<br>
-    Tout est uploadé en direct sur le site — aucune manipulation de code nécessaire.<br>
+    Tout est uploadé en direct sur le site — aucune manipulation de code nécessaire. Les photos sont automatiquement converties en WebP (2400 px max, métadonnées EXIF retirées) avant l'envoi.<br>
     <em>Exceptions — ces quelques fichiers sont gérés directement dans le code du site (pas via ce panel) : les vidéos de fond de l'accueil et de la page Partenaires, et le logo. Dis-le moi directement si tu veux les changer, je m'en occupe.</em>
   </p>
+  <details class="export-box" open>
+    <summary>📋 Fiche d'export — photos et vidéos (à lire avant d'envoyer un fichier)</summary>
+    <div class="export-body">
+      <h3>Règles générales pour les photos</h3>
+      <ul>
+        <li><strong>Format :</strong> WebP. Le panel convertit automatiquement JPEG/PNG/HEIC (qualité 82, côté long 2400 px max) et retire les métadonnées EXIF (dont la position GPS). Exporter dès l'origine en JPEG qualité 90+ ou PNG suffit.</li>
+        <li><strong>Couleurs :</strong> exporter en <strong>sRGB</strong> (Lightroom : « Espace colorimétrique sRGB »), sinon les couleurs ternissent sur le web.</li>
+        <li><strong>Pas de texte, logo ni cadre incrusté</strong> dans la photo. Sujet <strong>centré</strong> : le site recadre selon l'écran.</li>
+        <li><strong>Poids cible :</strong> voir tableau. Les photos du portfolio de plus de 400 Ko s'affichent en orange dans le panel.</li>
+        <li><strong>Droit à l'image :</strong> pour toute personne reconnaissable, garder l'autorisation de publication.</li>
+      </ul>
+
+      <h3>Emplacements — dimensions et poids</h3>
+      <table>
+        <tr><th>Emplacement</th><th>Dimensions</th><th>Ratio</th><th>Poids cible</th><th>Où sur le site</th></tr>
+        <tr><td>Bannières (hero/…)</td><td>1920 × 820 px</td><td>21:9 paysage</td><td>≤ 250 Ko</td><td>Haut des pages Devis, Portfolio, Services, Contact, Partenaires, Connexion, Espace client. <code>contact-1</code> sert aussi de fond à À propos et FAQ ; <code>services-1</code> de fond aux pages prestation, conseils et articles.</td></tr>
+        <tr><td>Photos prestations (services/…)</td><td>1600 × 2000 px</td><td>portrait 4:5, sujet centré</td><td>≤ 350 Ko</td><td>Carrousel d'accueil, filtre Services, formulaire de devis <strong>et photo de la page de chaque prestation</strong> (recadrée 3:4, avec texte alternatif)</td></tr>
+        <tr><td>Portfolio (portfolio/&lt;catégorie&gt;/N.webp)</td><td>≈ 900 × 1200 px</td><td>portrait</td><td>≤ 300 Ko</td><td>Galerie du Portfolio, 24 photos max par catégorie</td></tr>
+        <tr><td>Illustration « Devis &amp; déroulé »</td><td>900 × 700 px</td><td>9:7</td><td>≤ 150 Ko</td><td>Services → onglet Devis &amp; déroulé</td></tr>
+        <tr><td>Illustration « Collaboration »</td><td>900 × 1100 px</td><td>portrait</td><td>≤ 150 Ko</td><td>Partenaires → onglet Collaboration</td></tr>
+        <tr><td>Vignettes 4K Drone</td><td>640 × 400 px</td><td>16:10</td><td>≤ 80 Ko</td><td>Rubrique en pause</td></tr>
+      </table>
+
+      <h3>Vidéos de fond</h3>
+      <ul>
+        <li><strong>.mp4 (H.264), SANS piste audio</strong>, boucle fluide de 8 à 20 s, 1920 × 1080 px (illustration devis : 9:7), 24 à 30 images/s.</li>
+        <li><strong>Poids visé : 3 à 6 Mo</strong> (10 Mo maximum) pour ne pas pénaliser le chargement mobile.</li>
+        <li>Commande ffmpeg conseillée (compression, suppression du son, lecture immédiate) :
+<pre>ffmpeg -i source.mov -an -vf "scale=-2:1080,fps=30" -c:v libx264 -crf 28 -preset slow -pix_fmt yuv420p -movflags +faststart sortie.mp4</pre>
+Si le fichier dépasse 6 Mo, augmenter <code>-crf</code> (30) ou raccourcir la boucle. Les vidéos de l'accueil et de Partenaires (<code>videos/home-bg.mp4</code>, <code>videos/mission-bg.mp4</code>) se changent directement sur GitHub, avec les mêmes règles.</li>
+      </ul>
+
+      <h3>Compression en ligne de commande (optionnel)</h3>
+<pre>cwebp -q 82 -resize 900 1200 photo.jpg -o 1.webp</pre>
+      <p>Ou l'outil en ligne Squoosh (squoosh.app) : WebP, qualité 80–85.</p>
+
+      <h3>Référencement (Google Images)</h3>
+      <ul>
+        <li><strong>Textes alternatifs :</strong> décrire ce qu'on voit, en une phrase, sans liste de mots-clés. Ils se renseignent dans <code>config/media.js</code> : <code>IMG.portfolioAlt</code> (une liste par catégorie, <em>dans l'ordre des numéros de fichier</em> : 1.webp = 1re entrée) et <code>IMG.serviceAlt</code> (une phrase par prestation). Supprimer une photo ne décale pas les autres textes.</li>
+        <li><strong>Noms de fichiers :</strong> les photos du portfolio doivent garder la numérotation <code>N.webp</code> (c'est ainsi que la galerie les trouve) ; les autres chemins sont fixes, ne pas les renommer.</li>
+        <li><strong>Hébergement :</strong> les images sont servies depuis l'adresse technique <code>workers.dev</code>. Le passage à <code>media.bunkaio.com</code> est prévu (meilleur pour Google Images et la marque) ; il suffira ensuite de changer <code>MEDIA_BASE</code> dans <code>config/media.js</code>.</li>
+      </ul>
+
+      <h3>Suppression et remplacement</h3>
+      <ul>
+        <li><strong>Portfolio :</strong> « × » supprime la photo (confirmation demandée) ; clic sur la photo = la remplacer par un nouveau fichier au même numéro ; « + Ajouter » prend le premier numéro libre.</li>
+        <li>Un navigateur peut garder l'ancienne image en cache jusqu'à 1 h ; recharger la page avec Ctrl+Maj+R pour la voir tout de suite.</li>
+        <li>La suppression demande la dernière version du Worker : <code>cd server</code> puis <code>npx wrangler deploy</code>. Sans cela, le panel affiche « Worker à mettre à jour ».</li>
+      </ul>
+    </div>
+  </details>
   <div id="sections"></div>
 </div>
 
@@ -260,8 +334,8 @@ const VIDEO_SECTIONS = [
     params: [
       'Format vidéo : .mp4 (H.264)',
       'Cadrage : paysage 16:9, 1920 × 1080 px minimum',
-      'Boucle courte et fluide, SANS son (lue automatiquement en muet, en boucle) — 8 à 20 secondes idéalement',
-      'Poids conseillé : 10 à 20 Mo maximum, pour un chargement rapide même en 4G',
+      'Boucle courte et fluide, SANS piste audio (lue automatiquement en muet, en boucle) — 8 à 20 secondes idéalement',
+      'Poids visé : 3 à 6 Mo (10 Mo maximum) — commande ffmpeg dans la fiche d\'export en haut de page',
     ],
   },
   {
@@ -273,8 +347,8 @@ const VIDEO_SECTIONS = [
       'Optionnelle : remplace automatiquement l\'illustration fixe du même onglet dès qu\'un fichier existe ici',
       'Format vidéo : .mp4 (H.264)',
       'Cadrage : paysage 9:7, même cadrage que l\'illustration fixe',
-      'Boucle courte et fluide, SANS son — 8 à 15 secondes idéalement',
-      'Poids conseillé : 8 à 15 Mo maximum',
+      'Boucle courte et fluide, SANS piste audio — 8 à 15 secondes idéalement',
+      'Poids visé : 2 à 5 Mo (8 Mo maximum)',
     ],
   },
 ];
@@ -312,7 +386,7 @@ const SECTIONS = [
   {
     id: 'services-cats',
     title: '📸 Prestations — 5 catégories actives',
-    desc: '1600 × 2000 px, portrait 4:5, sujet centré. La même photo sert à 3 endroits : fond plein écran du parcours "prestations" sur l\'accueil, vignette quand on filtre par catégorie sur la page Services, ET miniature de la catégorie à la 1ère étape du questionnaire de devis. La modifier ici la met à jour partout automatiquement.',
+    desc: '1600 × 2000 px, portrait (cadrage 3:4 à 4:5), sujet CENTRÉ. La même photo sert à 4 endroits (dont la page de chaque prestation, recadrée en 3:4, avec son texte alternatif) : fond plein écran du parcours "prestations" sur l\'accueil, vignette quand on filtre par catégorie sur la page Services, ET miniature de la catégorie à la 1ère étape du questionnaire de devis. La modifier ici la met à jour partout automatiquement.',
     slots: [
       { path: 'services/photo-part.webp', label: 'Séance photo — particuliers' },
       { path: 'services/mode.webp', label: 'Mode, agence et mannequins' },
@@ -454,6 +528,7 @@ const PF_CATS_DISABLED = [
 document.getElementById('token').value = localStorage.getItem('bunkaio_admin_token') || '';
 document.getElementById('token').addEventListener('change', (e) => {
   localStorage.setItem('bunkaio_admin_token', e.target.value.trim());
+  refreshAllPortfolios();
 });
 
 function getToken() {
@@ -464,6 +539,29 @@ function getToken() {
 function slug(path) {
   return 'slot-' + path.replace(/[^a-z0-9]/gi, '-');
 }
+
+// ── Conversion WebP (côté navigateur) ───────────────────────────────────────
+// Redimensionne (côté long ≤ maxSide) et convertit en WebP avant l'envoi : poids réduit,
+// métadonnées EXIF (dont position GPS) retirées. Si la conversion échoue, le fichier d'origine est envoyé.
+async function toWebP(file, maxSide = 2400, quality = 0.82) {
+  if (!file.type || !file.type.startsWith('image/') || file.type === 'image/gif') return file;
+  try {
+    const bmp = await createImageBitmap(file);
+    const scale = Math.min(1, maxSide / Math.max(bmp.width, bmp.height));
+    const w = Math.round(bmp.width * scale), h = Math.round(bmp.height * scale);
+    const canvas = document.createElement('canvas');
+    canvas.width = w; canvas.height = h;
+    canvas.getContext('2d').drawImage(bmp, 0, 0, w, h);
+    const blob = await new Promise((r) => canvas.toBlob(r, 'image/webp', quality));
+    if (!blob || blob.type !== 'image/webp') return file;
+    if (file.type === 'image/webp' && scale === 1 && file.size <= blob.size) return file;
+    return new File([blob], 'image.webp', { type: 'image/webp' });
+  } catch (e) {
+    return file;
+  }
+}
+const kb = (n) => Math.round(n / 1024) + ' Ko';
+const WORKER_OUTDATED = 'Le Worker n\'est pas à jour : lance « wrangler deploy » dans le dossier server.';
 
 // ── Upload ───────────────────────────────────────────────────────────────────
 async function uploadFile(file, path, card) {
@@ -481,6 +579,8 @@ async function uploadFile(file, path, card) {
   card.classList.add('uploading');
   if (statusEl) { statusEl.textContent = 'Upload en cours…'; statusEl.className = 'slot-status uploading'; }
 
+  const original = file;
+  file = await toWebP(file);
   const formData = new FormData();
   formData.append('file', file);
   formData.append('path', path);
@@ -500,7 +600,7 @@ async function uploadFile(file, path, card) {
         imgEl.style.display = '';
         if (emptyEl) emptyEl.style.display = 'none';
       }
-      if (statusEl) { statusEl.textContent = 'Uploadé ✓'; statusEl.className = 'slot-status success'; }
+      if (statusEl) { statusEl.textContent = 'Uploadé ✓ ' + kb(original.size) + ' → ' + kb(file.size); statusEl.className = 'slot-status success'; }
     } else {
       const msg = data.error === 'unauthorized' ? 'Token incorrect' : (data.error || 'Erreur');
       if (statusEl) { statusEl.textContent = msg; statusEl.className = 'slot-status error'; }
@@ -655,38 +755,66 @@ function makeSlotCard(slot) {
   return card;
 }
 
-// ── Portfolio ────────────────────────────────────────────────────────────────
-async function loadPfCategory(catId, grid, addBtn) {
-  const token = getToken();
-  if (!token) { alert('Entre ton token admin d\'abord.'); return; }
-  localStorage.setItem('bunkaio_admin_token', token);
+// ── Portfolio ────────────────────────────────────────────────────────
+// La galerie du site cherche les fichiers 1.webp à 24.webp de chaque catégorie : un numéro libre
+// suffit (les « trous » après une suppression ne posent aucun problème). 24 photos maximum par catégorie.
+const PF_MAX = 24;
+const PF_HEAVY = 400 * 1024; // au-delà : avertissement de poids
 
-  addBtn.textContent = 'Chargement…';
-  try {
-    const res  = await fetch(WORKER_BASE + '/list-media?prefix=portfolio/' + catId + '/', {
-      headers: { 'Authorization': 'Bearer ' + token },
-    });
-    const data = await res.json();
-    if (!res.ok || !data.ok) { addBtn.textContent = '+ Ajouter'; return; }
+function pfNum(key) { const m = key.match(/\/(\d+)\.webp$/i); return m ? parseInt(m[1], 10) : null; }
 
-    data.keys.sort().forEach((key) => {
-      const card = makePfImgCard(key);
-      grid.insertBefore(card, addBtn);
-    });
-    addBtn.textContent = '+ Ajouter';
-  } catch {
-    addBtn.textContent = '+ Ajouter';
-  }
-}
-
-function makePfImgCard(key) {
+function makePfImgCard(key, size, onChange) {
   const card = document.createElement('div');
   card.className = 'pf-img-card';
+  card.dataset.key = key;
   const name = key.split('/').pop();
+  const heavy = size && size > PF_HEAVY;
   card.innerHTML = `
-    <img src="${MEDIA_BASE}/${key}?t=${Date.now()}" alt="${name}" loading="lazy">
-    <div class="pf-img-label">${name}</div>
+    <label class="pf-thumb" title="Cliquer pour remplacer cette photo">
+      <img src="${MEDIA_BASE}/${key}?t=${Date.now()}" alt="${name}" loading="lazy">
+      <input type="file" accept="image/*" style="display:none">
+    </label>
+    <div class="pf-img-foot">
+      <div class="pf-img-label${heavy ? ' heavy' : ''}" title="${heavy ? 'Fichier lourd : vise moins de 400 Ko' : ''}">${name}${size ? ' · ' + kb(size) : ''}</div>
+      <button type="button" class="pf-del" title="Supprimer cette photo" aria-label="Supprimer ${name}">×</button>
+    </div>
   `;
+  // Remplacer
+  card.querySelector('input').addEventListener('change', async (e) => {
+    const f = e.target.files[0];
+    if (!f) return;
+    const label = card.querySelector('.pf-img-label');
+    label.textContent = 'Envoi…';
+    const w = await toWebP(f);
+    const fd = new FormData(); fd.append('file', w); fd.append('path', key);
+    try {
+      const res = await fetch(WORKER_BASE + '/upload-image', { method: 'POST', headers: { 'Authorization': 'Bearer ' + getToken() }, body: fd });
+      const data = await res.json();
+      if (res.ok && data.ok) {
+        card.querySelector('img').src = MEDIA_BASE + '/' + key + '?t=' + Date.now();
+        label.textContent = name + ' · ' + kb(w.size);
+        label.classList.toggle('heavy', w.size > PF_HEAVY);
+      } else { label.textContent = 'Erreur ' + (data.error || ''); }
+    } catch { label.textContent = 'Erreur réseau'; }
+    e.target.value = '';
+  });
+  // Supprimer
+  card.querySelector('.pf-del').addEventListener('click', async () => {
+    if (!confirm('Supprimer définitivement ' + key + ' ? Cette photo disparaîtra du site (les autres ne bougent pas).')) return;
+    const label = card.querySelector('.pf-img-label');
+    label.textContent = 'Suppression…';
+    try {
+      const res = await fetch(WORKER_BASE + '/delete-media', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + getToken(), 'Content-Type': 'application/json' },
+        body: JSON.stringify({ path: key }),
+      });
+      if (res.status === 404) { label.textContent = 'Worker à mettre à jour'; alert(WORKER_OUTDATED); return; }
+      const data = await res.json();
+      if (res.ok && data.ok) { card.remove(); onChange && onChange(); }
+      else { label.textContent = data.error === 'unauthorized' ? 'Token incorrect' : ('Erreur ' + (data.error || '')); }
+    } catch { label.textContent = 'Erreur réseau'; }
+  });
   return card;
 }
 
@@ -696,14 +824,12 @@ function makePfCategory(cat) {
 
   const titleEl = document.createElement('div');
   titleEl.className = 'pf-cat-title';
-  titleEl.textContent = cat.label;
+  titleEl.innerHTML = `${cat.label}<span class="pf-count"></span>`;
   wrap.appendChild(titleEl);
 
   const grid = document.createElement('div');
   grid.className = 'pf-grid';
   wrap.appendChild(grid);
-
-  let loaded = false;
 
   const addBtn = document.createElement('div');
   addBtn.className = 'pf-add-btn';
@@ -714,55 +840,65 @@ function makePfCategory(cat) {
   input.type = 'file'; input.accept = 'image/*'; input.multiple = true; input.style.display = 'none';
   wrap.appendChild(input);
 
+  const usedNums = () => new Set([...grid.querySelectorAll('.pf-img-card[data-key]')].map((c) => pfNum(c.dataset.key)).filter(Boolean));
+  const updateCount = () => {
+    const n = grid.querySelectorAll('.pf-img-card[data-key]').length;
+    titleEl.querySelector('.pf-count').textContent = '— ' + n + ' / ' + PF_MAX + ' photos';
+    addBtn.style.display = n >= PF_MAX ? 'none' : '';
+  };
+
+  async function refresh() {
+    const token = getToken();
+    if (!token) return;
+    grid.querySelectorAll('.pf-img-card').forEach((c) => c.remove());
+    try {
+      const res  = await fetch(WORKER_BASE + '/list-media?prefix=portfolio/' + cat.id + '/', { headers: { 'Authorization': 'Bearer ' + token } });
+      const data = await res.json();
+      if (!res.ok || !data.ok) return;
+      const objs = data.objects || data.keys.map((key) => ({ key }));
+      objs.filter((o) => pfNum(o.key)).sort((a, b) => pfNum(a.key) - pfNum(b.key))
+        .forEach((o) => grid.insertBefore(makePfImgCard(o.key, o.size, updateCount), addBtn));
+      updateCount();
+    } catch {}
+  }
+  wrap._refresh = refresh;
+
   input.addEventListener('change', async (e) => {
+    if (!getToken()) { alert('Entre ton token admin d\'abord.'); return; }
     const files = Array.from(e.target.files);
-    if (!files.length) return;
-
-    // Next index = count of existing pf-img-card elements + 1
-    const existing = grid.querySelectorAll('.pf-img-card').length;
-    for (let i = 0; i < files.length; i++) {
-      const idx  = existing + i + 1;
+    input.value = '';
+    for (const f of files) {
+      const used = usedNums();
+      let idx = 1; while (used.has(idx) && idx <= PF_MAX) idx++;
+      if (idx > PF_MAX) { alert('24 photos maximum par catégorie : supprime-en une avant d\'en ajouter.'); break; }
       const path = `portfolio/${cat.id}/${idx}.webp`;
-
       const card = document.createElement('div');
       card.className = 'pf-img-card';
-      card.innerHTML = `<div class="pf-img-label" style="padding:6px 8px;font-size:10px;color:#999;">Upload ${idx}…</div>`;
+      card.dataset.key = path; // réserve le numéro pendant l'envoi
+      card.innerHTML = `<div class="pf-img-label" style="padding:6px 8px;color:#999;">Envoi ${idx}.webp…</div>`;
       grid.insertBefore(card, addBtn);
-
-      const formData = new FormData();
-      formData.append('file', files[i]);
-      formData.append('path', path);
+      const w = await toWebP(f);
+      const fd = new FormData(); fd.append('file', w); fd.append('path', path);
       try {
-        const res = await fetch(WORKER_BASE + '/upload-image', {
-          method: 'POST',
-          headers: { 'Authorization': 'Bearer ' + getToken() },
-          body: formData,
-        });
+        const res = await fetch(WORKER_BASE + '/upload-image', { method: 'POST', headers: { 'Authorization': 'Bearer ' + getToken() }, body: fd });
         const data = await res.json();
-        if (res.ok && data.ok) {
-          card.innerHTML = `
-            <img src="${MEDIA_BASE}/${path}?t=${Date.now()}" alt="${idx}.webp" loading="lazy">
-            <div class="pf-img-label">${idx}.webp</div>
-          `;
-        } else {
-          card.innerHTML = `<div class="pf-img-label" style="color:var(--red);padding:8px;">Erreur ${data.error||''}</div>`;
-        }
-      } catch {
-        card.innerHTML = `<div class="pf-img-label" style="color:var(--red);padding:8px;">Erreur réseau</div>`;
-      }
+        if (res.ok && data.ok) { card.replaceWith(makePfImgCard(path, w.size, updateCount)); }
+        else { card.removeAttribute('data-key'); card.innerHTML = `<div class="pf-img-label" style="color:var(--red);padding:8px;">Erreur ${data.error || ''}</div>`; }
+      } catch { card.removeAttribute('data-key'); card.innerHTML = `<div class="pf-img-label" style="color:var(--red);padding:8px;">Erreur réseau</div>`; }
+      updateCount();
     }
-    input.value = '';
   });
 
   addBtn.addEventListener('click', () => {
-    if (!loaded) { loaded = true; loadPfCategory(cat.id, grid, addBtn); }
-    else { input.click(); }
+    if (!getToken()) { alert('Entre ton token admin d\'abord.'); return; }
+    input.click();
   });
-
-  // After first load, make addBtn work as file picker too
-  wrap._onLoaded = () => { addBtn.addEventListener('click', () => input.click()); };
-
+  updateCount();
   return wrap;
+}
+
+function refreshAllPortfolios() {
+  document.querySelectorAll('.pf-cat').forEach((el) => el._refresh && el._refresh());
 }
 
 // ── Build UI — helpers ───────────────────────────────────────────────────────
@@ -831,7 +967,7 @@ function buildUI() {
   // Portfolio — catégories actives
   container.appendChild(buildPfSection(
     'Portfolio — Réalisations',
-    'Clique sur "+ Ajouter" pour charger les photos existantes d\'une catégorie et en ajouter de nouvelles. Format recommandé : portrait 900 × 1200 px.',
+    'Les photos existantes s\'affichent dès que le token est renseigné. « + Ajouter » (plusieurs fichiers possibles) prend le premier numéro libre ; clic sur une photo = la remplacer ; × = la supprimer. 24 photos max par catégorie, environ 900 × 1200 px, idéalement 300 Ko maximum chacune.',
     PF_CATS
   ));
 
@@ -865,6 +1001,7 @@ function buildUI() {
 }
 
 buildUI();
+refreshAllPortfolios();
 </script>
 </body>
 </html>

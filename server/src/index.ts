@@ -42,6 +42,7 @@ const REVIEW_GATEWAY_ROUTE = '/avis';
 const LEADS_ROUTE = '/leads';
 const UPLOAD_IMAGE_ROUTE = '/upload-image';
 const LIST_MEDIA_ROUTE = '/list-media';
+const DELETE_MEDIA_ROUTE = '/delete-media';
 const MEDIA_ROUTE_PREFIX = '/media/';
 const AUTH_LOGIN_ROUTE = '/auth-login';
 const ACCOUNT_UPDATE_ROUTE = '/account-update';
@@ -848,7 +849,33 @@ async function handleListMedia(request: Request, env: Env, headers: Record<strin
   const prefix = new URL(request.url).searchParams.get('prefix') ?? '';
   const listed = await env.MEDIA_BUCKET.list({ prefix, limit: 500 });
   const keys = listed.objects.map((obj) => obj.key);
-  return jsonResponse({ ok: true, keys }, 200, headers);
+  /* `objects` : taille (octets) et date d'envoi de chaque fichier, pour repérer les images trop lourdes dans l'admin. */
+  const objects = listed.objects.map((obj) => ({ key: obj.key, size: obj.size, uploaded: obj.uploaded }));
+  return jsonResponse({ ok: true, keys, objects }, 200, headers);
+}
+
+/* Suppression d'un média (admin/media.html). POST { path } — protégé par ADMIN_TOKEN, chemin validé comme à l'upload. */
+async function handleDeleteMedia(request: Request, env: Env, headers: Record<string, string>): Promise<Response> {
+  if (request.method !== 'POST') {
+    return jsonResponse({ ok: false, error: 'method_not_allowed' }, 405, headers);
+  }
+  const authHeader = request.headers.get('Authorization') ?? '';
+  if (authHeader !== `Bearer ${env.ADMIN_TOKEN}`) {
+    return jsonResponse({ ok: false, error: 'unauthorized' }, 401, headers);
+  }
+  let path = '';
+  try {
+    const body = (await request.json()) as { path?: string };
+    path = String(body.path ?? '');
+  } catch {
+    return jsonResponse({ ok: false, error: 'invalid_json' }, 400, headers);
+  }
+  if (!isValidMediaPath(path)) {
+    return jsonResponse({ ok: false, error: 'invalid_path' }, 400, headers);
+  }
+  await env.MEDIA_BUCKET.delete(path);
+  console.log('[delete-media] fichier supprimé', { path });
+  return jsonResponse({ ok: true, path }, 200, headers);
 }
 
 export default {
@@ -884,6 +911,9 @@ export default {
     }
     if (url.pathname === LIST_MEDIA_ROUTE) {
       return handleListMedia(request, env, headers);
+    }
+    if (url.pathname === DELETE_MEDIA_ROUTE) {
+      return handleDeleteMedia(request, env, headers);
     }
     if (url.pathname === AUTH_LOGIN_ROUTE) {
       return handleAuthLogin(request, env, headers);

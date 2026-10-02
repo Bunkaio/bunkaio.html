@@ -99,7 +99,7 @@ const IMG = {
   service:   MEDIA_BASE + '/hero/services-1.webp',   // Fond des pages de prestation (/services/…)
   advice:    MEDIA_BASE + '/hero/services-1.webp',   // Fond de la page Conseils
   article:   MEDIA_BASE + '/hero/services-1.webp',   // Fond des articles
-  /* Textes alternatifs du portfolio (SEO images) : un tableau par catégorie, dans l'ORDRE d'affichage des photos.
+  /* Textes alternatifs du portfolio (SEO images) : un tableau par catégorie, INDEXÉ PAR NUMÉRO DE FICHIER (1.webp = 1re entrée, 2.webp = 2e, etc.). Supprimer une photo ne décale donc pas les textes des autres.
      Décrivez ce qu'on voit, sans bourrer de mots-clés. Ex. : 'photo-part': ['Portrait en lumière naturelle d'une femme sur un pont à Béziers', ...]
      Si une entrée manque, un texte générique est utilisé. */
   portfolioAlt: {},
