@@ -3846,9 +3846,41 @@ function renderClientSpotlights(){
             <div class="cs-board-label">${t({fr:'Inspirations', en:'Inspiration'})}</div>
             <div class="cs-refs"><b></b><b></b><b></b></div>
           </div>
+          <div class="cs-float cs-float-track">
+            <div class="cs-float-title">${t({fr:'Suivi du projet', en:'Project tracking'})}</div>
+            <div class="cs-steps"><span class="done">${t({fr:'Devis', en:'Quote'})}</span><span class="done">${t({fr:'Shooting', en:'Shoot'})}</span><span class="live">${t({fr:'Retouche', en:'Editing'})}</span><span>${t({fr:'Livraison', en:'Delivery'})}</span></div>
+            <div class="cs-bar"><i></i></div>
+          </div>
+          <div class="cs-float cs-float-paid"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12.5 10 17.5 19 7.5"/></svg><span>${t({fr:'Acompte réglé', en:'Deposit paid'})}</span></div>
+          <div class="cs-float cs-float-gallery"><span>${t({fr:'Galerie prête', en:'Gallery ready'})}</span><em>${t({fr:'HD', en:'HD'})}</em></div>
         </div>`}
       </section>`;
   });
+  /* Animations déclenchées quand la section entre à l'écran (et rejouées si la langue change). */
+  if (window.IntersectionObserver) {
+    const io = new IntersectionObserver((entries) => entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('cs-live'); io.unobserve(e.target); } }), { threshold: 0.18 });
+    document.querySelectorAll('.cs-spotlight').forEach(el => io.observe(el));
+  } else {
+    document.querySelectorAll('.cs-spotlight').forEach(el => el.classList.add('cs-live'));
+  }
+}
+
+/* Indicateur de scroll noir : apparaît une seule fois, quand on passe de la vidéo au fond blanc (section « réassurance »),
+   puis s'efface après quelques secondes ou dès que le visiteur a scrollé plus loin. */
+function initWhiteScrollHint(){
+  const hint = document.getElementById('scrollHint2');
+  const target = document.querySelector('.reassure-section');
+  if (!hint || !target || !window.IntersectionObserver) return;
+  let shown = false, done = false, timer = null;
+  const hide = () => { if (done) return; done = true; hint.classList.remove('show'); clearTimeout(timer); io.disconnect(); };
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (done) return;
+      if (!shown && e.isIntersecting && e.intersectionRatio >= 0.5) { shown = true; hint.classList.add('show'); timer = setTimeout(hide, 6500); }
+      else if (shown && !e.isIntersecting) hide(); /* la section est sortie de l'écran */
+    });
+  }, { threshold: [0, 0.5] });
+  io.observe(target);
 }
 
 function updateNavLogin(){
@@ -5641,6 +5673,7 @@ renderFooterServices();
 { const _bootRoute = seoRouteForPath(location.pathname); if (!_bootRoute || _bootRoute.view === 'home') initHeroCarousel('home'); }
 initHomeClaimVideo();
 initTestiAutoplay();
+initWhiteScrollHint();
 updatePlaceholders();
 updateLang();
 applyImages();

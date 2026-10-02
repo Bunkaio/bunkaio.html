@@ -3891,3 +3891,67 @@ body:not([data-view="home"]) .scroll-hint { display: none; }
 
 /* Logo du pied de page : version foncée sur fond transparent, plus grande (plus de carré noir) */
 .ft-brand-logo-img { width: 130px; height: auto; background: none; border-radius: 0; padding: 0; margin-bottom: 10px; object-fit: contain; }
+
+/* ─── Indicateur de scroll noir (passage de la vidéo au fond blanc) ─── */
+.scroll-hint.scroll-hint-dark { color: rgba(10,10,12,0.78); text-shadow: none; animation: none; opacity: 0; transition: opacity 0.6s ease; }
+.scroll-hint.scroll-hint-dark.show { opacity: 1; }
+.scroll-hint-dark .scroll-hint-line { background: rgba(10,10,12,0.22); }
+.scroll-hint-dark .scroll-hint-line::after { background: #0a0a0c; }
+
+/* ─── Votre espace client : section animée, illustration visible sur mobile et ordinateur ─── */
+.cs-spotlight .cs-kicker, .cs-spotlight .cs-title, .cs-spotlight .cs-lead, .cs-spotlight .cs-points li, .cs-spotlight .cs-actions { opacity: 0; transform: translateY(18px); }
+.cs-spotlight.cs-live .cs-kicker, .cs-spotlight.cs-live .cs-title, .cs-spotlight.cs-live .cs-lead, .cs-spotlight.cs-live .cs-points li, .cs-spotlight.cs-live .cs-actions {
+  animation: csRise 0.8s var(--ease-luxe, cubic-bezier(.2,.7,.2,1)) forwards;
+}
+.cs-live .cs-kicker { animation-delay: 0.05s; } .cs-live .cs-title { animation-delay: 0.15s; } .cs-live .cs-lead { animation-delay: 0.28s; }
+.cs-live .cs-points li:nth-child(1) { animation-delay: 0.42s; } .cs-live .cs-points li:nth-child(2) { animation-delay: 0.54s; } .cs-live .cs-points li:nth-child(3) { animation-delay: 0.66s; }
+.cs-live .cs-actions { animation-delay: 0.82s; }
+@keyframes csRise { to { opacity: 1; transform: translateY(0); } }
+.cs-live .cs-points svg { animation: csPop 0.6s cubic-bezier(.3,1.6,.5,1) both; }
+.cs-live .cs-points li:nth-child(1) svg { animation-delay: 0.7s; } .cs-live .cs-points li:nth-child(2) svg { animation-delay: 0.82s; } .cs-live .cs-points li:nth-child(3) svg { animation-delay: 0.94s; }
+@keyframes csPop { from { transform: scale(0); } to { transform: scale(1); } }
+
+.cs-visual { position: relative; display: flex; align-items: center; justify-content: center; min-height: 330px; opacity: 0; transform: translateY(26px) scale(0.97); }
+.cs-live .cs-visual { animation: csRise 0.9s 0.3s var(--ease-luxe, cubic-bezier(.2,.7,.2,1)) forwards; }
+.cs-board { width: min(100%, 330px); animation: csFloat 7s ease-in-out infinite; }
+@keyframes csFloat { 0%, 100% { transform: rotate(1.5deg) translateY(0); } 50% { transform: rotate(0.5deg) translateY(-8px); } }
+.cs-live .cs-chips span { animation: csChip 6s ease-in-out infinite; }
+.cs-live .cs-chips span:nth-child(1) { animation-delay: 0s; } .cs-live .cs-chips span:nth-child(2) { animation-delay: 1.5s; } .cs-live .cs-chips span:nth-child(3) { animation-delay: 3s; } .cs-live .cs-chips span:nth-child(4) { animation-delay: 4.5s; }
+@keyframes csChip { 0%, 40%, 100% { box-shadow: 0 0 0 0 rgba(185,166,220,0); } 12%, 28% { box-shadow: 0 0 0 4px rgba(185,166,220,0.45); transform: translateY(-1px); } }
+.cs-live .cs-palette i { animation: csSwatch 3.6s ease-in-out infinite; }
+.cs-live .cs-palette i:nth-child(2) { animation-delay: 0.3s; } .cs-live .cs-palette i:nth-child(3) { animation-delay: 0.6s; } .cs-live .cs-palette i:nth-child(4) { animation-delay: 0.9s; } .cs-live .cs-palette i:nth-child(5) { animation-delay: 1.2s; }
+@keyframes csSwatch { 0%, 60%, 100% { transform: scale(1); } 30% { transform: scale(1.18); } }
+.cs-refs b { background-size: 200% 200%; animation: csShimmer 5s ease-in-out infinite; }
+.cs-refs b:nth-child(2) { animation-delay: 0.8s; } .cs-refs b:nth-child(3) { animation-delay: 1.6s; }
+@keyframes csShimmer { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+
+.cs-float { position: absolute; z-index: 2; background: #fff; border: 1px solid rgba(10,10,12,0.1); border-radius: 12px; box-shadow: 0 12px 30px rgba(10,10,12,0.14); font-size: 11.5px; color: var(--black); }
+.cs-float-track { left: -6px; bottom: 6px; width: 210px; padding: 12px 14px; animation: csFloatB 6s ease-in-out infinite; }
+.cs-float-title { font-weight: 700; font-size: 11px; letter-spacing: 0.04em; margin-bottom: 8px; }
+.cs-steps { display: flex; justify-content: space-between; gap: 4px; font-size: 9.5px; color: #8b8794; margin-bottom: 8px; }
+.cs-steps span.done { color: var(--black); font-weight: 600; } .cs-steps span.live { color: #6e5aa8; font-weight: 700; }
+.cs-bar { height: 5px; border-radius: 5px; background: #ece8f4; overflow: hidden; }
+.cs-bar i { display: block; height: 100%; width: 62%; border-radius: 5px; background: linear-gradient(90deg, #b9a6dc, #6e5aa8); transform-origin: left; }
+.cs-live .cs-bar i { animation: csBar 5.5s ease-in-out infinite; }
+@keyframes csBar { 0% { transform: scaleX(0.15); } 60%, 85% { transform: scaleX(1); } 100% { transform: scaleX(0.15); } }
+.cs-float-paid { right: -4px; top: 18px; display: flex; align-items: center; gap: 8px; padding: 9px 13px; font-weight: 600; animation: csFloatB 5.2s ease-in-out -1.5s infinite; }
+.cs-float-paid svg { width: 18px; height: 18px; padding: 3px; border-radius: 50%; background: #dff3e6; stroke: #1f8f4e; }
+.cs-float-gallery { right: 10px; bottom: -8px; display: flex; align-items: center; gap: 8px; padding: 9px 13px; font-weight: 600; animation: csFloatB 6.4s ease-in-out -3s infinite; }
+.cs-float-gallery em { font-style: normal; font-size: 9.5px; font-weight: 700; padding: 2px 7px; border-radius: 999px; background: var(--black); color: #fff; }
+@keyframes csFloatB { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+
+@media (max-width: 860px) {
+  .cs-visual { min-height: 0; padding: 8px 0 30px; margin-top: 4px; }
+  .cs-board { width: min(100%, 300px); animation-name: csFloatMobile; }
+  @keyframes csFloatMobile { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+  .cs-float-track { left: 0; bottom: 0; width: 190px; }
+  .cs-float-paid { right: 0; top: 6px; }
+  .cs-float-gallery { right: 6px; bottom: -4px; }
+}
+@media (max-width: 420px) { .cs-float-track { width: 170px; padding: 10px 12px; } }
+@media (prefers-reduced-motion: reduce) {
+  .cs-spotlight .cs-kicker, .cs-spotlight .cs-title, .cs-spotlight .cs-lead, .cs-spotlight .cs-points li, .cs-spotlight .cs-actions, .cs-visual { opacity: 1; transform: none; animation: none !important; }
+  .cs-board, .cs-float, .cs-chips span, .cs-palette i, .cs-refs b, .cs-bar i, .cs-points svg { animation: none !important; }
+}
+.cs-float-paid { top: -14px; }
+@media (max-width: 860px) { .cs-visual { padding-top: 22px; } .cs-float-paid { top: 6px; } }
