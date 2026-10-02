@@ -2869,6 +2869,8 @@ function doLogin(){
       if (!data.ok || !data.account) { err.style.display = 'block'; return; }
       USER = data.account;
       USER_CODE = code;
+      try { localStorage.setItem('bunkaio_user', JSON.stringify({ user: USER, code: USER_CODE })); } catch(e) {}
+      updateNavLogin();
       renderAccount();
       goView('account');
     })
@@ -2917,9 +2919,25 @@ function doRegister(){
 function doLogout(){
   USER = null;
   USER_CODE = null;
+  try { localStorage.removeItem('bunkaio_user'); } catch(e) {}
   document.getElementById('logEmail').value = '';
   document.getElementById('logCode').value = '';
+  updateNavLogin();
   goView('home');
+}
+
+function updateNavLogin(){
+  const btns = document.querySelectorAll('.nav-connect');
+  btns.forEach(btn => {
+    if (USER) {
+      const label = USER.type === 'partner' ? 'Espace partenaire' : 'Espace client';
+      btn.innerHTML = `<span>${label}</span>`;
+      btn.onclick = () => { goView('account'); closeMobileMenu(); };
+    } else {
+      btn.innerHTML = '<span data-lang="nav-connect">Connexion</span>';
+      btn.onclick = () => { openLogin('client'); closeMobileMenu(); };
+    }
+  });
 }
 
 function setAccountTab(tab){
@@ -3169,6 +3187,17 @@ function renderAccPartner(){
       </div>
 
       <div class="mb-detail-block">
+        <div class="mb-detail-label">${t({fr:'Visibilité dans l\'annuaire', en:'Directory visibility'})}</div>
+        <div class="fgroup" style="margin-bottom:0">
+          <label style="display: flex; align-items: center; gap: 12px; font-size: 14px; font-weight: normal; text-transform: none; letter-spacing: normal;">
+            <input type="checkbox" id="ptDirectoryCheckbox" ${info.visibleInDirectory !== false ? 'checked' : ''} onchange="setDirectoryVisibility(this.checked)" style="width: 18px; height: 18px; cursor: pointer;">
+            <span>${t({fr:'Être référencé dans l\'annuaire BUNKAIO', en:'Be listed in the BUNKAIO directory'})}</span>
+          </label>
+          <p class="acc-info-note" style="margin-top:8px">${t({fr:'Les autres partenaires Bunkaio pourront vous contacter et découvrir votre profil via l\'annuaire réseau.', en:'Other Bunkaio partners can find and contact you through the network directory.'})}</p>
+        </div>
+      </div>
+
+      <div class="mb-detail-block">
         <div class="mb-detail-label">${t({fr:'Votre présentation', en:'Your introduction'})}</div>
         <div class="fgroup" style="margin-bottom:14px">
           <textarea id="ptPresentation" maxlength="600" placeholder="${t({fr:'Votre savoir-faire, vos références, ce qui vous distingue — l\'équipe Bunkaio s\'en sert pour vous proposer les bonnes missions.', en:'Your craft, references and what sets you apart — the Bunkaio team uses this to offer you the right missions.'})}">${escHtml(info.presentation || '')}</textarea>
@@ -3239,6 +3268,9 @@ function savePartnerType(){
 }
 function setCollabAvailability(value){
   savePartnerData({ partenariat: { disponibleCollab: value } }, () => { renderAccPartner(); });
+}
+function setDirectoryVisibility(visible){
+  savePartnerData({ partenariat: { visibleInDirectory: visible } }, () => { renderAccPartner(); });
 }
 function savePartnerPresentation(){
   const btn = document.getElementById('ptPresBtn');
@@ -3408,7 +3440,6 @@ function renderNetworkDirectory(ownNames){
   }).join('');
   return `
     <div class="pt-section-label">${t({fr:'Annuaire du réseau Bunkaio', en:'Bunkaio network directory'})}</div>
-    <div class="pt-demo-flag">${t({fr:'Aperçu — profils fictifs à titre d\'exemple', en:'Preview — fictional example profiles'})}</div>
     <div class="mb-chip-grid pt-chips pt-dir-filter">
       <button type="button" class="mb-chip ${networkDirSector === 'all' ? 'active' : ''}" onclick="setNetworkDirSector('all')">${t({fr:'Tous', en:'All'})}</button>${sectors}
     </div>
@@ -4651,3 +4682,16 @@ syncNavHeight();
 window.addEventListener('resize', () => { syncNavHeight(); if (window.innerWidth > 1180) closeMobileMenu(); });
 initHeroScrollFx();
 initNavScrollState();
+
+/* Charger l'utilisateur depuis localStorage s'il y est */
+try {
+  const stored = localStorage.getItem('bunkaio_user');
+  if (stored) {
+    const data = JSON.parse(stored);
+    if (data.user && data.code) {
+      USER = data.user;
+      USER_CODE = data.code;
+    }
+  }
+} catch(e) {}
+updateNavLogin();

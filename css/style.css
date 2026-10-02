@@ -2517,7 +2517,7 @@
   .ct-follow:hover::before { transform: scaleX(1); transform-origin: left; }
 
   /* PARTNERS */
-  .partners-page { max-width: 860px; margin: 0 auto; padding: 170px 32px 130px; position: relative; z-index: 1; }
+  .partners-page { max-width: 860px; margin: 0 auto; padding: 64px 32px 130px; position: relative; z-index: 1; }
   .partner-section { margin-bottom: 58px; }
   .partner-section h2 {
     font-size: 22px; font-weight: 700; letter-spacing: -0.015em;
