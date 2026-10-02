@@ -3003,6 +3003,69 @@ function renderAdvicePage(){
     <p class="page-sub">${t({fr:'Des guides pratiques pour préparer une séance portrait, choisir ses tenues, organiser un shooting produit, mode ou événementiel.', en:'Practical guides to prepare a portrait session, choose outfits, and plan a product, fashion or event shoot.'})}${LANG === 'en' ? ' ' + ADVICE_NOTE.en : ''}</p>
     <section class="read-panel svcp-panel"><div class="advice-grid">${ARTICLES.map(a => adviceCard(a)).join('')}</div></section>`;
 }
+/* Illustrations des articles : pictogrammes au trait aux couleurs du site, choisis selon le sujet de chaque section. */
+const ART_ICONS = {
+  tag:     '<path d="M3 12V4a1 1 0 0 1 1-1h8l9 9-9 9z"/><circle cx="8" cy="8" r="1.6"/>',
+  hanger:  '<path d="M12 7a2.2 2.2 0 1 0-2.2-2.2"/><path d="M12 7v2.4L3 16.5a1.4 1.4 0 0 0 .9 2.5h16.2a1.4 1.4 0 0 0 .9-2.5L12 9.4"/>',
+  pin:     '<path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.6"/>',
+  list:    '<rect x="5" y="3" width="14" height="18" rx="2"/><polyline points="8.5 8.5 10 10 12.5 7"/><line x1="8.5" y1="14" x2="15.5" y2="14"/><line x1="8.5" y1="17.5" x2="13" y2="17.5"/>',
+  scale:   '<line x1="12" y1="4" x2="12" y2="20"/><line x1="7" y1="20" x2="17" y2="20"/><path d="M5 7h14"/><path d="M5 7l-3 7a3 3 0 0 0 6 0z"/><path d="M19 7l-3 7a3 3 0 0 0 6 0z"/>',
+  shield:  '<path d="M12 3l8 3v6c0 4.4-3.2 7.6-8 9-4.8-1.4-8-4.6-8-9V6z"/><polyline points="8.5 12 11 14.5 15.5 9.5"/>',
+  box:     '<path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><polyline points="4 7.5 12 12 20 7.5"/><line x1="12" y1="12" x2="12" y2="21"/>',
+  palette: '<path d="M12 3a9 9 0 1 0 0 18c1.4 0 2-1 1.6-2.1-.5-1.2.2-2.4 1.6-2.4H17a4 4 0 0 0 4-4C21 6.9 17 3 12 3z"/><circle cx="7.5" cy="11" r="1.1"/><circle cx="10" cy="7" r="1.1"/><circle cx="14.5" cy="7" r="1.1"/>',
+  warn:    '<path d="M12 4l9.5 16.5h-19z"/><line x1="12" y1="10" x2="12" y2="14.5"/><circle cx="12" cy="17.4" r=".6"/>',
+  clock:   '<circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/>',
+  gallery: '<rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="9" cy="10" r="1.8"/><path d="M3 17l5-4.5 4 3.5 3-2.5 6 4.5"/>',
+  spark:   '<path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/>',
+  user:    '<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6.5 8-6.5s8 2.5 8 6.5"/>',
+  calendar:'<rect x="3" y="5" width="18" height="16" rx="2"/><line x1="8" y1="3" x2="8" y2="7"/><line x1="16" y1="3" x2="16" y2="7"/><line x1="3" y1="10" x2="21" y2="10"/>',
+  camera:  '<path d="M4 8h3.5l1.5-2.5h6L16.5 8H20a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13.5" r="3.6"/>',
+  sun:     '<circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>'
+};
+const ART_ICON_RULES = [
+  [/prix|tarif|co[uû]t|pay|acompte|budget|combien co/i, 'tag'],
+  [/porter|tenue|v[eê]tement|mati[eè]re|accessoire|motif|chaussure/i, 'hanger'],
+  [/lieu|ext[eé]rieur|studio|emplacement|ville|[ée]lectri/i, 'pin'],
+  [/droit|licence|accord|image|usage/i, 'shield'],
+  [/formule|crit[eè]re|comparer|choisir|questions|poser/i, 'scale'],
+  [/erreur|[ée]viter|pi[eè]ge/i, 'warn'],
+  [/dur[ée]e|temps|d[eé]roul[eé]|jour j|timing|programme/i, 'clock'],
+  [/livraison|retouche|galerie|d[eé]lai|impression/i, 'gallery'],
+  [/couleur|teinte|palette|brief|r[eé]f[eé]rence|direction|moodboard|ambiance/i, 'palette'],
+  [/produit|packshot|fond neutre|pi[eè]ce/i, 'box'],
+  [/photobooth|invit[eé]|animation|souvenir|lumen/i, 'spark'],
+  [/mannequin|polas|digitals|coiffure|maquillage|portrait|profil|[eé]quipe/i, 'user'],
+  [/[eé]v[eé]nement|r[eé]ception|mariage|r[eé]servation|r[eé]server/i, 'calendar'],
+  [/pr[eé]parer|pr[eé]paration|check|avant|conseil|r[eé]sum[eé]|astuce/i, 'list'],
+  [/lumi[eè]re|ensoleill/i, 'sun']
+];
+function artIconFor(heading, body, cat, used){
+  const all = (txt) => ART_ICON_RULES.filter(([re]) => re.test(txt)).map(r => r[1]);
+  const pool = ['list', 'scale', 'palette', 'gallery', 'clock', 'pin', 'shield', 'camera', 'sun', 'spark', 'user', 'box', 'calendar', 'tag', 'hanger', 'warn'];
+  const h = all(heading), b = all(body);
+  /* sujet du titre d'abord (même si l'icône a déjà servi), puis sujet du texte, puis icône encore inutilisée */
+  const ic = h.find(x => !used.has(x)) || h[0] || b.find(x => !used.has(x)) || pool.find(x => !used.has(x)) || 'camera';
+  used.add(ic);
+  return ic;
+}
+function artIllus(icon, big){
+  const g = ART_ICONS[icon] || ART_ICONS.camera;
+  if (!big) return `<svg class="art-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${g}</svg>`;
+  return `<svg class="art-illus" viewBox="0 0 120 120" aria-hidden="true">
+    <rect width="120" height="120" rx="28" fill="#efeaf8"/>
+    <circle cx="96" cy="24" r="11" fill="#dccff2"/><circle cx="22" cy="98" r="7" fill="#e6def5"/><circle cx="101" cy="92" r="4" fill="#b9a6dc"/>
+    <g transform="translate(24 24) scale(3)" fill="none" stroke="#4b3d7a" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round">${g}</g>
+  </svg>`;
+}
+const ART_ALT = {
+  'photo-part': {fr:'Exemple de séance photo portrait réalisée par BUNKAIO', en:'Example of a portrait photo session by BUNKAIO'},
+  corporate: {fr:'Exemple de portrait professionnel réalisé par BUNKAIO', en:'Example of a professional portrait by BUNKAIO'},
+  mode: {fr:'Exemple de photographie de mode réalisée par BUNKAIO', en:'Example of fashion photography by BUNKAIO'},
+  commercial: {fr:'Exemple de photographie de produit réalisée par BUNKAIO', en:'Example of product photography by BUNKAIO'},
+  event: {fr:'Exemple de reportage d\'événement réalisé par BUNKAIO', en:'Example of event photography by BUNKAIO'},
+  lumen: {fr:'Lumen, le photobooth IA de BUNKAIO', en:'Lumen, the BUNKAIO IA photobooth'}
+};
+
 function renderArticlePage(slug){
   const el = document.getElementById('articlePageContent');
   if (!el || typeof ARTICLES === 'undefined') return;
@@ -3010,6 +3073,9 @@ function renderArticlePage(slug){
   if (!a) { el.innerHTML = ''; return; }
   const related = (a.related || []).map(sl => ARTICLES.find(x => x.slug === sl)).filter(Boolean);
   const cat = a.cat ? CATS.find(c => c.id === a.cat) : null;
+  const heroSrc = IMG.servicePhotos && IMG.servicePhotos[a.cat];
+  const heroAlt = (IMG.serviceAlt && IMG.serviceAlt[a.cat]) || (ART_ALT[a.cat] ? t(ART_ALT[a.cat]) : '');
+  const heroFig = heroSrc ? `<figure class="art-hero"><img src="${heroSrc}" alt="${escHtml(heroAlt)}" width="1200" height="520" loading="lazy" decoding="async" onerror="this.closest('figure').classList.add('is-broken')"></figure>` : '';
   el.innerHTML = `
     <div class="breadcrumb" role="navigation" aria-label="${t({fr:'Fil d\'Ariane', en:'Breadcrumb'})}">
       <a href="/" data-nav="home">${t({fr:'Accueil', en:'Home'})}</a><span aria-hidden="true">›</span>
@@ -3018,9 +3084,17 @@ function renderArticlePage(slug){
     </div>
     <h1 data-pageh1 class="page-title">${a.h1}</h1>
     <p class="page-sub article-meta"><time datetime="${a.date}">${fmtDate(a.date)}</time> · ${a.minutes} ${t({fr:'min de lecture', en:'min read'})} · ${t({fr:'Par', en:'By'})} <a href="/a-propos/" data-nav="about" rel="author">Aya Nascimento</a></p>
+    ${heroFig}
     <article class="read-panel svcp-panel article">
       <div class="article-summary"><strong>${t({fr:'En bref', en:'In short'})}</strong><ul>${a.summary.map(x => `<li>${x}</li>`).join('')}</ul></div>
-      ${a.sections.map(sec => `<h2>${sec.h}</h2>${sec.html}`).join('')}
+      <div class="art-toolbar"><span>${a.sections.length} ${t({fr:'rubriques', en:'sections'})}</span><button type="button" class="art-all" data-acc-all="#artAcc" data-label-open="${t({fr:'Tout déplier', en:'Expand all'})}" data-label-close="${t({fr:'Tout replier', en:'Collapse all'})}">${t({fr:'Tout déplier', en:'Expand all'})}</button></div>
+      <div class="cs-acc art-acc acc-multi" id="artAcc">${(() => { const used = new Set(); return a.sections.map((sec, k) => {
+        const ic = artIconFor(sec.h, String(sec.html).replace(/<[^>]+>/g, ' ').slice(0, 200), a.cat, used);
+        return `<section class="cs-acc-item art-item${k === 0 ? ' open' : ''}">
+          <h2 class="art-h2"><button type="button" class="cs-acc-head art-head" aria-expanded="${k === 0}"><span class="art-n">${String(k + 1).padStart(2, '0')}</span>${artIllus(ic, false)}<span class="art-t">${sec.h}</span><i class="cs-acc-chev" aria-hidden="true"></i></button></h2>
+          <div class="cs-acc-panel"><div class="art-body">${artIllus(ic, true)}<div class="art-text">${sec.html}</div></div></div>
+        </section>`;
+      }).join(''); })()}</div>
       <h2>${t({fr:'Questions fréquentes', en:'Frequently asked questions'})}</h2>
       <div id="articleFaq"></div>
       <aside class="author-box" aria-label="${t({fr:'À propos de l\'auteure', en:'About the author'})}">
@@ -3847,14 +3921,24 @@ function initReassureLoop(){
   bindTypewriters();
 }
 
-/* Accordéon « Votre espace client » : un seul point ouvert à la fois. */
+/* Accordéons (espace client, page Découvrir, articles) : un seul point ouvert à la fois, sauf listes « multi » (articles). */
 document.addEventListener('click', (e) => {
   const head = e.target.closest ? e.target.closest('.cs-acc-head') : null;
   if (!head) return;
-  const item = head.parentElement, list = item.parentElement;
+  const item = head.closest('.cs-acc-item'); if (!item) return;
+  const list = item.parentElement;
   const willOpen = !item.classList.contains('open');
-  list.querySelectorAll('.cs-acc-item').forEach(it => { it.classList.remove('open'); it.querySelector('.cs-acc-head').setAttribute('aria-expanded', 'false'); });
-  if (willOpen) { item.classList.add('open'); head.setAttribute('aria-expanded', 'true'); }
+  if (!list.classList.contains('acc-multi')) list.querySelectorAll('.cs-acc-item').forEach(it => { it.classList.remove('open'); it.querySelector('.cs-acc-head').setAttribute('aria-expanded', 'false'); });
+  item.classList.toggle('open', willOpen); head.setAttribute('aria-expanded', String(willOpen));
+});
+document.addEventListener('click', (e) => {
+  const b = e.target.closest ? e.target.closest('[data-acc-all]') : null;
+  if (!b) return;
+  const list = document.querySelector(b.dataset.accAll); if (!list) return;
+  const open = b.dataset.state !== 'open';
+  list.querySelectorAll('.cs-acc-item').forEach(it => { it.classList.toggle('open', open); it.querySelector('.cs-acc-head').setAttribute('aria-expanded', String(open)); });
+  b.dataset.state = open ? 'open' : 'closed';
+  b.textContent = open ? b.dataset.labelClose : b.dataset.labelOpen;
 });
 
 /* Conseils photo (accueil) : apparition en cascade des guides quand la section entre à l'écran. */
