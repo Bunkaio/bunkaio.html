@@ -5427,9 +5427,9 @@ initMissionServicesAutoplay();
 initCatShowcase();
 renderLogoCarousel();
 renderFooterServices();
-/* Hero image home */
-
-initHeroCarousel('home');
+/* Hero image home : seulement si la page demandée est l'accueil (sinon la vidéo d'accueil se téléchargeait
+   aussi sur /partenaires/, /services/, etc. alors qu'elle n'y est pas visible). Les autres vues l'initialisent via goView. */
+{ const _bootRoute = seoRouteForPath(location.pathname); if (!_bootRoute || _bootRoute.view === 'home') initHeroCarousel('home'); }
 initHomeClaimVideo();
 initTestiAutoplay();
 updatePlaceholders();

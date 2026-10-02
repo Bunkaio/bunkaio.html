@@ -580,7 +580,8 @@ async function uploadFile(file, path, card) {
   if (statusEl) { statusEl.textContent = 'Upload en cours…'; statusEl.className = 'slot-status uploading'; }
 
   const original = file;
-  file = await toWebP(file);
+  const isHero = path.startsWith('hero/');
+  file = await toWebP(file, isHero ? 1920 : 2400, isHero ? 0.72 : 0.82); /* bannières : plus compressées (arrière-plans) */
   const formData = new FormData();
   formData.append('file', file);
   formData.append('path', path);
