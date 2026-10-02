@@ -33,6 +33,8 @@ export interface QuizLeadPayload {
   delaiSouhaite?: string;
   optionsChoisies?: string;
   interetCommunication?: boolean;
+  /** Langue du site au moment de la demande : détermine la langue des emails envoyés au client ('fr' par défaut). */
+  lang?: string;
 }
 
 /** Résultat du create-or-update Stripe, renvoyé au front à titre informatif uniquement. */
@@ -55,6 +57,8 @@ export interface DepositInvoiceResult {
   invoicePdfUrl: string;
   depositAmountEur: number;
   customerName: string;
+  /** Langue du client (metadata Stripe `langue`). */
+  customerLang?: 'fr' | 'en';
 }
 
 /** Résultat renvoyé à admin/index.html après création de la facture de solde. */
@@ -64,6 +68,7 @@ export interface BalanceInvoiceResult {
   invoicePdfUrl: string;
   balanceAmountEur: number;
   customerName: string;
+  customerLang?: 'fr' | 'en';
 }
 
 /** Une ligne de la liste des leads renvoyée à admin/leads.html (route /leads). */

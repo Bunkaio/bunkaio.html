@@ -10,6 +10,7 @@ import {
   buildPaymentConfirmationEmail,
   buildQuizConfirmationEmail,
   buildReviewRequestEmail,
+  normalizeLang,
   sendEmail,
 } from './email';
 import {
@@ -17,6 +18,7 @@ import {
   createDepositInvoice,
   createStripeClient,
   findOverdueInvoices,
+  getCustomerLang,
   grantReviewDiscount,
   listLeads,
   markInvoiceReminded,
@@ -102,7 +104,8 @@ function isValidQuizLeadPayload(body: unknown): body is QuizLeadPayload {
     (b.phone === undefined || typeof b.phone === 'string') &&
     (b.delaiSouhaite === undefined || typeof b.delaiSouhaite === 'string') &&
     (b.optionsChoisies === undefined || typeof b.optionsChoisies === 'string') &&
-    (b.interetCommunication === undefined || typeof b.interetCommunication === 'boolean')
+    (b.interetCommunication === undefined || typeof b.interetCommunication === 'boolean') &&
+    (b.lang === undefined || typeof b.lang === 'string')
   );
 }
 
@@ -429,7 +432,7 @@ async function handleQuizLead(request: Request, env: Env, headers: Record<string
     // Email de confirmation au prospect — best-effort, ne doit jamais faire
     // échouer la synchronisation Stripe qui vient de réussir.
     try {
-      const { subject, html, text } = buildQuizConfirmationEmail({ customerName: body.name });
+      const { subject, html, text } = buildQuizConfirmationEmail({ customerName: body.name, lang: normalizeLang(body.lang) });
       await sendEmail(env, body.email, subject, html, text);
     } catch (emailErr) {
       console.error("[quiz-lead] échec de l'envoi de l'email de confirmation", emailErr);
@@ -477,6 +480,7 @@ async function handleCreateDepositInvoice(request: Request, env: Env, headers: R
         description: body.description,
         depositAmountEur: result.depositAmountEur,
         hostedInvoiceUrl: result.hostedInvoiceUrl,
+        lang: result.customerLang,
       });
       await sendEmail(env, body.email, subject, html, text);
       console.log('[create-deposit-invoice] email envoyé au client');
@@ -532,6 +536,7 @@ async function handleCreateBalanceInvoice(request: Request, env: Env, headers: R
         description: body.description,
         balanceAmountEur: result.balanceAmountEur,
         hostedInvoiceUrl: result.hostedInvoiceUrl,
+        lang: result.customerLang,
       });
       await sendEmail(env, body.email, subject, html, text);
       console.log('[create-balance-invoice] email envoyé au client');
@@ -603,11 +608,12 @@ async function handleStripeWebhook(request: Request, env: Env, headers: Record<s
   const kind: 'acompte' | 'solde' = invoiceType === 'acompte_30' ? 'acompte' : 'solde';
   const customerId = typeof invoice.customer === 'string' ? invoice.customer : invoice.customer?.id;
 
-  console.log('[stripe-webhook] facture payée', { invoiceId: invoice.id, kind, amountEur, customerEmail });
+  const customerLang = await getCustomerLang(stripe, customerId);
+  console.log('[stripe-webhook] facture payée', { invoiceId: invoice.id, kind, amountEur, customerEmail, customerLang });
 
   if (customerEmail) {
     try {
-      const { subject, html, text } = buildPaymentConfirmationEmail({ customerName, description, amountEur, invoiceType: kind });
+      const { subject, html, text } = buildPaymentConfirmationEmail({ customerName, description, amountEur, invoiceType: kind, lang: customerLang });
       await sendEmail(env, customerEmail, subject, html, text);
     } catch (err) {
       console.error('[stripe-webhook] échec email de confirmation client', err);
@@ -634,7 +640,7 @@ async function handleStripeWebhook(request: Request, env: Env, headers: Record<s
         ? `${new URL(request.url).origin}${REVIEW_GATEWAY_ROUTE}?c=${encodeURIComponent(customerId)}`
         : env.GOOGLE_REVIEW_URL;
       try {
-        const { subject, html, text } = buildReviewRequestEmail({ customerName, reviewUrl: reviewGatewayUrl });
+        const { subject, html, text } = buildReviewRequestEmail({ customerName, reviewUrl: reviewGatewayUrl, lang: customerLang });
         await sendEmail(env, customerEmail, subject, html, text);
       } catch (err) {
         console.error("[stripe-webhook] échec email de demande d'avis", err);
@@ -757,6 +763,7 @@ async function sendOverdueInvoiceReminders(env: Env): Promise<void> {
         amountEur,
         invoiceType: kind,
         hostedInvoiceUrl: invoice.hosted_invoice_url ?? '',
+        lang: await getCustomerLang(stripe, typeof invoice.customer === 'string' ? invoice.customer : invoice.customer?.id),
       });
       await sendEmail(env, customerEmail, subject, html, text);
       await markInvoiceReminded(stripe, invoice);

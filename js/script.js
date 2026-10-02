@@ -27,10 +27,11 @@ function sendQuizLeadToStripe(payload){
     console.warn('[quiz-lead] QUIZ_LEAD_WORKER_URL non configurée — synchronisation Stripe ignorée.');
     return;
   }
+  /* La langue du site au moment de la demande détermine la langue des emails envoyés ensuite au client. */
   fetch(QUIZ_LEAD_WORKER_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
+    body: JSON.stringify(Object.assign({ lang: LANG }, payload))
   })
     .then(r => r.json())
     .then(data => console.log('[quiz-lead] réponse Worker Stripe', data))

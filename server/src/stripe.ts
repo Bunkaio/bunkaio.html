@@ -68,6 +68,7 @@ function buildMetadata(payload: QuizLeadPayload): Record<string, string> {
     derniere_soumission_quiz: new Date().toISOString(),
     lead_score: String(score),
     lead_temperature: temperature,
+    langue: payload.lang === 'en' ? 'en' : 'fr',
   };
 }
 
@@ -92,6 +93,7 @@ export async function upsertQuizCustomer(
     const updated = await stripe.customers.update(match.id, {
       name: payload.name,
       phone: payload.phone || undefined,
+      preferred_locales: [payload.lang === 'en' ? 'en' : 'fr'],
       metadata: { ...match.metadata, ...metadata },
     });
     return { customerId: updated.id, created: false };
@@ -101,6 +103,7 @@ export async function upsertQuizCustomer(
     name: payload.name,
     email: payload.email,
     phone: payload.phone || undefined,
+    preferred_locales: [payload.lang === 'en' ? 'en' : 'fr'],
     metadata,
   });
   return { customerId: created.id, created: true };
@@ -148,19 +151,22 @@ async function createFractionalInvoice(
   fraction: number,
   metadataType: 'acompte_30' | 'solde_70',
   itemDescriptionPrefix: string
-): Promise<{ invoiceId: string; hostedInvoiceUrl: string; invoicePdfUrl: string; amountEur: number; customerName: string }> {
+): Promise<{ invoiceId: string; hostedInvoiceUrl: string; invoicePdfUrl: string; amountEur: number; customerName: string; customerLang: 'fr' | 'en' }> {
   const customer = await findCustomerByEmail(stripe, input.email);
   if (!customer) {
     throw new Error('customer_not_found');
   }
 
   const amountEur = Math.round(input.totalAmountEur * fraction * 100) / 100;
+  const customerLang: 'fr' | 'en' = customer.metadata?.langue === 'en' ? 'en' : 'fr';
+  /* Libellé de la ligne de facture dans la langue du client (page de paiement Stripe affichée selon preferred_locales). */
+  const prefix = customerLang === 'en' ? (metadataType === 'acompte_30' ? 'Deposit 30%' : 'Balance 70%') : itemDescriptionPrefix;
 
   await stripe.invoiceItems.create({
     customer: customer.id,
     currency: 'eur',
     amount: Math.round(amountEur * 100),
-    description: `${itemDescriptionPrefix} — ${input.description}`,
+    description: `${prefix} — ${input.description}`,
   });
 
   const invoice = await stripe.invoices.create({
@@ -187,7 +193,19 @@ async function createFractionalInvoice(
     invoicePdfUrl: finalized.invoice_pdf ?? '',
     amountEur,
     customerName: customer.name ?? '',
+    customerLang,
   };
+}
+
+/** Langue (fr/en) enregistrée sur la fiche client Stripe — 'fr' si inconnue ou en cas d'erreur. */
+export async function getCustomerLang(stripe: Stripe, customerId: string | undefined | null): Promise<'fr' | 'en'> {
+  if (!customerId) return 'fr';
+  try {
+    const customer = await stripe.customers.retrieve(customerId);
+    return !customer.deleted && customer.metadata?.langue === 'en' ? 'en' : 'fr';
+  } catch {
+    return 'fr';
+  }
 }
 
 /** Facture d'acompte (30 % du montant total HT). */
