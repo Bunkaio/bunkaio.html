@@ -809,6 +809,62 @@ export function buildMoodboardReminderEmail(params: { customerName: string; spac
   return finalize(lang, { subject: t('Bunkaio — Créez votre moodboard avant la séance', 'Bunkaio — Create your moodboard before the session'), html, text: `${greeting}\n\n${body}\n\n${spaceText(lang, params.space, 'deposit')}` });
 }
 
+/** Devis à consulter et signer en ligne. */
+export function buildQuoteEmail(params: { customerName: string; number: string; prestation: string; totalHT: number; validUntil: string; url: string; abonnement?: boolean; reminder?: boolean; space?: Space; lang?: Lang }): { subject: string; html: string; text: string } {
+  const lang = params.lang ?? 'fr';
+  const greeting = greet(lang, params.customerName);
+  const t = (fr: string, en: string): string => tr(lang, fr, en);
+  const amount = eur(lang, params.totalHT) + (params.abonnement ? t(' HT / mois', ' excl. VAT / month') : t(' HT', ' excl. VAT'));
+  const until = fmtDate(lang, params.validUntil);
+  const intro = params.reminder
+    ? t(`Petit rappel : votre devis n° ${params.number} est toujours disponible. Si vous avez la moindre question ou souhaitez un ajustement, répondez simplement à cet email.`,
+        `A quick reminder: your quote no. ${params.number} is still available. If you have any question or would like an adjustment, simply reply to this email.`)
+    : t(`Merci pour votre confiance. Voici votre devis personnalisé n° ${params.number} : vous pouvez le consulter et le signer en ligne en quelques secondes.`,
+        `Thank you for your trust. Here is your personalised quote no. ${params.number}: you can review and sign it online in a few seconds.`);
+  const how = params.abonnement
+    ? t("Une fois le devis signé, nous mettons en place votre abonnement mensuel.", 'Once the quote is signed, we set up your monthly subscription.')
+    : t("Dès la signature, vous recevez automatiquement la facture d'acompte (30 %) : son règlement confirme la réservation de votre date.", 'As soon as you sign, you automatically receive the deposit invoice (30%): paying it confirms your booking.');
+  const card = `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px;"><tr><td style="background:#0a0a0c;border-radius:10px;padding:20px 24px;">
+    <div style="font-size:11px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#d9cdf5;margin-bottom:6px;font-family:${FONT};">${t('Devis', 'Quote')} n° ${escapeHtml(params.number)}</div>
+    <div style="font-size:16px;font-weight:700;color:#ffffff;margin-bottom:6px;font-family:${FONT};">${escapeHtml(params.prestation)}</div>
+    <div style="font-size:22px;font-weight:700;color:#ffffff;font-family:${FONT};">${amount}</div>
+    <div style="font-size:12.5px;color:rgba(255,255,255,0.6);margin-top:6px;font-family:${FONT};">${t('Valable jusqu\'au', 'Valid until')} ${until}</div></td></tr></table>`;
+  const html = emailShell(`
+    <h1 style="font-size:20px;margin:0 0 16px;">${params.reminder ? t('Votre devis vous attend', 'Your quote is waiting') : t('Votre devis est prêt', 'Your quote is ready')}</h1>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">${greeting}</p>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">${intro}</p>
+    ${card}
+    <a href="${params.url}" style="${btnStyle}">${t('Consulter et signer mon devis', 'Review and sign my quote')}</a>
+    <p style="font-size:13px;line-height:1.6;color:#76717f;margin:20px 0 0;">${how}</p>
+    ${spaceBlock(lang, params.space, 'quote')}
+  `, lang);
+  const text = `${greeting}\n\n${intro}\n\n${t('Devis', 'Quote')} n° ${params.number} — ${params.prestation}\n${amount}\n${t('Valable jusqu\'au', 'Valid until')} ${until}\n\n${t('Consulter et signer mon devis', 'Review and sign my quote')} : ${params.url}\n\n${how}\n\n${spaceText(lang, params.space, 'quote')}`;
+  return finalize(lang, { subject: params.reminder ? t(`Bunkaio — Rappel : votre devis n° ${params.number}`, `Bunkaio — Reminder: your quote no. ${params.number}`) : t(`Bunkaio — Votre devis n° ${params.number}`, `Bunkaio — Your quote no. ${params.number}`), html, text });
+}
+
+/** Confirmation de signature, avec le lien vers l'exemplaire signé. */
+export function buildQuoteSignedEmail(params: { customerName: string; number: string; url: string; depositAmount?: number; depositUrl?: string; abonnement?: boolean; space?: Space; lang?: Lang }): { subject: string; html: string; text: string } {
+  const lang = params.lang ?? 'fr';
+  const greeting = greet(lang, params.customerName);
+  const t = (fr: string, en: string): string => tr(lang, fr, en);
+  const intro = t(`Votre devis n° ${params.number} est bien signé, merci ! Vous pouvez consulter et enregistrer votre exemplaire signé à tout moment.`, `Your quote no. ${params.number} has been signed, thank you! You can view and save your signed copy at any time.`);
+  const next = params.abonnement
+    ? t('Nous revenons vers vous pour mettre en place votre abonnement.', 'We will get back to you to set up your subscription.')
+    : params.depositUrl
+      ? t(`Votre facture d'acompte de ${eur(lang, params.depositAmount ?? 0)} vous est envoyée dans un email séparé : son règlement confirme la réservation de votre date.`, `Your deposit invoice of ${eur(lang, params.depositAmount ?? 0)} is sent in a separate email: paying it confirms your booking.`)
+      : t("Votre facture d'acompte vous est envoyée très prochainement.", 'Your deposit invoice will be sent to you shortly.');
+  const html = emailShell(`
+    <h1 style="font-size:20px;margin:0 0 16px;">${t('Devis signé', 'Quote signed')}</h1>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">${greeting}</p>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">${intro}</p>
+    <a href="${params.url}" style="${btnStyle}">${t('Voir mon devis signé', 'View my signed quote')}</a>
+    ${params.depositUrl ? `<p style="font-size:15px;line-height:1.6;margin:22px 0 0;">${next} <a href="${params.depositUrl}" style="color:#6e5aa8;">${t('Régler l\'acompte', 'Pay the deposit')}</a></p>` : `<p style="font-size:15px;line-height:1.6;margin:22px 0 0;">${next}</p>`}
+    ${spaceBlock(lang, params.space, 'deposit')}
+  `, lang);
+  const text = `${greeting}\n\n${intro}\n\n${t('Voir mon devis signé', 'View my signed quote')} : ${params.url}\n\n${next}${params.depositUrl ? '\n' + params.depositUrl : ''}\n\n${spaceText(lang, params.space, 'deposit')}`;
+  return finalize(lang, { subject: t(`Bunkaio — Devis n° ${params.number} signé`, `Bunkaio — Quote no. ${params.number} signed`), html, text });
+}
+
 function escapeHtml(value: string): string {
   return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }

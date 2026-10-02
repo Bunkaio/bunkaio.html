@@ -356,3 +356,17 @@ export async function syncCustomerBilling(
     }
   }
 }
+
+/** Fiche client Stripe pour un devis signé : réutilise celle du quiz si elle existe, sinon la crée. */
+export async function ensureCustomer(stripe: Stripe, input: { email: string; name: string; lang: 'fr' | 'en'; phone?: string }): Promise<string> {
+  const existing = await findCustomerByEmail(stripe, input.email);
+  if (existing) return existing.id;
+  const created = await stripe.customers.create({
+    email: input.email,
+    name: input.name || undefined,
+    phone: input.phone || undefined,
+    preferred_locales: [input.lang],
+    metadata: { source: 'devis_admin', langue: input.lang },
+  });
+  return created.id;
+}

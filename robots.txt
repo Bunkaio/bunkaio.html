@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /
 Disallow: /admin/
+Disallow: /signature/
 
 Sitemap: https://bunkaio.com/sitemap.xml

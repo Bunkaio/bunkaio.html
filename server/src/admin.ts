@@ -1,6 +1,8 @@
 import type Stripe from 'stripe';
 import { adminAccountView, getAccount, listAccounts } from './accounts';
-import { isDemo } from './config';
+import { getBusinessAddress, isDemo } from './config';
+import { listQuotes } from './quotes';
+import type { Quote } from './quotes';
 import { deleteMessagesOf, listMessages } from './messages';
 import type { FormMessage } from './messages';
 import type { AccountRecord, AccountType, Env } from './types';
@@ -46,6 +48,7 @@ export interface DashboardContact {
   invoices: DashboardInvoice[];
   accounts: ReturnType<typeof adminAccountView>[];
   messages: FormMessage[];
+  quotes: Omit<Quote, 'token'>[];
   markers: Record<string, string>;
   lastActivity: string;
   createdAt: string;
@@ -91,6 +94,8 @@ function computeStage(c: DashboardContact, now: string): string {
   if (balanceOpen) return 'solde';
   if (depositPaid) return acc?.seance?.date && acc.seance.date < now ? 'postprod' : 'reserve';
   if (depositOpen) return 'acompte';
+  if (c.quotes.some((q) => q.status === 'signe')) return 'acompte';
+  if (c.quotes.some((q) => q.status === 'envoye')) return 'devis';
   if (c.lead) return 'lead';
   if (c.roles.includes('partner')) return 'partenaire';
   return 'contact';
@@ -102,7 +107,7 @@ export async function buildDashboard(env: Env, stripe: Stripe): Promise<Record<s
     const key = norm(email);
     let c = contacts.get(key);
     if (!c) {
-      c = { email: key, name: '', phone: '', lang: 'fr', roles: [], stage: 'contact', lead: null, customerId: null, totalPaid: 0, totalDue: 0, invoices: [], accounts: [], messages: [], markers: {}, lastActivity: '', createdAt: '' };
+      c = { email: key, name: '', phone: '', lang: 'fr', roles: [], stage: 'contact', lead: null, customerId: null, totalPaid: 0, totalDue: 0, invoices: [], accounts: [], messages: [], quotes: [], markers: {}, lastActivity: '', createdAt: '' };
       contacts.set(key, c);
     }
     return c;
@@ -202,7 +207,22 @@ export async function buildDashboard(env: Env, stripe: Stripe): Promise<Record<s
     errors.push('messages');
   }
 
-  // 4. Marqueurs d'automatisation (relances, rappels…).
+  // 4. Devis.
+  let quotes: Omit<Quote, 'token'>[] = [];
+  try {
+    quotes = (await listQuotes(env)).filter((q) => !isDemo(q.email)).map(({ token: _t, ...rest }) => rest);
+    for (const q of quotes) {
+      const c = get(q.email);
+      c.quotes.push(q);
+      c.name ||= q.client?.nom ?? '';
+      touch(c, q.signedAt ?? q.sentAt ?? q.createdAt);
+    }
+  } catch (err) {
+    console.error('[admin] lecture des devis impossible', err);
+    errors.push('quotes');
+  }
+
+  // 5. Marqueurs d'automatisation (relances, rappels…).
   const prefixes: Record<string, string> = { 'lead:': 'quizLe', 'inv:': 'acompteCree', 'dep:': 'acomptePaye', 'bal:': 'soldeCree', 'fu:': 'relanceDevis', 'mbr:': 'rappelMoodboard' };
   try {
     for (const [prefix, label] of Object.entries(prefixes)) {
@@ -238,6 +258,8 @@ export async function buildDashboard(env: Env, stripe: Stripe): Promise<Record<s
     errors,
     contacts: list,
     messages,
+    quotes,
+    business: { address: getBusinessAddress() },
     invoices: allInvoices.filter((i) => i.status !== 'draft' && !isDemo(i.email)).sort((a, b) => b.created.localeCompare(a.created)),
   };
 }
@@ -262,6 +284,12 @@ export async function deleteContact(env: Env, stripe: Stripe, email: string, typ
   if (type) return summary;
 
   summary.messages = await deleteMessagesOf(env, key);
+  // Les devis envoyés ou signés sont des documents contractuels : seuls les brouillons sont supprimés.
+  let quotesDeleted = 0;
+  for (const q of await listQuotes(env)) {
+    if (q.email === key && (q.status === 'brouillon' || q.status === 'annule')) { await env.ACCOUNTS_KV.delete('quote:' + q.id); quotesDeleted++; }
+  }
+  summary.quotesDeleted = quotesDeleted;
   let markers = 0;
   for (const p of ['lead:', 'inv:', 'dep:', 'bal:', 'fu:', 'mbr:']) {
     if (await env.ACCOUNTS_KV.get(p + key)) { await env.ACCOUNTS_KV.delete(p + key); markers++; }

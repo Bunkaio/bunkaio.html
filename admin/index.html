@@ -300,6 +300,26 @@
         <p class="muted small" style="margin-top:12px" id="visitorsNote"></p>
       </section>
 
+      <!-- ═══ Devis ═══ -->
+      <section class="section" id="sec-quotes">
+        <div class="kpis" id="qKpis"></div>
+        <div class="toolbar">
+          <div class="chips" id="qChips"></div>
+          <span class="grow"></span>
+          <button class="btn sm" onclick="openQuote()">+ Nouveau devis</button>
+        </div>
+        <div id="qTable"></div>
+        <div class="card" style="margin-top:18px"><h3>Le circuit</h3>
+          <div class="tl">
+            <div class="it done"><b>1. Création</b><div class="d">Depuis la fiche d'un lead ou « Nouveau devis » : coordonnées et réponses au quiz pré-remplies, modèle adapté à la prestation.</div></div>
+            <div class="it done"><b>2. Envoi</b><div class="d">Le client reçoit un email avec un lien personnel vers son devis. Le contenu est figé (empreinte numérique).</div></div>
+            <div class="it done"><b>3. Signature en ligne</b><div class="d">« Bon pour accord », choix portfolio, demande d'exécution anticipée (particuliers), nom saisi ; date, heure et IP enregistrées.</div></div>
+            <div class="it done"><b>4. Acompte automatique</b><div class="d">La facture d'acompte (30 %) part dès la signature, puis le circuit habituel continue (paiement, espace, séance…).</div></div>
+            <div class="it"><b>Relance et expiration</b><div class="d">Relance unique 5 jours après l'envoi si non signé ; le devis expire à sa date de validité. Signature via Yousign possible : « Marquer signé ».</div></div>
+          </div>
+        </div>
+      </section>
+
       <!-- ═══ Factures ═══ -->
       <section class="section" id="sec-invoices">
         <div class="kpis" id="invKpis"></div>
@@ -393,8 +413,10 @@
 <datalist id="emailList"></datalist>
 <div class="toast" id="toast"></div>
 
+<script src="../js/devis-model.js"></script>
 <script>
 'use strict';
+document.head.insertAdjacentHTML('beforeend', '<style>' + BunkaioDevis.CSS + '</style>');
 const WORKER = 'https://bunkaio-quiz-stripe.bunkaio.workers.dev';
 const TOKEN_KEY = 'bunkaio_admin_token';
 const SEEN_KEY = 'bunkaio_admin_seen';
@@ -430,6 +452,7 @@ async function api(path, opts = {}) {
 /* ── Libellés ── */
 const STAGES = [
   ['lead', 'Lead', 'Demande de devis reçue'],
+  ['devis', 'Devis envoyé', 'En attente de signature'],
   ['acompte', 'Acompte envoyé', 'En attente du paiement de l\'acompte'],
   ['reserve', 'Réservé', 'Acompte payé, séance à venir'],
   ['postprod', 'Post-production', 'Séance passée, photos en cours'],
@@ -448,6 +471,7 @@ const FORMES = { ei: 'Entreprise individuelle / micro', sas: 'SAS / SASU', sarl:
 const ICON = {
   overview: '<path d="M3 13h8V3H3zM13 21h8v-8h-8zM3 21h8v-6H3zM13 3v8h8V3z"/>',
   contacts: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',
+  quotes: '<path d="M9 3h6l5 5v13H4V3h5"/><path d="M9 13l2 2 4-4"/>',
   invoices: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/>',
   sessions: '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
   activity: '<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>',
@@ -458,6 +482,7 @@ const ICON = {
 const SECTIONS = [
   ['overview', 'Tableau de bord', 'Vue d\'ensemble de l\'activité'],
   ['contacts', 'Base de données', 'Leads, clients, espaces et partenaires réunis par email'],
+  ['quotes', 'Devis', 'Création, envoi, signature en ligne et suivi des devis'],
   ['invoices', 'Factures', 'Acomptes, soldes et encaissements Stripe'],
   ['sessions', 'Séances & automatisations', 'Planning, livraisons et emails automatiques'],
   ['messages', 'Messages', 'Formulaires du site : contact, collaborations, candidatures, demandes d\'espace, témoignages'],
@@ -540,11 +565,12 @@ function updateCounts() {
   set('activity', allActivity().filter(a => a.unseen).length);
   set('invoices', DB.invoices.filter(i => i.overdue).length);
   set('messages', (DB.messages || []).filter(m => m.status === 'nouveau').length);
+  set('quotes', (DB.quotes || []).filter(q => q.status === 'signe' && !q.depositInvoice && !q.abonnement).length);
 }
 
 function renderAll() {
   renderKpis(); renderPipeStrip(); renderAlerts(); renderNextSessions(); renderRecentActivity(); renderRecentInvoices();
-  renderSegChips(); renderContacts(); renderInvoices(); renderSessions(); renderActivity(); renderMessages(); renderVisitorsNote(); updateCounts();
+  renderSegChips(); renderContacts(); renderInvoices(); renderSessions(); renderActivity(); renderMessages(); renderQuotes(); renderVisitorsNote(); updateCounts();
   if (state.section) $('pageSub').textContent = SECTIONS.find(x => x[0] === state.section)[2] + ' · données de ' + fdt(DB.generatedAt);
 }
 
@@ -576,6 +602,11 @@ function computeAlerts() {
     if (se && se.statut !== 'annulee' && se.date < now && !se.livraison && c.stage === 'postprod') out.push({ lvl: 'warn', ic: '📅', t: `Date de livraison à saisir — ${c.name || c.email}`, d: `Séance du ${fdate(se.date)} passée, aucune date de livraison estimée.`, email: c.email, tab: 'session' });
     if (se && se.livraison && se.livraison <= now && c.stage === 'postprod') out.push({ lvl: 'warn', ic: '📦', t: `Livraison prévue — ${c.name || c.email}`, d: `Prévue le ${fdate(se.livraison)} : créez la facture de solde quand les photos sont prêtes.`, email: c.email, tab: 'invoices' });
     if (c.stage === 'lead' && c.lead && c.lead.temperature === 'chaud') out.push({ lvl: 'info', ic: '🔥', t: `Lead chaud — ${c.name || c.email}`, d: `${esc(c.lead.category)} · ${esc(c.lead.budget)} · reçu ${ago(c.lead.date)}.`, email: c.email });
+  });
+  (DB.quotes || []).forEach(q => {
+    if (q.status === 'signe' && !q.depositInvoice && !q.abonnement) out.push({ lvl: 'danger', ic: '✍️', t: `Devis signé sans acompte — ${q.client.nom}`, d: `Devis n° ${esc(q.number)} signé : la facture d'acompte n'a pas été créée.`, email: q.email, quote: q.id });
+    if (q.status === 'signe' && q.abonnement && q.signedAt > addDays(-14)) out.push({ lvl: 'warn', ic: '🔁', t: `Abonnement à mettre en place — ${q.client.nom}`, d: `Devis n° ${esc(q.number)} signé le ${fdate(q.signedAt)}.`, email: q.email, quote: q.id });
+    if (q.status === 'envoye' && q.validUntil <= addDays(3)) out.push({ lvl: 'info', ic: '⌛', t: `Devis bientôt expiré — ${q.client.nom}`, d: `N° ${esc(q.number)} valable jusqu'au ${fdate(q.validUntil)}${q.viewedAt ? ' · consulté' : ' · jamais ouvert'}.`, email: q.email, quote: q.id });
   });
   (DB.messages || []).filter(m => m.status === 'nouveau').forEach(m => out.push({ lvl: 'info', ic: '✉️', t: `${MSG_KIND[m.kind] || 'Message'} — ${m.name || m.email}`, d: `Reçu ${ago(m.date)}. ${esc((m.details.message || m.details.projet || m.details.temoignage || m.details.activite || '').slice(0, 90))}`, email: m.email, go: 'messages' }));
   const unseen = allActivity().filter(a => a.unseen);
@@ -614,11 +645,11 @@ function renderKpis() {
 }
 function renderPipeStrip() {
   const counts = {}; DB.contacts.forEach(c => { counts[c.stage] = (counts[c.stage] || 0) + 1; });
-  $('pipeStrip').innerHTML = STAGES.filter(s => s[0] !== 'contact' && (counts[s[0]] || ['lead', 'acompte', 'reserve', 'postprod', 'solde', 'livre'].includes(s[0])))
+  $('pipeStrip').innerHTML = STAGES.filter(s => s[0] !== 'contact' && (counts[s[0]] || ['lead', 'devis', 'acompte', 'reserve', 'postprod', 'solde', 'livre'].includes(s[0])))
     .map(s => `<button onclick="state.seg='stage:${s[0]}';go('contacts');renderSegChips();renderContacts()"><div class="n">${counts[s[0]] || 0}</div><div class="l">${s[1]}</div></button>`).join('');
 }
 function alertLi(a) {
-  return `<div class="li click" onclick="${a.go ? `go('${a.go}')` : `openDrawer('${esc(a.email)}','${a.tab || 'summary'}')`}"><div class="ic ${a.lvl}">${a.ic}</div><div class="tx"><b>${esc(a.t)}</b><div class="d">${a.d}</div></div></div>`;
+  return `<div class="li click" onclick="${a.quote ? `openQuote('${esc(a.quote)}')` : a.go ? `go('${a.go}')` : `openDrawer('${esc(a.email)}','${a.tab || 'summary'}')`}"><div class="ic ${a.lvl}">${a.ic}</div><div class="tx"><b>${esc(a.t)}</b><div class="d">${a.d}</div></div></div>`;
 }
 function renderAlerts() {
   const al = computeAlerts();
@@ -694,7 +725,7 @@ function renderContacts() {
   $('contactCount').textContent = list.length + ' contact' + (list.length > 1 ? 's' : '');
   $('contactsTable').hidden = state.view !== 'table'; $('contactsKanban').hidden = state.view !== 'kanban';
   if (state.view === 'kanban') {
-    const cols = STAGES.filter(s => list.some(c => c.stage === s[0]) || ['lead', 'acompte', 'reserve', 'postprod', 'solde', 'livre'].includes(s[0]));
+    const cols = STAGES.filter(s => list.some(c => c.stage === s[0]) || ['lead', 'devis', 'acompte', 'reserve', 'postprod', 'solde', 'livre'].includes(s[0]));
     $('contactsKanban').innerHTML = '<div class="kanban">' + cols.map(s => { const cs = list.filter(c => c.stage === s[0]); return `<div class="col"><h4>${s[1]}<span>${cs.length}</span></h4>${cs.map(c => `<div class="kcard" onclick="openDrawer('${esc(c.email)}')"><b>${esc(c.name || c.email)}</b><div class="d">${esc(c.lead ? c.lead.category : (primaryAcc(c) && primaryAcc(c).seance ? 'Séance ' + fdate(primaryAcc(c).seance.date) : c.email))}</div>${c.totalDue ? `<div class="d">À encaisser : ${eur(c.totalDue)}</div>` : ''}</div>`).join('') || '<div class="small muted" style="padding:6px">—</div>'}</div>`; }).join('') + '</div>';
     return;
   }
@@ -815,7 +846,9 @@ function renderSessions() {
   const rows = [
     ['Accusé de réception des formulaires', 'Contact, collaboration, candidature partenaire, demande d\'espace : immédiat', '—', '—'],
     ['Confirmation de demande de devis', 'Envoi du quiz : immédiat', '—', c.filter(x => x.lead).length],
-    ['Relance de devis', '7 jours après le quiz, sans facture d\'acompte', leadsWaiting.length, c.filter(x => x.markers.relanceDevis).length],
+    ['Devis à signer en ligne', 'Envoi depuis « Devis » ; signature → facture d\'acompte automatique', (DB.quotes || []).filter(q => q.status === 'envoye').length, (DB.quotes || []).filter(q => q.status === 'signe').length],
+    ['Relance du devis envoyé', '5 jours après l\'envoi s\'il n\'est pas signé, puis expiration', (DB.quotes || []).filter(q => q.status === 'envoye' && !q.reminderSentAt).length, (DB.quotes || []).filter(q => q.reminderSentAt).length],
+    ['Relance de devis (quiz)', '7 jours après le quiz, sans devis envoyé ni facture d\'acompte', leadsWaiting.length, c.filter(x => x.markers.relanceDevis).length],
     ['Facture d\'acompte + paiement reçu', 'Création dans « Factures », puis paiement Stripe', c.filter(x => x.invoices.some(i => i.kind === 'acompte' && i.status === 'open')).length, c.filter(x => x.invoices.some(i => i.kind === 'acompte' && i.status === 'paid')).length],
     ['Rappel moodboard', '3 jours après l\'acompte payé, si aucun moodboard', mbWaiting.length, c.filter(x => x.markers.rappelMoodboard).length],
     ['Rappel de séance J-2', 'Chaque matin, séances dans 2 jours', sess.filter(x => x.s.date >= today()).length, '—'],
@@ -842,6 +875,202 @@ function renderActivity() {
   $('actChips').innerHTML = types.map(([id, l]) => `<button class="chip ${state.actFilter === id ? 'on' : ''}" onclick="state.actFilter='${id}';renderActivity()">${l}<span class="c">${all.filter(id === 'all' ? () => true : id === 'unseen' ? a => a.unseen : a => a.type === id).length}</span></button>`).join('');
   const list = all.filter(f);
   $('activityFeed').innerHTML = list.length ? list.map(a => `<div class="li click" onclick="openDrawer('${esc(a.email)}','activity')"><div class="ic">${a.type === 'moodboard' ? '🎨' : a.type === 'infos' ? '🧾' : a.type === 'collaboration' ? '🤝' : '⭐'}</div><div class="tx"><b>${a.unseen ? '<span class="dot"></span>' : ''}${esc(a.name)} <span class="badge line">${a.accType === 'partner' ? 'Partenaire' : 'Client'}</span></b><div>${esc(a.resume)}</div>${a.details && a.details.length ? `<div class="d">${a.details.map(esc).join(' · ')}</div>` : ''}<div class="d">${esc(ACT_LABEL[a.type] || a.type)} · ${fdt(a.date)}</div></div></div>`).join('') : '<div class="empty">Aucune activité.</div>';
+}
+
+/* ── Devis ── */
+const Q_STATUS = { brouillon: ['Brouillon', 'line'], envoye: ['Envoyé', 'warn'], signe: ['Signé', 'ok'], refuse: ['Refusé', 'danger'], expire: ['Expiré', 'danger'], annule: ['Annulé', 'line'] };
+const TPL = BunkaioDevis.TEMPLATES;
+function qLi(q) {
+  const st = Q_STATUS[q.status] || [q.status, 'line'];
+  return `<div class="li click" onclick="openQuote('${esc(q.id)}')"><div class="ic ${q.status === 'signe' ? 'ok' : q.status === 'envoye' ? 'warn' : ''}">📝</div><div class="tx"><b>N° ${esc(q.number)} · ${esc(q.prestation || 'Sans titre')}</b><div class="d">${esc(q.client && q.client.nom)} · ${q.status === 'signe' ? 'signé ' + fdate(q.signedAt) : q.status === 'envoye' ? 'envoyé ' + fdate(q.sentAt) + (q.viewedAt ? ' · consulté' : '') : 'créé ' + fdate(q.createdAt)}</div></div><div class="act" style="text-align:right"><b>${eur(q.totalHT)}</b><div><span class="badge ${st[1]}">${st[0]}</span></div></div></div>`;
+}
+function renderQuotes() {
+  const all = DB.quotes || [];
+  const month = today().slice(0, 7);
+  const sent = all.filter(q => ['envoye', 'signe', 'refuse', 'expire'].includes(q.status));
+  const signed = all.filter(q => q.status === 'signe');
+  $('qKpis').innerHTML = [
+    ['dark', 'Signés ce mois', eur(signed.filter(q => (q.signedAt || '').startsWith(month)).reduce((t, q) => t + q.totalHT, 0)), signed.filter(q => (q.signedAt || '').startsWith(month)).length + ' devis'],
+    ['', 'En attente de signature', all.filter(q => q.status === 'envoye').length, eur(all.filter(q => q.status === 'envoye').reduce((t, q) => t + q.totalHT, 0)) + ' en jeu'],
+    ['', 'Taux de signature', sent.length ? Math.round(signed.length / sent.length * 100) + ' %' : '—', signed.length + ' / ' + sent.length + ' envoyés'],
+    ['', 'Brouillons', all.filter(q => q.status === 'brouillon').length, 'À finaliser et envoyer'],
+  ].map(([cls, l, n, sub]) => `<div class="kpi ${cls}"><div class="l">${l}</div><div class="n">${n}</div><div class="s">${sub}</div></div>`).join('');
+  state.qFilter = state.qFilter || 'all';
+  const F = [['all', 'Tous', () => true], ['brouillon', 'Brouillons', q => q.status === 'brouillon'], ['envoye', 'Envoyés', q => q.status === 'envoye'], ['signe', 'Signés', q => q.status === 'signe'], ['clos', 'Expirés / annulés / refusés', q => ['expire', 'annule', 'refuse'].includes(q.status)]];
+  $('qChips').innerHTML = F.map(([id, l, f]) => `<button class="chip ${state.qFilter === id ? 'on' : ''}" onclick="state.qFilter='${id}';renderQuotes()">${l}<span class="c">${all.filter(f).length}</span></button>`).join('');
+  const list = all.filter(F.find(x => x[0] === state.qFilter)[2]);
+  $('qTable').innerHTML = list.length ? `<div class="tbl-wrap"><table><thead><tr><th>N°</th><th>Client</th><th>Prestation</th><th class="num">Montant HT</th><th>Statut</th><th>Suivi</th><th>Validité</th></tr></thead><tbody>${list.map(q => { const st = Q_STATUS[q.status] || [q.status, 'line'];
+    return `<tr class="click" onclick="openQuote('${esc(q.id)}')"><td><b>${esc(q.number)}</b></td><td class="who"><b>${esc(q.client && q.client.nom)}</b><span>${esc(q.email)}</span></td><td class="small">${esc(q.prestation)}</td><td class="num"><b>${eur(q.totalHT)}</b>${q.abonnement ? '<div class="small muted">/ mois</div>' : ''}</td><td><span class="badge ${st[1]}">${st[0]}</span></td>
+    <td class="small">${q.status === 'signe' ? 'Signé ' + fdate(q.signedAt) + (q.signedVia === 'yousign' ? ' (Yousign)' : q.signedVia === 'manuel' ? ' (manuel)' : ' en ligne') + (q.depositInvoice ? ' · acompte envoyé' : q.abonnement ? '' : ' · <b style="color:var(--danger)">acompte à créer</b>') : q.status === 'envoye' ? 'Envoyé ' + fdate(q.sentAt) + (q.viewedAt ? ' · consulté ' + ago(q.viewedAt) : ' · pas encore ouvert') + (q.reminderSentAt ? ' · relancé' : '') : 'Créé ' + fdate(q.createdAt)}</td><td class="small">${fdate(q.validUntil)}</td></tr>`; }).join('')}</tbody></table></div>` : '<div class="card"><div class="empty">Aucun devis. Créez-en un depuis la fiche d\'un lead ou avec « Nouveau devis ».</div></div>';
+}
+
+/* Éditeur de devis (dans le panneau latéral) */
+let QE = null; // devis en cours d'édition
+function quoteFromContact(email) {
+  const c = contactByEmail(email) || { email, name: '', phone: '', lang: 'fr', lead: null, accounts: [] };
+  const a = primaryAcc(c); const f = (a && a.facturation) || {};
+  const tplKey = c.lead ? BunkaioDevis.guessTemplate(c.lead.category) : 'part';
+  const t = TPL[tplKey];
+  const profil = f.profil || (a && a.type === 'partner' ? 'professionnel' : t.profil);
+  return {
+    email: c.email, lang: c.lang === 'en' ? 'en' : 'fr', template: tplKey,
+    client: { nom: (a && a.nom) || c.name, profil, contact: f.contact || '', forme: f.forme || '', adresse: [f.rue, [f.codePostal, f.ville].filter(Boolean).join(' '), f.pays].filter(Boolean).join(', ') || (a && a.adresse) || '', telephone: (a && a.telephone) || c.phone || '', siret: f.siret || '', tvaIntra: f.tvaIntra || '' },
+    prestation: t.prestation + (c.lead && c.lead.formule ? ' — Formule ' + c.lead.formule : ''),
+    contenu: c.lead ? [c.lead.description, c.lead.options && c.lead.options !== 'aucune' ? 'Options : ' + c.lead.options : ''].filter(Boolean).join('\n') : '',
+    seance: a && a.seance ? { date: a.seance.date, heure: a.seance.heure, lieu: a.seance.lieu } : {},
+    delai: t.abonnement ? t.delai : '', totalHT: '', abonnement: !!t.abonnement,
+    droits: { destination: t.destination, duree: t.duree, territoire: 'Monde entier (diffusion en ligne)', exclusivite: 'Non exclusive' },
+    report: BunkaioDevis.REPORT_STD, conditions: t.real.slice(), validUntil: addDays(30),
+    mediateur: lsGet('bk_q_mediateur', ''), tribunal: lsGet('bk_q_tribunal', ''), status: 'brouillon',
+  };
+}
+function openQuote(id, email) {
+  if (id) { const q = (DB.quotes || []).find(x => x.id === id); if (!q) { toast('Devis introuvable'); return; } QE = JSON.parse(JSON.stringify(q)); }
+  else QE = quoteFromContact((email || '').toLowerCase());
+  drawer = { mode: 'quote', tab: QE.status === 'brouillon' && !id ? 'edit' : (QE.status === 'brouillon' ? 'edit' : 'preview'), email: QE.email };
+  renderQuoteDrawer();
+  $('drawer').classList.add('on'); $('scrim').classList.add('on');
+}
+function qv(id) { const el = $(id); return el ? el.value.trim() : ''; }
+function readQuoteForm() {
+  if (!$('qeEmail')) return;
+  QE.email = qv('qeEmail').toLowerCase(); QE.lang = qv('qeLang'); QE.template = qv('qeTpl');
+  QE.client = { nom: qv('qeNom'), profil: qv('qeProfil'), contact: qv('qeContact'), forme: qv('qeForme'), adresse: qv('qeAdresse'), telephone: qv('qeTel'), siret: qv('qeSiret'), tvaIntra: qv('qeTva') };
+  QE.prestation = qv('qePresta'); QE.contenu = qv('qeContenu'); QE.notes = qv('qeNotes');
+  QE.seance = { date: qv('qeDate'), heure: qv('qeHeure'), lieu: qv('qeLieu') };
+  QE.delai = qv('qeDelai'); QE.totalHT = parseFloat(qv('qeTotal')) || ''; QE.validUntil = qv('qeValid');
+  QE.abonnement = !!(TPL[QE.template] && TPL[QE.template].abonnement);
+  QE.droits = { destination: qv('qeDest'), duree: qv('qeDuree'), territoire: qv('qeTerr'), exclusivite: qv('qeExcl') };
+  QE.report = qv('qeReport'); QE.conditions = qv('qeCond').split('\n').map(x => x.trim()).filter(Boolean);
+  QE.mediateur = qv('qeMed'); QE.tribunal = qv('qeTrib');
+  lsSet('bk_q_mediateur', QE.mediateur); lsSet('bk_q_tribunal', QE.tribunal);
+}
+function applyTemplate() {
+  const prev = QE.template;
+  readQuoteForm();
+  const t = TPL[qv('qeTpl')]; if (!t) return;
+  if (!confirm('Remplacer la prestation, le délai, la cession de droits et les conditions par celles du modèle « ' + t.label + ' » ?')) { QE.template = prev; renderQuoteDrawer(); return; }
+  QE.template = qv('qeTpl'); QE.prestation = t.prestation; QE.delai = t.abonnement ? t.delai : ''; QE.abonnement = !!t.abonnement;
+  QE.droits = { ...QE.droits, destination: t.destination, duree: t.duree }; QE.conditions = t.real.slice();
+  if (!QE.client.siret && !QE.client.forme) QE.client.profil = t.profil;
+  renderQuoteDrawer();
+}
+function fillFromContact() { readQuoteForm(); const keep = { totalHT: QE.totalHT, id: QE.id, number: QE.number, status: QE.status, createdAt: QE.createdAt }; QE = Object.assign(quoteFromContact(QE.email), keep); renderQuoteDrawer(); toast('Coordonnées reprises du contact'); }
+function setQTab(t) { if (drawer.tab === 'edit') readQuoteForm(); drawer.tab = t; renderQuoteDrawer(); }
+function renderQuoteDrawer() {
+  const q = QE; const st = Q_STATUS[q.status] || [q.status, 'line'];
+  const editable = q.status === 'brouillon';
+  $('drHead').innerHTML = `<div class="row1"><div style="min-width:0"><h2>${q.number ? 'Devis n° ' + esc(q.number) : 'Nouveau devis'}</h2><div class="em">${esc(q.client.nom || '')}${q.email ? ' · ' + esc(q.email) : ''}</div></div><button class="close" onclick="closeDrawer()" aria-label="Fermer">✕</button></div>
+    <div class="badges"><span class="badge lav">${st[0]}</span>${q.totalHT ? `<span class="badge">${eur(q.totalHT)} HT${q.abonnement ? ' / mois' : ''}</span>` : ''}${q.viewedAt ? '<span class="badge">Consulté ' + ago(q.viewedAt) + '</span>' : ''}${q.signedVia ? '<span class="badge">Signé ' + (q.signedVia === 'en_ligne' ? 'en ligne' : q.signedVia) + '</span>' : ''}</div>
+    <div class="dr-tabs">${(editable ? [['edit', 'Rédaction'], ['preview', 'Aperçu']] : [['preview', 'Devis'], ['track', 'Suivi']]).map(([id, l]) => `<button class="${drawer.tab === id ? 'on' : ''}" onclick="setQTab('${id}')">${l}</button>`).join('')}</div>`;
+  if (drawer.tab === 'edit') $('drBody').innerHTML = quoteForm(q);
+  else if (drawer.tab === 'track') $('drBody').innerHTML = quoteTrack(q);
+  else $('drBody').innerHTML = (editable ? '<div class="msg info" style="margin-bottom:14px">Aperçu : c\'est exactement ce que le client verra et signera.</div>' : '') + BunkaioDevis.render(q, DB.business || {});
+  const btns = [];
+  if (editable) {
+    btns.push(`<button class="btn ghost" onclick="saveQuote()">Enregistrer le brouillon</button>`, `<button class="btn" onclick="sendQuote()">Envoyer au client ✉</button>`);
+    if (q.id) btns.push(`<button class="btn ghost" onclick="markSigned()">Marquer signé…</button>`, `<button class="btn ghost" style="color:var(--danger);margin-left:auto" onclick="quoteAction('delete')">Supprimer</button>`);
+  } else {
+    btns.push(`<button class="btn ghost" onclick="printQuote()">Imprimer / PDF</button>`);
+    if (q.status === 'envoye') btns.push(`<button class="btn ghost" onclick="quoteAction('resend')">Renvoyer l'email</button>`, `<button class="btn ghost" onclick="copyLink()">Copier le lien</button>`, `<button class="btn" onclick="markSigned()">Marquer signé…</button>`, `<button class="btn ghost" onclick="quoteAction('refuse')">Refusé</button>`, `<button class="btn ghost" style="color:var(--danger)" onclick="quoteAction('cancel')">Annuler</button>`);
+    if (q.status === 'signe' && !q.depositInvoice && !q.abonnement) btns.push(`<button class="btn" onclick="quoteAction('create-deposit')">Créer et envoyer l'acompte</button>`);
+    if (q.depositInvoice) btns.push(`<a class="btn ghost" href="${esc(q.depositInvoice.url)}" target="_blank" rel="noopener">Facture d'acompte</a>`);
+    btns.push(`<button class="btn ghost" onclick="quoteAction('duplicate')">Dupliquer</button>`);
+    if (q.status === 'annule') btns.push(`<button class="btn ghost" style="color:var(--danger)" onclick="quoteAction('delete')">Supprimer</button>`);
+    if (contactByEmail(q.email)) btns.push(`<button class="btn ghost" onclick="openDrawer('${esc(q.email)}')">Fiche client</button>`);
+  }
+  $('drFoot').innerHTML = btns.join('') + '<div id="drMsg"></div>';
+}
+function quoteForm(q) {
+  const c = q.client; const opt = (v, cur, l) => `<option value="${v}" ${cur === v ? 'selected' : ''}>${l}</option>`;
+  return `<div class="form">
+    <div class="msg warn">Modèle de devis à faire valider par un juriste ou votre comptable avant les premiers envois.</div>
+    <div class="lab">Client</div>
+    <div class="frow"><div class="fg"><label>Email</label><input id="qeEmail" list="emailList" value="${esc(q.email)}"></div><div class="fg"><label>Langue des emails</label><select id="qeLang">${opt('fr', q.lang, 'Français')}${opt('en', q.lang, 'English')}</select></div></div>
+    <button class="btn ghost sm" style="justify-self:start" onclick="fillFromContact()">↻ Reprendre les coordonnées du contact</button>
+    <div class="frow"><div class="fg"><label>Type de client</label><select id="qeProfil">${opt('particulier', c.profil, 'Particulier')}${opt('professionnel', c.profil, 'Professionnel')}</select></div><div class="fg"><label>Forme juridique (pro)</label><select id="qeForme"><option value="">—</option>${Object.entries(FORMES).map(([k, v]) => opt(k, c.forme, v)).join('')}</select></div></div>
+    <div class="frow"><div class="fg"><label>Nom / raison sociale</label><input id="qeNom" value="${esc(c.nom)}"></div><div class="fg"><label>Contact signataire (pro)</label><input id="qeContact" value="${esc(c.contact)}"></div></div>
+    <div class="fg"><label>Adresse complète</label><input id="qeAdresse" value="${esc(c.adresse)}"></div>
+    <div class="frow"><div class="fg"><label>Téléphone</label><input id="qeTel" value="${esc(c.telephone)}"></div><div class="fg"><label>SIRET</label><input id="qeSiret" value="${esc(c.siret)}"></div></div>
+    <div class="fg"><label>N° TVA intracommunautaire</label><input id="qeTva" value="${esc(c.tvaIntra)}"></div>
+    <div class="lab" style="margin-top:10px">Prestation</div>
+    <div class="fg"><label>Modèle</label><select id="qeTpl" onchange="applyTemplate()">${Object.entries(TPL).map(([k, t]) => opt(k, q.template, t.label)).join('')}</select><div class="hint">Changer de modèle remplace prestation, délai, droits et conditions.</div></div>
+    <div class="fg"><label>Intitulé de la prestation</label><input id="qePresta" value="${esc(q.prestation)}"></div>
+    <div class="fg"><label>Contenu / livrables</label><textarea id="qeContenu" style="font-family:inherit;font-size:13.5px;min-height:90px" placeholder="${esc((TPL[q.template] || {}).contenuHint || '')}">${esc(q.contenu)}</textarea></div>
+    <div class="frow"><div class="fg"><label>Date</label><input type="date" id="qeDate" value="${esc(q.seance && q.seance.date)}"></div><div class="fg"><label>Heure</label><input id="qeHeure" value="${esc(q.seance && q.seance.heure)}" placeholder="14h30"></div></div>
+    <div class="fg"><label>Lieu</label><input id="qeLieu" value="${esc(q.seance && q.seance.lieu)}"></div>
+    <div class="fg"><label>Délai de livraison</label><input id="qeDelai" value="${esc(q.delai)}" placeholder="Ex. 7 ${esc((TPL[q.template] || {}).delai || '')}"></div>
+    <div class="frow"><div class="fg"><label>Montant total HT (€)${q.abonnement ? ' par mois' : ''}</label><input type="number" min="0" step="0.01" id="qeTotal" value="${esc(q.totalHT)}" oninput="$('qeSplit').textContent=this.value>0&&${!q.abonnement}?'Acompte '+eur(Math.round(this.value*30)/100)+' · Solde '+eur(Math.round(this.value*70)/100):''"></div><div class="fg"><label>Valable jusqu'au</label><input type="date" id="qeValid" value="${esc(q.validUntil)}"></div></div>
+    <div class="small muted" id="qeSplit">${q.totalHT && !q.abonnement ? 'Acompte ' + eur(Math.round(q.totalHT * 30) / 100) + ' · Solde ' + eur(Math.round(q.totalHT * 70) / 100) : ''}</div>
+    <div class="fg"><label>Précisions (facultatif)</label><textarea id="qeNotes" style="font-family:inherit;font-size:13.5px;min-height:60px">${esc(q.notes || '')}</textarea></div>
+    <div class="lab" style="margin-top:10px">Cession des droits</div>
+    <div class="fg"><label>Destination (usages autorisés)</label><textarea id="qeDest" style="font-family:inherit;font-size:13.5px">${esc(q.droits.destination)}</textarea></div>
+    <div class="frow"><div class="fg"><label>Durée</label><input id="qeDuree" value="${esc(q.droits.duree)}"></div><div class="fg"><label>Territoire</label><input id="qeTerr" value="${esc(q.droits.territoire || '')}"></div></div>
+    <div class="fg"><label>Étendue</label><input id="qeExcl" value="${esc(q.droits.exclusivite || 'Non exclusive')}"></div>
+    <div class="lab" style="margin-top:10px">Conditions</div>
+    <div class="fg"><label>Report et annulation</label><textarea id="qeReport" style="font-family:inherit;font-size:13.5px">${esc(q.report || '')}</textarea></div>
+    <div class="fg"><label>Conditions de réalisation propres à la prestation (une par ligne)</label><textarea id="qeCond" style="font-family:inherit;font-size:13.5px;min-height:140px">${esc((q.conditions || []).join('\n'))}</textarea><div class="hint">Les clauses communes (choix des visuels, respect de l'œuvre, conservation, responsabilité) sont ajoutées automatiquement.</div></div>
+    <div class="frow"><div class="fg"><label>Médiateur de la consommation</label><input id="qeMed" value="${esc(q.mediateur || '')}" placeholder="Nom et coordonnées"><div class="hint">Obligatoire pour les particuliers. Mémorisé pour les prochains devis.</div></div><div class="fg"><label>Tribunal compétent</label><input id="qeTrib" value="${esc(q.tribunal || '')}" placeholder="Ex. Tribunal judiciaire de Béziers"></div></div>
+  </div>`;
+}
+function quoteTrack(q) {
+  const ev = [['Créé', q.createdAt, true], ['Envoyé au client', q.sentAt, !!q.sentAt], ['Consulté', q.viewedAt, !!q.viewedAt], ['Relance envoyée', q.reminderSentAt, !!q.reminderSentAt], ['Signé' + (q.signedVia === 'en_ligne' ? ' en ligne' : q.signedVia === 'yousign' ? ' via Yousign' : q.signedVia ? ' (manuel)' : ''), q.signedAt, !!q.signedAt], [q.status === 'annule' ? 'Annulé' : q.status === 'refuse' ? 'Refusé' : 'Clôturé', q.closedAt, !!q.closedAt]].filter(e => e[1]);
+  const sg = q.signature;
+  return `<div class="grid g2"><div class="card"><h3>Historique</h3><div class="tl">${ev.map(e => `<div class="it ${e[2] ? 'done' : ''}"><b>${e[0]}</b><div class="d">${fdt(e[1])}</div></div>`).join('')}</div></div>
+    <div class="card"><h3>Preuve de signature</h3>${sg ? `<dl class="kv"><dt>Signataire</dt><dd>${esc(sg.name)}</dd><dt>Date</dt><dd>${fdt(sg.at)}</dd>${sg.ip ? `<dt>Adresse IP</dt><dd>${esc(sg.ip)}</dd>` : ''}${sg.ua ? `<dt>Navigateur</dt><dd class="small">${esc(sg.ua)}</dd>` : ''}<dt>Portfolio</dt><dd>${sg.portfolio ? 'Autorisé' : 'Refusé'}</dd>${q.client.profil === 'particulier' ? `<dt>Exécution anticipée</dt><dd>${sg.retractationWaiver ? 'Demandée' : 'Non demandée'}</dd>` : ''}<dt>Empreinte</dt><dd class="small" style="word-break:break-all">${esc(sg.hash)}</dd></dl>` : '<div class="small muted">Pas encore signé.</div>'}</div></div>
+    ${q.status === 'envoye' ? `<div class="msg info" style="margin-top:18px">Lien de signature du client : <code style="word-break:break-all">${esc(signLink(q))}</code></div>` : ''}`;
+}
+function signLink(q) { return q._url || '(lien disponible après « Renvoyer l\'email » ou dans l\'email du client)'; }
+async function saveQuote(silent) {
+  readQuoteForm();
+  if (!QE.email || !QE.email.includes('@')) { $('drMsg').innerHTML = '<div class="msg err">Email du client invalide.</div>'; return null; }
+  if (!(QE.totalHT > 0)) { $('drMsg').innerHTML = '<div class="msg err">Indiquez le montant total HT.</div>'; return null; }
+  try {
+    const { res, data } = await api('/admin/quote', { method: 'POST', body: JSON.stringify({ action: 'save', id: QE.id || undefined, quote: QE }) });
+    if (!res.ok || !data.ok) { $('drMsg').innerHTML = `<div class="msg err">Erreur : ${esc(data.error || res.status)}</div>`; return null; }
+    QE = data.quote; if (!silent) toast('Brouillon enregistré — n° ' + QE.number);
+    await loadDashboard(); renderQuoteDrawer(); return QE;
+  } catch (e) { return null; }
+}
+async function sendQuote() {
+  const q = await saveQuote(true); if (!q) return;
+  if (!confirm(`Envoyer le devis n° ${q.number} (${eur(q.totalHT)} HT) à ${q.email} ? Il ne sera plus modifiable.`)) return;
+  await quoteAction('send', true);
+}
+async function quoteAction(action, skipConfirm) {
+  const labels = { resend: 'Renvoyer l\'email du devis au client ?', cancel: 'Annuler ce devis ? Le lien de signature ne fonctionnera plus.', refuse: 'Marquer ce devis comme refusé ?', delete: 'Supprimer définitivement ce devis ?', 'create-deposit': 'Créer et envoyer la facture d\'acompte (30 %) au client ?', duplicate: 'Créer un nouveau brouillon à partir de ce devis ?' };
+  if (!skipConfirm && labels[action] && !confirm(labels[action])) return;
+  try {
+    const { res, data } = await api('/admin/quote', { method: 'POST', body: JSON.stringify({ action, id: QE.id }) });
+    if (!res.ok || !data.ok) {
+      const msg = data.error === 'incomplete' ? 'Champs manquants : ' + (data.fields || []).join(', ') : 'Erreur : ' + (data.error || res.status);
+      $('drMsg').innerHTML = `<div class="msg err">${esc(msg)}</div>`; return;
+    }
+    if (action === 'delete') { toast('Devis supprimé'); closeDrawer(); await loadDashboard(); return; }
+    QE = data.quote; if (data.url) QE._url = data.url;
+    toast({ send: data.emailSent ? 'Devis envoyé au client' : '⚠ Devis prêt mais email non envoyé', resend: 'Email renvoyé', cancel: 'Devis annulé', refuse: 'Devis marqué refusé', 'create-deposit': 'Facture d\'acompte envoyée', duplicate: 'Nouveau brouillon n° ' + QE.number }[action] || 'OK');
+    drawer.tab = QE.status === 'brouillon' ? 'edit' : (action === 'send' ? 'track' : drawer.tab === 'edit' ? 'preview' : drawer.tab);
+    await loadDashboard(); renderQuoteDrawer();
+    if (data.url && (action === 'send' || action === 'resend')) $('drMsg').innerHTML = `<div class="msg ${data.emailSent ? 'ok' : 'warn'}">${data.emailSent ? 'Email envoyé.' : 'Email non envoyé : transmettez le lien.'} Lien : <code style="word-break:break-all">${esc(data.url)}</code></div>`;
+  } catch (e) {}
+}
+async function markSigned() {
+  const via = confirm('Signé via Yousign ?\n\nOK = Yousign · Annuler = autre (papier, email…)') ? 'yousign' : 'manuel';
+  const portfolio = confirm('Le client autorise-t-il l\'utilisation des visuels pour le portfolio ?\n\nOK = oui · Annuler = non');
+  const createDeposit = !QE.abonnement && confirm('Créer et envoyer maintenant la facture d\'acompte (30 %) ?');
+  if (QE.status === 'brouillon') { const q = await saveQuote(true); if (!q) return; }
+  try {
+    const { res, data } = await api('/admin/quote', { method: 'POST', body: JSON.stringify({ action: 'mark-signed', id: QE.id, via, portfolio, createDeposit }) });
+    if (!res.ok || !data.ok) { $('drMsg').innerHTML = `<div class="msg err">Erreur : ${esc(data.error || res.status)}</div>`; return; }
+    QE = data.quote; toast('Devis marqué signé' + (data.depositError ? ' · ⚠ acompte non créé' : createDeposit ? ' · acompte envoyé' : ''));
+    drawer.tab = 'track'; await loadDashboard(); renderQuoteDrawer();
+  } catch (e) {}
+}
+function copyLink() { const l = QE._url; if (!l) { toast('Utilisez « Renvoyer l\'email » pour afficher le lien'); return; } navigator.clipboard.writeText(l).then(() => toast('Lien copié'), () => toast(l)); }
+function printQuote() {
+  const w = window.open('', '_blank'); if (!w) { toast('Autorisez les fenêtres pop-up pour imprimer'); return; }
+  w.document.write(`<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><title>Devis ${esc(QE.number)} — BUNKAIO</title><base href="${location.origin}/"><style>@font-face{font-family:'DM Sans';src:url('/fonts/dm-sans-latin-opsz-normal.woff2') format('woff2');font-weight:100 1000}body{margin:0;padding:24px;background:#fff}${BunkaioDevis.CSS}</style></head><body>${BunkaioDevis.render(QE, DB.business || {})}<script>window.onload=function(){setTimeout(function(){window.print()},300)}<\/script></body></html>`);
+  w.document.close();
 }
 
 /* ── Messages ── */
@@ -939,12 +1168,13 @@ function openNewContact(email, name, phone, type) {
   renderDrawer();
   $('drawer').classList.add('on'); $('scrim').classList.add('on');
 }
-function closeDrawer() { $('drawer').classList.remove('on'); $('scrim').classList.remove('on'); $('drawer').setAttribute('aria-hidden', 'true'); drawer.email = null; renderActivity(); renderRecentActivity(); renderContacts(); updateCounts(); }
+function closeDrawer() { QE = null; drawer.mode = null; $('drawer').classList.remove('on'); $('scrim').classList.remove('on'); $('drawer').setAttribute('aria-hidden', 'true'); drawer.email = null; renderActivity(); renderRecentActivity(); renderContacts(); updateCounts(); }
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('drawer').classList.contains('on')) closeDrawer(); });
 function setDrTab(t) { drawer.tab = t; if (t === 'activity') { const c = contactByEmail(drawer.email); if (c) { markSeen(c); updateCounts(); } } renderDrawer(); }
 function currentAcc(c) { return c && c.accounts.length ? c.accounts[Math.min(drawer.accIdx, c.accounts.length - 1)] : null; }
 
 function renderDrawer() {
+  if (drawer.mode === 'quote') { if (QE) renderQuoteDrawer(); return; }
   const c = drawer.isNew ? null : contactByEmail(drawer.email);
   if (!drawer.isNew && !c) { closeDrawer(); return; }
   const st = c ? (STAGE[c.stage] || STAGE.contact) : null;
@@ -963,8 +1193,10 @@ function accSwitch(c) {
 function drSummary(c) {
   const a = primaryAcc(c); const L = c.lead; const s = a && a.seance;
   const dep = c.invoices.find(i => i.kind === 'acompte'); const bal = c.invoices.find(i => i.kind === 'solde');
+  const lastQ = (c.quotes || [])[0];
   const steps = [
     ['Demande de devis (quiz)', L ? fdate(L.date) : null],
+    ['Devis', lastQ ? 'n° ' + lastQ.number + ' · ' + (Q_STATUS[lastQ.status] || [lastQ.status])[0].toLowerCase() : null, lastQ && lastQ.status === 'signe'],
     ['Relance de devis', c.markers.relanceDevis ? 'envoyée' : null],
     ['Facture d\'acompte', dep ? (INV_STATUS[dep.status] || [dep.status])[0] + ' · ' + eur(dep.amount) : null, dep && dep.status === 'paid'],
     ['Espace créé', a ? (a.infosCompletes ? 'validé' : 'coordonnées à compléter') : null, a && a.infosCompletes],
@@ -977,6 +1209,7 @@ function drSummary(c) {
   ];
   const quick = [];
   if (!c.accounts.length) quick.push(`<button class="btn sm" onclick="openNewContact('${esc(c.email)}','${esc(c.name).replace(/&#39;/g, '')}','${esc(c.phone)}')">+ Créer l'espace client</button>`);
+  quick.push(`<button class="btn sm" onclick="openQuote(null,'${esc(c.email)}')">📝 Créer un devis</button>`);
   if (c.customerId) quick.push(`<button class="btn soft sm" onclick="setDrTab('invoices')">€ Facturer</button>`);
   if (a) quick.push(`<button class="btn soft sm" onclick="setDrTab('session')">📅 Séance</button>`);
   const msgs = c.messages || [];
@@ -987,6 +1220,7 @@ function drSummary(c) {
   </div>
   ${L ? `<div class="card" style="margin-top:18px"><h3>Réponses au devis <span class="badge ${(TEMP[L.temperature] || TEMP.froid)[1]}">${L.score} · ${(TEMP[L.temperature] || TEMP.froid)[0]}</span></h3><dl class="kv">
     ${[['Catégorie', L.category], ['Profil', L.profile], ['Formule', L.formule], ['Budget estimé', L.budget], ['Délai souhaité', L.delai], ['Options', L.options], ['Projet', L.description], ['Accompagnement com\'', L.communication], ['Reçu le', fdate(L.date)]].map(([k, v]) => `<dt>${k}</dt><dd>${esc(v || '—')}</dd>`).join('')}</dl></div>` : ''}
+  ${(c.quotes || []).length ? `<div class="lab" style="margin:22px 0 10px">Devis (${c.quotes.length})</div><div class="card"><div class="list">${c.quotes.map(qLi).join('')}</div></div>` : ''}
   ${msgs.length ? `<div class="lab" style="margin:22px 0 10px">Messages reçus via les formulaires (${msgs.length})</div>${msgs.map(m => msgCard(m, true)).join('')}` : ''}`;
 }
 function coordsHtml(c, a) {

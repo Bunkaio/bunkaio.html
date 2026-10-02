@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Votre devis — BUNKAIO</title>
+<link rel="icon" href="/favicon.ico">
+<style>
+  @font-face { font-family: 'DM Sans'; font-style: normal; font-display: swap; font-weight: 100 1000; src: url('/fonts/dm-sans-latin-opsz-normal.woff2') format('woff2'); }
+  :root { --ink: #0a0a0c; --grey: #76717f; --line: rgba(20,10,40,.09); --bg: #f7f5fb; --violet: #f1ecfa; --lav: #d9cdf5; --accent: #6e5aa8; --ok: #2f7d4f; --ok-bg: #e7f4ec; --danger: #b3261e; --danger-bg: #fdecea; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', system-ui, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.55; -webkit-font-smoothing: antialiased; }
+  header { background: var(--ink); color: #fff; padding: 18px 20px; display: flex; align-items: center; gap: 14px; }
+  header img { width: 84px; }
+  header span { font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--lav); font-weight: 700; }
+  main { max-width: 860px; margin: 0 auto; padding: 28px 16px 80px; }
+  .banner { border-radius: 12px; padding: 16px 18px; margin-bottom: 20px; font-size: 14.5px; }
+  .banner.ok { background: var(--ok-bg); color: var(--ok); }
+  .banner.err { background: var(--danger-bg); color: var(--danger); }
+  .banner.info { background: var(--violet); }
+  .banner b { display: block; font-size: 16px; margin-bottom: 4px; }
+  .actions { display: flex; gap: 10px; flex-wrap: wrap; margin: 0 0 20px; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 0; border-radius: 6px; padding: 13px 20px; font: inherit; font-weight: 700; font-size: 15px; cursor: pointer; background: var(--ink); color: #fff; text-decoration: none; box-shadow: 0 0 24px rgba(110,90,168,.22); }
+  .btn.ghost { background: #fff; color: var(--ink); border: 1px solid var(--line); box-shadow: none; }
+  .btn:disabled { opacity: .45; cursor: not-allowed; }
+  .sign { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: clamp(20px, 4vw, 34px); margin-top: 22px; }
+  .sign h2 { font-size: 20px; letter-spacing: -.02em; margin-bottom: 6px; }
+  .sign .sum { color: var(--grey); font-size: 14px; margin-bottom: 18px; }
+  .row { display: flex; gap: 12px; align-items: flex-start; padding: 12px 0; border-top: 1px solid var(--line); font-size: 14px; cursor: pointer; }
+  .row input[type=checkbox], .row input[type=radio] { width: 18px; height: 18px; margin-top: 2px; accent-color: var(--ink); flex: 0 0 auto; }
+  .row small { display: block; color: var(--grey); font-size: 12.5px; margin-top: 2px; }
+  .radios { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 8px; }
+  .radios label { display: flex; gap: 8px; align-items: center; cursor: pointer; }
+  .field { margin: 16px 0 6px; }
+  .field label { display: block; font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--grey); margin-bottom: 6px; }
+  .field input { width: 100%; border: 1px solid var(--line); border-radius: 8px; padding: 13px 14px; font: inherit; font-size: 16px; outline: none; }
+  .field input:focus { border-color: var(--accent); }
+  .err { color: var(--danger); font-size: 13.5px; min-height: 20px; margin: 8px 0; }
+  .legal { color: var(--grey); font-size: 12px; margin-top: 14px; }
+  .loading { text-align: center; color: var(--grey); padding: 60px 0; }
+  @media print { header, .actions, .sign, .banner { display: none !important; } body { background: #fff; } main { padding: 0; max-width: none; } }
+</style>
+<style id="dvcss"></style>
+</head>
+<body>
+<header><img src="/images/logo-email.png" alt="BUNKAIO"><span>Devis</span></header>
+<main id="main"><div class="loading">Chargement de votre devis…</div></main>
+<script src="/js/devis-model.js"></script>
+<script>
+'use strict';
+const WORKER = 'https://bunkaio-quiz-stripe.bunkaio.workers.dev';
+const P = new URLSearchParams(location.search);
+const D = P.get('d') || '', K = P.get('k') || '';
+const main = document.getElementById('main');
+document.getElementById('dvcss').textContent = BunkaioDevis.CSS;
+const esc = v => String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const eur = n => (Number(n) || 0).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+let Q = null, BIZ = {};
+
+function show(q, banner) {
+  Q = q;
+  const signed = q.status === 'signe';
+  const doc = BunkaioDevis.render(q, BIZ);
+  const dep = Math.round(q.totalHT * (q.acomptePct || 30)) / 100;
+  let html = banner || '';
+  html += '<div class="actions"><button class="btn ghost" onclick="window.print()">Imprimer / enregistrer en PDF</button>' + (signed && q.depositUrl ? '<a class="btn" href="' + esc(q.depositUrl) + '" target="_blank" rel="noopener">Régler l\'acompte de ' + eur(q.depositInvoice ? q.depositInvoice.amount : dep) + '</a>' : '') + '</div>';
+  html += doc;
+  if (q.status === 'envoye') {
+    const part = (q.client || {}).profil !== 'professionnel';
+    html += '<section class="sign" id="signBox"><h2>Signer le devis</h2><p class="sum">' + esc(q.prestation) + ' · ' + eur(q.totalHT) + (q.abonnement ? ' HT / mois' : ' HT · acompte de ' + eur(dep) + ' à la signature') + '</p>' +
+      '<label class="row"><input type="checkbox" id="accept"><span><b>Bon pour accord.</b> J\'ai lu le devis n° ' + esc(q.number) + ' et ses conditions (cession de droits, report et annulation, conditions de réalisation) et je les accepte.</span></label>' +
+      '<div class="row" style="cursor:default"><span style="flex:1"><b>Utilisation des visuels par BUNKAIO</b> pour son portfolio et sa communication<small>Votre choix n\'a aucune incidence sur la prestation ni sur le prix.</small><span class="radios"><label><input type="radio" name="pf" value="1"> J\'autorise</label><label><input type="radio" name="pf" value="0"> Je refuse</label></span></span></div>' +
+      (part ? '<label class="row"><input type="checkbox" id="waiver"><span>Je demande que la prestation commence avant la fin de mon délai de rétractation de 14 jours <small>À cocher si la séance a lieu dans les 14 jours suivant la signature. Si je me rétracte après le début de la prestation, je paie la part déjà réalisée.</small></span></label>' : '') +
+      '<div class="field"><label for="signName">Nom et prénom du signataire</label><input id="signName" autocomplete="name" value="' + esc((q.client || {}).contact || (part ? (q.client || {}).nom : '')) + '"></div>' +
+      '<div class="err" id="signErr"></div>' +
+      '<button class="btn" id="signBtn" onclick="sign()" style="width:100%">Signer le devis' + (q.abonnement ? '' : ' et recevoir la facture d\'acompte') + '</button>' +
+      '<p class="legal">Signature électronique : votre nom, la date et l\'heure, votre adresse IP et l\'empreinte du devis sont enregistrés comme preuve de votre accord. Un exemplaire signé vous est envoyé par email.</p></section>';
+  }
+  main.innerHTML = html;
+}
+
+async function load() {
+  if (!D || !K) { main.innerHTML = '<div class="banner err"><b>Lien incomplet</b>Utilisez le lien reçu par email, ou écrivez-nous à contact@bunkaio.com.</div>'; return; }
+  try {
+    const res = await fetch(WORKER + '/quote?d=' + encodeURIComponent(D) + '&k=' + encodeURIComponent(K));
+    const data = await res.json();
+    if (!res.ok || !data.ok) { main.innerHTML = '<div class="banner err"><b>Devis introuvable</b>Ce lien n\'est plus valide. Écrivez-nous à contact@bunkaio.com ou au 07 58 57 31 61.</div>'; return; }
+    BIZ = data.business || {};
+    const q = data.quote;
+    const banners = {
+      signe: '<div class="banner ok"><b>Devis signé ✓</b>Signé le ' + new Date(q.signedAt).toLocaleString('fr-FR') + '. Vous pouvez l\'imprimer ou l\'enregistrer en PDF.' + (q.depositUrl ? ' Votre facture d\'acompte vous a aussi été envoyée par email.' : '') + '</div>',
+      expire: '<div class="banner err"><b>Devis expiré</b>Sa date de validité est dépassée. Écrivez-nous pour en recevoir un nouveau : contact@bunkaio.com.</div>',
+      annule: '<div class="banner err"><b>Devis annulé</b>Ce devis a été remplacé ou annulé. Écrivez-nous à contact@bunkaio.com.</div>',
+      refuse: '<div class="banner err"><b>Devis clôturé</b>Écrivez-nous à contact@bunkaio.com pour toute question.</div>',
+      envoye: '<div class="banner info"><b>Votre devis personnalisé</b>Lisez-le attentivement, puis signez-le en bas de page. Une question ? Répondez simplement à l\'email reçu ou appelez le 07 58 57 31 61.</div>',
+    };
+    show(q, banners[q.status] || '');
+  } catch (e) {
+    main.innerHTML = '<div class="banner err"><b>Connexion impossible</b>Vérifiez votre connexion et rechargez la page.</div>';
+  }
+}
+
+async function sign() {
+  const err = document.getElementById('signErr');
+  const accept = document.getElementById('accept').checked;
+  const pf = document.querySelector('input[name=pf]:checked');
+  const name = document.getElementById('signName').value.trim();
+  const waiver = document.getElementById('waiver');
+  if (!accept) { err.textContent = 'Cochez « Bon pour accord » pour signer.'; return; }
+  if (!pf) { err.textContent = 'Indiquez si vous autorisez l\'utilisation des visuels pour le portfolio.'; return; }
+  if (name.length < 3) { err.textContent = 'Saisissez votre nom et prénom.'; return; }
+  err.textContent = '';
+  const btn = document.getElementById('signBtn'); btn.disabled = true; btn.textContent = 'Signature en cours…';
+  try {
+    const res = await fetch(WORKER + '/quote/sign', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ d: D, k: K, name, accept: true, portfolio: pf.value === '1', retractationWaiver: !!(waiver && waiver.checked) }) });
+    const data = await res.json();
+    if (!res.ok || !data.ok) {
+      const msg = { expire: 'Ce devis a expiré.', annule: 'Ce devis a été annulé.', content_changed: 'Ce devis a été modifié : rechargez la page.', invalid_signature: 'Signature incomplète.' }[data.error] || 'La signature n\'a pas pu être enregistrée. Réessayez ou écrivez-nous.';
+      err.textContent = msg; btn.disabled = false; btn.textContent = 'Signer le devis'; return;
+    }
+    const q = data.quote;
+    show(q, '<div class="banner ok"><b>Merci, votre devis est signé ✓</b>' + (q.abonnement ? 'Nous revenons vers vous pour mettre en place votre abonnement.' : data.depositError ? 'Votre facture d\'acompte vous sera envoyée très prochainement.' : 'Votre facture d\'acompte vient de vous être envoyée par email : son règlement confirme la réservation de votre date.') + ' Un exemplaire signé vous est également envoyé.</div>');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } catch (e) { err.textContent = 'Connexion impossible. Réessayez.'; btn.disabled = false; btn.textContent = 'Signer le devis'; }
+}
+load();
+</script>
+</body>
+</html>

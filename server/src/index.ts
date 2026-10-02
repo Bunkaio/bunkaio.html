@@ -4,11 +4,16 @@ import { handleCollect, handleStats, purgeOldAnalytics } from './analytics';
 import { appendJournal, diffAccountActivity, flushActivityNotifications, queueActivityNotification } from './activity';
 import { billingErrors, cleanBilling, composeAddress } from './billing';
 import { buildDashboard, deleteContact } from './admin';
+import { cleanQuoteInput, createQuote, getQuote, isExpired, listQuotes, missingQuoteFields, prepareSend, publicQuote, putQuote, quoteHash, tokenMatches } from './quotes';
+import type { Quote } from './quotes';
+import { getBusinessAddress } from './config';
 import { cleanDetails, MESSAGE_KINDS, storeMessage, updateMessage } from './messages';
 import type { MessageKind } from './messages';
 import { configureBusiness } from './config';
 import { claimAckSlot, markBalanceInvoiced, markDepositPaid, markInvoiced, markLead, runDailyAutomations } from './automations';
 import {
+  buildQuoteEmail,
+  buildQuoteSignedEmail,
   buildAdminAlertEmail,
   buildAcknowledgementEmail,
   buildSeanceEmail,
@@ -27,6 +32,7 @@ import {
   createBalanceInvoice,
   createDepositInvoice,
   createStripeClient,
+  ensureCustomer,
   syncCustomerBilling,
   findOverdueInvoices,
   getCustomerLang,
@@ -609,6 +615,157 @@ async function handleAdminDashboard(request: Request, env: Env, headers: Record<
       return jsonResponse({ ok: false, error: 'delete_error' }, 502, headers);
     }
   }
+  if (path === '/admin/quote' && request.method === 'POST') {
+    return handleAdminQuote(request, env, headers);
+  }
+  return jsonResponse({ ok: false, error: 'not_found' }, 404, headers);
+}
+
+const SIGN_URL = (q: Quote): string => `https://bunkaio.com/signature/?d=${q.id}&k=${q.token}`;
+
+/** Crée et envoie la facture d'acompte d'un devis signé (fiche Stripe créée si besoin). */
+async function depositForQuote(env: Env, q: Quote): Promise<void> {
+  const stripe = createStripeClient(env.STRIPE_SECRET_KEY);
+  await ensureCustomer(stripe, { email: q.email, name: q.client.nom, lang: q.lang, phone: q.client.telephone });
+  const result = await createDepositInvoice(stripe, { email: q.email, totalAmountEur: q.totalHT, description: `Devis n° ${q.number} — ${q.prestation}` });
+  await markInvoiced(env, q.email).catch(() => undefined);
+  q.depositInvoice = { id: result.invoiceId, url: result.hostedInvoiceUrl, amount: result.depositAmountEur };
+  const m = buildDepositInvoiceEmail({ customerName: q.client.contact || q.client.nom, description: `${q.prestation} (devis n° ${q.number})`, depositAmountEur: result.depositAmountEur, hostedInvoiceUrl: result.hostedInvoiceUrl, lang: q.lang, space: await detectSpace(env, q.email) });
+  await sendEmail(env, q.email, m.subject, m.html, m.text);
+}
+
+/** Actions admin sur les devis : enregistrer, envoyer, renvoyer, marquer signé, acompte, annuler, dupliquer, supprimer. */
+async function handleAdminQuote(request: Request, env: Env, headers: Record<string, string>): Promise<Response> {
+  const body = (await request.json().catch(() => ({}))) as Record<string, unknown>;
+  const action = body.action;
+  const reply = (q: Quote | null, status = 200, extra: Record<string, unknown> = {}): Response => jsonResponse({ ok: status < 300, quote: q, ...extra }, status, headers);
+  if (action === 'save') {
+    const data = cleanQuoteInput((body.quote ?? {}) as Record<string, unknown>);
+    if (!data) return jsonResponse({ ok: false, error: 'invalid_quote' }, 400, headers);
+    if (typeof body.id === 'string' && body.id) {
+      const q = await getQuote(env, body.id);
+      if (!q) return jsonResponse({ ok: false, error: 'not_found' }, 404, headers);
+      if (q.status !== 'brouillon') return jsonResponse({ ok: false, error: 'not_editable' }, 409, headers);
+      const merged = { ...q, ...data } as Quote;
+      await putQuote(env, merged);
+      return reply(merged);
+    }
+    return reply(await createQuote(env, data));
+  }
+  const q = typeof body.id === 'string' ? await getQuote(env, body.id) : null;
+  if (!q) return jsonResponse({ ok: false, error: 'not_found' }, 404, headers);
+
+  if (action === 'send' || action === 'resend') {
+    if (action === 'send') {
+      if (q.status !== 'brouillon') return jsonResponse({ ok: false, error: 'not_draft' }, 409, headers);
+      const missing = missingQuoteFields(q);
+      if (missing.length) return jsonResponse({ ok: false, error: 'incomplete', fields: missing }, 400, headers);
+      await prepareSend(q);
+      await putQuote(env, q);
+      await env.ACCOUNTS_KV.put(`qsent:${q.email}`, q.id, { expirationTtl: 120 * 86400 });
+    } else if (q.status !== 'envoye') {
+      return jsonResponse({ ok: false, error: 'not_sent' }, 409, headers);
+    }
+    try {
+      const m = buildQuoteEmail({ customerName: q.client.contact || q.client.nom, number: q.number, prestation: q.prestation, totalHT: q.totalHT, validUntil: q.validUntil, url: SIGN_URL(q), abonnement: q.abonnement, lang: q.lang, space: await detectSpace(env, q.email) });
+      await sendEmail(env, q.email, m.subject, m.html, m.text);
+      return reply(q, 200, { emailSent: true, url: SIGN_URL(q) });
+    } catch (err) {
+      console.error('[devis] email non envoyé', err);
+      return reply(q, 200, { emailSent: false, url: SIGN_URL(q) });
+    }
+  }
+  if (action === 'mark-signed') {
+    if (q.status !== 'envoye' && q.status !== 'brouillon') return jsonResponse({ ok: false, error: 'not_signable' }, 409, headers);
+    if (!q.contentHash) q.contentHash = await quoteHash(q);
+    const at = new Date().toISOString();
+    q.status = 'signe';
+    q.signedAt = at;
+    q.signedVia = body.via === 'yousign' ? 'yousign' : 'manuel';
+    q.signature = { name: q.client.contact || q.client.nom, at, ip: '', ua: '', portfolio: body.portfolio === true, retractationWaiver: body.retractationWaiver === true, hash: q.contentHash };
+    await putQuote(env, q);
+    if (body.createDeposit === true && !q.abonnement) {
+      try { await depositForQuote(env, q); await putQuote(env, q); }
+      catch (err) { console.error('[devis] acompte non créé', err); return reply(q, 200, { depositError: true }); }
+    }
+    return reply(q);
+  }
+  if (action === 'create-deposit') {
+    if (q.status !== 'signe' || q.depositInvoice || q.abonnement) return jsonResponse({ ok: false, error: 'not_applicable' }, 409, headers);
+    try { await depositForQuote(env, q); await putQuote(env, q); return reply(q); }
+    catch (err) { console.error('[devis] acompte non créé', err); return jsonResponse({ ok: false, error: 'stripe_error' }, 502, headers); }
+  }
+  if (action === 'cancel' || action === 'refuse') {
+    if (q.status === 'signe') return jsonResponse({ ok: false, error: 'already_signed' }, 409, headers);
+    q.status = action === 'cancel' ? 'annule' : 'refuse';
+    q.closedAt = new Date().toISOString();
+    await putQuote(env, q);
+    return reply(q);
+  }
+  if (action === 'duplicate') {
+    const { id: _i, number: _n, token: _t, status: _s, createdAt: _c, updatedAt: _u, sentAt: _se, viewedAt: _v, signedAt: _si, closedAt: _cl, contentHash: _h, signature: _sg, signedVia: _sv, depositInvoice: _d, reminderSentAt: _r, ...content } = q;
+    const copy = await createQuote(env, { ...content, validUntil: new Date(Date.now() + 30 * 864e5).toISOString().slice(0, 10) });
+    return reply(copy);
+  }
+  if (action === 'delete') {
+    if (q.status !== 'brouillon' && q.status !== 'annule') return jsonResponse({ ok: false, error: 'not_deletable' }, 409, headers);
+    await env.ACCOUNTS_KV.delete('quote:' + q.id);
+    return jsonResponse({ ok: true }, 200, headers);
+  }
+  return jsonResponse({ ok: false, error: 'unknown_action' }, 400, headers);
+}
+
+/** Page publique de signature : lecture (GET /quote) et signature (POST /quote/sign). */
+async function handlePublicQuote(request: Request, env: Env, headers: Record<string, string>, path: string): Promise<Response> {
+  const url = new URL(request.url);
+  if (path === '/quote' && request.method === 'GET') {
+    const q = await getQuote(env, url.searchParams.get('d') ?? '');
+    if (!q || !tokenMatches(q, url.searchParams.get('k'))) return jsonResponse({ ok: false, error: 'not_found' }, 404, headers);
+    if (isExpired(q)) { q.status = 'expire'; await putQuote(env, q); }
+    if (!q.viewedAt && q.status === 'envoye') { q.viewedAt = new Date().toISOString(); await putQuote(env, q); }
+    return jsonResponse({ ok: true, quote: publicQuote(q), business: { address: getBusinessAddress() } }, 200, headers);
+  }
+  if (path === '/quote/sign' && request.method === 'POST') {
+    const body = (await request.json().catch(() => ({}))) as Record<string, unknown>;
+    const q = await getQuote(env, typeof body.d === 'string' ? body.d : '');
+    if (!q || !tokenMatches(q, body.k)) return jsonResponse({ ok: false, error: 'not_found' }, 404, headers);
+    if (q.status === 'signe') return jsonResponse({ ok: true, quote: publicQuote(q), already: true }, 200, headers);
+    if (isExpired(q)) { q.status = 'expire'; await putQuote(env, q); }
+    if (q.status !== 'envoye') return jsonResponse({ ok: false, error: q.status }, 409, headers);
+    const name = typeof body.name === 'string' ? body.name.trim().slice(0, 120) : '';
+    if (body.accept !== true || name.length < 3) return jsonResponse({ ok: false, error: 'invalid_signature' }, 400, headers);
+    const hash = await quoteHash(q);
+    if (hash !== q.contentHash) return jsonResponse({ ok: false, error: 'content_changed' }, 409, headers);
+    const at = new Date().toISOString();
+    q.status = 'signe';
+    q.signedAt = at;
+    q.signedVia = 'en_ligne';
+    q.signature = { name, at, ip: request.headers.get('CF-Connecting-IP') ?? '', ua: (request.headers.get('User-Agent') ?? '').slice(0, 300), portfolio: body.portfolio === true, retractationWaiver: body.retractationWaiver === true, hash };
+    await putQuote(env, q);
+
+    let depositError = false;
+    if (!q.abonnement) {
+      try { await depositForQuote(env, q); await putQuote(env, q); }
+      catch (err) { console.error('[devis] acompte non créé après signature', err); depositError = true; }
+    }
+    try {
+      const m = buildQuoteSignedEmail({ customerName: q.client.contact || q.client.nom, number: q.number, url: SIGN_URL(q), depositAmount: q.depositInvoice?.amount, depositUrl: q.depositInvoice?.url, abonnement: q.abonnement, lang: q.lang, space: await detectSpace(env, q.email) });
+      await sendEmail(env, q.email, m.subject, m.html, m.text);
+    } catch (err) { console.error('[devis] confirmation non envoyée', err); }
+    try {
+      const a = buildAdminAlertEmail({
+        subject: `✍️ Devis n° ${q.number} signé — ${q.client.nom} (${q.totalHT.toFixed(2)} €)`,
+        lines: [
+          `Devis n° ${q.number} signé en ligne par ${name} le ${new Date(at).toLocaleString('fr-FR', { timeZone: 'Europe/Paris' })}.`,
+          `Client : ${q.client.nom} <${q.email}> — ${q.prestation}`,
+          q.abonnement ? 'Abonnement : à mettre en place (pas de facture d\'acompte automatique).' : depositError ? '⚠ La facture d\'acompte n\'a pas pu être créée : créez-la depuis le tableau de bord (Devis → Créer l\'acompte).' : `Facture d'acompte de ${(q.depositInvoice?.amount ?? 0).toFixed(2)} € envoyée automatiquement.`,
+          `Portfolio : ${q.signature.portfolio ? 'autorisé' : 'refusé'}${q.client.profil === 'particulier' ? ` · Exécution avant fin de rétractation : ${q.signature.retractationWaiver ? 'demandée' : 'non demandée'}` : ''}`,
+        ],
+      });
+      await sendEmail(env, env.ADMIN_NOTIFICATION_EMAIL, a.subject, a.html, a.text);
+    } catch (err) { console.error('[devis] alerte admin non envoyée', err); }
+    return jsonResponse({ ok: true, quote: publicQuote(q), depositError }, 200, headers);
+  }
   return jsonResponse({ ok: false, error: 'not_found' }, 404, headers);
 }
 
@@ -1175,6 +1332,9 @@ export default {
     }
 
     const url = new URL(request.url);
+    if (url.pathname === '/quote' || url.pathname === '/quote/sign') {
+      return handlePublicQuote(request, env, headers, url.pathname);
+    }
     if (url.pathname.startsWith('/admin/')) {
       return handleAdminDashboard(request, env, headers, url.pathname);
     }

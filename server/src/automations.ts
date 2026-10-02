@@ -1,6 +1,8 @@
 import { getAccount, listAccounts } from './accounts';
 import { isDemo } from './config';
+import { listQuotes, putQuote } from './quotes';
 import {
+  buildQuoteEmail,
   buildAdminAlertEmail,
   buildAfterSessionEmail,
   buildMoodboardReminderEmail,
@@ -103,7 +105,8 @@ async function sendQuoteFollowUps(env: Env): Promise<void> {
     const email = k.name.slice(5);
     const marker = await readMarker(env, k.name);
     if (!marker || Date.now() - Date.parse(marker.date) < 7 * DAY) continue;
-    if ((await env.ACCOUNTS_KV.get(`inv:${email}`)) || (await env.ACCOUNTS_KV.get(`dep:${email}`)) || (await env.ACCOUNTS_KV.get(`fu:${email}`))) continue;
+    // Un devis envoyé a sa propre relance : pas de relance « quiz » en plus.
+    if ((await env.ACCOUNTS_KV.get(`inv:${email}`)) || (await env.ACCOUNTS_KV.get(`dep:${email}`)) || (await env.ACCOUNTS_KV.get(`fu:${email}`)) || (await env.ACCOUNTS_KV.get(`qsent:${email}`))) continue;
     const isPartner = !!(await getAccount(env, 'partner', email));
     try {
       const m = buildQuoteFollowUpEmail({ customerName: marker.name, space: isPartner ? 'partner' : 'client', lang: normalizeLang(marker.lang) });
@@ -166,8 +169,27 @@ async function sendAdminDeliveryAlerts(env: Env): Promise<void> {
   }
 }
 
+/** Devis envoyés : relance unique 5 jours après l'envoi s'ils ne sont pas signés, puis expiration à la date de validité. */
+async function processQuotes(env: Env): Promise<void> {
+  const today = parisDate(0);
+  for (const q of await listQuotes(env)) {
+    if (q.status !== 'envoye' || isDemo(q.email)) continue;
+    if (q.validUntil < today) { q.status = 'expire'; await putQuote(env, q); continue; }
+    if (q.reminderSentAt || !q.sentAt || Date.now() - Date.parse(q.sentAt) < 5 * DAY) continue;
+    try {
+      const isPartner = !!(await getAccount(env, 'partner', q.email));
+      const m = buildQuoteEmail({ customerName: q.client.contact || q.client.nom, number: q.number, prestation: q.prestation, totalHT: q.totalHT, validUntil: q.validUntil, url: `https://bunkaio.com/signature/?d=${q.id}&k=${q.token}`, abonnement: q.abonnement, reminder: true, lang: q.lang, space: isPartner ? 'partner' : 'client' });
+      await sendEmail(env, q.email, m.subject, m.html, m.text);
+      q.reminderSentAt = new Date().toISOString();
+      await putQuote(env, q);
+    } catch (err) {
+      console.error('[automatisation] relance de devis en échec', err);
+    }
+  }
+}
+
 export async function runDailyAutomations(env: Env): Promise<void> {
-  for (const job of [sendSeanceReminders, sendAfterSessionMails, sendAdminDeliveryAlerts, sendMoodboardReminders, sendQuoteFollowUps]) {
+  for (const job of [processQuotes, sendSeanceReminders, sendAfterSessionMails, sendAdminDeliveryAlerts, sendMoodboardReminders, sendQuoteFollowUps]) {
     try { await job(env); } catch (err) { console.error('[automatisation] tâche en échec', job.name, err); }
   }
 }
