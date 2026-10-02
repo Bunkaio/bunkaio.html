@@ -609,7 +609,7 @@
     mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
   }
   .logo-track {
-    display: flex; gap: 54px; align-items: center;
+    display: flex; gap: 0; align-items: center;
     width: max-content;
     animation: marqueeScroll 32s linear infinite;
   }
@@ -1108,7 +1108,6 @@
   .pp-cta-row { display: flex; align-items: center; gap: 26px; flex-wrap: wrap; margin-bottom: 52px; }
   .pp-ghost { font-size: 12px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--black); text-decoration: underline; text-underline-offset: 6px; text-decoration-color: rgba(10,10,12,0.35); }
   .pp-ghost:hover { text-decoration-color: var(--black); }
-  .pp-hero .partner-cta-btn { background: var(--black); color: var(--white); }
   .pp-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; border-top: 1px solid var(--line); padding-top: 30px; }
   .pp-stat-num { font-size: clamp(26px, 3.4vw, 38px); font-weight: 700; letter-spacing: -0.03em; color: var(--black); line-height: 1; margin-bottom: 8px; }
   .pp-stat-label { font-size: 12px; line-height: 1.5; color: var(--grey); }
@@ -3373,7 +3372,6 @@
   #view-contact #ctForm,
   #psec-apply, #psec-collab,
   #partnersAccordion,
-  #partnersPitch .pp-section,
   #psec-program .trust-section,
   #pfTabs {
     background: rgba(255,255,255,0.9);
@@ -3392,7 +3390,6 @@
   #psec-apply .collab-sub-full, #psec-collab .collab-sub-full { margin-bottom: 36px; }
   #psec-program .trust-section { margin: 0 0 40px; }
   #partnersAccordion { margin-top: 40px; }
-  #partnersPitch .pp-section { margin-bottom: 40px; }
 
   /* Case à cocher « annuaire » (espace partenaire) */
   .pt-check { display: flex; align-items: flex-start; gap: 12px; cursor: pointer; font-size: 14px; line-height: 1.6; color: var(--black); }
@@ -3522,4 +3519,105 @@
       background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.96) 28%);
     }
     .mb-wizard .mb-wizard-actions .btn { width: 100%; }
+  }
+
+
+  /* ─── LOGOS : défilement continu (les @keyframes manquaient) ─── */
+  .logo-track > * { margin-right: 54px; }
+  @keyframes marqueeScroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  /* ─── CTA : verre dépoli translucide partout ───
+     Texte noir, fond blanc dépoli + fine bordure sombre (lisible aussi bien
+     sur photo/vidéo que sur un panneau clair). « Estimer mon projet » est
+     le seul CTA teinté violet pâle, plus lumineux, pour ressortir. */
+  .btn-solid, .btn-ghost, .cs-btn, .partner-cta-btn, .pf-cta-btn, .hero-access {
+    color: var(--black);
+    background: rgba(255,255,255,0.72);
+    border: 1px solid rgba(10,10,12,0.16);
+    border-radius: 14px;
+    -webkit-backdrop-filter: blur(16px) saturate(1.5); backdrop-filter: blur(16px) saturate(1.5);
+    box-shadow: 0 6px 22px rgba(10,10,12,0.10), inset 0 1px 0 rgba(255,255,255,0.65);
+  }
+  .btn-solid::before, .btn-ghost::before { background: rgba(255,255,255,0.95); }
+  .btn-solid:hover:not(:disabled), .btn-ghost:hover { color: var(--black); border-color: rgba(10,10,12,0.32); }
+  .btn-ghost { background: rgba(255,255,255,0.4); }
+  .cs-btn:hover, .partner-cta-btn:hover, .pf-cta-btn:hover, .hero-access:hover { background: rgba(255,255,255,0.92); box-shadow: 0 12px 30px rgba(10,10,12,0.16), inset 0 1px 0 #fff; }
+  .btn-solid:disabled { opacity: 0.45; }
+
+  .nav-cta, .hero-start, .hero-start.cta-onlight, .cta-primary {
+    color: var(--black); font-weight: 700;
+    background: linear-gradient(135deg, rgba(240,233,252,0.86) 0%, rgba(206,190,238,0.72) 100%);
+    border: 1px solid rgba(185,166,220,0.95);
+    -webkit-backdrop-filter: blur(20px) saturate(1.7); backdrop-filter: blur(20px) saturate(1.7);
+    box-shadow: 0 10px 34px rgba(150,120,205,0.38), inset 0 1px 0 rgba(255,255,255,0.8);
+  }
+  .nav-cta:hover, .hero-start:hover, .hero-start.cta-onlight:hover, .cta-primary:hover {
+    background: linear-gradient(135deg, rgba(247,242,255,0.95) 0%, rgba(214,199,243,0.85) 100%);
+    border-color: rgba(160,135,208,1);
+    box-shadow: 0 16px 44px rgba(150,120,205,0.5), inset 0 1px 0 #fff;
+  }
+  .hero-start, .cta-primary { padding: 16px 38px; font-size: 15px; }
+  .hero-start { animation: riseIn 1s var(--ease) 1.35s forwards, ctaGlow 3.8s ease-in-out 2.6s infinite; }
+  .cta-primary { position: relative; overflow: hidden; cursor: pointer; font-family: inherit; letter-spacing: 0.04em; text-transform: none; }
+  .cta-primary.btn { letter-spacing: 0.04em; text-transform: none; font-size: 15px; }
+  @keyframes ctaGlow {
+    0%, 100% { box-shadow: 0 10px 34px rgba(150,120,205,0.38), inset 0 1px 0 rgba(255,255,255,0.8); }
+    50% { box-shadow: 0 14px 46px rgba(170,140,225,0.62), inset 0 1px 0 rgba(255,255,255,0.9); }
+  }
+  @media (prefers-reduced-motion: reduce) { .hero-start { animation: none !important; opacity: 1; } }
+
+  /* ─── SERVICES : arguments en puces-accordéon compactes ─── */
+  .svc-assure { margin: 0 0 30px; }
+  .svc-assure-chips { display: flex; flex-wrap: wrap; gap: 10px; }
+  .svc-chip {
+    display: inline-flex; align-items: center; gap: 10px; cursor: pointer;
+    font-family: inherit; font-size: 12.5px; font-weight: 600; color: var(--black);
+    padding: 10px 16px 10px 12px; border-radius: 999px;
+    background: rgba(255,255,255,0.78); border: 1px solid rgba(10,10,12,0.12);
+    -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+    box-shadow: 0 4px 16px rgba(10,10,12,0.08);
+    transition: transform 0.35s var(--ease), background 0.3s var(--ease), border-color 0.3s var(--ease), box-shadow 0.3s var(--ease);
+    opacity: 0; animation: chipIn 0.6s var(--ease-luxe) forwards;
+  }
+  .svc-chip:nth-child(1) { animation-delay: 0.05s; } .svc-chip:nth-child(2) { animation-delay: 0.12s; }
+  .svc-chip:nth-child(3) { animation-delay: 0.19s; } .svc-chip:nth-child(4) { animation-delay: 0.26s; }
+  .svc-chip:hover { transform: translateY(-2px); background: #fff; }
+  .svc-chip.active { background: var(--black); color: var(--white); border-color: var(--black); }
+  .svc-chip-ico { width: 26px; height: 26px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: var(--violet-deep); flex-shrink: 0; transition: transform 0.4s var(--ease-luxe), background 0.3s var(--ease); }
+  .svc-chip-ico svg { width: 14px; height: 14px; stroke: var(--black); }
+  .svc-chip:hover .svc-chip-ico { transform: rotate(-8deg) scale(1.1); }
+  .svc-chip.active .svc-chip-ico { background: rgba(255,255,255,0.18); }
+  .svc-chip.active .svc-chip-ico svg { stroke: var(--white); }
+  .svc-chip-plus { font-size: 15px; line-height: 1; opacity: 0.55; transition: transform 0.35s var(--ease-luxe); }
+  .svc-chip.active .svc-chip-plus { transform: rotate(45deg); opacity: 0.9; }
+  .svc-assure-panel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.45s var(--ease-luxe); }
+  .svc-assure-panel.open { grid-template-rows: 1fr; }
+  .svc-assure-panel-inner {
+    overflow: hidden; min-height: 0; font-size: 13.5px; line-height: 1.8; color: #3a3544;
+    background: rgba(255,255,255,0.88); border-radius: 12px; border: 1px solid transparent;
+    padding: 0 18px; margin-top: 0; opacity: 0; transition: opacity 0.4s var(--ease), padding 0.4s var(--ease), margin 0.4s var(--ease), border-color 0.4s var(--ease);
+  }
+  .svc-assure-panel.open .svc-assure-panel-inner { opacity: 1; padding: 14px 18px; margin-top: 12px; border-color: rgba(10,10,12,0.08); }
+  .svc-assure-panel .svc-trust-link { text-decoration: underline; text-underline-offset: 3px; cursor: pointer; font-weight: 700; color: var(--black); }
+  @keyframes chipIn { from { opacity: 0; transform: translateY(10px) scale(0.96); } to { opacity: 1; transform: none; } }
+  #ssec-catalogue .payment-flex-strip { margin-top: 36px; }
+
+  /* ─── PARTENAIRES : accordéon unique, contenu animé à l'ouverture ─── */
+  .accordion-body.open .pp-benefit, .accordion-body.open .pp-universe, .accordion-body.open .pp-step { animation: ppRise 0.55s var(--ease-luxe) both; }
+  .accordion-body.open .pp-benefit:nth-child(2), .accordion-body.open .pp-universe:nth-child(2), .accordion-body.open .pp-step:nth-child(2) { animation-delay: 0.06s; }
+  .accordion-body.open .pp-benefit:nth-child(3), .accordion-body.open .pp-universe:nth-child(3), .accordion-body.open .pp-step:nth-child(3) { animation-delay: 0.12s; }
+  .accordion-body.open .pp-benefit:nth-child(4), .accordion-body.open .pp-universe:nth-child(4), .accordion-body.open .pp-step:nth-child(4) { animation-delay: 0.18s; }
+  .accordion-body.open .pp-benefit:nth-child(5), .accordion-body.open .pp-universe:nth-child(5) { animation-delay: 0.24s; }
+  .accordion-body.open .pp-benefit:nth-child(6) { animation-delay: 0.3s; }
+  @keyframes ppRise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  #partnersAccordion .accordion-item { transition: background 0.3s var(--ease); border-radius: 10px; }
+  #partnersAccordion .accordion-trigger[aria-expanded="true"], #lsec-faq .accordion-trigger[aria-expanded="true"] { color: var(--black); }
+  #partnersAccordion .pp-benefits { margin-top: 4px; }
+
+  @media (max-width: 600px) {
+    .svc-assure-chips { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .svc-chip { font-size: 11.5px; padding: 9px 10px; gap: 8px; border-radius: 16px; text-align: left; line-height: 1.25; }
+    .svc-chip-ico { width: 24px; height: 24px; }
+    .svc-chip-plus { margin-left: auto; }
+    .svc-assure { margin-bottom: 24px; }
   }

@@ -61,10 +61,10 @@ const I18N = {
     'success-text2':'Chaque demande est évaluée individuellement et n\'est acceptée que si elle correspond à la <strong>ligne éditoriale de BUNKAIO</strong>. Nous travaillons uniquement avec des projets qui résonnent avec notre univers — c\'est ce qui garantit la qualité de chaque collaboration.',
     'success-text3':'Une fois votre devis confirmé, direction votre espace client : vous pourrez y construire votre <strong>moodboard</strong> pour partager votre vision — direction artistique, ambiance, inspirations — et nous arriver parfaitement alignés le jour du shooting.',
     'home-btn':'Retour à l\'accueil','see-portfolio':'Voir tout le portfolio',
-    'services-title':'Services','services-sub':'L\'ensemble de nos prestations et leurs tarifs, par univers. Chaque formule est pensée pour révéler ce qui rend votre projet unique.',
+    'services-title':'Services','services-sub':'Photographe professionnel : des images haut de gamme, en HD, pour mettre en valeur votre projet. Nos prestations et leurs tarifs, par univers.',
     'svc-all':'Tous','svc-cta':'Estimer ce projet →','svc-sub-label':'Abonnement mensuel',
     'svc-trust1-title':'Réponse sous 48h','svc-trust1-text':'Chaque demande est étudiée puis traitée personnellement — jamais de réponse automatique.',
-    'svc-trust2-title':'Un parcours accompagné','svc-trust2-text':'De la demande à la livraison, 7 étapes claires — dont la création de votre moodboard pour partager votre vision — <span class="svc-trust-link" onclick="setSvcTab(\'devis\')">voir le déroulé complet</span>.',
+    'svc-trust2-title':'Un parcours accompagné','svc-trust2-text':'De la demande à la livraison, 7 étapes claires — dont la création de votre moodboard pour partager votre vision — <span class="svc-trust-link" onclick="goToProcess()">voir le déroulé complet</span>.',
     'svc-trust3-title':'Vos droits garantis','svc-trust3-text':'Les visuels livrés vous appartiennent, avec des conditions d\'usage définies noir sur blanc dès le devis.',
     'svc-trust4-title':'Un interlocuteur unique','svc-trust4-text':'Du premier échange à la livraison finale, vous échangez toujours avec la même personne.',
     'drone-title':'4K Drone & vidéo',
@@ -204,7 +204,7 @@ const I18N = {
     'collab-btn':'Envoyer ma proposition',
     'collab-success-title':'Proposition envoyée',
     'collab-success-text':'Merci pour votre proposition. Nous l\'étudions et revenons vers vous sous 5 jours ouvrés.',
-    'footer-claim':'Nous révélons ce qui rend vos projets uniques.',
+    'footer-claim':'Photographe professionnel — des images premium en HD qui mettent en valeur vos projets.',
     'access-client':'Accès client','access-partner':'Accès partenaire','nav-connect':'Connexion','nav-account-client':'Espace client','nav-account-partner':'Espace partenaire',
     'login-title-client':'Espace client','login-title-partner':'Espace partenaire',
     'login-title':'Espace client',
@@ -370,10 +370,10 @@ const I18N = {
     'success-text2':'Every request is assessed individually and is only accepted if it aligns with <strong>BUNKAIO\'s editorial line</strong>. We work exclusively with projects that resonate with our universe — this is what guarantees the quality of every collaboration.',
     'success-text3':'Once your quote is confirmed, head to your client space : you\'ll be able to build your <strong>moodboard</strong> there to share your vision — art direction, mood, inspirations — so we arrive on the day perfectly aligned with your project.',
     'home-btn':'Back to home','see-portfolio':'View the full portfolio',
-    'services-title':'Services','services-sub':'All of our services and rates, organised by universe. Each package is designed to reveal what makes your project unique.',
+    'services-title':'Services','services-sub':'Professional photographer: premium, high-definition images that showcase your project. Our services and rates, by universe.',
     'svc-all':'All','svc-cta':'Get a quote for this →','svc-sub-label':'Monthly plan',
     'svc-trust1-title':'Reply within 48h','svc-trust1-text':'Every request is reviewed and handled personally — never an automated reply.',
-    'svc-trust2-title':'A guided journey','svc-trust2-text':'From request to delivery, 7 clear steps — including building your moodboard to share your vision — <span class="svc-trust-link" onclick="setSvcTab(\'devis\')">see the full process</span>.',
+    'svc-trust2-title':'A guided journey','svc-trust2-text':'From request to delivery, 7 clear steps — including building your moodboard to share your vision — <span class="svc-trust-link" onclick="goToProcess()">see the full process</span>.',
     'svc-trust3-title':'Your rights guaranteed','svc-trust3-text':'The delivered visuals belong to you, with usage terms clearly defined from the quote onward.',
     'svc-trust4-title':'One single point of contact','svc-trust4-text':'From the first exchange to final delivery, you always speak with the same person.',
     'drone-title':'4K Drone & video',
@@ -513,7 +513,7 @@ const I18N = {
     'collab-btn':'Send my proposal',
     'collab-success-title':'Proposal sent',
     'collab-success-text':'Thank you for your proposal. We\'re reviewing it and will get back to you within 5 working days.',
-    'footer-claim':'We reveal what makes your projects unique.',
+    'footer-claim':'Professional photographer — premium HD images that showcase your projects.',
     'access-client':'Client area','access-partner':'Partner area','nav-connect':'Sign in','nav-account-client':'Client area','nav-account-partner':'Partner area',
     'login-title-client':'Client area','login-title-partner':'Partner area',
     'login-title':'Client area',
@@ -765,6 +765,7 @@ function closeMobileMenu(){
 
 function refreshDynamic(){
   renderClientSpotlights();
+  renderSvcAssure();
   renderCats();
   renderMissionServices();
   renderFooterServices();
@@ -2415,6 +2416,30 @@ function submitQuiz(e){
 let activeServiceFilter = null;
 let activeSvcTab = 'catalogue';
 
+/* « Voir le déroulé complet » : ouvre l'onglet Devis & déroulé et y amène le lecteur. */
+function goToProcess(){
+  setSvcTab('devis');
+  const tabs = document.querySelector('#view-services .svc-tabs');
+  if (tabs) window.scrollTo({ top: tabs.getBoundingClientRect().top + window.scrollY - (parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav-h'), 10) || 90) - 16, behavior: 'smooth' });
+}
+
+/* Garanties de la page Services : 4 puces, une seule ouverte à la fois. */
+let svcAssureOpen = 0;
+function toggleSvcAssure(i){ svcAssureOpen = svcAssureOpen === i ? 0 : i; renderSvcAssure(); }
+function renderSvcAssure(){
+  const root = document.getElementById('svcAssure');
+  if (!root) return;
+  root.querySelectorAll('.svc-chip').forEach(c => {
+    const on = Number(c.dataset.i) === svcAssureOpen;
+    c.classList.toggle('active', on);
+    c.setAttribute('aria-expanded', String(on));
+  });
+  const panel = document.getElementById('svcAssurePanel');
+  const txt = document.getElementById('svcAssureText');
+  if (svcAssureOpen) txt.innerHTML = I18N[LANG]['svc-trust' + svcAssureOpen + '-text'];
+  panel.classList.toggle('open', svcAssureOpen > 0);
+}
+
 function setSvcTab(tab){
   activeSvcTab = tab;
   document.getElementById('stab-catalogue').classList.toggle('active', tab === 'catalogue');
@@ -3098,7 +3123,7 @@ function renderClientSpotlights(){
           <h3 class="cs-title">${t({fr:'Une commande, un moodboard personnalisé', en:'One order, one personalised moodboard'})}</h3>
           <p class="cs-lead">${t({fr:'Dès votre devis confirmé, retrouvez tout au même endroit — et créez pour chaque commande un moodboard sur mesure pour nous partager votre vision.', en:'Once your quote is confirmed, find everything in one place — and create a tailor-made moodboard for each order to share your vision with us.'})}</p>
           ${compact ? '' : `<ul class="cs-points">${points.map(x => `<li>${check}<span>${x}</span></li>`).join('')}</ul>`}
-          <div class="cs-actions">${act}${compact || open ? '' : `<button type="button" class="cs-link" onclick="goView('quiz')">${t({fr:'Estimer mon projet', en:'Estimate my project'})}</button>`}</div>
+          <div class="cs-actions">${act}${compact || open ? '' : `<button type="button" class="cta-primary" onclick="goView('quiz')">${t({fr:'Estimer mon projet', en:'Estimate my project'})}</button>`}</div>
         </div>
         ${compact ? '' : `
         <div class="cs-visual" aria-hidden="true">
@@ -3177,7 +3202,7 @@ function renderAccSubs(){
         <div class="acc-subs-empty-title">${I18N[LANG]['acc-subs-empty-title']}</div>
         <p class="acc-subs-empty-text">${I18N[LANG]['acc-subs-empty-text']}</p>
         <div class="btn-row" style="justify-content:center">
-          <button class="btn btn-solid" onclick="goView('quiz')"><span>${I18N[LANG]['acc-subs-discover-btn']}</span></button>
+          <button class="btn btn-solid cta-primary" onclick="goView('quiz')"><span>${I18N[LANG]['acc-subs-discover-btn']}</span></button>
         </div>
       </div>`;
     return;
@@ -3238,7 +3263,7 @@ function renderAccUpsell(){
       <div class="acc-help-title">${I18N[LANG][titleKey]}</div>
       <div class="acc-help-sub">${I18N[LANG][textKey]}</div>
     </div>
-    <button class="btn btn-solid" onclick="goView('quiz')"><span>${I18N[LANG][btnKey]}</span></button>`;
+    <button class="btn btn-solid cta-primary" onclick="goView('quiz')"><span>${I18N[LANG][btnKey]}</span></button>`;
 }
 
 /* ═══════════════ ESPACE PARTENAIRE — MON PARTENARIAT ═══════════════
@@ -4593,27 +4618,8 @@ function renderPartnersPitch(){
   ];
   const svg = d => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
 
-  el.innerHTML = `
-    <section class="pp-hero rv">
-      <div class="pp-kicker">${t({fr:'Programme Partenaires Fondateurs · 60 places', en:'Founding Partners Programme · 60 places'})}</div>
-      <h2 class="pp-title">${t({fr:'Votre savoir-faire mérite mieux qu\'une simple prestation.', en:'Your craft deserves more than a simple service.'})}</h2>
-      <p class="pp-lead">${t({fr:'Rejoignez le cercle restreint des professionnels que Bunkaio met en lumière. Une mise en valeur éditoriale, un tarif partenaire permanent, des missions rémunérées et un réseau d\'exception.', en:'Join the select circle of professionals Bunkaio puts in the spotlight. Editorial storytelling, a permanent partner rate, paid missions and an exceptional network.'})}</p>
-      <div class="pp-cta-row">
-        <button class="partner-cta-btn" onclick="goView('partners','apply')">${t({fr:'Candidater', en:'Apply'})}</button>
-        <a class="pp-ghost" href="#pp-benefits" onclick="event.preventDefault();document.getElementById('pp-benefits').scrollIntoView({behavior:'smooth'})">${t({fr:'Découvrir les avantages', en:'See the benefits'})}</a>
-      </div>
-      <div class="pp-stats">
-        <div><div class="pp-stat-num">-${PARTNER_DISCOUNT}%</div><div class="pp-stat-label">${t({fr:'permanent sur le catalogue', en:'permanent on the catalogue'})}</div></div>
-        <div><div class="pp-stat-num">60</div><div class="pp-stat-label">${t({fr:'partenaires fondateurs maximum', en:'founding partners maximum'})}</div></div>
-        <div><div class="pp-stat-num">5</div><div class="pp-stat-label">${t({fr:'univers · 10 places chacun', en:'universes · 10 places each'})}</div></div>
-        <div><div class="pp-stat-num">€</div><div class="pp-stat-label">${t({fr:'missions rémunérées', en:'paid missions'})}</div></div>
-      </div>
-    </section>
-
-    <section class="pp-section rv" id="pp-benefits">
-      <div class="pp-section-label">${t({fr:'Ce que vous obtenez', en:'What you get'})}</div>
-      <h3 class="pp-h3">${t({fr:'Six avantages concrets, dès votre admission.', en:'Six concrete benefits from the day you are admitted.'})}</h3>
-      <div class="pp-benefits">
+  window._ppSections = {
+    benefits: `<div class="pp-benefits">
         ${benefits.map(b => `
           <div class="pp-benefit">
             <div class="pp-benefit-top"><span class="pp-benefit-icon">${svg(b.icon)}</span><span class="pp-benefit-num">${b.n}</span></div>
@@ -4628,13 +4634,8 @@ function renderPartnersPitch(){
           <div>${t({fr:'Pack Signature — Commercial & produits', en:'Signature package — Commercial & products'})}</div>
           <div class="pp-example-prices"><span class="pt-price-old">${eur(exPrice)} ${t({fr:'HT', en:'excl. VAT'})}</span><strong>${eur(partnerPrice(exPrice))} ${t({fr:'HT', en:'excl. VAT'})}</strong><em>${t({fr:'vous économisez', en:'you save'})} ${eur(exPrice - partnerPrice(exPrice))}</em></div>
         </div>
-      </div>` : ''}
-    </section>
-
-    <section class="pp-section rv">
-      <div class="pp-section-label">${t({fr:'Pour qui', en:'Who it is for'})}</div>
-      <h3 class="pp-h3">${t({fr:'Cinq univers, dix places chacun.', en:'Five universes, ten places each.'})}</h3>
-      <div class="pp-universes">
+      </div>` : ''}`,
+    universes: `<div class="pp-universes">
         ${universes.map(u => `
           <div class="pp-universe">
             <div class="pp-universe-name">${t(u.name)}</div>
@@ -4642,43 +4643,52 @@ function renderPartnersPitch(){
             <div class="pp-universe-spots">${t({fr:'10 places', en:'10 places'})}</div>
           </div>`).join('')}
       </div>
-      <p class="pp-note">${t({fr:'Le programme n\'est pas ouvert à tous : chaque candidature est étudiée individuellement pour préserver la cohérence éditoriale de Bunkaio. Une fois les places pourvues, les nouvelles candidatures rejoignent une liste d\'attente.', en:'The programme is not open to everyone: each application is reviewed individually to preserve Bunkaio\'s editorial coherence. Once places are filled, new applications join a waiting list.'})}</p>
-    </section>
-
-    <section class="pp-section rv">
-      <div class="pp-section-label">${t({fr:'Comment ça marche', en:'How it works'})}</div>
-      <div class="pp-steps">
+      <p class="pp-note">${t({fr:'Le programme n\'est pas ouvert à tous : chaque candidature est étudiée individuellement pour préserver la cohérence éditoriale de Bunkaio. Une fois les places pourvues, les nouvelles candidatures rejoignent une liste d\'attente.', en:'The programme is not open to everyone: each application is reviewed individually to preserve Bunkaio\'s editorial coherence. Once places are filled, new applications join a waiting list.'})}</p>`,
+    steps: `<div class="pp-steps">
         ${steps.map(st => `
           <div class="pp-step"><div class="pp-step-num">${st.n}</div><div class="pp-step-title">${t(st.title)}</div><div class="pp-step-text">${t(st.text)}</div></div>`).join('')}
+      </div>`
+  };
+  el.innerHTML = `
+    <section class="pp-hero rv">
+      <div class="pp-kicker">${t({fr:'Programme Partenaires Fondateurs · 60 places', en:'Founding Partners Programme · 60 places'})}</div>
+      <h2 class="pp-title">${t({fr:'Votre savoir-faire mérite mieux qu\'une simple prestation.', en:'Your craft deserves more than a simple service.'})}</h2>
+      <p class="pp-lead">${t({fr:'Rejoignez le cercle restreint des professionnels que Bunkaio met en lumière. Des images haut de gamme en HD, un tarif partenaire permanent, des missions rémunérées et un réseau d\'exception.', en:'Join the select circle of professionals Bunkaio puts in the spotlight. Premium HD imagery, a permanent partner rate, paid missions and an exceptional network.'})}</p>
+      <div class="pp-cta-row">
+        <button class="partner-cta-btn" onclick="goView('partners','apply')">${t({fr:'Candidater', en:'Apply'})}</button>
+        <a class="pp-ghost" href="#partnersAccordion" onclick="event.preventDefault();openPartnersAccordion(0)">${t({fr:'Découvrir les avantages', en:'See the benefits'})}</a>
+      </div>
+      <div class="pp-stats">
+        <div><div class="pp-stat-num">-${PARTNER_DISCOUNT}%</div><div class="pp-stat-label">${t({fr:'permanent sur le catalogue', en:'permanent on the catalogue'})}</div></div>
+        <div><div class="pp-stat-num">60</div><div class="pp-stat-label">${t({fr:'partenaires fondateurs maximum', en:'founding partners maximum'})}</div></div>
+        <div><div class="pp-stat-num">5</div><div class="pp-stat-label">${t({fr:'univers · 10 places chacun', en:'universes · 10 places each'})}</div></div>
+        <div><div class="pp-stat-num">€</div><div class="pp-stat-label">${t({fr:'missions rémunérées', en:'paid missions'})}</div></div>
       </div>
     </section>`;
 }
 
 function renderPartnersAccordion(){
   renderPartnersPitch();
+  const sec = window._ppSections || {};
+  const sections = LANG === 'fr' ? [
+    { title:'Ce que vous obtenez', body: sec.benefits },
+    { title:'Pour qui ? Cinq univers, dix places chacun', body: `${sec.universes}<p style="margin-top:6px">Maximum <strong>60 partenaires fondateurs</strong>. Une fois les places pourvues, les nouvelles candidatures rejoignent une liste d'attente.</p>` },
+    { title:'Comment ça marche', body: `${sec.steps}<p style="margin-top:18px">Chaque candidature est étudiée selon la qualité des réalisations et la cohérence avec l'univers Bunkaio : sélectionné, compatible (ponctuel) ou réorienté selon vos besoins.</p>` },
+    { title:'Pourquoi Bunkaio existe', body:`<p>Bunkaio est un <strong>studio de photographie professionnel</strong>. Notre métier : produire des images haut de gamme, en haute définition, qui mettent en valeur votre projet — portrait, mode, produits, événements, mariage.</p><p>Chaque prise de vue est pensée, éclairée et retouchée avec exigence, pour un contenu premium prêt à être publié, imprimé ou diffusé.</p><p><strong>Nous ne sommes pas une agence de communication : nous sommes photographes, et la qualité de l'image est notre promesse.</strong></p>` },
+  ] : [
+    { title:'What you get', body: sec.benefits },
+    { title:'Who is it for? Five universes, ten places each', body: `${sec.universes}<p style="margin-top:6px">A maximum of <strong>60 founding partners</strong>. Once places are filled, new applications join a waiting list.</p>` },
+    { title:'How it works', body: `${sec.steps}<p style="margin-top:18px">Each application is assessed on the quality of your work and its fit with the Bunkaio universe: selected, compatible (one-off) or redirected according to your needs.</p>` },
+    { title:'Why Bunkaio exists', body:`<p>Bunkaio is a <strong>professional photography studio</strong>. Our craft: producing premium, high-definition images that showcase your project — portrait, fashion, products, events, weddings.</p><p>Every shoot is planned, lit and retouched with care, for premium content ready to be published, printed or shared.</p><p><strong>We are not a communications agency: we are photographers, and image quality is our promise.</strong></p>` },
+  ];
+  renderAccordionInto('partnersAccordion', sections, { exclusive: true });
+}
+function openPartnersAccordion(i){
   const el = document.getElementById('partnersAccordion');
   if (!el) return;
-  const sections = LANG === 'fr' ? [
-    { title:'Pourquoi Bunkaio existe', body:`<p>Nous vivons dans un monde où les contenus se multiplient, mais où les histoires se raréfient. Derrière chaque lieu, chaque objet et chaque réalisation se cache une histoire qui mérite d'être racontée.</p><p><strong>Nous ne documentons pas des projets. Nous révélons ce qui les rend uniques.</strong></p>` },
-    { title:'Qui peut devenir Partenaire Fondateur ?', body:`<p>Le programme est réservé aux entreprises et professionnels dont les réalisations correspondent à l'univers Bunkaio.</p><ul class="ft-list" style="margin-top:18px"><li style="margin-bottom:12px">⊹ Portrait & lifestyle</li><li style="margin-bottom:12px">⊹ Mode & mannequins</li><li style="margin-bottom:12px">⊹ Commercial & produits</li><li style="margin-bottom:12px">⊹ Événementiel</li><li>⊹ Mariage & Lumen</li></ul>` },
-    { title:'Les places disponibles', body:`<p>10 places par univers, soit un maximum de <strong>60 partenaires fondateurs</strong>. Une fois ce quota atteint, les nouvelles candidatures seront placées sur liste d'attente.</p>` },
-    { title:'Le processus de sélection', body:`<div class="process-steps" style="margin-top:0"><div class="process-step"><div class="ps-num">01</div><div><div class="ps-title">Présentation</div><div class="ps-text">Compléter le questionnaire Bunkaio — activité, réalisations, objectifs.</div></div></div><div class="process-step"><div class="ps-num">02</div><div><div class="ps-title">Étude</div><div class="ps-text">Analyse selon la qualité des réalisations et la cohérence éditoriale.</div></div></div><div class="process-step"><div class="ps-num">03</div><div><div class="ps-title">Réponse</div><div class="ps-text">Sélectionné, compatible (ponctuel) ou réorienté selon les besoins.</div></div></div><div class="process-step" style="border-bottom:none"><div class="ps-num">04</div><div><div class="ps-title">Lancement</div><div class="ps-text">Onboarding personnalisé et feuille de route éditoriale.</div></div></div></div>` }
-  ] : [
-    { title:'Why Bunkaio exists', body:`<p>We live in a world where content keeps multiplying, yet stories are becoming rare. Behind every place, every object and every achievement lies a story that deserves to be told.</p><p><strong>We don't document projects. We reveal what makes them unique.</strong></p>` },
-    { title:'Who can become a Founding Partner?', body:`<p>The programme is reserved for companies and professionals whose work aligns with the Bunkaio universe.</p><ul class="ft-list" style="margin-top:18px"><li style="margin-bottom:12px">⊹ Portrait & lifestyle</li><li style="margin-bottom:12px">⊹ Fashion & models</li><li style="margin-bottom:12px">⊹ Commercial & products</li><li style="margin-bottom:12px">⊹ Events</li><li>⊹ Weddings & Lumen</li></ul>` },
-    { title:'Available places', body:`<p>10 places per universe, for a maximum of <strong>60 founding partners</strong>. Once this quota is reached, new applications will be placed on a waiting list.</p>` },
-    { title:'The selection process', body:`<div class="process-steps" style="margin-top:0"><div class="process-step"><div class="ps-num">01</div><div><div class="ps-title">Presentation</div><div class="ps-text">Complete the Bunkaio questionnaire — your activity, work, goals.</div></div></div><div class="process-step"><div class="ps-num">02</div><div><div class="ps-title">Review</div><div class="ps-text">Assessment based on quality of work and editorial fit.</div></div></div><div class="process-step"><div class="ps-num">03</div><div><div class="ps-title">Response</div><div class="ps-text">Selected, compatible (one-off), or redirected according to your needs.</div></div></div><div class="process-step" style="border-bottom:none"><div class="ps-num">04</div><div><div class="ps-title">Launch</div><div class="ps-text">Personalised onboarding and editorial roadmap.</div></div></div></div>` }
-  ];
-  el.innerHTML = sections.map((s, i) => `
-    <div class="accordion-item">
-      <button class="accordion-trigger" aria-expanded="${i === 0 ? 'true' : 'false'}" onclick="toggleAccordion(this)">
-        <span>${s.title}</span>
-        <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></span>
-      </button>
-      <div class="accordion-body ${i === 0 ? 'open' : ''}">
-        <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544">${s.body}</div>
-      </div>
-    </div>`).join('');
+  const trig = el.querySelectorAll('.accordion-trigger')[i];
+  if (trig && trig.getAttribute('aria-expanded') !== 'true') toggleAccordion(trig);
+  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 /* ═══════════════ CARROUSEL TÉMOIGNAGES — autoplay en boucle ═══════════════ */
@@ -4725,6 +4735,15 @@ function initTestiAutoplay(){
 function toggleAccordion(btn){
   const body = btn.nextElementSibling;
   const open = body.classList.contains('open');
+  /* Accordéon « exclusif » : ouvrir un item referme les autres, pour garder
+     une page courte et dynamique. */
+  const group = btn.closest('.accordion-item')?.parentElement;
+  if (!open && group && group.dataset.exclusive) {
+    group.querySelectorAll('.accordion-trigger[aria-expanded="true"]').forEach(t => {
+      t.setAttribute('aria-expanded', 'false');
+      t.nextElementSibling.classList.remove('open');
+    });
+  }
   body.classList.toggle('open', !open);
   btn.setAttribute('aria-expanded', String(!open));
 }
@@ -4737,9 +4756,10 @@ function setLegalTab(tab){
   document.getElementById('lsec-privacy').style.display = tab === 'privacy' ? 'block' : 'none';
 }
 
-function renderAccordionInto(elId, sections){
+function renderAccordionInto(elId, sections, opts){
   const el = document.getElementById(elId);
   if (!el) return;
+  if (opts && opts.exclusive) el.dataset.exclusive = '1';
   el.innerHTML = sections.map((s, i) => `
     <div class="accordion-item">
       <button class="accordion-trigger" aria-expanded="${i === 0 ? 'true' : 'false'}" onclick="toggleAccordion(this)">
@@ -4754,29 +4774,35 @@ function renderAccordionInto(elId, sections){
 
 function renderFaqAccordion(){
   const sections = LANG === 'fr' ? [
-    { title:'Quelles prestations proposez-vous ?', body:`<p>Portrait & lifestyle pour particuliers, mode, agences et mannequins, commercial & packshots produits, événementiel, et Lumen, le photobooth IA pour mariages. Chaque univers dispose de formules détaillées dans notre <strong>catalogue & prix</strong>.</p>` },
-    { title:'Comment se déroule une prestation, de la demande à la livraison ?', body:`<p>Quatre étapes simples : <strong>devis</strong> personnalisé sous 24h, <strong>shooting</strong> à la date convenue, <strong>post-production</strong> (tri, retouche, montage), puis <strong>livraison</strong> de vos visuels via votre espace client. Le détail complet est disponible dans l'onglet « Devis & déroulé » de la page Services.</p>` },
-    { title:'Quels sont les délais de livraison ?', body:`<p>Ils varient selon la formule choisie et sont indiqués sur chaque offre du catalogue. Les délais démarrent à la date du shooting, hors demandes de retouches complémentaires.</p>` },
-    { title:'Comment fonctionne le paiement ?', body:`<p>30 % à la commande (signature du devis), solde à la livraison des livrables. Paiement par carte bancaire, prélèvement automatique, ou en 3x sans frais avec Klarna.</p>` },
-    { title:'Puis-je utiliser les visuels livrés pour un usage commercial ?', body:`<p>Oui. L'ensemble des droits d'utilisation des visuels livrés vous est cédé pour un usage commercial, sans limite de durée. Le détail des droits cédés et des réserves de Bunkaio est précisé dans l'onglet « Politique de confidentialité » ci-contre.</p>` },
+    { title:'Quelles prestations proposez-vous ?', body:`<p>Bunkaio est un photographe professionnel : nous produisons des images haut de gamme, en HD, pour <strong>portrait & lifestyle</strong>, <strong>mode, agences et mannequins</strong>, <strong>commercial & produits</strong>, <strong>événementiel</strong>, et <strong>Lumen</strong>, le photobooth IA pour mariages. Chaque univers a ses formules détaillées dans notre <strong>catalogue & prix</strong>.</p>` },
+    { title:'Quelle est la qualité des images livrées ?', body:`<p>Des photos <strong>haute définition, retouchées</strong> avec soin, prêtes à être publiées ou imprimées. Elles sont livrées dans une <strong>galerie privée</strong> à télécharger depuis votre espace client, et vous disposez des droits d'utilisation commerciale.</p>` },
+    { title:'Comment se déroule une prestation, de la demande à la livraison ?', body:`<p>Quatre étapes simples : <strong>devis</strong> personnalisé sous 48h, <strong>shooting</strong> à la date convenue, <strong>post-production</strong> (tri, retouche, montage), puis <strong>livraison</strong> de vos visuels via votre espace client. Le détail complet est dans l'onglet « Devis & déroulé » de la page Services.</p>` },
+    { title:'Je ne suis pas à l\'aise devant l\'objectif, est-ce un problème ?', body:`<p>Pas du tout : c'est notre rôle de vous mettre en confiance. Nous vous guidons sur les poses et l'ambiance pour obtenir des photos qui vous ressemblent vraiment.</p>` },
+    { title:'Quels sont les délais de livraison ?', body:`<p>Ils varient selon la formule choisie et sont indiqués sur chaque offre du catalogue. Ils démarrent à la date du shooting, hors demandes de retouches complémentaires.</p>` },
+    { title:'Comment fonctionne le paiement ?', body:`<p>30 % à la commande (signature du devis), solde à la livraison. Paiement par carte bancaire, prélèvement automatique, ou en 3x sans frais avec Klarna.</p>` },
+    { title:'Puis-je utiliser les visuels pour un usage commercial ?', body:`<p>Oui. L'ensemble des droits d'utilisation des visuels livrés vous est cédé pour un usage commercial, sans limite de durée. Le détail des droits cédés est précisé dans l'onglet « Politique de confidentialité » ci-contre.</p>` },
+    { title:'Comment accéder à mon espace client, et à quoi sert-il ?', body:`<p>Une fois votre devis confirmé, vous recevez par email votre <strong>code d'accès personnel</strong> : cliquez sur « Connexion » en haut du site. Vous restez connecté sur votre appareil jusqu'à votre déconnexion.</p><p>Vous y suivez l'avancement de votre projet, retrouvez vos <strong>commandes, devis, paiements et factures</strong>, téléchargez vos livrables, gérez vos abonnements et vos informations. Pas encore de code ? Demandez-le depuis la page de connexion : il vous est envoyé sous 24h.</p>` },
+    { title:'Qu\'est-ce qu\'un moodboard, et est-il obligatoire ?', body:`<p>Non, il est facultatif mais très utile : un <strong>moodboard par commande</strong> pour nous partager votre vision — direction artistique, ambiance, palette de couleurs, inspirations (Pinterest, liens), et les prestataires impliqués. Vous le complétez depuis votre espace client et vous échangez avec l'équipe grâce aux commentaires.</p>` },
+    { title:'Mes informations et mes images sont-elles en sécurité ?', body:`<p>Votre espace est protégé par votre email et un <strong>code d'accès personnel</strong>, conservé sous forme chiffrée. Vos données ne servent qu'à la réalisation de votre projet, et vos visuels vous sont livrés dans une galerie privée. Le détail est dans l'onglet « Politique de confidentialité ».</p>` },
     { title:'Intervenez-vous partout en France ?', body:`<p>Nous intervenons principalement en Occitanie. Au-delà, toute demande est étudiée avec des frais de déplacement calculés selon la distance.</p>` },
-    { title:'Comment accéder à mes livrables après le shooting ?', body:`<p>Vous recevez vos identifiants d'<strong>espace client</strong> après validation du devis. Vos visuels y restent disponibles au téléchargement pendant toute la durée convenue.</p>` },
-    { title:'Comment devenir Partenaire Fondateur ?', body:`<p>Le programme et les conditions de candidature sont détaillés sur notre page <strong>Partenaires</strong>.</p>` },
-    { title:'Qu\'est-ce que Lumen by Bunkaio ?', body:`<p>Lumen est le service photobooth IA de Bunkaio, conçu pour les mariages haut de gamme. Il allie technologie et élégance pour offrir aux invités une expérience mémorable, et aux mariés des souvenirs durables. Trois formules sont disponibles — Essentiel, Signature et Sur-mesure — selon la durée et le niveau de personnalisation souhaités.</p>` },
-    { title:'Lumen intervient-il uniquement pour les mariages ?', body:`<p>Lumen est conçu en priorité pour les mariages. Il s'adapte également aux réceptions privées, aux événements corporate et aux soirées organisées par des agences événementielles. Contactez-nous pour toute demande spécifique.</p>` },
+    { title:'Comment devenir partenaire, et que propose l\'espace partenaire ?', body:`<p>Candidatez depuis la page <strong>Partenariat et collaboration</strong> : réponse personnalisée sous 5 jours ouvrés. Une fois admis, votre espace partenaire vous donne <strong>-20 % permanent</strong> sur le catalogue, des promotions, des <strong>missions collaboratives rémunérées</strong> que vous acceptez ou déclinez en un clic, et l'accès au réseau de professionnels. Vous choisissez d'être référencé·e ou non dans l'annuaire.</p>` },
+    { title:'Qu\'est-ce que Lumen by Bunkaio ?', body:`<p>Lumen est le photobooth IA de Bunkaio, conçu pour les mariages haut de gamme et les événements : il offre aux invités une expérience mémorable et aux mariés des souvenirs durables. Trois formules — Essentiel, Signature et Sur-mesure — selon la durée et la personnalisation souhaitées.</p>` },
   ] : [
-    { title:'What services do you offer?', body:`<p>Portrait & lifestyle for individuals, fashion, agencies and models, commercial & product packshots, events, and Lumen, the IA photobooth for weddings. Each universe has packages detailed in our <strong>catalogue & rates</strong>.</p>` },
-    { title:'How does a project run, from request to delivery?', body:`<p>Four simple steps: a personalised <strong>quote</strong> within 24h, the <strong>shoot</strong> on the agreed date, <strong>post-production</strong> (selection, retouching, editing), then <strong>delivery</strong> of your visuals via your client area. Full details are available under the "Quote & process" tab on the Services page.</p>` },
-    { title:'What are the delivery times?', body:`<p>They vary depending on the package chosen and are stated on each catalogue offer. Delivery times start from the shoot date, excluding any additional retouching requests.</p>` },
-    { title:'How does payment work?', body:`<p>30% upon booking (quote signature), balance on delivery. Payment by card, direct debit, or in 3 interest-free instalments with Klarna.</p>` },
-    { title:'Can I use the delivered visuals for commercial purposes?', body:`<p>Yes. All usage rights to the delivered visuals are transferred to you for commercial use, with no time limit. Details on the rights transferred and Bunkaio's reservations are set out in the "Privacy policy" tab opposite.</p>` },
+    { title:'What services do you offer?', body:`<p>Bunkaio is a professional photographer: we produce premium, high-definition images for <strong>portrait & lifestyle</strong>, <strong>fashion, agencies and models</strong>, <strong>commercial & products</strong>, <strong>events</strong>, and <strong>Lumen</strong>, the IA photobooth for weddings. Each universe has its packages detailed in our <strong>catalogue & rates</strong>.</p>` },
+    { title:'What is the quality of the delivered images?', body:`<p><strong>High-definition, carefully retouched</strong> photos, ready to publish or print. They are delivered in a <strong>private gallery</strong> you can download from your client area, with commercial usage rights.</p>` },
+    { title:'How does a project run, from request to delivery?', body:`<p>Four simple steps: a personalised <strong>quote</strong> within 48h, the <strong>shoot</strong> on the agreed date, <strong>post-production</strong> (selection, retouching, editing), then <strong>delivery</strong> via your client area. Full details are under the "Quote & process" tab on the Services page.</p>` },
+    { title:'I\'m not comfortable in front of the camera — is that a problem?', body:`<p>Not at all: it's our job to put you at ease. We guide you on poses and mood so the photos truly look like you.</p>` },
+    { title:'What are the delivery times?', body:`<p>They depend on the package chosen and are shown on each catalogue offer. They start from the shoot date, excluding any additional retouching requests.</p>` },
+    { title:'How does payment work?', body:`<p>30% upon booking (quote signature), balance on delivery. Pay by card, direct debit, or in 3 interest-free instalments with Klarna.</p>` },
+    { title:'Can I use the visuals for commercial purposes?', body:`<p>Yes. All usage rights to the delivered visuals are transferred to you for commercial use, with no time limit. Details are set out in the "Privacy policy" tab opposite.</p>` },
+    { title:'How do I access my client area, and what is it for?', body:`<p>Once your quote is confirmed, you receive your <strong>personal access code</strong> by email: click "Sign in" at the top of the site. You stay signed in on your device until you sign out.</p><p>There you follow your project's progress, find your <strong>orders, quotes, payments and invoices</strong>, download your deliverables, and manage your subscriptions and details. No code yet? Request it from the sign-in page: it is sent within 24h.</p>` },
+    { title:'What is a moodboard, and is it compulsory?', body:`<p>No, it is optional but very useful: <strong>one moodboard per order</strong> to share your vision — art direction, mood, colour palette, inspiration (Pinterest, links) and the providers involved. You complete it from your client area and chat with the team through comments.</p>` },
+    { title:'Are my details and images safe?', body:`<p>Your space is protected by your email and a <strong>personal access code</strong>, stored in encrypted form. Your data is only used to carry out your project, and your visuals are delivered in a private gallery. Details are in the "Privacy policy" tab.</p>` },
     { title:'Do you work throughout France?', body:`<p>We work mainly across Occitanie. Beyond that, every request is reviewed, with travel costs calculated based on distance.</p>` },
-    { title:'How do I access my deliverables after the shoot?', body:`<p>You receive your <strong>client area</strong> credentials once the quote is confirmed. Your visuals remain available for download there for the agreed period.</p>` },
-    { title:'How can I become a Founding Partner?', body:`<p>The programme and application terms are detailed on our <strong>Partners</strong> page.</p>` },
-    { title:'What is Lumen by Bunkaio?', body:`<p>Lumen is Bunkaio's IA photobooth service, designed for luxury weddings. It combines technology and elegance to give guests a memorable experience and couples lasting memories. Three packages are available — Essentials, Signature and Bespoke — depending on the duration and level of customisation needed.</p>` },
-    { title:'Is Lumen exclusively for weddings?', body:`<p>Lumen is designed primarily for weddings. It also adapts to private receptions, corporate events and parties organised by event agencies. Contact us for any specific enquiry.</p>` },
+    { title:'How do I become a partner, and what does the partner area offer?', body:`<p>Apply from the <strong>Partnership & collaboration</strong> page: a personal reply within 5 working days. Once admitted, your partner area gives you a <strong>permanent 20% discount</strong> on the catalogue, promotions, <strong>paid collaborative missions</strong> you accept or decline in one click, and access to the professional network. You choose whether to be listed in the directory.</p>` },
+    { title:'What is Lumen by Bunkaio?', body:`<p>Lumen is Bunkaio's IA photobooth, designed for luxury weddings and events: it gives guests a memorable experience and couples lasting memories. Three packages — Essentials, Signature and Bespoke — depending on duration and customisation.</p>` },
   ];
-  renderAccordionInto('faqAccordion', sections);
+  renderAccordionInto('faqAccordion', sections, { exclusive: true });
 }
 
 function renderPrivacyAccordion(){
