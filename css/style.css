@@ -3809,3 +3809,12 @@
 .g-review p { margin: 0; font-size: 14px; line-height: 1.6; }
 #gReviewDone { margin-top: 14px; }
 #gReviewDone p { margin: 0 0 12px; }
+
+/* Titre d'accueil : l'accroche (mot-clé) fait partie du H1 sans changer la mise en page */
+.hero-title .hero-kicker { display: block; line-height: 1.4; }
+.cred-lead { flex: 1 0 100%; margin: 0 0 6px; max-width: 780px; font-size: 14px; line-height: 1.75; color: var(--black); }
+.cred-lead a { color: var(--black); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+.svcp-lead { max-width: 860px; }
+.svcp-lead { margin: 0; }
+.svcp-lead a, .cred-lead a { color: var(--black); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+a.cta-primary, a.cta-primary:hover { text-decoration: none; }

@@ -33,7 +33,7 @@ const SNAPS_BY_VIEW = {
   home: ['missionServicesTrack', 'adviceTeaser', 'catShowcaseTrack', 'csSlotHome'],
   quiz: ['catList', 'csSlotQuiz'],
   portfolio: ['pfTabs', 'pfLinks'],
-  services: ['servicesFilters', 'servicesGrid', 'processSteps', 'csSlotServices'],
+  services: ['servicesFilters', 'servicesGrid', 'svcLinks', 'processSteps', 'csSlotServices'],
   legal: ['faqAccordion', 'privacyAccordion'],
   partners: ['partnersPitch', 'partnersAccordion', 'applyBenefitsAccordion'],
   service: ['servicePageContent'],
@@ -288,7 +288,7 @@ function pinAssets(html) {
   await page.evaluate(() => goView('services', null, { initial: true }));
   await page.evaluate(() => { setSvcTab('devis'); });
   await page.waitForTimeout(300);
-  await grab(['servicesFilters', 'servicesGrid', 'processSteps']);
+  await grab(['servicesFilters', 'servicesGrid', 'svcLinks', 'processSteps']);
   await page.evaluate(() => goView('legal', null, { initial: true }));
   await grab(['faqAccordion', 'privacyAccordion']);
   await page.evaluate(() => goView('portfolio', null, { initial: true }));
