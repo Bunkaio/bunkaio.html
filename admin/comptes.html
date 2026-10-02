@@ -184,6 +184,7 @@
       <div class="fgroup"><label for="fProfil">Type de client</label><select id="fProfil"><option value="">—</option><option value="particulier">Particulier</option><option value="professionnel">Professionnel</option></select></div>
       <div class="fgroup"><label for="fContact">Contact (professionnel)</label><input type="text" id="fContact"></div>
     </div>
+    <div class="fgroup"><label for="fForme">Forme juridique (professionnel)</label><select id="fForme"><option value="">—</option><option value="ei">Entreprise individuelle / micro-entreprise</option><option value="sas">SAS / SASU</option><option value="sarl">SARL / EURL</option><option value="sa">SA</option><option value="association">Association</option><option value="autre">Autre</option></select></div>
     <div class="fgroup"><label for="fRue">Rue</label><input type="text" id="fRue"></div>
     <div class="fgrid">
       <div class="fgroup"><label for="fCp">Code postal</label><input type="text" id="fCp"></div>
@@ -397,6 +398,7 @@ document.getElementById('accountPicker').addEventListener('change', async (e) =>
     const fb = acc.facturation || {};
     document.getElementById('fProfil').value = fb.profil || '';
     document.getElementById('fContact').value = fb.contact || '';
+    document.getElementById('fForme').value = fb.forme || '';
     document.getElementById('fRue').value = fb.rue || '';
     document.getElementById('fCp').value = fb.codePostal || '';
     document.getElementById('fVille').value = fb.ville || '';
@@ -488,7 +490,7 @@ async function saveAccount() {
   payload.lang = document.getElementById('fLang').value;
   const gv = id => document.getElementById(id).value.trim();
   if (gv('fProfil') || gv('fRue')) {
-    payload.facturation = { profil: gv('fProfil') || (type === 'partner' ? 'professionnel' : 'particulier'), contact: gv('fContact') || undefined, rue: gv('fRue'), codePostal: gv('fCp'), ville: gv('fVille'), pays: gv('fPays'), siret: gv('fSiret') || undefined, tvaIntra: gv('fTva') || undefined };
+    payload.facturation = { profil: gv('fProfil') || (type === 'partner' ? 'professionnel' : 'particulier'), contact: gv('fContact') || undefined, forme: gv('fForme') || undefined, rue: gv('fRue'), codePostal: gv('fCp'), ville: gv('fVille'), pays: gv('fPays'), siret: gv('fSiret') || undefined, tvaIntra: gv('fTva') || undefined };
   }
   const seDate = document.getElementById('fSeDate').value;
   const seDateOriginal = window.__seDate || '';

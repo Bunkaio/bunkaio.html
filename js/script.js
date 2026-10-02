@@ -353,6 +353,7 @@ const I18N = {
     'lr-btn':'Accéder à Lightroom',
     'acc-step-devis':'Devis confirmé','acc-step-shoot':'Shooting planifié','acc-step-post':'Post-production','acc-step-livre':'Livré',
     'acc-help-title':'Une question sur votre projet ?','acc-help-sub':'Votre interlocuteur BUNKAIO vous répond directement.','acc-help-btn':'Nous écrire',
+    'acc-info-forme':'Forme juridique *','acc-forme-choose':'Choisir…','acc-forme-ei':'Entreprise individuelle / micro-entreprise','acc-forme-sas':'SAS / SASU','acc-forme-sarl':'SARL / EURL','acc-forme-sa':'SA','acc-forme-asso':'Association','acc-forme-autre':'Autre',
     'acc-info-status':'Statut de votre espace','acc-info-valid':'Espace validé','acc-info-incomplete':'Informations à compléter',
     'acc-info-banner':'Pour valider votre espace, complétez vos informations : elles servent à établir vos devis et vos factures.',
     'acc-info-profile':'Type de client *','acc-info-profile-part':'Particulier','acc-info-profile-pro':'Professionnel (société, indépendant, association)',
@@ -700,6 +701,7 @@ const I18N = {
     'lr-btn':'Go to Lightroom',
     'acc-step-devis':'Quote confirmed','acc-step-shoot':'Shoot scheduled','acc-step-post':'Post-production','acc-step-livre':'Delivered',
     'acc-help-title':'Any question about your project?','acc-help-sub':'Your BUNKAIO contact replies to you directly.','acc-help-btn':'Write to us',
+    'acc-info-forme':'Legal form *','acc-forme-choose':'Choose…','acc-forme-ei':'Sole proprietorship / micro-business','acc-forme-sas':'SAS / SASU','acc-forme-sarl':'SARL / EURL','acc-forme-sa':'SA','acc-forme-asso':'Association','acc-forme-autre':'Other',
     'acc-info-status':'Your area status','acc-info-valid':'Area validated','acc-info-incomplete':'Information to complete',
     'acc-info-banner':'To validate your area, please complete your information: it is used to prepare your quotes and invoices.',
     'acc-info-profile':'Client type *','acc-info-profile-part':'Individual','acc-info-profile-pro':'Business (company, freelancer, association)',
@@ -5297,6 +5299,7 @@ function accInfoMissing(u){
   if (!(u && u.telephone && u.telephone.replace(/\D/g,'').length >= 6)) m.push('telephone');
   if (profil !== 'particulier' && profil !== 'professionnel') m.push('profil');
   if (profil === 'professionnel' && !(f.contact && f.contact.trim())) m.push('contact');
+  if (profil === 'professionnel' && ['ei','sas','sarl','sa','association','autre'].indexOf(f.forme) < 0) m.push('forme');
   if (!(f.rue && f.rue.trim())) m.push('rue');
   if (!(f.codePostal && f.codePostal.trim())) m.push('codePostal');
   if (!(f.ville && f.ville.trim())) m.push('ville');
@@ -5321,6 +5324,8 @@ function renderAccInfoView(){
   document.getElementById('accInfoEmail').textContent = USER.email || notSet;
   document.getElementById('accInfoPhone').textContent = USER.telephone || notSet;
   document.getElementById('accInfoAddress').textContent = (f.rue ? [f.rue, [f.codePostal, f.ville].filter(Boolean).join(' '), f.pays].filter(Boolean).join(', ') : USER.adresse) || notSet;
+  const formeKey = { ei:'acc-forme-ei', sas:'acc-forme-sas', sarl:'acc-forme-sarl', sa:'acc-forme-sa', association:'acc-forme-asso', autre:'acc-forme-autre' }[f.forme];
+  document.getElementById('accInfoForme').textContent = formeKey ? I18N[LANG][formeKey] : notSet;
   document.getElementById('accInfoSiret').textContent = f.siret || notSet;
   document.getElementById('accInfoVat').textContent = f.tvaIntra || notSet;
   const ok = accInfoComplete();
@@ -5349,6 +5354,7 @@ function toggleAccInfoEdit(edit){
     document.getElementById('accEditZip').value = f.codePostal || '';
     document.getElementById('accEditCity').value = f.ville || '';
     document.getElementById('accEditCountry').value = f.pays || 'France';
+    document.getElementById('accEditForme').value = f.forme || '';
     document.getElementById('accEditSiret').value = f.siret || '';
     document.getElementById('accEditVat').value = f.tvaIntra || '';
     applyAccInfoProfile(document.getElementById('accEditProfile').value);
@@ -5385,6 +5391,7 @@ function saveAccInfo(){
     profil: profil,
     contact: profil === 'professionnel' ? val('accEditContact') : '',
     rue: val('accEditStreet'), codePostal: val('accEditZip'), ville: val('accEditCity'), pays: val('accEditCountry'),
+    forme: profil === 'professionnel' ? document.getElementById('accEditForme').value : '',
     siret: profil === 'professionnel' ? val('accEditSiret').replace(/\s/g,'') : '',
     tvaIntra: profil === 'professionnel' ? val('accEditVat').replace(/\s/g,'').toUpperCase() : ''
   };

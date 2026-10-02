@@ -261,6 +261,8 @@ export interface AccountBilling {
   /** Optionnel pour un client, obligatoire pour un partenaire. */
   siret?: string;
   tvaIntra?: string;
+  /** Forme juridique (professionnels) : ei, sas, sarl, sa, association, autre. */
+  forme?: string;
 }
 
 export interface AccountSeance { /** Date de livraison estimée des photos (AAAA-MM-JJ), saisie admin. */ livraison?: string; date: string; heure?: string; lieu?: string; prestation?: string; statut?: 'prevue' | 'annulee' }

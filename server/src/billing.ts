@@ -1,5 +1,7 @@
 import type { AccountBilling, AccountType } from './types';
 
+export const FORMES = ['ei', 'sas', 'sarl', 'sa', 'association', 'autre'];
+
 /**
  * Informations nécessaires à l'édition d'un devis et d'une facture.
  * Obligatoires pour valider l'espace client/partenaire. SIRET : optionnel pour un client,
@@ -18,6 +20,7 @@ export function billingErrors(
   const profil = type === 'partner' ? 'professionnel' : f.profil;
   if (profil !== 'particulier' && profil !== 'professionnel') errors.push('profil');
   if (profil === 'professionnel' && !f.contact?.trim()) errors.push('contact');
+  if (profil === 'professionnel' && !FORMES.includes(f.forme ?? '')) errors.push('forme');
   if (!f.rue?.trim()) errors.push('rue');
   if (!f.codePostal?.trim()) errors.push('codePostal');
   if (!f.ville?.trim()) errors.push('ville');
@@ -45,6 +48,7 @@ export function cleanBilling(type: AccountType, f: AccountBilling): AccountBilli
     codePostal: t(f.codePostal),
     ville: t(f.ville),
     pays: t(f.pays),
+    forme: type === 'partner' || f.profil === 'professionnel' ? t(f.forme) || undefined : undefined,
     siret: (f.siret ?? '').replace(/\s/g, '') || undefined,
     tvaIntra: (f.tvaIntra ?? '').replace(/\s/g, '').toUpperCase() || undefined,
   };

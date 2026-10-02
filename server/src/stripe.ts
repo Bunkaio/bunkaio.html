@@ -332,7 +332,7 @@ function addressLine(): string {
  */
 export async function syncCustomerBilling(
   stripe: Stripe,
-  account: { email: string; nom?: string; telephone?: string; facturation?: { contact?: string; rue: string; codePostal: string; ville: string; pays: string; siret?: string; tvaIntra?: string } },
+  account: { email: string; nom?: string; telephone?: string; facturation?: { contact?: string; rue: string; codePostal: string; ville: string; pays: string; siret?: string; tvaIntra?: string; forme?: string } },
 ): Promise<void> {
   const f = account.facturation;
   if (!f) return;
@@ -344,7 +344,7 @@ export async function syncCustomerBilling(
     name: account.nom,
     phone: account.telephone,
     address: { line1: f.rue, postal_code: f.codePostal, city: f.ville, ...(country ? { country } : {}) },
-    metadata: { ...(f.siret ? { siret: f.siret } : {}), ...(f.contact ? { contact: f.contact } : {}) },
+    metadata: { ...(f.siret ? { siret: f.siret } : {}), ...(f.contact ? { contact: f.contact } : {}), ...(f.forme ? { forme_juridique: f.forme } : {}) },
     invoice_settings: { custom_fields: f.siret ? [{ name: 'SIRET', value: f.siret }] : '' },
   });
   if (f.tvaIntra) {

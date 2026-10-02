@@ -210,7 +210,7 @@ function isValidBillingShape(v: unknown): boolean {
   if (typeof v !== 'object' || v === null) return false;
   const f = v as Record<string, unknown>;
   const s = (x: unknown): boolean => x === undefined || (typeof x === 'string' && x.length <= 200);
-  return (f.profil === 'particulier' || f.profil === 'professionnel') && s(f.contact) && s(f.rue) && s(f.codePostal) && s(f.ville) && s(f.pays) && s(f.siret) && s(f.tvaIntra);
+  return (f.profil === 'particulier' || f.profil === 'professionnel') && s(f.contact) && s(f.rue) && s(f.codePostal) && s(f.ville) && s(f.pays) && s(f.siret) && s(f.tvaIntra) && s(f.forme);
 }
 
 function isValidAccountSelfUpdatePayload(body: unknown): body is AccountSelfUpdatePayload {

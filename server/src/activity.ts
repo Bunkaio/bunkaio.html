@@ -58,7 +58,7 @@ export function diffAccountActivity(before: AccountRecord, after: AccountRecord,
     if ((before[key] ?? '') !== (after[key] ?? '')) infoChanges.push(`${label} : ${short(after[key]) || '(vide)'}`);
   }
   const bB = before.facturation; const bA = after.facturation;
-  const billingFields: Array<[keyof NonNullable<typeof bA>, string]> = [['profil', 'Type de client'], ['contact', 'Contact'], ['rue', 'Rue'], ['codePostal', 'Code postal'], ['ville', 'Ville'], ['pays', 'Pays'], ['siret', 'SIRET'], ['tvaIntra', 'TVA intracommunautaire']];
+  const billingFields: Array<[keyof NonNullable<typeof bA>, string]> = [['profil', 'Type de client'], ['contact', 'Contact'], ['rue', 'Rue'], ['codePostal', 'Code postal'], ['ville', 'Ville'], ['pays', 'Pays'], ['forme', 'Forme juridique'], ['siret', 'SIRET'], ['tvaIntra', 'TVA intracommunautaire']];
   for (const [key, label] of billingFields) {
     if ((bB?.[key] ?? '') !== (bA?.[key] ?? '')) infoChanges.push(`${label} : ${short(bA?.[key]) || '(vide)'}`);
   }
