@@ -182,6 +182,27 @@
   </div>
 
   <div class="section">
+    <div class="section-title">Séance (rappel J-2, confirmation, report, annulation)</div>
+    <div class="fgrid">
+      <div class="fgroup"><label for="fSeDate">Date</label><input type="date" id="fSeDate"></div>
+      <div class="fgroup"><label for="fSeHeure">Heure</label><input type="text" id="fSeHeure" placeholder="14h30"></div>
+    </div>
+    <div class="fgroup"><label for="fSeLieu">Lieu</label><input type="text" id="fSeLieu" placeholder="Adresse exacte du rendez-vous"></div>
+    <div class="fgroup"><label for="fSePresta">Prestation</label><input type="text" id="fSePresta" placeholder="Portrait corporate — Formule Signature"></div>
+    <div class="fgroup">
+      <label for="fSeMail">Envoyer un mail de séance à l'enregistrement</label>
+      <select id="fSeMail">
+        <option value="">Aucun</option>
+        <option value="confirmation">Confirmation de séance (date, heure, lieu)</option>
+        <option value="report">Report (la date saisie ci-dessus est la NOUVELLE date)</option>
+        <option value="cancel">Annulation (la séance est marquée annulée, plus de rappel)</option>
+      </select>
+      <div class="hint">Le rappel J-2 est envoyé automatiquement chaque matin si une date est renseignée et non annulée. Le motif ci-dessous est facultatif (report/annulation).</div>
+    </div>
+    <div class="fgroup"><label for="fSeMotif">Motif (facultatif)</label><input type="text" id="fSeMotif"></div>
+  </div>
+
+  <div class="section">
     <div class="section-title">Mes commandes (JSON)</div>
     <div class="fgroup">
       <textarea id="fCommandes" placeholder='[{"date":"12/09/2026","prestation":"Formule Signature","montant":"2 400 € HT","statut":"En production"}]'></textarea>
@@ -347,6 +368,16 @@ document.getElementById('accountPicker').addEventListener('change', async (e) =>
     document.getElementById('fEtape').value = acc.etapeActuelle || '';
     document.getElementById('fAdresse').value = acc.adresse || '';
     document.getElementById('fLightroom').value = acc.lightroomUrl || '';
+    document.getElementById('fLang').value = acc.lang || 'fr';
+    const se = acc.seance || {};
+    document.getElementById('fSeDate').value = se.date || '';
+    document.getElementById('fSeHeure').value = se.heure || '';
+    document.getElementById('fSeLieu').value = se.lieu || '';
+    document.getElementById('fSePresta').value = se.prestation || '';
+    document.getElementById('fSeMail').value = '';
+    document.getElementById('fSeMotif').value = '';
+    window.__seStatut = se.statut || 'prevue';
+    window.__seDate = se.date || '';
     document.getElementById('fCommandes').value = acc.commandes ? JSON.stringify(acc.commandes, null, 2) : '';
     document.getElementById('fPaiements').value = acc.paiements ? JSON.stringify(acc.paiements, null, 2) : '';
     document.getElementById('fFactures').value = acc.factures ? JSON.stringify(acc.factures, null, 2) : '';
@@ -411,6 +442,19 @@ async function saveAccount() {
   const code = document.getElementById('fCode').value.trim();
   if (code) payload.code = code;
   payload.lang = document.getElementById('fLang').value;
+  const seDate = document.getElementById('fSeDate').value;
+  const seDateOriginal = window.__seDate || '';
+  payload.seance = seDate ? {
+    date: seDate,
+    heure: document.getElementById('fSeHeure').value.trim() || undefined,
+    lieu: document.getElementById('fSeLieu').value.trim() || undefined,
+    prestation: document.getElementById('fSePresta').value.trim() || undefined,
+    statut: window.__seStatut === 'annulee' && seDateOriginal === seDate ? 'annulee' : 'prevue',
+  } : null;
+  const seMail = document.getElementById('fSeMail').value;
+  if (seMail) payload.sendSeanceMail = seMail;
+  const seMotif = document.getElementById('fSeMotif').value.trim();
+  if (seMotif) payload.motif = seMotif;
   if (document.getElementById('fSendAccess').checked) payload.sendAccessMail = true;
   if (document.getElementById('fSendPhotos').checked) payload.sendPhotosMail = true;
 
@@ -427,6 +471,9 @@ async function saveAccount() {
       const em = data.emails || {};
       if (em.access === true) msg += ' Mail d\'accès envoyé.';
       if (em.access === false) msg += ' ⚠ Mail d\'accès NON envoyé (saisis le code dans le champ et réessaie).';
+      if (em.seance === true) msg += ' Mail de séance envoyé.';
+      if (em.seance === 'no_seance') msg += ' ⚠ Mail de séance non envoyé : renseigne la date.';
+      if (em.seance === false) msg += ' ⚠ Mail de séance non envoyé (erreur).';
       if (em.photos === true) msg += ' Mail « photos prêtes » envoyé.';
       if (em.photos === 'no_lightroom_url') msg += ' ⚠ Mail photos non envoyé : renseigne le lien Lightroom.';
       if (em.photos === false) msg += ' ⚠ Mail photos non envoyé (erreur).';
@@ -434,6 +481,7 @@ async function saveAccount() {
       document.getElementById('fCode').value = '';
       document.getElementById('fSendAccess').checked = false;
       document.getElementById('fSendPhotos').checked = false;
+      document.getElementById('fSeMail').value = '';
       loadAccounts();
     } else if (data.error === 'code_required_for_new_account') {
       result.className = 'err';

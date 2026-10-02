@@ -14,7 +14,7 @@ export type Lang = 'fr' | 'en';
 export type Space = 'client' | 'partner';
 export function normalizeLang(value: unknown): Lang { return value === 'en' ? 'en' : 'fr'; }
 const tr = (lang: Lang, fr: string, en: string): string => (lang === 'en' ? en : fr);
-const eur = (lang: Lang, n: number): string => (lang === 'en' ? `€${n.toFixed(2)}` : `${n.toFixed(2)} €`);
+const eur = (lang: Lang, n: number): string => (lang === 'en' ? `€${n.toFixed(2)}` : `${n.toFixed(2).replace('.', ',')} €`);
 
 /** Signature unique, identique dans tous les emails (logo officiel, coordonnées, mentions légales). */
 function signatureHtml(lang: Lang): string {
@@ -136,6 +136,10 @@ function spaceText(lang: Lang, space: Space | undefined, stage: Stage): string {
   return `${c.title.toUpperCase()}\n${c.body}\n${c.button} : ${SITE}/connexion/`;
 }
 
+/** Délais réels du catalogue (config du site) : 3 à 10 jours ouvrés selon la formule, comptés à partir du shooting. */
+const deliveryNote = (lang: Lang): string => tr(lang,
+  'Délai de livraison : celui indiqué sur votre formule (de 3 à 10 jours ouvrés selon la formule), à compter de la date du shooting.',
+  'Delivery time: the one stated on your package (3 to 10 working days depending on the package), counted from the shoot date.');
 const greet = (lang: Lang, name: string): string => (name ? tr(lang, `Bonjour ${name},`, `Hello ${name},`) : tr(lang, 'Bonjour,', 'Hello,'));
 const payLineFor = (lang: Lang, amount: number): string => {
   const threeX = (amount / 3).toFixed(2);
@@ -289,7 +293,8 @@ export function buildPaymentConfirmationEmail(params: {
     <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">${greeting}</p>
     <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">${message}</p>
     <p style="font-size:24px;font-weight:700;margin:0 0 8px;">${amount}</p>
-    <p style="font-size:13px;color:#76717f;margin:0 0 28px;">${paidLabel} ${tr(lang, 'réglé', 'paid')}</p>
+    <p style="font-size:13px;color:#76717f;margin:0 0 ${isDeposit ? '20px' : '28px'};">${paidLabel} ${tr(lang, 'réglé', 'paid')}</p>
+    ${isDeposit ? `<p style="font-size:13px;line-height:1.6;color:#3a3544;margin:0 0 8px;padding:12px 14px;background:#f6f1fc;border-radius:6px;">${deliveryNote(lang)}</p>` : ''}
     ${spaceBlock(lang, params.space, isDeposit ? 'deposit' : 'delivered')}
   `, lang);
   const text = lang === 'en' ? `${greeting}
@@ -297,13 +302,13 @@ export function buildPaymentConfirmationEmail(params: {
 ${messageText}
 
 Amount paid: ${amount} (${isDeposit ? 'deposit 30%' : 'balance 70%'})
-
+${isDeposit ? '\n' + deliveryNote(lang) + '\n' : ''}
 ${spaceText(lang, params.space, isDeposit ? 'deposit' : 'delivered')}` : `${greeting}
 
 ${messageText}
 
 Montant réglé : ${amount} (${isDeposit ? 'acompte 30 %' : 'solde 70 %'})
-
+${isDeposit ? '\n' + deliveryNote(lang) + '\n' : ''}
 ${spaceText(lang, params.space, isDeposit ? 'deposit' : 'delivered')}`;
   return finalize(lang, { subject: tr(lang, `Bunkaio — Paiement reçu (${amount})`, `Bunkaio — Payment received (${amount})`), html, text });
 }
@@ -629,6 +634,160 @@ ${note}
 
 ${spaceText(lang, params.space, 'delivered')}`;
   return finalize(lang, { subject: tr(lang, 'Bunkaio — Vos photos sont prêtes', 'Bunkaio — Your photos are ready'), html, text });
+}
+
+const fmtDate = (lang: Lang, iso: string): string => {
+  const d = new Date(`${iso}T12:00:00Z`);
+  if (Number.isNaN(d.getTime())) return iso;
+  return d.toLocaleDateString(lang === 'en' ? 'en-GB' : 'fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+};
+
+/** Carte « détails de la séance » (date, heure, lieu, prestation). */
+function seanceCard(lang: Lang, s: SeanceInfo): string {
+  const rows: Array<[string, string]> = [[tr(lang, 'Date', 'Date'), fmtDate(lang, s.date)]];
+  if (s.heure) rows.push([tr(lang, 'Heure', 'Time'), s.heure]);
+  if (s.lieu) rows.push([tr(lang, 'Lieu', 'Location'), s.lieu]);
+  if (s.prestation) rows.push([tr(lang, 'Prestation', 'Service'), s.prestation]);
+  const cells = rows.map(([k, v]) => `<tr><td style="padding:6px 0;font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#d9cdf5;width:110px;vertical-align:top;font-family:${FONT};">${k}</td><td style="padding:6px 0;font-size:15px;color:#ffffff;font-family:${FONT};">${escapeHtml(v)}</td></tr>`).join('');
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px;"><tr><td style="background:#0a0a0c;border-radius:10px;padding:18px 24px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0">${cells}</table></td></tr></table>`;
+}
+const seanceCardText = (lang: Lang, s: SeanceInfo): string => [
+  `${tr(lang, 'Date', 'Date')} : ${fmtDate(lang, s.date)}`,
+  s.heure ? `${tr(lang, 'Heure', 'Time')} : ${s.heure}` : '',
+  s.lieu ? `${tr(lang, 'Lieu', 'Location')} : ${s.lieu}` : '',
+  s.prestation ? `${tr(lang, 'Prestation', 'Service')} : ${s.prestation}` : '',
+].filter(Boolean).join('\n');
+
+export interface SeanceInfo { date: string; heure?: string; lieu?: string; prestation?: string }
+
+/** Emails liés à la séance : confirmation, rappel J-2, report, annulation. */
+export function buildSeanceEmail(params: {
+  kind: 'confirmation' | 'reminder' | 'report' | 'cancel';
+  customerName: string;
+  seance: SeanceInfo;
+  /** Pour un report : la nouvelle date/heure/lieu. */
+  newSeance?: SeanceInfo;
+  motif?: string;
+  space?: Space;
+  lang?: Lang;
+}): { subject: string; html: string; text: string } {
+  const lang = params.lang ?? 'fr';
+  const greeting = greet(lang, params.customerName);
+  const t = (fr: string, en: string): string => tr(lang, fr, en);
+  const phone = '07 58 57 31 61';
+  const motif = params.motif ? escapeHtml(params.motif) : '';
+  let title: string; let subject: string; let intro: string; let card: SeanceInfo | undefined = params.seance; let after = ''; let afterText = ''; let stage: Stage | null = null;
+  if (params.kind === 'confirmation') {
+    title = t('Votre séance est confirmée', 'Your session is confirmed');
+    subject = t('Bunkaio — Votre séance est confirmée', 'Bunkaio — Your session is confirmed');
+    intro = t('Voici les informations de votre séance. Vous recevrez un rappel deux jours avant.', 'Here are the details of your session. You will receive a reminder two days before.');
+    stage = 'deposit';
+  } else if (params.kind === 'reminder') {
+    title = t('Votre séance approche', 'Your session is coming up');
+    subject = t('Bunkaio — Rappel : votre séance dans 2 jours', 'Bunkaio — Reminder: your session in 2 days');
+    intro = t('Petit rappel : votre séance a lieu dans deux jours. Voici les informations à garder sous la main.', 'A quick reminder: your session takes place in two days. Here are the details to keep handy.');
+    after = t(`Un imprévu ou une question ? Appelez-nous au ${phone} ou répondez simplement à cet email.`, `An unexpected change or a question? Call us on ${phone} or simply reply to this email.`);
+    stage = 'deposit';
+  } else if (params.kind === 'report') {
+    title = t('Votre séance est reportée', 'Your session has been rescheduled');
+    subject = t('Bunkaio — Votre séance est reportée', 'Bunkaio — Your session has been rescheduled');
+    intro = t('Votre séance est reportée. Voici la nouvelle date, qui remplace la précédente.', 'Your session has been rescheduled. Here is the new date, which replaces the previous one.');
+    card = params.newSeance ?? params.seance;
+    after = motif ? t(`Motif : ${motif}`, `Reason: ${motif}`) : '';
+  } else {
+    title = t('Votre séance est annulée', 'Your session has been cancelled');
+    subject = t('Bunkaio — Annulation de votre séance', 'Bunkaio — Your session has been cancelled');
+    intro = t("Nous vous confirmons l'annulation de la séance suivante :", 'We confirm the cancellation of the following session:');
+    after = (motif ? t(`Motif : ${motif}. `, `Reason: ${motif}. `) : '') + t("Pour toute question (acompte, nouvelle date), répondez simplement à cet email : nous trouverons la meilleure solution avec vous.", 'For any question (deposit, new date), simply reply to this email: we will find the best solution with you.');
+  }
+  const afterHtml = after ? `<p style="font-size:14px;line-height:1.6;color:#3a3544;margin:0 0 8px;">${after}</p>` : '';
+  const html = emailShell(`
+    <h1 style="font-size:20px;margin:0 0 16px;">${title}</h1>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">${greeting}</p>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">${intro}</p>
+    ${seanceCard(lang, card)}
+    ${afterHtml}
+    ${stage ? spaceBlock(lang, params.space, stage) : ''}
+  `, lang);
+  const text = `${greeting}
+
+${intro}
+
+${seanceCardText(lang, card)}
+${after ? '\n' + after.replace(/<[^>]+>/g, '') + '\n' : ''}${stage ? '\n' + spaceText(lang, params.space, stage) : ''}`;
+  void afterText;
+  return finalize(lang, { subject, html, text });
+}
+
+/** Accusé de réception des formulaires du site (contact, collaboration, candidature partenaire, demande d'espace). */
+export function buildAcknowledgementEmail(params: {
+  kind: 'contact' | 'collab' | 'partner' | 'account';
+  customerName: string;
+  space?: Space;
+  lang?: Lang;
+}): { subject: string; html: string; text: string } {
+  const lang = params.lang ?? 'fr';
+  const greeting = greet(lang, params.customerName);
+  const t = (fr: string, en: string): string => tr(lang, fr, en);
+  const copy = {
+    contact: { title: t('Nous avons bien reçu votre message', 'We have received your message'),
+      subject: t('Bunkaio — Nous avons bien reçu votre message', 'Bunkaio — We have received your message'),
+      body: t("Merci de nous avoir écrit. Votre message est bien arrivé et nous vous répondons dans les meilleurs délais (du lundi au samedi, 9h–18h).", 'Thank you for writing to us. Your message has arrived and we will reply as soon as possible (Monday to Saturday, 9am–6pm).') },
+    collab: { title: t('Nous avons bien reçu votre proposition', 'We have received your proposal'),
+      subject: t('Bunkaio — Nous avons bien reçu votre proposition de collaboration', 'Bunkaio — We have received your collaboration proposal'),
+      body: t("Merci pour votre proposition de collaboration. Chaque projet est étudié individuellement : s'il correspond à notre ligne éditoriale, nous revenons vers vous.", 'Thank you for your collaboration proposal. Each project is reviewed individually: if it matches our editorial line, we will get back to you.') },
+    partner: { title: t('Nous avons bien reçu votre candidature', 'We have received your application'),
+      subject: t('Bunkaio — Nous avons bien reçu votre candidature partenaire', 'Bunkaio — We have received your partner application'),
+      body: t("Merci pour votre candidature au réseau de partenaires BUNKAIO. Nous l'étudions avec attention et revenons vers vous. Si elle est retenue, votre espace partenaire est créé et vos accès vous sont envoyés par email.", 'Thank you for applying to the BUNKAIO partner network. We are reviewing it carefully and will get back to you. If it is accepted, your partner area is created and your login details are sent to you by email.') },
+    account: { title: t("Votre demande d'espace est bien reçue", 'Your area request has been received'),
+      subject: t("Bunkaio — Nous avons bien reçu votre demande d'espace", 'Bunkaio — We have received your area request'),
+      body: t("Merci pour votre demande. Votre espace est créé par notre équipe, puis votre code d'accès personnel vous est envoyé par email.", 'Thank you for your request. Your area is created by our team, then your personal access code is sent to you by email.') },
+  }[params.kind];
+  const block = params.kind === 'partner' ? spaceBlock(lang, 'partner', 'quote') : params.kind === 'account' ? spaceBlock(lang, params.space, 'access') : '';
+  const blockText = params.kind === 'partner' ? '\n\n' + spaceText(lang, 'partner', 'quote') : params.kind === 'account' ? '\n\n' + spaceText(lang, params.space, 'access') : '';
+  const html = emailShell(`
+    <h1 style="font-size:20px;margin:0 0 16px;">${copy.title}</h1>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">${greeting}</p>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 8px;">${copy.body}</p>
+    ${block}
+  `, lang);
+  return finalize(lang, { subject: copy.subject, html, text: `${greeting}\n\n${copy.body}${blockText}` });
+}
+
+/** Relance unique si le prospect n'a pas donné suite à son devis. */
+export function buildQuoteFollowUpEmail(params: { customerName: string; space?: Space; lang?: Lang }): { subject: string; html: string; text: string } {
+  const lang = params.lang ?? 'fr';
+  const greeting = greet(lang, params.customerName);
+  const t = (fr: string, en: string): string => tr(lang, fr, en);
+  const body = t(
+    "Nous revenons vers vous au sujet de votre demande de devis. Avez-vous eu le temps d'y réfléchir ? Si vous avez la moindre question, ou si vous souhaitez ajuster le projet (formule, options, date), répondez simplement à cet email : nous en discutons avec plaisir.",
+    'We are following up on your quote request. Have you had time to think it over? If you have any question, or if you would like to adjust the project (package, options, date), simply reply to this email: we will be happy to discuss it.');
+  const body2 = t("Pour réserver votre date, l'acompte de 30 % valide votre créneau.", 'To book your date, a 30% deposit secures your slot.');
+  const html = emailShell(`
+    <h1 style="font-size:20px;margin:0 0 16px;">${t('Où en êtes-vous de votre projet ?', 'How is your project coming along?')}</h1>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">${greeting}</p>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 16px;">${body}</p>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 8px;">${body2}</p>
+    ${spaceBlock(lang, params.space, 'quote')}
+  `, lang);
+  return finalize(lang, { subject: t('Bunkaio — Où en est votre projet ?', 'Bunkaio — How is your project coming along?'), html, text: `${greeting}\n\n${body}\n\n${body2}\n\n${spaceText(lang, params.space, 'quote')}` });
+}
+
+/** Rappel envoyé quand l'acompte est réglé mais le moodboard n'a pas été créé. */
+export function buildMoodboardReminderEmail(params: { customerName: string; space?: Space; lang?: Lang }): { subject: string; html: string; text: string } {
+  const lang = params.lang ?? 'fr';
+  const greeting = greet(lang, params.customerName);
+  const t = (fr: string, en: string): string => tr(lang, fr, en);
+  const body = t(
+    "Votre acompte est bien enregistré et votre date est réservée. Il vous reste une étape pour que votre séance soit parfaitement préparée : créer votre moodboard. Quelques minutes suffisent pour nous partager votre vision (direction artistique, ambiance, palette, inspirations).",
+    'Your deposit is registered and your date is booked. One step remains to prepare your session perfectly: creating your moodboard. A few minutes is all it takes to share your vision (art direction, mood, palette, inspiration).');
+  const html = emailShell(`
+    <h1 style="font-size:20px;margin:0 0 16px;">${t('Votre moodboard vous attend', 'Your moodboard is waiting')}</h1>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">${greeting}</p>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 8px;">${body}</p>
+    ${spaceBlock(lang, params.space, 'deposit')}
+  `, lang);
+  return finalize(lang, { subject: t('Bunkaio — Créez votre moodboard avant la séance', 'Bunkaio — Create your moodboard before the session'), html, text: `${greeting}\n\n${body}\n\n${spaceText(lang, params.space, 'deposit')}` });
 }
 
 function escapeHtml(value: string): string {

@@ -5,6 +5,17 @@ const FORMSPREE_URL = 'https://formspree.io/f/mnjybndv';
    À remplacer par l'URL réelle après déploiement du Worker (voir server/README.md).
    Tant que cette URL n'est pas configurée, sendQuizLeadToStripe() échoue silencieusement
    et n'a aucun impact sur le quiz (fire-and-forget, voir submitQuiz()). */
+/* Accusé de réception par email (envoyé par le Worker) — best-effort, ne bloque jamais le formulaire. */
+function sendAck(kind, name, email, space){
+  try {
+    fetch('https://bunkaio-quiz-stripe.bunkaio.workers.dev/ack', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ kind: kind, name: name, email: email, space: space || 'client', lang: (typeof LANG !== 'undefined' ? LANG : 'fr') }),
+      keepalive: true
+    }).catch(() => {});
+  } catch (e) {}
+}
 const QUIZ_LEAD_WORKER_URL = 'https://bunkaio-quiz-stripe.bunkaio.workers.dev/quiz-lead';
 
 const DELAY_LABELS = {
@@ -3549,6 +3560,7 @@ function sendContact(e){
   const msg = document.getElementById('ctMsg').value.trim();
   const btn = document.querySelector('#ctForm .btn-solid');
   if (btn) btn.disabled = true;
+  sendAck('contact', n, em);
   fetch(FORMSPREE_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
@@ -3625,6 +3637,7 @@ function sendCollab(e){
   }
   const btn = document.querySelector('#collabForm .btn-solid');
   if (btn) btn.disabled = true;
+  sendAck('collab', n, em);
   fetch(FORMSPREE_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
@@ -3729,6 +3742,7 @@ function sendApply(e){
   }
   const btn = document.querySelector('#applyForm .btn-solid');
   if (btn) btn.disabled = true;
+  sendAck('partner', n, em, 'partner');
   fetch(FORMSPREE_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
@@ -3833,6 +3847,7 @@ function doRegister(){
   if (!n || !em || !em.includes('@') || !act) { err.style.display = 'block'; return; }
   const typeLabel = loginType === 'client' ? 'CLIENT' : 'PARTENAIRE';
   if (btn) btn.disabled = true;
+  sendAck('account', n, em, loginType === 'client' ? 'client' : 'partner');
   fetch(FORMSPREE_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },

@@ -2,7 +2,10 @@ import type Stripe from 'stripe';
 import { adminAccountView, getAccount, listAccounts, putAccount, sanitizeAccount, upsertAccountFromAdmin, verifyLogin } from './accounts';
 import { handleCollect, handleStats, purgeOldAnalytics } from './analytics';
 import { appendJournal, diffAccountActivity, flushActivityNotifications, queueActivityNotification } from './activity';
+import { claimAckSlot, markDepositPaid, markInvoiced, markLead, runDailyAutomations } from './automations';
 import {
+  buildAcknowledgementEmail,
+  buildSeanceEmail,
   buildAccessCodeEmail,
   buildPhotosReadyEmail,
   buildAdminPaymentNotificationEmail,
@@ -232,6 +235,9 @@ function isValidAdminAccountUpsertPayload(body: unknown): body is AdminAccountUp
     (b.sendAccessMail === undefined || typeof b.sendAccessMail === 'boolean') &&
     (b.sendPhotosMail === undefined || typeof b.sendPhotosMail === 'boolean') &&
     (b.lang === undefined || b.lang === 'fr' || b.lang === 'en') &&
+    (b.seance === undefined || b.seance === null || (typeof b.seance === 'object' && typeof (b.seance as Record<string, unknown>).date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(String((b.seance as Record<string, unknown>).date)))) &&
+    (b.sendSeanceMail === undefined || b.sendSeanceMail === 'confirmation' || b.sendSeanceMail === 'report' || b.sendSeanceMail === 'cancel') &&
+    (b.motif === undefined || typeof b.motif === 'string') &&
     (b.commandes === undefined || Array.isArray(b.commandes)) &&
     (b.paiements === undefined || Array.isArray(b.paiements)) &&
     (b.factures === undefined || Array.isArray(b.factures)) &&
@@ -389,7 +395,7 @@ async function handleAdminAccounts(request: Request, env: Env, headers: Record<s
       const account = await upsertAccountFromAdmin(env, body);
       console.log('[accounts] compte créé/mis à jour par l\'admin', { type: account.type, email: account.email });
       const lang = normalizeLang(body.lang);
-      const emails: { access?: boolean; photos?: boolean | string } = {};
+      const emails: { access?: boolean; photos?: boolean | string; seance?: boolean | string } = {};
       if (body.sendAccessMail && body.code) {
         try {
           const m = buildAccessCodeEmail({ customerName: account.nom ?? '', email: account.email, code: body.code, space: account.type, lang });
@@ -416,6 +422,24 @@ async function handleAdminAccounts(request: Request, env: Env, headers: Record<s
           }
         }
       }
+      if (body.sendSeanceMail) {
+        if (!account.seance) {
+          emails.seance = 'no_seance';
+        } else {
+          try {
+            if (body.sendSeanceMail === 'cancel') {
+              account.seance = { ...account.seance, statut: 'annulee' };
+              await putAccount(env, account);
+            }
+            const m = buildSeanceEmail({ kind: body.sendSeanceMail, customerName: account.nom ?? '', seance: account.seance, motif: body.motif, space: account.type, lang });
+            await sendEmail(env, account.email, m.subject, m.html, m.text);
+            emails.seance = true;
+          } catch (err) {
+            console.error('[accounts] échec email de séance', err);
+            emails.seance = false;
+          }
+        }
+      }
       return jsonResponse({ ok: true, account: sanitizeAccount(account), emails }, 200, headers);
     } catch (err) {
       if (err instanceof Error && err.message === 'code_required_for_new_account') {
@@ -435,6 +459,32 @@ async function detectSpace(env: Env, email: string): Promise<'client' | 'partner
     return (await getAccount(env, 'partner', email)) ? 'partner' : 'client';
   } catch {
     return 'client';
+  }
+}
+
+/** Accusé de réception des formulaires du site (public, limité à 1 envoi/heure par adresse et par type). */
+async function handleAck(request: Request, env: Env, headers: Record<string, string>): Promise<Response> {
+  if (request.method !== 'POST') return jsonResponse({ ok: false, error: 'method_not_allowed' }, 405, headers);
+  let body: Record<string, unknown>;
+  try {
+    body = (await request.json()) as Record<string, unknown>;
+  } catch {
+    return jsonResponse({ ok: false, error: 'invalid_json' }, 400, headers);
+  }
+  const kind = body.kind;
+  const email = typeof body.email === 'string' ? body.email.trim() : '';
+  const name = typeof body.name === 'string' ? body.name.trim().slice(0, 120) : '';
+  if ((kind !== 'contact' && kind !== 'collab' && kind !== 'partner' && kind !== 'account') || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 200) {
+    return jsonResponse({ ok: false, error: 'invalid_payload' }, 400, headers);
+  }
+  if (!(await claimAckSlot(env, kind, email))) return jsonResponse({ ok: true, skipped: true }, 200, headers);
+  try {
+    const m = buildAcknowledgementEmail({ kind, customerName: name, space: body.space === 'partner' ? 'partner' : 'client', lang: normalizeLang(body.lang) });
+    await sendEmail(env, email, m.subject, m.html, m.text);
+    return jsonResponse({ ok: true }, 200, headers);
+  } catch (err) {
+    console.error('[ack] échec envoi', err);
+    return jsonResponse({ ok: false, error: 'email_error' }, 502, headers);
   }
 }
 
@@ -469,6 +519,7 @@ async function handleQuizLead(request: Request, env: Env, headers: Record<string
   try {
     const stripe = createStripeClient(env.STRIPE_SECRET_KEY);
     const result = await upsertQuizCustomer(stripe, body);
+    await markLead(env, body.email, body.name, normalizeLang(body.lang)).catch((err) => console.error('[quiz-lead] marqueur de relance', err));
     console.log('[quiz-lead] client Stripe synchronisé', result);
 
     // Email de confirmation au prospect — best-effort, ne doit jamais faire
@@ -514,6 +565,7 @@ async function handleCreateDepositInvoice(request: Request, env: Env, headers: R
   try {
     const stripe = createStripeClient(env.STRIPE_SECRET_KEY);
     const result = await createDepositInvoice(stripe, body);
+    await markInvoiced(env, body.email).catch((err) => console.error('[create-deposit-invoice] marqueur', err));
     console.log('[create-deposit-invoice] facture créée', result);
 
     try {
@@ -654,6 +706,9 @@ async function handleStripeWebhook(request: Request, env: Env, headers: Record<s
 
   const customerLang = await getCustomerLang(stripe, customerId);
   console.log('[stripe-webhook] facture payée', { invoiceId: invoice.id, kind, amountEur, customerEmail, customerLang });
+  if (kind === 'acompte' && customerEmail) {
+    await markDepositPaid(env, customerEmail, customerName, customerLang).catch((err) => console.error('[stripe-webhook] marqueur acompte', err));
+  }
 
   if (customerEmail) {
     try {
@@ -958,6 +1013,9 @@ export default {
     }
 
     const url = new URL(request.url);
+    if (url.pathname === '/ack') {
+      return handleAck(request, env, headers);
+    }
     if (url.pathname === QUIZ_LEAD_ROUTE) {
       return handleQuizLead(request, env, headers);
     }
@@ -1014,6 +1072,7 @@ export default {
       return;
     }
     await purgeOldAnalytics(env);
+    await runDailyAutomations(env);
     try {
       await sendOverdueInvoiceReminders(env);
     } catch (err) {

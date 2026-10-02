@@ -107,6 +107,8 @@ export async function upsertAccountFromAdmin(env: Env, payload: AdminAccountUpse
     adresse: payload.adresse ?? existing?.adresse,
     etapeActuelle: payload.etapeActuelle ?? existing?.etapeActuelle,
     lightroomUrl: payload.lightroomUrl ?? existing?.lightroomUrl,
+    lang: payload.lang ?? existing?.lang,
+    seance: payload.seance === null ? undefined : payload.seance ?? existing?.seance,
     commandes: payload.commandes ?? existing?.commandes,
     paiements: payload.paiements ?? existing?.paiements,
     factures: payload.factures ?? existing?.factures,

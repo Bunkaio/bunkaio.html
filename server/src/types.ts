@@ -247,6 +247,8 @@ export interface CollaborationResponse {
 }
 
 /** Enregistrement complet d'un compte, tel que stocké dans ACCOUNTS_KV. */
+export interface AccountSeance { date: string; heure?: string; lieu?: string; prestation?: string; statut?: 'prevue' | 'annulee' }
+
 export interface AccountRecord {
   type: AccountType;
   email: string;
@@ -256,6 +258,10 @@ export interface AccountRecord {
   adresse?: string;
   etapeActuelle?: number;
   lightroomUrl?: string;
+  /** Langue des emails envoyés à ce compte. */
+  lang?: 'fr' | 'en';
+  /** Prochaine séance (saisie admin) : alimente rappel J-2, confirmation, report et annulation. */
+  seance?: AccountSeance;
   commandes?: AccountOrder[];
   paiements?: AccountPayment[];
   factures?: AccountInvoice[];
@@ -337,6 +343,10 @@ export interface AdminAccountUpsertPayload {
   sendAccessMail?: boolean;
   sendPhotosMail?: boolean;
   lang?: 'fr' | 'en';
+  seance?: AccountSeance | null;
+  /** Envoie l'email de séance correspondant (confirmation, report ou annulation) à l'enregistrement. */
+  sendSeanceMail?: 'confirmation' | 'report' | 'cancel';
+  motif?: string;
   commandes?: AccountOrder[];
   paiements?: AccountPayment[];
   factures?: AccountInvoice[];
