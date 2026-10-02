@@ -195,6 +195,48 @@ export interface AccountPartnerInfo {
   statut?: string; // 'En attente' | 'Actif' | 'Terminé'
   dateAdhesion?: string;
   articleUrl?: string; // lien vers leur mise en avant éditoriale, une fois publiée
+  typePrestataire?: string; // id d'un type de PARTNER_PROVIDER_TYPES (js/script.js) — choisi par le partenaire
+  disponibleCollab?: boolean; // ouvert aux prestations collaboratives rémunérées
+  presentation?: string; // courte présentation affichée à l'équipe Bunkaio
+}
+
+/** Promotion accordée à un partenaire (en plus du -20% permanent). Renseignée par l'admin. */
+export interface AccountPromotion {
+  titre: string;
+  description?: string;
+  code?: string;
+  remise?: string; // libellé libre, ex. "-10% supplémentaires"
+  validiteJusquAu?: string;
+  statut?: string; // 'Active' | 'Expirée' | 'Utilisée'
+}
+
+/** Contact du réseau d'un partenaire. `origine: 'bunkaio'` = mise en relation par l'équipe (lecture seule côté partenaire). */
+export interface NetworkContact {
+  id: string;
+  nom: string;
+  domaine?: string;
+  role?: string;
+  contact?: string;
+  lien?: string;
+  note?: string;
+  origine?: 'partenaire' | 'bunkaio';
+}
+
+/** Mission collaborative rémunérée proposée par Bunkaio. Le partenaire ne peut que l'accepter ou la décliner. */
+export interface Collaboration {
+  id: string;
+  titre: string;
+  description?: string;
+  date?: string;
+  lieu?: string;
+  remuneration?: string;
+  statut: string; // 'Proposée' | 'Acceptée' | 'Déclinée' | 'Terminée' | 'Payée'
+}
+
+/** Réponse du partenaire à une mission proposée (payload /account-update). */
+export interface CollaborationResponse {
+  id: string;
+  statut: 'Acceptée' | 'Déclinée';
 }
 
 /** Enregistrement complet d'un compte, tel que stocké dans ACCOUNTS_KV. */
@@ -213,6 +255,9 @@ export interface AccountRecord {
   abonnement?: AccountSubscription;
   moodboards?: Moodboard[];
   partenariat?: AccountPartnerInfo;
+  promotions?: AccountPromotion[];
+  reseau?: NetworkContact[];
+  collaborations?: Collaboration[];
 }
 
 /** Version du compte renvoyée au front — jamais le hash du code. */
@@ -238,6 +283,11 @@ export interface AccountSelfUpdatePayload {
   telephone?: string;
   adresse?: string;
   moodboards?: Moodboard[];
+  /** Partenaires uniquement — seuls ces 3 champs de `partenariat` sont modifiables par le partenaire. */
+  partenariat?: Pick<AccountPartnerInfo, 'typePrestataire' | 'disponibleCollab' | 'presentation'>;
+  /** Partenaires uniquement — remplace les contacts ajoutés par le partenaire ; ceux de Bunkaio sont conservés. */
+  reseau?: NetworkContact[];
+  collaborationReponses?: CollaborationResponse[];
 }
 
 /** Payload de POST /accounts (admin) — crée ou met à jour un compte. `code` est optionnel
@@ -257,6 +307,9 @@ export interface AdminAccountUpsertPayload {
   abonnement?: AccountSubscription | null;
   moodboards?: Moodboard[];
   partenariat?: AccountPartnerInfo | null;
+  promotions?: AccountPromotion[];
+  reseau?: NetworkContact[];
+  collaborations?: Collaboration[];
 }
 
 /** Ligne légère renvoyée par GET /accounts (sans le détail commandes/paiements/etc.). */

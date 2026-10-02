@@ -663,6 +663,9 @@ const I18N = {
   }
 };
 
+Object.assign(I18N.fr, { 'acc-promotions':'Mes promotions', 'acc-reseau':'Mon réseau', 'acc-collabs':'Mes collaborations' });
+Object.assign(I18N.en, { 'acc-promotions':'My promotions', 'acc-reseau':'My network', 'acc-collabs':'My collaborations' });
+
 function t(obj){ return typeof obj === 'object' ? obj[LANG] : obj; }
 
 function updatePlaceholders(){
@@ -2909,7 +2912,7 @@ function doLogout(){
 }
 
 function setAccountTab(tab){
-  ['orders','partenariat','subs','moodboards','payments','factures','portfolio','infos'].forEach(x => {
+  ['orders','partenariat','promotions','reseau','collabs','subs','moodboards','payments','factures','portfolio','infos'].forEach(x => {
     document.getElementById('atab-' + x).classList.toggle('active', x === tab);
     document.getElementById('asec-' + x).classList.toggle('active', x === tab);
   });
@@ -3038,12 +3041,125 @@ const PARTNER_SECTORS = [
   { id:'evenementiel', name:{fr:'Événementiel & lieux', en:'Events & venues'} },
 ];
 
+/* Types de prestataire proposés au partenaire, regroupés par secteur
+   (mêmes identifiants que PARTNER_SECTORS). Liste alignée côté Worker
+   (PROVIDER_TYPE_IDS dans server/src/index.ts) : tout ajout ici doit y
+   être reporté, sinon la sauvegarde sera refusée. */
+const PARTNER_PROVIDER_TYPES = [
+  { id:'architecte',      sector:'architecture', name:{fr:'Architecte', en:'Architect'} },
+  { id:'archi-interieur', sector:'architecture', name:{fr:'Architecte d\'intérieur', en:'Interior architect'} },
+  { id:'constructeur',    sector:'architecture', name:{fr:'Constructeur / maître d\'œuvre', en:'Builder / project manager'} },
+  { id:'promoteur',       sector:'architecture', name:{fr:'Promoteur', en:'Property developer'} },
+  { id:'agent-immo',      sector:'architecture', name:{fr:'Agent immobilier premium', en:'Premium real-estate agent'} },
+  { id:'cuisiniste',      sector:'amenagement',  name:{fr:'Cuisiniste', en:'Kitchen specialist'} },
+  { id:'paysagiste',      sector:'amenagement',  name:{fr:'Paysagiste', en:'Landscaper'} },
+  { id:'pisciniste',      sector:'amenagement',  name:{fr:'Pisciniste', en:'Pool builder'} },
+  { id:'agenceur',        sector:'amenagement',  name:{fr:'Menuisier / agenceur', en:'Joiner / fitter'} },
+  { id:'eclairagiste',    sector:'amenagement',  name:{fr:'Éclairagiste', en:'Lighting designer'} },
+  { id:'artisan-art',     sector:'artisanat',    name:{fr:'Artisan d\'art', en:'Art craftsperson'} },
+  { id:'ebeniste',        sector:'artisanat',    name:{fr:'Ébéniste', en:'Cabinetmaker'} },
+  { id:'ceramiste',       sector:'artisanat',    name:{fr:'Céramiste / verrier', en:'Ceramicist / glassmaker'} },
+  { id:'bijoutier',       sector:'artisanat',    name:{fr:'Bijoutier / joaillier', en:'Jeweller'} },
+  { id:'createur-mode',   sector:'marques',      name:{fr:'Créateur de mode', en:'Fashion designer'} },
+  { id:'cosmetique',      sector:'marques',      name:{fr:'Marque cosmétique', en:'Cosmetics brand'} },
+  { id:'marque-deco',     sector:'marques',      name:{fr:'Marque déco / lifestyle', en:'Home & lifestyle brand'} },
+  { id:'traiteur',        sector:'evenementiel', name:{fr:'Traiteur', en:'Caterer'} },
+  { id:'lieu',            sector:'evenementiel', name:{fr:'Lieu de réception', en:'Event venue'} },
+  { id:'event-planner',   sector:'evenementiel', name:{fr:'Organisateur d\'événements', en:'Event planner'} },
+  { id:'fleuriste',       sector:'evenementiel', name:{fr:'Fleuriste / décorateur', en:'Florist / decorator'} },
+  { id:'beaute',          sector:'evenementiel', name:{fr:'Maquilleur·se / coiffeur·se', en:'Make-up artist / hairstylist'} },
+  { id:'stylisme',        sector:'evenementiel', name:{fr:'Styliste / scénographe', en:'Stylist / set designer'} },
+];
+const PARTNER_DISCOUNT = 20;
+
+let partnerEditType = false;
+let partnerDraftType = null;
+
+function partnerProviderType(id){ return PARTNER_PROVIDER_TYPES.find(p => p.id === id); }
+
+/* Écrit uniquement les champs partenaire modifiables par le partenaire
+   (typePrestataire, disponibleCollab, presentation, reseau, réponses aux
+   missions) — même ré-authentification par USER_CODE que saveMoodboards().
+   Le Worker ignore tout autre champ de `partenariat` (statut, secteur…). */
+function savePartnerData(extra, onSuccess, onError){
+  fetch(ACCOUNTS_API_BASE + '/account-update', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ type: USER.type, email: USER.email, code: USER_CODE, ...extra })
+  }).then(r => r.json()).then(data => {
+    if (!data.ok || !data.account) { if (onError) onError(); return; }
+    USER = data.account;
+    if (onSuccess) onSuccess();
+  }).catch(() => { if (onError) onError(); });
+}
+
 function renderAccPartner(){
   const el = document.getElementById('accPartnerContent');
   if (!el || !USER) return;
   const info = USER.partenariat || {};
-  const sector = PARTNER_SECTORS.find(s => s.id === info.secteur);
+  const ptype = partnerProviderType(info.typePrestataire);
+  const sector = PARTNER_SECTORS.find(s => s.id === (ptype ? ptype.sector : info.secteur));
   const statut = info.statut || I18N[LANG]['partner-statut-attente'];
+  const choosing = !ptype || partnerEditType;
+
+  const typeBlock = choosing ? `
+      <div class="mb-detail-block">
+        <div class="mb-detail-label">${t({fr:'Votre type de prestataire', en:'Your provider type'})}</div>
+        <p class="acc-info-note">${t({fr:'Sélectionnez la catégorie qui décrit le mieux votre activité. Elle détermine votre statut au sein du réseau Bunkaio et les missions collaboratives qui peuvent vous être proposées.', en:'Pick the category that best describes your business. It sets your status within the Bunkaio network and the collaborative missions you may be offered.'})}</p>
+        ${PARTNER_SECTORS.map(sec => `
+          <div class="pt-group">
+            <div class="pt-group-name">${t(sec.name)}</div>
+            <div class="mb-chip-grid pt-chips">
+              ${PARTNER_PROVIDER_TYPES.filter(p => p.sector === sec.id).map(p =>
+                `<button type="button" class="mb-chip ${partnerDraftType === p.id ? 'active' : ''}" onclick="selectPartnerType('${p.id}')">${t(p.name)}</button>`).join('')}
+            </div>
+          </div>`).join('')}
+        <div class="mb-wizard-actions pt-actions">
+          <button type="button" class="btn btn-solid" id="ptSaveBtn" onclick="savePartnerType()" ${partnerDraftType ? '' : 'disabled'}><span>${t({fr:'Valider mon statut', en:'Confirm my status'})}</span></button>
+          ${ptype ? `<button type="button" class="btn btn-ghost" onclick="cancelPartnerTypeEdit()"><span>${t({fr:'Annuler', en:'Cancel'})}</span></button>` : ''}
+        </div>
+      </div>` : `
+      <div class="pt-status">
+        <div class="pt-status-badge">
+          <div class="pt-status-label">${t({fr:'Votre statut', en:'Your status'})}</div>
+          <div class="pt-status-value">${t({fr:'Partenaire prestataire', en:'Partner provider'})} · ${t(ptype.name)}</div>
+        </div>
+        <button type="button" class="pt-link" onclick="editPartnerType()">${t({fr:'Modifier', en:'Change'})}</button>
+      </div>`;
+
+  const dispo = !!info.disponibleCollab;
+  const advantages = ptype ? `
+      <div class="mb-detail-block">
+        <div class="mb-detail-label">${t({fr:'Vos avantages de partenaire prestataire', en:'Your provider-partner benefits'})}</div>
+        <div class="pt-adv-grid">
+          <div class="pt-adv">
+            <div class="pt-adv-big">-${PARTNER_DISCOUNT}%</div>
+            <div class="pt-adv-title">${t({fr:'Sur chaque prestation du catalogue', en:'On every catalogue service'})}</div>
+            <div class="pt-adv-text">${t({fr:'Tarif partenaire permanent sur toutes les prestations Bunkaio, options comprises. Détail dans « Mes promotions ».', en:'A permanent partner rate on every Bunkaio service, add-ons included. Details in "My promotions".'})}</div>
+          </div>
+          <div class="pt-adv">
+            <div class="pt-adv-big pt-adv-icon">€</div>
+            <div class="pt-adv-title">${t({fr:'Missions collaboratives rémunérées', en:'Paid collaborative missions'})}</div>
+            <div class="pt-adv-text">${t({fr:'Bunkaio peut vous solliciter pour intervenir sur des projets clients, selon votre type de prestataire. Retrouvez-les dans « Mes collaborations ».', en:'Bunkaio may call on you for client projects, based on your provider type. Find them in "My collaborations".'})}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-detail-block">
+        <div class="mb-detail-label">${t({fr:'Disponibilité pour les collaborations', en:'Availability for collaborations'})}</div>
+        <div class="mb-chip-grid pt-chips">
+          <button type="button" class="mb-chip ${dispo ? 'active' : ''}" onclick="setCollabAvailability(true)">${t({fr:'Disponible', en:'Available'})}</button>
+          <button type="button" class="mb-chip ${!dispo ? 'active' : ''}" onclick="setCollabAvailability(false)">${t({fr:'Indisponible pour le moment', en:'Not available right now'})}</button>
+        </div>
+      </div>
+
+      <div class="mb-detail-block">
+        <div class="mb-detail-label">${t({fr:'Votre présentation', en:'Your introduction'})}</div>
+        <div class="fgroup" style="margin-bottom:14px">
+          <textarea id="ptPresentation" maxlength="600" placeholder="${t({fr:'Votre savoir-faire, vos références, ce qui vous distingue — l\'équipe Bunkaio s\'en sert pour vous proposer les bonnes missions.', en:'Your craft, references and what sets you apart — the Bunkaio team uses this to offer you the right missions.'})}">${escHtml(info.presentation || '')}</textarea>
+        </div>
+        <button type="button" class="btn btn-ghost" id="ptPresBtn" onclick="savePartnerPresentation()"><span>${t({fr:'Enregistrer', en:'Save'})}</span></button>
+      </div>` : '';
 
   el.innerHTML = `
     <div class="acc-info-card">
@@ -3054,6 +3170,9 @@ function renderAccPartner(){
         </div>
         <span class="status-pill ${statusClass(statut)}">${escHtml(statut)}</span>
       </div>
+
+      ${typeBlock}
+      ${advantages}
 
       ${info.articleUrl ? `
       <div class="mb-detail-block">
@@ -3066,7 +3185,7 @@ function renderAccPartner(){
 
       <div class="mb-detail-block">
         <div class="mb-detail-label">${I18N[LANG]['partner-benefits-label']}</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
+        <div class="pt-prog-grid">
           <div class="cred-card"><div class="cred-num">01</div><div class="cred-title">${I18N[LANG]['p-b1-title']}</div><div class="cred-text">${I18N[LANG]['p-b1-text']}</div></div>
           <div class="cred-card"><div class="cred-num">02</div><div class="cred-title">${I18N[LANG]['p-b2-title']}</div><div class="cred-text">${I18N[LANG]['p-b2-text']}</div></div>
           <div class="cred-card"><div class="cred-num">03</div><div class="cred-title">${I18N[LANG]['p-b3-title']}</div><div class="cred-text">${I18N[LANG]['p-b3-text']}</div></div>
@@ -3079,6 +3198,217 @@ function renderAccPartner(){
         <div class="mb-detail-vision">${I18N[LANG]['p-places-text']}</div>
       </div>
     </div>`;
+}
+
+function selectPartnerType(id){
+  partnerDraftType = id;
+  renderAccPartner();
+}
+function editPartnerType(){
+  partnerEditType = true;
+  partnerDraftType = (USER.partenariat || {}).typePrestataire || null;
+  renderAccPartner();
+}
+function cancelPartnerTypeEdit(){
+  partnerEditType = false; partnerDraftType = null;
+  renderAccPartner();
+}
+function savePartnerType(){
+  if (!partnerDraftType) return;
+  const btn = document.getElementById('ptSaveBtn');
+  if (btn) btn.disabled = true;
+  savePartnerData({ partenariat: { typePrestataire: partnerDraftType } }, () => {
+    partnerEditType = false; partnerDraftType = null;
+    renderAccount(); setAccountTab('partenariat');
+  }, () => { if (btn) btn.disabled = false; });
+}
+function setCollabAvailability(value){
+  savePartnerData({ partenariat: { disponibleCollab: value } }, () => { renderAccPartner(); });
+}
+function savePartnerPresentation(){
+  const btn = document.getElementById('ptPresBtn');
+  const value = document.getElementById('ptPresentation').value.trim();
+  if (btn) btn.disabled = true;
+  savePartnerData({ partenariat: { presentation: value } }, () => { renderAccPartner(); }, () => { if (btn) btn.disabled = false; });
+}
+
+/* ═══════════════ ESPACE PARTENAIRE — MES PROMOTIONS ═══════════════
+   Le -20% est permanent et lu depuis PARTNER_DISCOUNT ; les prix du
+   tableau sont calculés depuis CATS (jamais dupliqués). Les promotions
+   additionnelles viennent de USER.promotions, renseignées par l'admin. */
+function partnerPrice(price){ return Math.round(price * (100 - PARTNER_DISCOUNT) / 100); }
+function eur(n){ return n.toLocaleString(LANG === 'fr' ? 'fr-FR' : 'en-GB') + ' €'; }
+
+function renderAccPromos(){
+  const el = document.getElementById('accPromosContent');
+  if (!el || !USER) return;
+  const promos = USER.promotions || [];
+  const rows = CATS.filter(c => c.tiers && TIERS.some(tr => c.tiers[tr.id] && typeof c.tiers[tr.id].price === 'number')).map(c => {
+    const cells = TIERS.map(tr => {
+      const p = c.tiers[tr.id] && c.tiers[tr.id].price;
+      return typeof p === 'number'
+        ? `<td><span class="pt-price-old">${eur(p)}</span> <strong>${eur(partnerPrice(p))}</strong></td>` : '<td>—</td>';
+    }).join('');
+    return `<tr><td>${t(c.name)}</td>${cells}</tr>`;
+  }).join('');
+
+  el.innerHTML = `
+    <div class="acc-info-card pt-hero-promo">
+      <div class="pt-hero-big">-${PARTNER_DISCOUNT}%</div>
+      <div>
+        <div class="pt-hero-title">${t({fr:'Tarif partenaire permanent', en:'Permanent partner rate'})}</div>
+        <p class="acc-info-note" style="margin:0">${t({fr:'Sur chaque prestation du catalogue Bunkaio, options comprises, tant que votre partenariat est actif.', en:'On every Bunkaio catalogue service, add-ons included, for as long as your partnership is active.'})}</p>
+      </div>
+    </div>
+
+    <div class="pt-section-label">${t({fr:'Promotions en cours', en:'Current promotions'})}</div>
+    ${promos.length ? `<div class="pt-promo-list">${promos.map(p => `
+      <div class="pt-promo">
+        <div class="pt-promo-top">
+          <div class="pt-promo-title">${escHtml(p.titre)}</div>
+          ${p.remise ? `<span class="mb-tag">${escHtml(p.remise)}</span>` : ''}
+        </div>
+        ${p.description ? `<p class="pt-promo-text">${escHtml(p.description)}</p>` : ''}
+        <div class="pt-promo-foot">
+          ${p.code ? `<span class="pt-code">${escHtml(p.code)}</span>` : ''}
+          ${p.validiteJusquAu ? `<span class="pt-promo-meta">${t({fr:'Valable jusqu\'au', en:'Valid until'})} ${escHtml(p.validiteJusquAu)}</span>` : ''}
+          ${p.statut ? `<span class="status-pill ${statusClass(p.statut)}">${escHtml(p.statut)}</span>` : ''}
+        </div>
+      </div>`).join('')}</div>`
+    : `<div class="acc-info-card"><div class="empty-note">${t({fr:'Aucune promotion additionnelle pour le moment. Vos offres exclusives apparaîtront ici.', en:'No additional promotions right now. Your exclusive offers will appear here.'})}</div></div>`}
+
+    <div class="pt-section-label">${t({fr:'Vos prix partenaire', en:'Your partner prices'})}</div>
+    <div class="table-wrap"><table class="data-table pt-price-table">
+      <thead><tr><th>${t({fr:'Prestation', en:'Service'})}</th>${TIERS.map(tr => `<th>${t(tr.name)}</th>`).join('')}</tr></thead>
+      <tbody>${rows}</tbody>
+    </table></div>
+    <p class="pt-foot-note">${t({fr:'Prix HT. Les options ajoutées à une prestation bénéficient également du tarif partenaire.', en:'Prices excl. VAT. Add-ons on any service also get the partner rate.'})}</p>`;
+}
+
+/* ═══════════════ ESPACE PARTENAIRE — MON RÉSEAU ═══════════════
+   Contacts du partenaire (ajoutés par lui, modifiables) + mises en
+   relation faites par l'équipe Bunkaio (origine 'bunkaio', lecture
+   seule — le Worker les conserve toujours à la sauvegarde). */
+let reseauAdding = false;
+
+function renderAccReseau(){
+  const el = document.getElementById('accReseauContent');
+  if (!el || !USER) return;
+  const all = USER.reseau || [];
+  const introduced = all.filter(c => c.origine === 'bunkaio');
+  const own = all.filter(c => c.origine !== 'bunkaio');
+
+  const card = (c, removable) => `
+    <div class="pt-contact">
+      <div class="pt-contact-main">
+        <div class="pt-contact-name">${escHtml(c.nom)}</div>
+        <div class="pt-contact-role">${[c.domaine, c.role].filter(Boolean).map(escHtml).join(' · ') || '&nbsp;'}</div>
+        ${c.contact ? `<div class="pt-contact-line">${escHtml(c.contact)}</div>` : ''}
+        ${c.lien ? `<a class="pt-contact-line" href="${escHtml(c.lien)}" target="_blank" rel="noopener">${escHtml(c.lien)}</a>` : ''}
+        ${c.note ? `<div class="pt-contact-note">${escHtml(c.note)}</div>` : ''}
+      </div>
+      ${removable ? `<button type="button" class="pt-link" onclick="removeNetworkContact('${escHtml(c.id)}')">${t({fr:'Retirer', en:'Remove'})}</button>` : ''}
+    </div>`;
+
+  el.innerHTML = `
+    ${introduced.length ? `
+      <div class="pt-section-label">${t({fr:'Mises en relation par Bunkaio', en:'Introduced by Bunkaio'})}</div>
+      <div class="pt-contact-grid">${introduced.map(c => card(c, false)).join('')}</div>` : ''}
+
+    <div class="pt-section-head">
+      <div class="pt-section-label" style="margin:0">${t({fr:'Mes contacts', en:'My contacts'})}</div>
+      ${reseauAdding ? '' : `<button type="button" class="btn btn-ghost" onclick="toggleNetworkForm(true)"><span>${t({fr:'+ Ajouter un contact', en:'+ Add a contact'})}</span></button>`}
+    </div>
+
+    ${reseauAdding ? `
+    <div class="acc-info-card" style="margin-bottom:22px">
+      <div class="pt-form-grid">
+        <div class="fgroup"><label>${t({fr:'Nom / société *', en:'Name / company *'})}</label><input type="text" id="nwNom" maxlength="120"></div>
+        <div class="fgroup"><label>${t({fr:'Domaine', en:'Field'})}</label>
+          <select id="nwDomaine"><option value=""></option>${PARTNER_PROVIDER_TYPES.map(p => `<option value="${escHtml(t(p.name))}">${escHtml(t(p.name))}</option>`).join('')}</select></div>
+        <div class="fgroup"><label>${t({fr:'Rôle / spécialité', en:'Role / speciality'})}</label><input type="text" id="nwRole" maxlength="300"></div>
+        <div class="fgroup"><label>${t({fr:'Email ou téléphone', en:'Email or phone'})}</label><input type="text" id="nwContact" maxlength="300"></div>
+        <div class="fgroup"><label>${t({fr:'Site ou Instagram', en:'Website or Instagram'})}</label><input type="text" id="nwLien" maxlength="300"></div>
+        <div class="fgroup"><label>${t({fr:'Note', en:'Note'})}</label><input type="text" id="nwNote" maxlength="300"></div>
+      </div>
+      <div class="mb-wizard-actions" style="margin-left:0">
+        <button type="button" class="btn btn-solid" id="nwSaveBtn" onclick="addNetworkContact()"><span>${t({fr:'Ajouter à mon réseau', en:'Add to my network'})}</span></button>
+        <button type="button" class="btn btn-ghost" onclick="toggleNetworkForm(false)"><span>${t({fr:'Annuler', en:'Cancel'})}</span></button>
+      </div>
+    </div>` : ''}
+
+    ${own.length ? `<div class="pt-contact-grid">${own.map(c => card(c, true)).join('')}</div>`
+      : (reseauAdding ? '' : `<div class="acc-info-card"><div class="empty-note">${t({fr:'Votre réseau est vide. Ajoutez les professionnels avec qui vous travaillez — traiteurs, lieux, décorateurs, stylistes — pour les retrouver dans vos futures collaborations.', en:'Your network is empty. Add the professionals you work with — caterers, venues, decorators, stylists — to find them in future collaborations.'})}</div></div>`)}`;
+}
+
+function toggleNetworkForm(open){ reseauAdding = open; renderAccReseau(); }
+
+function networkOwnPayload(list){
+  return list.filter(c => c.origine !== 'bunkaio').map(c => ({ id:c.id, nom:c.nom, domaine:c.domaine, role:c.role, contact:c.contact, lien:c.lien, note:c.note }));
+}
+function addNetworkContact(){
+  const nom = document.getElementById('nwNom').value.trim();
+  if (!nom) { document.getElementById('nwNom').focus(); return; }
+  const val = id => document.getElementById(id).value.trim() || undefined;
+  const contact = { id:'nw_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7), nom, domaine:val('nwDomaine'), role:val('nwRole'), contact:val('nwContact'), lien:val('nwLien'), note:val('nwNote') };
+  const btn = document.getElementById('nwSaveBtn');
+  if (btn) btn.disabled = true;
+  savePartnerData({ reseau: [...networkOwnPayload(USER.reseau || []), contact] },
+    () => { reseauAdding = false; renderAccReseau(); }, () => { if (btn) btn.disabled = false; });
+}
+function removeNetworkContact(id){
+  savePartnerData({ reseau: networkOwnPayload(USER.reseau || []).filter(c => c.id !== id) }, () => { renderAccReseau(); });
+}
+
+/* ═══════════════ ESPACE PARTENAIRE — MES COLLABORATIONS ═══════════════
+   Missions rémunérées proposées par Bunkaio (créées côté admin). Le
+   partenaire ne peut que répondre à une mission "Proposée" ; le Worker
+   refuse toute autre transition. */
+function renderAccCollabs(){
+  const el = document.getElementById('accCollabsContent');
+  if (!el || !USER) return;
+  const list = USER.collaborations || [];
+  const pending = list.filter(c => c.statut === 'Proposée');
+  const rest = list.filter(c => c.statut !== 'Proposée');
+  const info = USER.partenariat || {};
+
+  const card = c => `
+    <div class="pt-promo">
+      <div class="pt-promo-top">
+        <div class="pt-promo-title">${escHtml(c.titre)}</div>
+        <span class="status-pill ${statusClass(c.statut)}">${escHtml(c.statut)}</span>
+      </div>
+      ${c.description ? `<p class="pt-promo-text">${escHtml(c.description)}</p>` : ''}
+      <div class="pt-promo-foot">
+        ${c.date ? `<span class="pt-promo-meta">${escHtml(c.date)}</span>` : ''}
+        ${c.lieu ? `<span class="pt-promo-meta">${escHtml(c.lieu)}</span>` : ''}
+        ${c.remuneration ? `<span class="pt-code">${escHtml(c.remuneration)}</span>` : ''}
+      </div>
+      ${c.statut === 'Proposée' ? `
+      <div class="mb-wizard-actions" style="margin:18px 0 0">
+        <button type="button" class="btn btn-solid" onclick="respondCollab('${escHtml(c.id)}','Acceptée')"><span>${t({fr:'Accepter', en:'Accept'})}</span></button>
+        <button type="button" class="btn btn-ghost" onclick="respondCollab('${escHtml(c.id)}','Déclinée')"><span>${t({fr:'Décliner', en:'Decline'})}</span></button>
+      </div>` : ''}
+    </div>`;
+
+  el.innerHTML = `
+    <div class="acc-info-card pt-hero-promo">
+      <div class="pt-hero-big pt-adv-icon">€</div>
+      <div>
+        <div class="pt-hero-title">${t({fr:'Prestations collaboratives rémunérées', en:'Paid collaborative missions'})}</div>
+        <p class="acc-info-note" style="margin:0">${info.typePrestataire
+          ? t({fr:'Bunkaio vous propose ici des missions adaptées à votre profil. Vous restez libre de les accepter ou non.', en:'Bunkaio offers missions here that match your profile. You are free to accept or decline.'})
+          : t({fr:'Choisissez d\'abord votre type de prestataire dans « Mon partenariat » pour recevoir des missions adaptées.', en:'First choose your provider type in "My partnership" to receive matching missions.'})}</p>
+      </div>
+    </div>
+
+    ${pending.length ? `<div class="pt-section-label">${t({fr:'À traiter', en:'Awaiting your reply'})}</div><div class="pt-promo-list">${pending.map(card).join('')}</div>` : ''}
+    ${rest.length ? `<div class="pt-section-label">${t({fr:'Historique', en:'History'})}</div><div class="pt-promo-list">${rest.map(card).join('')}</div>` : ''}
+    ${list.length ? '' : `<div class="acc-info-card"><div class="empty-note">${t({fr:'Aucune mission pour le moment. Les propositions de l\'équipe Bunkaio apparaîtront ici.', en:'No missions yet. Proposals from the Bunkaio team will appear here.'})}</div></div>`}`;
+}
+
+function respondCollab(id, statut){
+  savePartnerData({ collaborationReponses: [{ id, statut }] }, () => { renderAccCollabs(); });
 }
 
 /* ═══════════════ ESPACE CLIENT — MES MOODBOARDS ═══════════════
@@ -3604,11 +3934,12 @@ function renderAccount(){
   document.getElementById('accBadge').textContent =
     I18N[LANG][USER.type === 'client' ? 'acc-client-badge' : 'acc-partner-badge'];
   document.getElementById('accName').textContent = USER.nom || USER.email;
-  const partnerTab = document.getElementById('atab-partenariat');
-  if (partnerTab) {
-    partnerTab.style.display = USER.type === 'partner' ? '' : 'none';
-    if (USER.type === 'partner') renderAccPartner();
-  }
+  const isPartner = USER.type === 'partner';
+  document.getElementById('view-account').dataset.acct = USER.type;
+  ['partenariat','promotions','reseau','collabs'].forEach(x => {
+    document.getElementById('atab-' + x).style.display = isPartner ? '' : 'none';
+  });
+  if (isPartner) { renderAccPartner(); renderAccPromos(); renderAccReseau(); renderAccCollabs(); }
   renderAccountStepper();
   renderAccSubs();
   mbView = 'list'; mbActiveId = null;

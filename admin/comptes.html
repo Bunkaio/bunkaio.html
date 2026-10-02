@@ -197,7 +197,31 @@
     <div class="section-title">Mon partenariat (JSON — uniquement pour un compte Partenaire)</div>
     <div class="fgroup">
       <textarea id="fPartenariat" placeholder='{"secteur":"architecture","statut":"Actif","dateAdhesion":"01/06/2026","articleUrl":"https://bunkaio.com/..."}'></textarea>
-      <div class="hint">secteur : architecture, amenagement, artisanat, marques ou evenementiel. statut : En attente, Actif ou Terminé. articleUrl optionnel, à renseigner une fois leur mise en avant éditoriale publiée.</div>
+      <div class="hint">secteur : architecture, amenagement, artisanat, marques ou evenementiel. Le partenaire renseigne lui-même typePrestataire, disponibleCollab et presentation depuis son espace (ne pas les écraser). statut : En attente, Actif ou Terminé. articleUrl optionnel, à renseigner une fois leur mise en avant éditoriale publiée.</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Mes promotions (JSON — Partenaire)</div>
+    <div class="fgroup">
+      <textarea id="fPromotions" placeholder='[{"titre":"Offre rentrée","description":"...","remise":"-10% supplémentaires","code":"RENTREE10","validiteJusquAu":"31/10/2026","statut":"Active"}]'></textarea>
+      <div class="hint">Le -20% permanent est automatique, ne pas le saisir ici. Uniquement les offres additionnelles.</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Mon réseau — mises en relation Bunkaio (JSON — Partenaire)</div>
+    <div class="fgroup">
+      <textarea id="fReseau" placeholder='[{"id":"bk_1","nom":"Atelier Fleur","domaine":"Fleuriste / décorateur","role":"Décoration","contact":"contact@...","origine":"bunkaio"}]'></textarea>
+      <div class="hint">Tout le réseau est ici : "origine":"bunkaio" = mise en relation par l'équipe (non supprimable par le partenaire), "partenaire" = contacts ajoutés par lui. Conserve les entrées "partenaire" existantes à l'enregistrement.</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Mes collaborations (JSON — Partenaire)</div>
+    <div class="fgroup">
+      <textarea id="fCollabs" style="min-height:120px" placeholder='[{"id":"co_1","titre":"Shooting villa — maquillage","description":"...","date":"12/11/2026","lieu":"Nice","remuneration":"450 € HT","statut":"Proposée"}]'></textarea>
+      <div class="hint">statut : Proposée (le partenaire peut accepter/décliner), Acceptée, Déclinée, Terminée, Payée. Le partenaire ne peut modifier que les missions "Proposée".</div>
     </div>
   </div>
 
@@ -266,6 +290,9 @@ document.getElementById('accountPicker').addEventListener('change', async (e) =>
     document.getElementById('fFactures').value = acc.factures ? JSON.stringify(acc.factures, null, 2) : '';
     document.getElementById('fAbonnement').value = acc.abonnement ? JSON.stringify(acc.abonnement, null, 2) : '';
     document.getElementById('fMoodboards').value = acc.moodboards ? JSON.stringify(acc.moodboards, null, 2) : '';
+    document.getElementById('fPromotions').value = acc.promotions ? JSON.stringify(acc.promotions, null, 2) : '';
+    document.getElementById('fReseau').value = acc.reseau ? JSON.stringify(acc.reseau, null, 2) : '';
+    document.getElementById('fCollabs').value = acc.collaborations ? JSON.stringify(acc.collaborations, null, 2) : '';
     document.getElementById('fPartenariat').value = acc.partenariat ? JSON.stringify(acc.partenariat, null, 2) : '';
   } catch {
     alert('Erreur réseau lors du chargement du compte.');
@@ -283,7 +310,7 @@ async function saveAccount() {
   const email = document.getElementById('fEmail').value.trim();
   if (!email || !email.includes('@')) { result.className = 'err'; result.textContent = 'Email invalide.'; return; }
 
-  let commandes, paiements, factures, abonnement, moodboards, partenariat;
+  let commandes, paiements, factures, abonnement, moodboards, partenariat, promotions, reseau, collaborations;
   try { commandes = jsonFieldValue('fCommandes'); }
   catch { result.className = 'err'; result.textContent = 'JSON invalide dans "Mes commandes".'; return; }
   try { paiements = jsonFieldValue('fPaiements'); }
@@ -297,6 +324,13 @@ async function saveAccount() {
   try { partenariat = jsonFieldValue('fPartenariat'); }
   catch { result.className = 'err'; result.textContent = 'JSON invalide dans "Mon partenariat".'; return; }
 
+  try { promotions = jsonFieldValue('fPromotions'); }
+  catch { result.className = 'err'; result.textContent = 'JSON invalide dans "Mes promotions".'; return; }
+  try { reseau = jsonFieldValue('fReseau'); }
+  catch { result.className = 'err'; result.textContent = 'JSON invalide dans "Mon réseau".'; return; }
+  try { collaborations = jsonFieldValue('fCollabs'); }
+  catch { result.className = 'err'; result.textContent = 'JSON invalide dans "Mes collaborations".'; return; }
+
   localStorage.setItem('bunkaio_admin_token', token);
   btn.disabled = true;
   btn.textContent = 'Enregistrement…';
@@ -308,7 +342,7 @@ async function saveAccount() {
     adresse: document.getElementById('fAdresse').value.trim() || undefined,
     etapeActuelle: document.getElementById('fEtape').value ? Number(document.getElementById('fEtape').value) : undefined,
     lightroomUrl: document.getElementById('fLightroom').value.trim() || undefined,
-    commandes, paiements, factures, moodboards,
+    commandes, paiements, factures, moodboards, promotions, reseau, collaborations,
     abonnement: abonnement ?? null,
     partenariat: partenariat ?? null,
   };
