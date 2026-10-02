@@ -8,15 +8,15 @@
     "date": "2026-10-02"
   },
   "/services/seance-photo-particuliers/": {
-    "hash": "412b0fc82c0c7da08c6fe1e61ca087202f1287e5",
+    "hash": "621b2d80b359bac101b75dd44c7d877047c39cd8",
     "date": "2026-10-02"
   },
   "/services/photographe-mode-mannequins/": {
-    "hash": "260f1b4ba02a55deb0c1d0260cd77848ea93c1ba",
+    "hash": "8f4ec73768ef0deb3d9ca74199509712c30c8b69",
     "date": "2026-10-02"
   },
   "/services/photo-produits-packshots/": {
-    "hash": "1747219fbd218c40a560124a30269fc8716b422c",
+    "hash": "2391f7864d974b43aa3a8af068d2460de9225e8b",
     "date": "2026-10-02"
   },
   "/services/photographe-evenementiel/": {
@@ -68,7 +68,7 @@
     "date": "2026-10-02"
   },
   "/conseils/": {
-    "hash": "88b42e190467b8340dda1a8745b6d0859c7ff8a7",
+    "hash": "5a8cd9843152606e98c5647d2ef133b9b9efade7",
     "date": "2026-10-02"
   },
   "/conseils/preparer-seance-photo-portrait/": {
@@ -80,11 +80,11 @@
     "date": "2026-10-02"
   },
   "/conseils/preparer-shooting-photo-produit/": {
-    "hash": "67bcd17c0a1ae9f72c791bb85101d9182e6062fa",
+    "hash": "bfa6d959efdc2c1c95e87acfaddaca29229b5d9a",
     "date": "2026-10-02"
   },
   "/conseils/preparer-shooting-mode-lookbook/": {
-    "hash": "2ac98f72f88007007d1c445f98eb27605fe15bc9",
+    "hash": "0633850c47f9530d3665b4d4043ec4cb7a8e7dfc",
     "date": "2026-10-02"
   },
   "/conseils/choisir-photographe-evenementiel/": {
@@ -101,6 +101,14 @@
   },
   "/confidentialite/": {
     "hash": "fac2ea587d0037b659d46f93c1fac8b6d9a07702",
+    "date": "2026-10-02"
+  },
+  "/conseils/polas-mannequin-digitals-agence/": {
+    "hash": "eb5a66d11d2831fe7698a9e8c00b492536b2a213",
+    "date": "2026-10-02"
+  },
+  "/conseils/packshot-ou-mise-en-scene-photo-produit/": {
+    "hash": "cfdd57caf3714d9f2f0f7954804b8a729542d3f8",
     "date": "2026-10-02"
   }
 }
