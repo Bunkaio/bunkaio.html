@@ -134,9 +134,12 @@ const I18N = {
     'about-cta-portfolio':'Voir le portfolio','about-cta-contact':'Contacter BUNKAIO',
     'ft-about':'À propos','ft-privacy':'Confidentialité et mentions légales','legal-title-privacy':'Politique de confidentialité et mentions légales','acc-h1':'Mon espace','ft-advice':'Conseils photo','ft-review':'Laisser un avis Google','cred-about-link':'Qui est derrière BUNKAIO ? →',
     'hours-label':'Horaires','hours-value':'Du lundi au samedi, de 9h à 18h','zone-label':'Zone d\'intervention','zone-value':'Basé à Montpellier — intervient à Béziers, Montpellier et Toulouse',
-    'share-sub':'Vous avez travaillé avec BUNKAIO ? Votre retour aide d\'autres clients à se projeter — et compte énormément pour nous.',
+    'share-sub':'Vous avez travaillé avec BUNKAIO ? Votre avis Google aide d\'autres clients à nous trouver et à nous faire confiance.',
     'share-info-label':'Comment ça marche',
-    'share-info-value':'Votre message nous est envoyé directement. Avec votre accord, il pourra être publié (de façon anonymisée si vous le souhaitez) dans la section témoignages du site.',
+    'share-info-value':'Le bouton ouvre notre fiche Google : vous y déposez votre avis en moins d\'une minute.',
+    'share-cta':'Laisser mon avis sur Google',
+    'share-note':'Avis Google public. S\'il est partagé sur ce site, il pourra être anonymisé.',
+    'share-note-short':'Avis Google, anonymisable si partagé',
     'share-specialty-label':'Prestation concernée *',
     'share-specialty-opt0':'Sélectionnez…',
     'share-specialty-opt1':'Portrait extérieur',
@@ -469,9 +472,12 @@ const I18N = {
     'about-cta-portfolio':'See the portfolio','about-cta-contact':'Contact BUNKAIO',
     'ft-about':'About','ft-privacy':'Privacy and legal notice','legal-title-privacy':'Privacy policy and legal notice','acc-h1':'My space','ft-advice':'Photo advice','ft-review':'Leave a Google review','cred-about-link':'Who is behind BUNKAIO? →',
     'hours-label':'Opening hours','hours-value':'Monday to Saturday, 9am to 6pm','zone-label':'Service area','zone-value':'Based in Montpellier — works in Béziers, Montpellier and Toulouse',
-    'share-sub':'Have you worked with BUNKAIO? Your feedback helps other clients picture what to expect — and it means a great deal to us.',
+    'share-sub':'Have you worked with BUNKAIO? Your Google review helps other clients find us and trust us.',
     'share-info-label':'How it works',
-    'share-info-value':'Your message is sent to us directly. With your consent, it may be published (anonymised if you prefer) in the testimonials section of the site.',
+    'share-info-value':'The button opens our Google listing, where you can leave your review in under a minute.',
+    'share-cta':'Leave my Google review',
+    'share-note':'Public Google review. If it is shared on this site, it may be anonymised.',
+    'share-note-short':'Google review, may be anonymised if shared',
     'share-specialty-label':'Service concerned *',
     'share-specialty-opt0':'Select…',
     'share-specialty-opt1':'Outdoor portrait',
@@ -1786,6 +1792,15 @@ function goToQuizCategory(catId){
 
 /* Renvoie vers la page Services, filtrée sur la catégorie concernée —
    c'est le tableau de tarifs de ce domaine qui s'affiche directement. */
+/* Depuis le carrousel d'accueil : page « Découvrir chaque prestation », rubrique de la catégorie choisie ouverte et centrée. */
+let _discoverFocus = null;
+function goToDiscover(catId){ _discoverFocus = catId || null; goView('discover'); }
+document.addEventListener('click', (e) => {
+  const a = e.target.closest ? e.target.closest('[data-discover]') : null;
+  if (!a) return;
+  if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button === 1) return;
+  e.preventDefault(); goToDiscover(a.dataset.discover);
+});
 function goToServiceTable(catId){
   activeServiceFilter = catId;
   goView('services');
@@ -2746,8 +2761,9 @@ function renderDiscoverPage(){
   const phs = f => f.pMax ? (f.pMin === f.pMax ? f.pMin : f.pMin + ' ' + to + ' ' + f.pMax) + ' ' + t({fr:'photos retouchées', en:'retouched photos'}) : '';
   const rows = cats.map((c, k) => {
     const f = facts[c.id], cp = DISCOVER_COPY[c.id] || { for:{fr:'', en:''}, why:{fr:'', en:''} };
-    return `<li class="cs-acc-item${k === 0 ? ' open' : ''}">
-      <button type="button" class="cs-acc-head" aria-expanded="${k === 0}">
+    const isOpen = _discoverFocus ? c.id === _discoverFocus : k === 0;
+    return `<li class="cs-acc-item${isOpen ? ' open' : ''}" data-cat="${c.id}">
+      <button type="button" class="cs-acc-head" aria-expanded="${isOpen}">
         <b class="disc-num">${String(k + 1).padStart(2, '0')}</b>
         <span class="disc-name">${t(c.name)}</span>
         <em class="disc-from">${t({fr:'dès', en:'from'})} ${money(f.from)}</em>
@@ -2816,6 +2832,11 @@ function renderDiscoverPage(){
       body: '<p>' + t({fr:'BUNKAIO est basé à Montpellier et intervient à Montpellier, Béziers et Toulouse. Les déplacements sont offerts à Montpellier et à Béziers ; ils sont facturés à Toulouse et dans toute autre ville de France.', en:'BUNKAIO is based in Montpellier and works in Montpellier, Béziers and Toulouse. Travel is free in Montpellier and Béziers; it is charged in Toulouse and in any other city in France.'}) + '</p>' }
   ], { exclusive: true });
   initReassureLoop();
+  if (_discoverFocus) {
+    const target = el.querySelector('.cs-acc-item[data-cat="' + _discoverFocus + '"]');
+    _discoverFocus = null;
+    if (target) setTimeout(() => target.scrollIntoView({ block: 'center', behavior: 'smooth' }), 350);
+  }
   const live = el.querySelector('.disc-acc');
   if (live) { if (window.IntersectionObserver && !REDUCED_MOTION) { const io = new IntersectionObserver((es) => es.forEach(e => { if (e.isIntersecting) { live.classList.add('disc-live'); io.disconnect(); } }), { threshold: 0.15 }); io.observe(live); } else live.classList.add('disc-live'); }
 }
@@ -3532,6 +3553,12 @@ function sendContact(e){
 }
 
 /* ═══════════════ PARTAGER MON EXPÉRIENCE (témoignage) ═══════════════ */
+/* « Partager mon expérience » : ouvre directement la fiche Google (formulaire d'avis). */
+function shareExperience(){
+  if (window.track) track('share_google');
+  const url = typeof GOOGLE_REVIEW_URL !== 'undefined' ? GOOGLE_REVIEW_URL : '';
+  if (url) window.open(url, '_blank', 'noopener'); else goView('share');
+}
 function sendShare(e){
   e.preventDefault();
   if (window.track) track('share_submit');
@@ -5328,7 +5355,7 @@ function initCatShowcase(){
         <div class="cat-showcase-content">
           <div class="cat-showcase-name">${t(cat.name)}</div>
           <div class="cat-showcase-tag">${t(cat.tag)}</div>
-          <button class="hero-start" onclick="goToServiceTable('${cat.id}')"><span>${t({fr:'Découvrir cette prestation',en:'Discover this service'})}</span></button>
+          <a class="hero-start" href="/decouvrir-chaque-prestation/" data-discover="${cat.id}"><span>${t({fr:'Découvrir cette prestation',en:'Discover this service'})}</span></a>
         </div>
       </div>`;
   }).join('');
@@ -5341,10 +5368,7 @@ function initCatShowcase(){
 
   /* Estompe la flèche en bord de parcours (pas de "précédent" sur la
      première catégorie, pas de "suivant" sur la dernière). */
-  const paintArrows = (idx) => {
-    if (arrowPrev) arrowPrev.classList.toggle('is-disabled', idx <= 0);
-    if (arrowNext) arrowNext.classList.toggle('is-disabled', idx >= slides.length - 1);
-  };
+  const paintArrows = () => { /* flèches toujours actives : le parcours est circulaire */ };
 
   const setActive = (idx) => {
     currentIdx = idx;
@@ -5359,9 +5383,21 @@ function initCatShowcase(){
     track.scrollTo({ left: idx * track.clientWidth, behavior: behavior || 'smooth' });
   };
   window._catShowcaseJump = (idx) => goTo(idx); /* points cliquables */
-  window._catShowcaseNav = (delta) => goTo(currentIdx + delta); /* flèches gauche/droite */
-  if (arrowPrev) arrowPrev.addEventListener('click', () => goTo(currentIdx - 1));
-  if (arrowNext) arrowNext.addEventListener('click', () => goTo(currentIdx + 1));
+  const wrapIdx = (i) => (i + slides.length) % slides.length;
+  window._catShowcaseNav = (delta) => goTo(wrapIdx(currentIdx + delta)); /* flèches gauche/droite (circulaires) */
+  if (arrowPrev) arrowPrev.addEventListener('click', () => goTo(wrapIdx(currentIdx - 1)));
+  if (arrowNext) arrowNext.addEventListener('click', () => goTo(wrapIdx(currentIdx + 1)));
+
+  /* Défilement automatique : toutes les 5,5 s tant que la bannière est visible ; se met en pause 9 s après toute
+     interaction (flèche, point, glissement, souris dessus) puis reprend. */
+  let lastTouch = 0, inView = false;
+  const markTouch = () => { lastTouch = Date.now(); };
+  ['pointerdown', 'touchstart', 'wheel', 'keydown'].forEach(ev => root.addEventListener(ev, markTouch, { passive: true }));
+  root.addEventListener('pointerenter', markTouch); root.addEventListener('pointermove', markTouch, { passive: true });
+  if (arrowPrev) arrowPrev.addEventListener('click', markTouch); if (arrowNext) arrowNext.addEventListener('click', markTouch);
+  dotsWrap.addEventListener('click', markTouch);
+  if (!REDUCED_MOTION) setInterval(() => { if (inView && Date.now() - lastTouch > 9000 && !document.hidden) goTo(wrapIdx(currentIdx + 1)); }, 5500);
+  if (window.IntersectionObserver) new IntersectionObserver((es) => { inView = es.some(e => e.isIntersecting); }, { threshold: 0.5 }).observe(root);
 
   /* Détecte la slide effectivement centrée après un scroll horizontal
      natif (swipe, trackpad, molette convertie ci-dessous ou scrollTo

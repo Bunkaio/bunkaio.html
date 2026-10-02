@@ -4149,3 +4149,10 @@ body.menu-open .nav-burger-glyph { color: #0a0a0c; }
 .art-text ul, .art-text ol { margin: 0 0 12px; }
 .article .art-h2 { margin: 0 !important; }
 .art-head .art-n { flex: 0 0 auto; } .art-head .art-t { flex: 1; text-align: left; }
+
+.share-note { margin: 12px 0 0; font-size: 11px; line-height: 1.5; color: #6b6b70; max-width: 420px; }
+.testi-share-row { display: flex; flex-direction: column; align-items: center; text-align: center; }
+.testi-share-row .share-note { margin-top: 12px; }
+.ft-note { display: block; margin-top: 3px; font-size: 10.5px; line-height: 1.4; color: rgba(255,255,255,0.45); }
+.g-review .share-note { margin-top: 14px; }
+a.hero-start { text-decoration: none; display: inline-flex; align-items: center; justify-content: center; }
