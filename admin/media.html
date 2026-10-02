@@ -5,7 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Bunkaio — Médias</title>
+<script>if (/[?&]embed=1/.test(location.search)) document.documentElement.classList.add('embed');</script>
 <style>
+  @font-face { font-family: 'DM Sans'; font-style: normal; font-display: swap; font-weight: 100 1000; src: url('../fonts/dm-sans-latin-opsz-normal.woff2') format('woff2'); }
+  html.embed .header { display: none; }
+  html.embed .page { padding-top: 20px; }
   :root {
     --black: #0a0a0c;
     --grey: #6b6b70;
@@ -17,7 +21,7 @@
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     background: var(--bg); color: var(--black);
   }
 
@@ -245,10 +249,7 @@
     <input type="password" id="token" placeholder="Ton mot de passe admin">
   </div>
   <div class="nav-links">
-    <a href="index.html">Factures</a>
-    <a href="leads.html">Leads</a>
-    <a href="comptes.html">Comptes</a>
-    <a href="stats.html">Stats</a>
+    <a href="index.html">← Tableau de bord</a>
   </div>
 </div>
 

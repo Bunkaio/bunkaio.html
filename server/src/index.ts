@@ -3,6 +3,7 @@ import { adminAccountView, getAccount, listAccounts, putAccount, sanitizeAccount
 import { handleCollect, handleStats, purgeOldAnalytics } from './analytics';
 import { appendJournal, diffAccountActivity, flushActivityNotifications, queueActivityNotification } from './activity';
 import { billingErrors, cleanBilling, composeAddress } from './billing';
+import { buildDashboard } from './admin';
 import { configureBusiness } from './config';
 import { claimAckSlot, markBalanceInvoiced, markDepositPaid, markInvoiced, markLead, runDailyAutomations } from './automations';
 import {
@@ -551,6 +552,32 @@ async function lightroomMissing(env: Env, email: string): Promise<boolean> {
   } catch {
     return true;
   }
+}
+
+/** Tableau de bord admin : base de contacts fusionnée + factures (lecture seule), et lancement manuel des automatisations. */
+async function handleAdminDashboard(request: Request, env: Env, headers: Record<string, string>, path: string): Promise<Response> {
+  if ((request.headers.get('Authorization') ?? '') !== `Bearer ${env.ADMIN_TOKEN}`) {
+    return jsonResponse({ ok: false, error: 'unauthorized' }, 401, headers);
+  }
+  if (path === '/admin/dashboard' && request.method === 'GET') {
+    try {
+      return jsonResponse(await buildDashboard(env, createStripeClient(env.STRIPE_SECRET_KEY)), 200, headers);
+    } catch (err) {
+      console.error('[admin] tableau de bord indisponible', err);
+      return jsonResponse({ ok: false, error: 'dashboard_error' }, 502, headers);
+    }
+  }
+  if (path === '/admin/run-automations' && request.method === 'POST') {
+    // Mêmes tâches que le cron quotidien ; chacune est idempotente (marqueurs), donc sans risque de doublon.
+    await runDailyAutomations(env);
+    try {
+      await sendOverdueInvoiceReminders(env);
+    } catch (err) {
+      console.error('[admin] relances de factures en échec', err);
+    }
+    return jsonResponse({ ok: true, ranAt: new Date().toISOString() }, 200, headers);
+  }
+  return jsonResponse({ ok: false, error: 'not_found' }, 404, headers);
 }
 
 async function handleQuizLead(request: Request, env: Env, headers: Record<string, string>): Promise<Response> {
@@ -1116,6 +1143,9 @@ export default {
     }
 
     const url = new URL(request.url);
+    if (url.pathname === '/admin/dashboard' || url.pathname === '/admin/run-automations') {
+      return handleAdminDashboard(request, env, headers, url.pathname);
+    }
     if (url.pathname === '/ack') {
       return handleAck(request, env, headers);
     }

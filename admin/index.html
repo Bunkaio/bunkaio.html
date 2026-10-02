@@ -2,151 +2,1073 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
-<title>Bunkaio — Factures</title>
+<title>BUNKAIO — Administration</title>
+<link rel="icon" href="../favicon.ico">
 <style>
-  :root { --black:#0a0a0c; --grey:#6b6b70; --line:#e3e1dc; --bg:#faf9f6; }
-  * { box-sizing: border-box; }
-  body {
-    margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: var(--bg); color: var(--black); padding: 40px 20px;
+  @font-face { font-family: 'DM Sans'; font-style: normal; font-display: swap; font-weight: 100 1000; src: url('../fonts/dm-sans-latin-opsz-normal.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+  @font-face { font-family: 'DM Sans'; font-style: normal; font-display: swap; font-weight: 100 1000; src: url('../fonts/dm-sans-latin-ext-opsz-normal.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+  :root {
+    --ink: #0a0a0c; --white: #ffffff; --grey: #76717f; --grey2: #a29bb3;
+    --line: rgba(20, 10, 40, 0.09); --bg: #f7f5fb; --violet: #f1ecfa; --violet-deep: #e6def5;
+    --lav: #d9cdf5; --accent: #6e5aa8;
+    --ok: #2f7d4f; --ok-bg: #e7f4ec; --warn: #8a5d00; --warn-bg: #fff4d6; --danger: #b3261e; --danger-bg: #fdecea;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --side: 248px;
   }
-  .wrap { max-width: 480px; margin: 0 auto; }
-  h1 { font-size: 22px; margin-bottom: 6px; }
-  p.sub { color: var(--grey); font-size: 14px; margin-bottom: 32px; }
-  label {
-    display: block; font-size: 11px; font-weight: 600; letter-spacing: 0.1em;
-    text-transform: uppercase; color: var(--grey); margin-bottom: 8px;
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body { font-family: 'DM Sans', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--ink); font-size: 14px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  button, input, select, textarea { font-family: inherit; font-size: inherit; color: inherit; }
+  [hidden] { display: none !important; }
+
+  /* ── Connexion ── */
+  .login { position: fixed; inset: 0; z-index: 100; background: var(--ink); display: grid; place-items: center; padding: 24px; }
+  .login-card { width: 100%; max-width: 380px; text-align: center; color: #fff; }
+  .login-card img { width: 150px; margin-bottom: 28px; }
+  .login-card h1 { font-size: 24px; letter-spacing: -0.02em; margin-bottom: 6px; }
+  .login-card p { color: rgba(255,255,255,.6); font-size: 13.5px; margin-bottom: 26px; }
+  .login-card input { width: 100%; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.18); border-radius: 6px; padding: 14px 16px; color: #fff; font-size: 15px; outline: none; margin-bottom: 12px; }
+  .login-card input:focus { border-color: var(--lav); }
+  .login-card button { width: 100%; background: #fff; color: var(--ink); border: 0; border-radius: 6px; padding: 14px; font-weight: 700; font-size: 15px; cursor: pointer; box-shadow: 0 0 28px rgba(217,205,245,.35); }
+  .login-err { color: #ffb4ab; font-size: 13px; min-height: 20px; margin-top: 10px; }
+
+  /* ── Structure ── */
+  .app { display: flex; min-height: 100vh; }
+  .side { width: var(--side); flex: 0 0 var(--side); background: var(--ink); color: #fff; position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; padding: 26px 16px 18px; }
+  .side-logo { display: flex; align-items: center; gap: 10px; padding: 0 10px 26px; text-decoration: none; }
+  .side-logo img { width: 92px; }
+  .side-logo span { font-size: 10.5px; letter-spacing: .18em; text-transform: uppercase; color: var(--lav); font-weight: 700; }
+  .nav { display: flex; flex-direction: column; gap: 2px; flex: 1; overflow-y: auto; }
+  .nav button { display: flex; align-items: center; gap: 12px; width: 100%; background: none; border: 0; color: rgba(255,255,255,.66); padding: 11px 12px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500; text-align: left; transition: background .2s, color .2s; }
+  .nav button svg { width: 18px; height: 18px; flex: 0 0 18px; stroke: currentColor; fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+  .nav button:hover { color: #fff; background: rgba(255,255,255,.06); }
+  .nav button.active { color: var(--ink); background: var(--violet); font-weight: 700; }
+  .nav .count { margin-left: auto; font-size: 11px; font-weight: 700; background: var(--lav); color: var(--ink); border-radius: 100px; padding: 1px 8px; }
+  .nav button.active .count { background: var(--ink); color: #fff; }
+  .side-foot { border-top: 1px solid rgba(255,255,255,.1); padding-top: 14px; display: grid; gap: 6px; }
+  .side-foot a, .side-foot button { display: block; background: none; border: 0; color: rgba(255,255,255,.55); font-size: 12.5px; text-align: left; padding: 6px 12px; cursor: pointer; text-decoration: none; }
+  .side-foot a:hover, .side-foot button:hover { color: #fff; }
+
+  .main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  .top { position: sticky; top: 0; z-index: 20; background: rgba(247,245,251,.88); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); padding: 16px 32px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .top h1 { font-size: 22px; letter-spacing: -0.02em; font-weight: 800; }
+  .top .sub { font-size: 12px; color: var(--grey); }
+  .top-search { margin-left: auto; position: relative; flex: 0 1 320px; min-width: 180px; }
+  .top-search input { width: 100%; border: 1px solid var(--line); background: #fff; border-radius: 100px; padding: 10px 16px 10px 38px; outline: none; }
+  .top-search input:focus { border-color: var(--accent); }
+  .top-search svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); width: 15px; height: 15px; stroke: var(--grey); fill: none; stroke-width: 2; }
+  .content { padding: 28px 32px 80px; max-width: 1360px; width: 100%; }
+  .section { display: none; animation: fadeIn .4s var(--ease); }
+  .section.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+  /* ── Composants ── */
+  .btn { display: inline-flex; align-items: center; gap: 8px; border: 0; border-radius: 6px; padding: 10px 16px; font-weight: 700; font-size: 13.5px; cursor: pointer; background: var(--ink); color: #fff; text-decoration: none; transition: transform .15s, box-shadow .2s; white-space: nowrap; }
+  .btn:hover { box-shadow: 0 0 22px rgba(110,90,168,.28); }
+  .btn:active { transform: scale(.98); }
+  .btn.ghost { background: #fff; color: var(--ink); border: 1px solid var(--line); }
+  .btn.soft { background: var(--violet); color: var(--ink); }
+  .btn.danger { background: var(--danger); }
+  .btn.sm { padding: 7px 12px; font-size: 12.5px; }
+  .btn:disabled { opacity: .45; cursor: not-allowed; box-shadow: none; }
+  .card { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 20px 22px; min-width: 0; }
+  .card h3 { font-size: 11px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; display: flex; align-items: center; gap: 10px; }
+  .card h3 .link { margin-left: auto; letter-spacing: 0; text-transform: none; font-size: 12.5px; color: var(--grey); font-weight: 600; cursor: pointer; background: none; border: 0; }
+  .grid { display: grid; gap: 18px; }
+  .g2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .g3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; margin-bottom: 18px; }
+  .kpi { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 18px 20px; }
+  .kpi.dark { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .kpi .l { font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--grey); }
+  .kpi.dark .l { color: var(--lav); }
+  .kpi .n { font-size: 30px; font-weight: 800; letter-spacing: -0.03em; margin: 6px 0 2px; font-variant-numeric: tabular-nums; }
+  .kpi .s { font-size: 12.5px; color: var(--grey); }
+  .kpi.dark .s { color: rgba(255,255,255,.6); }
+  .badge { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 700; border-radius: 100px; padding: 3px 10px; background: var(--violet); color: var(--ink); white-space: nowrap; }
+  .badge.ok { background: var(--ok-bg); color: var(--ok); }
+  .badge.warn { background: var(--warn-bg); color: var(--warn); }
+  .badge.danger { background: var(--danger-bg); color: var(--danger); }
+  .badge.dark { background: var(--ink); color: #fff; }
+  .badge.line { background: #fff; border: 1px solid var(--line); color: var(--grey); }
+  .badges { display: flex; flex-wrap: wrap; gap: 5px; }
+  .muted { color: var(--grey); }
+  .small { font-size: 12.5px; }
+  .empty { color: var(--grey); font-size: 13.5px; padding: 18px 0; text-align: center; }
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; }
+  .chip { border: 1px solid var(--line); background: #fff; border-radius: 100px; padding: 7px 14px; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .chip .c { color: var(--grey); font-weight: 500; margin-left: 4px; }
+  .chip.on { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .chip.on .c { color: var(--lav); }
+  .toolbar { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; }
+  .toolbar .grow { flex: 1; }
+  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 100px; background: #fff; padding: 3px; }
+  .seg button { border: 0; background: none; border-radius: 100px; padding: 6px 14px; font-size: 12.5px; font-weight: 700; cursor: pointer; color: var(--grey); }
+  .seg button.on { background: var(--ink); color: #fff; }
+
+  /* Tableaux */
+  .tbl-wrap { overflow-x: auto; background: #fff; border: 1px solid var(--line); border-radius: 14px; }
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; font-size: 10.5px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--grey); padding: 13px 14px; border-bottom: 1px solid var(--line); white-space: nowrap; background: #fcfbfe; cursor: default; }
+  th.sort { cursor: pointer; }
+  th.sort:hover { color: var(--ink); }
+  td { padding: 12px 14px; border-bottom: 1px solid var(--line); vertical-align: middle; font-size: 13.5px; }
+  tr:last-child td { border-bottom: 0; }
+  tbody tr.click { cursor: pointer; transition: background .15s; }
+  tbody tr.click:hover { background: #faf8fe; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .who b { display: block; font-weight: 700; }
+  .who span { color: var(--grey); font-size: 12.5px; }
+  .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); margin-right: 6px; vertical-align: middle; }
+
+  /* Listes */
+  .list { display: grid; }
+  .li { display: flex; gap: 12px; align-items: flex-start; padding: 12px 0; border-bottom: 1px solid var(--line); }
+  .li:last-child { border-bottom: 0; }
+  .li .ic { width: 32px; height: 32px; border-radius: 9px; display: grid; place-items: center; flex: 0 0 32px; background: var(--violet); font-size: 15px; }
+  .li .ic.danger { background: var(--danger-bg); } .li .ic.warn { background: var(--warn-bg); } .li .ic.ok { background: var(--ok-bg); }
+  .li .tx { flex: 1; min-width: 0; }
+  .li .tx b { font-weight: 700; }
+  .li .tx .d { color: var(--grey); font-size: 12.5px; }
+  .li .act { flex: 0 0 auto; }
+  .li.click { cursor: pointer; }
+
+  /* Pipeline */
+  .pipe-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(118px, 1fr)); gap: 10px; margin-bottom: 18px; }
+  .pipe-strip button { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 14px; text-align: left; cursor: pointer; transition: border-color .2s; }
+  .pipe-strip button:hover { border-color: var(--accent); }
+  .pipe-strip .n { font-size: 24px; font-weight: 800; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+  .pipe-strip .l { font-size: 12px; color: var(--grey); font-weight: 600; }
+  .kanban { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(230px, 1fr); gap: 14px; overflow-x: auto; padding-bottom: 8px; }
+  .col { background: var(--violet); border-radius: 14px; padding: 12px; min-height: 160px; }
+  .col h4 { font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); margin: 2px 4px 10px; display: flex; justify-content: space-between; }
+  .kcard { background: #fff; border-radius: 10px; padding: 11px 12px; margin-bottom: 8px; cursor: pointer; border: 1px solid transparent; transition: border-color .2s; }
+  .kcard:hover { border-color: var(--accent); }
+  .kcard b { display: block; font-size: 13.5px; }
+  .kcard .d { font-size: 12px; color: var(--grey); }
+
+  /* Graphiques */
+  .chart { width: 100%; height: 220px; display: block; }
+  .bar-row { display: grid; grid-template-columns: minmax(0, 1fr) 70px; gap: 10px; align-items: center; padding: 6px 0; font-size: 13px; }
+  .bar-row .track { position: relative; height: 26px; background: var(--violet); border-radius: 6px; overflow: hidden; }
+  .bar-row .fill { position: absolute; inset: 0 auto 0 0; background: var(--lav); border-radius: 6px; }
+  .bar-row .lbl { position: relative; padding: 4px 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }
+  .bar-row .v { text-align: right; font-variant-numeric: tabular-nums; font-weight: 700; }
+  .legend { display: flex; gap: 16px; font-size: 12px; color: var(--grey); margin-top: 8px; }
+  .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+
+  /* Formulaires */
+  .form { display: grid; gap: 14px; }
+  .fg { display: grid; gap: 6px; min-width: 0; }
+  .fg label, .lab { font-size: 10.5px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--grey); }
+  .fg input, .fg select, .fg textarea { width: 100%; border: 1px solid var(--line); background: #fff; border-radius: 8px; padding: 10px 12px; outline: none; }
+  .fg input:focus, .fg select:focus, .fg textarea:focus { border-color: var(--accent); }
+  .fg textarea { min-height: 110px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; resize: vertical; }
+  .fg .hint { font-size: 11.5px; color: var(--grey); }
+  .frow { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  .check { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; cursor: pointer; }
+  .check input { width: 17px; height: 17px; margin-top: 1px; accent-color: var(--ink); flex: 0 0 auto; }
+  .msg { border-radius: 10px; padding: 12px 14px; font-size: 13px; line-height: 1.55; }
+  .msg.ok { background: var(--ok-bg); color: var(--ok); }
+  .msg.err { background: var(--danger-bg); color: var(--danger); }
+  .msg.warn { background: var(--warn-bg); color: var(--warn); }
+  .msg.info { background: var(--violet); color: var(--ink); }
+
+  /* Fiche contact (tiroir) */
+  .scrim { position: fixed; inset: 0; background: rgba(10,10,12,.35); z-index: 60; opacity: 0; pointer-events: none; transition: opacity .3s; }
+  .scrim.on { opacity: 1; pointer-events: auto; }
+  .drawer { position: fixed; top: 0; right: 0; bottom: 0; width: min(760px, 100%); background: var(--bg); z-index: 61; transform: translateX(100%); transition: transform .45s var(--ease); display: flex; flex-direction: column; box-shadow: -20px 0 60px rgba(10,10,12,.18); }
+  .drawer.on { transform: none; }
+  .dr-head { background: var(--ink); color: #fff; padding: 22px 26px 0; }
+  .dr-head .row1 { display: flex; gap: 14px; align-items: flex-start; }
+  .dr-head h2 { font-size: 22px; letter-spacing: -0.02em; line-height: 1.2; }
+  .dr-head .em { color: rgba(255,255,255,.62); font-size: 13px; margin-top: 3px; word-break: break-all; }
+  .dr-head .close { margin-left: auto; background: rgba(255,255,255,.1); border: 0; color: #fff; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 18px; flex: 0 0 36px; }
+  .dr-head .badges { margin-top: 12px; }
+  .dr-head .badge { background: rgba(255,255,255,.12); color: #fff; }
+  .dr-head .badge.lav { background: var(--lav); color: var(--ink); }
+  .dr-tabs { display: flex; gap: 4px; margin-top: 18px; overflow-x: auto; }
+  .dr-tabs button { background: none; border: 0; color: rgba(255,255,255,.6); padding: 10px 14px; font-weight: 700; font-size: 13px; cursor: pointer; border-radius: 8px 8px 0 0; white-space: nowrap; }
+  .dr-tabs button.on { background: var(--bg); color: var(--ink); }
+  .dr-body { flex: 1; overflow-y: auto; padding: 22px 26px 28px; }
+  .dr-foot { border-top: 1px solid var(--line); background: #fff; padding: 14px 26px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .dr-foot .msg { flex: 1 1 100%; }
+  .kv { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 8px 16px; font-size: 13.5px; }
+  .kv dt { color: var(--grey); font-size: 12.5px; }
+  .kv dd { word-break: break-word; }
+  .quick { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+  .tl { position: relative; padding-left: 20px; }
+  .tl::before { content: ''; position: absolute; left: 6px; top: 6px; bottom: 6px; width: 1px; background: var(--lav); }
+  .tl .it { position: relative; padding: 0 0 14px; }
+  .tl .it::before { content: ''; position: absolute; left: -18px; top: 6px; width: 9px; height: 9px; border-radius: 50%; background: var(--lav); border: 2px solid var(--bg); }
+  .tl .it.done::before { background: var(--ok); }
+  .tl .it b { font-size: 13px; } .tl .it .d { font-size: 12px; color: var(--grey); }
+  .acc-switch { display: flex; gap: 8px; margin-bottom: 14px; }
+  iframe.media { width: 100%; height: calc(100vh - 150px); border: 1px solid var(--line); border-radius: 14px; background: #fff; }
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--ink); color: #fff; padding: 12px 20px; border-radius: 100px; font-size: 13.5px; font-weight: 600; opacity: 0; pointer-events: none; transition: all .35s var(--ease); z-index: 200; box-shadow: 0 10px 30px rgba(10,10,12,.25); }
+  .toast.on { opacity: 1; transform: translateX(-50%); }
+  .loading { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); z-index: 300; width: 0; transition: width .4s; }
+
+  @media (max-width: 1100px) { .g3 { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 900px) {
+    .app { flex-direction: column; }
+    .side { position: sticky; top: 0; z-index: 30; width: 100%; height: auto; flex: none; flex-direction: row; align-items: center; padding: 10px 12px; gap: 8px; }
+    .side-logo { padding: 0 6px 0 4px; } .side-logo span { display: none; } .side-logo img { width: 64px; }
+    .nav { flex-direction: row; overflow-x: auto; gap: 4px; }
+    .nav button { padding: 8px 10px; font-size: 12.5px; white-space: nowrap; width: auto; }
+    .nav button svg { display: none; }
+    .side-foot { display: none; }
+    .top { padding: 12px 16px; position: static; }
+    .top-search { flex: 1 1 100%; margin-left: 0; }
+    .content { padding: 18px 16px 60px; }
+    .g2, .g3, .frow { grid-template-columns: 1fr; }
+    .kv { grid-template-columns: 1fr; gap: 2px; } .kv dd { margin-bottom: 8px; }
+    .dr-head, .dr-body, .dr-foot { padding-left: 16px; padding-right: 16px; }
   }
-  .fgroup { margin-bottom: 22px; }
-  input {
-    width: 100%; border: 1px solid var(--line); border-radius: 4px;
-    padding: 11px 12px; font-size: 15px; background: #fff; color: var(--black);
-  }
-  button {
-    width: 100%; padding: 13px; border: none; border-radius: 4px;
-    background: var(--black); color: #fff; font-size: 15px; font-weight: 600;
-    cursor: pointer; margin-bottom: 12px;
-  }
-  button.secondary { background: #fff; color: var(--black); border: 1px solid var(--line); }
-  button:disabled { opacity: 0.5; cursor: not-allowed; }
-  #result { margin-top: 24px; padding: 16px; border-radius: 4px; font-size: 14px; display: none; }
-  #result.ok { background: #e8f5e9; border: 1px solid #a5d6a7; display: block; }
-  #result.err { background: #fdecea; border: 1px solid #f5b5ae; display: block; }
-  #result a { color: var(--black); font-weight: 600; word-break: break-all; }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <h1>Générer une facture</h1>
-  <p class="sub">Crée et envoie automatiquement par email une facture Stripe (acompte 30 % ou solde 70 %) à un client déjà présent dans la base (créé via le quiz). Les deux factures utilisent les mêmes informations ci-dessous et peuvent être générées séparément, à tout moment.</p>
+<div class="loading" id="loading"></div>
 
-  <div class="fgroup">
-    <label for="token">Token admin</label>
-    <input type="password" id="token" placeholder="Le mot de passe que tu as choisi avec wrangler secret put ADMIN_TOKEN">
-  </div>
-  <div class="fgroup">
-    <label for="email">Email du client</label>
-    <input type="email" id="email" placeholder="client@exemple.fr">
-  </div>
-  <div class="fgroup">
-    <label for="amount">Montant total HT (€)</label>
-    <input type="number" id="amount" placeholder="1200" min="0" step="0.01">
-  </div>
-  <div class="fgroup">
-    <label for="description">Description</label>
-    <input type="text" id="description" placeholder="Formule Signature — Mariage">
-  </div>
-
-  <button id="depositBtn" onclick="createInvoice('deposit')">Générer la facture d'acompte (30 %)</button>
-  <button id="balanceBtn" class="secondary" onclick="createInvoice('balance')">Générer la facture du solde (70 %)</button>
-
-  <div id="result"></div>
+<!-- Connexion : le token admin n'est demandé qu'une fois (gardé dans ce navigateur, partagé avec l'onglet Médias) -->
+<div class="login" id="login">
+  <form class="login-card" onsubmit="event.preventDefault(); login();">
+    <img src="../images/logo-email.png" alt="BUNKAIO">
+    <h1>Administration</h1>
+    <p>Un seul mot de passe pour tout : factures, leads, espaces, médias et statistiques.</p>
+    <input type="password" id="tokenInput" placeholder="Token admin" autocomplete="current-password" autofocus>
+    <button type="submit" id="loginBtn">Se connecter</button>
+    <div class="login-err" id="loginErr"></div>
+  </form>
 </div>
 
+<div class="app" id="app" hidden>
+  <aside class="side">
+    <a class="side-logo" href="#overview"><img src="../images/logo-email.png" alt="BUNKAIO"><span>Admin</span></a>
+    <nav class="nav" id="nav"></nav>
+    <div class="side-foot">
+      <button onclick="refreshAll()">↻ Actualiser les données</button>
+      <a href="../" target="_blank" rel="noopener">↗ Voir le site</a>
+      <button onclick="logout()">Se déconnecter</button>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="top">
+      <div>
+        <h1 id="pageTitle">Tableau de bord</h1>
+        <div class="sub" id="pageSub">—</div>
+      </div>
+      <label class="top-search">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input type="search" id="globalSearch" placeholder="Rechercher un contact, un email, une facture…" oninput="onGlobalSearch(this.value)">
+      </label>
+    </header>
+
+    <main class="content">
+      <!-- ═══ Tableau de bord ═══ -->
+      <section class="section" id="sec-overview">
+        <div class="kpis" id="kpis"></div>
+        <div class="pipe-strip" id="pipeStrip"></div>
+        <div class="grid g2" style="margin-bottom:18px">
+          <div class="card"><h3>À traiter <span class="badge" id="alertCount">0</span></h3><div class="list" id="alerts"></div></div>
+          <div class="card"><h3>Prochaines séances <button class="link" onclick="go('sessions')">Tout voir →</button></h3><div class="list" id="nextSessions"></div></div>
+        </div>
+        <div class="grid g2">
+          <div class="card"><h3>Activité des espaces <button class="link" onclick="go('activity')">Tout voir →</button></h3><div class="list" id="recentActivity"></div></div>
+          <div class="card"><h3>Dernières factures <button class="link" onclick="go('invoices')">Tout voir →</button></h3><div class="list" id="recentInvoices"></div></div>
+        </div>
+      </section>
+
+      <!-- ═══ Base de données ═══ -->
+      <section class="section" id="sec-contacts">
+        <div class="toolbar">
+          <div class="chips" id="segChips"></div>
+        </div>
+        <div class="toolbar">
+          <div class="seg"><button class="on" data-view="table" onclick="setContactView('table')">Tableau</button><button data-view="kanban" onclick="setContactView('kanban')">Parcours</button></div>
+          <span class="muted small" id="contactCount"></span>
+          <span class="grow"></span>
+          <button class="btn ghost sm" onclick="exportCSV()">Exporter (CSV)</button>
+          <button class="btn sm" onclick="openNewContact()">+ Nouvel espace</button>
+        </div>
+        <div id="contactsTable"></div>
+        <div id="contactsKanban" hidden></div>
+        <p class="muted small" style="margin-top:12px" id="visitorsNote"></p>
+      </section>
+
+      <!-- ═══ Factures ═══ -->
+      <section class="section" id="sec-invoices">
+        <div class="kpis" id="invKpis"></div>
+        <div class="grid g2" style="margin-bottom:18px;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr)">
+          <div class="card">
+            <h3>Nouvelle facture</h3>
+            <div class="form">
+              <div class="fg"><label for="invEmail">Email du client</label><input id="invEmail" list="emailList" placeholder="client@exemple.fr" oninput="invPreview()"></div>
+              <div class="frow">
+                <div class="fg"><label for="invAmount">Montant total HT (€)</label><input id="invAmount" type="number" min="0" step="0.01" placeholder="1200" oninput="invPreview()"></div>
+                <div class="fg"><label>Calcul</label><div class="small" id="invSplit" style="padding:10px 0">Acompte 30 % · Solde 70 %</div></div>
+              </div>
+              <div class="fg"><label for="invDesc">Description</label><input id="invDesc" placeholder="Portrait corporate — Formule Signature"></div>
+              <div id="invContext"></div>
+              <div style="display:flex;gap:10px;flex-wrap:wrap">
+                <button class="btn" id="btnDeposit" onclick="createInvoice('deposit')">Facture d'acompte (30 %)</button>
+                <button class="btn ghost" id="btnBalance" onclick="createInvoice('balance')">Facture de solde (70 %)</button>
+              </div>
+              <div class="hint small muted">L'acompte envoie la facture avec les conditions d'annulation. Le solde envoie « Vos photos sont prêtes » : à n'utiliser qu'une fois la post-production terminée. Le paiement du solde ouvre l'accès Lightroom et envoie la demande d'avis.</div>
+              <div id="invResult"></div>
+            </div>
+          </div>
+          <div class="card">
+            <h3>Encaissements par mois</h3>
+            <svg class="chart" id="revChart" viewBox="0 0 600 220" preserveAspectRatio="none"></svg>
+            <div class="legend"><span><i style="background:var(--ink)"></i>Encaissé</span><span><i style="background:var(--lav)"></i>En attente (émis ce mois-là)</span></div>
+          </div>
+        </div>
+        <div class="toolbar"><div class="chips" id="invChips"></div></div>
+        <div id="invTable"></div>
+      </section>
+
+      <!-- ═══ Séances & automatisations ═══ -->
+      <section class="section" id="sec-sessions">
+        <div class="grid g2" style="margin-bottom:18px">
+          <div class="card"><h3>Séances à venir</h3><div id="sessUpcoming"></div></div>
+          <div class="card"><h3>Post-production et livraisons</h3><div id="sessDelivery"></div></div>
+        </div>
+        <div class="card">
+          <h3>Automatisations <span class="link" style="cursor:default"></span></h3>
+          <div class="toolbar" style="margin-bottom:6px">
+            <span class="muted small">Elles tournent chaque matin (8 h UTC). Chaque envoi n'a lieu qu'une fois par client.</span>
+            <span class="grow"></span>
+            <button class="btn sm" id="runAutoBtn" onclick="runAutomations()">Exécuter maintenant</button>
+          </div>
+          <div class="tbl-wrap"><table><thead><tr><th>Automatisation</th><th>Déclencheur</th><th class="num">En attente</th><th class="num">Déjà envoyés</th></tr></thead><tbody id="autoRows"></tbody></table></div>
+        </div>
+      </section>
+
+      <!-- ═══ Activité ═══ -->
+      <section class="section" id="sec-activity">
+        <div class="toolbar">
+          <div class="chips" id="actChips"></div>
+          <span class="grow"></span>
+          <button class="btn ghost sm" onclick="markAllSeen()">Tout marquer comme vu</button>
+        </div>
+        <div class="card"><div class="list" id="activityFeed"></div></div>
+      </section>
+
+      <!-- ═══ Médias ═══ -->
+      <section class="section" id="sec-media">
+        <iframe class="media" id="mediaFrame" title="Gestion des médias" loading="lazy"></iframe>
+      </section>
+
+      <!-- ═══ Statistiques ═══ -->
+      <section class="section" id="sec-stats">
+        <div class="toolbar">
+          <div class="seg" id="statDays"><button data-d="7">7 j</button><button data-d="30" class="on">30 j</button><button data-d="90">90 j</button><button data-d="365">12 mois</button></div>
+          <span class="muted small">Mesure anonyme, sans cookie. Exclure vos visites : ouvrez <b>bunkaio.com/?notrack=1</b> sur chaque appareil.</span>
+        </div>
+        <div id="statsOut"></div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<!-- Fiche contact -->
+<div class="scrim" id="scrim" onclick="closeDrawer()"></div>
+<aside class="drawer" id="drawer" aria-hidden="true">
+  <div class="dr-head" id="drHead"></div>
+  <div class="dr-body" id="drBody"></div>
+  <div class="dr-foot" id="drFoot"></div>
+</aside>
+<datalist id="emailList"></datalist>
+<div class="toast" id="toast"></div>
+
 <script>
-  const WORKER_BASE = 'https://bunkaio-quiz-stripe.bunkaio.workers.dev';
+'use strict';
+const WORKER = 'https://bunkaio-quiz-stripe.bunkaio.workers.dev';
+const TOKEN_KEY = 'bunkaio_admin_token';
+const SEEN_KEY = 'bunkaio_admin_seen';
+let TOKEN = '';
+let DB = { contacts: [], invoices: [] };
+let STATS = null;
+let STAT_DAYS = 30;
+let state = { section: 'overview', seg: 'all', view: 'table', sort: { key: 'lastActivity', dir: -1 }, invFilter: 'all', actFilter: 'all', q: '' };
+let drawer = { email: null, tab: 'summary', accIdx: 0 };
 
-  const INVOICE_KINDS = {
-    deposit: {
-      route: '/create-deposit-invoice',
-      btnId: 'depositBtn',
-      idleLabel: "Générer la facture d'acompte (30 %)",
-      amountField: 'depositAmountEur',
-      amountLabel: 'acompte',
-    },
-    balance: {
-      route: '/create-balance-invoice',
-      btnId: 'balanceBtn',
-      idleLabel: 'Générer la facture du solde (70 %)',
-      amountField: 'balanceAmountEur',
-      amountLabel: 'solde',
-    },
-  };
+/* ── Utilitaires ── */
+const $ = (id) => document.getElementById(id);
+const esc = (v) => String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+const eur = (n) => (Number(n) || 0).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: (Number(n) % 1) ? 2 : 0 });
+const fdate = (d, opts) => { if (!d) return '—'; const x = new Date(d.length === 10 ? d + 'T12:00:00' : d); return isNaN(x) ? esc(d) : x.toLocaleDateString('fr-FR', opts || { day: 'numeric', month: 'short', year: 'numeric' }); };
+const fdt = (d) => { if (!d) return '—'; const x = new Date(d); return isNaN(x) ? '—' : x.toLocaleString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }); };
+const ago = (d) => { if (!d) return '—'; const s = (Date.now() - new Date(d).getTime()) / 1000; if (s < 3600) return 'il y a ' + Math.max(1, Math.round(s / 60)) + ' min'; if (s < 86400) return 'il y a ' + Math.round(s / 3600) + ' h'; if (s < 86400 * 30) return 'il y a ' + Math.round(s / 86400) + ' j'; return fdate(d); };
+const today = () => new Date().toISOString().slice(0, 10);
+const addDays = (n) => new Date(Date.now() + n * 864e5).toISOString().slice(0, 10);
+const lsGet = (k, d) => { try { const v = localStorage.getItem(k); return v === null ? d : v; } catch (e) { return d; } };
+const lsSet = (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} };
+function toast(msg) { const t = $('toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('on'), 3200); }
+function loading(on) { const l = $('loading'); l.style.width = on ? '70%' : '100%'; if (!on) setTimeout(() => { l.style.width = '0'; }, 350); }
 
-  // Mémorise le token localement pour ne pas avoir à le retaper à chaque facture.
-  document.getElementById('token').value = localStorage.getItem('bunkaio_admin_token') || '';
+async function api(path, opts = {}) {
+  const res = await fetch(WORKER + path, { ...opts, headers: { 'Authorization': 'Bearer ' + TOKEN, ...(opts.body ? { 'Content-Type': 'application/json' } : {}), ...(opts.headers || {}) } });
+  let data = {};
+  try { data = await res.json(); } catch (e) {}
+  if (res.status === 401) { logout(true); throw new Error('unauthorized'); }
+  return { res, data };
+}
 
-  async function createInvoice(kind) {
-    const cfg = INVOICE_KINDS[kind];
-    const token = document.getElementById('token').value.trim();
-    const email = document.getElementById('email').value.trim();
-    const amount = parseFloat(document.getElementById('amount').value);
-    const description = document.getElementById('description').value.trim();
-    const result = document.getElementById('result');
-    const btn = document.getElementById(cfg.btnId);
-    if (kind === 'balance' && !window.confirm('Envoyer maintenant « Vos photos sont prêtes » avec la facture du solde ? À réserver au moment où la post-production est terminée.')) return;
+/* ── Libellés ── */
+const STAGES = [
+  ['lead', 'Lead', 'Demande de devis reçue'],
+  ['acompte', 'Acompte envoyé', 'En attente du paiement de l\'acompte'],
+  ['reserve', 'Réservé', 'Acompte payé, séance à venir'],
+  ['postprod', 'Post-production', 'Séance passée, photos en cours'],
+  ['solde', 'Solde envoyé', 'Photos prêtes, solde en attente'],
+  ['livre', 'Livré', 'Solde payé, album ouvert'],
+  ['annule', 'Annulé', 'Séance annulée'],
+  ['partenaire', 'Partenaire', 'Espace partenaire'],
+  ['contact', 'Contact', 'Autre contact'],
+];
+const STAGE = Object.fromEntries(STAGES.map(s => [s[0], s]));
+const ROLE_LABEL = { lead: ['Lead quiz', ''], client: ['Client', 'ok'], espace: ['Espace client', 'dark'], partner: ['Partenaire', 'dark'] };
+const TEMP = { chaud: ['Chaud', 'danger'], tiede: ['Tiède', 'warn'], froid: ['Froid', 'line'] };
+const INV_STATUS = { paid: ['Payée', 'ok'], open: ['En attente', 'warn'], uncollectible: ['Irrécouvrable', 'danger'], void: ['Annulée', 'line'], draft: ['Brouillon', 'line'] };
+const ACT_LABEL = { moodboard: 'Moodboard', infos: 'Coordonnées', collaboration: 'Collaboration', partenariat: 'Profil partenaire' };
+const FORMES = { ei: 'Entreprise individuelle / micro', sas: 'SAS / SASU', sarl: 'SARL / EURL', sa: 'SA', association: 'Association', autre: 'Autre' };
+const ICON = {
+  overview: '<path d="M3 13h8V3H3zM13 21h8v-8h-8zM3 21h8v-6H3zM13 3v8h8V3z"/>',
+  contacts: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',
+  invoices: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/>',
+  sessions: '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+  activity: '<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>',
+  media: '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/>',
+  stats: '<path d="M18 20V10M12 20V4M6 20v-6"/>',
+};
+const SECTIONS = [
+  ['overview', 'Tableau de bord', 'Vue d\'ensemble de l\'activité'],
+  ['contacts', 'Base de données', 'Leads, clients, espaces et partenaires réunis par email'],
+  ['invoices', 'Factures', 'Acomptes, soldes et encaissements Stripe'],
+  ['sessions', 'Séances & automatisations', 'Planning, livraisons et emails automatiques'],
+  ['activity', 'Activité des espaces', 'Ce que les clients et partenaires modifient dans leur espace'],
+  ['media', 'Médias', 'Photos et vidéos du site'],
+  ['stats', 'Statistiques', 'Fréquentation et conversion du site'],
+];
 
-    result.className = '';
+/* ── Connexion ── */
+async function login() {
+  const t = $('tokenInput').value.trim();
+  if (!t) { $('loginErr').textContent = 'Saisis le token admin.'; return; }
+  TOKEN = t;
+  $('loginBtn').disabled = true; $('loginBtn').textContent = 'Connexion…'; $('loginErr').textContent = '';
+  try {
+    const ok = await loadDashboard();
+    if (ok) { lsSet(TOKEN_KEY, t); showApp(); }
+  } catch (e) {
+    $('loginErr').textContent = e.message === 'unauthorized' ? 'Token incorrect.' : 'Connexion impossible (réseau ou Worker non déployé).';
+  } finally { $('loginBtn').disabled = false; $('loginBtn').textContent = 'Se connecter'; }
+}
+function logout(expired) {
+  try { localStorage.removeItem(TOKEN_KEY); } catch (e) {}
+  TOKEN = '';
+  $('app').hidden = true; $('login').hidden = false;
+  $('loginErr').textContent = expired ? 'Session expirée ou token incorrect.' : '';
+  $('tokenInput').value = '';
+}
+function showApp() {
+  $('login').hidden = true; $('app').hidden = false;
+  renderNav();
+  go((location.hash || '#overview').slice(1).split('/')[0] || 'overview', true);
+  loadStats(STAT_DAYS);
+}
 
-    if (!token || !email || !amount || amount <= 0 || !description) {
-      result.className = 'err';
-      result.textContent = 'Remplis tous les champs (montant supérieur à 0).';
-      return;
+/* ── Données ── */
+async function loadDashboard() {
+  loading(true);
+  try {
+    const { res, data } = await api('/admin/dashboard');
+    if (!res.ok || !data.ok) throw new Error(data.error || 'erreur ' + res.status);
+    DB = data;
+    $('emailList').innerHTML = DB.contacts.map(c => `<option value="${esc(c.email)}">${esc(c.name)}</option>`).join('');
+    renderAll();
+    if (data.errors && data.errors.length) toast('Données partielles : ' + data.errors.join(', '));
+    return true;
+  } finally { loading(false); }
+}
+async function loadStats(days) {
+  STAT_DAYS = days;
+  try {
+    const { res, data } = await api('/stats?days=' + days);
+    STATS = res.ok && data.ok ? data : { error: data.error || res.status };
+  } catch (e) { if (e.message !== 'unauthorized') STATS = { error: 'réseau' }; }
+  renderStats(); renderKpis(); renderVisitorsNote();
+}
+async function refreshAll() { try { await loadDashboard(); await loadStats(STAT_DAYS); if (drawer.email) renderDrawer(); toast('Données actualisées'); } catch (e) {} }
+
+/* ── Navigation ── */
+function renderNav() {
+  $('nav').innerHTML = SECTIONS.map(([id, label]) => `<button data-s="${id}" onclick="go('${id}')"><svg viewBox="0 0 24 24">${ICON[id]}</svg>${label}<span class="count" id="cnt-${id}" hidden></span></button>`).join('');
+  updateCounts();
+}
+function go(id, noPush) {
+  if (!SECTIONS.find(s => s[0] === id)) id = 'overview';
+  state.section = id;
+  document.querySelectorAll('.section').forEach(s => s.classList.toggle('active', s.id === 'sec-' + id));
+  document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('active', b.dataset.s === id));
+  const s = SECTIONS.find(x => x[0] === id);
+  $('pageTitle').textContent = s[1];
+  $('pageSub').textContent = s[2] + (DB.generatedAt ? ' · données de ' + fdt(DB.generatedAt) : '');
+  if (!noPush) history.replaceState(null, '', '#' + id);
+  if (id === 'media' && !$('mediaFrame').src) $('mediaFrame').src = 'media.html?embed=1';
+  window.scrollTo({ top: 0 });
+}
+window.addEventListener('hashchange', () => { if (TOKEN) go(location.hash.slice(1), true); });
+function updateCounts() {
+  const set = (id, n) => { const el = $('cnt-' + id); if (!el) return; el.hidden = !n; el.textContent = n; };
+  set('overview', computeAlerts().length);
+  set('activity', allActivity().filter(a => a.unseen).length);
+  set('invoices', DB.invoices.filter(i => i.overdue).length);
+}
+
+function renderAll() {
+  renderKpis(); renderPipeStrip(); renderAlerts(); renderNextSessions(); renderRecentActivity(); renderRecentInvoices();
+  renderSegChips(); renderContacts(); renderInvoices(); renderSessions(); renderActivity(); renderVisitorsNote(); updateCounts();
+  if (state.section) $('pageSub').textContent = SECTIONS.find(x => x[0] === state.section)[2] + ' · données de ' + fdt(DB.generatedAt);
+}
+
+/* ── Calculs ── */
+const accOf = (c, type) => c.accounts.find(a => !type || a.type === type) || null;
+const primaryAcc = (c) => accOf(c, 'client') || accOf(c, 'partner');
+function seenMap() { try { return JSON.parse(lsGet(SEEN_KEY, '{}')); } catch (e) { return {}; } }
+function allActivity() {
+  const seen = seenMap(); const out = [];
+  DB.contacts.forEach(c => c.accounts.forEach(a => (a.journal || []).forEach(e => {
+    out.push({ ...e, email: c.email, name: c.name || a.nom || c.email, accType: a.type, unseen: e.date > (seen[a.type + '|' + c.email] || '') });
+  })));
+  return out.sort((a, b) => b.date.localeCompare(a.date));
+}
+function markSeen(c) { const m = seenMap(); c.accounts.forEach(a => { if (a.derniereActivite) m[a.type + '|' + c.email] = a.derniereActivite; }); lsSet(SEEN_KEY, JSON.stringify(m)); }
+function markAllSeen() { const m = seenMap(); DB.contacts.forEach(c => c.accounts.forEach(a => { if (a.derniereActivite) m[a.type + '|' + c.email] = a.derniereActivite; })); lsSet(SEEN_KEY, JSON.stringify(m)); renderActivity(); renderRecentActivity(); updateCounts(); toast('Toute l\'activité est marquée comme vue'); }
+
+function computeAlerts() {
+  const out = []; const now = today();
+  DB.invoices.filter(i => i.overdue).forEach(i => out.push({ lvl: 'danger', ic: '⏰', t: `Facture en retard — ${i.name || i.email}`, d: `${i.kind === 'solde' ? 'Solde' : i.kind === 'acompte' ? 'Acompte' : 'Facture'} de ${eur(i.amountRemaining)}, échue le ${fdate(i.dueDate)}. Relance automatique envoyée.`, email: i.email }));
+  DB.contacts.forEach(c => {
+    const acc = primaryAcc(c); const inv = c.invoices;
+    const balOpen = inv.some(i => i.kind === 'solde' && i.status === 'open');
+    const depPaid = inv.some(i => i.kind === 'acompte' && i.status === 'paid');
+    const se = acc && acc.seance;
+    if (balOpen && !(acc && acc.lightroomUrl)) out.push({ lvl: 'danger', ic: '🔗', t: `Lien Lightroom manquant — ${c.name || c.email}`, d: 'Le solde est envoyé : sans lien, le client ne recevra pas son album au paiement.', email: c.email, tab: 'space' });
+    if (depPaid && !c.accounts.length) out.push({ lvl: 'warn', ic: '👤', t: `Espace à créer — ${c.name || c.email}`, d: 'Acompte payé mais aucun espace client : créez-le pour le moodboard et le suivi.', email: c.email, tab: 'space' });
+    if (acc && !acc.infosCompletes && (depPaid || acc.type === 'partner')) out.push({ lvl: 'warn', ic: '🧾', t: `Coordonnées incomplètes — ${c.name || c.email}`, d: 'L\'espace n\'est pas validé : informations de devis et de facture à compléter.', email: c.email, tab: 'space' });
+    if (se && se.statut !== 'annulee' && se.date < now && !se.livraison && c.stage === 'postprod') out.push({ lvl: 'warn', ic: '📅', t: `Date de livraison à saisir — ${c.name || c.email}`, d: `Séance du ${fdate(se.date)} passée, aucune date de livraison estimée.`, email: c.email, tab: 'session' });
+    if (se && se.livraison && se.livraison <= now && c.stage === 'postprod') out.push({ lvl: 'warn', ic: '📦', t: `Livraison prévue — ${c.name || c.email}`, d: `Prévue le ${fdate(se.livraison)} : créez la facture de solde quand les photos sont prêtes.`, email: c.email, tab: 'invoices' });
+    if (c.stage === 'lead' && c.lead && c.lead.temperature === 'chaud') out.push({ lvl: 'info', ic: '🔥', t: `Lead chaud — ${c.name || c.email}`, d: `${esc(c.lead.category)} · ${esc(c.lead.budget)} · reçu ${ago(c.lead.date)}.`, email: c.email });
+  });
+  const unseen = allActivity().filter(a => a.unseen);
+  const byContact = {};
+  unseen.forEach(a => { byContact[a.email] = (byContact[a.email] || 0) + 1; });
+  Object.entries(byContact).forEach(([email, n]) => { const c = DB.contacts.find(x => x.email === email); out.push({ lvl: 'info', ic: '✏️', t: `Nouvelle activité — ${c ? (c.name || email) : email}`, d: `${n} modification${n > 1 ? 's' : ''} dans son espace depuis votre dernière visite.`, email, tab: 'activity' }); });
+  const order = { danger: 0, warn: 1, info: 2 };
+  return out.sort((a, b) => order[a.lvl] - order[b.lvl]);
+}
+
+/* ── Tableau de bord ── */
+function renderKpis() {
+  if (!$('kpis')) return;
+  const since30 = addDays(-30);
+  const paid = DB.invoices.filter(i => i.status === 'paid');
+  const paid30 = paid.filter(i => (i.paidAt || i.created).slice(0, 10) >= since30).reduce((s, i) => s + i.amountPaid, 0);
+  const paidAll = paid.reduce((s, i) => s + i.amountPaid, 0);
+  const open = DB.invoices.filter(i => i.status === 'open');
+  const due = open.reduce((s, i) => s + i.amountRemaining, 0);
+  const overdue = open.filter(i => i.overdue).length;
+  const leads = DB.contacts.filter(c => c.lead);
+  const leads30 = leads.filter(c => (c.lead.date || '').slice(0, 10) >= since30).length;
+  const converted = leads.filter(c => c.invoices.some(i => i.kind === 'acompte' && i.status === 'paid')).length;
+  const accounts = DB.contacts.filter(c => c.accounts.length);
+  const valid = accounts.filter(c => c.accounts.every(a => a.infosCompletes)).length;
+  const visitors = STATS && STATS.totals ? STATS.totals.uv : null;
+  const quizRate = STATS && STATS.funnel && STATS.funnel.quizVisitors ? Math.round(STATS.funnel.quizSubmits / STATS.funnel.quizVisitors * 100) : null;
+  $('kpis').innerHTML = [
+    ['dark', 'Encaissé · 30 j', eur(paid30), 'Total : ' + eur(paidAll)],
+    ['', 'À encaisser', eur(due), open.length + ' facture' + (open.length > 1 ? 's' : '') + (overdue ? ' · <b style="color:var(--danger)">' + overdue + ' en retard</b>' : '')],
+    ['', 'Leads · 30 j', leads30, leads.length + ' au total'],
+    ['', 'Conversion', leads.length ? Math.round(converted / leads.length * 100) + ' %' : '—', converted + ' lead' + (converted > 1 ? 's' : '') + ' → acompte payé'],
+    ['', 'Visiteurs · ' + STAT_DAYS + ' j', visitors === null ? '—' : visitors, quizRate === null ? 'Statistiques du site' : quizRate + ' % envoient le devis'],
+    ['', 'Espaces validés', accounts.length ? valid + ' / ' + accounts.length : '—', 'Coordonnées complètes'],
+  ].map(([cls, l, n, s]) => `<div class="kpi ${cls}"><div class="l">${l}</div><div class="n">${n}</div><div class="s">${s}</div></div>`).join('');
+}
+function renderPipeStrip() {
+  const counts = {}; DB.contacts.forEach(c => { counts[c.stage] = (counts[c.stage] || 0) + 1; });
+  $('pipeStrip').innerHTML = STAGES.filter(s => s[0] !== 'contact' && (counts[s[0]] || ['lead', 'acompte', 'reserve', 'postprod', 'solde', 'livre'].includes(s[0])))
+    .map(s => `<button onclick="state.seg='stage:${s[0]}';go('contacts');renderSegChips();renderContacts()"><div class="n">${counts[s[0]] || 0}</div><div class="l">${s[1]}</div></button>`).join('');
+}
+function alertLi(a) {
+  return `<div class="li click" onclick="openDrawer('${esc(a.email)}','${a.tab || 'summary'}')"><div class="ic ${a.lvl}">${a.ic}</div><div class="tx"><b>${esc(a.t)}</b><div class="d">${a.d}</div></div></div>`;
+}
+function renderAlerts() {
+  const al = computeAlerts();
+  $('alertCount').textContent = al.length;
+  $('alerts').innerHTML = al.length ? al.slice(0, 8).map(alertLi).join('') + (al.length > 8 ? `<div class="small muted" style="padding-top:10px">+ ${al.length - 8} autres éléments</div>` : '') : '<div class="empty">Rien d\'urgent. Tout est à jour ✓</div>';
+}
+function upcomingSessions() {
+  const out = [];
+  DB.contacts.forEach(c => c.accounts.forEach(a => { if (a.seance && a.seance.date) out.push({ c, a, s: a.seance }); }));
+  return out.sort((x, y) => x.s.date.localeCompare(y.s.date));
+}
+function renderNextSessions() {
+  const list = upcomingSessions().filter(x => x.s.date >= today() && x.s.statut !== 'annulee').slice(0, 6);
+  $('nextSessions').innerHTML = list.length ? list.map(({ c, s }) => `<div class="li click" onclick="openDrawer('${esc(c.email)}','session')"><div class="ic">📸</div><div class="tx"><b>${esc(c.name || c.email)}</b><div class="d">${fdate(s.date, { weekday: 'short', day: 'numeric', month: 'short' })}${s.heure ? ' · ' + esc(s.heure) : ''}${s.lieu ? ' · ' + esc(s.lieu) : ''}</div>${s.prestation ? `<div class="d">${esc(s.prestation)}</div>` : ''}</div><div class="act"><span class="badge">${s.date === addDays(2) ? 'Rappel J-2 aujourd\'hui' : daysUntil(s.date)}</span></div></div>`).join('') : '<div class="empty">Aucune séance planifiée. Saisissez-les dans la fiche du client.</div>';
+}
+function daysUntil(d) { const n = Math.round((new Date(d + 'T12:00:00') - new Date(today() + 'T12:00:00')) / 864e5); return n === 0 ? 'Aujourd\'hui' : n === 1 ? 'Demain' : 'Dans ' + n + ' j'; }
+function actLi(a) {
+  return `<div class="li click" onclick="openDrawer('${esc(a.email)}','activity')"><div class="ic">${a.type === 'moodboard' ? '🎨' : a.type === 'infos' ? '🧾' : a.type === 'collaboration' ? '🤝' : '⭐'}</div><div class="tx"><b>${a.unseen ? '<span class="dot"></span>' : ''}${esc(a.name)}</b><div class="d">${esc(a.resume)}</div><div class="d">${esc(ACT_LABEL[a.type] || a.type)} · ${ago(a.date)}</div></div></div>`;
+}
+function renderRecentActivity() {
+  const list = allActivity().slice(0, 6);
+  $('recentActivity').innerHTML = list.length ? list.map(actLi).join('') : '<div class="empty">Aucune modification dans les espaces pour l\'instant.</div>';
+}
+function invLi(i) {
+  const st = INV_STATUS[i.status] || [i.status, 'line'];
+  return `<div class="li click" onclick="openDrawer('${esc(i.email)}','invoices')"><div class="ic ${i.status === 'paid' ? 'ok' : i.overdue ? 'danger' : 'warn'}">${i.status === 'paid' ? '✓' : '€'}</div><div class="tx"><b>${esc(i.name || i.email)}</b><div class="d">${i.kind === 'acompte' ? 'Acompte' : i.kind === 'solde' ? 'Solde' : 'Facture'} · ${esc(i.description)}</div></div><div class="act" style="text-align:right"><b>${eur(i.amount)}</b><div><span class="badge ${i.overdue ? 'danger' : st[1]}">${i.overdue ? 'En retard' : st[0]}</span></div></div></div>`;
+}
+function renderRecentInvoices() {
+  const list = DB.invoices.slice(0, 6);
+  $('recentInvoices').innerHTML = list.length ? list.map(invLi).join('') : '<div class="empty">Aucune facture pour l\'instant.</div>';
+}
+
+/* ── Base de données ── */
+const SEGMENTS = [
+  ['all', 'Tous', () => true],
+  ['lead', 'Leads quiz', c => !!c.lead],
+  ['client', 'Clients', c => c.roles.includes('client')],
+  ['espace', 'Espaces clients', c => c.roles.includes('espace')],
+  ['partner', 'Partenaires', c => c.roles.includes('partner')],
+  ['hot', 'Leads chauds', c => c.lead && c.lead.temperature === 'chaud' && c.stage === 'lead'],
+  ['incomplete', 'Espaces non validés', c => c.accounts.length && c.accounts.some(a => !a.infosCompletes)],
+  ['due', 'À encaisser', c => c.totalDue > 0],
+];
+function segFn(seg) {
+  if (seg.startsWith('stage:')) { const st = seg.slice(6); return c => c.stage === st; }
+  return (SEGMENTS.find(s => s[0] === seg) || SEGMENTS[0])[2];
+}
+function matchQ(c, q) {
+  if (!q) return true;
+  const hay = [c.name, c.email, c.phone, c.lead && c.lead.category, c.lead && c.lead.description, ...c.accounts.map(a => [a.nom, a.facturation && a.facturation.ville, a.facturation && a.facturation.siret].join(' ')), ...c.invoices.map(i => i.number + ' ' + i.description)].join(' ').toLowerCase();
+  return q.toLowerCase().split(/\s+/).every(w => hay.includes(w));
+}
+function filteredContacts() {
+  const f = segFn(state.seg);
+  const list = DB.contacts.filter(c => f(c) && matchQ(c, state.q));
+  const { key, dir } = state.sort;
+  const val = c => key === 'name' ? (c.name || c.email).toLowerCase() : key === 'score' ? (c.lead ? c.lead.score : -1) : key === 'paid' ? c.totalPaid : key === 'due' ? c.totalDue : key === 'stage' ? STAGES.findIndex(s => s[0] === c.stage) : c.lastActivity || '';
+  return list.sort((a, b) => { const x = val(a), y = val(b); return (x > y ? 1 : x < y ? -1 : 0) * dir; });
+}
+function renderSegChips() {
+  const chips = SEGMENTS.map(([id, label, f]) => `<button class="chip ${state.seg === id ? 'on' : ''}" onclick="state.seg='${id}';renderSegChips();renderContacts()">${label}<span class="c">${DB.contacts.filter(f).length}</span></button>`);
+  if (state.seg.startsWith('stage:')) chips.push(`<button class="chip on" onclick="state.seg='all';renderSegChips();renderContacts()">Étape : ${esc(STAGE[state.seg.slice(6)][1])} ✕</button>`);
+  $('segChips').innerHTML = chips.join('');
+}
+function roleBadges(c) {
+  return '<div class="badges">' + c.roles.map(r => ROLE_LABEL[r] ? `<span class="badge ${ROLE_LABEL[r][1]}">${ROLE_LABEL[r][0]}</span>` : '').join('') + (c.accounts.some(a => !a.infosCompletes) ? '<span class="badge warn">Non validé</span>' : '') + '</div>';
+}
+function setContactView(v) { state.view = v; document.querySelectorAll('.seg [data-view]').forEach(b => b.classList.toggle('on', b.dataset.view === v)); renderContacts(); }
+function sortBy(key) { state.sort = { key, dir: state.sort.key === key ? -state.sort.dir : (key === 'name' ? 1 : -1) }; renderContacts(); }
+function renderContacts() {
+  const list = filteredContacts();
+  $('contactCount').textContent = list.length + ' contact' + (list.length > 1 ? 's' : '');
+  $('contactsTable').hidden = state.view !== 'table'; $('contactsKanban').hidden = state.view !== 'kanban';
+  if (state.view === 'kanban') {
+    const cols = STAGES.filter(s => list.some(c => c.stage === s[0]) || ['lead', 'acompte', 'reserve', 'postprod', 'solde', 'livre'].includes(s[0]));
+    $('contactsKanban').innerHTML = '<div class="kanban">' + cols.map(s => { const cs = list.filter(c => c.stage === s[0]); return `<div class="col"><h4>${s[1]}<span>${cs.length}</span></h4>${cs.map(c => `<div class="kcard" onclick="openDrawer('${esc(c.email)}')"><b>${esc(c.name || c.email)}</b><div class="d">${esc(c.lead ? c.lead.category : (primaryAcc(c) && primaryAcc(c).seance ? 'Séance ' + fdate(primaryAcc(c).seance.date) : c.email))}</div>${c.totalDue ? `<div class="d">À encaisser : ${eur(c.totalDue)}</div>` : ''}</div>`).join('') || '<div class="small muted" style="padding:6px">—</div>'}</div>`; }).join('') + '</div>';
+    return;
+  }
+  const arrow = k => state.sort.key === k ? (state.sort.dir > 0 ? ' ↑' : ' ↓') : '';
+  $('contactsTable').innerHTML = list.length ? `<div class="tbl-wrap"><table><thead><tr>
+    <th class="sort" onclick="sortBy('name')">Contact${arrow('name')}</th><th>Profil</th><th class="sort" onclick="sortBy('stage')">Étape${arrow('stage')}</th><th class="sort" onclick="sortBy('score')">Lead${arrow('score')}</th><th>Projet</th>
+    <th class="num sort" onclick="sortBy('paid')">Encaissé${arrow('paid')}</th><th class="num sort" onclick="sortBy('due')">À payer${arrow('due')}</th><th class="sort" onclick="sortBy('lastActivity')">Activité${arrow('lastActivity')}</th></tr></thead><tbody>
+    ${list.map(c => { const st = STAGE[c.stage] || STAGE.contact; const t = c.lead ? TEMP[c.lead.temperature] || TEMP.froid : null; const unseen = allActivity().some(a => a.email === c.email && a.unseen);
+      return `<tr class="click" onclick="openDrawer('${esc(c.email)}')"><td class="who"><b>${unseen ? '<span class="dot"></span>' : ''}${esc(c.name || '(sans nom)')}</b><span>${esc(c.email)}</span></td><td>${roleBadges(c)}</td><td><span class="badge ${c.stage === 'livre' ? 'ok' : c.stage === 'annule' ? 'danger' : ''}">${st[1]}</span></td>
+      <td>${t ? `<span class="badge ${t[1]}">${c.lead.score} · ${t[0]}</span>` : '<span class="muted">—</span>'}</td><td class="small">${esc(c.lead ? c.lead.category : (primaryAcc(c) && primaryAcc(c).seance ? primaryAcc(c).seance.prestation || '' : '')) || '<span class="muted">—</span>'}</td>
+      <td class="num">${c.totalPaid ? eur(c.totalPaid) : '—'}</td><td class="num">${c.totalDue ? `<b>${eur(c.totalDue)}</b>` : '—'}</td><td class="small muted">${ago(c.lastActivity)}</td></tr>`; }).join('')}
+    </tbody></table></div>` : '<div class="card"><div class="empty">Aucun contact ne correspond.</div></div>';
+}
+function renderVisitorsNote() {
+  const el = $('visitorsNote'); if (!el) return;
+  el.textContent = STATS && STATS.totals ? `Visiteurs anonymes sur ${STAT_DAYS} jours : ${STATS.totals.uv} (${STATS.totals.pv} pages vues). Ils ne sont pas identifiables (mesure sans cookie) : ils apparaissent ici dès qu'ils remplissent le devis, un formulaire ou créent un espace.` : '';
+}
+function onGlobalSearch(q) {
+  state.q = q.trim();
+  if (state.q && state.section !== 'contacts' && state.section !== 'invoices') go('contacts');
+  if (state.section === 'invoices') renderInvoices(); else renderContacts();
+}
+function csvCell(v) { const s = String(v ?? ''); return /[";\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; }
+function exportCSV() {
+  const head = ['Email', 'Nom', 'Téléphone', 'Profils', 'Étape', 'Score lead', 'Température', 'Catégorie', 'Budget', 'Date quiz', 'Encaissé', 'À payer', 'Type de client', 'Forme juridique', 'Contact', 'Adresse', 'Code postal', 'Ville', 'Pays', 'SIRET', 'TVA', 'Espace validé', 'Séance', 'Dernière activité'];
+  const rows = filteredContacts().map(c => { const a = primaryAcc(c) || {}; const f = a.facturation || {}; return [c.email, c.name, c.phone, c.roles.join(' '), (STAGE[c.stage] || STAGE.contact)[1], c.lead ? c.lead.score : '', c.lead ? c.lead.temperature : '', c.lead ? c.lead.category : '', c.lead ? c.lead.budget : '', c.lead ? (c.lead.date || '').slice(0, 10) : '', c.totalPaid, c.totalDue, f.profil || '', FORMES[f.forme] || '', f.contact || '', f.rue || '', f.codePostal || '', f.ville || '', f.pays || '', f.siret || '', f.tvaIntra || '', a.email ? (a.infosCompletes ? 'oui' : 'non') : '', a.seance ? a.seance.date : '', (c.lastActivity || '').slice(0, 10)]; });
+  const csv = '﻿' + [head, ...rows].map(r => r.map(csvCell).join(';')).join('\n');
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' })); a.download = 'bunkaio-contacts-' + today() + '.csv'; a.click();
+}
+
+/* ── Factures ── */
+const INV_FILTERS = [['all', 'Toutes', () => true], ['paid', 'Payées', i => i.status === 'paid'], ['open', 'En attente', i => i.status === 'open' && !i.overdue], ['overdue', 'En retard', i => i.overdue], ['acompte', 'Acomptes', i => i.kind === 'acompte'], ['solde', 'Soldes', i => i.kind === 'solde']];
+function renderInvoices() {
+  const paid = DB.invoices.filter(i => i.status === 'paid'); const open = DB.invoices.filter(i => i.status === 'open');
+  const year = String(new Date().getFullYear());
+  $('invKpis').innerHTML = [
+    ['dark', 'Encaissé ' + year, eur(paid.filter(i => (i.paidAt || i.created).startsWith(year)).reduce((s, i) => s + i.amountPaid, 0)), paid.length + ' factures payées au total'],
+    ['', 'En attente', eur(open.filter(i => !i.overdue).reduce((s, i) => s + i.amountRemaining, 0)), open.filter(i => !i.overdue).length + ' facture(s)'],
+    ['', 'En retard', eur(open.filter(i => i.overdue).reduce((s, i) => s + i.amountRemaining, 0)), open.filter(i => i.overdue).length + ' facture(s) · relance auto'],
+    ['', 'Panier moyen', paid.length ? eur(DB.contacts.filter(c => c.totalPaid).reduce((s, c) => s + c.totalPaid, 0) / Math.max(1, DB.contacts.filter(c => c.totalPaid).length)) : '—', 'Par client ayant payé'],
+  ].map(([cls, l, n, s]) => `<div class="kpi ${cls}"><div class="l">${l}</div><div class="n">${n}</div><div class="s">${s}</div></div>`).join('');
+  $('invChips').innerHTML = INV_FILTERS.map(([id, l, f]) => `<button class="chip ${state.invFilter === id ? 'on' : ''}" onclick="state.invFilter='${id}';renderInvoices()">${l}<span class="c">${DB.invoices.filter(f).length}</span></button>`).join('');
+  const f = INV_FILTERS.find(x => x[0] === state.invFilter)[2];
+  const q = state.q.toLowerCase();
+  const list = DB.invoices.filter(i => f(i) && (!q || [i.name, i.email, i.number, i.description].join(' ').toLowerCase().includes(q)));
+  $('invTable').innerHTML = list.length ? invTableHtml(list, true) : '<div class="card"><div class="empty">Aucune facture.</div></div>';
+  renderRevChart();
+}
+function invTableHtml(list, withClient) {
+  return `<div class="tbl-wrap"><table><thead><tr><th>N°</th>${withClient ? '<th>Client</th>' : ''}<th>Type</th><th>Description</th><th class="num">Montant</th><th>Statut</th><th>Émise</th><th>Échéance / payée</th><th></th></tr></thead><tbody>
+  ${list.map(i => { const st = INV_STATUS[i.status] || [i.status, 'line']; return `<tr${withClient ? ` class="click" onclick="openDrawer('${esc(i.email)}','invoices')"` : ''}><td class="small">${esc(i.number || '—')}</td>${withClient ? `<td class="who"><b>${esc(i.name || '—')}</b><span>${esc(i.email)}</span></td>` : ''}<td><span class="badge ${i.kind === 'solde' ? 'dark' : ''}">${i.kind === 'acompte' ? 'Acompte' : i.kind === 'solde' ? 'Solde' : 'Autre'}</span></td><td class="small">${esc(i.description)}</td><td class="num"><b>${eur(i.amount)}</b>${i.status === 'open' && i.amountPaid ? `<div class="small muted">reste ${eur(i.amountRemaining)}</div>` : ''}</td><td><span class="badge ${i.overdue ? 'danger' : st[1]}">${i.overdue ? 'En retard' : st[0]}</span></td><td class="small">${fdate(i.created)}</td><td class="small">${i.status === 'paid' ? 'payée ' + fdate(i.paidAt) : fdate(i.dueDate)}</td>
+  <td style="white-space:nowrap" onclick="event.stopPropagation()">${i.url ? `<a class="btn ghost sm" href="${esc(i.url)}" target="_blank" rel="noopener">Voir</a> ` : ''}${i.pdf ? `<a class="btn ghost sm" href="${esc(i.pdf)}" target="_blank" rel="noopener">PDF</a> ` : ''}<a class="btn ghost sm" href="https://dashboard.stripe.com/invoices/${esc(i.id)}" target="_blank" rel="noopener">Stripe</a></td></tr>`; }).join('')}
+  </tbody></table></div>`;
+}
+function renderRevChart() {
+  const months = []; const d = new Date(); d.setDate(1);
+  for (let k = 11; k >= 0; k--) { const m = new Date(d.getFullYear(), d.getMonth() - k, 1); months.push(m.getFullYear() + '-' + String(m.getMonth() + 1).padStart(2, '0')); }
+  const paid = months.map(m => DB.invoices.filter(i => i.status === 'paid' && (i.paidAt || i.created).startsWith(m)).reduce((s, i) => s + i.amountPaid, 0));
+  const pend = months.map(m => DB.invoices.filter(i => i.status === 'open' && i.created.startsWith(m)).reduce((s, i) => s + i.amountRemaining, 0));
+  const max = Math.max(1, ...paid.map((p, k) => p + pend[k]));
+  const W = 600, H = 220, pad = 24, bw = (W - 20) / 12;
+  const lbl = ['janv', 'févr', 'mars', 'avr', 'mai', 'juin', 'juil', 'août', 'sept', 'oct', 'nov', 'déc'];
+  $('revChart').innerHTML = months.map((m, k) => { const x = 10 + k * bw + bw * .18, w = bw * .64; const hp = (paid[k] / max) * (H - pad - 18), hq = (pend[k] / max) * (H - pad - 18); const y = H - pad;
+    return `<rect x="${x}" y="${y - hp}" width="${w}" height="${hp}" rx="3" fill="#0a0a0c"><title>${m} : ${eur(paid[k])} encaissés</title></rect><rect x="${x}" y="${y - hp - hq}" width="${w}" height="${hq}" rx="3" fill="#d9cdf5"><title>${m} : ${eur(pend[k])} en attente</title></rect><text x="${x + w / 2}" y="${H - 6}" text-anchor="middle" font-size="11" fill="#76717f" font-family="DM Sans">${lbl[+m.slice(5) - 1]}</text>`; }).join('') + `<line x1="10" x2="${W - 10}" y1="${H - pad}" y2="${H - pad}" stroke="rgba(20,10,40,.12)"/>`;
+}
+function invPreview() {
+  const amt = parseFloat($('invAmount').value);
+  $('invSplit').innerHTML = amt > 0 ? `Acompte <b>${eur(Math.round(amt * 30) / 100)}</b> · Solde <b>${eur(Math.round(amt * 70) / 100)}</b>` : 'Acompte 30 % · Solde 70 %';
+  const c = DB.contacts.find(x => x.email === $('invEmail').value.trim().toLowerCase());
+  const box = $('invContext');
+  if (!$('invEmail').value.trim()) { box.innerHTML = ''; return; }
+  if (!c || !c.customerId) { box.innerHTML = '<div class="msg warn">Ce client n\'existe pas dans Stripe : il doit d\'abord avoir rempli le devis (quiz) sur le site.</div>'; return; }
+  const a = primaryAcc(c); const notes = [];
+  if (!a) notes.push('pas encore d\'espace client');
+  else { if (!a.infosCompletes) notes.push('coordonnées de facturation incomplètes'); if (!a.lightroomUrl) notes.push('lien Lightroom non saisi (nécessaire avant le solde)'); }
+  const dep = c.invoices.find(i => i.kind === 'acompte');
+  box.innerHTML = `<div class="msg ${notes.length ? 'warn' : 'info'}"><b>${esc(c.name || c.email)}</b> · ${(STAGE[c.stage] || STAGE.contact)[1]}${dep ? ' · acompte ' + (INV_STATUS[dep.status] || [dep.status])[0].toLowerCase() : ''}${notes.length ? '<br>⚠ ' + notes.join(' · ') : ''}</div>`;
+}
+async function createInvoice(kind, fromDrawer) {
+  const p = fromDrawer ? 'dr' : 'inv';
+  const email = $(p + 'Email') ? $(p + 'Email').value.trim().toLowerCase() : drawer.email;
+  const amount = parseFloat($(p + 'Amount').value); const description = $(p + 'Desc').value.trim();
+  const out = $(p + 'Result');
+  if (!email || !(amount > 0) || !description) { out.innerHTML = '<div class="msg err">Email, montant total et description sont obligatoires.</div>'; return; }
+  const label = kind === 'deposit' ? `la facture d'acompte de ${eur(Math.round(amount * 30) / 100)}` : `la facture de solde de ${eur(Math.round(amount * 70) / 100)} avec le mail « Vos photos sont prêtes »`;
+  if (!confirm(`Envoyer ${label} à ${email} ?`)) return;
+  const btns = document.querySelectorAll(fromDrawer ? '#drBody .invbtn' : '#btnDeposit,#btnBalance'); btns.forEach(b => b.disabled = true);
+  try {
+    const { res, data } = await api(kind === 'deposit' ? '/create-deposit-invoice' : '/create-balance-invoice', { method: 'POST', body: JSON.stringify({ email, totalAmountEur: amount, description }) });
+    if (res.ok && data.ok) {
+      const amt = data.depositAmountEur ?? data.balanceAmountEur;
+      const warns = [];
+      if (!data.emailSent) warns.push('email NON envoyé : transmettez le lien à la main');
+      if (data.lightroomMissing && kind === 'balance') warns.push('aucun lien Lightroom dans l\'espace : saisissez-le avant le paiement');
+      if (data.infosIncomplete) warns.push('coordonnées de facturation incomplètes');
+      out.innerHTML = `<div class="msg ${warns.length ? 'warn' : 'ok'}">Facture de ${eur(amt)} créée${data.emailSent ? ' et envoyée' : ''}. <a href="${esc(data.hostedInvoiceUrl)}" target="_blank" rel="noopener">Voir la facture</a>${warns.length ? '<br>⚠ ' + warns.join(' · ') : ''}</div>`;
+      toast('Facture créée'); await loadDashboard(); if (fromDrawer) renderDrawer();
+    } else {
+      out.innerHTML = `<div class="msg err">${data.error === 'customer_not_found' ? 'Aucun client Stripe avec cet email : il doit d\'abord remplir le devis sur le site.' : 'Erreur : ' + esc(data.error || res.status)}</div>`;
     }
+  } catch (e) { if (e.message !== 'unauthorized') out.innerHTML = '<div class="msg err">Erreur réseau.</div>'; }
+  finally { btns.forEach(b => b.disabled = false); }
+}
 
-    localStorage.setItem('bunkaio_admin_token', token);
-    btn.disabled = true;
-    btn.textContent = 'Génération en cours…';
+/* ── Séances & automatisations ── */
+function renderSessions() {
+  const all = upcomingSessions();
+  const up = all.filter(x => x.s.date >= today() && x.s.statut !== 'annulee');
+  $('sessUpcoming').innerHTML = up.length ? `<div class="list">${up.map(({ c, s }) => `<div class="li click" onclick="openDrawer('${esc(c.email)}','session')"><div class="ic">📸</div><div class="tx"><b>${fdate(s.date, { weekday: 'long', day: 'numeric', month: 'long' })}${s.heure ? ' · ' + esc(s.heure) : ''}</b><div class="d">${esc(c.name || c.email)}${s.prestation ? ' · ' + esc(s.prestation) : ''}</div><div class="d">${esc(s.lieu || 'Lieu à préciser')}</div></div><div class="act"><span class="badge">${daysUntil(s.date)}</span></div></div>`).join('')}</div>` : '<div class="empty">Aucune séance à venir.</div>';
+  const post = DB.contacts.filter(c => ['postprod', 'solde'].includes(c.stage));
+  $('sessDelivery').innerHTML = post.length ? `<div class="list">${post.map(c => { const a = primaryAcc(c) || {}; const s = a.seance || {}; const late = s.livraison && s.livraison < today() && c.stage === 'postprod';
+    return `<div class="li click" onclick="openDrawer('${esc(c.email)}','${c.stage === 'postprod' ? 'invoices' : 'space'}')"><div class="ic ${late ? 'danger' : ''}">${c.stage === 'solde' ? '€' : '🎞'}</div><div class="tx"><b>${esc(c.name || c.email)}</b><div class="d">${c.stage === 'solde' ? 'Solde envoyé, en attente du paiement' : 'Séance du ' + fdate(s.date) + ' · livraison ' + (s.livraison ? 'prévue ' + fdate(s.livraison) : 'non datée')}</div></div><div class="act">${a.lightroomUrl ? '<span class="badge ok">Lightroom ✓</span>' : '<span class="badge warn">Lightroom à saisir</span>'}</div></div>`; }).join('')}</div>` : '<div class="empty">Aucun projet en post-production.</div>';
+  // Automatisations : en attente = ce que la prochaine exécution enverra (ou enverra plus tard).
+  const c = DB.contacts;
+  const leadsWaiting = c.filter(x => x.markers.quizLe && !x.markers.acompteCree && !x.markers.acomptePaye && !x.markers.relanceDevis);
+  const mbWaiting = c.filter(x => x.markers.acomptePaye && !x.markers.rappelMoodboard && x.accounts.length && !x.accounts.some(a => (a.moodboards || []).length));
+  const sess = upcomingSessions().filter(x => x.s.statut !== 'annulee');
+  const rows = [
+    ['Accusé de réception des formulaires', 'Contact, collaboration, candidature partenaire, demande d\'espace : immédiat', '—', '—'],
+    ['Confirmation de demande de devis', 'Envoi du quiz : immédiat', '—', c.filter(x => x.lead).length],
+    ['Relance de devis', '7 jours après le quiz, sans facture d\'acompte', leadsWaiting.length, c.filter(x => x.markers.relanceDevis).length],
+    ['Facture d\'acompte + paiement reçu', 'Création dans « Factures », puis paiement Stripe', c.filter(x => x.invoices.some(i => i.kind === 'acompte' && i.status === 'open')).length, c.filter(x => x.invoices.some(i => i.kind === 'acompte' && i.status === 'paid')).length],
+    ['Rappel moodboard', '3 jours après l\'acompte payé, si aucun moodboard', mbWaiting.length, c.filter(x => x.markers.rappelMoodboard).length],
+    ['Rappel de séance J-2', 'Chaque matin, séances dans 2 jours', sess.filter(x => x.s.date >= today()).length, '—'],
+    ['Remerciement J+1 + date de livraison', 'Le lendemain de la séance', sess.filter(x => x.s.date >= addDays(-1)).length, '—'],
+    ['Alertes admin (livraison, date manquante)', 'Date de livraison atteinte / séance passée sans date', computeAlerts().filter(a => a.ic === '📦' || a.ic === '📅').length, '—'],
+    ['Photos prêtes + facture de solde', 'Création du solde dans « Factures »', c.filter(x => x.stage === 'postprod').length, c.filter(x => x.invoices.some(i => i.kind === 'solde')).length],
+    ['Relance de facture impayée', 'Chaque matin, factures échues', DB.invoices.filter(i => i.overdue).length, '—'],
+    ['Accès album + avis Google + remise 15 %', 'Paiement du solde', c.filter(x => x.stage === 'solde').length, c.filter(x => x.stage === 'livre').length],
+  ];
+  $('autoRows').innerHTML = rows.map(r => `<tr><td><b>${r[0]}</b></td><td class="small muted">${r[1]}</td><td class="num">${r[2] === '—' ? '—' : `<span class="badge ${r[2] ? 'warn' : 'line'}">${r[2]}</span>`}</td><td class="num">${r[3]}</td></tr>`).join('');
+}
+async function runAutomations() {
+  if (!confirm('Lancer maintenant les automatisations du jour (rappels, relances, alertes) ? Chaque email n\'est envoyé qu\'une fois.')) return;
+  $('runAutoBtn').disabled = true;
+  try { const { res, data } = await api('/admin/run-automations', { method: 'POST' }); toast(res.ok && data.ok ? 'Automatisations exécutées' : 'Erreur : ' + (data.error || res.status)); await loadDashboard(); }
+  catch (e) {} finally { $('runAutoBtn').disabled = false; }
+}
 
-    try {
-      const res = await fetch(WORKER_BASE + cfg.route, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + token
-        },
-        body: JSON.stringify({ email, totalAmountEur: amount, description })
-      });
-      const data = await res.json();
+/* ── Activité ── */
+function renderActivity() {
+  const all = allActivity();
+  const types = [['all', 'Tout'], ['unseen', 'Non vues'], ['moodboard', 'Moodboards'], ['infos', 'Coordonnées'], ['collaboration', 'Collaborations'], ['partenariat', 'Profil partenaire']];
+  const f = state.actFilter === 'all' ? () => true : state.actFilter === 'unseen' ? a => a.unseen : a => a.type === state.actFilter;
+  $('actChips').innerHTML = types.map(([id, l]) => `<button class="chip ${state.actFilter === id ? 'on' : ''}" onclick="state.actFilter='${id}';renderActivity()">${l}<span class="c">${all.filter(id === 'all' ? () => true : id === 'unseen' ? a => a.unseen : a => a.type === id).length}</span></button>`).join('');
+  const list = all.filter(f);
+  $('activityFeed').innerHTML = list.length ? list.map(a => `<div class="li click" onclick="openDrawer('${esc(a.email)}','activity')"><div class="ic">${a.type === 'moodboard' ? '🎨' : a.type === 'infos' ? '🧾' : a.type === 'collaboration' ? '🤝' : '⭐'}</div><div class="tx"><b>${a.unseen ? '<span class="dot"></span>' : ''}${esc(a.name)} <span class="badge line">${a.accType === 'partner' ? 'Partenaire' : 'Client'}</span></b><div>${esc(a.resume)}</div>${a.details && a.details.length ? `<div class="d">${a.details.map(esc).join(' · ')}</div>` : ''}<div class="d">${esc(ACT_LABEL[a.type] || a.type)} · ${fdt(a.date)}</div></div></div>`).join('') : '<div class="empty">Aucune activité.</div>';
+}
 
-      if (res.ok && data.ok && data.emailSent) {
-        result.className = 'ok';
-        const infoWarn = data.infosIncomplete ? '<br><strong>⚠ Coordonnées de facturation incomplètes</strong> : le client n\'a pas validé son espace (nom, adresse, téléphone, SIRET…). Complète-les dans Comptes avant de finaliser le devis et la facture.' : '';
-        const lrWarn = (kind === 'balance' && data.lightroomMissing) ? '<br><strong>⚠ Aucun lien Lightroom dans le compte de ce client</strong> : saisis-le dans Comptes avant qu\'il ne paie, sinon il ne recevra pas son accès (tu seras alerté).' : '';
-        result.innerHTML = 'Facture envoyée par email au client.<br>Montant ' + cfg.amountLabel + ' : <strong>' + data[cfg.amountField] + '€</strong><br>Lien : <a href="' + data.hostedInvoiceUrl + '" target="_blank">' + data.hostedInvoiceUrl + '</a>' + lrWarn + infoWarn;
-      } else if (res.ok && data.ok && !data.emailSent) {
-        result.className = 'err';
-        result.innerHTML = 'Facture créée dans Stripe, mais l\'email n\'a pas pu être envoyé automatiquement.<br>Montant ' + cfg.amountLabel + ' : <strong>' + data[cfg.amountField] + '€</strong><br>Transmets ce lien toi-même au client : <a href="' + data.hostedInvoiceUrl + '" target="_blank">' + data.hostedInvoiceUrl + '</a>';
-      } else if (data.error === 'customer_not_found') {
-        result.className = 'err';
-        result.textContent = 'Aucun client Stripe trouvé avec cet email. Le client doit avoir soumis le quiz au moins une fois.';
-      } else if (data.error === 'unauthorized') {
-        result.className = 'err';
-        result.textContent = 'Token admin incorrect.';
-      } else {
-        result.className = 'err';
-        result.textContent = 'Erreur : ' + (data.error || res.status);
-      }
-    } catch (err) {
-      result.className = 'err';
-      result.textContent = 'Erreur réseau : ' + err.message;
-    } finally {
-      btn.disabled = false;
-      btn.textContent = cfg.idleLabel;
+/* ── Statistiques ── */
+document.addEventListener('click', e => { const b = e.target.closest('#statDays button'); if (!b) return; document.querySelectorAll('#statDays button').forEach(x => x.classList.toggle('on', x === b)); loadStats(+b.dataset.d); });
+const EV_LABEL = { cta_click: 'Clic sur un bouton d\'action', quiz_step: 'Devis — étape atteinte', quiz_submit: 'Devis envoyé', contact_submit: 'Formulaire de contact', collab_submit: 'Proposition de collaboration', partner_apply: 'Candidature partenaire', account_request: 'Demande d\'espace', login: 'Connexion à un espace', share_google: 'Clic « Partager mon expérience »', share_submit: 'Témoignage envoyé', lang_switch: 'Changement de langue', video_play: 'Lecture vidéo' };
+function barRows(rows, labelFn, valFn) { const max = Math.max(1, ...rows.map(valFn)); return rows.length ? rows.map(r => `<div class="bar-row"><div class="track"><div class="fill" style="width:${valFn(r) / max * 100}%"></div><div class="lbl">${labelFn(r)}</div></div><div class="v">${valFn(r)}</div></div>`).join('') : '<div class="empty">Pas encore de données.</div>'; }
+function renderStats() {
+  const out = $('statsOut'); if (!out) return;
+  if (!STATS) { out.innerHTML = '<div class="card"><div class="empty">Chargement…</div></div>'; return; }
+  if (STATS.error) { out.innerHTML = `<div class="msg warn">${STATS.error === 'analytics_db_not_configured' ? 'La base de mesure n\'est pas encore activée : suivez les commandes en fin de <code>server/wrangler.toml</code>.' : 'Statistiques indisponibles : ' + esc(STATS.error)}</div>`; return; }
+  const d = STATS; const f = d.funnel; const base = f.quizVisitors || 0; const pct = n => base ? Math.round(n / base * 100) + ' %' : '—';
+  const days = d.daily; const max = Math.max(1, ...days.map(x => x.pv));
+  const W = 900, H = 220, P = 26; const step = days.length > 1 ? (W - 20) / (days.length - 1) : 0;
+  const pt = (x, k) => `${10 + k * step},${H - P - x / max * (H - P - 14)}`;
+  const area = days.length ? `<polygon points="10,${H - P} ${days.map((x, k) => pt(x.pv, k)).join(' ')} ${10 + (days.length - 1) * step},${H - P}" fill="#f1ecfa"/><polyline points="${days.map((x, k) => pt(x.pv, k)).join(' ')}" fill="none" stroke="#0a0a0c" stroke-width="2"/><polyline points="${days.map((x, k) => pt(x.uv, k)).join(' ')}" fill="none" stroke="#6e5aa8" stroke-width="2" stroke-dasharray="4 3"/>` : '';
+  const ticks = days.filter((_, k) => k % Math.max(1, Math.ceil(days.length / 8)) === 0).map(x => { const k = days.indexOf(x); return `<text x="${10 + k * step}" y="${H - 6}" font-size="11" fill="#76717f" text-anchor="middle" font-family="DM Sans">${fdate(x.day, { day: 'numeric', month: 'short' })}</text>`; }).join('');
+  out.innerHTML = `<div class="kpis">
+    <div class="kpi dark"><div class="l">Visiteurs</div><div class="n">${d.totals.uv}</div><div class="s">${STAT_DAYS} derniers jours</div></div>
+    <div class="kpi"><div class="l">Pages vues</div><div class="n">${d.totals.pv}</div><div class="s">${d.totals.uv ? (d.totals.pv / d.totals.uv).toFixed(1) + ' par visiteur' : '—'}</div></div>
+    <div class="kpi"><div class="l">Visiteurs du devis</div><div class="n">${base}</div><div class="s">Page /devis/</div></div>
+    <div class="kpi"><div class="l">Devis envoyés</div><div class="n">${f.quizSubmits}</div><div class="s">${pct(f.quizSubmits)} des visiteurs du devis</div></div></div>
+  <div class="card" style="margin-bottom:18px"><h3>Fréquentation</h3><svg class="chart" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">${area}${ticks}</svg><div class="legend"><span><i style="background:#0a0a0c"></i>Pages vues</span><span><i style="background:#6e5aa8"></i>Visiteurs</span></div></div>
+  <div class="grid g2" style="margin-bottom:18px">
+    <div class="card"><h3>Parcours du devis</h3>${barRows([{ l: 'Arrivée sur la page Devis', n: base }, ...f.steps.map(s => ({ l: 'Étape ' + s.prop + ' atteinte', n: s.n })), { l: 'Devis envoyé', n: f.quizSubmits }], r => esc(r.l) + (base && r.l !== 'Arrivée sur la page Devis' ? ' · ' + pct(r.n) : ''), r => r.n)}</div>
+    <div class="card"><h3>Pages les plus vues</h3>${barRows(d.pages, r => esc(r.path), r => r.pv)}</div>
+  </div>
+  <div class="grid g3">
+    <div class="card"><h3>Sources de trafic</h3>${barRows(d.referrers, r => esc(r.ref), r => r.n)}</div>
+    <div class="card"><h3>Appareils</h3>${barRows(d.devices, r => esc({ mobile: 'Mobile', desktop: 'Ordinateur', tablet: 'Tablette' }[r.device] || r.device), r => r.n)}</div>
+    <div class="card"><h3>Actions des visiteurs</h3>${barRows(d.events.slice(0, 12), r => esc((EV_LABEL[r.name] || r.name) + (r.prop ? ' — ' + r.prop : '')), r => r.n)}</div>
+  </div>`;
+}
+
+/* ── Fiche contact ── */
+const DR_TABS = [['summary', 'Résumé'], ['space', 'Espace & coordonnées'], ['session', 'Séance'], ['invoices', 'Factures'], ['activity', 'Activité'], ['advanced', 'Avancé']];
+function contactByEmail(email) { return DB.contacts.find(c => c.email === email); }
+function openDrawer(email, tab) {
+  const c = contactByEmail(email);
+  if (!c) { toast('Contact introuvable'); return; }
+  drawer = { email, tab: tab || 'summary', accIdx: Math.max(0, c.accounts.findIndex(a => a.type === 'client')), isNew: false };
+  if (drawer.tab === 'activity') { markSeen(c); updateCounts(); }
+  renderDrawer();
+  $('drawer').classList.add('on'); $('scrim').classList.add('on'); $('drawer').setAttribute('aria-hidden', 'false');
+}
+function openNewContact(email, name, phone, type) {
+  const known = contactByEmail((email || '').toLowerCase());
+  drawer = { email: (email || '').toLowerCase(), tab: 'space', accIdx: 0, isNew: true, newName: name || '', newPhone: phone || '', newType: type || 'client', newLang: known ? known.lang : 'fr' };
+  renderDrawer();
+  $('drawer').classList.add('on'); $('scrim').classList.add('on');
+}
+function closeDrawer() { $('drawer').classList.remove('on'); $('scrim').classList.remove('on'); $('drawer').setAttribute('aria-hidden', 'true'); drawer.email = null; renderActivity(); renderRecentActivity(); renderContacts(); updateCounts(); }
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('drawer').classList.contains('on')) closeDrawer(); });
+function setDrTab(t) { drawer.tab = t; if (t === 'activity') { const c = contactByEmail(drawer.email); if (c) { markSeen(c); updateCounts(); } } renderDrawer(); }
+function currentAcc(c) { return c && c.accounts.length ? c.accounts[Math.min(drawer.accIdx, c.accounts.length - 1)] : null; }
+
+function renderDrawer() {
+  const c = drawer.isNew ? null : contactByEmail(drawer.email);
+  if (!drawer.isNew && !c) { closeDrawer(); return; }
+  const st = c ? (STAGE[c.stage] || STAGE.contact) : null;
+  $('drHead').innerHTML = `<div class="row1"><div style="min-width:0"><h2>${esc(c ? (c.name || '(sans nom)') : 'Nouvel espace')}</h2><div class="em">${esc(c ? c.email : 'Créer un espace client ou partenaire')}${c && c.phone ? ' · ' + esc(c.phone) : ''}</div></div><button class="close" onclick="closeDrawer()" aria-label="Fermer">✕</button></div>
+    ${c ? `<div class="badges"><span class="badge lav">${st[1]}</span>${c.roles.map(r => ROLE_LABEL[r] ? `<span class="badge">${ROLE_LABEL[r][0]}</span>` : '').join('')}${c.lang === 'en' ? '<span class="badge">EN</span>' : ''}${c.totalPaid ? `<span class="badge">Encaissé ${eur(c.totalPaid)}</span>` : ''}${c.totalDue ? `<span class="badge">À payer ${eur(c.totalDue)}</span>` : ''}</div>` : ''}
+    <div class="dr-tabs">${(c ? DR_TABS : [['space', 'Espace & coordonnées']]).map(([id, l]) => `<button class="${drawer.tab === id ? 'on' : ''}" onclick="setDrTab('${id}')">${l}</button>`).join('')}</div>`;
+  const fn = { summary: drSummary, space: drSpace, session: drSession, invoices: drInvoices, activity: drActivity, advanced: drAdvanced }[drawer.tab] || drSummary;
+  $('drBody').innerHTML = fn(c);
+  const needsSave = ['space', 'session', 'advanced'].includes(drawer.tab) && (drawer.isNew || currentAcc(c));
+  $('drFoot').innerHTML = needsSave ? `<button class="btn" id="drSave" onclick="saveAccount()">${drawer.isNew ? 'Créer l\'espace' : 'Enregistrer'}</button><button class="btn ghost" onclick="closeDrawer()">Fermer</button><span class="small muted">${drawer.tab === 'session' ? 'Le rappel J-2 et le remerciement J+1 partent automatiquement.' : ''}</span><div id="drMsg"></div>` : `<button class="btn ghost" onclick="closeDrawer()">Fermer</button>${c ? `<a class="btn ghost" href="mailto:${esc(c.email)}">Écrire un email</a>${c.customerId ? `<a class="btn ghost" href="https://dashboard.stripe.com/customers/${esc(c.customerId)}" target="_blank" rel="noopener">Ouvrir dans Stripe</a>` : ''}` : ''}<div id="drMsg"></div>`;
+}
+function accSwitch(c) {
+  if (!c || c.accounts.length < 2) return '';
+  return `<div class="acc-switch">${c.accounts.map((a, k) => `<button class="chip ${k === drawer.accIdx ? 'on' : ''}" onclick="drawer.accIdx=${k};renderDrawer()">${a.type === 'partner' ? 'Espace partenaire' : 'Espace client'}</button>`).join('')}</div>`;
+}
+function drSummary(c) {
+  const a = primaryAcc(c); const L = c.lead; const s = a && a.seance;
+  const dep = c.invoices.find(i => i.kind === 'acompte'); const bal = c.invoices.find(i => i.kind === 'solde');
+  const steps = [
+    ['Demande de devis (quiz)', L ? fdate(L.date) : null],
+    ['Relance de devis', c.markers.relanceDevis ? 'envoyée' : null],
+    ['Facture d\'acompte', dep ? (INV_STATUS[dep.status] || [dep.status])[0] + ' · ' + eur(dep.amount) : null, dep && dep.status === 'paid'],
+    ['Espace créé', a ? (a.infosCompletes ? 'validé' : 'coordonnées à compléter') : null, a && a.infosCompletes],
+    ['Rappel moodboard', c.markers.rappelMoodboard ? 'envoyé' : null],
+    ['Séance', s ? fdate(s.date) + (s.statut === 'annulee' ? ' (annulée)' : '') : null, s && s.date < today()],
+    ['Facture de solde · photos prêtes', bal ? (INV_STATUS[bal.status] || [bal.status])[0] + ' · ' + eur(bal.amount) : null, bal && bal.status === 'paid'],
+    ['Album Lightroom ouvert', a && a.photosAcces ? 'oui' : null, a && a.photosAcces],
+    ['Clic sur l\'avis Google', c.markers.avisClique ? c.markers.avisClique : null, !!c.markers.avisClique],
+    ['Remise fidélité 15 %', c.markers.remise15 ? 'disponible' : null, !!c.markers.remise15],
+  ];
+  const quick = [];
+  if (!c.accounts.length) quick.push(`<button class="btn sm" onclick="openNewContact('${esc(c.email)}','${esc(c.name).replace(/&#39;/g, '')}','${esc(c.phone)}')">+ Créer l'espace client</button>`);
+  if (c.customerId) quick.push(`<button class="btn soft sm" onclick="setDrTab('invoices')">€ Facturer</button>`);
+  if (a) quick.push(`<button class="btn soft sm" onclick="setDrTab('session')">📅 Séance</button>`);
+  return `<div class="quick">${quick.join('')}</div>
+  <div class="grid g2">
+    <div class="card"><h3>Parcours</h3><div class="tl">${steps.filter(x => x[1]).map(x => `<div class="it ${x[2] ? 'done' : ''}"><b>${x[0]}</b><div class="d">${esc(x[1])}</div></div>`).join('') || '<div class="small muted">Aucune étape pour l\'instant.</div>'}</div></div>
+    <div class="card"><h3>Coordonnées</h3>${coordsHtml(c, a)}</div>
+  </div>
+  ${L ? `<div class="card" style="margin-top:18px"><h3>Réponses au devis <span class="badge ${(TEMP[L.temperature] || TEMP.froid)[1]}">${L.score} · ${(TEMP[L.temperature] || TEMP.froid)[0]}</span></h3><dl class="kv">
+    ${[['Catégorie', L.category], ['Profil', L.profile], ['Formule', L.formule], ['Budget estimé', L.budget], ['Délai souhaité', L.delai], ['Options', L.options], ['Projet', L.description], ['Accompagnement com\'', L.communication], ['Reçu le', fdate(L.date)]].map(([k, v]) => `<dt>${k}</dt><dd>${esc(v || '—')}</dd>`).join('')}</dl></div>` : ''}`;
+}
+function coordsHtml(c, a) {
+  const f = (a && a.facturation) || {};
+  const rows = [['Email', c.email], ['Téléphone', c.phone || (a && a.telephone)], ['Langue', c.lang === 'en' ? 'Anglais' : 'Français']];
+  if (a) rows.push(['Type de client', f.profil === 'professionnel' ? 'Professionnel' : f.profil === 'particulier' ? 'Particulier' : '—'], ['Raison sociale / nom', a.nom], ['Forme juridique', FORMES[f.forme]], ['Contact', f.contact], ['Adresse', [f.rue, [f.codePostal, f.ville].filter(Boolean).join(' '), f.pays].filter(Boolean).join(', ') || a.adresse], ['SIRET', f.siret], ['TVA intracom.', f.tvaIntra], ['Espace', a.infosCompletes ? '✓ validé' : '⚠ coordonnées incomplètes']);
+  return `<dl class="kv">${rows.filter(r => r[1]).map(([k, v]) => `<dt>${k}</dt><dd>${esc(v)}</dd>`).join('')}</dl>`;
+}
+function genCode() { const a = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; const r = new Uint8Array(4); crypto.getRandomValues(r); return 'BKO-' + Array.from(r, x => a[x % a.length]).join(''); }
+function fv(id) { const el = $(id); return el ? el.value.trim() : ''; }
+function drSpace(c) {
+  const a = drawer.isNew ? null : currentAcc(c);
+  if (!drawer.isNew && !a) return `<div class="card"><div class="empty">Aucun espace pour ce contact.</div><div style="text-align:center"><button class="btn" onclick="openNewContact('${esc(c.email)}','${esc(c.name).replace(/&#39;/g, '')}','${esc(c.phone)}')">+ Créer l'espace client</button></div></div>`;
+  const f = (a && a.facturation) || {};
+  const type = a ? a.type : drawer.newType;
+  return `${accSwitch(c)}<div class="form">
+    ${a ? `<div class="msg ${a.infosCompletes ? 'ok' : 'warn'}">${a.infosCompletes ? '✓ Espace validé : coordonnées de devis et facture complètes.' : '⚠ Espace non validé : le client doit compléter ses coordonnées (ou complétez-les ici).'}</div>` : '<div class="msg info">Un code d\'accès est généré : cochez l\'envoi du mail « Vos accès » pour le transmettre au client.</div>'}
+    <div class="frow">
+      <div class="fg"><label>Type d'espace</label><select id="aType" ${a ? 'disabled' : ''}><option value="client" ${type === 'client' ? 'selected' : ''}>Client</option><option value="partner" ${type === 'partner' ? 'selected' : ''}>Partenaire</option></select></div>
+      <div class="fg"><label>Email (identifiant)</label><input id="aEmail" type="email" value="${esc(a ? a.email : drawer.email)}" ${a ? 'disabled' : ''}></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label>Code d'accès ${a ? '(laisser vide pour garder l\'actuel)' : ''}</label><input id="aCode" value="${a ? '' : genCode()}" placeholder="BKO-XXXX"></div>
+      <div class="fg"><label>Langue des emails</label><select id="aLang"><option value="fr" ${(a ? a.lang : drawer.newLang) !== 'en' ? 'selected' : ''}>Français</option><option value="en" ${(a ? a.lang : drawer.newLang) === 'en' ? 'selected' : ''}>English</option></select></div>
+    </div>
+    <label class="check"><input type="checkbox" id="aSendAccess" ${a ? '' : 'checked'}> Envoyer le mail « Vos accès » (email + code saisi ci-dessus)</label>
+    <div class="lab" style="margin-top:8px">Coordonnées de devis et de facture</div>
+    <div class="frow">
+      <div class="fg"><label>Type de client</label><select id="aProfil"><option value="">—</option><option value="particulier" ${f.profil === 'particulier' ? 'selected' : ''}>Particulier</option><option value="professionnel" ${f.profil === 'professionnel' || (!f.profil && type === 'partner') ? 'selected' : ''}>Professionnel</option></select></div>
+      <div class="fg"><label>Forme juridique (pro)</label><select id="aForme"><option value="">—</option>${Object.entries(FORMES).map(([k, v]) => `<option value="${k}" ${f.forme === k ? 'selected' : ''}>${v}</option>`).join('')}</select></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label>Nom / raison sociale</label><input id="aNom" value="${esc(a ? a.nom : drawer.newName)}"></div>
+      <div class="fg"><label>Contact (pro)</label><input id="aContact" value="${esc(f.contact)}"></div>
+    </div>
+    <div class="fg"><label>Téléphone</label><input id="aTel" value="${esc(a ? a.telephone : drawer.newPhone)}"></div>
+    <div class="fg"><label>Adresse</label><input id="aRue" value="${esc(f.rue)}"></div>
+    <div class="frow"><div class="fg"><label>Code postal</label><input id="aCp" value="${esc(f.codePostal)}"></div><div class="fg"><label>Ville</label><input id="aVille" value="${esc(f.ville)}"></div></div>
+    <div class="frow"><div class="fg"><label>Pays</label><input id="aPays" value="${esc(f.pays || 'France')}"></div><div class="fg"><label>SIRET ${type === 'partner' ? '(obligatoire)' : '(optionnel)'}</label><input id="aSiret" value="${esc(f.siret)}"></div></div>
+    <div class="fg"><label>N° TVA intracommunautaire</label><input id="aTva" value="${esc(f.tvaIntra)}"></div>
+    <div class="lab" style="margin-top:8px">Album photo</div>
+    <div class="fg"><label>Lien Lightroom (album partagé)</label><input id="aLr" value="${esc(a ? a.lightroomUrl : '')}" placeholder="https://lightroom.adobe.com/shares/..."><div class="hint">À saisir avant la facture de solde. Le client ne le voit qu'une fois le solde payé.</div></div>
+    ${a ? `<div class="msg ${a.photosAcces ? 'ok' : 'info'}">Accès aux photos : <b>${a.photosAcces ? 'ouvert' : 'fermé'}</b></div>
+    <label class="check"><input type="checkbox" id="aSendPhotos"> Débloquer et envoyer l'accès aux photos maintenant (normalement automatique au paiement du solde)</label>
+    ${a.photosAcces ? `<button class="btn danger sm" style="justify-self:start" onclick="revokePhotos()">Retirer l'accès aux photos</button>` : ''}` : ''}
+    <div class="fg"><label>Étape affichée dans l'espace (1 à 4)</label><select id="aEtape"><option value="">—</option>${[1, 2, 3, 4].map(n => `<option ${a && a.etapeActuelle === n ? 'selected' : ''}>${n}</option>`).join('')}</select><div class="hint">1 devis · 2 shooting · 3 post-production · 4 livré</div></div>
+  </div>`;
+}
+function drSession(c) {
+  const a = currentAcc(c);
+  if (!a) return `<div class="card"><div class="empty">Créez d'abord l'espace du client pour planifier sa séance (rappel J-2, remerciement J+1).</div><div style="text-align:center"><button class="btn" onclick="openNewContact('${esc(c.email)}','${esc(c.name).replace(/&#39;/g, '')}','${esc(c.phone)}')">+ Créer l'espace client</button></div></div>`;
+  const s = a.seance || {};
+  return `${accSwitch(c)}<div class="form">
+    ${s.statut === 'annulee' ? '<div class="msg err">Séance annulée : aucun rappel ne sera envoyé. Modifier la date la réactive.</div>' : ''}
+    <div class="frow"><div class="fg"><label>Date</label><input type="date" id="sDate" value="${esc(s.date)}"></div><div class="fg"><label>Heure</label><input id="sHeure" value="${esc(s.heure)}" placeholder="14h30"></div></div>
+    <div class="fg"><label>Lieu</label><input id="sLieu" value="${esc(s.lieu)}" placeholder="Adresse exacte du rendez-vous"></div>
+    <div class="fg"><label>Prestation</label><input id="sPresta" value="${esc(s.prestation || (c.lead ? c.lead.category + (c.lead.formule ? ' — ' + c.lead.formule : '') : ''))}"></div>
+    <div class="fg"><label>Date de livraison estimée</label><input type="date" id="sLivraison" value="${esc(s.livraison)}"><div class="hint">Citée dans le mail du lendemain. Alerte à cette date si le solde n'est pas créé.</div></div>
+    <div class="frow"><div class="fg"><label>Envoyer un email à l'enregistrement</label><select id="sMail"><option value="">Aucun</option><option value="confirmation">Confirmation de séance</option><option value="report">Report (la date ci-dessus est la nouvelle)</option><option value="cancel">Annulation</option></select></div>
+    <div class="fg"><label>Motif (facultatif)</label><input id="sMotif"></div></div>
+  </div>`;
+}
+function drInvoices(c) {
+  return `<div class="card" style="margin-bottom:18px"><h3>Nouvelle facture pour ${esc(c.name || c.email)}</h3>
+    ${c.customerId ? `<div class="form"><div class="frow"><div class="fg"><label>Montant total HT (€)</label><input id="drAmount" type="number" min="0" step="0.01" oninput="$('drSplit').innerHTML=this.value>0?'Acompte <b>'+eur(Math.round(this.value*30)/100)+'</b> · Solde <b>'+eur(Math.round(this.value*70)/100)+'</b>':''" value="${esc(c.invoices.find(i => i.kind === 'acompte') ? Math.round(c.invoices.find(i => i.kind === 'acompte').amount / 0.3 * 100) / 100 : '')}"></div><div class="fg"><label>Répartition</label><div class="small" id="drSplit" style="padding:10px 0"></div></div></div>
+      <div class="fg"><label>Description</label><input id="drDesc" value="${esc((c.invoices[0] && c.invoices[0].description) || (primaryAcc(c) && primaryAcc(c).seance && primaryAcc(c).seance.prestation) || (c.lead ? c.lead.category : ''))}"></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn invbtn" onclick="createInvoice('deposit',true)">Facture d'acompte (30 %)</button><button class="btn ghost invbtn" onclick="createInvoice('balance',true)">Photos prêtes + solde (70 %)</button></div>
+      ${primaryAcc(c) && !primaryAcc(c).lightroomUrl ? '<div class="msg warn">Lien Lightroom non saisi : renseignez-le dans « Espace & coordonnées » avant le solde.</div>' : ''}
+      <div id="drResult"></div></div>` : '<div class="msg warn">Ce contact n\'existe pas dans Stripe : il doit d\'abord remplir le devis sur le site pour pouvoir être facturé.</div>'}
+  </div>
+  ${c.invoices.length ? invTableHtml(c.invoices, false) : '<div class="card"><div class="empty">Aucune facture.</div></div>'}`;
+}
+function drActivity(c) {
+  const list = allActivity().filter(a => a.email === c.email);
+  return list.length ? `<div class="card"><div class="list">${list.map(a => `<div class="li"><div class="ic">${a.type === 'moodboard' ? '🎨' : a.type === 'infos' ? '🧾' : a.type === 'collaboration' ? '🤝' : '⭐'}</div><div class="tx"><b>${esc(a.resume)}</b>${a.details && a.details.length ? `<ul style="margin:4px 0 0 16px" class="small">${a.details.map(d => `<li>${esc(d)}</li>`).join('')}</ul>` : ''}<div class="d">${esc(ACT_LABEL[a.type] || a.type)} · ${fdt(a.date)}</div></div></div>`).join('')}</div></div>` : '<div class="card"><div class="empty">Aucune modification faite par ce contact dans son espace.</div></div>';
+}
+const ADV = [['commandes', 'Mes commandes'], ['paiements', 'Mes paiements'], ['factures', 'Mes factures'], ['abonnement', 'Mon abonnement'], ['moodboards', 'Moodboards'], ['partenariat', 'Partenariat'], ['promotions', 'Promotions'], ['reseau', 'Réseau'], ['collaborations', 'Collaborations']];
+function drAdvanced(c) {
+  const a = currentAcc(c);
+  if (!a) return '<div class="card"><div class="empty">Aucun espace pour ce contact.</div></div>';
+  return `${accSwitch(c)}<div class="msg info" style="margin-bottom:14px">Données affichées dans l'espace, au format JSON. Laissez un champ vide pour ne pas le modifier (« Abonnement » et « Partenariat » vides sont supprimés).</div><div class="form">${ADV.map(([k, l]) => `<div class="fg"><label>${l}</label><textarea id="adv-${k}" spellcheck="false">${a[k] ? esc(JSON.stringify(a[k], null, 2)) : ''}</textarea></div>`).join('')}</div>`;
+}
+function revokePhotos() { if (!confirm('Retirer l\'accès aux photos ? Le lien disparaît de l\'espace du client. Pensez aussi à retirer le partage dans Lightroom.')) return; saveAccount({ revokePhotos: true }); }
+
+async function saveAccount(extra) {
+  const c = drawer.isNew ? null : contactByEmail(drawer.email);
+  const a = drawer.isNew ? null : currentAcc(c);
+  const msg = $('drMsg');
+  const tab = drawer.tab;
+  const payload = { type: a ? a.type : fv('aType'), email: a ? a.email : fv('aEmail').toLowerCase() };
+  if (!payload.email || !payload.email.includes('@')) { msg.innerHTML = '<div class="msg err">Email invalide.</div>'; return; }
+  if (tab === 'space') {
+    Object.assign(payload, { nom: fv('aNom') || undefined, telephone: fv('aTel') || undefined, lightroomUrl: fv('aLr') || undefined, lang: fv('aLang'), etapeActuelle: fv('aEtape') ? Number(fv('aEtape')) : undefined });
+    if (fv('aCode')) payload.code = fv('aCode');
+    if (fv('aProfil') || fv('aRue')) payload.facturation = { profil: fv('aProfil') || (payload.type === 'partner' ? 'professionnel' : 'particulier'), contact: fv('aContact') || undefined, forme: fv('aForme') || undefined, rue: fv('aRue'), codePostal: fv('aCp'), ville: fv('aVille'), pays: fv('aPays'), siret: fv('aSiret') || undefined, tvaIntra: fv('aTva') || undefined };
+    if ($('aSendAccess') && $('aSendAccess').checked) { if (!payload.code) { msg.innerHTML = '<div class="msg err">Saisissez un code d\'accès pour l\'envoyer (l\'actuel n\'est pas lisible).</div>'; return; } payload.sendAccessMail = true; }
+    if ($('aSendPhotos') && $('aSendPhotos').checked) payload.sendPhotosMail = true;
+    if (!a && !payload.code) { msg.innerHTML = '<div class="msg err">Un code d\'accès est obligatoire pour créer l\'espace.</div>'; return; }
+  }
+  if (tab === 'session') {
+    const s = a.seance || {}; const d = fv('sDate');
+    payload.seance = d ? { date: d, heure: fv('sHeure') || undefined, lieu: fv('sLieu') || undefined, prestation: fv('sPresta') || undefined, livraison: fv('sLivraison') || undefined, statut: s.statut === 'annulee' && s.date === d ? 'annulee' : 'prevue' } : null;
+    if (fv('sMail')) { if (!d) { msg.innerHTML = '<div class="msg err">Renseignez la date pour envoyer un email de séance.</div>'; return; } payload.sendSeanceMail = fv('sMail'); }
+    if (fv('sMotif')) payload.motif = fv('sMotif');
+    if (fv('sMail') && !confirm('Envoyer l\'email « ' + $('sMail').selectedOptions[0].textContent + ' » au client ?')) return;
+  }
+  if (tab === 'advanced') {
+    for (const [k, l] of ADV) {
+      const raw = $('adv-' + k).value.trim();
+      if (!raw) { if (k === 'abonnement' || k === 'partenariat') payload[k] = null; continue; }
+      try { payload[k] = JSON.parse(raw); } catch (e) { msg.innerHTML = `<div class="msg err">JSON invalide dans « ${l} ».</div>`; return; }
     }
   }
+  Object.assign(payload, extra || {});
+  const btn = $('drSave'); if (btn) { btn.disabled = true; btn.textContent = 'Enregistrement…'; }
+  try {
+    const { res, data } = await api('/accounts', { method: 'POST', body: JSON.stringify(payload) });
+    if (res.ok && data.ok) {
+      const em = data.emails || {}; const notes = [];
+      if (em.access === true) notes.push('mail d\'accès envoyé'); if (em.access === false) notes.push('⚠ mail d\'accès non envoyé');
+      if (em.seance === true) notes.push('mail de séance envoyé'); if (em.seance === false || em.seance === 'no_seance') notes.push('⚠ mail de séance non envoyé');
+      if (em.photos === true) notes.push('accès photos envoyé'); if (em.photos === 'no_lightroom_url') notes.push('⚠ lien Lightroom manquant'); if (em.photos === false) notes.push('⚠ mail photos non envoyé');
+      toast((drawer.isNew ? 'Espace créé' : 'Enregistré') + (notes.length ? ' · ' + notes.join(' · ') : ''));
+      const email = payload.email;
+      await loadDashboard();
+      drawer.isNew = false; drawer.email = email;
+      const c2 = contactByEmail(email); if (c2) drawer.accIdx = Math.max(0, c2.accounts.findIndex(x => x.type === payload.type));
+      renderDrawer();
+      $('drMsg').innerHTML = `<div class="msg ${notes.some(n => n.startsWith('⚠')) ? 'warn' : 'ok'}">✓ ${drawer.tab === 'space' && !a ? 'Espace créé' : 'Modifications enregistrées'}${notes.length ? ' · ' + notes.join(' · ') : ''}</div>`;
+    } else {
+      msg.innerHTML = `<div class="msg err">${data.error === 'code_required_for_new_account' ? 'Un code d\'accès est obligatoire pour créer l\'espace.' : 'Erreur : ' + esc(data.error || res.status)}</div>`;
+    }
+  } catch (e) { if (e.message !== 'unauthorized') msg.innerHTML = '<div class="msg err">Erreur réseau.</div>'; }
+  finally { const b = $('drSave'); if (b) { b.disabled = false; b.textContent = drawer.isNew ? 'Créer l\'espace' : 'Enregistrer'; } }
+}
+
+/* ── Démarrage : reconnexion automatique si le token est déjà enregistré ── */
+(async function init() {
+  const saved = lsGet(TOKEN_KEY, '');
+  if (!saved) return;
+  TOKEN = saved; $('tokenInput').value = saved;
+  try { if (await loadDashboard()) showApp(); } catch (e) { if (e.message !== 'unauthorized') $('loginErr').textContent = 'Connexion impossible (réseau ou Worker non déployé).'; }
+})();
 </script>
 </body>
 </html>
