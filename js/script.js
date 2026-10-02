@@ -122,7 +122,7 @@ const I18N = {
     'about-h-method':'Comment ça se passe',
     'about-step1':'Devis personnalisé sous 48 h','about-step2':'Shooting à la date convenue','about-step3':'Retouche et post-production','about-step4':'Livraison en HD dans une galerie privée, depuis votre espace client',
     'about-cta-portfolio':'Voir le portfolio','about-cta-contact':'Contacter BUNKAIO',
-    'ft-about':'À propos','ft-advice':'Conseils photo','cred-about-link':'Qui est derrière BUNKAIO ? →',
+    'ft-about':'À propos','acc-h1':'Mon espace','ft-advice':'Conseils photo','cred-about-link':'Qui est derrière BUNKAIO ? →',
     'zone-label':'Zone d\'intervention','zone-value':'Photographe mobile — Béziers, Montpellier, Toulouse',
     'share-sub':'Vous avez travaillé avec BUNKAIO ? Votre retour aide d\'autres clients à se projeter — et compte énormément pour nous.',
     'share-info-label':'Comment ça marche',
@@ -447,7 +447,7 @@ const I18N = {
     'about-h-method':'How it works',
     'about-step1':'Personalised quote within 48 hours','about-step2':'Shoot on the agreed date','about-step3':'Retouching and post-production','about-step4':'HD delivery in a private gallery, from your client area',
     'about-cta-portfolio':'See the portfolio','about-cta-contact':'Contact BUNKAIO',
-    'ft-about':'About','ft-advice':'Photo advice','cred-about-link':'Who is behind BUNKAIO? →',
+    'ft-about':'About','acc-h1':'My space','ft-advice':'Photo advice','cred-about-link':'Who is behind BUNKAIO? →',
     'zone-label':'Service area','zone-value':'Mobile photographer — Béziers, Montpellier, Toulouse',
     'share-sub':'Have you worked with BUNKAIO? Your feedback helps other clients picture what to expect — and it means a great deal to us.',
     'share-info-label':'How it works',
@@ -798,6 +798,7 @@ function closeMobileMenu(){
 
 function refreshDynamic(){
   renderClientSpotlights();
+  if (currentView === 'portfolio') renderPortfolioLinks();
   if (currentView === 'service') renderServicePage(currentSub);
   if (currentView === 'article') renderArticlePage(currentSub);
   if (currentView === 'advice') renderAdvicePage();
@@ -1202,10 +1203,12 @@ const TIERS = [
   { id:'edit', name:{fr:'Éditorial Bunkaio', en:'Bunkaio editorial'}, badge:{fr:'Expérience complète', en:'The complete experience'} }
 ];
 
+/* Portfolio : aligné sur le catalogue actuel. Les rubriques suspendues (immobilier,
+   architecture, artisanat) sont à ré-ajouter ici si elles reviennent au catalogue :
+     { id:'immobilier', label:{fr:'Immobilier', en:'Real estate'} },
+     { id:'archi',      label:{fr:'Architecture', en:'Architecture'} },
+     { id:'artisan',    label:{fr:'Artisanat', en:'Craftsmanship'} } */
 const PF_CATS = [
-  { id:'immobilier',  label:{fr:'Immobilier', en:'Real estate'} },
-  { id:'archi',       label:{fr:'Architecture',en:'Architecture'} },
-  { id:'artisan',     label:{fr:'Artisanat',   en:'Craftsmanship'} },
   { id:'photo-part',  label:{fr:'Séance photo',en:'Portrait'} },
   { id:'mode',        label:{fr:'Mode',        en:'Fashion'} },
   { id:'commercial',  label:{fr:'Commercial',  en:'Commercial'} },
@@ -1604,6 +1607,7 @@ function goView(v, subTab, opts){
     if (v === 'services') { renderServices(); setSvcTab('catalogue'); }
     if (v === 'drone') { renderDroneCats(); renderDroneProjects(activeDroneCat); }
     if (v === 'portfolio' && !pfLoaded) { renderPfTabs(); selectPfTab(PF_CATS[0].id); pfLoaded = true; }
+    if (v === 'portfolio') renderPortfolioLinks();
     if (v === 'partners') {
       renderPartnersAccordion(); renderLogoCarousel();
       setPartnersTab(subTab === 'collab' || subTab === 'apply' ? subTab : 'program');
@@ -3021,7 +3025,8 @@ function renderPfGalleryInto(container, catId, catLabel, max, emptyText){
     photos.forEach((src, i) => {
       const ph = document.createElement('div');
       ph.className = 'ph rv';
-      ph.innerHTML = `<img loading="lazy" src="${src}" alt="${LANG === 'fr' ? 'Photographie' : 'Photography'} ${catLabel} — Bunkaio ${i + 1}">`;
+      const customAlt = IMG.portfolioAlt && IMG.portfolioAlt[catId] && IMG.portfolioAlt[catId][i];
+      ph.innerHTML = `<img loading="lazy" src="${src}" alt="${escHtml(customAlt || ((LANG === 'fr' ? 'Photographie' : 'Photography') + ' ' + catLabel + ' — Bunkaio ' + (i + 1)))}">`;
       container.appendChild(ph);
       observe(ph);
     });
@@ -3041,6 +3046,14 @@ function renderPfTabs(){
   });
 }
 
+/* Liens vers chaque prestation, sous la galerie : maillage interne + texte indexable. */
+function renderPortfolioLinks(){
+  const el = document.getElementById('pfLinks');
+  if (!el) return;
+  el.innerHTML = `<section class="read-panel svcp-panel pf-links"><h2>${t({fr:'Découvrir chaque prestation', en:'Explore each service'})}</h2>
+    <p class="svcp-text">${t({fr:'Chaque univers a sa page avec les formules, les tarifs et les délais : portrait, mode, produits, événementiel et photobooth Lumen, à Béziers, Montpellier et Toulouse.', en:'Each universe has its own page with packages, rates and timelines: portrait, fashion, products, events and the Lumen photobooth, in Béziers, Montpellier and Toulouse.'})}</p>
+    <div class="svcp-others-row">${CATS.filter(c => seoRouteFor('service', c.id)).map(c => `<a class="svcp-chip" href="${servicePath(c.id)}" data-nav="service:${c.id}">${t(c.name)}</a>`).join('')}</div></section>`;
+}
 function selectPfTab(id){
   document.querySelectorAll('.pf-cat-tab').forEach(tab => tab.classList.toggle('active', tab.dataset.cat === id));
   const grid = document.getElementById('pfGrid');

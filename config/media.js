@@ -97,6 +97,10 @@ const IMG = {
   contact:   MEDIA_BASE + '/hero/contact-1.webp',    // Fond page Contact
   about:     MEDIA_BASE + '/hero/contact-1.webp',    // Fond page À propos
   service:   MEDIA_BASE + '/hero/services-1.webp',   // Fond des pages de prestation (/services/…)
+  /* Textes alternatifs du portfolio (SEO images) : un tableau par catégorie, dans l'ORDRE d'affichage des photos.
+     Décrivez ce qu'on voit, sans bourrer de mots-clés. Ex. : 'photo-part': ['Portrait en lumière naturelle d'une femme sur un pont à Béziers', ...]
+     Si une entrée manque, un texte générique est utilisé. */
+  portfolioAlt: {},
   aboutPhoto: '',                                     // Portrait de la photographe (À propos) — ex. MEDIA_BASE + '/about/aya.webp' après dépôt dans l'admin média
   partners:  MEDIA_BASE + '/hero/partners-1.webp',   // Fond page Partenaires
   legal:     MEDIA_BASE + '/hero/contact-1.webp',    // Fond page FAQ & confidentialité

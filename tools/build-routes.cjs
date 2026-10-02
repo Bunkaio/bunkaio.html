@@ -20,6 +20,7 @@ const fs = require('fs');
 const path = require('path');
 const http = require('http');
 const vm = require('vm');
+const crypto = require('crypto');
 const { chromium } = require('playwright');
 
 const ROOT = path.resolve(__dirname, '..');
@@ -30,6 +31,8 @@ const ROUTES = vm.runInNewContext(fs.readFileSync(path.join(ROOT, 'config/articl
 /* Conteneurs remplis par le JavaScript, à pré-rendre dans le HTML. */
 const SNAPS_BY_VIEW = {
   home: ['missionServicesTrack', 'adviceTeaser'],
+  quiz: ['catList'],
+  portfolio: ['pfTabs', 'pfLinks'],
   services: ['servicesFilters', 'servicesGrid', 'processSteps'],
   legal: ['faqAccordion', 'privacyAccordion'],
   partners: ['partnersPitch', 'partnersAccordion', 'applyBenefitsAccordion'],
@@ -171,15 +174,21 @@ function buildPage(template, route, snaps, meta) {
 
   html = html.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/, buildJsonLd(route, meta));
 
+  if (route.slug) {
+    const art = ARTICLES.find((x) => x.slug === route.slug);
+    html = html.replace('<meta property="og:type" content="website">', '<meta property="og:type" content="article">\n<meta property="article:published_time" content="' + (art ? art.date : '') + '">');
+  }
+
   // Vue active = celle de la route
   html = html.replace(/<div class="view( active)?" id="view-([a-z]+)"/g, (m, act, v) => '<div class="view' + (v === route.view ? ' active' : '') + '" id="view-' + v + '"');
   html = html.replace(/<(a|button) class="nav-link( mobile-link)?( active)?" data-view="([a-z]+)"/g, (m, tag, mob, act, v) => '<' + tag + ' class="nav-link' + (mob || '') + (v === (route.view === 'service' ? 'services' : route.view) ? ' active' : '') + '" data-view="' + v + '"');
 
   // Un seul <h1> : celui de la vue de la page ; les autres deviennent <h2>
-  let current = null;
+  let current = null, keptH1 = false;
   html = html.replace(/<div class="view[^"]*" id="view-([a-z]+)"|<h1\b([^>]*data-pageh1[^>]*)>([\s\S]*?)<\/h1>/g, (m, v, attrs, inner) => {
     if (v) { current = v; return m; }
-    return current === route.view ? m : '<h2' + attrs + '>' + inner + '</h2>';
+    if (current === route.view && !keptH1) { keptH1 = true; return m; }
+    return '<h2' + attrs + '>' + inner + '</h2>';
   });
 
   // Contenu pré-rendu
@@ -189,7 +198,25 @@ function buildPage(template, route, snaps, meta) {
   return html;
 }
 
+/* Minification (esbuild, dispo dans server/node_modules) : les pages chargent css/style.min.css et
+   js/script.min.js ; les sources lisibles restent css/style.css et js/script.js. La version dans l'URL
+   (?v=) est l'empreinte du fichier : le cache se renouvelle tout seul à chaque changement. */
+function minifyAssets() {
+  const esbuild = require(path.join(ROOT, 'server/node_modules/esbuild'));
+  esbuild.buildSync({ entryPoints: [path.join(ROOT, 'css/style.css')], minify: true, outfile: path.join(ROOT, 'css/style.min.css'), logLevel: 'error' });
+  esbuild.buildSync({ entryPoints: [path.join(ROOT, 'js/script.js')], minify: true, outfile: path.join(ROOT, 'js/script.min.js'), logLevel: 'error' });
+}
+const hash8 = (file) => crypto.createHash('sha1').update(fs.readFileSync(path.join(ROOT, file))).digest('hex').slice(0, 8);
+function pinAssets(html) {
+  const files = { 'css/style.min.css': 'css/style\\.(?:min\\.)?css', 'js/script.min.js': 'js/script\\.(?:min\\.)?js', 'js/analytics.js': 'js/analytics\\.js', 'config/analytics.js': 'config/analytics\\.js', 'config/articles.js': 'config/articles\\.js', 'config/routes.js': 'config/routes\\.js', 'config/media.js': 'config/media\\.js' };
+  for (const [file, pattern] of Object.entries(files)) {
+    html = html.replace(new RegExp('(?:' + pattern + ')\\?v=[^"\']*', 'g'), file + '?v=' + hash8(file));
+  }
+  return html;
+}
+
 (async () => {
+  minifyAssets();
   const srv = await serve();
   const port = srv.address().port;
   const browser = await chromium.launch(process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : {});
@@ -240,16 +267,26 @@ function buildPage(template, route, snaps, meta) {
   const template = normalize(fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8'));
   for (const route of ROUTES) {
     const sn = route.cat ? { ...snaps, servicePageContent: serviceSnaps[route.cat] } : route.slug ? { ...snaps, articlePageContent: articleSnaps[route.slug] } : snaps;
-    const out = buildPage(template, route, sn, serviceMeta[route.cat]);
+    const out = pinAssets(buildPage(template, route, sn, serviceMeta[route.cat]));
     const file = route.path === '/' ? path.join(ROOT, 'index.html') : path.join(ROOT, route.path, 'index.html');
     fs.mkdirSync(path.dirname(file), { recursive: true });
     fs.writeFileSync(file, out);
     console.log('écrit', path.relative(ROOT, file), route.index ? '' : '(noindex)');
   }
 
-  // 3. sitemap.xml (pages indexables uniquement)
+  // 3. sitemap.xml (pages indexables uniquement) — lastmod = date du dernier changement réel du
+  // contenu de la page (empreinte hors versions de fichiers), conservée dans tools/lastmod.json.
   const today = new Date().toISOString().slice(0, 10);
-  const urls = ROUTES.filter((r) => r.index).map((r) => '  <url>\n    <loc>' + SITE + r.path + '</loc>\n    <lastmod>' + today + '</lastmod>\n  </url>').join('\n');
+  const lmFile = path.join(ROOT, 'tools/lastmod.json');
+  const lm = fs.existsSync(lmFile) ? JSON.parse(fs.readFileSync(lmFile, 'utf8')) : {};
+  for (const route of ROUTES) {
+    const file = route.path === '/' ? path.join(ROOT, 'index.html') : path.join(ROOT, route.path, 'index.html');
+    const content = fs.readFileSync(file, 'utf8').replace(/\?v=[0-9a-f]{8}/g, '');
+    const h = crypto.createHash('sha1').update(content).digest('hex');
+    if (!lm[route.path] || lm[route.path].hash !== h) lm[route.path] = { hash: h, date: today };
+  }
+  fs.writeFileSync(lmFile, JSON.stringify(lm, null, 2) + '\n');
+  const urls = ROUTES.filter((r) => r.index).map((r) => '  <url>\n    <loc>' + SITE + r.path + '</loc>\n    <lastmod>' + lm[r.path].date + '</lastmod>\n  </url>').join('\n');
   fs.writeFileSync(path.join(ROOT, 'sitemap.xml'), '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + urls + '\n</urlset>\n');
 
   // 4. 404.html
