@@ -2,7 +2,6 @@ import { getAccount, listAccounts } from './accounts';
 import {
   buildAdminAlertEmail,
   buildAfterSessionEmail,
-  buildReviewRequestEmail,
   buildMoodboardReminderEmail,
   buildQuoteFollowUpEmail,
   buildSeanceEmail,
@@ -41,11 +40,6 @@ export async function markDepositPaid(env: Env, email: string, name: string, lan
 export async function markBalanceInvoiced(env: Env, email: string): Promise<void> {
   await env.ACCOUNTS_KV.put(`bal:${norm(email)}`, '1', { expirationTtl: 120 * DAY / 1000 });
 }
-/** Solde payé : la demande d'avis part 7 jours plus tard (cron). */
-export async function markReviewDue(env: Env, email: string, name: string, lang: string, url: string): Promise<void> {
-  await env.ACCOUNTS_KV.put(`rev:${norm(email)}`, JSON.stringify({ name, lang, date: new Date().toISOString(), url }), { expirationTtl: 60 * DAY / 1000 });
-}
-
 /** Date du jour à Paris au format AAAA-MM-JJ, décalée de `offsetDays`. */
 function parisDate(offsetDays: number): string {
   const d = new Date(Date.now() + offsetDays * DAY);
@@ -168,29 +162,8 @@ async function sendAdminDeliveryAlerts(env: Env): Promise<void> {
   }
 }
 
-/** Demande d'avis + rappel de la remise de 15 %, 7 jours après l'accès aux photos. */
-async function sendReviewRequests(env: Env): Promise<void> {
-  const list = await env.ACCOUNTS_KV.list({ prefix: 'rev:', limit: 1000 });
-  for (const k of list.keys) {
-    const email = k.name.slice(4);
-    const raw = await env.ACCOUNTS_KV.get(k.name);
-    if (!raw) continue;
-    let marker: { name: string; lang: string; date: string; url: string };
-    try { marker = JSON.parse(raw); } catch { continue; }
-    if (Date.now() - Date.parse(marker.date) < 7 * DAY) continue;
-    try {
-      const isPartner = !!(await getAccount(env, 'partner', email));
-      const m = buildReviewRequestEmail({ customerName: marker.name, reviewUrl: marker.url, lang: normalizeLang(marker.lang), space: isPartner ? 'partner' : 'client' });
-      await sendEmail(env, email, m.subject, m.html, m.text);
-      await env.ACCOUNTS_KV.delete(k.name);
-    } catch (err) {
-      console.error('[automatisation] échec demande d\'avis', err);
-    }
-  }
-}
-
 export async function runDailyAutomations(env: Env): Promise<void> {
-  for (const job of [sendSeanceReminders, sendAfterSessionMails, sendAdminDeliveryAlerts, sendMoodboardReminders, sendQuoteFollowUps, sendReviewRequests]) {
+  for (const job of [sendSeanceReminders, sendAfterSessionMails, sendAdminDeliveryAlerts, sendMoodboardReminders, sendQuoteFollowUps]) {
     try { await job(env); } catch (err) { console.error('[automatisation] tâche en échec', job.name, err); }
   }
 }

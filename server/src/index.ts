@@ -2,8 +2,9 @@ import type Stripe from 'stripe';
 import { adminAccountView, getAccount, listAccounts, putAccount, sanitizeAccount, upsertAccountFromAdmin, verifyLogin } from './accounts';
 import { handleCollect, handleStats, purgeOldAnalytics } from './analytics';
 import { appendJournal, diffAccountActivity, flushActivityNotifications, queueActivityNotification } from './activity';
-import { claimAckSlot, markBalanceInvoiced, markReviewDue, markDepositPaid, markInvoiced, markLead, runDailyAutomations } from './automations';
+import { claimAckSlot, markBalanceInvoiced, markDepositPaid, markInvoiced, markLead, runDailyAutomations } from './automations';
 import {
+  buildAdminAlertEmail,
   buildAcknowledgementEmail,
   buildSeanceEmail,
   buildAccessCodeEmail,
@@ -14,8 +15,7 @@ import {
   buildOverdueReminderEmail,
   buildPaymentConfirmationEmail,
   buildQuizConfirmationEmail,
-  buildReviewRequestEmail,
-  normalizeLang,
+    normalizeLang,
   sendEmail,
 } from './email';
 import {
@@ -418,7 +418,7 @@ async function handleAdminAccounts(request: Request, env: Env, headers: Record<s
           emails.photos = 'no_lightroom_url';
         } else {
           try {
-            const m = buildPhotosReadyEmail({ customerName: account.nom ?? '', lightroomUrl: account.lightroomUrl, space: account.type, lang });
+            const m = buildPhotosReadyEmail({ customerName: account.nom ?? '', lightroomUrl: account.lightroomUrl, space: account.type, lang, reviewUrl: env.GOOGLE_REVIEW_URL });
             await sendEmail(env, account.email, m.subject, m.html, m.text);
             emails.photos = true;
           } catch (err) {
@@ -702,6 +702,29 @@ async function handleStripeWebhook(request: Request, env: Env, headers: Record<s
     return jsonResponse({ ok: false, error: 'invalid_signature' }, 400, headers);
   }
 
+  // Litige ouvert par le client (carte, prélèvement, Klarna) : on prévient l'admin pour qu'elle puisse
+  // répondre dans les délais et, si besoin, couper l'accès à l'album Lightroom.
+  if (event.type === 'charge.dispute.created') {
+    const dispute = event.data.object as Stripe.Dispute;
+    try {
+      const chargeId = typeof dispute.charge === 'string' ? dispute.charge : dispute.charge?.id;
+      const charge = chargeId ? await stripe.charges.retrieve(chargeId) : null;
+      const who = charge?.billing_details?.email || charge?.receipt_email || '(client inconnu)';
+      const m = buildAdminAlertEmail({
+        subject: `⚠ Litige Stripe — ${who}`,
+        lines: [
+          `Un litige a été ouvert : ${(dispute.amount / 100).toFixed(2)} € (${dispute.reason}).`,
+          `Client : ${who}`,
+          'À faire : répondre dans Stripe (Paiements → Litiges) avec le devis signé et les échanges, et couper l\'accès à l\'album Lightroom si nécessaire.',
+        ],
+      });
+      await sendEmail(env, env.ADMIN_NOTIFICATION_EMAIL, m.subject, m.html, m.text);
+    } catch (err) {
+      console.error('[stripe-webhook] échec alerte litige', err);
+    }
+    return jsonResponse({ ok: true }, 200, headers);
+  }
+
   if (event.type !== 'invoice.paid') {
     return jsonResponse({ ok: true, ignored: true }, 200, headers);
   }
@@ -731,6 +754,9 @@ async function handleStripeWebhook(request: Request, env: Env, headers: Record<s
     const space = await detectSpace(env, customerEmail);
     // Solde payé : l'accès à l'album s'ouvre. Le lien Lightroom (saisi dans le compte) est envoyé dans le même email
     // que la confirmation de paiement, puis rendu visible dans l'espace du client (« Mon portfolio »).
+    const reviewGatewayUrl = customerId
+      ? `${new URL(request.url).origin}${REVIEW_GATEWAY_ROUTE}?c=${encodeURIComponent(customerId)}`
+      : env.GOOGLE_REVIEW_URL;
     let accessSent = false;
     if (kind === 'solde') {
       try {
@@ -740,7 +766,7 @@ async function handleStripeWebhook(request: Request, env: Env, headers: Record<s
           await putAccount(env, account);
         }
         if (account?.lightroomUrl) {
-          const m = buildPhotosReadyEmail({ customerName, lightroomUrl: account.lightroomUrl, space: account.type, lang: normalizeLang(account.lang ?? customerLang), amountEur });
+          const m = buildPhotosReadyEmail({ customerName, lightroomUrl: account.lightroomUrl, space: account.type, lang: normalizeLang(account.lang ?? customerLang), amountEur, reviewUrl: reviewGatewayUrl });
           await sendEmail(env, customerEmail, m.subject, m.html, m.text);
           accessSent = true;
         } else {
@@ -760,22 +786,15 @@ async function handleStripeWebhook(request: Request, env: Env, headers: Record<s
       }
     }
 
-    // La réduction de 15 % est offerte à TOUS les clients dont le projet est
-    // entièrement réglé, jamais en échange d'un avis (ce que Google interdit).
-    // La demande d'avis part plus tard (cron, 7 jours après l'accès aux photos) :
-    // le lien passe par notre passerelle (/avis) qui ne fait qu'enregistrer le clic.
-    if (kind === 'solde') {
-      if (customerId) {
-        try {
-          await grantReviewDiscount(stripe, customerId);
-        } catch (err) {
-          console.error('[stripe-webhook] échec attribution réduction fidélité', err);
-        }
+    // La réduction de 15 % est offerte à TOUS les clients dont le projet est entièrement
+    // réglé, jamais en échange d'un avis (ce que Google interdit). La demande d'avis est
+    // dans le mail d'accès aux photos ; son lien passe par /avis qui n'enregistre que le clic.
+    if (kind === 'solde' && customerId) {
+      try {
+        await grantReviewDiscount(stripe, customerId);
+      } catch (err) {
+        console.error('[stripe-webhook] échec attribution réduction fidélité', err);
       }
-      const reviewGatewayUrl = customerId
-        ? `${new URL(request.url).origin}${REVIEW_GATEWAY_ROUTE}?c=${encodeURIComponent(customerId)}`
-        : env.GOOGLE_REVIEW_URL;
-      await markReviewDue(env, customerEmail, customerName, customerLang, reviewGatewayUrl).catch((err) => console.error('[stripe-webhook] marqueur avis', err));
     }
   }
 

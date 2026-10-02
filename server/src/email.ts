@@ -361,74 +361,6 @@ export function buildAdminPaymentNotificationEmail(params: {
   return { subject: `💰 Paiement reçu — ${params.customerName || params.customerEmail} (${label})`, html, text };
 }
 
-/** Email demandant un avis Google, envoyé automatiquement une fois le solde (70 %) payé — projet entièrement réglé. */
-export function buildReviewRequestEmail(params: {
-  customerName: string;
-  reviewUrl: string;
-  lang?: Lang;
-  space?: Space;
-}): { subject: string; html: string; text: string } {
-  const lang = params.lang ?? 'fr';
-  const greeting = greet(lang, params.customerName);
-  const t = (fr: string, en: string): string => tr(lang, fr, en);
-  const html = emailShell(`
-    <h1 style="font-size:22px;margin:0 0 18px;letter-spacing:-0.01em;">${t('Projet livré.', 'Project delivered.')}</h1>
-    <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">${greeting}</p>
-    <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">
-      ${t("Votre prestation est désormais intégralement réglée — votre projet est officiellement achevé. Merci d'avoir fait confiance à Bunkaio pour le mener à bien, du premier échange jusqu'à la livraison finale.",
-          'Your service is now fully paid — your project is officially complete. Thank you for trusting Bunkaio to see it through, from our first exchange to final delivery.')}
-    </p>
-    <p style="font-size:15px;line-height:1.6;margin:0 0 32px;">
-      ${t("En signe de reconnaissance pour cette collaboration, un avantage de <strong>15 % vous est dès à présent réservé</strong> sur votre prochaine prestation avec Bunkaio — sans démarche de votre part, il s'appliquera automatiquement.",
-          'As a token of appreciation for this collaboration, a <strong>15% benefit is now reserved for you</strong> on your next service with Bunkaio — no action is needed on your part, it will be applied automatically.')}
-    </p>
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 28px;">
-      <tr><td style="background:#0a0a0c;border-radius:10px;padding:32px 28px;text-align:center;">
-        <div style="font-size:11px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#d9cdf5;margin-bottom:12px;font-family:${FONT};">
-          ${t('Votre regard compte', 'Your opinion matters')}
-        </div>
-        <div style="font-size:18px;font-weight:700;color:#ffffff;line-height:1.4;margin-bottom:14px;font-family:${FONT};">
-          ${t("Votre expérience peut éclairer d'autres porteurs de projet", 'Your experience can guide other project owners')}
-        </div>
-        <div style="font-size:14px;line-height:1.6;color:rgba(255,255,255,0.6);margin-bottom:24px;">
-          ${t("Avant de se lancer, beaucoup hésitent encore. Un retour sincère comme le vôtre peut les aider à avancer avec confiance — et à rejoindre, eux aussi, l'aventure Bunkaio.",
-              'Before getting started, many people still hesitate. Honest feedback like yours can help them move forward with confidence — and join the Bunkaio adventure too.')}
-        </div>
-        <a href="${params.reviewUrl}" style="display:inline-block;background:#ffffff;color:#0a0a0c;text-decoration:none;padding:14px 32px;border-radius:4px;font-weight:700;font-size:15px;letter-spacing:0.01em;">
-          ${t('Partager mon expérience →', 'Share my experience →')}
-        </a>
-      </td></tr>
-    </table>
-    ${spaceBlock(lang, params.space, 'delivered')}
-  `, lang);
-  const text = lang === 'en' ? `${greeting}
-
-Your service is now fully paid — your project is officially complete. Thank you for trusting Bunkaio to see it through, from our first exchange to final delivery.
-
-As a token of appreciation for this collaboration, a 15% benefit is now reserved for you on your next service with Bunkaio — no action is needed on your part, it will be applied automatically.
-
-YOUR OPINION MATTERS
-Your experience can guide other project owners
-Before getting started, many people still hesitate. Honest feedback like yours can help them move forward with confidence — and join the Bunkaio adventure too.
-
-Share my experience: ${params.reviewUrl}
-
-${spaceText(lang, params.space, 'delivered')}` : `${greeting}
-
-Votre prestation est désormais intégralement réglée — votre projet est officiellement achevé. Merci d'avoir fait confiance à Bunkaio pour le mener à bien, du premier échange jusqu'à la livraison finale.
-
-En signe de reconnaissance pour cette collaboration, un avantage de 15 % vous est dès à présent réservé sur votre prochaine prestation avec Bunkaio — sans démarche de votre part, il s'appliquera automatiquement.
-
-VOTRE REGARD COMPTE
-Votre expérience peut éclairer d'autres porteurs de projet
-Avant de se lancer, beaucoup hésitent encore. Un retour sincère comme le vôtre peut les aider à avancer avec confiance — et à rejoindre, eux aussi, l'aventure Bunkaio.
-
-Partager mon expérience : ${params.reviewUrl}
-
-${spaceText(lang, params.space, 'delivered')}`;
-  return finalize(lang, { subject: t('Bunkaio — Votre projet est officiellement livré', 'Bunkaio — Your project is officially delivered'), html, text });
-}
-
 /** Email de rappel envoyé automatiquement (cron) quand une facture d'acompte ou de solde reste impayée après son échéance. */
 export function buildOverdueReminderEmail(params: {
   customerName: string;
@@ -629,8 +561,34 @@ ${spaceText(lang, params.space, 'access')}`;
   return finalize(lang, { subject: tr(lang, `Bunkaio — Vos accès à votre ${area}`, `Bunkaio — Your ${area} access`), html, text });
 }
 
+/** Bloc « votre avis + remise de -15 % » inséré dans le mail d'accès aux photos (le client réagit à chaud). */
+function reviewBlock(lang: Lang, reviewUrl: string): { html: string; text: string } {
+  const t = (fr: string, en: string): string => tr(lang, fr, en);
+  const head = t('Votre regard compte', 'Your opinion matters');
+  const title = t("Vous aimez vos photos ? Dites-le en 1 minute", 'Happy with your photos? Tell us in 1 minute');
+  const body = t("Avant de se lancer, beaucoup hésitent encore. Votre retour sincère aide d'autres porteurs de projet à avancer avec confiance.", 'Before getting started, many people still hesitate. Your honest feedback helps other project owners move forward with confidence.');
+  const offerTitle = t('-15 % sur votre prochaine prestation', '-15% on your next service');
+  const offer = t("Votre remise de 15 % est déjà réservée et s'appliquera automatiquement à votre prochaine prestation avec Bunkaio. Elle ne dépend pas de votre avis : c'est notre façon de vous remercier de votre confiance.", 'Your 15% discount is already reserved and will be applied automatically to your next service with Bunkaio. It does not depend on your review: it is our way of thanking you for your trust.');
+  const btn = t('Partager mon expérience →', 'Share my experience →');
+  const html = `
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:26px 0 8px;">
+      <tr><td style="background:#0a0a0c;border-radius:10px;padding:28px 26px;text-align:center;">
+        <div style="display:inline-block;background:#f1ecfa;color:#0a0a0c;font-size:22px;font-weight:700;border-radius:100px;padding:8px 20px;margin-bottom:12px;font-family:${FONT};">-15 %</div>
+        <div style="font-size:17px;font-weight:700;color:#ffffff;margin-bottom:8px;font-family:${FONT};">${offerTitle}</div>
+        <div style="font-size:13.5px;line-height:1.6;color:rgba(255,255,255,0.65);margin-bottom:24px;font-family:${FONT};">${offer}</div>
+        <div style="height:1px;background:rgba(255,255,255,0.15);margin:0 0 22px;"></div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#d9cdf5;margin-bottom:10px;font-family:${FONT};">${head}</div>
+        <div style="font-size:17px;font-weight:700;color:#ffffff;line-height:1.4;margin-bottom:10px;font-family:${FONT};">${title}</div>
+        <div style="font-size:13.5px;line-height:1.6;color:rgba(255,255,255,0.65);margin-bottom:22px;font-family:${FONT};">${body}</div>
+        <a href="${reviewUrl}" style="display:inline-block;background:#ffffff;color:#0a0a0c;text-decoration:none;padding:14px 32px;border-radius:4px;font-weight:700;font-size:15px;font-family:${FONT};">${btn}</a>
+      </td></tr>
+    </table>`;
+  const text = `${offerTitle.toUpperCase()}\n${offer}\n\n${head.toUpperCase()}\n${title}\n${body}\n${btn.replace(' →', '')} : ${reviewUrl}`;
+  return { html, text };
+}
+
 /** Accès aux photos : envoyé dès le solde payé (ou renvoyé depuis l'admin), avec le lien d'album Lightroom permanent. */
-export function buildPhotosReadyEmail(params: { customerName: string; lightroomUrl: string; space: Space; lang?: Lang; amountEur?: number }): { subject: string; html: string; text: string } {
+export function buildPhotosReadyEmail(params: { customerName: string; lightroomUrl: string; space: Space; lang?: Lang; amountEur?: number; reviewUrl: string }): { subject: string; html: string; text: string } {
   const lang = params.lang ?? 'fr';
   const greeting = greet(lang, params.customerName);
   const t = (fr: string, en: string): string => tr(lang, fr, en);
@@ -638,6 +596,7 @@ export function buildPhotosReadyEmail(params: { customerName: string; lightroomU
   const intro = t("Votre album est ouvert : vous pouvez dès maintenant consulter vos photos et les exporter dans les formats de votre choix.", 'Your album is now open: you can view your photos right away and export them in the formats you choose.');
   const perm = t("Ce lien est permanent : vous le retrouvez à tout moment dans votre espace, rubrique « Mon portfolio ».", 'This link is permanent: you can find it at any time in your area, under “My portfolio”.');
   const lr = lightroomExplainer(lang);
+  const rv = reviewBlock(lang, params.reviewUrl);
   const html = emailShell(`
     <h1 style="font-size:22px;margin:0 0 16px;">${t('Votre album est accessible', 'Your album is open')}</h1>
     <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">${greeting}</p>
@@ -645,6 +604,7 @@ export function buildPhotosReadyEmail(params: { customerName: string; lightroomU
     <p style="font-size:15px;line-height:1.6;margin:0 0 24px;">${intro}</p>
     <a href="${params.lightroomUrl}" style="${btnStyle}">${t('Accéder à mes photos', 'Access my photos')}</a>
     <p style="font-size:13px;line-height:1.6;color:#76717f;margin:20px 0 0;">${perm}</p>
+    ${rv.html}
     ${lr.html}
     ${spaceBlock(lang, params.space, 'delivered')}
   `, lang);
@@ -655,6 +615,8 @@ ${paid ? paid + '\n\n' : ''}${intro}
 ${t('Accéder à mes photos', 'Access my photos')} : ${params.lightroomUrl}
 
 ${perm}
+
+${rv.text}
 
 ${lr.text}
 
