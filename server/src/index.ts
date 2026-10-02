@@ -3,7 +3,9 @@ import { adminAccountView, getAccount, listAccounts, putAccount, sanitizeAccount
 import { handleCollect, handleStats, purgeOldAnalytics } from './analytics';
 import { appendJournal, diffAccountActivity, flushActivityNotifications, queueActivityNotification } from './activity';
 import { billingErrors, cleanBilling, composeAddress } from './billing';
-import { buildDashboard } from './admin';
+import { buildDashboard, deleteContact } from './admin';
+import { cleanDetails, MESSAGE_KINDS, storeMessage, updateMessage } from './messages';
+import type { MessageKind } from './messages';
 import { configureBusiness } from './config';
 import { claimAckSlot, markBalanceInvoiced, markDepositPaid, markInvoiced, markLead, runDailyAutomations } from './automations';
 import {
@@ -510,12 +512,20 @@ async function handleAck(request: Request, env: Env, headers: Record<string, str
   const kind = body.kind;
   const email = typeof body.email === 'string' ? body.email.trim() : '';
   const name = typeof body.name === 'string' ? body.name.trim().slice(0, 120) : '';
-  if ((kind !== 'contact' && kind !== 'collab' && kind !== 'partner' && kind !== 'account') || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 200) {
+  if (!MESSAGE_KINDS.includes(kind as MessageKind) || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 200) {
     return jsonResponse({ ok: false, error: 'invalid_payload' }, 400, headers);
   }
-  if (!(await claimAckSlot(env, kind, email))) return jsonResponse({ ok: true, skipped: true }, 200, headers);
+  // Le message est conservé pour le tableau de bord admin (rubrique Messages), même sans accusé de réception.
   try {
-    const m = buildAcknowledgementEmail({ kind, customerName: name, space: body.space === 'partner' ? 'partner' : 'client', lang: normalizeLang(body.lang) });
+    await storeMessage(env, { kind: kind as MessageKind, name, email: email.toLowerCase(), lang: normalizeLang(body.lang), details: cleanDetails(body.details) });
+  } catch (err) {
+    console.error('[ack] message non enregistré', err);
+  }
+  // Les témoignages n'ont pas d'accusé de réception.
+  if (kind === 'share') return jsonResponse({ ok: true }, 200, headers);
+  if (!(await claimAckSlot(env, kind as string, email))) return jsonResponse({ ok: true, skipped: true }, 200, headers);
+  try {
+    const m = buildAcknowledgementEmail({ kind: kind as 'contact' | 'collab' | 'partner' | 'account', customerName: name, space: body.space === 'partner' ? 'partner' : 'client', lang: normalizeLang(body.lang) });
     await sendEmail(env, email, m.subject, m.html, m.text);
     return jsonResponse({ ok: true }, 200, headers);
   } catch (err) {
@@ -576,6 +586,28 @@ async function handleAdminDashboard(request: Request, env: Env, headers: Record<
       console.error('[admin] relances de factures en échec', err);
     }
     return jsonResponse({ ok: true, ranAt: new Date().toISOString() }, 200, headers);
+  }
+  if (path === '/admin/message' && request.method === 'POST') {
+    const body = (await request.json().catch(() => ({}))) as { id?: unknown; status?: unknown; remove?: unknown };
+    if (typeof body.id !== 'string' || (body.status !== undefined && body.status !== 'nouveau' && body.status !== 'traite')) {
+      return jsonResponse({ ok: false, error: 'invalid_payload' }, 400, headers);
+    }
+    const ok = await updateMessage(env, body.id, { status: body.status as 'nouveau' | 'traite' | undefined, remove: body.remove === true });
+    return jsonResponse({ ok }, ok ? 200 : 404, headers);
+  }
+  if (path === '/admin/delete' && request.method === 'POST') {
+    const body = (await request.json().catch(() => ({}))) as { email?: unknown; type?: unknown };
+    if (typeof body.email !== 'string' || !body.email.includes('@') || (body.type !== undefined && !isValidAccountType(body.type))) {
+      return jsonResponse({ ok: false, error: 'invalid_payload' }, 400, headers);
+    }
+    try {
+      const summary = await deleteContact(env, createStripeClient(env.STRIPE_SECRET_KEY), body.email, body.type as AccountType | undefined);
+      console.log('[admin] suppression', summary);
+      return jsonResponse({ ok: true, summary }, 200, headers);
+    } catch (err) {
+      console.error('[admin] suppression en échec', err);
+      return jsonResponse({ ok: false, error: 'delete_error' }, 502, headers);
+    }
   }
   return jsonResponse({ ok: false, error: 'not_found' }, 404, headers);
 }
@@ -1143,7 +1175,7 @@ export default {
     }
 
     const url = new URL(request.url);
-    if (url.pathname === '/admin/dashboard' || url.pathname === '/admin/run-automations') {
+    if (url.pathname.startsWith('/admin/')) {
       return handleAdminDashboard(request, env, headers, url.pathname);
     }
     if (url.pathname === '/ack') {

@@ -12,3 +12,9 @@ export function configureBusiness(env: { BUSINESS_ADDRESS?: string }): void {
 export function getBusinessAddress(): string {
   return businessAddress;
 }
+
+/** Comptes de démonstration : exclus du tableau de bord, des statistiques et des automatisations. */
+export const DEMO_EMAILS = ['demo@bunkaio.com'];
+export function isDemo(email: string | null | undefined): boolean {
+  return DEMO_EMAILS.includes((email ?? '').trim().toLowerCase());
+}

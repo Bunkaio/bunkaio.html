@@ -359,6 +359,13 @@
         <div class="card"><div class="list" id="activityFeed"></div></div>
       </section>
 
+      <!-- ═══ Messages ═══ -->
+      <section class="section" id="sec-messages">
+        <div class="toolbar"><div class="chips" id="msgChips"></div></div>
+        <div class="toolbar"><div class="chips" id="msgStatus"></div></div>
+        <div id="msgList"></div>
+      </section>
+
       <!-- ═══ Médias ═══ -->
       <section class="section" id="sec-media">
         <iframe class="media" id="mediaFrame" title="Gestion des médias" loading="lazy"></iframe>
@@ -433,7 +440,7 @@ const STAGES = [
   ['contact', 'Contact', 'Autre contact'],
 ];
 const STAGE = Object.fromEntries(STAGES.map(s => [s[0], s]));
-const ROLE_LABEL = { lead: ['Lead quiz', ''], client: ['Client', 'ok'], espace: ['Espace client', 'dark'], partner: ['Partenaire', 'dark'] };
+const ROLE_LABEL = { message: ['Formulaire', 'line'], lead: ['Lead quiz', ''], client: ['Client', 'ok'], espace: ['Espace client', 'dark'], partner: ['Partenaire', 'dark'] };
 const TEMP = { chaud: ['Chaud', 'danger'], tiede: ['Tiède', 'warn'], froid: ['Froid', 'line'] };
 const INV_STATUS = { paid: ['Payée', 'ok'], open: ['En attente', 'warn'], uncollectible: ['Irrécouvrable', 'danger'], void: ['Annulée', 'line'], draft: ['Brouillon', 'line'] };
 const ACT_LABEL = { moodboard: 'Moodboard', infos: 'Coordonnées', collaboration: 'Collaboration', partenariat: 'Profil partenaire' };
@@ -444,6 +451,7 @@ const ICON = {
   invoices: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/>',
   sessions: '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
   activity: '<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>',
+  messages: '<path d="M4 4h16v12H5.2L4 17.2z"/><path d="M8 9h8M8 12h5"/>',
   media: '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/>',
   stats: '<path d="M18 20V10M12 20V4M6 20v-6"/>',
 };
@@ -452,6 +460,7 @@ const SECTIONS = [
   ['contacts', 'Base de données', 'Leads, clients, espaces et partenaires réunis par email'],
   ['invoices', 'Factures', 'Acomptes, soldes et encaissements Stripe'],
   ['sessions', 'Séances & automatisations', 'Planning, livraisons et emails automatiques'],
+  ['messages', 'Messages', 'Formulaires du site : contact, collaborations, candidatures, demandes d\'espace, témoignages'],
   ['activity', 'Activité des espaces', 'Ce que les clients et partenaires modifient dans leur espace'],
   ['media', 'Médias', 'Photos et vidéos du site'],
   ['stats', 'Statistiques', 'Fréquentation et conversion du site'],
@@ -530,11 +539,12 @@ function updateCounts() {
   set('overview', computeAlerts().length);
   set('activity', allActivity().filter(a => a.unseen).length);
   set('invoices', DB.invoices.filter(i => i.overdue).length);
+  set('messages', (DB.messages || []).filter(m => m.status === 'nouveau').length);
 }
 
 function renderAll() {
   renderKpis(); renderPipeStrip(); renderAlerts(); renderNextSessions(); renderRecentActivity(); renderRecentInvoices();
-  renderSegChips(); renderContacts(); renderInvoices(); renderSessions(); renderActivity(); renderVisitorsNote(); updateCounts();
+  renderSegChips(); renderContacts(); renderInvoices(); renderSessions(); renderActivity(); renderMessages(); renderVisitorsNote(); updateCounts();
   if (state.section) $('pageSub').textContent = SECTIONS.find(x => x[0] === state.section)[2] + ' · données de ' + fdt(DB.generatedAt);
 }
 
@@ -567,6 +577,7 @@ function computeAlerts() {
     if (se && se.livraison && se.livraison <= now && c.stage === 'postprod') out.push({ lvl: 'warn', ic: '📦', t: `Livraison prévue — ${c.name || c.email}`, d: `Prévue le ${fdate(se.livraison)} : créez la facture de solde quand les photos sont prêtes.`, email: c.email, tab: 'invoices' });
     if (c.stage === 'lead' && c.lead && c.lead.temperature === 'chaud') out.push({ lvl: 'info', ic: '🔥', t: `Lead chaud — ${c.name || c.email}`, d: `${esc(c.lead.category)} · ${esc(c.lead.budget)} · reçu ${ago(c.lead.date)}.`, email: c.email });
   });
+  (DB.messages || []).filter(m => m.status === 'nouveau').forEach(m => out.push({ lvl: 'info', ic: '✉️', t: `${MSG_KIND[m.kind] || 'Message'} — ${m.name || m.email}`, d: `Reçu ${ago(m.date)}. ${esc((m.details.message || m.details.projet || m.details.temoignage || m.details.activite || '').slice(0, 90))}`, email: m.email, go: 'messages' }));
   const unseen = allActivity().filter(a => a.unseen);
   const byContact = {};
   unseen.forEach(a => { byContact[a.email] = (byContact[a.email] || 0) + 1; });
@@ -607,7 +618,7 @@ function renderPipeStrip() {
     .map(s => `<button onclick="state.seg='stage:${s[0]}';go('contacts');renderSegChips();renderContacts()"><div class="n">${counts[s[0]] || 0}</div><div class="l">${s[1]}</div></button>`).join('');
 }
 function alertLi(a) {
-  return `<div class="li click" onclick="openDrawer('${esc(a.email)}','${a.tab || 'summary'}')"><div class="ic ${a.lvl}">${a.ic}</div><div class="tx"><b>${esc(a.t)}</b><div class="d">${a.d}</div></div></div>`;
+  return `<div class="li click" onclick="${a.go ? `go('${a.go}')` : `openDrawer('${esc(a.email)}','${a.tab || 'summary'}')`}"><div class="ic ${a.lvl}">${a.ic}</div><div class="tx"><b>${esc(a.t)}</b><div class="d">${a.d}</div></div></div>`;
 }
 function renderAlerts() {
   const al = computeAlerts();
@@ -650,6 +661,7 @@ const SEGMENTS = [
   ['hot', 'Leads chauds', c => c.lead && c.lead.temperature === 'chaud' && c.stage === 'lead'],
   ['incomplete', 'Espaces non validés', c => c.accounts.length && c.accounts.some(a => !a.infosCompletes)],
   ['due', 'À encaisser', c => c.totalDue > 0],
+  ['message', 'Formulaires', c => c.roles.includes('message')],
 ];
 function segFn(seg) {
   if (seg.startsWith('stage:')) { const st = seg.slice(6); return c => c.stage === st; }
@@ -657,7 +669,7 @@ function segFn(seg) {
 }
 function matchQ(c, q) {
   if (!q) return true;
-  const hay = [c.name, c.email, c.phone, c.lead && c.lead.category, c.lead && c.lead.description, ...c.accounts.map(a => [a.nom, a.facturation && a.facturation.ville, a.facturation && a.facturation.siret].join(' ')), ...c.invoices.map(i => i.number + ' ' + i.description)].join(' ').toLowerCase();
+  const hay = [c.name, c.email, c.phone, c.lead && c.lead.category, c.lead && c.lead.description, ...c.accounts.map(a => [a.nom, a.facturation && a.facturation.ville, a.facturation && a.facturation.siret].join(' ')), ...c.invoices.map(i => i.number + ' ' + i.description), ...(c.messages || []).map(m => Object.values(m.details || {}).join(' '))].join(' ').toLowerCase();
   return q.toLowerCase().split(/\s+/).every(w => hay.includes(w));
 }
 function filteredContacts() {
@@ -832,6 +844,53 @@ function renderActivity() {
   $('activityFeed').innerHTML = list.length ? list.map(a => `<div class="li click" onclick="openDrawer('${esc(a.email)}','activity')"><div class="ic">${a.type === 'moodboard' ? '🎨' : a.type === 'infos' ? '🧾' : a.type === 'collaboration' ? '🤝' : '⭐'}</div><div class="tx"><b>${a.unseen ? '<span class="dot"></span>' : ''}${esc(a.name)} <span class="badge line">${a.accType === 'partner' ? 'Partenaire' : 'Client'}</span></b><div>${esc(a.resume)}</div>${a.details && a.details.length ? `<div class="d">${a.details.map(esc).join(' · ')}</div>` : ''}<div class="d">${esc(ACT_LABEL[a.type] || a.type)} · ${fdt(a.date)}</div></div></div>`).join('') : '<div class="empty">Aucune activité.</div>';
 }
 
+/* ── Messages ── */
+const MSG_KIND = { contact: 'Message de contact', collab: 'Proposition de collaboration', partner: 'Candidature partenaire', account: 'Demande d\'espace', share: 'Témoignage' };
+const MSG_FIELD = { telephone: 'Téléphone', message: 'Message', type: 'Type', site: 'Site / réseaux', projet: 'Projet', secteur: 'Secteur', espace: 'Espace demandé', activite: 'Activité', prestation: 'Prestation', temoignage: 'Témoignage' };
+function msgCard(m, inDrawer) {
+  const det = Object.entries(m.details || {});
+  const actions = [];
+  if (!inDrawer) actions.push(`<button class="btn ghost sm" onclick="openDrawer('${esc(m.email)}')">Fiche</button>`);
+  actions.push(`<a class="btn ghost sm" href="mailto:${esc(m.email)}?subject=${encodeURIComponent('BUNKAIO — ' + (MSG_KIND[m.kind] || 'Votre message'))}">Répondre</a>`);
+  if (m.kind === 'account' || m.kind === 'partner') { const c = contactByEmail(m.email); if (!c || !c.accounts.length) actions.push(`<button class="btn sm" onclick="openNewContact('${esc(m.email)}','${esc(m.name).replace(/&#39;/g, '')}','${esc(m.details.telephone || '')}','${m.kind === 'partner' || m.details.espace === 'partenaire' ? 'partner' : 'client'}')">Créer l'espace</button>`); }
+  actions.push(`<button class="btn ${m.status === 'nouveau' ? '' : 'ghost'} sm" onclick="setMsgStatus('${esc(m.id)}','${m.status === 'nouveau' ? 'traite' : 'nouveau'}')">${m.status === 'nouveau' ? '✓ Marquer traité' : 'Remettre à traiter'}</button>`);
+  actions.push(`<button class="btn ghost sm" style="color:var(--danger)" onclick="deleteMsg('${esc(m.id)}')">Supprimer</button>`);
+  return `<div class="card" style="margin-bottom:12px${m.status === 'nouveau' ? ';border-color:var(--lav)' : ''}"><div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:10px"><span class="badge ${m.kind === 'share' ? 'ok' : m.kind === 'partner' ? 'dark' : ''}">${MSG_KIND[m.kind] || m.kind}</span>${m.status === 'nouveau' ? '<span class="badge warn">À traiter</span>' : '<span class="badge line">Traité</span>'}<span class="small muted">${fdt(m.date)}${m.lang === 'en' ? ' · EN' : ''}</span></div>
+    ${inDrawer ? '' : `<div class="who" style="margin-bottom:10px"><b>${esc(m.name || '(sans nom)')}</b><span>${esc(m.email)}</span></div>`}
+    ${det.length ? `<dl class="kv">${det.map(([k, v]) => `<dt>${esc(MSG_FIELD[k] || k)}</dt><dd style="white-space:pre-wrap">${esc(v)}</dd>`).join('')}</dl>` : ''}
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">${actions.join('')}</div></div>`;
+}
+function renderMessages() {
+  const all = DB.messages || [];
+  state.msgKind = state.msgKind || 'all'; state.msgStatus = state.msgStatus || 'nouveau';
+  const kinds = [['all', 'Tous'], ...Object.entries(MSG_KIND)];
+  $('msgChips').innerHTML = kinds.map(([id, l]) => `<button class="chip ${state.msgKind === id ? 'on' : ''}" onclick="state.msgKind='${id}';renderMessages()">${l}<span class="c">${all.filter(m => id === 'all' || m.kind === id).length}</span></button>`).join('');
+  $('msgStatus').innerHTML = [['nouveau', 'À traiter'], ['traite', 'Traités'], ['all', 'Tous']].map(([id, l]) => `<button class="chip ${state.msgStatus === id ? 'on' : ''}" onclick="state.msgStatus='${id}';renderMessages()">${l}<span class="c">${all.filter(m => (state.msgKind === 'all' || m.kind === state.msgKind) && (id === 'all' || m.status === id)).length}</span></button>`).join('');
+  const list = all.filter(m => (state.msgKind === 'all' || m.kind === state.msgKind) && (state.msgStatus === 'all' || m.status === state.msgStatus));
+  $('msgList').innerHTML = list.length ? list.map(m => msgCard(m)).join('') : '<div class="card"><div class="empty">Aucun message dans cette catégorie.</div></div>';
+}
+async function setMsgStatus(id, status) {
+  try { const { res } = await api('/admin/message', { method: 'POST', body: JSON.stringify({ id, status }) }); if (!res.ok) { toast('Erreur'); return; } const m = (DB.messages || []).find(x => x.id === id); if (m) m.status = status; DB.contacts.forEach(c => c.messages.forEach(x => { if (x.id === id) x.status = status; })); renderMessages(); renderAlerts(); updateCounts(); if (drawer.email) renderDrawer(); toast(status === 'traite' ? 'Message traité' : 'Message remis à traiter'); } catch (e) {}
+}
+async function deleteMsg(id) {
+  if (!confirm('Supprimer définitivement ce message ?')) return;
+  try { const { res } = await api('/admin/message', { method: 'POST', body: JSON.stringify({ id, remove: true }) }); if (!res.ok) { toast('Erreur'); return; } toast('Message supprimé'); await loadDashboard(); if (drawer.email) renderDrawer(); } catch (e) {}
+}
+async function deleteContactUI(type) {
+  const c = contactByEmail(drawer.email); if (!c) return;
+  const what = type ? `l'espace ${type === 'partner' ? 'partenaire' : 'client'} de ${c.email} (ses factures et messages sont conservés)` : `toutes les données de ${c.email} : espaces, messages, réponses au devis et suivi des automatisations. Les factures Stripe sont conservées (obligation comptable)`;
+  const typed = prompt(`Vous allez supprimer ${what}.\n\nCette action est définitive. Tapez l'email du contact pour confirmer :`);
+  if (typed === null) return;
+  if (typed.trim().toLowerCase() !== c.email) { toast('Email différent : suppression annulée'); return; }
+  try {
+    const { res, data } = await api('/admin/delete', { method: 'POST', body: JSON.stringify(type ? { email: c.email, type } : { email: c.email }) });
+    if (!res.ok || !data.ok) { toast('Erreur : ' + (data.error || res.status)); return; }
+    const s = data.summary || {};
+    toast(type ? 'Espace supprimé' : `Contact supprimé${s.stripeKeptWithInvoices ? ' · fiche Stripe conservée pour les factures' : ''}`);
+    closeDrawer(); await loadDashboard();
+  } catch (e) {}
+}
+
 /* ── Statistiques ── */
 document.addEventListener('click', e => { const b = e.target.closest('#statDays button'); if (!b) return; document.querySelectorAll('#statDays button').forEach(x => x.classList.toggle('on', x === b)); loadStats(+b.dataset.d); });
 const EV_LABEL = { cta_click: 'Clic sur un bouton d\'action', quiz_step: 'Devis — étape atteinte', quiz_submit: 'Devis envoyé', contact_submit: 'Formulaire de contact', collab_submit: 'Proposition de collaboration', partner_apply: 'Candidature partenaire', account_request: 'Demande d\'espace', login: 'Connexion à un espace', share_google: 'Clic « Partager mon expérience »', share_submit: 'Témoignage envoyé', lang_switch: 'Changement de langue', video_play: 'Lecture vidéo' };
@@ -895,7 +954,7 @@ function renderDrawer() {
   const fn = { summary: drSummary, space: drSpace, session: drSession, invoices: drInvoices, activity: drActivity, advanced: drAdvanced }[drawer.tab] || drSummary;
   $('drBody').innerHTML = fn(c);
   const needsSave = ['space', 'session', 'advanced'].includes(drawer.tab) && (drawer.isNew || currentAcc(c));
-  $('drFoot').innerHTML = needsSave ? `<button class="btn" id="drSave" onclick="saveAccount()">${drawer.isNew ? 'Créer l\'espace' : 'Enregistrer'}</button><button class="btn ghost" onclick="closeDrawer()">Fermer</button><span class="small muted">${drawer.tab === 'session' ? 'Le rappel J-2 et le remerciement J+1 partent automatiquement.' : ''}</span><div id="drMsg"></div>` : `<button class="btn ghost" onclick="closeDrawer()">Fermer</button>${c ? `<a class="btn ghost" href="mailto:${esc(c.email)}">Écrire un email</a>${c.customerId ? `<a class="btn ghost" href="https://dashboard.stripe.com/customers/${esc(c.customerId)}" target="_blank" rel="noopener">Ouvrir dans Stripe</a>` : ''}` : ''}<div id="drMsg"></div>`;
+  $('drFoot').innerHTML = needsSave ? `<button class="btn" id="drSave" onclick="saveAccount()">${drawer.isNew ? 'Créer l\'espace' : 'Enregistrer'}</button><button class="btn ghost" onclick="closeDrawer()">Fermer</button><span class="small muted">${drawer.tab === 'session' ? 'Le rappel J-2 et le remerciement J+1 partent automatiquement.' : ''}</span>${!drawer.isNew && drawer.tab === 'space' && currentAcc(c) ? `<button class="btn ghost" style="color:var(--danger);margin-left:auto" onclick="deleteContactUI('${currentAcc(c).type}')">Supprimer cet espace</button>` : ''}<div id="drMsg"></div>` : `<button class="btn ghost" onclick="closeDrawer()">Fermer</button>${c ? `<a class="btn ghost" href="mailto:${esc(c.email)}">Écrire un email</a>${c.customerId ? `<a class="btn ghost" href="https://dashboard.stripe.com/customers/${esc(c.customerId)}" target="_blank" rel="noopener">Ouvrir dans Stripe</a>` : ''}${drawer.tab === 'summary' ? `<button class="btn ghost" style="color:var(--danger);margin-left:auto" onclick="deleteContactUI()">Supprimer le contact…</button>` : ''}` : ''}<div id="drMsg"></div>`;
 }
 function accSwitch(c) {
   if (!c || c.accounts.length < 2) return '';
@@ -920,13 +979,15 @@ function drSummary(c) {
   if (!c.accounts.length) quick.push(`<button class="btn sm" onclick="openNewContact('${esc(c.email)}','${esc(c.name).replace(/&#39;/g, '')}','${esc(c.phone)}')">+ Créer l'espace client</button>`);
   if (c.customerId) quick.push(`<button class="btn soft sm" onclick="setDrTab('invoices')">€ Facturer</button>`);
   if (a) quick.push(`<button class="btn soft sm" onclick="setDrTab('session')">📅 Séance</button>`);
+  const msgs = c.messages || [];
   return `<div class="quick">${quick.join('')}</div>
   <div class="grid g2">
     <div class="card"><h3>Parcours</h3><div class="tl">${steps.filter(x => x[1]).map(x => `<div class="it ${x[2] ? 'done' : ''}"><b>${x[0]}</b><div class="d">${esc(x[1])}</div></div>`).join('') || '<div class="small muted">Aucune étape pour l\'instant.</div>'}</div></div>
     <div class="card"><h3>Coordonnées</h3>${coordsHtml(c, a)}</div>
   </div>
   ${L ? `<div class="card" style="margin-top:18px"><h3>Réponses au devis <span class="badge ${(TEMP[L.temperature] || TEMP.froid)[1]}">${L.score} · ${(TEMP[L.temperature] || TEMP.froid)[0]}</span></h3><dl class="kv">
-    ${[['Catégorie', L.category], ['Profil', L.profile], ['Formule', L.formule], ['Budget estimé', L.budget], ['Délai souhaité', L.delai], ['Options', L.options], ['Projet', L.description], ['Accompagnement com\'', L.communication], ['Reçu le', fdate(L.date)]].map(([k, v]) => `<dt>${k}</dt><dd>${esc(v || '—')}</dd>`).join('')}</dl></div>` : ''}`;
+    ${[['Catégorie', L.category], ['Profil', L.profile], ['Formule', L.formule], ['Budget estimé', L.budget], ['Délai souhaité', L.delai], ['Options', L.options], ['Projet', L.description], ['Accompagnement com\'', L.communication], ['Reçu le', fdate(L.date)]].map(([k, v]) => `<dt>${k}</dt><dd>${esc(v || '—')}</dd>`).join('')}</dl></div>` : ''}
+  ${msgs.length ? `<div class="lab" style="margin:22px 0 10px">Messages reçus via les formulaires (${msgs.length})</div>${msgs.map(m => msgCard(m, true)).join('')}` : ''}`;
 }
 function coordsHtml(c, a) {
   const f = (a && a.facturation) || {};

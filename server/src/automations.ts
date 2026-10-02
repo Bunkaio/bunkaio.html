@@ -1,4 +1,5 @@
 import { getAccount, listAccounts } from './accounts';
+import { isDemo } from './config';
 import {
   buildAdminAlertEmail,
   buildAfterSessionEmail,
@@ -55,6 +56,7 @@ async function readMarker(env: Env, key: string): Promise<LeadMarker | null> {
 async function sendSeanceReminders(env: Env): Promise<void> {
   const target = parisDate(2);
   for (const summary of await listAccounts(env)) {
+    if (isDemo(summary.email)) continue;
     const account = await getAccount(env, summary.type, summary.email);
     const s = account?.seance;
     if (!account || !s || s.statut === 'annulee' || s.date !== target) continue;
@@ -118,6 +120,7 @@ async function sendQuoteFollowUps(env: Env): Promise<void> {
 async function sendAfterSessionMails(env: Env): Promise<void> {
   const target = parisDate(-1);
   for (const summary of await listAccounts(env)) {
+    if (isDemo(summary.email)) continue;
     const account = await getAccount(env, summary.type, summary.email);
     const s = account?.seance;
     if (!account || !s || s.statut === 'annulee' || s.date !== target) continue;
@@ -138,6 +141,7 @@ async function sendAdminDeliveryAlerts(env: Env): Promise<void> {
   const today = parisDate(0);
   const twoDaysAgo = parisDate(-2);
   for (const summary of await listAccounts(env)) {
+    if (isDemo(summary.email)) continue;
     const account = await getAccount(env, summary.type, summary.email);
     const s = account?.seance;
     if (!account || !s || s.statut === 'annulee' || account.photosAcces) continue;

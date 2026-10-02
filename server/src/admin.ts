@@ -1,6 +1,9 @@
 import type Stripe from 'stripe';
 import { adminAccountView, getAccount, listAccounts } from './accounts';
-import type { AccountRecord, Env } from './types';
+import { isDemo } from './config';
+import { deleteMessagesOf, listMessages } from './messages';
+import type { FormMessage } from './messages';
+import type { AccountRecord, AccountType, Env } from './types';
 
 /**
  * Tableau de bord admin : une seule réponse qui fusionne toutes les sources
@@ -42,6 +45,7 @@ export interface DashboardContact {
   totalDue: number;
   invoices: DashboardInvoice[];
   accounts: ReturnType<typeof adminAccountView>[];
+  messages: FormMessage[];
   markers: Record<string, string>;
   lastActivity: string;
   createdAt: string;
@@ -98,7 +102,7 @@ export async function buildDashboard(env: Env, stripe: Stripe): Promise<Record<s
     const key = norm(email);
     let c = contacts.get(key);
     if (!c) {
-      c = { email: key, name: '', phone: '', lang: 'fr', roles: [], stage: 'contact', lead: null, customerId: null, totalPaid: 0, totalDue: 0, invoices: [], accounts: [], markers: {}, lastActivity: '', createdAt: '' };
+      c = { email: key, name: '', phone: '', lang: 'fr', roles: [], stage: 'contact', lead: null, customerId: null, totalPaid: 0, totalDue: 0, invoices: [], accounts: [], messages: [], markers: {}, lastActivity: '', createdAt: '' };
       contacts.set(key, c);
     }
     return c;
@@ -122,7 +126,7 @@ export async function buildDashboard(env: Env, stripe: Stripe): Promise<Record<s
     errors.push('stripe');
   }
   for (const cu of customers) {
-    if (!cu.email) continue;
+    if (!cu.email || isDemo(cu.email)) continue;
     const c = get(cu.email);
     c.customerId = cu.id;
     c.name ||= cu.name ?? '';
@@ -152,7 +156,7 @@ export async function buildDashboard(env: Env, stripe: Stripe): Promise<Record<s
   }
   const allInvoices = invoices.map(toInvoice);
   for (const inv of allInvoices) {
-    if (!inv.email || inv.status === 'draft' || inv.status === 'void') continue;
+    if (!inv.email || isDemo(inv.email) || inv.status === 'draft' || inv.status === 'void') continue;
     const c = get(inv.email);
     c.name ||= inv.name;
     c.invoices.push(inv);
@@ -166,7 +170,7 @@ export async function buildDashboard(env: Env, stripe: Stripe): Promise<Record<s
   try {
     const summaries = await listAccounts(env);
     const records = await Promise.all(summaries.map((s) => getAccount(env, s.type, s.email)));
-    for (const rec of records.filter((r): r is AccountRecord => !!r)) {
+    for (const rec of records.filter((r): r is AccountRecord => !!r && !isDemo(r.email))) {
       const c = get(rec.email);
       c.accounts.push(adminAccountView(rec));
       c.name ||= rec.nom ?? '';
@@ -181,7 +185,24 @@ export async function buildDashboard(env: Env, stripe: Stripe): Promise<Record<s
     errors.push('accounts');
   }
 
-  // 3. Marqueurs d'automatisation (relances, rappels…).
+  // 3. Messages des formulaires du site.
+  let messages: FormMessage[] = [];
+  try {
+    messages = (await listMessages(env)).filter((m) => !isDemo(m.email));
+    for (const m of messages) {
+      const c = get(m.email);
+      c.messages.push(m);
+      c.name ||= m.name;
+      if (m.details.telephone && !c.phone) c.phone = m.details.telephone;
+      if (!c.roles.includes('message')) c.roles.push('message');
+      touch(c, m.date);
+    }
+  } catch (err) {
+    console.error('[admin] lecture des messages impossible', err);
+    errors.push('messages');
+  }
+
+  // 4. Marqueurs d'automatisation (relances, rappels…).
   const prefixes: Record<string, string> = { 'lead:': 'quizLe', 'inv:': 'acompteCree', 'dep:': 'acomptePaye', 'bal:': 'soldeCree', 'fu:': 'relanceDevis', 'mbr:': 'rappelMoodboard' };
   try {
     for (const [prefix, label] of Object.entries(prefixes)) {
@@ -216,6 +237,56 @@ export async function buildDashboard(env: Env, stripe: Stripe): Promise<Record<s
     generatedAt: new Date().toISOString(),
     errors,
     contacts: list,
-    invoices: allInvoices.filter((i) => i.status !== 'draft').sort((a, b) => b.created.localeCompare(a.created)),
+    messages,
+    invoices: allInvoices.filter((i) => i.status !== 'draft' && !isDemo(i.email)).sort((a, b) => b.created.localeCompare(a.created)),
   };
+}
+
+/**
+ * Suppression demandée depuis le tableau de bord.
+ * - `type` fourni : supprime uniquement cet espace (client ou partenaire).
+ * - sinon : supprime tout le contact (espaces, messages, marqueurs d'automatisation). Côté Stripe,
+ *   le client est supprimé s'il n'a aucune facture ; s'il en a, il est conservé (obligation de
+ *   conservation comptable des factures) mais ses réponses au devis sont effacées.
+ */
+export async function deleteContact(env: Env, stripe: Stripe, email: string, type?: AccountType): Promise<Record<string, unknown>> {
+  const key = norm(email);
+  const summary: Record<string, unknown> = { email: key };
+  const types: AccountType[] = type ? [type] : ['client', 'partner'];
+  let accounts = 0;
+  for (const t of types) {
+    const k = `account:${t}:${key}`;
+    if (await env.ACCOUNTS_KV.get(k)) { await env.ACCOUNTS_KV.delete(k); accounts++; }
+  }
+  summary.accounts = accounts;
+  if (type) return summary;
+
+  summary.messages = await deleteMessagesOf(env, key);
+  let markers = 0;
+  for (const p of ['lead:', 'inv:', 'dep:', 'bal:', 'fu:', 'mbr:']) {
+    if (await env.ACCOUNTS_KV.get(p + key)) { await env.ACCOUNTS_KV.delete(p + key); markers++; }
+  }
+  for (const p of [`rem:${key}:`, `thx:${key}:`, `alv:${key}:`, `adt:${key}:`, `ack:contact:${key}`, `ack:collab:${key}`, `ack:partner:${key}`, `ack:account:${key}`]) {
+    for (const k of (await env.ACCOUNTS_KV.list({ prefix: p })).keys) { await env.ACCOUNTS_KV.delete(k.name); markers++; }
+  }
+  summary.markers = markers;
+
+  const customers = (await stripe.customers.list({ email: key, limit: 10 })).data;
+  let stripeDeleted = 0;
+  let stripeKept = 0;
+  for (const cu of customers) {
+    const invs = await stripe.invoices.list({ customer: cu.id, limit: 1 });
+    if (invs.data.length) {
+      const cleared: Record<string, string> = {};
+      for (const k of Object.keys(cu.metadata ?? {})) cleared[k] = '';
+      await stripe.customers.update(cu.id, { metadata: cleared });
+      stripeKept++;
+    } else {
+      await stripe.customers.del(cu.id);
+      stripeDeleted++;
+    }
+  }
+  summary.stripeDeleted = stripeDeleted;
+  summary.stripeKeptWithInvoices = stripeKept;
+  return summary;
 }

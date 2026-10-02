@@ -6,12 +6,12 @@ const FORMSPREE_URL = 'https://formspree.io/f/mnjybndv';
    Tant que cette URL n'est pas configurée, sendQuizLeadToStripe() échoue silencieusement
    et n'a aucun impact sur le quiz (fire-and-forget, voir submitQuiz()). */
 /* Accusé de réception par email (envoyé par le Worker) — best-effort, ne bloque jamais le formulaire. */
-function sendAck(kind, name, email, space){
+function sendAck(kind, name, email, space, details){
   try {
     fetch('https://bunkaio-quiz-stripe.bunkaio.workers.dev/ack', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ kind: kind, name: name, email: email, space: space || 'client', lang: (typeof LANG !== 'undefined' ? LANG : 'fr') }),
+      body: JSON.stringify({ kind: kind, name: name, email: email, space: space || 'client', lang: (typeof LANG !== 'undefined' ? LANG : 'fr'), details: details || {} }),
       keepalive: true
     }).catch(() => {});
   } catch (e) {}
@@ -3576,7 +3576,7 @@ function sendContact(e){
   const msg = document.getElementById('ctMsg').value.trim();
   const btn = document.querySelector('#ctForm .btn-solid');
   if (btn) btn.disabled = true;
-  sendAck('contact', n, em);
+  sendAck('contact', n, em, 'client', { telephone: ph, message: msg });
   fetch(FORMSPREE_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
@@ -3606,6 +3606,7 @@ function sendShare(e){
   const txt = document.getElementById('shText').value.trim();
   const btn = document.querySelector('#shareForm .btn-solid');
   if (btn) btn.disabled = true;
+  sendAck('share', n, em, 'client', { prestation: spe, temoignage: txt });
   fetch(FORMSPREE_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
@@ -3653,7 +3654,7 @@ function sendCollab(e){
   }
   const btn = document.querySelector('#collabForm .btn-solid');
   if (btn) btn.disabled = true;
-  sendAck('collab', n, em);
+  sendAck('collab', n, em, 'client', { type: type, site: web, projet: proj });
   fetch(FORMSPREE_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
@@ -3758,7 +3759,7 @@ function sendApply(e){
   }
   const btn = document.querySelector('#applyForm .btn-solid');
   if (btn) btn.disabled = true;
-  sendAck('partner', n, em, 'partner');
+  sendAck('partner', n, em, 'partner', { telephone: ph, site: web, secteur: sector, type: provType, projet: proj });
   fetch(FORMSPREE_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
@@ -3863,7 +3864,7 @@ function doRegister(){
   if (!n || !em || !em.includes('@') || !act) { err.style.display = 'block'; return; }
   const typeLabel = loginType === 'client' ? 'CLIENT' : 'PARTENAIRE';
   if (btn) btn.disabled = true;
-  sendAck('account', n, em, loginType === 'client' ? 'client' : 'partner');
+  sendAck('account', n, em, loginType === 'client' ? 'client' : 'partner', { espace: loginType === 'client' ? 'client' : 'partenaire', telephone: ph, activite: act });
   fetch(FORMSPREE_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
@@ -5310,7 +5311,8 @@ function accInfoMissing(u){
   if (tva && !/^[A-Za-z]{2}[0-9A-Za-z]{2,12}$/.test(tva)) m.push('tvaIntra');
   return m;
 }
-function accInfoComplete(){ return !!USER && accInfoMissing(USER).length === 0; }
+/* Le compte de démonstration n'est jamais bloqué par le verrou des informations. */
+function accInfoComplete(){ return !!USER && (USER.email === 'demo@bunkaio.com' || accInfoMissing(USER).length === 0); }
 
 function renderAccInfoView(){
   if (!USER) return;
@@ -5928,23 +5930,23 @@ function renderPrivacyAccordion(){
     { title:'Responsable du traitement des données', body:`<p>Ce site est édité par <strong>BUNKAIO</strong>, Entreprise Individuelle, SIRET 951 547 587 00034, France. Pour toute question relative à vos données personnelles, contactez-nous à <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a>.</p>` },
     { title:'Éditeur et hébergement', body:`<p><strong>Éditeur :</strong> BUNKAIO, Entreprise Individuelle (Aya Nascimento), SIRET 951 547 587 00034, France. <strong>Contact :</strong> <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a> · <a href="tel:+33758573161">07 58 57 31 61</a>. <strong>Responsable de la publication :</strong> Aya Nascimento.</p><p><strong>Hébergement du site :</strong> GitHub Pages (GitHub, Inc., San Francisco, États-Unis). <strong>Gestion du domaine et services applicatifs :</strong> Cloudflare, Inc. (San Francisco, États-Unis).</p>` },
     { title:'Données collectées et finalités', body:`<p>Nous collectons uniquement les données que vous nous transmettez volontairement : nom, email, téléphone et informations relatives à votre projet via le formulaire de contact, le questionnaire de devis ou votre espace client/partenaire.</p><p>Ces données sont utilisées exclusivement pour répondre à vos demandes, établir vos devis et gérer votre compte. Elles ne sont ni vendues, ni cédées, ni partagées avec des tiers à des fins commerciales.</p>` },
-    { title:'Base légale et durée de conservation', body:`<p>Le traitement repose sur l'exécution de la relation commerciale ou précontractuelle (devis, prestation) et sur notre intérêt légitime à répondre à vos demandes.</p><p>Vos données sont conservées pendant la durée de la relation commerciale, puis archivées le temps imposé par nos obligations légales et comptables, avant suppression ou anonymisation.</p>` },
+    { title:'Base légale et durée de conservation', body:`<p>Le traitement repose sur l'exécution de la relation commerciale ou précontractuelle (devis, prestation) et sur notre intérêt légitime à répondre à vos demandes.</p><p>Vos données sont conservées pendant la durée de la relation commerciale, puis archivées le temps imposé par nos obligations légales et comptables, avant suppression ou anonymisation. Les messages envoyés via les formulaires du site sont conservés au plus 3 ans après leur réception.</p>` },
     { title:'Cookies et mesure d\'audience', body:`<p>Ce site n'utilise aucun cookie publicitaire ni traceur tiers. Nous mesurons l'audience de façon <strong>anonyme et sans cookie</strong>, avec un outil développé et hébergé par nos soins (sur notre compte Cloudflare) : pages vues, domaine de provenance, type d'appareil et clics sur les boutons principaux. Aucune adresse IP ni identifiant n'est conservé, aucune donnée n'est transmise à un service de mesure tiers, et les données sont supprimées au bout de 13 mois.</p><p>Cette mesure respecte l'option « Ne pas me suivre » de votre navigateur. Vous pouvez aussi la désactiver sur cet appareil : <button type="button" class="pt-link" onclick="toggleTracking()">Activer / désactiver la mesure</button> <span id="trackToggleState" style="font-size:12px;color:var(--grey)"></span></p>` },
     { title:'Vos droits', body:`<p>Conformément au RGPD et à la loi Informatique et Libertés, vous disposez d'un droit d'accès, de rectification, d'effacement, de limitation, d'opposition et de portabilité sur vos données.</p><p>Vous pouvez exercer ces droits à tout moment en écrivant à <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a>. Vous disposez également du droit d'introduire une réclamation auprès de la CNIL (<a href="https://www.cnil.fr" target="_blank" rel="noopener">www.cnil.fr</a>).</p>` },
     { title:'Hébergement et sécurité des données', body:`<p>Ce site est hébergé par GitHub, Inc. Les échanges sont sécurisés (HTTPS). Aucune base de données client n'est publiquement accessible : les informations transmises via nos formulaires sont traitées de façon confidentielle par BUNKAIO.</p>` },
     { title:'Politique d\'annulation et acompte', body:`<p>L'<strong>acompte de 30 %</strong> versé à la signature du devis réserve votre date et votre créneau. En cas d'<strong>annulation de votre part après la validation du devis</strong>, cet acompte reste acquis à BUNKAIO et n'est pas remboursé. Le solde n'est exigible qu'à la livraison des livrables.</p><p>Pour toute question, écrivez-nous à <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a>.</p>` },
-    { title:'Droits d\'auteur et droits d\'utilisation des photos & vidéos', body:`<p>BUNKAIO conserve l'intégralité de ses droits d'auteur (droit moral) sur l'ensemble des photographies et vidéos qu'elle réalise, conformément au Code de la propriété intellectuelle.</p><p>Les <strong>droits d'exploitation</strong> (droits d'utilisation commerciale) des visuels livrés sont cédés au client pour une utilisation commerciale, sans limite de durée, dans les conditions précisées au devis signé.</p><p>BUNKAIO se réserve le droit d'utiliser les visuels produits dans le cadre de ses propres supports de communication, de son portfolio et de ses réseaux sociaux, sauf demande contraire et écrite du client. Toute réutilisation par un tiers autre que le client nécessite l'autorisation écrite préalable de BUNKAIO.</p>` },
+    { title:'Droits d\'auteur et droits d\'utilisation des photos & vidéos', body:`<p>BUNKAIO conserve l'intégralité de ses droits d'auteur (droit moral) sur l'ensemble des photographies et vidéos qu'elle réalise, conformément au Code de la propriété intellectuelle.</p><p>Les <strong>droits d'exploitation</strong> (droits d'utilisation commerciale) des visuels livrés sont cédés au client dans les conditions précisées au devis signé (usages, durée, territoire). La cession des droits d'utilisation est subordonnée au paiement intégral du prix.</p><p>BUNKAIO se réserve le droit d'utiliser les visuels produits dans le cadre de ses propres supports de communication, de son portfolio et de ses réseaux sociaux, sauf demande contraire et écrite du client. Toute réutilisation par un tiers autre que le client nécessite l'autorisation écrite préalable de BUNKAIO.</p>` },
     { title:'Mentions légales', body:`<p><strong>Éditeur du site :</strong> BUNKAIO, Entreprise Individuelle — SIRET 951 547 587 00034 — France. Contact : <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a> — 07 58 57 31 61.</p><p><strong>Hébergement :</strong> GitHub, Inc.</p><p><strong>Propriété intellectuelle :</strong> le contenu de ce site (textes, identité visuelle, code) est la propriété de BUNKAIO, sauf mention contraire, et ne peut être reproduit sans autorisation préalable.</p><p><strong>Droit applicable :</strong> le présent site est soumis au droit français ; tout litige relève de la compétence des tribunaux français.</p>` },
   ] : [
     { title:'Data controller', body:`<p>This site is published by <strong>BUNKAIO</strong>, a French sole proprietorship (Entreprise Individuelle), SIRET 951 547 587 00034, France. For any question regarding your personal data, contact us at <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a>.</p>` },
     { title:'Publisher and hosting', body:`<p><strong>Publisher:</strong> BUNKAIO, sole proprietorship (Aya Nascimento), SIRET 951 547 587 00034, France. <strong>Contact:</strong> <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a> · <a href="tel:+33758573161">07 58 57 31 61</a>. <strong>Publication manager:</strong> Aya Nascimento.</p><p><strong>Site hosting:</strong> GitHub Pages (GitHub, Inc., San Francisco, United States). <strong>Domain management and application services:</strong> Cloudflare, Inc. (San Francisco, United States).</p>` },
     { title:'Data collected and purposes', body:`<p>We only collect the data you voluntarily provide: name, email, phone number and project details, via the contact form, the quote questionnaire, or your client/partner area.</p><p>This data is used exclusively to respond to your enquiries, prepare your quotes and manage your account. It is never sold, transferred or shared with third parties for commercial purposes.</p>` },
-    { title:'Legal basis and retention period', body:`<p>Processing is based on the performance of the (pre-)contractual relationship (quote, service) and on our legitimate interest in responding to your requests.</p><p>Your data is kept for the duration of the business relationship, then archived for the period required by our legal and accounting obligations, before deletion or anonymisation.</p>` },
+    { title:'Legal basis and retention period', body:`<p>Processing is based on the performance of the (pre-)contractual relationship (quote, service) and on our legitimate interest in responding to your requests.</p><p>Your data is kept for the duration of the business relationship, then archived for the period required by our legal and accounting obligations, before deletion or anonymisation. Messages sent through the site's forms are kept for up to 3 years after receipt.</p>` },
     { title:'Cookies and audience measurement', body:`<p>This site uses no advertising cookies and no third-party trackers. We measure audience <strong>anonymously and without cookies</strong>, with a tool built and hosted by us (on our own Cloudflare account): page views, referring domain, device type and clicks on the main buttons. No IP address or identifier is kept, no data is shared with a third-party measurement service, and data is deleted after 13 months.</p><p>This measurement honours your browser's "Do Not Track" setting. You can also turn it off on this device: <button type="button" class="pt-link" onclick="toggleTracking()">Turn measurement on / off</button> <span id="trackToggleState" style="font-size:12px;color:var(--grey)"></span></p>` },
     { title:'Your rights', body:`<p>In accordance with the GDPR and French data protection law, you have the right to access, rectify, erase, restrict, object to, and port your data.</p><p>You may exercise these rights at any time by writing to <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a>. You also have the right to lodge a complaint with the CNIL (<a href="https://www.cnil.fr" target="_blank" rel="noopener">www.cnil.fr</a>).</p>` },
     { title:'Hosting and data security', body:`<p>This site is hosted by GitHub, Inc. All exchanges are secured (HTTPS). No client database is publicly accessible: information submitted via our forms is handled confidentially by BUNKAIO.</p>` },
     { title:'Cancellation policy and deposit', body:`<p>The <strong>30% deposit</strong> paid when the quote is signed reserves your date and time slot. If <strong>you cancel after the quote has been accepted</strong>, the deposit is retained by BUNKAIO and is non-refundable. The balance is only due on delivery of the deliverables.</p><p>For any question, write to us at <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a>.</p>` },
-    { title:'Copyright and usage rights for photos & videos', body:`<p>BUNKAIO retains full authorship rights (moral rights) over all photographs and videos it produces, in accordance with French intellectual property law.</p><p>The <strong>exploitation rights</strong> (commercial usage rights) to the delivered visuals are transferred to the client for commercial use, with no time limit, under the terms set out in the signed quote.</p><p>BUNKAIO reserves the right to use the visuals it produces for its own communication materials, portfolio and social media, unless the client requests otherwise in writing. Any reuse by a third party other than the client requires BUNKAIO's prior written authorisation.</p>` },
+    { title:'Copyright and usage rights for photos & videos', body:`<p>BUNKAIO retains full authorship rights (moral rights) over all photographs and videos it produces, in accordance with French intellectual property law.</p><p>The <strong>exploitation rights</strong> (commercial usage rights) to the delivered visuals are transferred to the client under the terms set out in the signed quote (uses, duration, territory). The assignment of usage rights is subject to payment in full of the price.</p><p>BUNKAIO reserves the right to use the visuals it produces for its own communication materials, portfolio and social media, unless the client requests otherwise in writing. Any reuse by a third party other than the client requires BUNKAIO's prior written authorisation.</p>` },
     { title:'Legal notice', body:`<p><strong>Site publisher:</strong> BUNKAIO, sole proprietorship — SIRET 951 547 587 00034 — France. Contact: <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a> — +33 7 58 57 31 61.</p><p><strong>Hosting:</strong> GitHub, Inc.</p><p><strong>Intellectual property:</strong> the content of this site (text, visual identity, code) is the property of BUNKAIO, unless otherwise stated, and may not be reproduced without prior authorisation.</p><p><strong>Governing law:</strong> this site is governed by French law; any dispute falls under the jurisdiction of the French courts.</p>` },
   ];
   renderAccordionInto('privacyAccordion', sections);
