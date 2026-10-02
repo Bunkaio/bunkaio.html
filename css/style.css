@@ -3892,11 +3892,14 @@ body:not([data-view="home"]) .scroll-hint { display: none; }
 /* Logo du pied de page : version foncée sur fond transparent, plus grande (plus de carré noir) */
 .ft-brand-logo-img { width: 130px; height: auto; background: none; border-radius: 0; padding: 0; margin-bottom: 10px; object-fit: contain; }
 
-/* ─── Indicateur de scroll noir (passage de la vidéo au fond blanc) ─── */
-.scroll-hint.scroll-hint-dark { color: rgba(10,10,12,0.78); text-shadow: none; animation: none; opacity: 0; transition: opacity 0.6s ease; }
-.scroll-hint.scroll-hint-dark.show { opacity: 1; }
-.scroll-hint-dark .scroll-hint-line { background: rgba(10,10,12,0.22); }
-.scroll-hint-dark .scroll-hint-line::after { background: #0a0a0c; }
+/* ─── Indicateur de scroll « tardif » : blanc sur la section vidéo, noir à l'arrivée sur le fond blanc ─── */
+.scroll-hint.scroll-hint-late { color: rgba(255,255,255,0.88); text-shadow: 0 1px 8px rgba(0,0,0,0.5); animation: none; opacity: 0; transition: opacity 0.6s ease, color 0.6s ease; }
+.scroll-hint-late.show { opacity: 1; }
+.scroll-hint-late .scroll-hint-line { background: rgba(255,255,255,0.3); transition: background 0.6s ease; }
+.scroll-hint-late .scroll-hint-line::after { background: #fff; transition: background 0.6s ease; }
+.scroll-hint-late.is-dark { color: rgba(10,10,12,0.82); text-shadow: none; }
+.scroll-hint-late.is-dark .scroll-hint-line { background: rgba(10,10,12,0.22); }
+.scroll-hint-late.is-dark .scroll-hint-line::after { background: #0a0a0c; }
 
 /* ─── Votre espace client : section animée, illustration visible sur mobile et ordinateur ─── */
 .cs-spotlight .cs-kicker, .cs-spotlight .cs-title, .cs-spotlight .cs-lead, .cs-spotlight .cs-points li, .cs-spotlight .cs-actions { opacity: 0; transform: translateY(18px); }
@@ -4114,3 +4117,7 @@ body.menu-open .nav-burger-glyph { color: #0a0a0c; }
 @media (max-width: 600px) {
   .cat-showcase { width: calc(100% - 24px); margin: 18px auto 24px; border-radius: 24px; height: 70vh; height: 70svh; min-height: 420px; }
 }
+
+/* Carrousel des prestations : légèrement transparent (on devine le calque derrière) */
+.cat-showcase { background: transparent; }
+.cat-showcase-bgs { opacity: 0.9; }

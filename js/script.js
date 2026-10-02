@@ -3928,18 +3928,24 @@ function renderClientSpotlights(){
    puis s'efface après quelques secondes ou dès que le visiteur a scrollé plus loin. */
 function initWhiteScrollHint(){
   const hint = document.getElementById('scrollHint2');
-  const target = document.querySelector('.reassure-section');
-  if (!hint || !target || !window.IntersectionObserver) return;
-  let shown = false, done = false, timer = null;
-  const hide = () => { if (done) return; done = true; hint.classList.remove('show'); clearTimeout(timer); io.disconnect(); };
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (done) return;
-      if (!shown && e.isIntersecting && e.intersectionRatio >= 0.5) { shown = true; hint.classList.add('show'); timer = setTimeout(hide, 6500); }
-      else if (shown && !e.isIntersecting) hide(); /* la section est sortie de l'écran */
-    });
-  }, { threshold: [0, 0.5] });
-  io.observe(target);
+  const mission = document.getElementById('homeClaimSection');
+  const white = document.querySelector('.reassure-section');
+  if (!hint || !mission || !white || !window.IntersectionObserver) return;
+  /* Parcours : section « Le studio » (vidéo) → indicateur BLANC ; arrivée sur le fond blanc → il passe en NOIR,
+     puis disparaît quand le texte commence à s'écrire. Se réinitialise quand on quitte la zone. */
+  let state = 'idle', missionOn = false, whiteOn = false, timer = null;
+  const reset = () => { clearTimeout(timer); state = 'idle'; hint.classList.remove('show'); hint.classList.remove('is-dark'); };
+  const evaluate = () => {
+    if (state === 'idle' && missionOn && !whiteOn) { state = 'white'; hint.classList.remove('is-dark'); hint.classList.add('show'); }
+    else if (state === 'white' && whiteOn) {
+      state = 'dark'; hint.classList.add('is-dark');
+      timer = setTimeout(() => { hint.classList.remove('show'); state = 'done'; }, 900);
+    }
+    else if (state === 'white' && !missionOn && !whiteOn) reset();
+    else if (state === 'done' && !missionOn && !whiteOn) reset();
+  };
+  new IntersectionObserver((es) => { es.forEach(e => { missionOn = e.isIntersecting && e.intersectionRatio >= 0.4; if (!e.isIntersecting) missionOn = false; }); evaluate(); }, { threshold: [0, 0.4] }).observe(mission);
+  new IntersectionObserver((es) => { es.forEach(e => { whiteOn = e.isIntersecting && e.intersectionRatio >= 0.5; if (!e.isIntersecting) whiteOn = false; }); evaluate(); }, { threshold: [0, 0.5] }).observe(white);
 }
 
 function updateNavLogin(){
