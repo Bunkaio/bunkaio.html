@@ -29,7 +29,7 @@
 <link rel="icon" type="image/png" sizes="64x64" href="/images/favicon-64.png">
 <link rel="apple-touch-icon" href="/images/apple-touch-icon.png"><text y='0.9em' font-size='80' font-family='serif'>⊹</text></svg>">
 <link rel="preload" href="fonts/dm-sans-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/style.min.css?v=2387b659">
+<link rel="stylesheet" href="css/style.min.css?v=d4280b67">
 
 <script type="application/ld+json">
 {
@@ -409,7 +409,7 @@
       <a class="nav-link" data-view="portfolio" href="/portfolio/" onclick="return navLink(event,'portfolio')" data-lang="portfolio">Portfolio</a>
       <button class="nav-link" data-view="drone" onclick="goView('drone')" data-lang="drone">4K Drone</button>
       <a class="nav-link" data-view="contact" href="/contact/" onclick="return navLink(event,'contact')" data-lang="contact">Contact</a>
-      <a class="nav-link" data-view="partners" href="/partenaires/" onclick="return navLink(event,'partners')" data-lang="partners">Partenaires</a>
+      <a class="nav-link" data-view="partners" href="/collaboration/" onclick="return navLink(event,'partners')" data-lang="partners">Collaboration</a>
       <a class="nav-link" data-view="legal" href="/faq/" onclick="return navLink(event,'legal')" data-lang="nav-legal">FAQ</a>
     </div>
     <div class="nav-utils">
@@ -431,7 +431,7 @@
     <a class="nav-link mobile-link" data-view="portfolio" href="/portfolio/" onclick="return navLink(event,'portfolio')" data-lang="portfolio">Portfolio</a>
     <button class="nav-link mobile-link" data-view="drone" onclick="goView('drone');closeMobileMenu()" data-lang="drone">4K Drone</button>
     <a class="nav-link mobile-link" data-view="contact" href="/contact/" onclick="return navLink(event,'contact')" data-lang="contact">Contact</a>
-    <a class="nav-link mobile-link" data-view="partners" href="/partenaires/" onclick="return navLink(event,'partners')" data-lang="partners">Partenaires</a>
+    <a class="nav-link mobile-link" data-view="partners" href="/collaboration/" onclick="return navLink(event,'partners')" data-lang="partners">Collaboration</a>
     <a class="nav-link mobile-link" data-view="legal" href="/faq/" onclick="return navLink(event,'legal')" data-lang="nav-legal">FAQ</a>
   </div>
   <button class="nav-cta mobile-cta" onclick="goView('quiz');closeMobileMenu()" data-lang="start">Estimer mon projet</button>
@@ -497,10 +497,7 @@
       <button class="hero-access" onclick="openLogin('client')" data-lang="access-client">Accès client</button>
       <button class="hero-access" onclick="openLogin('partner')" data-lang="access-partner">Accès partenaire</button>
     </div>
-    <div class="scroll-hint" id="scrollHint">
-      <span>Scroll</span>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="6 13 12 19 18 13"/></svg>
-    </div>
+    
   </section>
 
   <!-- PRESTATIONS — carrousel horizontal natif (scroll-snap), en flux
@@ -839,7 +836,7 @@
   <div class="services-page">
     <h2 data-pageh1 class="page-title" data-lang="services-title">Prestations & tarifs photo</h2>
     <p class="page-sub" data-lang="services-sub">Photographe professionnel à Béziers, Montpellier et Toulouse : des images haut de gamme, en HD, pour mettre en valeur votre projet. Nos prestations et leurs tarifs, par univers.</p>
-    <div class="svc-cta-row"><a class="cta-primary" href="/devis/" data-quiz=""><span data-lang="svc-reserve">Je réserve ma séance</span></a></div>
+    <div class="svc-cta-row"><a class="cta-primary" href="/devis/" data-quiz=""><span data-lang="svc-reserve">Je réserve ma séance</span></a><a class="btn btn-ghost" href="/decouvrir-chaque-prestation/" data-nav="discover"><span data-lang="svc-discover">Découvrir chaque prestation</span></a></div>
     <div class="svc-tabs">
       <button class="svc-tab active" id="stab-catalogue" onclick="setSvcTab('catalogue')" data-lang="stab-catalogue">Catalogue & prix</button>
       <button class="svc-tab" id="stab-devis" onclick="setSvcTab('devis')" data-lang="stab-devis">Devis & déroulé</button>
@@ -1164,6 +1161,9 @@
 <div class="view" id="view-advice">
   <div class="services-page service-page"><div id="advicePageContent"><!--snap--><!--/snap--></div></div>
 </div>
+<div class="view" id="view-discover">
+  <div class="services-page service-page"><div id="discoverPageContent"><!--snap--><!--/snap--></div></div>
+</div>
 <div class="view" id="view-article">
   <div class="services-page service-page"><div id="articlePageContent"><!--snap--><!--/snap--></div></div>
 </div>
@@ -1267,7 +1267,7 @@
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><ul class="svcp-list"><li><strong>Essentiel</strong> — Impressions illimitées incluses</li><li><strong>Signature</strong> — Impressions illimitées incluses</li></ul></div>
       </div>
     </div></div>
-      <p class="svcp-note">Nous intervenons à <strong>Béziers, Montpellier et Toulouse</strong>. Les droits d'utilisation commerciale des visuels vous sont cédés sans limite de durée. Toutes les réponses sont dans la <a href="/faq/" data-nav="faq">FAQ</a>, et pour une question précise, <a href="/contact/" data-nav="contact">contactez-nous</a>. Wedding planner, domaine ou fleuriste ? Découvrez le <a href="/partenaires/" data-nav="partners">partenariat BUNKAIO</a>.</p>
+      <p class="svcp-note">Nous intervenons à <strong>Béziers, Montpellier et Toulouse</strong>. Les droits d'utilisation commerciale des visuels vous sont cédés sans limite de durée. Toutes les réponses sont dans la <a href="/faq/" data-nav="faq">FAQ</a>, et pour une question précise, <a href="/contact/" data-nav="contact">contactez-nous</a>. Wedding planner, domaine ou fleuriste ? Découvrez le <a href="/collaboration/" data-nav="partners">partenariat BUNKAIO</a>.</p>
     </section>
 
     
@@ -1337,7 +1337,7 @@
 
     <section class="read-panel about-card">
       <h2 data-lang="about-partner-h">Vous êtes un professionnel de l'image, de la beauté ou de l'événementiel ?</h2>
-      <p class="svcp-text" data-lang="about-partner-p">Coiffeurs, maquilleurs, stylistes, agences, wedding planners, lieux de réception : BUNKAIO propose un <a href="/partenaires/" data-nav="partners">programme de partenariat</a> avec un tarif partenaire permanent, des missions collaboratives et un réseau de professionnels.</p>
+      <p class="svcp-text" data-lang="about-partner-p">Coiffeurs, maquilleurs, stylistes, agences, wedding planners, lieux de réception : BUNKAIO propose un <a href="/collaboration/" data-nav="partners">programme de partenariat</a> avec un tarif partenaire permanent, des missions collaboratives et un réseau de professionnels.</p>
     </section>
 
     <div class="about-cta">
@@ -1835,6 +1835,10 @@
 
 </main>
 
+<div class="scroll-hint" id="scrollHint" aria-hidden="true">
+      <span data-lang="scroll-hint">Scroll</span>
+      <i class="scroll-hint-line"></i>
+    </div>
 <footer>
   <div class="footer-cta-row">
     <div class="footer-cta-headline">Un projet en tête&nbsp;?</div>
@@ -1863,11 +1867,12 @@
         <div class="ft-col-title" data-lang="ft-studio">Le studio</div>
         <ul class="ft-list">
           <li><a href="/a-propos/" onclick="return navLink(event,'about')" data-lang="ft-about">À propos</a></li>
+          <li><a href="/decouvrir-chaque-prestation/" onclick="return navLink(event,'discover')" data-lang="ft-discover">Découvrir chaque prestation</a></li>
           <li><a href="/conseils/" onclick="return navLink(event,'advice')" data-lang="ft-advice">Conseils photo</a></li>
           <li id="ftReviewLi" hidden><a href="#" target="_blank" rel="noopener" data-lang="ft-review">Laisser un avis Google</a></li>
           <li><a href="/portfolio/" onclick="return navLink(event,'portfolio')" data-lang="portfolio">Portfolio</a></li>
           <li><button onclick="goView('drone')" data-lang="drone">4K Drone</button></li>
-          <li><a href="/partenaires/" onclick="return navLink(event,'partners')" data-lang="partners">Partenaires</a></li>
+          <li><a href="/collaboration/" onclick="return navLink(event,'partners')" data-lang="partners">Collaboration</a></li>
           <li><button onclick="goView('share')" data-lang="testi-share-btn">Partager mon expérience</button></li>
           <li><a href="/faq/" onclick="return navLink(event,'legal')" data-lang="nav-legal">FAQ</a></li>
           <li><a href="/confidentialite/" onclick="return navLink(event,'legal','privacy')" data-lang="ft-privacy">Confidentialité et mentions légales</a></li>
@@ -1888,8 +1893,8 @@
 <script src="config/analytics.js?v=eff8bde4"></script>
 <script src="js/analytics.js?v=e0edf83d"></script>
 <script src="config/articles.js?v=0c31bdd3"></script>
-<script src="config/routes.js?v=091370ed"></script>
-<script src="config/media.js?v=56d3f2db"></script>
-<script src="js/script.min.js?v=4b2bc5c2"></script>
+<script src="config/routes.js?v=78f5403f"></script>
+<script src="config/media.js?v=4c55fc7b"></script>
+<script src="js/script.min.js?v=80d5f5fa"></script>
 </body>
 </html>

@@ -3836,3 +3836,37 @@ a.cta-primary, a.cta-primary:hover { text-decoration: none; }
 .author-name a, .article-meta a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
 .author-role { font-size: 13px; line-height: 1.6; color: #3a3544; }
 .author-sign { font-size: 12px; color: #6b6b70; font-style: italic; }
+
+/* ─── Indicateur de scroll : discret, en bas à droite de l'accueil ─── */
+.scroll-hint {
+  position: fixed; left: auto; right: 28px; bottom: 28px; transform: none; z-index: 20;
+  flex-direction: column; align-items: center; gap: 10px;
+  color: rgba(255,255,255,0.78); font-size: 9.5px; letter-spacing: 0.3em;
+  text-shadow: 0 1px 8px rgba(0,0,0,0.55);
+  writing-mode: vertical-rl; flex-direction: row; text-orientation: mixed;
+}
+.scroll-hint-line { display: block; position: relative; width: 1px; height: 56px; background: rgba(255,255,255,0.28); overflow: hidden; }
+.scroll-hint-line::after { content: ''; position: absolute; left: 0; top: -40%; width: 100%; height: 40%; background: #fff; animation: scrollHintLine 2.2s ease-in-out infinite; }
+@keyframes scrollHintLine { 0% { top: -40%; opacity: 0; } 25% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
+@media (max-width: 600px) { .scroll-hint { right: 16px; bottom: 20px; } .scroll-hint-line { height: 44px; } }
+@media (prefers-reduced-motion: reduce) { .scroll-hint-line::after { animation: none; top: 30%; opacity: 1; } }
+
+/* ─── Page « Découvrir chaque prestation » ─── */
+.discover-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 18px; margin-top: 18px; }
+.discover-card { display: flex; flex-direction: column; gap: 10px; padding: 22px; border: 1px solid rgba(10,10,12,0.12); border-radius: 14px; background: rgba(255,255,255,0.7); }
+.discover-card h3 { margin: 0; font-size: 18px; letter-spacing: -0.01em; }
+.discover-card p { margin: 0; }
+.discover-for { font-size: 13.5px; line-height: 1.6; }
+.discover-facts { list-style: none; margin: 4px 0 6px; padding: 0; display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: #3a3544; }
+.discover-facts li::before { content: '—'; margin-right: 8px; color: #b9a6dc; }
+.discover-actions { margin-top: auto; display: flex; flex-wrap: wrap; gap: 10px; padding-top: 6px; }
+.discover-actions .cta-primary, .discover-actions .btn { padding: 11px 18px; font-size: 12.5px; }
+.discover-table-wrap { overflow-x: auto; }
+.discover-table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 560px; }
+.discover-table th, .discover-table td { text-align: left; padding: 10px 12px 10px 0; border-bottom: 1px solid rgba(10,10,12,0.12); vertical-align: top; }
+.discover-table thead th { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: #6b6b70; }
+.discover-table tbody th a { color: inherit; text-decoration: underline; text-underline-offset: 3px; font-weight: 600; }
+.discover-cta { margin: 6px 0 16px; }
+.svc-cta-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+
+body:not([data-view="home"]) .scroll-hint { display: none; }

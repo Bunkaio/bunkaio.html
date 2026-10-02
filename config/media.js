@@ -100,6 +100,7 @@ const IMG = {
   about:     MEDIA_BASE + '/hero/contact-1.webp',    // Fond page À propos
   service:   MEDIA_BASE + '/hero/services-1.webp',   // Fond des pages de prestation (/services/…)
   advice:    MEDIA_BASE + '/hero/services-1.webp',   // Fond de la page Conseils
+  discover:  MEDIA_BASE + '/hero/services-1.webp',   // Fond de la page « Découvrir chaque prestation »
   article:   MEDIA_BASE + '/hero/services-1.webp',   // Fond des articles
   /* Textes alternatifs du portfolio (SEO images) : un tableau par catégorie, INDEXÉ PAR NUMÉRO DE FICHIER (1.webp = 1re entrée, 2.webp = 2e, etc.). Supprimer une photo ne décale donc pas les textes des autres.
      Décrivez ce qu'on voit, sans bourrer de mots-clés. Ex. : 'photo-part': ['Portrait en lumière naturelle d'une femme sur un pont à Béziers', ...]
@@ -181,6 +182,7 @@ const IMG = {
 
     /* Conseils et articles — même fond que Services */
     advice: [MEDIA_BASE + '/hero/services-1.webp'],
+    discover: [MEDIA_BASE + '/hero/services-1.webp'],
     article: [MEDIA_BASE + '/hero/services-1.webp'],
 
     /* Pages de prestation — même fond que Services */

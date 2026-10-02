@@ -44,7 +44,7 @@ let LANG = 'fr';
 
 const I18N = {
   fr: {
-    'estimate':'Devis','services':'Services','portfolio':'Portfolio','drone':'4K Drone','contact':'Contact','partners':'Partenaires','nav-legal':'FAQ',
+    'estimate':'Devis','services':'Services','portfolio':'Portfolio','drone':'4K Drone','contact':'Contact','partners':'Collaboration','nav-legal':'FAQ',
     'hero-kicker':'Photographe professionnel · Occitanie','cred-lead':'BUNKAIO est un studio de photographie professionnelle mobile, basé à Montpellier : séances portrait, portraits professionnels, mode et mannequins, photo de produit, événementiel et photobooth IA Lumen, à Béziers, Montpellier et Toulouse. Retrouvez chaque <a href="/services/" data-nav="services">prestation et ses tarifs</a>.','quiz-h1':'Devis photo en ligne','hero-word1':'Estimez','hero-word2':'votre','hero-word3':'projet','start':'Estimer mon projet',
     'step-cat':'01 — Catégorie','q-cat':'Quel est votre domaine\u00a0?','q-cat-sub':'Sélectionnez l\'univers de votre projet.',
     'step-prof':'02 — Profil','q-prof':'Quel profil êtes-vous\u00a0?','q-prof-sub':'Identifiez-vous pour que nous comprenions précisément votre besoin.',
@@ -61,7 +61,7 @@ const I18N = {
     'success-text2':'Chaque demande est évaluée individuellement et n\'est acceptée que si elle correspond à la <strong>ligne éditoriale de BUNKAIO</strong>. Nous travaillons uniquement avec des projets qui résonnent avec notre univers — c\'est ce qui garantit la qualité de chaque collaboration.',
     'success-text3':'Une fois votre devis confirmé, direction votre espace client : vous pourrez y construire votre <strong>moodboard</strong> pour partager votre vision — direction artistique, ambiance, inspirations — et nous arriver parfaitement alignés le jour du shooting.',
     'home-btn':'Retour à l\'accueil','see-portfolio':'Voir tout le portfolio',
-    'svc-reserve':'Je réserve ma séance','services-title':'Prestations & tarifs photo','services-sub':'Photographe professionnel à Béziers, Montpellier et Toulouse : des images haut de gamme, en HD, pour mettre en valeur votre projet. Nos prestations et leurs tarifs, par univers.',
+    'svc-reserve':'Je réserve ma séance','svc-discover':'Découvrir chaque prestation','ft-discover':'Découvrir chaque prestation','scroll-hint':'Scroll','services-title':'Prestations & tarifs photo','services-sub':'Photographe professionnel à Béziers, Montpellier et Toulouse : des images haut de gamme, en HD, pour mettre en valeur votre projet. Nos prestations et leurs tarifs, par univers.',
     'svc-all':'Tous','svc-cta':'Estimer ce projet →','svc-sub-label':'Abonnement mensuel',
     'svc-trust1-title':'Réponse sous 48h','svc-trust1-text':'Chaque demande est étudiée puis traitée personnellement — jamais de réponse automatique.',
     'svc-trust2-title':'Un parcours accompagné','svc-trust2-text':'De la demande à la livraison, 7 étapes claires — dont la création de votre moodboard pour partager votre vision — <span class="svc-trust-link" onclick="goToProcess()">voir le déroulé complet</span>.',
@@ -111,7 +111,7 @@ const I18N = {
     'share-title':'Partager mon expérience',
     'about-title':'Aya Nascimento, photographe portraitiste professionnelle',
     'about-partner-h':'Vous êtes un professionnel de l\'image, de la beauté ou de l\'événementiel ?',
-    'about-partner-p':'Coiffeurs, maquilleurs, stylistes, agences, wedding planners, lieux de réception : BUNKAIO propose un <a href="/partenaires/" data-nav="partners">programme de partenariat</a> avec un tarif partenaire permanent, des missions collaboratives et un réseau de professionnels.',
+    'about-partner-p':'Coiffeurs, maquilleurs, stylistes, agences, wedding planners, lieux de réception : BUNKAIO propose un <a href="/collaboration/" data-nav="partners">programme de partenariat</a> avec un tarif partenaire permanent, des missions collaboratives et un réseau de professionnels.',
     'about-cta-quote':'Estimer mon projet',
     'ct-extra-h':'Pour recevoir une réponse rapide',
     'ct-extra-intro':'Précisez dans votre message :',
@@ -379,7 +379,7 @@ const I18N = {
     'ph-reg-email':'vous@societe.fr'
   },
   en: {
-    'estimate':'Quote','services':'Services','portfolio':'Portfolio','drone':'4K Drone','contact':'Contact','partners':'Partners','nav-legal':'FAQ',
+    'estimate':'Quote','services':'Services','portfolio':'Portfolio','drone':'4K Drone','contact':'Contact','partners':'Collaboration','nav-legal':'FAQ',
     'hero-kicker':'Professional photographer · Occitanie','cred-lead':'BUNKAIO is a mobile professional photography studio based in Montpellier: portrait sessions, professional portraits, fashion and models, product photography, events and the Lumen IA photobooth, in Béziers, Montpellier and Toulouse. Browse each <a href="/services/" data-nav="services">service and its rates</a>.','quiz-h1':'Online photo quote','hero-word1':'Estimate','hero-word2':'your','hero-word3':'project','start':'Estimate My Project',
     'step-cat':'01 — Category','q-cat':'What is your field\u00a0?','q-cat-sub':'Select the universe your project belongs to.',
     'step-prof':'02 — Profile','q-prof':'Which profile are you\u00a0?','q-prof-sub':'Tell us who you are so we can understand exactly what you need.',
@@ -396,7 +396,7 @@ const I18N = {
     'success-text2':'Every request is assessed individually and is only accepted if it aligns with <strong>BUNKAIO\'s editorial line</strong>. We work exclusively with projects that resonate with our universe — this is what guarantees the quality of every collaboration.',
     'success-text3':'Once your quote is confirmed, head to your client space : you\'ll be able to build your <strong>moodboard</strong> there to share your vision — art direction, mood, inspirations — so we arrive on the day perfectly aligned with your project.',
     'home-btn':'Back to home','see-portfolio':'View the full portfolio',
-    'svc-reserve':'Book my session','services-title':'Photography services & rates','services-sub':'Professional photographer in Béziers, Montpellier and Toulouse: premium, high-definition images that showcase your project. Our services and rates, by universe.',
+    'svc-reserve':'Book my session','svc-discover':'Explore each service','ft-discover':'Explore each service','scroll-hint':'Scroll','services-title':'Photography services & rates','services-sub':'Professional photographer in Béziers, Montpellier and Toulouse: premium, high-definition images that showcase your project. Our services and rates, by universe.',
     'svc-all':'All','svc-cta':'Get a quote for this →','svc-sub-label':'Monthly plan',
     'svc-trust1-title':'Reply within 48h','svc-trust1-text':'Every request is reviewed and handled personally — never an automated reply.',
     'svc-trust2-title':'A guided journey','svc-trust2-text':'From request to delivery, 7 clear steps — including building your moodboard to share your vision — <span class="svc-trust-link" onclick="goToProcess()">see the full process</span>.',
@@ -446,7 +446,7 @@ const I18N = {
     'share-title':'Share my experience',
     'about-title':'Aya Nascimento, professional portrait photographer',
     'about-partner-h':'Are you an image, beauty or events professional?',
-    'about-partner-p':'Hairstylists, make-up artists, stylists, agencies, wedding planners, venues: BUNKAIO offers a <a href="/partenaires/" data-nav="partners">partnership programme</a> with a permanent partner rate, collaborative missions and a professional network.',
+    'about-partner-p':'Hairstylists, make-up artists, stylists, agencies, wedding planners, venues: BUNKAIO offers a <a href="/collaboration/" data-nav="partners">partnership programme</a> with a permanent partner rate, collaborative missions and a professional network.',
     'about-cta-quote':'Estimate my project',
     'ct-extra-h':'To get a quick reply',
     'ct-extra-intro':'Please mention in your message:',
@@ -824,6 +824,7 @@ function refreshDynamic(){
   if (currentView === 'service') renderServicePage(currentSub);
   if (currentView === 'article') renderArticlePage(currentSub);
   if (currentView === 'advice') renderAdvicePage();
+  if (currentView === 'discover') renderDiscoverPage();
   renderAdviceTeaser();
   renderSvcAssure();
   renderCats();
@@ -1173,9 +1174,9 @@ const CAT_PROFILES = {
   archi:      ['agence', 'promo', 'marque', 'autre'],
   artisan:    ['artisan', 'marque', 'autre'],
   corporate:  ['ei', 'equipe', 'autre'],
-  mode:       ['modele', 'mannequin', 'createur', 'marque', 'agence', 'autre'],
+  mode:       ['modele', 'mannequin', 'createur', 'marque', 'agence', 'ei', 'autre'],
   commercial: ['marque', 'agence', 'ei', 'gastro', 'artisan', 'autre'],
-  event:      ['event', 'agence', 'marque', 'autre']
+  event:      ['event', 'agence', 'marque', 'ei', 'autre']
 };
 
 const PHOTO_PART_PROFILES = [
@@ -1208,8 +1209,8 @@ const PROFILE_DESCRIPTIONS = {
     en:'You publish regularly and your image is your working tool. We create visuals consistent with your universe, for your social channels, personal brand and collaborations.'
   },
   ei: {
-    fr:'Vous êtes à votre compte et votre image fait partie de votre offre. Produits, portrait de marque, vitrine : des images soignées à la mesure de votre activité.',
-    en:'You work for yourself and your image is part of your offer. Products, personal-brand portraits, storefront: polished images that fit your business.'
+    fr:'Vous êtes à votre compte et votre image fait partie de votre offre. Des images soignées, à la mesure de votre activité, pour vos réseaux, votre site et vos clients.',
+    en:'You work for yourself and your image is part of your offer. Polished images that fit your business, for your social channels, website and clients.'
   },
   agence: {
     fr:'Vous concevez des espaces, des identités, des projets. Vos réalisations méritent une documentation à la hauteur de votre exigence créative : des images précises, fidèles à vos intentions, que vous pourrez présenter à vos clients, à la presse ou en concours.',
@@ -1666,7 +1667,8 @@ function goView(v, subTab, opts){
   const run = () => {
     document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
     document.getElementById('view-' + v).classList.add('active');
-    document.querySelectorAll('.nav-link').forEach(l => l.classList.toggle('active', l.dataset.view === (v === 'service' ? 'services' : v)));
+    document.body.dataset.view = v;
+    document.querySelectorAll('.nav-link').forEach(l => l.classList.toggle('active', l.dataset.view === ((v === 'service' || v === 'discover') ? 'services' : v)));
     window.scrollTo({ top:0, behavior:'instant' });
     updateHeroScrollFx();
     updateNavScrollState();
@@ -1698,6 +1700,7 @@ function goView(v, subTab, opts){
     if (v === 'service') renderServicePage(subTab);
     if (v === 'article') renderArticlePage(subTab);
     if (v === 'advice') renderAdvicePage();
+    if (v === 'discover') renderDiscoverPage();
     if (v === 'legal') { renderFaqAccordion(); renderPrivacyAccordion(); setLegalTab(subTab === 'privacy' ? 'privacy' : 'faq', true); }
     if (v === 'about') { const ph = document.getElementById('img-about'); if (ph && IMG.aboutPhoto && !ph.getAttribute('src')) { ph.src = IMG.aboutPhoto; ph.hidden = false; } }
     /* Anime au scroll tous les éléments .rv de la vue active — cohérent
@@ -2687,6 +2690,156 @@ const SERVICE_COPY = {
   }
 };
 
+/* ═══════════════ PAGE « DÉCOUVRIR CHAQUE PRESTATION » ═══════════════
+   Page d'orientation : à chaque besoin sa prestation. Complète /services/ (catalogue et tarifs) sans le doubler.
+   Chiffres calculés à partir du catalogue (CATS, LUMEN_TIERS) : aucune donnée saisie à la main. */
+const DISCOVER_COPY = {
+  'photo-part': {
+    for:{fr:'Particuliers : portrait, lifestyle, couple, famille ou groupe.', en:'Individuals: portrait, lifestyle, couple, family or group.'},
+    why:{fr:'Des photos qui vous ressemblent, sans avoir besoin d\'être à l\'aise devant l\'objectif : nous vous mettons en confiance et vous guidons sur les poses, en extérieur ou en studio.', en:'Photos that truly look like you, even if you\'re not at ease in front of the camera: we put you at ease and guide your poses, outdoors or in the studio.'}
+  },
+  corporate: {
+    for:{fr:'Dirigeants, entreprises individuelles et équipes.', en:'Executives, sole proprietors and teams.'},
+    why:{fr:'Une image professionnelle naturelle pour votre profil LinkedIn, votre site web ou la présentation de votre équipe, avec direction de pose.', en:'A natural professional image for your LinkedIn profile, website or team presentation, with posing guidance.'}
+  },
+  mode: {
+    for:{fr:'Mannequins, modèles émergents, créateurs de contenu, marques et agences.', en:'Models, emerging models, content creators, brands and agencies.'},
+    why:{fr:'Lookbooks, books et visuels e-commerce avec direction artistique ; la formule Polas pour présenter un profil à une agence ; l\'abonnement Studio Continu pour les modèles et mannequins.', en:'Lookbooks, portfolios and e-commerce visuals with art direction; the Polas package to present a profile to an agency; the Studio Continu subscription for models.'}
+  },
+  commercial: {
+    for:{fr:'Marques, artisans, entreprises individuelles, restaurateurs et agences.', en:'Brands, artisans, sole proprietors, restaurateurs and agencies.'},
+    why:{fr:'Des packshots nets sur fond neutre pour vos fiches produit, et des mises en scène pour vos réseaux : de quelques produits jusqu\'au catalogue complet.', en:'Crisp packshots on a neutral backdrop for your product listings, and styled setups for social media: from a few products up to a full catalogue.'}
+  },
+  event: {
+    for:{fr:'Domaines, entreprises, organisateurs et lieux de réception.', en:'Estates, companies, organisers and reception venues.'},
+    why:{fr:'Une couverture discrète de 2 heures à l\'événement complet, avec teaser vidéo ou aftermovie selon la formule, pour garder chaque moment sans le vivre derrière un écran.', en:'Discreet coverage from 2 hours to the full event, with a video teaser or aftermovie depending on the package, so you keep every moment without watching it through a screen.'}
+  },
+  lumen: {
+    for:{fr:'Mariages, wedding planners, domaines et événements haut de gamme.', en:'Weddings, wedding planners, estates and high-end events.'},
+    why:{fr:'Un souvenir unique généré par IA en quelques secondes pour chaque invité, avec impressions illimitées et galerie privée selon la formule.', en:'A one-of-a-kind keepsake generated by AI in seconds for each guest, with unlimited prints and a private gallery depending on the package.'}
+  }
+};
+
+function catFacts(c){
+  const en = LANG === 'en';
+  const tiers = c.lumen
+    ? LUMEN_TIERS.filter(x => x.id !== 'surm' && x.price).map(x => ({ price: x.price, delay: x.delay, items: x.items }))
+    : TIERS.map(tr => ({ price: c.tiers[tr.id].price, delay: c.tiers[tr.id].delay, items: c.tiers[tr.id].items }));
+  const prices = tiers.map(x => x.price);
+  const days = tiers.map(x => parseInt((en ? x.delay.en : x.delay.fr), 10)).filter(Boolean);
+  const photos = tiers.map(x => { const m = (en ? x.items.en : x.items.fr).join(' ').match(/(\d+)\s+(?:retouched\s+)?(?:HD\s+)?(?:photos|photographs|retouched)/i); return m ? parseInt(m[1], 10) : 0; }).filter(Boolean);
+  const hasVideo = tiers.some(x => (en ? x.items.en : x.items.fr).some(i => /(reel|film|vidéo|video|teaser|aftermovie)/i.test(i)));
+  return { from: Math.min(...prices), dMin: Math.min(...days), dMax: Math.max(...days), pMin: photos.length ? Math.min(...photos) : 0, pMax: photos.length ? Math.max(...photos) : 0, hasVideo };
+}
+
+function renderDiscoverPage(){
+  const el = document.getElementById('discoverPageContent');
+  if (!el) return;
+  const en = LANG === 'en';
+  const money = n => n.toLocaleString(en ? 'en-GB' : 'fr-FR') + ' € ' + (en ? 'excl. VAT' : 'HT');
+  const cats = CATS.filter(c => seoRouteFor('service', c.id));
+  const facts = Object.fromEntries(cats.map(c => [c.id, catFacts(c)]));
+  const allMin = Math.min(...cats.map(c => facts[c.id].dMin)), allMax = Math.max(...cats.map(c => facts[c.id].dMax));
+  const cheapest = Math.min(...cats.map(c => facts[c.id].from));
+  const steps = ['about-step1', 'about-step2', 'about-step3', 'about-step4'];
+  const dly = f => f.dMin === f.dMax ? (f.dMin + ' ' + t({fr:'jours ouvrés', en:'working days'})) : (f.dMin + ' ' + t({fr:'à', en:'to'}) + ' ' + f.dMax + ' ' + t({fr:'jours ouvrés', en:'working days'}));
+  const phs = f => f.pMax ? (f.pMin === f.pMax ? f.pMin : f.pMin + ' ' + t({fr:'à', en:'to'}) + ' ' + f.pMax) + ' ' + t({fr:'photos retouchées', en:'retouched photos'}) : '';
+  const cards = cats.map(c => {
+    const f = facts[c.id], cp = DISCOVER_COPY[c.id] || { for:{fr:'', en:''}, why:{fr:'', en:''} };
+    return `<article class="discover-card">
+      <h3>${t(c.name)}</h3>
+      <p class="discover-for"><strong>${t({fr:'Pour qui', en:'Who it is for'})} :</strong> ${t(cp.for)}</p>
+      <p class="svcp-text">${t(cp.why)}</p>
+      <ul class="discover-facts">
+        <li>${t({fr:'À partir de', en:'From'})} <strong>${money(f.from)}</strong></li>
+        <li>${t({fr:'Livraison en', en:'Delivery in'})} ${dly(f)}</li>
+        ${phs(f) ? `<li>${phs(f)}</li>` : ''}
+        ${f.hasVideo ? `<li>${t({fr:'Vidéo ou Reels selon la formule', en:'Video or Reels depending on the package'})}</li>` : ''}
+      </ul>
+      <div class="discover-actions">
+        <a class="btn btn-ghost" href="${servicePath(c.id)}" data-nav="service:${c.id}"><span>${t({fr:'Découvrir la prestation', en:'Explore this service'})}</span></a>
+        ${quizLink(c.id, t({fr:'Estimer ce projet', en:'Estimate this project'}))}
+      </div>
+    </article>`;
+  }).join('');
+  const rows = cats.map(c => { const f = facts[c.id], cp = DISCOVER_COPY[c.id] || { for:{fr:'', en:''} };
+    return `<tr><th scope="row"><a href="${servicePath(c.id)}" data-nav="service:${c.id}">${t(c.name)}</a></th><td>${t(cp.for)}</td><td>${money(f.from)}</td><td>${dly(f)}</td></tr>`; }).join('');
+
+  el.innerHTML = `
+    <div class="breadcrumb" role="navigation" aria-label="${t({fr:'Fil d\'Ariane', en:'Breadcrumb'})}">
+      <a href="/" data-nav="home">${t({fr:'Accueil', en:'Home'})}</a><span aria-hidden="true">›</span>
+      <a href="/services/" data-nav="services">Services</a><span aria-hidden="true">›</span>
+      <span>${t({fr:'Découvrir chaque prestation', en:'Explore each service'})}</span>
+    </div>
+    <h1 data-pageh1 class="page-title">${t({fr:'Découvrir chaque prestation', en:'Explore each service'})}</h1>
+    <p class="page-sub">${t({fr:'Portrait, corporate, mode, produit, événementiel et photobooth IA : une prestation pour chaque besoin, à Montpellier, Béziers et Toulouse. Trouvez celle qui correspond à votre projet.', en:'Portrait, corporate, fashion, product, events and IA photobooth: a service for every need, in Montpellier, Béziers and Toulouse. Find the one that fits your project.'})}</p>
+    <div class="svcp-cta-row">
+      ${quizLink('', t({fr:'Estimer mon projet', en:'Estimate my project'}))}
+      <a class="btn btn-ghost" href="/services/" data-nav="services"><span>${t({fr:'Voir les tarifs détaillés', en:'See detailed rates'})}</span></a>
+    </div>
+
+    <section class="read-panel svcp-panel">
+      <h2>${t({fr:'Quelle prestation pour quel besoin ?', en:'Which service for which need?'})}</h2>
+      <p class="svcp-text">${t({fr:'BUNKAIO est un studio de photographie professionnelle mobile basé à Montpellier. Chaque prestation répond à un usage précis : voici pour qui elle est conçue, ce qu\'elle apporte, et ce qu\'elle coûte à partir de.', en:'BUNKAIO is a mobile professional photography studio based in Montpellier. Each service answers a specific use: here is who it is designed for, what it brings, and what it costs from.'})}</p>
+      <div class="discover-grid">${cards}</div>
+    </section>
+
+    <section class="read-panel svcp-panel">
+      <h2>${t({fr:'Comparer en un coup d\'œil', en:'Compare at a glance'})}</h2>
+      <div class="discover-table-wrap"><table class="discover-table">
+        <thead><tr><th scope="col">${t({fr:'Prestation', en:'Service'})}</th><th scope="col">${t({fr:'Pour', en:'For'})}</th><th scope="col">${t({fr:'À partir de', en:'From'})}</th><th scope="col">${t({fr:'Livraison', en:'Delivery'})}</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table></div>
+    </section>
+
+    <section class="read-panel svcp-panel svcp-two">
+      <div>
+        <h2>${t({fr:'Comment ça se passe', en:'How it works'})}</h2>
+        <ol class="about-list about-steps">${steps.map(k => `<li>${I18N[LANG][k]}</li>`).join('')}</ol>
+      </div>
+      <div>
+        <h2>${t({fr:'Pourquoi choisir BUNKAIO', en:'Why choose BUNKAIO'})}</h2>
+        <ul class="svcp-list">
+          <li>${t({fr:'Basé à Montpellier, mobile à Béziers et Toulouse : déplacements offerts à Montpellier et Béziers.', en:'Based in Montpellier, mobile in Béziers and Toulouse: travel is free in Montpellier and Béziers.'})}</li>
+          <li>${t({fr:'Photos retouchées en HD, galerie privée de téléchargement, livraison en ' + allMin + ' à ' + allMax + ' jours ouvrés.', en:'Retouched HD photos, private download gallery, delivery in ' + allMin + ' to ' + allMax + ' working days.'})}</li>
+          <li>${t({fr:'Droits d\'utilisation commerciale cédés sans limite de durée.', en:'Commercial usage rights transferred with no time limit.'})}</li>
+          <li>${t({fr:'Devis en ligne en 2 minutes, réponse personnalisée sous 48 h, sans engagement.', en:'Online quote in 2 minutes, personalised reply within 48 hours, no commitment.'})}</li>
+          <li>${t({fr:'Paiement en plusieurs fois possible : acompte de 30 % puis solde, ou 3 fois sans frais avec Klarna.', en:'Flexible payment: 30% deposit then balance, or 3 interest-free instalments with Klarna.'})}</li>
+          <li>${t({fr:'Une photographe diplômée de l\'ETPA (BTS Photographie, 2018), plus de 8 ans d\'expérience et plus de 200 projets : ', en:'A photographer trained at ETPA (BTS Photography, 2018), with over 8 years of experience and 200+ projects: '})}<a href="/a-propos/" data-nav="about">${t({fr:'découvrir Aya Nascimento', en:'meet Aya Nascimento'})}</a>.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="read-panel svcp-panel">
+      <h2>${t({fr:'Questions fréquentes', en:'Frequently asked questions'})}</h2>
+      <div id="discoverFaq"></div>
+    </section>
+
+    <section class="read-panel svcp-panel">
+      <h2>${t({fr:'Nos conseils pour choisir et préparer', en:'Our tips to choose and prepare'})}</h2>
+      <div class="advice-grid">${['combien-coute-une-seance-photo', 'lieux-seance-photo-montpellier-beziers-toulouse', 'choisir-photographe-evenementiel'].map(sl => ARTICLES.find(a => a.slug === sl)).filter(Boolean).map(a => adviceCard(a)).join('')}</div>
+    </section>
+
+    <section class="read-panel svcp-panel article-cta">
+      <h2>${t({fr:'Prêt à lancer votre projet ?', en:'Ready to start your project?'})}</h2>
+      <p class="svcp-text">${t({fr:'Dites-nous ce dont vous avez besoin : vous recevez une proposition chiffrée sous 48 h, sans engagement. Une question avant ? Écrivez-nous via la page ', en:'Tell us what you need: you will receive a priced proposal within 48 hours, no commitment. A question first? Write to us on the '})}<a href="/contact/" data-nav="contact">${t({fr:'contact', en:'contact page'})}</a>.</p>
+      <div class="svcp-cta-row" style="margin:0">${quizLink('', t({fr:'Estimer mon projet', en:'Estimate my project'}))}</div>
+    </section>`;
+
+  renderAccordionInto('discoverFaq', [
+    { title: t({fr:'Comment choisir ma prestation ?', en:'How do I choose my service?'}),
+      body: '<ul class="svcp-list">' + cats.map(c => `<li><strong>${t(c.name)}</strong> — ${t((DISCOVER_COPY[c.id] || { for:{fr:'', en:''} }).for)}</li>`).join('') + '</ul><p>' + t({fr:'Un doute entre deux prestations ? Le devis en ligne vous guide en quelques questions.', en:'Unsure between two services? The online quote guides you in a few questions.'}) + '</p>' },
+    { title: t({fr:'Combien coûtent les prestations ?', en:'How much do the services cost?'}),
+      body: '<ul class="svcp-list">' + cats.map(c => `<li><strong>${t(c.name)}</strong> — ${t({fr:'à partir de', en:'from'})} ${money(facts[c.id].from)}</li>`).join('') + '</ul><p>' + t({fr:'Les formules complètes sont détaillées sur la page ', en:'Full packages are detailed on the '}) + '<a href="/services/" data-nav="services">' + t({fr:'Services', en:'Services page'}) + '</a>.</p>' },
+    { title: t({fr:'Dans quels délais reçoit-on les photos ?', en:'How soon are the photos delivered?'}),
+      body: '<p>' + t({fr:'Entre ' + allMin + ' et ' + allMax + ' jours ouvrés selon la prestation et la formule, à compter de la date du shooting.', en:'Between ' + allMin + ' and ' + allMax + ' working days depending on the service and package, counted from the shoot date.'}) + '</p>' },
+    { title: t({fr:'Où intervenez-vous ?', en:'Where do you work?'}),
+      body: '<p>' + t({fr:'BUNKAIO est basé à Montpellier et intervient à Montpellier, Béziers et Toulouse. Les déplacements sont offerts à Montpellier et à Béziers ; ils sont facturés à Toulouse et dans toute autre ville de France.', en:'BUNKAIO is based in Montpellier and works in Montpellier, Béziers and Toulouse. Travel is free in Montpellier and Béziers; it is charged in Toulouse and in any other city in France.'}) + '</p>' },
+    { title: t({fr:'Les photos sont-elles utilisables pour mon activité ?', en:'Can I use the photos for my business?'}),
+      body: '<p>' + t({fr:'Oui : les droits d\'utilisation commerciale vous sont cédés sans limite de durée.', en:'Yes: commercial usage rights are transferred to you with no time limit.'}) + '</p>' }
+  ], { exclusive: true });
+}
+
 function renderServicePage(catId){
   const el = document.getElementById('servicePageContent');
   if (!el) return;
@@ -2738,9 +2891,9 @@ function renderServicePage(catId){
       a: `<p>${t({fr:'Oui : photo de profil, site web, présentation d\'équipe. Ils ont leur propre page, avec les mêmes formules adaptées à l\'usage professionnel : ', en:'Yes: profile photo, website, team presentation. They have their own page, with the same packages adapted to professional use: '})}<a href="/services/portrait-professionnel-corporate/" data-nav="service:corporate">${t({fr:'portraits corporate', en:'corporate portraits'})}</a>.</p>` }] : []),
   ];
   const PARTNER_HINT = {
-    mode: { fr: 'Créateur, styliste, agence de mannequins ou maquilleur·se ? Découvrez le <a href="/partenaires/" data-nav="partners">partenariat BUNKAIO</a>.', en: 'Designer, stylist, model agency or make-up artist? Discover the <a href="/partenaires/" data-nav="partners">BUNKAIO partnership</a>.' },
-    event: { fr: 'Lieu de réception, traiteur, décorateur ou organisateur ? Découvrez le <a href="/partenaires/" data-nav="partners">partenariat BUNKAIO</a>.', en: 'Venue, caterer, decorator or planner? Discover the <a href="/partenaires/" data-nav="partners">BUNKAIO partnership</a>.' },
-    lumen: { fr: 'Wedding planner, domaine ou fleuriste ? Découvrez le <a href="/partenaires/" data-nav="partners">partenariat BUNKAIO</a>.', en: 'Wedding planner, estate or florist? Discover the <a href="/partenaires/" data-nav="partners">BUNKAIO partnership</a>.' },
+    mode: { fr: 'Créateur, styliste, agence de mannequins ou maquilleur·se ? Découvrez le <a href="/collaboration/" data-nav="partners">partenariat BUNKAIO</a>.', en: 'Designer, stylist, model agency or make-up artist? Discover the <a href="/collaboration/" data-nav="partners">BUNKAIO partnership</a>.' },
+    event: { fr: 'Lieu de réception, traiteur, décorateur ou organisateur ? Découvrez le <a href="/collaboration/" data-nav="partners">partenariat BUNKAIO</a>.', en: 'Venue, caterer, decorator or planner? Discover the <a href="/collaboration/" data-nav="partners">BUNKAIO partnership</a>.' },
+    lumen: { fr: 'Wedding planner, domaine ou fleuriste ? Découvrez le <a href="/collaboration/" data-nav="partners">partenariat BUNKAIO</a>.', en: 'Wedding planner, estate or florist? Discover the <a href="/collaboration/" data-nav="partners">BUNKAIO partnership</a>.' },
   };
   const hint = PARTNER_HINT[catId];
   const copyBlock = SERVICE_COPY[catId];
@@ -3258,22 +3411,22 @@ function renderPfTabs(){
 }
 
 /* Liens vers chaque prestation, sous la galerie : maillage interne + texte indexable. */
+function discoverPanel(text){
+  return `<section class="read-panel svcp-panel pf-links"><h2>${t({fr:'Découvrir chaque prestation', en:'Explore each service'})}</h2>
+    <p class="svcp-text">${text}</p>
+    <div class="discover-cta"><a class="cta-primary" href="/decouvrir-chaque-prestation/" data-nav="discover"><span>${t({fr:'Découvrir chaque prestation →', en:'Explore each service →'})}</span></a></div>
+    <div class="svcp-others-row">${CATS.filter(c => seoRouteFor('service', c.id)).map(c => `<a class="svcp-chip" href="${servicePath(c.id)}" data-nav="service:${c.id}">${t(c.name)}</a>`).join('')}</div></section>`;
+}
 function renderPortfolioLinks(){
   const el = document.getElementById('pfLinks');
   if (!el) return;
-  el.innerHTML = `<section class="read-panel svcp-panel pf-links"><h2>${t({fr:'Découvrir chaque prestation', en:'Explore each service'})}</h2>
-    <p class="svcp-text">${t({fr:'Chaque univers a sa page avec les formules, les tarifs et les délais : portrait, mode, produits, événementiel et photobooth Lumen, à Béziers, Montpellier et Toulouse.', en:'Each universe has its own page with packages, rates and timelines: portrait, fashion, products, events and the Lumen photobooth, in Béziers, Montpellier and Toulouse.'})}</p>
-    <div class="svcp-others-row">${CATS.filter(c => seoRouteFor('service', c.id)).map(c => `<a class="svcp-chip" href="${servicePath(c.id)}" data-nav="service:${c.id}">${t(c.name)}</a>`).join('')}</div></section>`;
+  el.innerHTML = discoverPanel(t({fr:'Vous aimez ce que vous voyez ? Découvrez pour qui est conçue chaque prestation, ce qu\'elle comprend, à partir de quel prix et sous quel délai : portrait, corporate, mode, produits, événementiel et photobooth Lumen.', en:'Like what you see? Find out who each service is designed for, what it includes, from what price and in what time: portrait, corporate, fashion, products, events and the Lumen photobooth.'}));
 }
-/* Même bandeau côté « Prestations » : accès direct à la page détaillée de chaque univers. */
 function renderServiceLinks(){
   const el = document.getElementById('svcLinks');
   if (!el) return;
-  el.innerHTML = `<section class="read-panel svcp-panel pf-links"><h2>${t({fr:'Découvrir chaque prestation', en:'Explore each service'})}</h2>
-    <p class="svcp-text">${t({fr:'Ouvrez la page de chaque univers pour le détail des formules, les questions fréquentes et les conseils associés : portrait, mode, produits, événementiel et photobooth Lumen.', en:'Open each universe page for package details, frequently asked questions and related advice: portrait, fashion, products, events and the Lumen photobooth.'})}</p>
-    <div class="svcp-others-row">${CATS.filter(c => seoRouteFor('service', c.id)).map(c => `<a class="svcp-chip" href="${servicePath(c.id)}" data-nav="service:${c.id}">${t(c.name)}</a>`).join('')}</div></section>`;
+  el.innerHTML = discoverPanel(t({fr:'Pas sûr de la prestation qui vous convient ? Parcourez chacune d\'elles : pour qui, ce qu\'elle apporte, ses tarifs de départ et ses délais, avec des conseils pour bien choisir.', en:'Not sure which service suits you? Browse each one: who it is for, what it brings, starting rates and delivery times, with tips to choose well.'}));
 }
-
 /* Avis Google : le lien (config/media.js → GOOGLE_REVIEW_URL) est renseigné une fois la fiche Google Business Profile créée.
    Tant qu'il est vide, aucun bouton n'est affiché. */
 function renderGoogleReview(){
@@ -5484,7 +5637,7 @@ initCatShowcase();
 renderLogoCarousel();
 renderFooterServices();
 /* Hero image home : seulement si la page demandée est l'accueil (sinon la vidéo d'accueil se téléchargeait
-   aussi sur /partenaires/, /services/, etc. alors qu'elle n'y est pas visible). Les autres vues l'initialisent via goView. */
+   aussi sur /collaboration/, /services/, etc. alors qu'elle n'y est pas visible). Les autres vues l'initialisent via goView. */
 { const _bootRoute = seoRouteForPath(location.pathname); if (!_bootRoute || _bootRoute.view === 'home') initHeroCarousel('home'); }
 initHomeClaimVideo();
 initTestiAutoplay();
@@ -5507,6 +5660,7 @@ initNavScrollState();
 (function initRoute(){
   const r = seoRouteForPath(location.pathname);
   const v = r ? r.view : 'home';
+  document.body.dataset.view = v;
   history.replaceState({ v }, '', location.pathname + location.hash);
   if (window.track) track('pageview');
   if (v === 'home') { applySeoMeta('home'); return; }

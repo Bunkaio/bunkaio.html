@@ -38,6 +38,7 @@ const SNAPS_BY_VIEW = {
   partners: ['partnersPitch', 'partnersAccordion', 'applyBenefitsAccordion'],
   service: ['servicePageContent'],
   advice: ['advicePageContent'],
+  discover: ['discoverPageContent'],
   article: ['articlePageContent'],
 };
 const SNAPS_ALL = ['ftServices'];
@@ -176,23 +177,26 @@ function buildJsonLd(route, meta, snaps) {
     const artImg = SITE + (route.ogImage || '/images/og-default.jpg');
     graph.push({ '@type': 'ImageObject', '@id': url + '#primaryimage', url: artImg, contentUrl: artImg, width: 1200, height: 630, caption: art.h1 + ' — ' + b.name, ...imgMeta });
   }
+  if (route.view === 'discover') {
+    graph.push({ '@type': 'ItemList', '@id': url + '#list', name: route.h1, itemListElement: b.services.map((sv, i) => ({ '@type': 'ListItem', position: i + 1, url: SITE + sv.path, name: sv.name })) });
+  }
   if (route.view === 'advice') {
     graph.push({ '@type': 'ItemList', '@id': url + '#list', itemListElement: ARTICLES.map((x, i) => ({ '@type': 'ListItem', position: i + 1, url: SITE + '/conseils/' + x.slug + '/', name: x.h1 })) });
   }
-  const pageType = route.view === 'about' ? 'AboutPage' : route.view === 'contact' ? 'ContactPage' : route.view === 'advice' ? 'CollectionPage' : 'WebPage';
+  const pageType = route.view === 'about' ? 'AboutPage' : route.view === 'contact' ? 'ContactPage' : (route.view === 'advice' || route.view === 'discover') ? 'CollectionPage' : 'WebPage';
   const page = { '@type': pageType, '@id': url + '#webpage', url, name: route.title, description: route.description, inLanguage: 'fr-FR', isPartOf: { '@id': siteId }, about: { '@id': bizId } };
   if (route.view === 'about') page.mainEntity = { '@id': personId };
   if (route.cat) page.mainEntity = { '@id': url + '#service' };
   if (route.view === 'about' && per.photo) page.primaryImageOfPage = { '@id': SITE + '/a-propos/#portrait' };
   if (fig || art) page.primaryImageOfPage = { '@id': url + '#primaryimage' };
   if (art) page.mainEntity = { '@id': url + '#article' };
-  if (route.view === 'advice') page.mainEntity = { '@id': url + '#list' };
+  if (route.view === 'advice' || route.view === 'discover') page.mainEntity = { '@id': url + '#list' };
   if (route.path !== '/') page.breadcrumb = { '@id': url + '#breadcrumb' };
   graph.push(page);
   if (route.path !== '/') {
-    const name = route.cat && meta ? meta.name : route.slug && art ? art.h1 : route.view === 'advice' ? 'Conseils photo' : route.title.split('|')[0].trim();
+    const name = route.cat && meta ? meta.name : route.slug && art ? art.h1 : route.view === 'advice' ? 'Conseils photo' : route.view === 'discover' ? route.h1 : route.title.split('|')[0].trim();
     const crumbs = [{ '@type': 'ListItem', position: 1, name: 'Accueil', item: SITE + '/' }];
-    if (route.cat) crumbs.push({ '@type': 'ListItem', position: 2, name: 'Services', item: SITE + '/services/' });
+    if (route.cat || route.view === 'discover') crumbs.push({ '@type': 'ListItem', position: 2, name: 'Services', item: SITE + '/services/' });
     if (route.slug) crumbs.push({ '@type': 'ListItem', position: 2, name: 'Conseils photo', item: SITE + '/conseils/' });
     crumbs.push({ '@type': 'ListItem', position: crumbs.length + 1, name, item: url });
     graph.push({ '@type': 'BreadcrumbList', '@id': url + '#breadcrumb', itemListElement: crumbs });
@@ -336,6 +340,8 @@ function pinAssets(html) {
   const articleSnaps = {};
   await page.evaluate(() => goView('advice', null, { initial: true }));
   await grab(['advicePageContent']);
+  await page.evaluate(() => goView('discover', null, { initial: true }));
+  await grab(['discoverPageContent']);
   for (const r of ROUTES.filter((x) => x.view === 'article')) {
     await page.evaluate((sl) => goView('article', sl, { initial: true }), r.slug);
     articleSnaps[r.slug] = await page.evaluate(() => document.getElementById('articlePageContent').innerHTML);
@@ -373,6 +379,19 @@ function pinAssets(html) {
     fs.mkdirSync(path.dirname(file), { recursive: true });
     fs.writeFileSync(file, out);
     console.log('écrit', path.relative(ROOT, file), route.index ? '' : '(noindex)');
+  }
+
+  /* Anciennes URL renommées : page de redirection (GitHub Pages ne gère pas les 301). Hors sitemap. */
+  for (const rd of [{ from: '/partenaires/', to: '/collaboration/', label: 'Collaboration' }]) {
+    const f = path.join(ROOT, rd.from, 'index.html');
+    fs.mkdirSync(path.dirname(f), { recursive: true });
+    fs.writeFileSync(f, `<!DOCTYPE html>
+<html lang="fr"><head><meta charset="UTF-8"><title>${rd.label} | BUNKAIO</title>
+<meta name="robots" content="noindex, follow"><link rel="canonical" href="${SITE}${rd.to}">
+<meta http-equiv="refresh" content="0; url=${rd.to}"></head>
+<body><p><a href="${rd.to}">${rd.label} — BUNKAIO</a></p><script>location.replace('${rd.to}'+location.hash);</script></body></html>
+`);
+    console.log('redirection', rd.from, '→', rd.to);
   }
 
   // 3. sitemap.xml (pages indexables uniquement) — lastmod = date du dernier changement réel du
