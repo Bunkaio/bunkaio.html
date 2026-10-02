@@ -501,8 +501,25 @@ async function login() {
     const ok = await loadDashboard();
     if (ok) { lsSet(TOKEN_KEY, t); showApp(); }
   } catch (e) {
-    $('loginErr').textContent = e.message === 'unauthorized' ? 'Token incorrect.' : 'Connexion impossible (réseau ou Worker non déployé).';
+    $('loginErr').textContent = await diagnoseLogin(e);
   } finally { $('loginBtn').disabled = false; $('loginBtn').textContent = 'Se connecter'; }
+}
+/* Explique précisément pourquoi la connexion échoue (token, Worker pas à jour, réseau…). */
+async function diagnoseLogin(e) {
+  const m = e && e.message;
+  if (m === 'unauthorized') return 'Token incorrect : ce n\'est pas la valeur du secret ADMIN_TOKEN enregistré dans Cloudflare.';
+  if (m === 'not_found' || m === 'erreur 404') {
+    // Le Worker déployé ne connaît pas encore le tableau de bord : on vérifie le token sur une ancienne route.
+    try {
+      const r = await fetch(WORKER + '/accounts', { headers: { Authorization: 'Bearer ' + TOKEN } });
+      if (r.status === 401) return 'Token incorrect : ce n\'est pas la valeur du secret ADMIN_TOKEN enregistré dans Cloudflare.';
+      if (r.ok) return 'Votre token est bon, mais le Worker en ligne n\'est pas à jour (il ne connaît pas encore le tableau de bord). Lancez : cd server && npx wrangler deploy';
+    } catch (x) { /* réseau */ }
+    return 'Le Worker ne répond pas comme attendu (route /admin/dashboard introuvable). Lancez : cd server && npx wrangler deploy';
+  }
+  if (m === 'dashboard_error') return 'Le Worker répond mais n\'arrive pas à lire les données (Stripe ou KV). Consultez ses journaux : npx wrangler tail.';
+  if (m === 'Failed to fetch' || m === 'Load failed' || m === 'NetworkError when attempting to fetch resource.') return 'Impossible de joindre le Worker (réseau, ou origine non autorisée dans ALLOWED_ORIGINS). Ouvrez le tableau de bord depuis https://bunkaio.com/admin/.';
+  return 'Connexion impossible : ' + (m || 'erreur inconnue') + '. Ouvrez le tableau de bord depuis https://bunkaio.com/admin/.';
 }
 function logout(expired) {
   try { localStorage.removeItem(TOKEN_KEY); } catch (e) {}
@@ -1362,7 +1379,7 @@ async function saveAccount(extra) {
   const saved = lsGet(TOKEN_KEY, '');
   if (!saved) return;
   TOKEN = saved; $('tokenInput').value = saved;
-  try { if (await loadDashboard()) showApp(); } catch (e) { if (e.message !== 'unauthorized') $('loginErr').textContent = 'Connexion impossible (réseau ou Worker non déployé).'; }
+  try { if (await loadDashboard()) showApp(); } catch (e) { if (e.message !== 'unauthorized') $('loginErr').textContent = await diagnoseLogin(e); }
 })();
 </script>
 </body>
