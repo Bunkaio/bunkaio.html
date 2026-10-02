@@ -145,7 +145,9 @@ function buildJsonLd(route, meta, snaps) {
       alumniOf: { '@type': 'EducationalOrganization', name: per.alumniOf },
       hasCredential: { '@type': 'EducationalOccupationalCredential', name: per.credential, credentialCategory: 'degree' },
       knowsAbout: per.knowsAbout,
+      ...(per.photo ? { image: { '@id': SITE + '/a-propos/#portrait' } } : {}),
     });
+    if (per.photo) graph.push({ '@type': 'ImageObject', '@id': SITE + '/a-propos/#portrait', url: SITE + per.photo.path, contentUrl: SITE + per.photo.path, width: per.photo.width, height: per.photo.height, caption: per.photo.caption, creditText: b.name, copyrightNotice: '© ' + b.name, creator: { '@id': personId } });
   }
   /* Image principale : photo de la prestation (si configurée dans config/media.js) ou carte de partage de l'article. */
   const fig = route.cat && snaps && snaps.servicePageContent && snaps.servicePageContent.match(/<figure class="svcp-figure[^"]*"><img src="([^"]+)" alt="([^"]*)"/);
@@ -181,6 +183,7 @@ function buildJsonLd(route, meta, snaps) {
   const page = { '@type': pageType, '@id': url + '#webpage', url, name: route.title, description: route.description, inLanguage: 'fr-FR', isPartOf: { '@id': siteId }, about: { '@id': bizId } };
   if (route.view === 'about') page.mainEntity = { '@id': personId };
   if (route.cat) page.mainEntity = { '@id': url + '#service' };
+  if (route.view === 'about' && per.photo) page.primaryImageOfPage = { '@id': SITE + '/a-propos/#portrait' };
   if (fig || art) page.primaryImageOfPage = { '@id': url + '#primaryimage' };
   if (art) page.mainEntity = { '@id': url + '#article' };
   if (route.view === 'advice') page.mainEntity = { '@id': url + '#list' };

@@ -74,6 +74,12 @@
       "Photographie de produit",
       "Photographie corporate",
       "Photographie événementielle"
-    ]
+    ],
+    "photo": {
+      "path": "/images/about/aya-nascimento-photographe-studio.webp",
+      "width": 1200,
+      "height": 1600,
+      "caption": "Aya Nascimento, photographe portraitiste, assise dans son studio, un appareil photo Sony à la main"
+    }
   }
 }

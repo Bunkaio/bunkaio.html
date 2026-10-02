@@ -3825,3 +3825,5 @@ a.cta-primary, a.cta-primary:hover { text-decoration: none; }
 .svcp-figure img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 4; object-fit: cover; border-radius: 12px; background: rgba(10,10,12,0.06); }
 .svcp-figure.is-broken { display: none; }
 @media (max-width: 700px) { .svcp-lead-grid.has-figure { grid-template-columns: 1fr; } .svcp-figure { max-width: 300px; } }
+
+.about-photo { height: auto; object-position: 50% 28%; max-width: 280px; }
