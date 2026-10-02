@@ -173,7 +173,7 @@ const I18N = {
     'p-cta-text':'Bunkaio n\'a pas vocation à travailler avec tout le monde. Nous recherchons des projets qui ont quelque chose à raconter. Si vous pensez que votre histoire mérite d\'être racontée, nous serons heureux de la découvrir.',
     'p-cta-btn':'Candidater',
     'ptab-program':'Programme Partenaires','ptab-apply':'Candidater','ptab-collab':'Collaboration',
-    'apply-title':'Candidature — Partenaire Fondateur',
+    'apply-title':'Candidature — Devenir partenaire','apply-benefits-label':'Ce que vous obtenez en devenant partenaire',
     'apply-sub':'Complétez ce formulaire pour candidater au programme Partenaires Fondateurs. Chaque candidature est étudiée individuellement — réponse personnalisée sous 5 jours ouvrés.',
     'apply-who-label':'Qui peut candidater',
     'apply-who-value':'Les entreprises et professionnels dont les réalisations correspondent à l\'univers Bunkaio — portrait & lifestyle, mode & mannequins, commercial & produits, événementiel, mariage & Lumen.',
@@ -181,9 +181,9 @@ const I18N = {
     'apply-eval-value':'La qualité de vos réalisations et la cohérence avec la ligne éditoriale Bunkaio. 10 places par univers, 60 partenaires fondateurs au total.',
     'apply-delay-value':'Sous 5 jours ouvrés.',
     'apply-web-label':'Site web / réseaux sociaux *',
-    'apply-sector-label':'Secteur d\'activité *',
+    'apply-sector-label':'Votre type de prestataire *',
     'apply-sector-opt1':'Portrait & lifestyle','apply-sector-opt2':'Mode & mannequins','apply-sector-opt3':'Commercial & produits','apply-sector-opt4':'Événementiel','apply-sector-opt5':'Mariage & Lumen',
-    'apply-sector-error':'Sélectionnez un secteur d\'activité ci-dessus.',
+    'apply-sector-error':'Sélectionnez votre type de prestataire ci-dessus.',
     'apply-project-label':'Présentez votre activité et vos réalisations *',
     'apply-btn':'Envoyer ma candidature',
     'apply-success-title':'Candidature envoyée',
@@ -482,7 +482,7 @@ const I18N = {
     'p-cta-text':'Bunkaio was never meant to work with everyone. We look for projects that have something to say. If you believe your story deserves to be told, we would be delighted to discover it.',
     'p-cta-btn':'Apply',
     'ptab-program':'Partner Programme','ptab-apply':'Apply','ptab-collab':'Collaboration',
-    'apply-title':'Application — Founding Partner',
+    'apply-title':'Application — Become a partner','apply-benefits-label':'What you get as a partner',
     'apply-sub':'Fill in this form to apply to the Founding Partners programme. Every application is reviewed individually — a personal reply within 5 working days.',
     'apply-who-label':'Who can apply',
     'apply-who-value':'Companies and professionals whose work aligns with the Bunkaio universe — portrait & lifestyle, fashion & models, commercial & products, events, weddings & Lumen.',
@@ -490,9 +490,9 @@ const I18N = {
     'apply-eval-value':'The quality of your work and its fit with the Bunkaio editorial line. 10 places per universe, 60 founding partners in total.',
     'apply-delay-value':'Within 5 working days.',
     'apply-web-label':'Website / social media *',
-    'apply-sector-label':'Business sector *',
+    'apply-sector-label':'Your provider type *',
     'apply-sector-opt1':'Portrait & lifestyle','apply-sector-opt2':'Fashion & models','apply-sector-opt3':'Commercial & products','apply-sector-opt4':'Events','apply-sector-opt5':'Weddings & Lumen',
-    'apply-sector-error':'Please select a business sector above.',
+    'apply-sector-error':'Please select your provider type above.',
     'apply-project-label':'Tell us about your business and your work *',
     'apply-btn':'Send my application',
     'apply-success-title':'Application sent',
@@ -764,6 +764,7 @@ function closeMobileMenu(){
 }
 
 function refreshDynamic(){
+  renderClientSpotlights();
   renderCats();
   renderMissionServices();
   renderFooterServices();
@@ -774,7 +775,7 @@ function refreshDynamic(){
   if (S.cat && document.getElementById('qs-6').classList.contains('active')) renderQuizPortfolio();
   if (document.getElementById('view-services').classList.contains('active')) { renderServices(); if (activeSvcTab === 'devis') renderProcessSteps(); }
   if (document.getElementById('view-drone').classList.contains('active')) { renderDroneCats(); renderDroneProjects(activeDroneCat); }
-  if (document.getElementById('view-partners').classList.contains('active')) renderPartnersAccordion();
+  if (document.getElementById('view-partners').classList.contains('active')) { renderPartnersAccordion(); renderApplyBenefits(); renderApplyTypePicker(); }
   if (document.getElementById('view-legal').classList.contains('active')) { renderFaqAccordion(); renderPrivacyAccordion(); }
   if (document.getElementById('view-portfolio').classList.contains('active')) {
     const curPfCat = document.querySelector('#pfTabs .pf-cat-tab.active')?.dataset.cat || PF_CATS[0].id;
@@ -1566,36 +1567,70 @@ function goToServiceTable(catId){
 function renderMissionServices(){
   const track = document.getElementById('missionServicesTrack');
   if (!track) return;
-  track.innerHTML = CATS.map(c => `
+  /* Liste doublée : le carrousel boucle sans à-coup (voir msGo). */
+  const cards = CATS.map(c => `
     <div class="mission-service-card" onclick="goToQuizCategory('${c.id}')">
       ${getIcon(c.icon)}
       <div class="mission-service-name">${t(c.name)}</div>
     </div>`).join('');
+  track.innerHTML = cards + cards;
+  msIndex = 0;
+  msLayout(false);
 }
 
-/* Défilement automatique en boucle du carrousel de prestations —
-   pause au survol (desktop) et à l'interaction tactile (mobile),
-   même logique que le carrousel de témoignages. */
-let _missionServicesPaused = false;
-let _missionServicesResumeTO = null;
-function initMissionServicesAutoplay(){
+/* Carrousel « Le studio » : défile seul, une prestation à la fois, avec
+   deux flèches. Le cadre (viewport) est dimensionné pour ne contenir que
+   des cartes entières — jamais de carte coupée sur les bords. */
+let msIndex = 0, msPaused = false, msTimer = null, msBusy = false;
+function msMaxWidth(){
+  const box = document.getElementById('missionServices');
+  const arrows = box ? [...box.querySelectorAll('.mission-arrow')].reduce((w, a) => w + a.offsetWidth + 10, 0) : 0;
+  return box ? Math.max(0, box.clientWidth - arrows) : 0;
+}
+function msLayout(animate){
+  const vp = document.getElementById('missionServicesViewport');
   const track = document.getElementById('missionServicesTrack');
-  if (!track || track.dataset.autoplayInit) return;
-  track.dataset.autoplayInit = '1';
-  setInterval(() => {
-    if (_missionServicesPaused) return;
-    const card = track.querySelector('.mission-service-card');
-    const amount = (card ? card.offsetWidth : 140) + 10;
-    const atEnd = track.scrollLeft + track.clientWidth >= track.scrollWidth - 4;
-    track.scrollTo({ left: atEnd ? 0 : track.scrollLeft + amount, behavior: 'smooth' });
-  }, 2600);
-  track.addEventListener('mouseenter', () => { _missionServicesPaused = true; });
-  track.addEventListener('mouseleave', () => { _missionServicesPaused = false; });
-  track.addEventListener('touchstart', () => {
-    _missionServicesPaused = true;
-    clearTimeout(_missionServicesResumeTO);
-    _missionServicesResumeTO = setTimeout(() => { _missionServicesPaused = false; }, 5000);
-  }, { passive: true });
+  if (!vp || !track || !track.children.length) return;
+  const cards = [...track.children];
+  const n = cards.length / 2;
+  const max = msMaxWidth();
+  const start = cards[msIndex].offsetLeft;
+  let end = start + cards[msIndex].offsetWidth;
+  for (let k = 1; k < n; k++) {
+    const c = cards[msIndex + k];
+    if (!c || c.offsetLeft + c.offsetWidth - start > max) break;
+    end = c.offsetLeft + c.offsetWidth;
+  }
+  const tr = animate ? '' : 'none';
+  vp.style.transition = tr; track.style.transition = tr;
+  vp.style.width = (end - start) + 'px';
+  track.style.transform = 'translateX(' + (-start) + 'px)';
+}
+function msGo(dir){
+  const track = document.getElementById('missionServicesTrack');
+  if (!track || !track.children.length || msBusy) return;
+  const n = track.children.length / 2;
+  if (dir < 0 && msIndex === 0) { msIndex = n; msLayout(false); void track.offsetWidth; }
+  msIndex += dir;
+  msBusy = true;
+  msLayout(true);
+  setTimeout(() => {
+    if (msIndex >= n) { msIndex -= n; msLayout(false); }
+    msBusy = false;
+  }, 650);
+}
+function initMissionServicesAutoplay(){
+  const box = document.getElementById('missionServices');
+  if (!box || box.dataset.autoplayInit) return;
+  box.dataset.autoplayInit = '1';
+  const pause = ms => { msPaused = true; clearTimeout(msTimer); if (ms) msTimer = setTimeout(() => { msPaused = false; }, ms); };
+  document.getElementById('missionPrev').addEventListener('click', () => { msGo(-1); pause(6000); });
+  document.getElementById('missionNext').addEventListener('click', () => { msGo(1); pause(6000); });
+  setInterval(() => { if (!msPaused && document.getElementById('missionVideoWrap').classList.contains('active')) msGo(1); }, 3200);
+  box.addEventListener('mouseenter', () => { msPaused = true; clearTimeout(msTimer); });
+  box.addEventListener('mouseleave', () => { msPaused = false; });
+  box.addEventListener('touchstart', () => pause(5000), { passive: true });
+  window.addEventListener('resize', () => msLayout(false));
 }
 
 function renderCats(){
@@ -2764,13 +2799,65 @@ function sendCollab(e){
 }
 
 /* ═══════════════ PARTENAIRES — CANDIDATER (Partenaire Fondateur) ═══════════════ */
-/* Même logique que selectCollabType()/sendCollab() ci-dessus : cartes
-   cliquables pour le secteur, repris dans le champ caché #applySector. */
-function selectApplySector(btn){
-  document.querySelectorAll('#applySectorGrid .collab-type-card').forEach(c => c.classList.toggle('active', c === btn));
-  document.getElementById('applySector').value = btn.dataset.value;
+/* Le candidat choisit son type de prestataire (mêmes catégories que
+   PARTNER_PROVIDER_TYPES, regroupées par univers) : le secteur est déduit
+   du type. Valeurs reprises dans les champs cachés #applySector/#applyType. */
+let applyDraftType = null;
+function renderApplyTypePicker(){
+  const el = document.getElementById('applyTypePicker');
+  if (!el) return;
+  el.innerHTML = PARTNER_SECTORS.map(sec => `
+    <div class="pt-group">
+      <div class="pt-group-name">${t(sec.name)}</div>
+      <div class="mb-chip-grid pt-chips">
+        ${PARTNER_PROVIDER_TYPES.filter(p => p.sector === sec.id).map(p =>
+          `<button type="button" class="mb-chip ${applyDraftType === p.id ? 'active' : ''}" onclick="selectApplyType('${p.id}')">${t(p.name)}</button>`).join('')}
+      </div>
+    </div>`).join('') + `
+    <div class="pt-group">
+      <div class="mb-chip-grid pt-chips">
+        <button type="button" class="mb-chip ${applyDraftType === 'autre' ? 'active' : ''}" onclick="selectApplyType('autre')">${t({fr:'Autre', en:'Other'})}</button>
+      </div>
+    </div>`;
+}
+function selectApplyType(id){
+  applyDraftType = id;
+  const pt = partnerProviderType(id);
+  const sec = pt ? PARTNER_SECTORS.find(x => x.id === pt.sector) : null;
+  document.getElementById('applyType').value = pt ? t(pt.name) : t({fr:'Autre', en:'Other'});
+  document.getElementById('applySector').value = sec ? t(sec.name) : t({fr:'Autre', en:'Other'});
   const err = document.getElementById('applySectorError');
   if (err) err.style.display = 'none';
+  renderApplyTypePicker();
+}
+
+/* Accordéon « Ce que vous obtenez » : reprend les avantages du programme
+   (remise permanente, promotions, missions, visibilité, réseau, espace). */
+function renderApplyBenefits(){
+  const el = document.getElementById('applyBenefitsAccordion');
+  if (!el) return;
+  const ex = CATS.find(c => c.id === 'commercial');
+  const exPrice = ex && ex.tiers && ex.tiers.sig && ex.tiers.sig.price;
+  const exLine = exPrice ? t({
+    fr:`Exemple : le Pack Signature « Commercial & produits » passe de ${eur(exPrice)} HT à ${eur(partnerPrice(exPrice))} HT, soit ${eur(exPrice - partnerPrice(exPrice))} économisés.`,
+    en:`Example: the "Commercial & products" Signature package goes from ${eur(exPrice)} excl. VAT to ${eur(partnerPrice(exPrice))} excl. VAT — you save ${eur(exPrice - partnerPrice(exPrice))}.`}) : '';
+  const li = arr => '<ul class="ft-list" style="margin-top:12px">' + arr.map(x => `<li style="margin-bottom:8px">⊹ ${x}</li>`).join('') + '</ul>';
+  const sections = LANG === 'fr' ? [
+    { title:`-${PARTNER_DISCOUNT}% permanent sur tout le catalogue`, body:`<p>Un tarif partenaire appliqué automatiquement à tous vos devis, tant que votre partenariat est actif.</p>${li(['Toutes les prestations du catalogue, options comprises','Abonnements Studio Continu inclus','Remise visible dans le récapitulatif de votre devis'])}${exLine ? `<p style="margin-top:12px"><strong>${exLine}</strong></p>` : ''}` },
+    { title:'Promotions supplémentaires sur certaines prestations', body:`<p>Bunkaio peut vous accorder des promotions ciblées, en plus de la remise permanente : offre de lancement, prestation offerte, tarif spécial sur une période. Elles apparaissent dans l'onglet <strong>« Mes promotions »</strong> de votre espace partenaire.</p>` },
+    { title:'Des missions collaboratives rémunérées', body:`<p>Selon votre type de prestataire, Bunkaio vous sollicite pour intervenir sur des projets clients. Vous acceptez ou déclinez en un clic depuis <strong>« Mes collaborations »</strong>, et vous indiquez quand vous êtes disponible.</p>` },
+    { title:'Visibilité et réseau', body:`<p>Une mise en lumière éditoriale de votre savoir-faire, une présence sur le site et les réseaux Bunkaio, et l'accès à l'<strong>annuaire du réseau</strong> pour trouver d'autres professionnels (traiteurs, lieux, créateurs…) et être mis en relation. Vous choisissez d'y être référencé·e ou non.</p>` },
+    { title:'Un espace partenaire dédié', body:`<p>Vos promotions, votre réseau, vos collaborations, vos commandes et vos <strong>moodboards personnalisés</strong> (un par commande) au même endroit, avec un accès prioritaire à nos disponibilités.</p>` },
+    { title:'Comment se passe la candidature ?', body:`<p>Vous candidatez ci-dessous, nous étudions votre profil individuellement et vous répondons sous 5 jours ouvrés. Une fois accepté·e, vous recevez vos accès et vous confirmez votre type de prestataire dans votre espace.</p>` },
+  ] : [
+    { title:`-${PARTNER_DISCOUNT}% permanent across the catalogue`, body:`<p>A partner rate applied automatically to all your quotes for as long as your partnership is active.</p>${li(['Every catalogue service, add-ons included','Studio Continu subscriptions included','Discount shown in your quote summary'])}${exLine ? `<p style="margin-top:12px"><strong>${exLine}</strong></p>` : ''}` },
+    { title:'Extra promotions on selected services', body:`<p>Bunkaio can grant you targeted promotions on top of the permanent discount: launch offers, a free service, a special rate for a period. They appear in the <strong>"My promotions"</strong> tab of your partner space.</p>` },
+    { title:'Paid collaborative missions', body:`<p>Depending on your provider type, Bunkaio calls on you for client projects. You accept or decline in one click from <strong>"My collaborations"</strong>, and you tell us when you are available.</p>` },
+    { title:'Visibility and network', body:`<p>An editorial spotlight on your craft, a presence on Bunkaio's site and social channels, and access to the <strong>network directory</strong> to find other professionals (caterers, venues, designers…) and get introduced. You choose whether to be listed.</p>` },
+    { title:'A dedicated partner space', body:`<p>Your promotions, network, collaborations, orders and <strong>personalised moodboards</strong> (one per order) in one place, with priority access to our schedule.</p>` },
+    { title:'How does the application work?', body:`<p>Apply below, we review your profile individually and reply within 5 working days. Once accepted, you receive your access and confirm your provider type in your space.</p>` },
+  ];
+  renderAccordionInto('applyBenefitsAccordion', sections);
 }
 
 function sendApply(e){
@@ -2780,11 +2867,12 @@ function sendApply(e){
   const ph = document.getElementById('applyPhone').value.trim();
   const web = document.getElementById('applyWeb').value.trim();
   const sector = document.getElementById('applySector').value;
+  const provType = document.getElementById('applyType').value;
   const proj = document.getElementById('applyProject').value.trim();
-  if (!sector) {
+  if (!sector || !provType) {
     const err = document.getElementById('applySectorError');
     if (err) err.style.display = 'block';
-    document.getElementById('applySectorGrid').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    document.getElementById('applyTypePicker').scrollIntoView({ behavior: 'smooth', block: 'center' });
     return;
   }
   const btn = document.querySelector('#applyForm .btn-solid');
@@ -2796,9 +2884,10 @@ function sendApply(e){
       /* Secteur en tête de l'objet du mail, même convention que les
          demandes de collaboration : tri/filtrage des candidatures par
          secteur directement depuis la boîte mail. */
-      _subject: 'CANDIDATURE PARTENAIRE [' + sector + '] — ' + n,
+      _subject: 'CANDIDATURE PARTENAIRE [' + sector + ' · ' + provType + '] — ' + n,
       _replyto: em,
       secteur_activite: sector,
+      type_prestataire: provType,
       nom_societe: n,
       email: em,
       telephone: ph || 'Non renseigné',
@@ -2819,8 +2908,9 @@ function sendApply(e){
    accounts.ts) — le front ne lit plus jamais de fichier public, il
    n'appelle que /auth-login et /account-update sur le Worker, qui
    vérifient l'identité avant de renvoyer quoi que ce soit. USER_CODE
-   garde le code d'accès en mémoire (jamais localStorage) le temps de
-   l'onglet ouvert, pour ré-authentifier /account-update. */
+   garde le code d'accès en mémoire pour ré-authentifier /account-update ;
+   il est aussi conservé dans localStorage (saveSession) pour que le client
+   reste connecté d'une visite à l'autre — effacé à la déconnexion. */
 const ACCOUNTS_API_BASE = 'https://bunkaio-quiz-stripe.bunkaio.workers.dev';
 let loginType = 'client';
 let USER = null;
@@ -2959,12 +3049,55 @@ function restoreSession(){
     .catch(() => {});
 }
 
+/* Mise en avant de l'espace client et du moodboard personnalisé par commande.
+   Un seul gabarit injecté dans tous les emplacements .cs-slot (accueil,
+   catalogue, confirmation de devis). */
+function renderClientSpotlights(){
+  const slots = document.querySelectorAll('.cs-slot');
+  if (!slots.length) return;
+  const open = !!USER;
+  const cta = open ? t({fr:'Ouvrir mon espace', en:'Open my space'}) : t({fr:'Accéder à mon espace client', en:'Access my client area'});
+  const check = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12.5 10 17.5 19 7.5"/></svg>';
+  const points = [
+    t({fr:'<strong>Un moodboard par commande</strong> : direction artistique, ambiance, palette de couleurs, inspirations', en:'<strong>One moodboard per order</strong>: art direction, mood, colour palette, inspiration'}),
+    t({fr:'<strong>Suivi de votre projet</strong>, du shooting à la livraison, étape par étape', en:'<strong>Track your project</strong> from shoot to delivery, step by step'}),
+    t({fr:'<strong>Devis, factures, paiements et livrables</strong> accessibles à tout moment', en:'<strong>Quotes, invoices, payments and deliverables</strong> available at any time'}),
+  ];
+  const act = `<button type="button" class="cs-btn" onclick="${open ? "renderAccount();goView('account')" : "openLogin('client')"}">${cta}</button>`;
+  slots.forEach(el => {
+    const compact = el.dataset.variant === 'compact';
+    el.innerHTML = `
+      <section class="cs-spotlight ${compact ? 'cs-compact' : ''} rv in">
+        <div class="cs-main">
+          <div class="cs-kicker">${t({fr:'Votre espace client', en:'Your client area'})}</div>
+          <h3 class="cs-title">${t({fr:'Une commande, un moodboard personnalisé', en:'One order, one personalised moodboard'})}</h3>
+          <p class="cs-lead">${t({fr:'Dès votre devis confirmé, retrouvez tout au même endroit — et créez pour chaque commande un moodboard sur mesure pour nous partager votre vision.', en:'Once your quote is confirmed, find everything in one place — and create a tailor-made moodboard for each order to share your vision with us.'})}</p>
+          ${compact ? '' : `<ul class="cs-points">${points.map(x => `<li>${check}<span>${x}</span></li>`).join('')}</ul>`}
+          <div class="cs-actions">${act}${compact || open ? '' : `<button type="button" class="cs-link" onclick="goView('quiz')">${t({fr:'Estimer mon projet', en:'Estimate my project'})}</button>`}</div>
+        </div>
+        ${compact ? '' : `
+        <div class="cs-visual" aria-hidden="true">
+          <div class="cs-board">
+            <div class="cs-board-head"><span>${t({fr:'Moodboard', en:'Moodboard'})}</span><em>${t({fr:'Commande n°1', en:'Order #1'})}</em></div>
+            <div class="cs-board-label">${t({fr:'Ambiance', en:'Mood'})}</div>
+            <div class="cs-chips"><span class="on">${t({fr:'Intemporel', en:'Timeless'})}</span><span>${t({fr:'Lumineux', en:'Bright'})}</span><span class="on">${t({fr:'Épuré', en:'Minimal'})}</span><span>${t({fr:'Urbain', en:'Urban'})}</span></div>
+            <div class="cs-board-label">${t({fr:'Palette', en:'Palette'})}</div>
+            <div class="cs-palette"><i style="background:#e6def5"></i><i style="background:#b9a6dc"></i><i style="background:#3a3544"></i><i style="background:#0a0a0c"></i><i style="background:#f4f1f8"></i></div>
+            <div class="cs-board-label">${t({fr:'Inspirations', en:'Inspiration'})}</div>
+            <div class="cs-refs"><b></b><b></b><b></b></div>
+          </div>
+        </div>`}
+      </section>`;
+  });
+}
+
 function updateNavLogin(){
   const key = !USER ? 'nav-connect' : USER.type === 'partner' ? 'nav-account-partner' : 'nav-account-client';
   document.querySelectorAll('.nav-connect span').forEach(span => {
     span.setAttribute('data-lang', key);
     span.innerHTML = I18N[LANG][key];
   });
+  renderClientSpotlights();
   syncNavHeight();
 }
 
@@ -4374,6 +4507,7 @@ function setPartnersTab(tab){
   document.getElementById('psec-program').style.display = tab === 'program' ? 'block' : 'none';
   document.getElementById('psec-apply').style.display = tab === 'apply' ? 'block' : 'none';
   document.getElementById('psec-collab').style.display = tab === 'collab' ? 'block' : 'none';
+  if (tab === 'apply') { renderApplyBenefits(); renderApplyTypePicker(); }
 }
 
 /* ═══════════════ ACCORDÉON PARTENAIRES ═══════════════ */
@@ -4633,15 +4767,28 @@ function renderPrivacyAccordion(){
 
 /* ═══════════════ LOGO CAROUSEL ═══════════════ */
 const PARTNER_LOGOS = [
-  'Atelier Blanc','Studio Forma','Maison Cuvée','Architecture M','Créations P. Sellier',
-  'Résidences Prestige','Domain Vallier','Artisans du Sud','Label Matière','Event & Sens',
-  'Construire Sud','Espace Cuisine','Piscines Azur','Bloom Paysage','Marque Céleste'
+  { name:'Atelier Blanc',   mark:'<circle cx="12" cy="12" r="9"/><path d="M12 3v18"/>', style:'font-weight:300;letter-spacing:0.28em;text-transform:uppercase' },
+  { name:'Maison Cuvée',    mark:'<path d="M12 3c4 4 6 7 6 10a6 6 0 0 1-12 0c0-3 2-6 6-10z"/>', style:'font-family:Georgia,serif;font-weight:700;font-style:italic;letter-spacing:0' },
+  { name:'STUDIO FORMA',    mark:'<rect x="4" y="4" width="16" height="16" rx="1"/><path d="M4 12h16M12 4v16"/>', style:'font-weight:800;letter-spacing:0.12em' },
+  { name:'Domaine Vallier', mark:'<path d="M3 19 12 5l9 14z"/>', style:'font-family:Georgia,serif;font-weight:400;letter-spacing:0.08em;text-transform:uppercase' },
+  { name:'Label Matière',   mark:'<path d="M5 12a7 7 0 0 1 14 0M5 12a7 7 0 0 0 14 0"/><circle cx="12" cy="12" r="1.6"/>', style:'font-weight:600;letter-spacing:0.02em' },
+  { name:'Bloom',           mark:'<circle cx="12" cy="7" r="3"/><circle cx="7" cy="15" r="3"/><circle cx="17" cy="15" r="3"/>', style:'font-weight:700;letter-spacing:0.18em;text-transform:uppercase' },
+  { name:'Event & Sens',    mark:'<path d="M12 3l2.4 6.6L21 12l-6.6 2.4L12 21l-2.4-6.6L3 12l6.6-2.4z"/>', style:'font-weight:500;letter-spacing:0.04em' },
+  { name:'Artisans du Sud', mark:'<path d="M4 18c3-8 5-12 8-12s5 4 8 12"/><path d="M8 18h8"/>', style:'font-family:Georgia,serif;font-weight:700;letter-spacing:0.02em' },
+  { name:'MARQUE CÉLESTE',  mark:'<circle cx="12" cy="12" r="3.2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>', style:'font-weight:300;letter-spacing:0.2em' },
+  { name:'Piscines Azur',   mark:'<path d="M3 15c3-3 6 3 9 0s6 3 9 0M3 10c3-3 6 3 9 0s6 3 9 0"/>', style:'font-weight:700;letter-spacing:-0.01em' },
+  { name:'Nord & Cie',      mark:'<path d="M6 19V5l12 14V5"/>', style:'font-weight:800;letter-spacing:0.06em;text-transform:uppercase' },
+  { name:'Espace Cuisine',  mark:'<path d="M7 4v7a2 2 0 0 0 2 2v7M7 4v5M11 4v5M15 4c-2 2-2 6 0 8v8"/>', style:'font-weight:500;letter-spacing:0.1em;text-transform:uppercase' }
 ];
 
 function renderLogoCarousel(){
   const el = document.getElementById('logoTrack');
   if (!el) return;
-  const make = () => PARTNER_LOGOS.map(n => `<div class="logo-pill">${n}</div>`).join('');
+  const make = () => PARTNER_LOGOS.map(l => `
+    <div class="logo-item" aria-label="${l.name}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${l.mark}</svg>
+      <span style="${l.style}">${l.name}</span>
+    </div>`).join('');
   el.innerHTML = make() + make();
 }
 
