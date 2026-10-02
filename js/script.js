@@ -5217,11 +5217,24 @@ function initCatShowcase(){
   if (!CATS.length) return;
   _catShowcaseInit = true;
 
-  track.innerHTML = CATS.map(cat => {
+  /* Fond FIXE : une image par catégorie, empilées derrière le défilement (fondu au changement) — seuls les textes glissent. */
+  const bgs = document.createElement('div');
+  bgs.className = 'cat-showcase-bgs';
+  bgs.setAttribute('aria-hidden', 'true');
+  bgs.innerHTML = CATS.map((cat, i) => {
     const url = IMG.servicePhotos && IMG.servicePhotos[cat.id];
+    return `<div class="cat-showcase-bg${i === 0 ? ' active' : ''}"${url ? ` data-src="${url}"` : ''}${(i === 0 && url) ? ` style="background-image:url('${url}')"` : ''}></div>`;
+  }).join('') + '<div class="cat-showcase-shade"></div>';
+  root.insertBefore(bgs, track);
+  const bgEls = Array.from(bgs.querySelectorAll('.cat-showcase-bg'));
+  const paintBg = (idx) => bgEls.forEach((b, i) => {
+    if (i === idx && !b.style.backgroundImage && b.dataset.src) b.style.backgroundImage = `url('${b.dataset.src}')`;
+    b.classList.toggle('active', i === idx);
+  });
+
+  track.innerHTML = CATS.map(cat => {
     return `
-      <div class="cat-showcase-slide" data-cat="${cat.id}"${url ? ` style="background-image:url('${url}')"` : ''}>
-        <div class="cat-showcase-overlay"></div>
+      <div class="cat-showcase-slide" data-cat="${cat.id}">
         <div class="cat-showcase-content">
           <div class="cat-showcase-name">${t(cat.name)}</div>
           <div class="cat-showcase-tag">${t(cat.tag)}</div>
@@ -5247,6 +5260,7 @@ function initCatShowcase(){
     currentIdx = idx;
     slides.forEach((s, i) => s.classList.toggle('is-active', i === idx));
     dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+    paintBg(idx);
     paintArrows(idx);
   };
 
@@ -5263,8 +5277,9 @@ function initCatShowcase(){
      natif (swipe, trackpad, molette convertie ci-dessous ou scrollTo
      programmatique) — un simple debounce sur l'évènement scroll du
      conteneur, sans dépendance à la hauteur du viewport de la page. */
-  let scrollTimer = null;
+  let scrollTimer = null, bgFrame = null;
   track.addEventListener('scroll', () => {
+    if (!bgFrame) bgFrame = requestAnimationFrame(() => { bgFrame = null; paintBg(Math.max(0, Math.min(slides.length - 1, Math.round(track.scrollLeft / track.clientWidth)))); });
     clearTimeout(scrollTimer);
     scrollTimer = setTimeout(() => {
       const idx = Math.round(track.scrollLeft / track.clientWidth);
@@ -5302,6 +5317,7 @@ function initCatShowcase(){
   const revealIO = new IntersectionObserver(entries => {
     if (!entries[0].isIntersecting) return;
     slides[currentIdx].classList.add('is-active');
+    bgEls.forEach(b => { if (b.dataset.src) { const im = new Image(); im.src = b.dataset.src; } }); /* précharge les autres fonds */
     if (!hintShown) {
       hintShown = true;
       setTimeout(() => {

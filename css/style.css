@@ -4095,3 +4095,22 @@ body.menu-open .nav-burger-glyph { color: #0a0a0c; }
   .disc-panel { padding-left: 16px; padding-right: 14px; }
 }
 @media (prefers-reduced-motion: reduce) { .disc-acc .cs-acc-item { opacity: 1; transform: none; animation: none !important; } .disc-step.is-lit::after { animation: none !important; } }
+
+/* ─── Bannière des prestations (accueil) : carte arrondie, fond fixe, seuls les textes défilent ─── */
+.cat-showcase {
+  width: calc(100% - 48px); max-width: 1240px; margin: 28px auto 36px;
+  border-radius: 30px; height: min(74vh, 680px); height: min(74svh, 680px); min-height: 440px; max-height: none;
+  box-shadow: 0 22px 60px rgba(10,10,12,0.22);
+  isolation: isolate;
+}
+.cat-showcase-bgs { position: absolute; inset: 0; z-index: 0; }
+.cat-showcase-bg { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: 0; transition: opacity 1s ease; }
+.cat-showcase-bg.active { opacity: 1; }
+.cat-showcase-shade { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(10,10,12,0.42) 0%, rgba(10,10,12,0.12) 45%, rgba(10,10,12,0.58) 100%); }
+.cat-showcase-track { position: relative; z-index: 2; border-radius: inherit; }
+.cat-showcase-slide { background: none !important; }
+.cat-showcase-slide .cat-showcase-overlay { display: none; }
+.cat-showcase-arrow, .cat-showcase-dots { z-index: 3; }
+@media (max-width: 600px) {
+  .cat-showcase { width: calc(100% - 24px); margin: 18px auto 24px; border-radius: 24px; height: 70vh; height: 70svh; min-height: 420px; }
+}
