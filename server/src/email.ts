@@ -1,4 +1,4 @@
-import type { Env } from './types';
+import type { AccountType, ActivityEntry, Env } from './types';
 
 const LOGO_URL = 'https://bunkaio.com/images/logo.png';
 
@@ -342,6 +342,41 @@ ${stepsText}
 À très vite,
 L'équipe Bunkaio`;
   return { subject: 'Bunkaio — Nous avons bien reçu votre demande', html, text };
+}
+
+function escapeHtml(value: string): string {
+  return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+const ACTIVITY_LABELS: Record<ActivityEntry['type'], string> = {
+  moodboard: 'Moodboard',
+  infos: 'Coordonnées',
+  collaboration: 'Collaboration',
+  partenariat: 'Profil partenaire',
+};
+
+/** Récapitulatif envoyé à l'équipe Bunkaio quand un client/partenaire a modifié son espace. Tout contenu saisi par l'utilisateur est échappé. */
+export function buildClientActivityEmail(params: { type: AccountType; email: string; nom?: string; entries: ActivityEntry[] }): { subject: string; html: string; text: string } {
+  const who = params.nom?.trim() || params.email;
+  const space = params.type === 'partner' ? 'partenaire' : 'client';
+  const count = params.entries.length;
+  const subject = `Bunkaio — Espace ${space} : ${who} (${count} modification${count > 1 ? 's' : ''})`;
+  const fmt = (iso: string) => new Date(iso).toLocaleString('fr-FR', { timeZone: 'Europe/Paris', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+  const blocks = params.entries.map((en) => `
+    <div style="margin:0 0 18px;padding:14px 16px;background:#f6f1fc;border-radius:6px;">
+      <p style="margin:0 0 4px;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#76717f;">${escapeHtml(ACTIVITY_LABELS[en.type])} · ${escapeHtml(fmt(en.date))}</p>
+      <p style="margin:0;font-size:14px;font-weight:700;">${escapeHtml(en.resume)}</p>
+      ${en.details?.length ? `<ul style="margin:8px 0 0;padding-left:18px;font-size:13px;line-height:1.7;color:#3a3544;">${en.details.map((d) => `<li>${escapeHtml(d)}</li>`).join('')}</ul>` : ''}
+    </div>`).join('');
+  const html = emailShell(`
+    <h1 style="margin:0 0 6px;font-size:20px;">Espace ${space} mis à jour</h1>
+    <p style="margin:0 0 22px;font-size:14px;color:#3a3544;"><strong>${escapeHtml(who)}</strong> — ${escapeHtml(params.email)}</p>
+    ${blocks}
+    <p style="margin:24px 0 0;font-size:13px;"><a href="https://bunkaio.com/admin/comptes.html" style="color:#0a0a0c;">Ouvrir la fiche dans l'admin</a></p>`);
+  const text = `Espace ${space} mis à jour — ${who} (${params.email})\n\n` + params.entries.map((en) =>
+    `[${ACTIVITY_LABELS[en.type]} · ${fmt(en.date)}] ${en.resume}` + (en.details?.length ? '\n' + en.details.map((d) => `  - ${d}`).join('\n') : '')).join('\n\n') +
+    '\n\nFiche : https://bunkaio.com/admin/comptes.html';
+  return { subject, html, text };
 }
 
 /** Envoie un email transactionnel via l'API Resend (https://resend.com). */

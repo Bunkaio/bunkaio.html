@@ -1,5 +1,6 @@
 import type Stripe from 'stripe';
-import { getAccount, listAccounts, putAccount, sanitizeAccount, upsertAccountFromAdmin, verifyLogin } from './accounts';
+import { adminAccountView, getAccount, listAccounts, putAccount, sanitizeAccount, upsertAccountFromAdmin, verifyLogin } from './accounts';
+import { appendJournal, diffAccountActivity, flushActivityNotifications, queueActivityNotification } from './activity';
 import {
   buildAdminPaymentNotificationEmail,
   buildBalanceInvoiceEmail,
@@ -269,7 +270,7 @@ async function handleAuthLogin(request: Request, env: Env, headers: Record<strin
  * sont volontairement pas modifiables ici : ce sont les clés d'identité du
  * compte (changer l'email reviendrait à en créer un autre).
  */
-async function handleAccountUpdate(request: Request, env: Env, headers: Record<string, string>): Promise<Response> {
+async function handleAccountUpdate(request: Request, env: Env, headers: Record<string, string>, ctx: ExecutionContext): Promise<Response> {
   if (request.method !== 'POST') {
     return jsonResponse({ ok: false, error: 'method_not_allowed' }, 405, headers);
   }
@@ -325,9 +326,13 @@ async function handleAccountUpdate(request: Request, env: Env, headers: Record<s
     adresse: body.adresse ?? account.adresse,
     moodboards: body.moodboards ?? account.moodboards,
   };
-  await putAccount(env, updated);
-  console.log('[account-update] informations mises à jour', { type: body.type, email: body.email });
-  return jsonResponse({ ok: true, account: sanitizeAccount(updated) }, 200, headers);
+  const entries = diffAccountActivity(account, updated, new Date().toISOString());
+  const withJournal = appendJournal(updated, entries);
+  await putAccount(env, withJournal);
+  // File d'attente de l'email récapitulatif : un échec ne doit jamais faire échouer l'enregistrement du client.
+  if (entries.length) ctx.waitUntil(queueActivityNotification(env, withJournal, entries).catch((err) => console.error('[activity] mise en file impossible', err)));
+  console.log('[account-update] informations mises à jour', { type: body.type, email: body.email, changes: entries.length });
+  return jsonResponse({ ok: true, account: sanitizeAccount(withJournal) }, 200, headers);
 }
 
 /**
@@ -354,7 +359,7 @@ async function handleAdminAccounts(request: Request, env: Env, headers: Record<s
       if (!account) {
         return jsonResponse({ ok: false, error: 'not_found' }, 404, headers);
       }
-      return jsonResponse({ ok: true, account: sanitizeAccount(account) }, 200, headers);
+      return jsonResponse({ ok: true, account: adminAccountView(account) }, 200, headers);
     }
     const accounts = await listAccounts(env);
     return jsonResponse({ ok: true, accounts }, 200, headers);
@@ -846,7 +851,7 @@ async function handleListMedia(request: Request, env: Env, headers: Record<strin
 }
 
 export default {
-  async fetch(request: Request, env: Env): Promise<Response> {
+  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const headers = corsHeaders(resolveAllowedOrigin(request.headers.get('Origin'), env.ALLOWED_ORIGINS));
 
     // Préflight CORS — le navigateur l'envoie avant le vrai POST.
@@ -883,7 +888,7 @@ export default {
       return handleAuthLogin(request, env, headers);
     }
     if (url.pathname === ACCOUNT_UPDATE_ROUTE) {
-      return handleAccountUpdate(request, env, headers);
+      return handleAccountUpdate(request, env, headers, ctx);
     }
     if (url.pathname === ACCOUNTS_ROUTE) {
       return handleAdminAccounts(request, env, headers);
@@ -895,7 +900,12 @@ export default {
     return jsonResponse({ ok: false, error: 'not_found' }, 404, headers);
   },
 
-  async scheduled(_event: ScheduledEvent, env: Env): Promise<void> {
+  async scheduled(event: ScheduledEvent, env: Env): Promise<void> {
+    // Cron "*/5" : envoi des récapitulatifs d'activité clients. Cron quotidien : relances de factures.
+    if (event.cron === '*/5 * * * *') {
+      await flushActivityNotifications(env);
+      return;
+    }
     try {
       await sendOverdueInvoiceReminders(env);
     } catch (err) {

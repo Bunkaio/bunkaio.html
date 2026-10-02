@@ -26,7 +26,7 @@ GOOGLE_REVIEW_URL = "https://g.page/r/CaRPILV6GmYIEBM/review"
 # les factures d'acompte/solde impayées dont l'échéance est dépassée, et
 # envoie une relance par email — voir le handler `scheduled` dans index.ts.
 [triggers]
-crons = ["0 8 * * *"]
+crons = ["0 8 * * *", "*/5 * * * *"]
 
 [[r2_buckets]]
 binding = "MEDIA_BUCKET"

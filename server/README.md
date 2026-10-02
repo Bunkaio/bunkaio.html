@@ -459,3 +459,23 @@ facturation, réservation en ligne, automatisations marketing) peuvent être
 ajoutées comme nouvelles routes dans `src/index.ts`, en réutilisant
 `createStripeClient()` et le Customer déjà résolu par email dans
 `stripe.ts`.
+
+## Réception automatique des modifications clients
+
+Quand un client ou un partenaire enregistre quelque chose dans son espace
+(moodboard, coordonnées, réponse à une collaboration, profil partenaire),
+`/account-update` :
+
+1. ajoute une entrée horodatée au **journal** du compte (`journal`, 200 entrées max, visible uniquement dans l'admin) ;
+2. met la modification en file (`notif:<type>:<email>` dans `ACCOUNTS_KV`).
+
+Le cron `*/5 * * * *` envoie **un seul email récapitulatif par compte** à
+`ADMIN_NOTIFICATION_EMAIL` dès que le client n'a plus rien enregistré depuis
+3 minutes (regroupement). Un moodboard encore en « Brouillon » est journalisé
+mais ne déclenche pas d'email. En cas d'échec Resend, l'envoi est retenté au
+passage suivant (7 jours max).
+
+Dans `admin/comptes.html`, le sélecteur de compte trie par activité récente,
+affiche « ● » pour les comptes modifiés depuis votre dernière consultation et
+la fiche montre le journal complet. Après modification du `wrangler.toml`
+(nouveau cron), il faut redéployer : `npm run deploy`.

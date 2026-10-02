@@ -1,5 +1,6 @@
 import type {
   AccountRecord,
+  AdminAccountRecord,
   AccountType,
   AdminAccountSummary,
   AdminAccountUpsertPayload,
@@ -41,13 +42,19 @@ export async function getAccount(env: Env, type: AccountType, email: string): Pr
     sans avoir à relire chaque valeur complète — évite un fetch par compte pour la liste admin. */
 export async function putAccount(env: Env, record: AccountRecord): Promise<void> {
   await env.ACCOUNTS_KV.put(accountKey(record.type, record.email), JSON.stringify(record), {
-    metadata: { type: record.type, email: record.email, nom: record.nom ?? '' },
+    metadata: { type: record.type, email: record.email, nom: record.nom ?? '', derniereActivite: record.derniereActivite ?? '' },
   });
 }
 
 export function sanitizeAccount(record: AccountRecord): PublicAccountRecord {
-  const { codeHash: _codeHash, ...publicRecord } = record;
+  const { codeHash: _codeHash, journal: _journal, derniereActivite: _derniere, ...publicRecord } = record;
   return publicRecord;
+}
+
+/** Vue admin : comme sanitizeAccount mais conserve le journal d'activité. */
+export function adminAccountView(record: AccountRecord): AdminAccountRecord {
+  const { codeHash: _codeHash, ...adminRecord } = record;
+  return adminRecord;
 }
 
 /**
@@ -66,7 +73,7 @@ export async function verifyLogin(env: Env, type: AccountType, email: string, co
 
 /** Liste légère (type/email/nom) de tous les comptes, pour le sélecteur de l'admin. */
 export async function listAccounts(env: Env): Promise<AdminAccountSummary[]> {
-  const result = await env.ACCOUNTS_KV.list<{ type: AccountType; email: string; nom?: string }>({
+  const result = await env.ACCOUNTS_KV.list<{ type: AccountType; email: string; nom?: string; derniereActivite?: string }>({
     prefix: ACCOUNT_LIST_PREFIX,
     limit: 1000,
   });
@@ -76,6 +83,7 @@ export async function listAccounts(env: Env): Promise<AdminAccountSummary[]> {
       type: k.metadata!.type,
       email: k.metadata!.email,
       nom: k.metadata!.nom,
+      derniereActivite: k.metadata!.derniereActivite || undefined,
     }));
 }
 
@@ -108,6 +116,8 @@ export async function upsertAccountFromAdmin(env: Env, payload: AdminAccountUpse
     promotions: payload.promotions ?? existing?.promotions,
     reseau: payload.reseau ?? existing?.reseau,
     collaborations: payload.collaborations ?? existing?.collaborations,
+    journal: existing?.journal,
+    derniereActivite: existing?.derniereActivite,
   };
   await putAccount(env, record);
   return record;

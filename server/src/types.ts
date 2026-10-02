@@ -259,10 +259,35 @@ export interface AccountRecord {
   promotions?: AccountPromotion[];
   reseau?: NetworkContact[];
   collaborations?: Collaboration[];
+  journal?: ActivityEntry[]; // historique horodaté des modifications faites par le client — lu par l'admin uniquement
+  derniereActivite?: string; // ISO — date de la dernière entrée du journal
+}
+
+/** Une modification faite par le client/partenaire dans son espace (voir activity.ts). */
+export type ActivityType = 'moodboard' | 'infos' | 'collaboration' | 'partenariat';
+export interface ActivityEntry {
+  id: string;
+  date: string; // ISO
+  type: ActivityType;
+  resume: string;
+  details?: string[];
+  silent?: boolean; // journalisé mais sans email (ex. moodboard encore en brouillon)
+}
+
+/** Modifications en attente d'envoi : regroupées par compte jusqu'à la fin de la fenêtre de calme. */
+export interface PendingActivityNotification {
+  type: AccountType;
+  email: string;
+  nom?: string;
+  entries: ActivityEntry[];
+  lastAt: number; // ms epoch de la dernière modification
 }
 
 /** Version du compte renvoyée au front — jamais le hash du code. */
-export type PublicAccountRecord = Omit<AccountRecord, 'codeHash'>;
+/** Vue renvoyée au client : sans code d'accès ni journal interne. */
+export type PublicAccountRecord = Omit<AccountRecord, 'codeHash' | 'journal' | 'derniereActivite'>;
+/** Vue renvoyée à l'admin : tout sauf le hash du code. */
+export type AdminAccountRecord = Omit<AccountRecord, 'codeHash'>;
 
 /** Payload de /auth-login. */
 export interface AuthLoginPayload {
@@ -318,4 +343,5 @@ export interface AdminAccountSummary {
   type: AccountType;
   email: string;
   nom?: string;
+  derniereActivite?: string;
 }

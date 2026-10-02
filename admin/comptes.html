@@ -69,6 +69,13 @@
   #result.ok { background: #e8f5e9; border: 1px solid #a5d6a7; display: block; }
   #result.err { background: #fdecea; border: 1px solid #f5b5ae; display: block; }
 
+  .activity-list { display: grid; gap: 10px; }
+  .activity-item { background: #fff; border: 1px solid var(--line); border-radius: 6px; padding: 12px 14px; }
+  .activity-meta { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--grey); margin-bottom: 4px; }
+  .activity-resume { font-size: 14px; font-weight: 600; }
+  .activity-item ul { margin: 6px 0 0; padding-left: 18px; font-size: 12.5px; line-height: 1.7; color: #3a3544; word-break: break-word; }
+  .activity-empty { font-size: 13px; color: var(--grey); }
+
   @media (max-width: 600px) {
     .page { padding: 24px 16px 60px; }
     .fgrid { grid-template-columns: 1fr; }
@@ -103,6 +110,12 @@
       <select id="accountPicker"><option value="">— Sélectionner un compte —</option></select>
       <button class="secondary" type="button" onclick="loadAccounts()">Rafraîchir</button>
     </div>
+    <div class="hint" style="font-size:11px;color:var(--grey);margin-top:8px">● = activité du client depuis votre dernière consultation de sa fiche.</div>
+  </div>
+
+  <div class="section" id="activitySection" style="display:none">
+    <div class="section-title">Activité du compte</div>
+    <div class="activity-list" id="activityList"></div>
   </div>
 
   <div class="section">
@@ -237,6 +250,40 @@ document.getElementById('token').addEventListener('change', (e) => {
   localStorage.setItem('bunkaio_admin_token', e.target.value.trim());
 });
 
+let allAccounts = [];
+function seenMap() { try { return JSON.parse(localStorage.getItem('bunkaio_admin_seen') || '{}'); } catch { return {}; } }
+function markSeen(type, email, iso) {
+  if (!iso) return;
+  const m = seenMap(); m[type + '|' + email] = iso;
+  try { localStorage.setItem('bunkaio_admin_seen', JSON.stringify(m)); } catch {}
+}
+function escHtml(v) { return String(v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+function renderPicker(selected) {
+  const picker = document.getElementById('accountPicker');
+  const seen = seenMap();
+  const sorted = [...allAccounts].sort((a, b) => (b.derniereActivite || '').localeCompare(a.derniereActivite || ''));
+  picker.innerHTML = '<option value="">— Sélectionner un compte —</option>' + sorted.map(a => {
+    const key = a.type + '|' + a.email;
+    const fresh = a.derniereActivite && a.derniereActivite > (seen[key] || '');
+    return `<option value="${escHtml(key)}">${fresh ? '● ' : ''}${a.type === 'client' ? 'Client' : 'Partenaire'} — ${escHtml(a.nom || a.email)} (${escHtml(a.email)})</option>`;
+  }).join('');
+  if (selected) picker.value = selected;
+}
+const ACTIVITY_LABELS = { moodboard: 'Moodboard', infos: 'Coordonnées', collaboration: 'Collaboration', partenariat: 'Profil partenaire' };
+function renderActivity(acc) {
+  const box = document.getElementById('activitySection');
+  const list = document.getElementById('activityList');
+  box.style.display = 'block';
+  const journal = [...(acc.journal || [])].reverse();
+  if (!journal.length) { list.innerHTML = '<div class="activity-empty">Aucune modification enregistrée pour ce compte.</div>'; return; }
+  list.innerHTML = journal.map(e => `
+    <div class="activity-item">
+      <div class="activity-meta">${escHtml(ACTIVITY_LABELS[e.type] || e.type)} · ${escHtml(new Date(e.date).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' }))}</div>
+      <div class="activity-resume">${escHtml(e.resume)}</div>
+      ${e.details && e.details.length ? '<ul>' + e.details.map(d => `<li>${escHtml(d)}</li>`).join('') + '</ul>' : ''}
+    </div>`).join('');
+}
+
 function getToken() { return document.getElementById('token').value.trim(); }
 
 function jsonFieldValue(id) {
@@ -258,8 +305,8 @@ async function loadAccounts() {
       picker.innerHTML = '<option value="">— Erreur de chargement —</option>';
       return;
     }
-    picker.innerHTML = '<option value="">— Sélectionner un compte —</option>' +
-      data.accounts.map(a => `<option value="${a.type}|${a.email}">${a.type === 'client' ? 'Client' : 'Partenaire'} — ${a.nom || a.email} (${a.email})</option>`).join('');
+    allAccounts = data.accounts;
+    renderPicker();
   } catch {
     picker.innerHTML = '<option value="">— Erreur réseau —</option>';
   }
@@ -277,6 +324,9 @@ document.getElementById('accountPicker').addEventListener('change', async (e) =>
     const data = await res.json();
     if (!res.ok || !data.ok) { alert('Compte introuvable.'); return; }
     const acc = data.account;
+    renderActivity(acc);
+    markSeen(acc.type, acc.email, acc.derniereActivite);
+    renderPicker(value);
     document.getElementById('fType').value = acc.type;
     document.getElementById('fEmail').value = acc.email;
     document.getElementById('fCode').value = '';
