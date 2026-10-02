@@ -2995,17 +2995,22 @@ function adviceCard(a){
 function renderAdviceTeaser(){
   const el = document.getElementById('adviceTeaser');
   if (!el || typeof ARTICLES === 'undefined') return;
+  const picks = ARTICLES.filter((a, i, arr) => arr.findIndex(b => b.cat === a.cat) === i).slice(0, 3);
+  const hook = t({fr:picks.length + ' guides pour arriver préparé(e) à votre séance ou à votre shooting — à lire en ' + picks.reduce((n, a) => n + a.minutes, 0) + ' minutes en tout.', en:picks.length + ' guides to arrive prepared for your session or shoot — ' + picks.reduce((n, a) => n + a.minutes, 0) + ' minutes in total.'});
   el.innerHTML = `
     <section class="advice-teaser rv in">
       <div class="advice-teaser-head">
         <div>
           <div class="cs-kicker">${t({fr:'Conseils photo', en:'Photo advice'})}</div>
-          <h2 class="advice-teaser-title">${t({fr:'Bien préparer votre séance ou votre shooting', en:'Prepare your session or shoot'})}</h2>
+          <h2 class="advice-teaser-title" data-tw data-tw-delay="100">${t({fr:'Bien préparer votre séance ou votre shooting', en:'Prepare your session or shoot'})}</h2>
+          <p class="advice-hook">${hook}</p>
         </div>
         <a class="svcp-link" href="/conseils/" data-nav="advice">${t({fr:'Tous les conseils →', en:'All advice →'})}</a>
       </div>
-      <div class="advice-grid">${ARTICLES.filter((a, i, arr) => arr.findIndex(b => b.cat === a.cat) === i).slice(0, 3).map(a => adviceCard(a)).join('')}</div>
+      <div class="advice-grid">${picks.map(a => adviceCard(a)).join('')}</div>
     </section>`;
+  bindTypewriters();
+  initAdviceLive();
 }
 function renderAdvicePage(){
   const el = document.getElementById('advicePageContent');
@@ -3811,6 +3816,76 @@ function restoreSession(){
 /* Mise en avant de l'espace client et du moodboard personnalisé par commande.
    Un seul gabarit injecté dans tous les emplacements .cs-slot (accueil,
    catalogue, confirmation de devis). */
+/* ═══════════════ ANIMATIONS D'ÉCRITURE ═══════════════
+   « Machine à écrire » compatible SEO : le texte complet reste dans la page (partie visible + partie transparente),
+   la mise en page ne bouge pas, et seules les lettres apparaissent au fil de l'eau quand le bloc entre à l'écran. */
+const REDUCED_MOTION = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function bindTypewriters(){
+  const els = document.querySelectorAll('[data-tw]:not([data-tw-bound])');
+  if (!els.length) return;
+  const run = (el) => {
+    const full = el.dataset.twText;
+    const v = el.querySelector('.tw-v'), r = el.querySelector('.tw-r');
+    if (!v || !r) return;
+    const delay = parseInt(el.dataset.twDelay || '0', 10);
+    const per = full.length > 110 ? 9 : 22;           /* ms par caractère */
+    setTimeout(() => {
+      const t0 = performance.now();
+      el.classList.add('tw-typing');
+      const tick = (now) => {
+        const n = Math.min(full.length, Math.floor((now - t0) / per));
+        v.textContent = full.slice(0, n); r.textContent = full.slice(n);
+        if (n < full.length) requestAnimationFrame(tick); else el.classList.remove('tw-typing');
+      };
+      requestAnimationFrame(tick);
+    }, delay);
+  };
+  const io = window.IntersectionObserver ? new IntersectionObserver((entries) => entries.forEach(e => { if (e.isIntersecting) { io.unobserve(e.target); run(e.target); } }), { threshold: 0.35 }) : null;
+  els.forEach(el => {
+    el.dataset.twBound = '1';
+    const full = el.textContent;
+    el.dataset.twText = full;
+    if (REDUCED_MOTION || !io) return;                 /* texte laissé tel quel */
+    el.innerHTML = '<span class="tw-v"></span><span class="tw-r">' + full.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</span>';
+    io.observe(el);
+  });
+}
+
+/* Section « arguments numérotés » : animation permanente — l'argument mis en avant change toutes les 2,8 s tant que la section est visible. */
+function initReassureLoop(){
+  document.querySelectorAll('.reassure-section').forEach(sec => {
+    if (sec.dataset.loopBound) return; sec.dataset.loopBound = '1';
+    const items = [...sec.querySelectorAll('.reassure-item')];
+    if (!items.length || REDUCED_MOTION) return;
+    let i = -1, timer = null;
+    const step = () => { i = (i + 1) % items.length; items.forEach((it, k) => it.classList.toggle('is-lit', k === i)); };
+    const start = () => { if (!timer) { step(); timer = setInterval(step, 2800); } };
+    const stop = () => { clearInterval(timer); timer = null; items.forEach(it => it.classList.remove('is-lit')); };
+    if (window.IntersectionObserver) new IntersectionObserver((es) => es.forEach(e => e.isIntersecting ? start() : stop()), { threshold: 0.3 }).observe(sec);
+    sec.querySelectorAll('.reassure-text').forEach((el, k) => { el.dataset.tw = ''; el.dataset.twDelay = String(500 + k * 320); });
+  });
+  bindTypewriters();
+}
+
+/* Accordéon « Votre espace client » : un seul point ouvert à la fois. */
+document.addEventListener('click', (e) => {
+  const head = e.target.closest ? e.target.closest('.cs-acc-head') : null;
+  if (!head) return;
+  const item = head.parentElement, list = item.parentElement;
+  const willOpen = !item.classList.contains('open');
+  list.querySelectorAll('.cs-acc-item').forEach(it => { it.classList.remove('open'); it.querySelector('.cs-acc-head').setAttribute('aria-expanded', 'false'); });
+  if (willOpen) { item.classList.add('open'); head.setAttribute('aria-expanded', 'true'); }
+});
+
+/* Conseils photo (accueil) : apparition en cascade des guides quand la section entre à l'écran. */
+function initAdviceLive(){
+  const sec = document.querySelector('.advice-teaser');
+  if (!sec) return;
+  if (!window.IntersectionObserver || REDUCED_MOTION) { sec.classList.add('adv-live'); return; }
+  const io = new IntersectionObserver((es) => es.forEach(e => { if (e.isIntersecting) { sec.classList.add('adv-live'); io.disconnect(); } }), { threshold: 0.2 });
+  io.observe(sec);
+}
+
 function renderClientSpotlights(){
   const slots = document.querySelectorAll('.cs-slot');
   if (!slots.length) return;
@@ -3818,9 +3893,12 @@ function renderClientSpotlights(){
   const cta = open ? t({fr:'Ouvrir mon espace', en:'Open my space'}) : t({fr:'Accéder à mon espace client', en:'Access my client area'});
   const check = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12.5 10 17.5 19 7.5"/></svg>';
   const points = [
-    t({fr:'<strong>Un moodboard par commande</strong> : direction artistique, ambiance, palette de couleurs, inspirations', en:'<strong>One moodboard per order</strong>: art direction, mood, colour palette, inspiration'}),
-    t({fr:'<strong>Suivi de votre projet</strong>, du shooting à la livraison, étape par étape', en:'<strong>Track your project</strong> from shoot to delivery, step by step'}),
-    t({fr:'<strong>Devis, factures, paiements et livrables</strong> accessibles à tout moment', en:'<strong>Quotes, invoices, payments and deliverables</strong> available at any time'}),
+    { head:t({fr:'Un moodboard par commande', en:'One moodboard per order'}),
+      body:t({fr:'Direction artistique, ambiance, palette de couleurs, inspirations (Pinterest, liens) et prestataires impliqués. Vous le complétez depuis votre espace et échangez avec l\'équipe par commentaires.', en:'Art direction, mood, colour palette, inspiration (Pinterest, links) and the providers involved. You complete it from your space and chat with the team through comments.'}) },
+    { head:t({fr:'Suivi de votre projet', en:'Track your project'}),
+      body:t({fr:'Chaque commande affiche son avancement, du devis confirmé à la livraison de vos photos, étape par étape.', en:'Each order shows its progress, from the confirmed quote to the delivery of your photos, step by step.'}) },
+    { head:t({fr:'Devis, factures, paiements et livrables', en:'Quotes, invoices, payments and deliverables'}),
+      body:t({fr:'Retrouvez vos devis, vos factures et vos paiements, et téléchargez vos photos HD depuis votre galerie privée, à tout moment.', en:'Find your quotes, invoices and payments, and download your HD photos from your private gallery at any time.'}) },
   ];
   const act = `<button type="button" class="cs-btn" onclick="${open ? "renderAccount();goView('account')" : "openLogin('client')"}">${cta}</button>`;
   slots.forEach(el => {
@@ -3830,9 +3908,9 @@ function renderClientSpotlights(){
       <section class="cs-spotlight ${compact ? 'cs-compact' : ''} ${noVisual && !compact ? 'cs-novisual' : ''} rv in">
         <div class="cs-main">
           <div class="cs-kicker">${t({fr:'Votre espace client', en:'Your client area'})}</div>
-          <h2 class="cs-title">${t({fr:'Une commande, un moodboard personnalisé', en:'One order, one personalised moodboard'})}</h2>
-          <p class="cs-lead">${t({fr:'Dès votre devis confirmé, retrouvez tout au même endroit — et créez pour chaque commande un moodboard sur mesure pour nous partager votre vision.', en:'Once your quote is confirmed, find everything in one place — and create a tailor-made moodboard for each order to share your vision with us.'})}</p>
-          ${compact ? '' : `<ul class="cs-points">${points.map(x => `<li>${check}<span>${x}</span></li>`).join('')}</ul>`}
+          <h2 class="cs-title" data-tw data-tw-delay="150">${t({fr:'Une commande, un moodboard personnalisé', en:'One order, one personalised moodboard'})}</h2>
+          <p class="cs-lead" data-tw data-tw-delay="900">${t({fr:'Dès votre devis confirmé, retrouvez tout au même endroit — et créez pour chaque commande un moodboard sur mesure pour nous partager votre vision.', en:'Once your quote is confirmed, find everything in one place — and create a tailor-made moodboard for each order to share your vision with us.'})}</p>
+          ${compact ? '' : `<ul class="cs-points cs-acc">${points.map((x, k) => `<li class="cs-acc-item${k === 0 ? ' open' : ''}"><button type="button" class="cs-acc-head" aria-expanded="${k === 0}">${check}<span>${x.head}</span><i class="cs-acc-chev" aria-hidden="true"></i></button><div class="cs-acc-panel"><p>${x.body}</p></div></li>`).join('')}</ul>`}
           <div class="cs-actions">${act}${compact || open ? '' : `<button type="button" class="cta-primary" onclick="goView('quiz')">${t({fr:'Estimer mon projet', en:'Estimate my project'})}</button>`}</div>
         </div>
         ${noVisual ? '' : `
@@ -3863,6 +3941,7 @@ function renderClientSpotlights(){
   } else {
     document.querySelectorAll('.cs-spotlight').forEach(el => el.classList.add('cs-live'));
   }
+  bindTypewriters();
 }
 
 /* Indicateur de scroll noir : apparaît une seule fois, quand on passe de la vidéo au fond blanc (section « réassurance »),
@@ -5677,6 +5756,7 @@ initWhiteScrollHint();
 updatePlaceholders();
 updateLang();
 applyImages();
+initReassureLoop();
 document.querySelectorAll('.ph').forEach(observe);
 document.querySelectorAll('#view-home .rv:not(.reassure-section)').forEach(observe);
 document.querySelectorAll('#view-home .reassure-section').forEach(observeLate);

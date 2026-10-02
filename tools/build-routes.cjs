@@ -310,6 +310,12 @@ function pinAssets(html) {
   const ogPage = await browser.newPage({ viewport: { width: 1200, height: 630 } });
   const grab = async (ids) => {
     const out = await page.evaluate((list) => Object.fromEntries(list.map((id) => [id, (document.getElementById(id) || {}).innerHTML || ''])), ids);
+    /* Retire les habillages d'animation d'écriture (machine à écrire) : le HTML statique garde le texte brut. */
+    for (const k of Object.keys(out)) {
+      out[k] = out[k]
+        .replace(/<span class="tw-v">([^<]*)<\/span><span class="tw-r">([^<]*)<\/span>/g, '$1$2')
+        .replace(/ data-tw-bound="1"| data-tw-text="[^"]*"| tw-typing/g, '');
+    }
     Object.assign(snaps, out);
   };
   await grab(['missionServicesTrack', 'ftServices', 'catShowcaseTrack', 'csSlotHome', 'csSlotServices', 'csSlotQuiz']);

@@ -4002,3 +4002,62 @@ body.menu-open .nav-logo-img { filter: brightness(0.22) saturate(1.3); animation
 body.menu-open .nav-studio { color: rgba(10,10,12,0.6); }
 body.menu-open .nav-burger { border-color: rgba(10,10,12,0.55); background: rgba(255,255,255,0.5); }
 body.menu-open .nav-burger-glyph { color: #0a0a0c; }
+
+/* ─── Machine à écrire (texte complet conservé, lettres révélées) ─── */
+.tw-r { color: transparent; -webkit-text-fill-color: transparent; user-select: none; }
+.tw-typing .tw-v::after { content: ''; display: inline-block; width: 2px; height: 1em; margin-left: 2px; vertical-align: -0.12em; background: currentColor; animation: twCaret 0.7s steps(1) infinite; }
+@keyframes twCaret { 50% { opacity: 0; } }
+
+/* ─── Arguments numérotés : animation permanente ─── */
+.reassure-item { position: relative; transition: background 0.5s ease; }
+.reassure-item::before { content: ''; position: absolute; left: 26px; right: 26px; top: -22px; height: 2px; background: linear-gradient(90deg, #b9a6dc, #6e5aa8); transform: scaleX(0); transform-origin: left; opacity: 0; }
+.reassure-item:first-child::before { left: 0; }
+.reassure-item.is-lit::before { opacity: 1; animation: reassureBar 2.8s linear forwards; }
+@keyframes reassureBar { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.reassure-item .reassure-num { transition: color 0.5s ease, letter-spacing 0.5s ease; }
+.reassure-item.is-lit .reassure-num { color: #6e5aa8; letter-spacing: 0.32em; }
+.reassure-item.is-lit .reassure-icon svg { animation: reassureIcon 1.4s ease-in-out; color: #6e5aa8; }
+.reassure-icon svg { transition: color 0.5s ease; }
+@keyframes reassureIcon { 0%, 100% { transform: scale(1) rotate(0); } 35% { transform: scale(1.22) rotate(-6deg); } 70% { transform: scale(1.08) rotate(4deg); } }
+.reassure-item.is-lit .reassure-title { text-shadow: 0 0 0 transparent; }
+@media (max-width: 860px) { .reassure-item::before { left: 0; right: 0; } }
+
+/* ─── Votre espace client : transition d'entrée + accordéon ─── */
+.cs-spotlight { transition: none; }
+.cs-spotlight:not(.cs-live) { opacity: 0.001; }
+.cs-spotlight.cs-live { animation: csCard 1s var(--ease-luxe, cubic-bezier(.2,.7,.2,1)) both; }
+@keyframes csCard { from { opacity: 0; transform: translateY(40px) scale(0.98); filter: blur(8px); } to { opacity: 1; transform: none; filter: blur(0); } }
+.cs-acc { gap: 10px !important; }
+.cs-acc-item { display: block !important; border: 1px solid rgba(10,10,12,0.1); border-radius: 12px; background: rgba(255,255,255,0.7); transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease; }
+.cs-acc-item.open { border-color: rgba(110,90,168,0.45); box-shadow: 0 8px 22px rgba(110,90,168,0.14); background: #fff; }
+.cs-acc-head { width: 100%; display: flex; align-items: center; gap: 12px; padding: 13px 14px; background: none; border: 0; cursor: pointer; font: inherit; font-size: 13.5px; font-weight: 700; color: var(--black); text-align: left; }
+.cs-acc-head svg { margin-top: 0; }
+.cs-acc-head span { flex: 1; }
+.cs-acc-chev { width: 8px; height: 8px; border-right: 2px solid #6e5aa8; border-bottom: 2px solid #6e5aa8; transform: rotate(45deg); transition: transform 0.4s var(--ease-luxe, ease); margin-right: 4px; flex-shrink: 0; }
+.cs-acc-item.open .cs-acc-chev { transform: rotate(225deg); }
+.cs-acc-panel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.5s var(--ease-luxe, ease); }
+.cs-acc-panel p { overflow: hidden; margin: 0; padding: 0 16px 0 44px; font-size: 13px; line-height: 1.7; color: #3a3544; opacity: 0; transform: translateY(-6px); transition: opacity 0.4s ease 0.05s, transform 0.4s ease 0.05s, padding 0.4s ease; }
+.cs-acc-item.open .cs-acc-panel { grid-template-rows: 1fr; }
+.cs-acc-item.open .cs-acc-panel p { padding-bottom: 15px; opacity: 1; transform: none; }
+.cs-acc-head:hover .cs-acc-chev { transform: rotate(45deg) translate(2px, 2px); }
+.cs-acc-item.open .cs-acc-head:hover .cs-acc-chev { transform: rotate(225deg) translate(2px, 2px); }
+
+/* ─── Conseils photo : apparition en cascade, survol vivant ─── */
+.advice-hook { margin: 8px 0 0; font-size: 13.5px; color: #3a3544; max-width: 560px; line-height: 1.6; }
+.advice-teaser .advice-card { opacity: 0; transform: translateY(28px) rotate(0.8deg); }
+.advice-teaser.adv-live .advice-card { animation: advIn 0.8s var(--ease-luxe, cubic-bezier(.2,.7,.2,1)) forwards; }
+.advice-teaser.adv-live .advice-card:nth-child(1) { animation-delay: 0.1s; } .advice-teaser.adv-live .advice-card:nth-child(2) { animation-delay: 0.25s; } .advice-teaser.adv-live .advice-card:nth-child(3) { animation-delay: 0.4s; }
+@keyframes advIn { to { opacity: 1; transform: none; } }
+.advice-card { position: relative; overflow: hidden; transition: transform 0.4s var(--ease-luxe, ease), box-shadow 0.4s ease, border-color 0.3s ease; }
+.advice-card::after { content: ''; position: absolute; left: 0; bottom: 0; height: 3px; width: 100%; background: linear-gradient(90deg, #b9a6dc, #6e5aa8); transform: scaleX(0); transform-origin: left; transition: transform 0.5s var(--ease-luxe, ease); }
+.advice-card:hover { transform: translateY(-5px); box-shadow: 0 16px 34px rgba(110,90,168,0.2); }
+.advice-card:hover::after { transform: scaleX(1); }
+.advice-card-meta::before { content: '⏱ '; }
+.advice-card-more { display: inline-block; animation: advArrow 3.2s ease-in-out infinite; }
+@keyframes advArrow { 0%, 70%, 100% { transform: translateX(0); } 80% { transform: translateX(6px); } 90% { transform: translateX(2px); } }
+.advice-card:hover .advice-card-more { animation: none; transform: translateX(6px); }
+@media (prefers-reduced-motion: reduce) {
+  .reassure-item.is-lit::before, .reassure-item.is-lit .reassure-icon svg, .advice-card-more, .cs-spotlight.cs-live { animation: none !important; }
+  .advice-teaser .advice-card { opacity: 1; transform: none; }
+  .cs-spotlight:not(.cs-live) { opacity: 1; }
+}
