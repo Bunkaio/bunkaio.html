@@ -488,6 +488,16 @@ async function handleAck(request: Request, env: Env, headers: Record<string, str
   }
 }
 
+/** Séance planifiée (non annulée) dans le compte du client, s'il existe déjà. */
+async function findSeance(env: Env, email: string): Promise<{ date: string; heure?: string; lieu?: string; prestation?: string } | undefined> {
+  try {
+    const account = (await getAccount(env, 'client', email)) ?? (await getAccount(env, 'partner', email));
+    return account?.seance && account.seance.statut !== 'annulee' ? account.seance : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 async function handleQuizLead(request: Request, env: Env, headers: Record<string, string>): Promise<Response> {
   if (request.method !== 'POST') {
     return jsonResponse({ ok: false, error: 'method_not_allowed' }, 405, headers);
@@ -712,7 +722,7 @@ async function handleStripeWebhook(request: Request, env: Env, headers: Record<s
 
   if (customerEmail) {
     try {
-      const { subject, html, text } = buildPaymentConfirmationEmail({ customerName, description, amountEur, invoiceType: kind, lang: customerLang, space: await detectSpace(env, customerEmail) });
+      const { subject, html, text } = buildPaymentConfirmationEmail({ customerName, description, amountEur, invoiceType: kind, lang: customerLang, space: await detectSpace(env, customerEmail), seance: kind === 'acompte' ? await findSeance(env, customerEmail) : undefined });
       await sendEmail(env, customerEmail, subject, html, text);
     } catch (err) {
       console.error('[stripe-webhook] échec email de confirmation client', err);

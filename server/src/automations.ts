@@ -94,7 +94,7 @@ async function sendQuoteFollowUps(env: Env): Promise<void> {
   for (const k of list.keys) {
     const email = k.name.slice(5);
     const marker = await readMarker(env, k.name);
-    if (!marker || Date.now() - Date.parse(marker.date) < 5 * DAY) continue;
+    if (!marker || Date.now() - Date.parse(marker.date) < 7 * DAY) continue;
     if ((await env.ACCOUNTS_KV.get(`inv:${email}`)) || (await env.ACCOUNTS_KV.get(`dep:${email}`)) || (await env.ACCOUNTS_KV.get(`fu:${email}`))) continue;
     const isPartner = !!(await getAccount(env, 'partner', email));
     try {

@@ -274,6 +274,8 @@ export function buildPaymentConfirmationEmail(params: {
   invoiceType: 'acompte' | 'solde';
   lang?: Lang;
   space?: Space;
+  /** Séance déjà planifiée dans l'espace du client (acompte uniquement). */
+  seance?: SeanceInfo;
 }): { subject: string; html: string; text: string } {
   const lang = params.lang ?? 'fr';
   const greeting = greet(lang, params.customerName);
@@ -294,6 +296,7 @@ export function buildPaymentConfirmationEmail(params: {
     <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">${message}</p>
     <p style="font-size:24px;font-weight:700;margin:0 0 8px;">${amount}</p>
     <p style="font-size:13px;color:#76717f;margin:0 0 ${isDeposit ? '20px' : '28px'};">${paidLabel} ${tr(lang, 'réglé', 'paid')}</p>
+    ${isDeposit ? (params.seance ? seanceCard(lang, params.seance) : `<p style="font-size:13px;line-height:1.6;color:#3a3544;margin:0 0 12px;">${tr(lang, 'La date, l\'heure et le lieu exacts de votre séance vous sont confirmés par email.', 'The exact date, time and location of your session will be confirmed to you by email.')}</p>`) : ''}
     ${isDeposit ? `<p style="font-size:13px;line-height:1.6;color:#3a3544;margin:0 0 8px;padding:12px 14px;background:#f6f1fc;border-radius:6px;">${deliveryNote(lang)}</p>` : ''}
     ${spaceBlock(lang, params.space, isDeposit ? 'deposit' : 'delivered')}
   `, lang);
@@ -302,13 +305,13 @@ export function buildPaymentConfirmationEmail(params: {
 ${messageText}
 
 Amount paid: ${amount} (${isDeposit ? 'deposit 30%' : 'balance 70%'})
-${isDeposit ? '\n' + deliveryNote(lang) + '\n' : ''}
+${isDeposit ? '\n' + (params.seance ? seanceCardText(lang, params.seance) : tr(lang, "La date, l'heure et le lieu exacts de votre séance vous sont confirmés par email.", 'The exact date, time and location of your session will be confirmed to you by email.')) + '\n' : ''}${isDeposit ? '\n' + deliveryNote(lang) + '\n' : ''}
 ${spaceText(lang, params.space, isDeposit ? 'deposit' : 'delivered')}` : `${greeting}
 
 ${messageText}
 
 Montant réglé : ${amount} (${isDeposit ? 'acompte 30 %' : 'solde 70 %'})
-${isDeposit ? '\n' + deliveryNote(lang) + '\n' : ''}
+${isDeposit ? '\n' + (params.seance ? seanceCardText(lang, params.seance) : tr(lang, "La date, l'heure et le lieu exacts de votre séance vous sont confirmés par email.", 'The exact date, time and location of your session will be confirmed to you by email.')) + '\n' : ''}${isDeposit ? '\n' + deliveryNote(lang) + '\n' : ''}
 ${spaceText(lang, params.space, isDeposit ? 'deposit' : 'delivered')}`;
   return finalize(lang, { subject: tr(lang, `Bunkaio — Paiement reçu (${amount})`, `Bunkaio — Payment received (${amount})`), html, text });
 }
