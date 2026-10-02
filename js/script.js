@@ -2831,12 +2831,20 @@ function renderArticlePage(slug){
       <span>${a.h1}</span>
     </div>
     <h1 data-pageh1 class="page-title">${a.h1}</h1>
-    <p class="page-sub article-meta"><time datetime="${a.date}">${fmtDate(a.date)}</time> · ${a.minutes} ${t({fr:'min de lecture', en:'min read'})} · ${t({fr:'Par l\'équipe BUNKAIO', en:'By the BUNKAIO team'})}</p>
+    <p class="page-sub article-meta"><time datetime="${a.date}">${fmtDate(a.date)}</time> · ${a.minutes} ${t({fr:'min de lecture', en:'min read'})} · ${t({fr:'Par', en:'By'})} <a href="/a-propos/" data-nav="about" rel="author">Aya Nascimento</a></p>
     <article class="read-panel svcp-panel article">
       <div class="article-summary"><strong>${t({fr:'En bref', en:'In short'})}</strong><ul>${a.summary.map(x => `<li>${x}</li>`).join('')}</ul></div>
       ${a.sections.map(sec => `<h2>${sec.h}</h2>${sec.html}`).join('')}
       <h2>${t({fr:'Questions fréquentes', en:'Frequently asked questions'})}</h2>
       <div id="articleFaq"></div>
+      <aside class="author-box" aria-label="${t({fr:'À propos de l\'auteure', en:'About the author'})}">
+        <img src="/images/about/aya-nascimento-photographe-studio.webp" alt="Aya Nascimento, photographe portraitiste" width="72" height="72" loading="lazy" decoding="async">
+        <div>
+          <p class="author-name"><a href="/a-propos/" data-nav="about" rel="author">Aya Nascimento</a></p>
+          <p class="author-role">${t({fr:'Photographe portraitiste professionnelle, diplômée de l\'ETPA (BTS Photographie, 2018). Plus de 8 ans d\'expérience et plus de 200 projets réalisés.', en:'Professional portrait photographer, ETPA graduate (BTS Photography, 2018). Over 8 years of experience and 200+ projects.'})}</p>
+          <p class="author-sign">${t({fr:'Article rédigé et signé par Aya Nascimento, fondatrice de BUNKAIO.', en:'Article written and signed by Aya Nascimento, founder of BUNKAIO.'})}</p>
+        </div>
+      </aside>
     </article>
     <section class="read-panel svcp-panel article-cta">
       <h2>${t({fr:'Un projet de séance ou de shooting ?', en:'Planning a session or a shoot?'})}</h2>

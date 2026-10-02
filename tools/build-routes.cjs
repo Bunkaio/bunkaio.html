@@ -120,7 +120,7 @@ function buildJsonLd(route, meta, snaps) {
   const bizId = SITE + '/#business', siteId = SITE + '/#website', personId = SITE + '/a-propos/#aya';
   const url = SITE + route.path;
   const graph = [];
-  const hasPerson = route.view === 'home' || route.view === 'about';
+  const hasPerson = route.view === 'home' || route.view === 'about' || !!route.slug;
   graph.push({
     '@type': 'ProfessionalService', '@id': bizId,
     name: b.name, alternateName: b.alternateName, url: SITE + '/',
@@ -170,7 +170,7 @@ function buildJsonLd(route, meta, snaps) {
     graph.push({
       '@type': 'Article', '@id': url + '#article', headline: art.h1, description: art.description,
       datePublished: art.date, dateModified: art.date, inLanguage: 'fr-FR',
-      author: { '@id': bizId }, publisher: { '@id': bizId }, mainEntityOfPage: { '@id': url + '#webpage' },
+      author: { '@id': personId }, publisher: { '@id': bizId }, mainEntityOfPage: { '@id': url + '#webpage' },
       image: { '@id': url + '#primaryimage' }, articleSection: 'Conseils photo',
     });
     const artImg = SITE + (route.ogImage || '/images/og-default.jpg');

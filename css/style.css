@@ -3827,3 +3827,12 @@ a.cta-primary, a.cta-primary:hover { text-decoration: none; }
 @media (max-width: 700px) { .svcp-lead-grid.has-figure { grid-template-columns: 1fr; } .svcp-figure { max-width: 300px; } }
 
 .about-photo { height: auto; object-position: 50% 28%; max-width: 280px; }
+
+/* Signature d'auteure en bas des articles */
+.author-box { display: flex; gap: 16px; align-items: center; margin-top: 28px; padding-top: 20px; border-top: 1px solid rgba(10,10,12,0.12); }
+.author-box img { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; object-position: 50% 25%; flex-shrink: 0; }
+.author-box p { margin: 0 0 4px; }
+.author-name { font-weight: 700; font-size: 15px; }
+.author-name a, .article-meta a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+.author-role { font-size: 13px; line-height: 1.6; color: #3a3544; }
+.author-sign { font-size: 12px; color: #6b6b70; font-style: italic; }
