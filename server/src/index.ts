@@ -235,6 +235,7 @@ function isValidAdminAccountUpsertPayload(body: unknown): body is AdminAccountUp
     (b.sendAccessMail === undefined || typeof b.sendAccessMail === 'boolean') &&
     (b.sendPhotosMail === undefined || typeof b.sendPhotosMail === 'boolean') &&
     (b.photosAcces === undefined || typeof b.photosAcces === 'boolean') &&
+    (b.revokePhotos === undefined || typeof b.revokePhotos === 'boolean') &&
     (b.lang === undefined || b.lang === 'fr' || b.lang === 'en') &&
     (b.seance === undefined || b.seance === null || (typeof b.seance === 'object' && typeof (b.seance as Record<string, unknown>).date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(String((b.seance as Record<string, unknown>).date)))) &&
     (b.sendSeanceMail === undefined || b.sendSeanceMail === 'confirmation' || b.sendSeanceMail === 'report' || b.sendSeanceMail === 'cancel') &&
@@ -394,6 +395,11 @@ async function handleAdminAccounts(request: Request, env: Env, headers: Record<s
     }
     try {
       const account = await upsertAccountFromAdmin(env, body);
+      if (body.revokePhotos && account.photosAcces) {
+        account.photosAcces = false;
+        await putAccount(env, account);
+        console.log('[accounts] accès aux photos retiré par l\'admin', { email: account.email });
+      }
       console.log('[accounts] compte créé/mis à jour par l\'admin', { type: account.type, email: account.email });
       const lang = normalizeLang(body.lang);
       const emails: { access?: boolean; photos?: boolean | string; seance?: boolean | string } = {};

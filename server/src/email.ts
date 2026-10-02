@@ -145,8 +145,8 @@ const payLineFor = (lang: Lang, amount: number): string => {
   const threeX = (amount / 3).toFixed(2);
   const threeXFr = threeX.replace('.', ',');
   return tr(lang,
-    `Soit 3 × ${threeXFr} € sans frais avec Klarna — ou par carte bancaire, par prélèvement automatique, au choix sur la page de paiement.`,
-    `That is 3 × €${threeX} interest-free with Klarna — or by bank card or direct debit, as you prefer on the payment page.`);
+    `Soit 3 × ${threeXFr} € sans frais avec Klarna — ou par carte bancaire, au choix sur la page de paiement.`,
+    `That is 3 × €${threeX} interest-free with Klarna — or by bank card, as you prefer on the payment page.`);
 };
 const btnStyle = 'display:inline-block;background:#0a0a0c;color:#ffffff;text-decoration:none;padding:14px 28px;border-radius:4px;font-weight:600;font-size:15px;';
 
@@ -378,8 +378,8 @@ export function buildOverdueReminderEmail(params: {
   const amount = eur(lang, params.amountEur);
   const threeX = (params.amountEur / 3).toFixed(2);
   const payLine = tr(lang,
-    `Rappel : soit 3 × ${threeX.replace('.', ',')} € sans frais avec Klarna, par carte bancaire ou par prélèvement automatique.`,
-    `Reminder: that is 3 × €${threeX} interest-free with Klarna, by bank card or by direct debit.`);
+    `Rappel : soit 3 × ${threeX.replace('.', ',')} € sans frais avec Klarna, par carte bancaire.`,
+    `Reminder: that is 3 × €${threeX} interest-free with Klarna, by bank card.`);
   const html = emailShell(`
     <h1 style="font-size:20px;margin:0 0 16px;">${tr(lang, 'Petit rappel', 'A quick reminder')}</h1>
     <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">${greeting}</p>

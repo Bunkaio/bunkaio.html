@@ -346,6 +346,8 @@ export interface AdminAccountUpsertPayload {
   sendPhotosMail?: boolean;
   lang?: 'fr' | 'en';
   photosAcces?: boolean;
+  /** Referme l'accès aux photos : le lien Lightroom disparaît de l'espace du client. */
+  revokePhotos?: boolean;
   seance?: AccountSeance | null;
   /** Envoie l'email de séance correspondant (confirmation, report ou annulation) à l'enregistrement. */
   sendSeanceMail?: 'confirmation' | 'report' | 'cancel';

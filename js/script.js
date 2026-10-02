@@ -374,15 +374,14 @@ const I18N = {
     'footer-claim2':'Photographe mobile · Béziers · Montpellier · Toulouse',
     'stab-catalogue':'Catalogue & prix','stab-devis':'Devis & déroulé',
     'p-trust':'Ils nous ont fait confiance',
-    'process-payment-info':'<strong>Modalités de paiement :</strong> 30 % à la commande à la signature du devis, solde à la livraison des livrables. Chaque versement est réglable en 3x sans frais avec Klarna, par carte bancaire ou par prélèvement automatique.',
+    'process-payment-info':'<strong>Modalités de paiement :</strong> 30 % à la commande à la signature du devis, solde à la livraison des livrables. Chaque versement est réglable en 3x sans frais avec Klarna, par carte bancaire.',
     'process-cancel-info':'<strong>Annulation :</strong> une fois le devis validé, l\'acompte de 30 % versé à la commande reste acquis à BUNKAIO et n\'est pas remboursé en cas d\'annulation de votre part.',
     'process-delay-info':'Les délais indiqués sur chaque formule démarrent à la date du shooting.',
     'process-rights-info':'L\'ensemble des droits d\'utilisation des visuels livrés vous sont cédés pour une utilisation commerciale sans limite de durée.',
     'pay-flex-kicker':'Paiement flexible',
-    'pay-flex-text':'<strong>3x sans frais avec Klarna</strong>, carte bancaire ou prélèvement automatique — ou en 2 fois, acompte 30 % puis solde. Sans aucun frais supplémentaire.',
+    'pay-flex-text':'<strong>3x sans frais avec Klarna</strong>, carte bancaire — ou en 2 fois, acompte 30 % puis solde. Sans aucun frais supplémentaire.',
     'pay-flex-pill-klarna':'3x sans frais',
     'pay-flex-pill-card':'Carte bancaire',
-    'pay-flex-pill-debit':'Prélèvement auto',
     'pay-flex-pill-split':'Acompte + solde',
     'ph-name':'Votre nom ou société',
     'ph-email':'vous@societe.fr',
@@ -715,15 +714,14 @@ const I18N = {
     'footer-claim2':'Mobile photographer · Béziers · Montpellier · Toulouse',
     'stab-catalogue':'Catalogue & rates','stab-devis':'Quote & process',
     'p-trust':'They trusted us',
-    'process-payment-info':'<strong>Payment terms:</strong> 30% deposit upon signing the quote, balance due on delivery of your deliverables. Each payment can be split into 3 interest-free instalments with Klarna, by credit card or by direct debit.',
+    'process-payment-info':'<strong>Payment terms:</strong> 30% deposit upon signing the quote, balance due on delivery of your deliverables. Each payment can be split into 3 interest-free instalments with Klarna, by credit card.',
     'process-cancel-info':'<strong>Cancellation:</strong> once the quote is accepted, the 30% deposit paid at booking is retained by BUNKAIO and is non-refundable if you cancel.',
     'process-delay-info':'The delivery timelines indicated on each package begin on the day of the shoot.',
     'process-rights-info':'Full commercial usage rights for all delivered visuals are granted to you with no time limit.',
     'pay-flex-kicker':'Flexible payment',
-    'pay-flex-text':'<strong>3 interest-free instalments with Klarna</strong>, credit card or direct debit — or in two payments, 30% deposit then balance. No extra fees, ever.',
+    'pay-flex-text':'<strong>3 interest-free instalments with Klarna</strong>, credit card — or in two payments, 30% deposit then balance. No extra fees, ever.',
     'pay-flex-pill-klarna':'3x interest-free',
     'pay-flex-pill-card':'Credit card',
-    'pay-flex-pill-debit':'Direct debit',
     'pay-flex-pill-split':'Deposit + balance',
     'ph-name':'Your name or company',
     'ph-email':'you@company.com',
@@ -1776,15 +1774,15 @@ function updateQuizPayReassurance(){
   if (!el || !S.tier) return;
   if (S.tier === 'sub') {
     el.innerHTML = LANG === 'fr'
-      ? '<strong>Côté règlement :</strong> votre abonnement est réglable chaque mois par carte bancaire ou prélèvement automatique, sans engagement de paiement anticipé.'
-      : '<strong>On the payment side:</strong> your subscription is billed monthly by credit card or direct debit, with no upfront payment required.';
+      ? '<strong>Côté règlement :</strong> votre abonnement est réglable chaque mois par carte bancaire, sans engagement de paiement anticipé.'
+      : '<strong>On the payment side:</strong> your subscription is billed monthly by credit card, with no upfront payment required.';
     return;
   }
   const res = computeTotal();
   const threeX = Math.round(res.amount / 3).toLocaleString('fr-FR');
   el.innerHTML = LANG === 'fr'
-    ? `<strong>Côté règlement :</strong> soit 3 × ${threeX}€ sans frais avec Klarna — ou carte bancaire, prélèvement automatique, ou acompte 30 % + solde. Sans aucun frais supplémentaire.`
-    : `<strong>On the payment side:</strong> that's 3 × €${threeX} interest-free with Klarna — or credit card, direct debit, or a 30% deposit + balance. No extra fees.`;
+    ? `<strong>Côté règlement :</strong> soit 3 × ${threeX}€ sans frais avec Klarna — ou carte bancaire, ou acompte 30 % + solde. Sans aucun frais supplémentaire.`
+    : `<strong>On the payment side:</strong> that's 3 × €${threeX} interest-free with Klarna — or credit card, or a 30% deposit + balance. No extra fees.`;
 }
 
 function goToTiers(){
@@ -2162,8 +2160,8 @@ function renderRecapBase(){
       ? 'Engagement minimum : 6 mois · Reconduction mensuelle ensuite'
       : 'Minimum commitment: 6 months · Monthly renewal afterwards';
     const payLine = LANG === 'fr'
-      ? '💳 Réglable par carte bancaire ou prélèvement automatique, chaque mois.'
-      : '💳 Payable by credit card or direct debit, every month.';
+      ? '💳 Réglable par carte bancaire, chaque mois.'
+      : '💳 Payable by credit card, every month.';
     box.innerHTML = `
       <div class="recap-label">${selLabel}</div>
       <div class="recap-title">
@@ -2182,8 +2180,8 @@ function renderRecapBase(){
     const total = pp(polas.price + 60);
     const threeX = Math.round(total / 3).toLocaleString('fr-FR');
     const payLine = LANG === 'fr'
-      ? `💳 Soit 3 × ${threeX}€ sans frais avec Klarna — ou carte bancaire, prélèvement automatique, acompte 30 % + solde.`
-      : `💳 That's 3 × €${threeX} interest-free with Klarna — or credit card, direct debit, 30% deposit + balance.`;
+      ? `💳 Soit 3 × ${threeX}€ sans frais avec Klarna — ou carte bancaire, acompte 30 % + solde.`
+      : `💳 That's 3 × €${threeX} interest-free with Klarna — or credit card, 30% deposit + balance.`;
     const studioLabel = LANG === 'fr' ? 'Studio inclus (+60€)' : 'Studio included (+€60)';
     box.innerHTML = `
       <div class="recap-label">${selLabel}</div>
@@ -2211,8 +2209,8 @@ function renderRecapBase(){
           ? '💳 Devis personnalisé — nous vous revenons sous 48h ouvrées.'
           : '💳 Personalised quote — we get back to you within 48 working hours.')
       : (LANG === 'fr'
-          ? `💳 Soit 3 × ${threeX}€ sans frais avec Klarna — ou carte bancaire, prélèvement automatique, acompte 30 % + solde.`
-          : `💳 That's 3 × €${threeX} interest-free with Klarna — or credit card, direct debit, 30% deposit + balance.`);
+          ? `💳 Soit 3 × ${threeX}€ sans frais avec Klarna — ou carte bancaire, acompte 30 % + solde.`
+          : `💳 That's 3 × €${threeX} interest-free with Klarna — or credit card, 30% deposit + balance.`);
     box.innerHTML = `
       <div class="recap-label">${selLabel}</div>
       <div class="recap-title">
@@ -2232,8 +2230,8 @@ function renderRecapBase(){
   const studioSupplement = ((S.cat === 'photo-part' || S.cat === 'corporate') && S.studio) ? ' + 60€ studio' : '';
   const threeX = Math.round(pp(td.price) / 3).toLocaleString('fr-FR');
   const payLine = LANG === 'fr'
-    ? `💳 Soit 3 × ${threeX}€ sans frais avec Klarna — ou carte bancaire, prélèvement automatique, acompte 30 % + solde.`
-    : `💳 That's 3 × €${threeX} interest-free with Klarna — or credit card, direct debit, 30% deposit + balance.`;
+    ? `💳 Soit 3 × ${threeX}€ sans frais avec Klarna — ou carte bancaire, acompte 30 % + solde.`
+    : `💳 That's 3 × €${threeX} interest-free with Klarna — or credit card, 30% deposit + balance.`;
   box.innerHTML = `
     <div class="recap-label">${selLabel}</div>
     <div class="recap-title">
@@ -2508,8 +2506,8 @@ function animatePriceCalc(){
   if (payEl) {
     if (isSub) {
       payEl.textContent = LANG === 'fr'
-        ? '💳 Réglable chaque mois par carte bancaire ou prélèvement automatique.'
-        : '💳 Billed monthly by credit card or direct debit.';
+        ? '💳 Réglable chaque mois par carte bancaire.'
+        : '💳 Billed monthly by credit card.';
     } else if (S.cat === 'lumen' && S.tier === 'surm') {
       payEl.textContent = LANG === 'fr'
         ? '💳 Devis personnalisé — réponse sous 48h ouvrées. Paiement : acompte 30 % + solde à la livraison.'
@@ -2517,8 +2515,8 @@ function animatePriceCalc(){
     } else {
       const threeX = Math.round(targetAmount / 3).toLocaleString('fr-FR');
       payEl.textContent = LANG === 'fr'
-        ? `💳 Soit 3 × ${threeX}€ sans frais avec Klarna, ou par carte bancaire / prélèvement automatique.`
-        : `💳 That's 3 × €${threeX} interest-free with Klarna, or by credit card / direct debit.`;
+        ? `💳 Soit 3 × ${threeX}€ sans frais avec Klarna, ou par carte bancaire.`
+        : `💳 That's 3 × €${threeX} interest-free with Klarna, or by credit card.`;
     }
   }
 
@@ -3225,8 +3223,8 @@ function updatePayFlexBanner(list){
   const minPrice = Math.min(...pricedList.map(c => c.tiers.deco.price));
   const monthly = Math.round(minPrice / 3).toLocaleString('fr-FR');
   el.innerHTML = LANG === 'fr'
-    ? `<strong>À partir de ${monthly}€/mois avec Klarna</strong>, carte bancaire ou prélèvement automatique — ou en 2 fois, acompte 30 % puis solde. Sans aucun frais supplémentaire.`
-    : `<strong>From €${monthly}/mo with Klarna</strong>, credit card or direct debit — or in 2 instalments, 30% deposit then balance. No extra fees.`;
+    ? `<strong>À partir de ${monthly}€/mois avec Klarna</strong>, carte bancaire — ou en 2 fois, acompte 30 % puis solde. Sans aucun frais supplémentaire.`
+    : `<strong>From €${monthly}/mo with Klarna</strong>, credit card — or in 2 instalments, 30% deposit then balance. No extra fees.`;
 }
 
 function renderServices(){
@@ -5783,7 +5781,7 @@ function renderFaqAccordion(){
     { title:'Comment se déroule une prestation, de la demande à la livraison ?', body:`<p>Quatre étapes simples : <strong>devis</strong> personnalisé sous 48h, <strong>shooting</strong> à la date convenue, <strong>post-production</strong> (tri, retouche, montage), puis <strong>livraison</strong> de vos visuels via votre espace client. Le détail complet est dans l'onglet « Devis & déroulé » de la page Services.</p>` },
     { title:'Je ne suis pas à l\'aise devant l\'objectif, est-ce un problème ?', body:`<p>Pas du tout : c'est notre rôle de vous mettre en confiance. Nous vous guidons sur les poses et l'ambiance pour obtenir des photos qui vous ressemblent vraiment. Pour vous préparer, consultez notre guide <a href="/conseils/preparer-seance-photo-portrait/" data-nav="article:preparer-seance-photo-portrait">Préparer sa séance photo portrait</a>.</p>` },
     { title:'Quels sont les délais de livraison ?', body:`<p>Ils varient selon la formule choisie et sont indiqués sur chaque offre du catalogue. Ils démarrent à la date du shooting, hors demandes de retouches complémentaires.</p>` },
-    { title:'Comment fonctionne le paiement ?', body:`<p>30 % à la commande (signature du devis), solde à la livraison. Paiement par carte bancaire, prélèvement automatique, ou en 3x sans frais avec Klarna.</p>` },
+    { title:'Comment fonctionne le paiement ?', body:`<p>30 % à la commande (signature du devis), solde à la livraison. Paiement par carte bancaire, ou en 3x sans frais avec Klarna.</p>` },
     { title:'Que se passe-t-il si j\'annule ma prestation ?', body:`<p>Votre date et votre créneau sont réservés dès la validation du devis et le versement de l'<strong>acompte de 30 %</strong>. Si vous annulez après cette validation, <strong>l'acompte reste acquis à Bunkaio et n'est pas remboursé</strong>. Pour toute difficulté, contactez-nous le plus tôt possible.</p>` },
     { title:'Puis-je utiliser les visuels pour un usage commercial ?', body:`<p>Oui. L'ensemble des droits d'utilisation des visuels livrés vous est cédé pour un usage commercial, sans limite de durée. Le détail des droits cédés est précisé dans l'onglet « Politique de confidentialité » ci-contre.</p>` },
     { title:'Comment accéder à mon espace client, et à quoi sert-il ?', body:`<p>Une fois votre devis confirmé, vous recevez par email votre <strong>code d'accès personnel</strong> : cliquez sur « Connexion » en haut du site. Vous restez connecté sur votre appareil jusqu'à votre déconnexion.</p><p>Vous y suivez l'avancement de votre projet, retrouvez vos <strong>commandes, devis, paiements et factures</strong>, téléchargez vos livrables, gérez vos abonnements et vos informations. Pas encore de code ? Demandez-le depuis la page de connexion : il vous est envoyé sous 24h.</p>` },
@@ -5798,7 +5796,7 @@ function renderFaqAccordion(){
     { title:'How does a project run, from request to delivery?', body:`<p>Four simple steps: a personalised <strong>quote</strong> within 48h, the <strong>shoot</strong> on the agreed date, <strong>post-production</strong> (selection, retouching, editing), then <strong>delivery</strong> via your client area. Full details are under the "Quote & process" tab on the Services page.</p>` },
     { title:'I\'m not comfortable in front of the camera — is that a problem?', body:`<p>Not at all: it's our job to put you at ease. We guide you on poses and mood so the photos truly look like you. To get ready, see our guide <a href="/conseils/preparer-seance-photo-portrait/" data-nav="article:preparer-seance-photo-portrait">Preparing your portrait photo session</a> (in French).</p>` },
     { title:'What are the delivery times?', body:`<p>They depend on the package chosen and are shown on each catalogue offer. They start from the shoot date, excluding any additional retouching requests.</p>` },
-    { title:'How does payment work?', body:`<p>30% upon booking (quote signature), balance on delivery. Pay by card, direct debit, or in 3 interest-free instalments with Klarna.</p>` },
+    { title:'How does payment work?', body:`<p>30% upon booking (quote signature), balance on delivery. Pay by card, or in 3 interest-free instalments with Klarna.</p>` },
     { title:'What happens if I cancel my booking?', body:`<p>Your date and time slot are reserved once the quote is accepted and the <strong>30% deposit</strong> is paid. If you cancel after that point, <strong>the deposit is retained by Bunkaio and is non-refundable</strong>. If you run into any difficulty, please contact us as early as possible.</p>` },
     { title:'Can I use the visuals for commercial purposes?', body:`<p>Yes. All usage rights to the delivered visuals are transferred to you for commercial use, with no time limit. Details are set out in the "Privacy policy" tab opposite.</p>` },
     { title:'How do I access my client area, and what is it for?', body:`<p>Once your quote is confirmed, you receive your <strong>personal access code</strong> by email: click "Sign in" at the top of the site. You stay signed in on your device until you sign out.</p><p>There you follow your project's progress, find your <strong>orders, quotes, payments and invoices</strong>, download your deliverables, and manage your subscriptions and details. No code yet? Request it from the sign-in page: it is sent within 24h.</p>` },

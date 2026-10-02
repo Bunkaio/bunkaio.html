@@ -144,6 +144,11 @@
       <label><input type="checkbox" id="fSendPhotos" style="width:auto;margin-right:8px"> Débloquer et envoyer l'accès aux photos (lien Lightroom ci-dessus). Normal : c'est automatique au paiement du solde — à utiliser pour renvoyer ou débloquer à la main.</label>
     </div>
     <div class="fgroup">
+      <div id="photosStatus" class="hint" style="margin-bottom:8px">Accès aux photos : —</div>
+      <button type="button" id="revokeBtn" onclick="revokePhotos()" style="background:#b3261e">Retirer l'accès aux photos</button>
+      <div class="hint">Masque le lien Lightroom dans l'espace du client (utile en cas d'impayé ou de litige). Pense aussi à retirer le partage dans Lightroom. L'accès se rouvre au prochain paiement du solde ou via la case ci-dessus.</div>
+    </div>
+    <div class="fgroup">
       <label for="fLang">Langue des mails</label>
       <select id="fLang"><option value="fr">Français</option><option value="en">English</option></select>
     </div>
@@ -371,6 +376,7 @@ document.getElementById('accountPicker').addEventListener('change', async (e) =>
     document.getElementById('fAdresse').value = acc.adresse || '';
     document.getElementById('fLightroom').value = acc.lightroomUrl || '';
     document.getElementById('fLang').value = acc.lang || 'fr';
+    document.getElementById('photosStatus').textContent = 'Accès aux photos : ' + (acc.photosAcces ? 'OUVERT (lien visible par le client)' : 'fermé');
     const se = acc.seance || {};
     document.getElementById('fSeDate').value = se.date || '';
     document.getElementById('fSeHeure').value = se.heure || '';
@@ -394,6 +400,13 @@ document.getElementById('accountPicker').addEventListener('change', async (e) =>
     alert('Erreur réseau lors du chargement du compte.');
   }
 });
+
+function revokePhotos() {
+  if (!document.getElementById('fEmail').value.trim()) return;
+  if (!window.confirm("Retirer l'accès aux photos pour ce client ? Le lien disparaît de son espace.")) return;
+  window.__revoke = true;
+  saveAccount();
+}
 
 async function saveAccount() {
   const token = getToken();
@@ -461,6 +474,7 @@ async function saveAccount() {
   if (seMotif) payload.motif = seMotif;
   if (document.getElementById('fSendAccess').checked) payload.sendAccessMail = true;
   if (document.getElementById('fSendPhotos').checked) payload.sendPhotosMail = true;
+  if (window.__revoke) { payload.revokePhotos = true; window.__revoke = false; }
 
   try {
     const res = await fetch(WORKER_BASE + '/accounts', {
@@ -482,6 +496,7 @@ async function saveAccount() {
       if (em.photos === 'no_lightroom_url') msg += ' ⚠ Mail photos non envoyé : renseigne le lien Lightroom.';
       if (em.photos === false) msg += ' ⚠ Mail photos non envoyé (erreur).';
       result.textContent = msg;
+      document.getElementById('photosStatus').textContent = 'Accès aux photos : ' + (data.account.photosAcces ? 'OUVERT (lien visible par le client)' : 'fermé');
       document.getElementById('fCode').value = '';
       document.getElementById('fSendAccess').checked = false;
       document.getElementById('fSendPhotos').checked = false;
