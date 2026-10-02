@@ -152,11 +152,11 @@ function isValidMoodboardArray(value: unknown): boolean {
 
 /** Doit rester aligné sur PARTNER_PROVIDER_TYPES dans js/script.js. */
 const PROVIDER_TYPE_IDS = new Set([
-  'architecte', 'archi-interieur', 'constructeur', 'promoteur', 'agent-immo',
-  'cuisiniste', 'paysagiste', 'pisciniste', 'agenceur', 'eclairagiste',
-  'artisan-art', 'ebeniste', 'ceramiste', 'bijoutier',
-  'createur-mode', 'cosmetique', 'marque-deco',
-  'traiteur', 'lieu', 'event-planner', 'fleuriste', 'beaute', 'stylisme',
+  'coiffeur', 'maquilleur', 'coach-image', 'bien-etre', 'studio-lieu',
+  'createur-mode', 'agence-mannequin', 'styliste', 'maquilleur-mode', 'bijoutier',
+  'marque-produit', 'cosmetique', 'artisan-art', 'restaurateur', 'agence-com',
+  'event-planner', 'lieu', 'traiteur', 'decorateur', 'animation',
+  'wedding-planner', 'lieu-mariage', 'fleuriste-mariage', 'robe-mariee', 'traiteur-mariage',
 ]);
 
 function isValidSelfPartenariat(value: unknown): boolean {

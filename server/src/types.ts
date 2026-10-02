@@ -189,7 +189,7 @@ export interface Moodboard {
 /** Onglet "Mon partenariat" — uniquement pour les comptes type 'partner'
     (Programme Partenaires Fondateurs). `secteur` reprend les identifiants
     du formulaire de candidature (voir PARTNER_SECTORS dans js/script.js) :
-    architecture, amenagement, artisanat, marques, evenementiel. */
+    portrait, mode, commercial, evenementiel, mariage (les prestations du catalogue). */
 export interface AccountPartnerInfo {
   secteur?: string;
   statut?: string; // 'En attente' | 'Actif' | 'Terminé'
