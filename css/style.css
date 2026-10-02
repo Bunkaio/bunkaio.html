@@ -3623,3 +3623,8 @@
   }
 
   .cs-spotlight.cs-novisual { grid-template-columns: 1fr; }
+
+  .svc-cta-row { margin: -30px 0 42px; }
+  .svc-cta-row .cta-primary { animation: ctaGlow 3.8s ease-in-out infinite; }
+  @media (max-width: 600px) { .svc-cta-row { margin: -34px 0 34px; } .svc-cta-row .cta-primary { width: 100%; } }
+  .cta-primary { border-radius: 18px; }
