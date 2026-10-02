@@ -150,11 +150,11 @@ const I18N = {
     'testi8-role':'Organisateur d\'événements d\'entreprise · Marseille',
     'p-who':'Qui peut devenir Partenaire Fondateur\u00a0?',
     'p-who-text':'Le programme Partenaires Fondateurs est réservé aux entreprises et professionnels dont les réalisations, les valeurs et l\'exigence correspondent à l\'univers Bunkaio. Nous recherchons notamment\u00a0:',
-    'p-list-1':'Architecture & habitat — architectes, architectes d\'intérieur, constructeurs, maîtres d\'œuvre, promoteurs premium',
-    'p-list-2':'Aménagement & design — cuisinistes, agenceurs, menuisiers, designers, paysagistes',
-    'p-list-3':'Artisanat d\'exception — artisans d\'art, ébénistes, marbriers, ferronniers, créateurs spécialisés',
-    'p-list-4':'Marques & lifestyle — marques premium, créateurs, entreprises valorisant le savoir-faire et la qualité',
-    'p-list-5':'Événementiel & lieux — domaines, hôtels, lieux de réception, concepts événementiels sélectionnés',
+    'p-list-1':'Portrait & lifestyle — coiffeurs, maquilleurs, coachs en image, instituts, studios',
+    'p-list-2':'Mode & mannequins — créateurs, agences de mannequins, stylistes, bijoutiers',
+    'p-list-3':'Commercial & produits — marques, artisans, cosmétique, restaurateurs, agences',
+    'p-list-4':'Événementiel — organisateurs, lieux de réception, traiteurs, décorateurs, animation',
+    'p-list-5':'Mariage & Lumen — wedding planners, domaines, fleuristes, créateurs de robes, traiteurs',
     'p-who-note':'Le programme n\'est pas ouvert à tous. Chaque candidature est étudiée individuellement afin de préserver la cohérence éditoriale de Bunkaio.',
     'p-benefits':'Les avantages du programme',
     'p-b1-title':'Une mise en lumière éditoriale.','p-b1-text':'Votre activité n\'est pas présentée comme une simple prestation : elle est racontée à travers une histoire, selon la méthode éditoriale Bunkaio — la Découverte, la Vision, le Défi, le Savoir-Faire, Mon Regard, la Révélation.',
@@ -162,7 +162,7 @@ const I18N = {
     'p-b3-title':'Une relation privilégiée.','p-b3-text':'Accès prioritaire aux disponibilités, offres préférentielles de lancement et collaboration sur le long terme.',
     'p-b4-title':'Une appartenance à un écosystème.','p-b4-text':'Rejoindre Bunkaio, c\'est intégrer un cercle de professionnels partageant l\'exigence, le goût du détail et l\'amour du travail bien fait.',
     'p-places':'Les places disponibles',
-    'p-places-text':'Afin de préserver la qualité des collaborations, le nombre de partenaires fondateurs est volontairement limité\u00a0: 10 places par univers (architecture, architecture d\'intérieur, cuisinistes, artisans d\'art, piscinistes, marques sélectionnées), soit un maximum de <strong>60 partenaires fondateurs</strong> sur l\'ensemble du territoire.',
+    'p-places-text':'Afin de préserver la qualité des collaborations, le nombre de partenaires fondateurs est volontairement limité\u00a0: 10 places par univers (portrait & lifestyle, mode & mannequins, commercial & produits, événementiel, mariage & Lumen), soit un maximum de <strong>60 partenaires fondateurs</strong> sur l\'ensemble du territoire.',
     'p-places-note':'Une fois ce quota atteint, les nouvelles candidatures seront placées sur liste d\'attente.',
     'p-process':'Le processus de sélection',
     'p-step1':'<strong>Étape 1 — Présentation du projet.</strong> Le candidat complète le questionnaire Bunkaio et présente son activité, ses réalisations, ses objectifs et son univers.',
@@ -176,20 +176,20 @@ const I18N = {
     'apply-title':'Candidature — Partenaire Fondateur',
     'apply-sub':'Complétez ce formulaire pour candidater au programme Partenaires Fondateurs. Chaque candidature est étudiée individuellement — réponse personnalisée sous 5 jours ouvrés.',
     'apply-who-label':'Qui peut candidater',
-    'apply-who-value':'Les entreprises et professionnels dont les réalisations correspondent à l\'univers Bunkaio — architecture, aménagement, artisanat d\'exception, marques & lifestyle, événementiel.',
+    'apply-who-value':'Les entreprises et professionnels dont les réalisations correspondent à l\'univers Bunkaio — portrait & lifestyle, mode & mannequins, commercial & produits, événementiel, mariage & Lumen.',
     'apply-eval-label':'Ce qui est évalué',
     'apply-eval-value':'La qualité de vos réalisations et la cohérence avec la ligne éditoriale Bunkaio. 10 places par univers, 60 partenaires fondateurs au total.',
     'apply-delay-value':'Sous 5 jours ouvrés.',
     'apply-web-label':'Site web / réseaux sociaux *',
     'apply-sector-label':'Secteur d\'activité *',
-    'apply-sector-opt1':'Architecture & habitat','apply-sector-opt2':'Aménagement & design','apply-sector-opt3':'Artisanat d\'exception','apply-sector-opt4':'Marques & lifestyle','apply-sector-opt5':'Événementiel & lieux',
+    'apply-sector-opt1':'Portrait & lifestyle','apply-sector-opt2':'Mode & mannequins','apply-sector-opt3':'Commercial & produits','apply-sector-opt4':'Événementiel','apply-sector-opt5':'Mariage & Lumen',
     'apply-sector-error':'Sélectionnez un secteur d\'activité ci-dessus.',
     'apply-project-label':'Présentez votre activité et vos réalisations *',
     'apply-btn':'Envoyer ma candidature',
     'apply-success-title':'Candidature envoyée',
     'apply-success-text':'Merci pour votre candidature. Nous l\'étudions selon notre processus de sélection et revenons vers vous sous 5 jours ouvrés.',
     'partner-redirect-title':'Vous êtes aussi un professionnel dont le travail mérite d\'être raconté ?',
-    'partner-redirect-text':'BUNKAIO sélectionne chaque année un nombre limité de Partenaires Fondateurs — architecture, aménagement, artisanat, marques, événementiel. Découvrez le programme et candidatez.',
+    'partner-redirect-text':'BUNKAIO sélectionne chaque année un nombre limité de Partenaires Fondateurs — portrait, mode, commercial, événementiel, mariage. Découvrez le programme et candidatez.',
     'partner-redirect-btn':'Découvrir le programme partenaires',
     'collab-title':'Proposer une collaboration',
     'collab-sub':'Marque, lieu, média, autre créateur·rice — BUNKAIO est ouvert aux collaborations qui ont du sens avec son univers, en dehors de ses prestations sur-mesure habituelles.',
@@ -459,11 +459,11 @@ const I18N = {
     'testi8-role':'Corporate event organiser · Marseille',
     'p-who':'Who can become a Founding Partner\u00a0?',
     'p-who-text':'The Founding Partners programme is reserved for companies and professionals whose work, values and standards align with the Bunkaio universe. We are particularly looking for\u00a0:',
-    'p-list-1':'Architecture & living — architects, interior architects, builders, project managers, premium developers',
-    'p-list-2':'Fittings & design — kitchen specialists, fitters, joiners, designers, landscape architects',
-    'p-list-3':'Exceptional craftsmanship — master artisans, cabinetmakers, marble workers, ironworkers, specialised makers',
-    'p-list-4':'Brands & lifestyle — premium brands, creators, companies that champion craftsmanship and quality',
-    'p-list-5':'Events & venues — estates, hotels, reception venues, selected event concepts',
+    'p-list-1':'Portrait & lifestyle — hairstylists, make-up artists, image coaches, wellness studios, studios',
+    'p-list-2':'Fashion & models — designers, model agencies, stylists, jewellers',
+    'p-list-3':'Commercial & products — brands, artisans, cosmetics, restaurateurs, agencies',
+    'p-list-4':'Events — planners, reception venues, caterers, decorators, entertainment',
+    'p-list-5':'Weddings & Lumen — wedding planners, estates, florists, gown designers, caterers',
     'p-who-note':'The programme is not open to everyone. Every application is reviewed individually in order to preserve Bunkaio\'s editorial coherence.',
     'p-benefits':'Programme benefits',
     'p-b1-title':'An editorial spotlight.','p-b1-text':'Your work is not presented as a mere service: it is told as a story, following the Bunkaio editorial method — Discovery, Vision, Challenge, Craftsmanship, My Perspective, Revelation.',
@@ -471,7 +471,7 @@ const I18N = {
     'p-b3-title':'A privileged relationship.','p-b3-text':'Priority access to our schedule, preferential launch rates and a long-term working relationship.',
     'p-b4-title':'Belonging to an ecosystem.','p-b4-text':'Joining Bunkaio means entering a circle of professionals who share the same high standards, eye for detail and love of work well done.',
     'p-places':'Available places',
-    'p-places-text':'To preserve the quality of every collaboration, the number of founding partners is deliberately limited\u00a0: 10 places per universe (architecture, interior architecture, kitchen specialists, master artisans, pool builders, selected brands), for a maximum of <strong>60 founding partners</strong> nationwide.',
+    'p-places-text':'To preserve the quality of every collaboration, the number of founding partners is deliberately limited\u00a0: 10 places per universe (portrait & lifestyle, fashion & models, commercial & products, events, weddings & Lumen), for a maximum of <strong>60 founding partners</strong> nationwide.',
     'p-places-note':'Once this quota is reached, new applications will be placed on a waiting list.',
     'p-process':'The selection process',
     'p-step1':'<strong>Step 1 — Presenting your project.</strong> The candidate completes the Bunkaio questionnaire and presents their activity, their work, their goals and their universe.',
@@ -485,20 +485,20 @@ const I18N = {
     'apply-title':'Application — Founding Partner',
     'apply-sub':'Fill in this form to apply to the Founding Partners programme. Every application is reviewed individually — a personal reply within 5 working days.',
     'apply-who-label':'Who can apply',
-    'apply-who-value':'Companies and professionals whose work aligns with the Bunkaio universe — architecture, fittings & design, exceptional craftsmanship, brands & lifestyle, events & venues.',
+    'apply-who-value':'Companies and professionals whose work aligns with the Bunkaio universe — portrait & lifestyle, fashion & models, commercial & products, events, weddings & Lumen.',
     'apply-eval-label':'What we assess',
     'apply-eval-value':'The quality of your work and its fit with the Bunkaio editorial line. 10 places per universe, 60 founding partners in total.',
     'apply-delay-value':'Within 5 working days.',
     'apply-web-label':'Website / social media *',
     'apply-sector-label':'Business sector *',
-    'apply-sector-opt1':'Architecture & living','apply-sector-opt2':'Fittings & design','apply-sector-opt3':'Exceptional craftsmanship','apply-sector-opt4':'Brands & lifestyle','apply-sector-opt5':'Events & venues',
+    'apply-sector-opt1':'Portrait & lifestyle','apply-sector-opt2':'Fashion & models','apply-sector-opt3':'Commercial & products','apply-sector-opt4':'Events','apply-sector-opt5':'Weddings & Lumen',
     'apply-sector-error':'Please select a business sector above.',
     'apply-project-label':'Tell us about your business and your work *',
     'apply-btn':'Send my application',
     'apply-success-title':'Application sent',
     'apply-success-text':'Thank you for your application. We\'re reviewing it as part of our selection process and will get back to you within 5 working days.',
     'partner-redirect-title':'Are you also a professional whose work deserves to be told ?',
-    'partner-redirect-text':'Every year BUNKAIO selects a limited number of Founding Partners — architecture, fittings, craftsmanship, brands, events. Discover the programme and apply.',
+    'partner-redirect-text':'Every year BUNKAIO selects a limited number of Founding Partners — portrait, fashion, commercial, events, weddings. Discover the programme and apply.',
     'partner-redirect-btn':'Discover the partner programme',
     'collab-title':'Propose a collaboration',
     'collab-sub':'Brand, venue, media, another creator — BUNKAIO is open to collaborations that make sense with its universe, outside of its usual bespoke services.',
@@ -662,6 +662,9 @@ const I18N = {
     'ph-reg-email':'you@company.com'
   }
 };
+
+Object.assign(I18N.fr, { 'acc-promotions':'Mes promotions', 'acc-reseau':'Mon réseau', 'acc-collabs':'Mes collaborations' });
+Object.assign(I18N.en, { 'acc-promotions':'My promotions', 'acc-reseau':'My network', 'acc-collabs':'My collaborations' });
 
 function t(obj){ return typeof obj === 'object' ? obj[LANG] : obj; }
 
@@ -1730,6 +1733,11 @@ function getIcon(type){
 }
 
 function renderTiers(){
+  renderTiersBase();
+  const list = document.getElementById('tierList');
+  if (list) list.insertAdjacentHTML('afterbegin', partnerQuizNotice());
+}
+function renderTiersBase(){
   const cat = CATS.find(c => c.id === S.cat);
   if (!cat) return;
   const subEl = document.getElementById('tierSub');
@@ -1744,15 +1752,15 @@ function renderTiers(){
       const isSurm = lt.id === 'surm';
       const priceStr = isSurm
         ? (LANG === 'fr' ? 'À partir de ' : 'From ') + lt.price.toLocaleString('fr-FR') + '€'
-        : lt.price.toLocaleString('fr-FR') + '€';
+        : pp(lt.price).toLocaleString('fr-FR') + '€';
       const chfLine = (LANG === 'en' && lt.priceUSD)
         ? `<div style="font-size:12px;color:var(--grey);margin-top:4px">$${lt.priceUSD.toLocaleString('en-US')}</div>`
         : '';
       const payLine = isSurm
         ? (LANG === 'fr' ? 'Devis personnalisé — réponse sous 48h ouvrées' : 'Personalised quote — reply within 48 working hours')
         : (LANG === 'fr'
-            ? `Soit 3 × ${Math.round(lt.price / 3).toLocaleString('fr-FR')}€ sans frais`
-            : `That's 3 × €${Math.round(lt.price / 3).toLocaleString('fr-FR')} interest-free`);
+            ? `Soit 3 × ${Math.round(pp(lt.price) / 3).toLocaleString('fr-FR')}€ sans frais`
+            : `That's 3 × €${Math.round(pp(lt.price) / 3).toLocaleString('fr-FR')} interest-free`);
       const d = document.createElement('div');
       d.className = 'tier-card stagger';
       d.style.animationDelay = (0.24 + idx * 0.1) + 's';
@@ -1780,7 +1788,7 @@ function renderTiers(){
   let slot = 0;
   if (POLAS[S.cat]) {
     const polas = POLAS[S.cat];
-    const total = polas.price + 60;
+    const total = pp(polas.price + 60);
     const threeX = Math.round(total / 3).toLocaleString('fr-FR');
     const payLine = LANG === 'fr' ? `Soit 3 × ${threeX}€ sans frais` : `That's 3 × €${threeX} interest-free`;
     const badge = LANG === 'fr' ? 'Spécial mannequins' : 'For models';
@@ -1801,7 +1809,7 @@ function renderTiers(){
   }
   TIERS.forEach((tier) => {
     const td = cat.tiers[tier.id];
-    const threeX = Math.round(td.price / 3).toLocaleString('fr-FR');
+    const threeX = Math.round(pp(td.price) / 3).toLocaleString('fr-FR');
     const payLine = LANG === 'fr' ? `Soit 3 × ${threeX}€ sans frais` : `That's 3 × €${threeX} interest-free`;
     const d = document.createElement('div');
     d.className = 'tier-card stagger';
@@ -1810,7 +1818,7 @@ function renderTiers(){
       ${td.promo ? `<div class="tier-promo">${t(td.promo)}</div>` : ''}${tier.badge ? `<div class="tier-badge">${t(tier.badge)}</div>` : ''}
       <div class="tier-head">
         <div class="tier-name">${t(tier.name)}</div>
-        <div class="tier-price">${td.price.toLocaleString('fr-FR')}€<small>HT</small></div>
+        <div class="tier-price">${pp(td.price).toLocaleString('fr-FR')}€<small>HT</small></div>
       </div>
       <div class="tier-pay-line">${payLine}</div>
       <div class="tier-detail">${t(td.items).join(' · ')}</div>`;
@@ -1829,7 +1837,7 @@ function renderTiers(){
       ${sub.promo ? `<div class="tier-promo">${t(sub.promo)}</div>` : ''}<div class="tier-badge">${badge}</div>
       <div class="tier-head">
         <div class="tier-name">${t(sub.name)}</div>
-        <div class="tier-price">${sub.price.toLocaleString('fr-FR')}€<small>HT/${LANG === 'fr' ? 'mois' : 'mo'}</small></div>
+        <div class="tier-price">${pp(sub.price).toLocaleString('fr-FR')}€<small>HT/${LANG === 'fr' ? 'mois' : 'mo'}</small></div>
       </div>
       <div class="tier-detail">${t(sub.items).join(' · ')}</div>
       <div class="sub-engagement">${engagement} · ${saving}</div>`;
@@ -1839,6 +1847,11 @@ function renderTiers(){
 }
 
 function renderRecap(){
+  renderRecapBase();
+  const box = document.getElementById('recapBox');
+  if (box) box.insertAdjacentHTML('beforeend', partnerQuizNotice());
+}
+function renderRecapBase(){
   const cat = CATS.find(c => c.id === S.cat);
   const selLabel = LANG === 'fr' ? 'Votre sélection' : 'Your selection';
   const box = document.getElementById('recapBox');
@@ -1854,7 +1867,7 @@ function renderRecap(){
       <div class="recap-label">${selLabel}</div>
       <div class="recap-title">
         <span>${t(sub.name)}</span>
-        <span>${sub.price.toLocaleString('fr-FR')}€ HT/${LANG === 'fr' ? 'mois' : 'mo'}</span>
+        <span>${pp(sub.price).toLocaleString('fr-FR')}€ HT/${LANG === 'fr' ? 'mois' : 'mo'}</span>
       </div>
       <div class="recap-payment">${payLine}</div>
       <ul class="recap-items">
@@ -1865,7 +1878,7 @@ function renderRecap(){
   }
   if (S.tier === 'polas') {
     const polas = POLAS[S.cat];
-    const total = polas.price + 60;
+    const total = pp(polas.price + 60);
     const threeX = Math.round(total / 3).toLocaleString('fr-FR');
     const payLine = LANG === 'fr'
       ? `💳 Soit 3 × ${threeX}€ sans frais avec Klarna — ou carte bancaire, prélèvement automatique, acompte 30 % + solde.`
@@ -1891,7 +1904,7 @@ function renderRecap(){
     const isSurm = lt.id === 'surm';
     const chfLine = (LANG === 'en' && lt.priceUSD) ? ` / $${lt.priceUSD.toLocaleString('en-US')}` : '';
     const pricePrefix = isSurm ? (LANG === 'fr' ? 'À partir de ' : 'From ') : '';
-    const threeX = Math.round(lt.price / 3).toLocaleString('fr-FR');
+    const threeX = Math.round(pp(lt.price) / 3).toLocaleString('fr-FR');
     const payLine = isSurm
       ? (LANG === 'fr'
           ? '💳 Devis personnalisé — nous vous revenons sous 48h ouvrées.'
@@ -1903,7 +1916,7 @@ function renderRecap(){
       <div class="recap-label">${selLabel}</div>
       <div class="recap-title">
         <span>Lumen — ${t(lt.name)}</span>
-        <span>${pricePrefix}${lt.price.toLocaleString('fr-FR')}€${chfLine} HT</span>
+        <span>${pricePrefix}${(isSurm ? lt.price : pp(lt.price)).toLocaleString('fr-FR')}€${chfLine} HT</span>
       </div>
       <div class="recap-payment">${payLine}</div>
       <ul class="recap-items">
@@ -1916,7 +1929,7 @@ function renderRecap(){
   const td = cat.tiers[S.tier];
   const delivLabel = LANG === 'fr' ? 'Livraison' : 'Delivery';
   const studioSupplement = (S.cat === 'photo-part' && S.studio) ? ' + 60€ studio' : '';
-  const threeX = Math.round(td.price / 3).toLocaleString('fr-FR');
+  const threeX = Math.round(pp(td.price) / 3).toLocaleString('fr-FR');
   const payLine = LANG === 'fr'
     ? `💳 Soit 3 × ${threeX}€ sans frais avec Klarna — ou carte bancaire, prélèvement automatique, acompte 30 % + solde.`
     : `💳 That's 3 × €${threeX} interest-free with Klarna — or credit card, direct debit, 30% deposit + balance.`;
@@ -1924,7 +1937,7 @@ function renderRecap(){
     <div class="recap-label">${selLabel}</div>
     <div class="recap-title">
       <span>${t(cat.name)} — ${t(tier.name)}</span>
-      <span>${td.price.toLocaleString('fr-FR')}€${studioSupplement} HT</span>
+      <span>${pp(td.price).toLocaleString('fr-FR')}€${studioSupplement} HT</span>
     </div>
     <div class="recap-payment">${payLine}</div>
     <ul class="recap-items">
@@ -1984,7 +1997,7 @@ function renderOptions(){
       d.className = 'opt-item stagger';
       d.style.animationDelay = (0.42 + i * 0.08) + 's';
       const priceDisplay = typeof o.price === 'number'
-        ? '+' + o.price + '€'
+        ? '+' + pp(o.price) + '€'
         : (LANG === 'fr' ? 'Inclus' : 'Included');
       d.innerHTML = `
         <div class="opt-icon">${o.icon}</div>
@@ -2055,12 +2068,12 @@ function renderOptions(){
             ${o.packs.map(pk => `
               <div class="photo-pack" data-pack="${pk.id}" onclick="selectPhotoPack(event,'${o.id}','${pk.id}')">
                 <span>${t(pk.label)}</span>
-                <span class="photo-pack-price">${typeof pk.price==='number' ? '+'+pk.price+'€' : (LANG==='fr'?'Sur devis':'On request')}</span>
+                <span class="photo-pack-price">${typeof pk.price==='number' ? '+'+pp(pk.price)+'€' : (LANG==='fr'?'Sur devis':'On request')}</span>
               </div>`).join('')}
           </div>
         </div>`;
     } else {
-      const priceDisplay = typeof o.price === 'number' ? '+' + o.price + '€' : (o.price === '+20%' ? o.price : (LANG==='fr'?'Sur devis':'On request'));
+      const priceDisplay = typeof o.price === 'number' ? '+' + pp(o.price) + '€' : (o.price === '+20%' ? o.price : (LANG==='fr'?'Sur devis':'On request'));
       d.innerHTML = `
         <div class="opt-icon">${o.icon}</div>
         <div class="opt-check"></div>
@@ -2141,8 +2154,8 @@ function checkQuizForm(){
 }
 
 function computeTotal(){
-  if (S.tier === 'sub') return { amount: SUBS[S.cat].price, surDevis: false };
-  if (S.tier === 'polas') return { amount: POLAS[S.cat].price + 60, surDevis: false };
+  if (S.tier === 'sub') return { amount: pp(SUBS[S.cat].price), surDevis: false };
+  if (S.tier === 'polas') return { amount: pp(POLAS[S.cat].price + 60), surDevis: false };
   if (S.cat === 'lumen') {
     const lt = LUMEN_TIERS.find(x => x.id === S.tier);
     if (!lt) return { amount: 0, surDevis: true };
@@ -2153,7 +2166,7 @@ function computeTotal(){
       if (o && typeof o.price === 'number') total += o.price;
       else if (o) hasSurDevis = true;
     });
-    return { amount: total, surDevis: hasSurDevis };
+    return { amount: lt.id === 'surm' ? total : pp(total), surDevis: hasSurDevis };
   }
   const cat = CATS.find(c => c.id === S.cat);
   let total = cat.tiers[S.tier].price;
@@ -2168,7 +2181,7 @@ function computeTotal(){
     else hasSurDevis = true;
   });
   if (express) total = Math.round(total * 1.2);
-  return { amount: total, surDevis: hasSurDevis };
+  return { amount: pp(total), surDevis: hasSurDevis };
 }
 
 
@@ -2182,7 +2195,7 @@ function animatePriceCalc(){
 
   let targetAmount, isSub = false, surDevis = false, monthlyLabel = '';
   if (S.tier === 'sub') {
-    targetAmount = SUBS[S.cat] ? SUBS[S.cat].price : 0;
+    targetAmount = SUBS[S.cat] ? pp(SUBS[S.cat].price) : 0;
     isSub = true;
     monthlyLabel = LANG === 'fr' ? '/mois' : '/mo';
   } else {
@@ -2262,9 +2275,9 @@ function submitQuiz(e){
   let formuleLabel, montantLabel, budgetMontantEur;
   if (S.tier === 'sub') {
     const sub = SUBS[S.cat];
-    formuleLabel = 'ABONNEMENT — ' + sub.name.fr + ' (' + sub.price + '€ HT/mois, engagement 6 mois)';
-    montantLabel = sub.price + '€ HT/mois';
-    budgetMontantEur = sub.price;
+    formuleLabel = 'ABONNEMENT — ' + sub.name.fr + ' (' + pp(sub.price) + '€ HT/mois, engagement 6 mois)';
+    montantLabel = pp(sub.price) + '€ HT/mois';
+    budgetMontantEur = pp(sub.price);
   } else if (S.tier === 'polas') {
     const polas = POLAS[S.cat];
     const res = computeTotal();
@@ -2274,19 +2287,20 @@ function submitQuiz(e){
   } else if (S.cat === 'lumen') {
     const lt = LUMEN_TIERS.find(x => x.id === S.tier);
     const res = computeTotal();
-    const priceStr = lt.id === 'surm' ? 'à partir de 1800€ HT' : lt.price + '€ HT';
+    const priceStr = lt.id === 'surm' ? 'à partir de 1800€ HT' : pp(lt.price) + '€ HT';
     formuleLabel = 'Lumen — ' + lt.name.fr + ' (' + priceStr + ')';
     montantLabel = lt.id === 'surm'
       ? 'Sur devis (à partir de 1800€ HT)'
       : res.amount + '€ HT' + (res.surDevis ? ' + options sur devis' : '');
-    budgetMontantEur = lt.price;
+    budgetMontantEur = lt.id === 'surm' ? lt.price : pp(lt.price);
   } else {
     const tier = TIERS.find(x => x.id === S.tier);
     const res = computeTotal();
-    formuleLabel = tier.name.fr + ' (' + cat.tiers[S.tier].price + (S.studio?' +60€ studio':'') + '€ HT)';
+    formuleLabel = tier.name.fr + ' (' + res.amount + '€ HT' + (S.studio?', dont 60€ studio':'') + ')';
     montantLabel = res.amount + '€ HT' + (res.surDevis ? ' + options sur devis' : '');
     budgetMontantEur = res.amount;
   }
+  if (isPartnerUser() && !(S.cat === 'lumen' && S.tier === 'surm')) formuleLabel += ' — TARIF PARTENAIRE -' + PARTNER_DISCOUNT + '% (compte ' + USER.email + ')';
   const allOpts = S.cat === 'lumen'
     ? LUMEN_OPTIONS
     : [...OPTIONS, ...((SPECIAL_OPTIONS[S.cat+'_'+S.tier])||[])];
@@ -2909,7 +2923,7 @@ function doLogout(){
 }
 
 function setAccountTab(tab){
-  ['orders','partenariat','subs','moodboards','payments','factures','portfolio','infos'].forEach(x => {
+  ['orders','partenariat','promotions','reseau','collabs','subs','moodboards','payments','factures','portfolio','infos'].forEach(x => {
     document.getElementById('atab-' + x).classList.toggle('active', x === tab);
     document.getElementById('asec-' + x).classList.toggle('active', x === tab);
   });
@@ -2987,7 +3001,7 @@ function renderAccSubs(){
         </div>
         <div style="text-align:right">
           <span class="status-pill ${statusClass(sub.statut)}" style="margin-bottom:10px;display:inline-block">${sub.statut || '—'}</span>
-          <div class="acc-sub-price">${plan.price}€<small>${I18N[LANG]['acc-subs-month']}</small></div>
+          <div class="acc-sub-price">${pp(plan.price)}€<small>${I18N[LANG]['acc-subs-month']}</small></div>
         </div>
       </div>
       <div class="acc-sub-section-title">${I18N[LANG]['acc-subs-included']}</div>
@@ -3031,19 +3045,136 @@ function renderAccUpsell(){
    contenu statique de l'accordéon "Programme Partenaires" — un seul
    texte de référence pour ces informations, pas de duplication. */
 const PARTNER_SECTORS = [
-  { id:'architecture', name:{fr:'Architecture & habitat', en:'Architecture & living'} },
-  { id:'amenagement', name:{fr:'Aménagement & design', en:'Fittings & design'} },
-  { id:'artisanat', name:{fr:'Artisanat d\'exception', en:'Exceptional craftsmanship'} },
-  { id:'marques', name:{fr:'Marques & lifestyle', en:'Brands & lifestyle'} },
-  { id:'evenementiel', name:{fr:'Événementiel & lieux', en:'Events & venues'} },
+  { id:'portrait', name:{fr:'Portrait & lifestyle', en:'Portrait & lifestyle'} },
+  { id:'mode', name:{fr:'Mode & mannequins', en:'Fashion & models'} },
+  { id:'commercial', name:{fr:'Commercial & produits', en:'Commercial & products'} },
+  { id:'evenementiel', name:{fr:'Événementiel', en:'Events'} },
+  { id:'mariage', name:{fr:'Mariage & Lumen', en:'Weddings & Lumen'} },
 ];
+
+/* Les 5 univers partenaires reprennent les prestations actuellement
+   proposées au catalogue (Séance photo particuliers, Mode/agence/
+   mannequins, Commercial & produits, Événementiel, Lumen). Types de
+   prestataire regroupés par univers. Liste alignée côté Worker
+   (PROVIDER_TYPE_IDS dans server/src/index.ts) : tout ajout ici doit y
+   être reporté, sinon la sauvegarde sera refusée. */
+const PARTNER_PROVIDER_TYPES = [
+  { id:'coiffeur',        sector:'portrait',     name:{fr:'Coiffeur·se / barbier', en:'Hairstylist / barber'} },
+  { id:'maquilleur',      sector:'portrait',     name:{fr:'Maquilleur·se', en:'Make-up artist'} },
+  { id:'coach-image',     sector:'portrait',     name:{fr:'Coach en image / styliste personnel', en:'Image coach / personal stylist'} },
+  { id:'bien-etre',       sector:'portrait',     name:{fr:'Institut de beauté / bien-être', en:'Beauty / wellness studio'} },
+  { id:'studio-lieu',     sector:'portrait',     name:{fr:'Studio / lieu de shooting', en:'Studio / shoot location'} },
+  { id:'createur-mode',   sector:'mode',         name:{fr:'Créateur de mode', en:'Fashion designer'} },
+  { id:'agence-mannequin',sector:'mode',         name:{fr:'Agence de mannequins', en:'Model agency'} },
+  { id:'styliste',        sector:'mode',         name:{fr:'Styliste / directeur artistique', en:'Stylist / art director'} },
+  { id:'maquilleur-mode', sector:'mode',         name:{fr:'Maquilleur·se / coiffeur·se mode', en:'Fashion make-up / hair artist'} },
+  { id:'bijoutier',       sector:'mode',         name:{fr:'Bijoutier / créateur d\'accessoires', en:'Jeweller / accessories maker'} },
+  { id:'marque-produit',  sector:'commercial',   name:{fr:'Marque / e-commerçant', en:'Brand / online retailer'} },
+  { id:'cosmetique',      sector:'commercial',   name:{fr:'Marque cosmétique', en:'Cosmetics brand'} },
+  { id:'artisan-art',     sector:'commercial',   name:{fr:'Artisan / créateur de produits', en:'Artisan / product maker'} },
+  { id:'restaurateur',    sector:'commercial',   name:{fr:'Restaurateur / chef', en:'Restaurateur / chef'} },
+  { id:'agence-com',      sector:'commercial',   name:{fr:'Agence de communication / marketing', en:'Communication / marketing agency'} },
+  { id:'event-planner',   sector:'evenementiel', name:{fr:'Organisateur d\'événements', en:'Event planner'} },
+  { id:'lieu',            sector:'evenementiel', name:{fr:'Lieu de réception', en:'Event venue'} },
+  { id:'traiteur',        sector:'evenementiel', name:{fr:'Traiteur', en:'Caterer'} },
+  { id:'decorateur',      sector:'evenementiel', name:{fr:'Décorateur / fleuriste', en:'Decorator / florist'} },
+  { id:'animation',       sector:'evenementiel', name:{fr:'DJ / animation / son & lumière', en:'DJ / entertainment / sound & lighting'} },
+  { id:'wedding-planner', sector:'mariage',      name:{fr:'Wedding planner', en:'Wedding planner'} },
+  { id:'lieu-mariage',    sector:'mariage',      name:{fr:'Domaine / lieu de mariage', en:'Wedding venue'} },
+  { id:'fleuriste-mariage', sector:'mariage',    name:{fr:'Fleuriste de mariage', en:'Wedding florist'} },
+  { id:'robe-mariee',     sector:'mariage',      name:{fr:'Créateur de robes / costumier', en:'Gown designer / tailor'} },
+  { id:'traiteur-mariage',sector:'mariage',      name:{fr:'Traiteur / pâtissier mariage', en:'Wedding caterer / pastry chef'} },
+];
+const PARTNER_DISCOUNT = 20;
+
+let partnerEditType = false;
+let partnerDraftType = null;
+
+function partnerProviderType(id){ return PARTNER_PROVIDER_TYPES.find(p => p.id === id); }
+
+/* Écrit uniquement les champs partenaire modifiables par le partenaire
+   (typePrestataire, disponibleCollab, presentation, reseau, réponses aux
+   missions) — même ré-authentification par USER_CODE que saveMoodboards().
+   Le Worker ignore tout autre champ de `partenariat` (statut, secteur…). */
+function savePartnerData(extra, onSuccess, onError){
+  fetch(ACCOUNTS_API_BASE + '/account-update', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ type: USER.type, email: USER.email, code: USER_CODE, ...extra })
+  }).then(r => r.json()).then(data => {
+    if (!data.ok || !data.account) { if (onError) onError(); return; }
+    USER = data.account;
+    if (onSuccess) onSuccess();
+  }).catch(() => { if (onError) onError(); });
+}
 
 function renderAccPartner(){
   const el = document.getElementById('accPartnerContent');
   if (!el || !USER) return;
   const info = USER.partenariat || {};
-  const sector = PARTNER_SECTORS.find(s => s.id === info.secteur);
+  const ptype = partnerProviderType(info.typePrestataire);
+  const sector = PARTNER_SECTORS.find(s => s.id === (ptype ? ptype.sector : info.secteur));
   const statut = info.statut || I18N[LANG]['partner-statut-attente'];
+  const choosing = !ptype || partnerEditType;
+
+  const typeBlock = choosing ? `
+      <div class="mb-detail-block">
+        <div class="mb-detail-label">${t({fr:'Votre type de prestataire', en:'Your provider type'})}</div>
+        <p class="acc-info-note">${t({fr:'Sélectionnez la catégorie qui décrit le mieux votre activité. Elle détermine votre statut au sein du réseau Bunkaio et les missions collaboratives qui peuvent vous être proposées.', en:'Pick the category that best describes your business. It sets your status within the Bunkaio network and the collaborative missions you may be offered.'})}</p>
+        ${PARTNER_SECTORS.map(sec => `
+          <div class="pt-group">
+            <div class="pt-group-name">${t(sec.name)}</div>
+            <div class="mb-chip-grid pt-chips">
+              ${PARTNER_PROVIDER_TYPES.filter(p => p.sector === sec.id).map(p =>
+                `<button type="button" class="mb-chip ${partnerDraftType === p.id ? 'active' : ''}" onclick="selectPartnerType('${p.id}')">${t(p.name)}</button>`).join('')}
+            </div>
+          </div>`).join('')}
+        <div class="mb-wizard-actions pt-actions">
+          <button type="button" class="btn btn-solid" id="ptSaveBtn" onclick="savePartnerType()" ${partnerDraftType ? '' : 'disabled'}><span>${t({fr:'Valider mon statut', en:'Confirm my status'})}</span></button>
+          ${ptype ? `<button type="button" class="btn btn-ghost" onclick="cancelPartnerTypeEdit()"><span>${t({fr:'Annuler', en:'Cancel'})}</span></button>` : ''}
+        </div>
+      </div>` : `
+      <div class="pt-status">
+        <div class="pt-status-badge">
+          <div class="pt-status-label">${t({fr:'Votre statut', en:'Your status'})}</div>
+          <div class="pt-status-value">${t({fr:'Partenaire prestataire', en:'Partner provider'})} · ${t(ptype.name)}</div>
+        </div>
+        <button type="button" class="pt-link" onclick="editPartnerType()">${t({fr:'Modifier', en:'Change'})}</button>
+      </div>`;
+
+  const dispo = !!info.disponibleCollab;
+  const advantages = ptype ? `
+      <div class="mb-detail-block">
+        <div class="mb-detail-label">${t({fr:'Vos avantages de partenaire prestataire', en:'Your provider-partner benefits'})}</div>
+        <div class="pt-adv-grid">
+          <div class="pt-adv">
+            <div class="pt-adv-big">-${PARTNER_DISCOUNT}%</div>
+            <div class="pt-adv-title">${t({fr:'Sur chaque prestation du catalogue', en:'On every catalogue service'})}</div>
+            <div class="pt-adv-text">${t({fr:'Tarif partenaire permanent sur toutes les prestations Bunkaio, options comprises. Détail dans « Mes promotions ».', en:'A permanent partner rate on every Bunkaio service, add-ons included. Details in "My promotions".'})}</div>
+          </div>
+          <div class="pt-adv">
+            <div class="pt-adv-big pt-adv-icon">€</div>
+            <div class="pt-adv-title">${t({fr:'Missions collaboratives rémunérées', en:'Paid collaborative missions'})}</div>
+            <div class="pt-adv-text">${t({fr:'Bunkaio peut vous solliciter pour intervenir sur des projets clients, selon votre type de prestataire. Retrouvez-les dans « Mes collaborations ».', en:'Bunkaio may call on you for client projects, based on your provider type. Find them in "My collaborations".'})}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-detail-block">
+        <div class="mb-detail-label">${t({fr:'Disponibilité pour les collaborations', en:'Availability for collaborations'})}</div>
+        <div class="mb-chip-grid pt-chips">
+          <button type="button" class="mb-chip ${dispo ? 'active' : ''}" onclick="setCollabAvailability(true)">${t({fr:'Disponible', en:'Available'})}</button>
+          <button type="button" class="mb-chip ${!dispo ? 'active' : ''}" onclick="setCollabAvailability(false)">${t({fr:'Indisponible pour le moment', en:'Not available right now'})}</button>
+        </div>
+      </div>
+
+      <div class="mb-detail-block">
+        <div class="mb-detail-label">${t({fr:'Votre présentation', en:'Your introduction'})}</div>
+        <div class="fgroup" style="margin-bottom:14px">
+          <textarea id="ptPresentation" maxlength="600" placeholder="${t({fr:'Votre savoir-faire, vos références, ce qui vous distingue — l\'équipe Bunkaio s\'en sert pour vous proposer les bonnes missions.', en:'Your craft, references and what sets you apart — the Bunkaio team uses this to offer you the right missions.'})}">${escHtml(info.presentation || '')}</textarea>
+        </div>
+        <button type="button" class="btn btn-ghost" id="ptPresBtn" onclick="savePartnerPresentation()"><span>${t({fr:'Enregistrer', en:'Save'})}</span></button>
+      </div>` : '';
 
   el.innerHTML = `
     <div class="acc-info-card">
@@ -3054,6 +3185,9 @@ function renderAccPartner(){
         </div>
         <span class="status-pill ${statusClass(statut)}">${escHtml(statut)}</span>
       </div>
+
+      ${typeBlock}
+      ${advantages}
 
       ${info.articleUrl ? `
       <div class="mb-detail-block">
@@ -3066,7 +3200,7 @@ function renderAccPartner(){
 
       <div class="mb-detail-block">
         <div class="mb-detail-label">${I18N[LANG]['partner-benefits-label']}</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
+        <div class="pt-prog-grid">
           <div class="cred-card"><div class="cred-num">01</div><div class="cred-title">${I18N[LANG]['p-b1-title']}</div><div class="cred-text">${I18N[LANG]['p-b1-text']}</div></div>
           <div class="cred-card"><div class="cred-num">02</div><div class="cred-title">${I18N[LANG]['p-b2-title']}</div><div class="cred-text">${I18N[LANG]['p-b2-text']}</div></div>
           <div class="cred-card"><div class="cred-num">03</div><div class="cred-title">${I18N[LANG]['p-b3-title']}</div><div class="cred-text">${I18N[LANG]['p-b3-text']}</div></div>
@@ -3079,6 +3213,284 @@ function renderAccPartner(){
         <div class="mb-detail-vision">${I18N[LANG]['p-places-text']}</div>
       </div>
     </div>`;
+}
+
+function selectPartnerType(id){
+  partnerDraftType = id;
+  renderAccPartner();
+}
+function editPartnerType(){
+  partnerEditType = true;
+  partnerDraftType = (USER.partenariat || {}).typePrestataire || null;
+  renderAccPartner();
+}
+function cancelPartnerTypeEdit(){
+  partnerEditType = false; partnerDraftType = null;
+  renderAccPartner();
+}
+function savePartnerType(){
+  if (!partnerDraftType) return;
+  const btn = document.getElementById('ptSaveBtn');
+  if (btn) btn.disabled = true;
+  savePartnerData({ partenariat: { typePrestataire: partnerDraftType } }, () => {
+    partnerEditType = false; partnerDraftType = null;
+    renderAccount(); setAccountTab('partenariat');
+  }, () => { if (btn) btn.disabled = false; });
+}
+function setCollabAvailability(value){
+  savePartnerData({ partenariat: { disponibleCollab: value } }, () => { renderAccPartner(); });
+}
+function savePartnerPresentation(){
+  const btn = document.getElementById('ptPresBtn');
+  const value = document.getElementById('ptPresentation').value.trim();
+  if (btn) btn.disabled = true;
+  savePartnerData({ partenariat: { presentation: value } }, () => { renderAccPartner(); }, () => { if (btn) btn.disabled = false; });
+}
+
+/* ═══════════════ ESPACE PARTENAIRE — MES PROMOTIONS ═══════════════
+   Le -20% est permanent et lu depuis PARTNER_DISCOUNT ; les prix du
+   tableau sont calculés depuis CATS (jamais dupliqués). Les promotions
+   additionnelles viennent de USER.promotions, renseignées par l'admin. */
+function partnerPrice(price){ return Math.round(price * (100 - PARTNER_DISCOUNT) / 100); }
+/* Remise partenaire appliquée au questionnaire de devis : -20% sur les
+   prestations, abonnements et options pour un partenaire connecté
+   (abonnements inclus, sauf la formule Lumen "Sur-mesure", sur devis). */
+function isPartnerUser(){ return !!(USER && USER.type === 'partner'); }
+function pp(price){ return isPartnerUser() && typeof price === 'number' ? partnerPrice(price) : price; }
+function partnerQuizNotice(){
+  if (!isPartnerUser() || (S.cat === 'lumen' && S.tier === 'surm')) return '';
+  return `<div class="pt-quiz-notice">${t({fr:'Tarif partenaire -' + PARTNER_DISCOUNT + '% appliqué à cette sélection.', en:'Partner rate -' + PARTNER_DISCOUNT + '% applied to this selection.'})}</div>`;
+}
+function eur(n){ return n.toLocaleString(LANG === 'fr' ? 'fr-FR' : 'en-GB') + ' €'; }
+
+function renderAccPromos(){
+  const el = document.getElementById('accPromosContent');
+  if (!el || !USER) return;
+  const promos = USER.promotions || [];
+  const rows = CATS.filter(c => c.tiers && TIERS.some(tr => c.tiers[tr.id] && typeof c.tiers[tr.id].price === 'number')).map(c => {
+    const cells = TIERS.map(tr => {
+      const p = c.tiers[tr.id] && c.tiers[tr.id].price;
+      return typeof p === 'number'
+        ? `<td><span class="pt-price-old">${eur(p)}</span> <strong>${eur(partnerPrice(p))}</strong></td>` : '<td>—</td>';
+    }).join('');
+    return `<tr><td>${t(c.name)}</td>${cells}</tr>`;
+  }).join('');
+
+  el.innerHTML = `
+    <div class="acc-info-card pt-hero-promo">
+      <div class="pt-hero-big">-${PARTNER_DISCOUNT}%</div>
+      <div>
+        <div class="pt-hero-title">${t({fr:'Tarif partenaire permanent', en:'Permanent partner rate'})}</div>
+        <p class="acc-info-note" style="margin:0">${t({fr:'Sur chaque prestation du catalogue Bunkaio, options comprises, tant que votre partenariat est actif.', en:'On every Bunkaio catalogue service, add-ons included, for as long as your partnership is active.'})}</p>
+      </div>
+    </div>
+
+    <div class="pt-section-label">${t({fr:'Promotions en cours', en:'Current promotions'})}</div>
+    ${promos.length ? `<div class="pt-promo-list">${promos.map(p => `
+      <div class="pt-promo">
+        <div class="pt-promo-top">
+          <div class="pt-promo-title">${escHtml(p.titre)}</div>
+          ${p.remise ? `<span class="mb-tag">${escHtml(p.remise)}</span>` : ''}
+        </div>
+        ${p.description ? `<p class="pt-promo-text">${escHtml(p.description)}</p>` : ''}
+        <div class="pt-promo-foot">
+          ${p.code ? `<span class="pt-code">${escHtml(p.code)}</span>` : ''}
+          ${p.validiteJusquAu ? `<span class="pt-promo-meta">${t({fr:'Valable jusqu\'au', en:'Valid until'})} ${escHtml(p.validiteJusquAu)}</span>` : ''}
+          ${p.statut ? `<span class="status-pill ${statusClass(p.statut)}">${escHtml(p.statut)}</span>` : ''}
+        </div>
+      </div>`).join('')}</div>`
+    : `<div class="acc-info-card"><div class="empty-note">${t({fr:'Aucune promotion additionnelle pour le moment. Vos offres exclusives apparaîtront ici.', en:'No additional promotions right now. Your exclusive offers will appear here.'})}</div></div>`}
+
+    <div class="pt-section-label">${t({fr:'Vos prix partenaire', en:'Your partner prices'})}</div>
+    <div class="table-wrap"><table class="data-table pt-price-table">
+      <thead><tr><th>${t({fr:'Prestation', en:'Service'})}</th>${TIERS.map(tr => `<th>${t(tr.name)}</th>`).join('')}</tr></thead>
+      <tbody>${rows}</tbody>
+    </table></div>
+    <p class="pt-foot-note">${t({fr:'Prix HT. Les options ajoutées à une prestation bénéficient également du tarif partenaire.', en:'Prices excl. VAT. Add-ons on any service also get the partner rate.'})}</p>`;
+}
+
+/* ═══════════════ ESPACE PARTENAIRE — MON RÉSEAU ═══════════════
+   Contacts du partenaire (ajoutés par lui, modifiables) + mises en
+   relation faites par l'équipe Bunkaio (origine 'bunkaio', lecture
+   seule — le Worker les conserve toujours à la sauvegarde). */
+let reseauAdding = false;
+
+function renderAccReseau(){
+  const el = document.getElementById('accReseauContent');
+  if (!el || !USER) return;
+  const all = USER.reseau || [];
+  const introduced = all.filter(c => c.origine === 'bunkaio');
+  const own = all.filter(c => c.origine !== 'bunkaio');
+  const ownNames = new Set(all.map(c => c.nom.toLowerCase()));
+
+  const card = (c, removable) => `
+    <div class="pt-contact">
+      <div class="pt-contact-main">
+        <div class="pt-contact-name">${escHtml(c.nom)}</div>
+        <div class="pt-contact-role">${[c.domaine, c.role].filter(Boolean).map(escHtml).join(' · ') || '&nbsp;'}</div>
+        ${c.contact ? `<div class="pt-contact-line">${escHtml(c.contact)}</div>` : ''}
+        ${c.lien ? `<a class="pt-contact-line" href="${escHtml(c.lien)}" target="_blank" rel="noopener">${escHtml(c.lien)}</a>` : ''}
+        ${c.note ? `<div class="pt-contact-note">${escHtml(c.note)}</div>` : ''}
+      </div>
+      ${removable ? `<button type="button" class="pt-link" onclick="removeNetworkContact('${escHtml(c.id)}')">${t({fr:'Retirer', en:'Remove'})}</button>` : ''}
+    </div>`;
+
+  el.innerHTML = `
+    ${introduced.length ? `
+      <div class="pt-section-label">${t({fr:'Mises en relation par Bunkaio', en:'Introduced by Bunkaio'})}</div>
+      <div class="pt-contact-grid">${introduced.map(c => card(c, false)).join('')}</div>` : ''}
+
+    <div class="pt-section-head">
+      <div class="pt-section-label" style="margin:0">${t({fr:'Mes contacts', en:'My contacts'})}</div>
+      ${reseauAdding ? '' : `<button type="button" class="btn btn-ghost" onclick="toggleNetworkForm(true)"><span>${t({fr:'+ Ajouter un contact', en:'+ Add a contact'})}</span></button>`}
+    </div>
+
+    ${reseauAdding ? `
+    <div class="acc-info-card" style="margin-bottom:22px">
+      <div class="pt-form-grid">
+        <div class="fgroup"><label>${t({fr:'Nom / société *', en:'Name / company *'})}</label><input type="text" id="nwNom" maxlength="120"></div>
+        <div class="fgroup"><label>${t({fr:'Domaine', en:'Field'})}</label>
+          <select id="nwDomaine"><option value=""></option>${PARTNER_PROVIDER_TYPES.map(p => `<option value="${escHtml(t(p.name))}">${escHtml(t(p.name))}</option>`).join('')}</select></div>
+        <div class="fgroup"><label>${t({fr:'Rôle / spécialité', en:'Role / speciality'})}</label><input type="text" id="nwRole" maxlength="300"></div>
+        <div class="fgroup"><label>${t({fr:'Email ou téléphone', en:'Email or phone'})}</label><input type="text" id="nwContact" maxlength="300"></div>
+        <div class="fgroup"><label>${t({fr:'Site ou Instagram', en:'Website or Instagram'})}</label><input type="text" id="nwLien" maxlength="300"></div>
+        <div class="fgroup"><label>${t({fr:'Note', en:'Note'})}</label><input type="text" id="nwNote" maxlength="300"></div>
+      </div>
+      <div class="mb-wizard-actions" style="margin-left:0">
+        <button type="button" class="btn btn-solid" id="nwSaveBtn" onclick="addNetworkContact()"><span>${t({fr:'Ajouter à mon réseau', en:'Add to my network'})}</span></button>
+        <button type="button" class="btn btn-ghost" onclick="toggleNetworkForm(false)"><span>${t({fr:'Annuler', en:'Cancel'})}</span></button>
+      </div>
+    </div>` : ''}
+
+    ${own.length ? `<div class="pt-contact-grid">${own.map(c => card(c, true)).join('')}</div>`
+      : (reseauAdding ? '' : `<div class="acc-info-card"><div class="empty-note">${t({fr:'Votre réseau est vide. Ajoutez les professionnels avec qui vous travaillez — traiteurs, lieux, décorateurs, stylistes — pour les retrouver dans vos futures collaborations.', en:'Your network is empty. Add the professionals you work with — caterers, venues, decorators, stylists — to find them in future collaborations.'})}</div></div>`)}
+    ${renderNetworkDirectory(ownNames)}`;
+}
+
+/* Annuaire du réseau Bunkaio — DONNÉES FICTIVES (démo), à remplacer par
+   les vrais partenaires consentants (une route Worker dédiée) avant
+   publication. Les ids de type reprennent PARTNER_PROVIDER_TYPES. */
+const NETWORK_DIRECTORY_DEMO = [
+  { nom:'Atelier Mérel',        type:'maquilleur',      ville:'Lyon',        desc:{fr:'Maquillage et beauté pour portraits et shootings.', en:'Make-up and beauty for portraits and shoots.'} },
+  { nom:'Studio Valmont',       type:'studio-lieu',     ville:'Bordeaux',    desc:{fr:'Studio lumière naturelle, cycloramas et décors.', en:'Natural-light studio, cycloramas and sets.'} },
+  { nom:'Maison Élise Varenne', type:'createur-mode',   ville:'Paris',       desc:{fr:'Prêt-à-porter féminin éthique.', en:'Ethical womenswear.'} },
+  { nom:'Agence Solstice',      type:'agence-mannequin',ville:'Marseille',   desc:{fr:'Mannequins et talents pour campagnes et lookbooks.', en:'Models and talent for campaigns and lookbooks.'} },
+  { nom:'Atelier Nour',         type:'bijoutier',       ville:'Montpellier', desc:{fr:'Bijoux artisanaux en séries limitées.', en:'Handmade jewellery in limited runs.'} },
+  { nom:'Lumière Cosmétiques',  type:'cosmetique',      ville:'Grasse',      desc:{fr:'Soins naturels, parfumerie de niche.', en:'Natural skincare, niche perfumery.'} },
+  { nom:'Terre & Feu',          type:'artisan-art',     ville:'Aix-en-Provence', desc:{fr:'Céramique d\'art et arts de la table.', en:'Art ceramics and tableware.'} },
+  { nom:'Maison Gaspard',       type:'restaurateur',    ville:'Lyon',        desc:{fr:'Table gastronomique de saison.', en:'Seasonal fine dining.'} },
+  { nom:'Maison Orsini Events', type:'event-planner',   ville:'Nice',        desc:{fr:'Événements d\'entreprise et soirées privées.', en:'Corporate events and private parties.'} },
+  { nom:'Domaine des Oliviers', type:'lieu',            ville:'Luberon',     desc:{fr:'Lieu de réception pour séminaires et soirées.', en:'Venue for seminars and parties.'} },
+  { nom:'Fleurs d\'Ysée',       type:'decorateur',      ville:'Paris',       desc:{fr:'Décors floraux événementiels.', en:'Event floral design.'} },
+  { nom:'Camille & Co',         type:'wedding-planner', ville:'Béziers',     desc:{fr:'Organisation de mariages clé en main.', en:'Turnkey wedding planning.'} },
+  { nom:'Château de Lauzun',    type:'lieu-mariage',    ville:'Narbonne',    desc:{fr:'Domaine de mariage, 150 couverts.', en:'Wedding estate, 150 guests.'} },
+  { nom:'Atelier Céleste',      type:'robe-mariee',     ville:'Montpellier', desc:{fr:'Robes de mariée sur mesure.', en:'Bespoke wedding gowns.'} },
+];
+let networkDirSector = 'all';
+
+function renderNetworkDirectory(ownNames){
+  const sectors = PARTNER_SECTORS.map(sec => `<button type="button" class="mb-chip ${networkDirSector === sec.id ? 'active' : ''}" onclick="setNetworkDirSector('${sec.id}')">${t(sec.name)}</button>`).join('');
+  const rows = NETWORK_DIRECTORY_DEMO.filter(m => {
+    const pt = partnerProviderType(m.type);
+    return networkDirSector === 'all' || (pt && pt.sector === networkDirSector);
+  }).map(m => {
+    const pt = partnerProviderType(m.type);
+    const added = ownNames.has(m.nom.toLowerCase());
+    return `
+    <div class="pt-contact">
+      <div class="pt-contact-main">
+        <div class="pt-contact-name">${escHtml(m.nom)}</div>
+        <div class="pt-contact-role">${pt ? escHtml(t(pt.name)) : ''} · ${escHtml(m.ville)}</div>
+        <div class="pt-contact-line">${escHtml(t(m.desc))}</div>
+      </div>
+      <button type="button" class="pt-link" ${added ? 'disabled' : ''} onclick="addDirectoryContact('${escHtml(m.nom.replace(/'/g, "\\'"))}')">${added ? t({fr:'Ajouté', en:'Added'}) : t({fr:'Ajouter', en:'Add'})}</button>
+    </div>`;
+  }).join('');
+  return `
+    <div class="pt-section-label">${t({fr:'Annuaire du réseau Bunkaio', en:'Bunkaio network directory'})}</div>
+    <div class="pt-demo-flag">${t({fr:'Aperçu — profils fictifs à titre d\'exemple', en:'Preview — fictional example profiles'})}</div>
+    <div class="mb-chip-grid pt-chips pt-dir-filter">
+      <button type="button" class="mb-chip ${networkDirSector === 'all' ? 'active' : ''}" onclick="setNetworkDirSector('all')">${t({fr:'Tous', en:'All'})}</button>${sectors}
+    </div>
+    <div class="pt-contact-grid">${rows}</div>`;
+}
+function setNetworkDirSector(id){ networkDirSector = id; renderAccReseau(); }
+function addDirectoryContact(nom){
+  const m = NETWORK_DIRECTORY_DEMO.find(x => x.nom === nom);
+  if (!m) return;
+  const pt = partnerProviderType(m.type);
+  const contact = { id:'nw_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7), nom:m.nom, domaine: pt ? t(pt.name) : undefined, role:m.ville };
+  savePartnerData({ reseau: [...networkOwnPayload(USER.reseau || []), contact] }, () => { renderAccReseau(); });
+}
+
+function toggleNetworkForm(open){ reseauAdding = open; renderAccReseau(); }
+
+function networkOwnPayload(list){
+  return list.filter(c => c.origine !== 'bunkaio').map(c => ({ id:c.id, nom:c.nom, domaine:c.domaine, role:c.role, contact:c.contact, lien:c.lien, note:c.note }));
+}
+function addNetworkContact(){
+  const nom = document.getElementById('nwNom').value.trim();
+  if (!nom) { document.getElementById('nwNom').focus(); return; }
+  const val = id => document.getElementById(id).value.trim() || undefined;
+  const contact = { id:'nw_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7), nom, domaine:val('nwDomaine'), role:val('nwRole'), contact:val('nwContact'), lien:val('nwLien'), note:val('nwNote') };
+  const btn = document.getElementById('nwSaveBtn');
+  if (btn) btn.disabled = true;
+  savePartnerData({ reseau: [...networkOwnPayload(USER.reseau || []), contact] },
+    () => { reseauAdding = false; renderAccReseau(); }, () => { if (btn) btn.disabled = false; });
+}
+function removeNetworkContact(id){
+  savePartnerData({ reseau: networkOwnPayload(USER.reseau || []).filter(c => c.id !== id) }, () => { renderAccReseau(); });
+}
+
+/* ═══════════════ ESPACE PARTENAIRE — MES COLLABORATIONS ═══════════════
+   Missions rémunérées proposées par Bunkaio (créées côté admin). Le
+   partenaire ne peut que répondre à une mission "Proposée" ; le Worker
+   refuse toute autre transition. */
+function renderAccCollabs(){
+  const el = document.getElementById('accCollabsContent');
+  if (!el || !USER) return;
+  const list = USER.collaborations || [];
+  const pending = list.filter(c => c.statut === 'Proposée');
+  const rest = list.filter(c => c.statut !== 'Proposée');
+  const info = USER.partenariat || {};
+
+  const card = c => `
+    <div class="pt-promo">
+      <div class="pt-promo-top">
+        <div class="pt-promo-title">${escHtml(c.titre)}</div>
+        <span class="status-pill ${statusClass(c.statut)}">${escHtml(c.statut)}</span>
+      </div>
+      ${c.description ? `<p class="pt-promo-text">${escHtml(c.description)}</p>` : ''}
+      <div class="pt-promo-foot">
+        ${c.date ? `<span class="pt-promo-meta">${escHtml(c.date)}</span>` : ''}
+        ${c.lieu ? `<span class="pt-promo-meta">${escHtml(c.lieu)}</span>` : ''}
+        ${c.remuneration ? `<span class="pt-code">${escHtml(c.remuneration)}</span>` : ''}
+      </div>
+      ${c.statut === 'Proposée' ? `
+      <div class="mb-wizard-actions" style="margin:18px 0 0">
+        <button type="button" class="btn btn-solid" onclick="respondCollab('${escHtml(c.id)}','Acceptée')"><span>${t({fr:'Accepter', en:'Accept'})}</span></button>
+        <button type="button" class="btn btn-ghost" onclick="respondCollab('${escHtml(c.id)}','Déclinée')"><span>${t({fr:'Décliner', en:'Decline'})}</span></button>
+      </div>` : ''}
+    </div>`;
+
+  el.innerHTML = `
+    <div class="acc-info-card pt-hero-promo">
+      <div class="pt-hero-big pt-adv-icon">€</div>
+      <div>
+        <div class="pt-hero-title">${t({fr:'Prestations collaboratives rémunérées', en:'Paid collaborative missions'})}</div>
+        <p class="acc-info-note" style="margin:0">${info.typePrestataire
+          ? t({fr:'Bunkaio vous propose ici des missions adaptées à votre profil. Vous restez libre de les accepter ou non.', en:'Bunkaio offers missions here that match your profile. You are free to accept or decline.'})
+          : t({fr:'Choisissez d\'abord votre type de prestataire dans « Mon partenariat » pour recevoir des missions adaptées.', en:'First choose your provider type in "My partnership" to receive matching missions.'})}</p>
+      </div>
+    </div>
+
+    ${pending.length ? `<div class="pt-section-label">${t({fr:'À traiter', en:'Awaiting your reply'})}</div><div class="pt-promo-list">${pending.map(card).join('')}</div>` : ''}
+    ${rest.length ? `<div class="pt-section-label">${t({fr:'Historique', en:'History'})}</div><div class="pt-promo-list">${rest.map(card).join('')}</div>` : ''}
+    ${list.length ? '' : `<div class="acc-info-card"><div class="empty-note">${t({fr:'Aucune mission pour le moment. Les propositions de l\'équipe Bunkaio apparaîtront ici.', en:'No missions yet. Proposals from the Bunkaio team will appear here.'})}</div></div>`}`;
+}
+
+function respondCollab(id, statut){
+  savePartnerData({ collaborationReponses: [{ id, statut }] }, () => { renderAccCollabs(); });
 }
 
 /* ═══════════════ ESPACE CLIENT — MES MOODBOARDS ═══════════════
@@ -3604,11 +4016,12 @@ function renderAccount(){
   document.getElementById('accBadge').textContent =
     I18N[LANG][USER.type === 'client' ? 'acc-client-badge' : 'acc-partner-badge'];
   document.getElementById('accName').textContent = USER.nom || USER.email;
-  const partnerTab = document.getElementById('atab-partenariat');
-  if (partnerTab) {
-    partnerTab.style.display = USER.type === 'partner' ? '' : 'none';
-    if (USER.type === 'partner') renderAccPartner();
-  }
+  const isPartner = USER.type === 'partner';
+  document.getElementById('view-account').dataset.acct = USER.type;
+  ['partenariat','promotions','reseau','collabs'].forEach(x => {
+    document.getElementById('atab-' + x).style.display = isPartner ? '' : 'none';
+  });
+  if (isPartner) { renderAccPartner(); renderAccPromos(); renderAccReseau(); renderAccCollabs(); }
   renderAccountStepper();
   renderAccSubs();
   mbView = 'list'; mbActiveId = null;
@@ -3907,19 +4320,124 @@ function setPartnersTab(tab){
 }
 
 /* ═══════════════ ACCORDÉON PARTENAIRES ═══════════════ */
+/* ═══════════════ PAGE PARTENAIRES — ARGUMENTAIRE ═══════════════
+   Bloc d'accroche au-dessus de l'accordéon : proposition de valeur,
+   chiffres clés, avantages concrets, univers et parcours. Les chiffres
+   (-20%, 60 places) viennent de PARTNER_DISCOUNT / du texte du
+   programme ; l'exemple de prix est calculé depuis CATS. */
+function renderPartnersPitch(){
+  const el = document.getElementById('partnersPitch');
+  if (!el) return;
+  const ex = CATS.find(c => c.id === 'commercial');
+  const exPrice = ex && ex.tiers && ex.tiers.sig && ex.tiers.sig.price;
+  const benefits = [
+    { n:'01', icon:'<path d="M12 3l2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.6 6.6 19.5l1.2-6L3.3 9.3l6.1-.7z"/>',
+      title:{fr:'Une mise en lumière éditoriale', en:'An editorial spotlight'},
+      text:{fr:'Votre savoir-faire n\'est pas vendu comme une prestation : il est raconté. Un récit visuel signé Bunkaio, publié et durable.', en:'Your craft isn\'t sold as a service: it is told. A visual story signed by Bunkaio, published and lasting.'} },
+    { n:'02', icon:'<path d="M5 19 19 5"/><circle cx="7" cy="7" r="2.4"/><circle cx="17" cy="17" r="2.4"/>', hl:'-' + PARTNER_DISCOUNT + '%',
+      title:{fr:'-' + PARTNER_DISCOUNT + '% sur tout le catalogue', en:'-' + PARTNER_DISCOUNT + '% across the catalogue'},
+      text:{fr:'Un tarif partenaire permanent sur chaque prestation Bunkaio, options et abonnements compris. Il s\'applique automatiquement à vos devis.', en:'A permanent partner rate on every Bunkaio service, add-ons and subscriptions included. It applies automatically to your quotes.'} },
+    { n:'03', icon:'<circle cx="12" cy="12" r="8.5"/><path d="M14.8 9.2c-.5-.8-1.5-1.2-2.8-1.2-1.6 0-2.7.8-2.7 2 0 3 5.6 1.4 5.6 4.2 0 1.2-1.1 2-2.9 2-1.4 0-2.5-.5-3-1.4M12 6.5V8m0 8v1.5"/>',
+      title:{fr:'Des missions collaboratives rémunérées', en:'Paid collaborative missions'},
+      text:{fr:'Selon votre métier, Bunkaio vous sollicite sur des projets clients. Vous acceptez ou déclinez, depuis votre espace, en un clic.', en:'Depending on your trade, Bunkaio calls on you for client projects. You accept or decline from your space in one click.'} },
+    { n:'04', icon:'<circle cx="12" cy="12" r="3"/><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/>',
+      title:{fr:'Une visibilité renforcée', en:'Enhanced visibility'},
+      text:{fr:'Présence privilégiée sur le site Bunkaio, les réseaux sociaux et les futurs supports éditoriaux de la marque.', en:'A privileged presence on the Bunkaio website, social channels and the brand\'s future editorial publications.'} },
+    { n:'05', icon:'<circle cx="6" cy="7" r="2.4"/><circle cx="18" cy="7" r="2.4"/><circle cx="12" cy="18" r="2.4"/><path d="M8 8.5l3 7M16 8.5l-3 7M8.4 7h7.2"/>',
+      title:{fr:'Un réseau de professionnels', en:'A professional network'},
+      text:{fr:'Un annuaire de partenaires triés sur le volet et des mises en relation par l\'équipe : traiteurs, lieux, architectes, artisans.', en:'A directory of hand-picked partners and introductions by the team: caterers, venues, architects, craftspeople.'} },
+    { n:'06', icon:'<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 9.5h16M9.5 9.5V20"/>',
+      title:{fr:'Un espace partenaire dédié', en:'A dedicated partner space'},
+      text:{fr:'Vos promotions, votre réseau, vos collaborations et vos moodboards au même endroit. Plus un accès prioritaire à nos disponibilités.', en:'Your promotions, network, collaborations and moodboards in one place. Plus priority access to our schedule.'} },
+  ];
+  const universes = [
+    { id:'portrait', name:{fr:'Portrait & lifestyle', en:'Portrait & lifestyle'}, who:{fr:'Coiffeurs, maquilleurs, coachs en image, instituts, studios', en:'Hairstylists, make-up artists, image coaches, wellness studios, studios'} },
+    { id:'mode', name:{fr:'Mode & mannequins', en:'Fashion & models'}, who:{fr:'Créateurs, agences de mannequins, stylistes, bijoutiers', en:'Designers, model agencies, stylists, jewellers'} },
+    { id:'commercial', name:{fr:'Commercial & produits', en:'Commercial & products'}, who:{fr:'Marques, artisans, cosmétique, restaurateurs, agences', en:'Brands, artisans, cosmetics, restaurateurs, agencies'} },
+    { id:'evenementiel', name:{fr:'Événementiel', en:'Events'}, who:{fr:'Organisateurs, lieux de réception, traiteurs, décorateurs, animation', en:'Planners, venues, caterers, decorators, entertainment'} },
+    { id:'mariage', name:{fr:'Mariage & Lumen', en:'Weddings & Lumen'}, who:{fr:'Wedding planners, domaines, fleuristes, créateurs de robes, traiteurs', en:'Wedding planners, estates, florists, gown designers, caterers'} },
+  ];
+  const steps = [
+    { n:'1', title:{fr:'Candidatez', en:'Apply'}, text:{fr:'Présentez votre activité et vos réalisations.', en:'Present your business and your work.'} },
+    { n:'2', title:{fr:'Étude', en:'Review'}, text:{fr:'Réponse personnalisée sous 5 jours ouvrés.', en:'A personal reply within 5 working days.'} },
+    { n:'3', title:{fr:'Choisissez votre statut', en:'Pick your status'}, text:{fr:'Sélectionnez votre type de prestataire dans votre espace.', en:'Select your provider type in your space.'} },
+    { n:'4', title:{fr:'Profitez', en:'Benefit'}, text:{fr:'Tarif partenaire, missions, visibilité, réseau.', en:'Partner rate, missions, visibility, network.'} },
+  ];
+  const svg = d => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
+
+  el.innerHTML = `
+    <section class="pp-hero rv">
+      <div class="pp-kicker">${t({fr:'Programme Partenaires Fondateurs · 60 places', en:'Founding Partners Programme · 60 places'})}</div>
+      <h2 class="pp-title">${t({fr:'Votre savoir-faire mérite mieux qu\'une simple prestation.', en:'Your craft deserves more than a simple service.'})}</h2>
+      <p class="pp-lead">${t({fr:'Rejoignez le cercle restreint des professionnels que Bunkaio met en lumière. Une mise en valeur éditoriale, un tarif partenaire permanent, des missions rémunérées et un réseau d\'exception.', en:'Join the select circle of professionals Bunkaio puts in the spotlight. Editorial storytelling, a permanent partner rate, paid missions and an exceptional network.'})}</p>
+      <div class="pp-cta-row">
+        <button class="partner-cta-btn" onclick="goView('partners','apply')">${t({fr:'Candidater', en:'Apply'})}</button>
+        <a class="pp-ghost" href="#pp-benefits" onclick="event.preventDefault();document.getElementById('pp-benefits').scrollIntoView({behavior:'smooth'})">${t({fr:'Découvrir les avantages', en:'See the benefits'})}</a>
+      </div>
+      <div class="pp-stats">
+        <div><div class="pp-stat-num">-${PARTNER_DISCOUNT}%</div><div class="pp-stat-label">${t({fr:'permanent sur le catalogue', en:'permanent on the catalogue'})}</div></div>
+        <div><div class="pp-stat-num">60</div><div class="pp-stat-label">${t({fr:'partenaires fondateurs maximum', en:'founding partners maximum'})}</div></div>
+        <div><div class="pp-stat-num">5</div><div class="pp-stat-label">${t({fr:'univers · 10 places chacun', en:'universes · 10 places each'})}</div></div>
+        <div><div class="pp-stat-num">€</div><div class="pp-stat-label">${t({fr:'missions rémunérées', en:'paid missions'})}</div></div>
+      </div>
+    </section>
+
+    <section class="pp-section rv" id="pp-benefits">
+      <div class="pp-section-label">${t({fr:'Ce que vous obtenez', en:'What you get'})}</div>
+      <h3 class="pp-h3">${t({fr:'Six avantages concrets, dès votre admission.', en:'Six concrete benefits from the day you are admitted.'})}</h3>
+      <div class="pp-benefits">
+        ${benefits.map(b => `
+          <div class="pp-benefit">
+            <div class="pp-benefit-top"><span class="pp-benefit-icon">${svg(b.icon)}</span><span class="pp-benefit-num">${b.n}</span></div>
+            <div class="pp-benefit-title">${t(b.title)}</div>
+            <div class="pp-benefit-text">${t(b.text)}</div>
+          </div>`).join('')}
+      </div>
+      ${exPrice ? `
+      <div class="pp-example">
+        <div class="pp-example-label">${t({fr:'Un exemple concret', en:'A concrete example'})}</div>
+        <div class="pp-example-body">
+          <div>${t({fr:'Pack Signature — Commercial & produits', en:'Signature package — Commercial & products'})}</div>
+          <div class="pp-example-prices"><span class="pt-price-old">${eur(exPrice)} ${t({fr:'HT', en:'excl. VAT'})}</span><strong>${eur(partnerPrice(exPrice))} ${t({fr:'HT', en:'excl. VAT'})}</strong><em>${t({fr:'vous économisez', en:'you save'})} ${eur(exPrice - partnerPrice(exPrice))}</em></div>
+        </div>
+      </div>` : ''}
+    </section>
+
+    <section class="pp-section rv">
+      <div class="pp-section-label">${t({fr:'Pour qui', en:'Who it is for'})}</div>
+      <h3 class="pp-h3">${t({fr:'Cinq univers, dix places chacun.', en:'Five universes, ten places each.'})}</h3>
+      <div class="pp-universes">
+        ${universes.map(u => `
+          <div class="pp-universe">
+            <div class="pp-universe-name">${t(u.name)}</div>
+            <div class="pp-universe-who">${t(u.who)}</div>
+            <div class="pp-universe-spots">${t({fr:'10 places', en:'10 places'})}</div>
+          </div>`).join('')}
+      </div>
+      <p class="pp-note">${t({fr:'Le programme n\'est pas ouvert à tous : chaque candidature est étudiée individuellement pour préserver la cohérence éditoriale de Bunkaio. Une fois les places pourvues, les nouvelles candidatures rejoignent une liste d\'attente.', en:'The programme is not open to everyone: each application is reviewed individually to preserve Bunkaio\'s editorial coherence. Once places are filled, new applications join a waiting list.'})}</p>
+    </section>
+
+    <section class="pp-section rv">
+      <div class="pp-section-label">${t({fr:'Comment ça marche', en:'How it works'})}</div>
+      <div class="pp-steps">
+        ${steps.map(st => `
+          <div class="pp-step"><div class="pp-step-num">${st.n}</div><div class="pp-step-title">${t(st.title)}</div><div class="pp-step-text">${t(st.text)}</div></div>`).join('')}
+      </div>
+    </section>`;
+}
+
 function renderPartnersAccordion(){
+  renderPartnersPitch();
   const el = document.getElementById('partnersAccordion');
   if (!el) return;
   const sections = LANG === 'fr' ? [
     { title:'Pourquoi Bunkaio existe', body:`<p>Nous vivons dans un monde où les contenus se multiplient, mais où les histoires se raréfient. Derrière chaque lieu, chaque objet et chaque réalisation se cache une histoire qui mérite d'être racontée.</p><p><strong>Nous ne documentons pas des projets. Nous révélons ce qui les rend uniques.</strong></p>` },
-    { title:'Qui peut devenir Partenaire Fondateur ?', body:`<p>Le programme est réservé aux entreprises et professionnels dont les réalisations correspondent à l'univers Bunkaio.</p><ul class="ft-list" style="margin-top:18px"><li style="margin-bottom:12px">⊹ Architecture & habitat</li><li style="margin-bottom:12px">⊹ Aménagement & design</li><li style="margin-bottom:12px">⊹ Artisanat d'exception</li><li style="margin-bottom:12px">⊹ Marques & lifestyle</li><li>⊹ Événementiel & lieux</li></ul>` },
-    { title:'Les avantages du programme', body:`<div style="display:grid;grid-template-columns:1fr 1fr;gap:18px"><div class="cred-card"><div class="cred-num">01</div><div class="cred-title">Mise en lumière éditoriale</div><div class="cred-text">Votre activité racontée selon la méthode Bunkaio — Découverte, Vision, Défi, Savoir-Faire, Mon Regard, Révélation.</div></div><div class="cred-card"><div class="cred-num">02</div><div class="cred-title">Visibilité renforcée</div><div class="cred-text">Présence sur le site, les réseaux et les futurs supports éditoriaux de la marque.</div></div><div class="cred-card"><div class="cred-num">03</div><div class="cred-title">Relation privilégiée</div><div class="cred-text">Accès prioritaire aux disponibilités et offres préférentielles.</div></div><div class="cred-card"><div class="cred-num">04</div><div class="cred-title">Un écosystème</div><div class="cred-text">Un cercle de professionnels partageant l'exigence et l'amour du travail bien fait.</div></div></div>` },
+    { title:'Qui peut devenir Partenaire Fondateur ?', body:`<p>Le programme est réservé aux entreprises et professionnels dont les réalisations correspondent à l'univers Bunkaio.</p><ul class="ft-list" style="margin-top:18px"><li style="margin-bottom:12px">⊹ Portrait & lifestyle</li><li style="margin-bottom:12px">⊹ Mode & mannequins</li><li style="margin-bottom:12px">⊹ Commercial & produits</li><li style="margin-bottom:12px">⊹ Événementiel</li><li>⊹ Mariage & Lumen</li></ul>` },
     { title:'Les places disponibles', body:`<p>10 places par univers, soit un maximum de <strong>60 partenaires fondateurs</strong>. Une fois ce quota atteint, les nouvelles candidatures seront placées sur liste d'attente.</p>` },
     { title:'Le processus de sélection', body:`<div class="process-steps" style="margin-top:0"><div class="process-step"><div class="ps-num">01</div><div><div class="ps-title">Présentation</div><div class="ps-text">Compléter le questionnaire Bunkaio — activité, réalisations, objectifs.</div></div></div><div class="process-step"><div class="ps-num">02</div><div><div class="ps-title">Étude</div><div class="ps-text">Analyse selon la qualité des réalisations et la cohérence éditoriale.</div></div></div><div class="process-step"><div class="ps-num">03</div><div><div class="ps-title">Réponse</div><div class="ps-text">Sélectionné, compatible (ponctuel) ou réorienté selon les besoins.</div></div></div><div class="process-step" style="border-bottom:none"><div class="ps-num">04</div><div><div class="ps-title">Lancement</div><div class="ps-text">Onboarding personnalisé et feuille de route éditoriale.</div></div></div></div>` }
   ] : [
     { title:'Why Bunkaio exists', body:`<p>We live in a world where content keeps multiplying, yet stories are becoming rare. Behind every place, every object and every achievement lies a story that deserves to be told.</p><p><strong>We don't document projects. We reveal what makes them unique.</strong></p>` },
-    { title:'Who can become a Founding Partner?', body:`<p>The programme is reserved for companies and professionals whose work aligns with the Bunkaio universe.</p><ul class="ft-list" style="margin-top:18px"><li style="margin-bottom:12px">⊹ Architecture & living</li><li style="margin-bottom:12px">⊹ Fittings & design</li><li style="margin-bottom:12px">⊹ Exceptional craftsmanship</li><li style="margin-bottom:12px">⊹ Brands & lifestyle</li><li>⊹ Events & venues</li></ul>` },
-    { title:'Programme benefits', body:`<div style="display:grid;grid-template-columns:1fr 1fr;gap:18px"><div class="cred-card"><div class="cred-num">01</div><div class="cred-title">An editorial spotlight</div><div class="cred-text">Your work told as a story — Discovery, Vision, Challenge, Craftsmanship, My Perspective, Revelation.</div></div><div class="cred-card"><div class="cred-num">02</div><div class="cred-title">Enhanced visibility</div><div class="cred-text">Privileged presence on the Bunkaio website, social channels and future publications.</div></div><div class="cred-card"><div class="cred-num">03</div><div class="cred-title">A privileged relationship</div><div class="cred-text">Priority scheduling and preferential rates.</div></div><div class="cred-card"><div class="cred-num">04</div><div class="cred-title">An ecosystem</div><div class="cred-text">A circle of professionals sharing the same high standards and love of work well done.</div></div></div>` },
+    { title:'Who can become a Founding Partner?', body:`<p>The programme is reserved for companies and professionals whose work aligns with the Bunkaio universe.</p><ul class="ft-list" style="margin-top:18px"><li style="margin-bottom:12px">⊹ Portrait & lifestyle</li><li style="margin-bottom:12px">⊹ Fashion & models</li><li style="margin-bottom:12px">⊹ Commercial & products</li><li style="margin-bottom:12px">⊹ Events</li><li>⊹ Weddings & Lumen</li></ul>` },
     { title:'Available places', body:`<p>10 places per universe, for a maximum of <strong>60 founding partners</strong>. Once this quota is reached, new applications will be placed on a waiting list.</p>` },
     { title:'The selection process', body:`<div class="process-steps" style="margin-top:0"><div class="process-step"><div class="ps-num">01</div><div><div class="ps-title">Presentation</div><div class="ps-text">Complete the Bunkaio questionnaire — your activity, work, goals.</div></div></div><div class="process-step"><div class="ps-num">02</div><div><div class="ps-title">Review</div><div class="ps-text">Assessment based on quality of work and editorial fit.</div></div></div><div class="process-step"><div class="ps-num">03</div><div><div class="ps-title">Response</div><div class="ps-text">Selected, compatible (one-off), or redirected according to your needs.</div></div></div><div class="process-step" style="border-bottom:none"><div class="ps-num">04</div><div><div class="ps-title">Launch</div><div class="ps-text">Personalised onboarding and editorial roadmap.</div></div></div></div>` }
   ];
@@ -4008,27 +4526,23 @@ function renderAccordionInto(elId, sections){
 
 function renderFaqAccordion(){
   const sections = LANG === 'fr' ? [
-    { title:'Quelles prestations proposez-vous ?', body:`<p>Photographie et vidéo immobilière, architecture & design, drone 4K, événementiel, marques et particuliers. Chaque univers dispose de formules détaillées dans notre <strong>catalogue & prix</strong>.</p>` },
+    { title:'Quelles prestations proposez-vous ?', body:`<p>Portrait & lifestyle pour particuliers, mode, agences et mannequins, commercial & packshots produits, événementiel, et Lumen, le photobooth IA pour mariages. Chaque univers dispose de formules détaillées dans notre <strong>catalogue & prix</strong>.</p>` },
     { title:'Comment se déroule une prestation, de la demande à la livraison ?', body:`<p>Quatre étapes simples : <strong>devis</strong> personnalisé sous 24h, <strong>shooting</strong> à la date convenue, <strong>post-production</strong> (tri, retouche, montage), puis <strong>livraison</strong> de vos visuels via votre espace client. Le détail complet est disponible dans l'onglet « Devis & déroulé » de la page Services.</p>` },
     { title:'Quels sont les délais de livraison ?', body:`<p>Ils varient selon la formule choisie et sont indiqués sur chaque offre du catalogue. Les délais démarrent à la date du shooting, hors demandes de retouches complémentaires.</p>` },
     { title:'Comment fonctionne le paiement ?', body:`<p>30 % à la commande (signature du devis), solde à la livraison des livrables. Paiement par carte bancaire, prélèvement automatique, ou en 3x sans frais avec Klarna.</p>` },
     { title:'Puis-je utiliser les visuels livrés pour un usage commercial ?', body:`<p>Oui. L'ensemble des droits d'utilisation des visuels livrés vous est cédé pour un usage commercial, sans limite de durée. Le détail des droits cédés et des réserves de Bunkaio est précisé dans l'onglet « Politique de confidentialité » ci-contre.</p>` },
     { title:'Intervenez-vous partout en France ?', body:`<p>Nous intervenons principalement en Occitanie. Au-delà, toute demande est étudiée avec des frais de déplacement calculés selon la distance.</p>` },
-    { title:'Que se passe-t-il en cas de météo défavorable pour une prestation drone ?', body:`<p>La sécurité et la réglementation aérienne priment toujours. En cas de météo incompatible (vent, pluie, faible visibilité), la prestation est reportée sans frais à la première date disponible.</p>` },
-    { title:'Êtes-vous assurés et autorisés à piloter un drone ?', body:`<p>Oui. Nos pilotes sont formés et déclarés conformément à la réglementation de la DGAC, et notre activité est couverte par une assurance responsabilité civile professionnelle.</p>` },
     { title:'Comment accéder à mes livrables après le shooting ?', body:`<p>Vous recevez vos identifiants d'<strong>espace client</strong> après validation du devis. Vos visuels y restent disponibles au téléchargement pendant toute la durée convenue.</p>` },
     { title:'Comment devenir Partenaire Fondateur ?', body:`<p>Le programme et les conditions de candidature sont détaillés sur notre page <strong>Partenaires</strong>.</p>` },
     { title:'Qu\'est-ce que Lumen by Bunkaio ?', body:`<p>Lumen est le service photobooth IA de Bunkaio, conçu pour les mariages haut de gamme. Il allie technologie et élégance pour offrir aux invités une expérience mémorable, et aux mariés des souvenirs durables. Trois formules sont disponibles — Essentiel, Signature et Sur-mesure — selon la durée et le niveau de personnalisation souhaités.</p>` },
     { title:'Lumen intervient-il uniquement pour les mariages ?', body:`<p>Lumen est conçu en priorité pour les mariages. Il s'adapte également aux réceptions privées, aux événements corporate et aux soirées organisées par des agences événementielles. Contactez-nous pour toute demande spécifique.</p>` },
   ] : [
-    { title:'What services do you offer?', body:`<p>Real-estate photography and video, architecture & design, 4K drone, events, brands and private clients. Each universe has packages detailed in our <strong>catalogue & rates</strong>.</p>` },
+    { title:'What services do you offer?', body:`<p>Portrait & lifestyle for individuals, fashion, agencies and models, commercial & product packshots, events, and Lumen, the IA photobooth for weddings. Each universe has packages detailed in our <strong>catalogue & rates</strong>.</p>` },
     { title:'How does a project run, from request to delivery?', body:`<p>Four simple steps: a personalised <strong>quote</strong> within 24h, the <strong>shoot</strong> on the agreed date, <strong>post-production</strong> (selection, retouching, editing), then <strong>delivery</strong> of your visuals via your client area. Full details are available under the "Quote & process" tab on the Services page.</p>` },
     { title:'What are the delivery times?', body:`<p>They vary depending on the package chosen and are stated on each catalogue offer. Delivery times start from the shoot date, excluding any additional retouching requests.</p>` },
     { title:'How does payment work?', body:`<p>30% upon booking (quote signature), balance on delivery. Payment by card, direct debit, or in 3 interest-free instalments with Klarna.</p>` },
     { title:'Can I use the delivered visuals for commercial purposes?', body:`<p>Yes. All usage rights to the delivered visuals are transferred to you for commercial use, with no time limit. Details on the rights transferred and Bunkaio's reservations are set out in the "Privacy policy" tab opposite.</p>` },
     { title:'Do you work throughout France?', body:`<p>We work mainly across Occitanie. Beyond that, every request is reviewed, with travel costs calculated based on distance.</p>` },
-    { title:'What happens if the weather is unsuitable for a drone shoot?', body:`<p>Safety and aviation regulations always come first. If weather conditions are unsuitable (wind, rain, poor visibility), the shoot is rescheduled at no extra cost to the next available date.</p>` },
-    { title:'Are you insured and authorised to fly a drone?', body:`<p>Yes. Our pilots are trained and registered in accordance with French DGAC regulations, and our activity is covered by professional liability insurance.</p>` },
     { title:'How do I access my deliverables after the shoot?', body:`<p>You receive your <strong>client area</strong> credentials once the quote is confirmed. Your visuals remain available for download there for the agreed period.</p>` },
     { title:'How can I become a Founding Partner?', body:`<p>The programme and application terms are detailed on our <strong>Partners</strong> page.</p>` },
     { title:'What is Lumen by Bunkaio?', body:`<p>Lumen is Bunkaio's IA photobooth service, designed for luxury weddings. It combines technology and elegance to give guests a memorable experience and couples lasting memories. Three packages are available — Essentials, Signature and Bespoke — depending on the duration and level of customisation needed.</p>` },

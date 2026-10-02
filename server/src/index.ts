@@ -150,6 +150,47 @@ function isValidMoodboardArray(value: unknown): boolean {
   });
 }
 
+/** Doit rester aligné sur PARTNER_PROVIDER_TYPES dans js/script.js. */
+const PROVIDER_TYPE_IDS = new Set([
+  'coiffeur', 'maquilleur', 'coach-image', 'bien-etre', 'studio-lieu',
+  'createur-mode', 'agence-mannequin', 'styliste', 'maquilleur-mode', 'bijoutier',
+  'marque-produit', 'cosmetique', 'artisan-art', 'restaurateur', 'agence-com',
+  'event-planner', 'lieu', 'traiteur', 'decorateur', 'animation',
+  'wedding-planner', 'lieu-mariage', 'fleuriste-mariage', 'robe-mariee', 'traiteur-mariage',
+]);
+
+function isValidSelfPartenariat(value: unknown): boolean {
+  if (typeof value !== 'object' || value === null) return false;
+  const v = value as Record<string, unknown>;
+  return (
+    (v.typePrestataire === undefined || (typeof v.typePrestataire === 'string' && PROVIDER_TYPE_IDS.has(v.typePrestataire))) &&
+    (v.disponibleCollab === undefined || typeof v.disponibleCollab === 'boolean') &&
+    (v.presentation === undefined || (typeof v.presentation === 'string' && v.presentation.length <= 600))
+  );
+}
+
+function isValidSelfReseau(value: unknown): boolean {
+  if (!Array.isArray(value) || value.length > 100) return false;
+  return value.every((c) => {
+    if (typeof c !== 'object' || c === null) return false;
+    const x = c as Record<string, unknown>;
+    return (
+      typeof x.id === 'string' && x.id.length > 0 &&
+      typeof x.nom === 'string' && x.nom.trim().length > 0 && x.nom.length <= 120 &&
+      ['domaine', 'role', 'contact', 'lien', 'note'].every((k) => x[k] === undefined || (typeof x[k] === 'string' && (x[k] as string).length <= 300))
+    );
+  });
+}
+
+function isValidCollaborationReponses(value: unknown): boolean {
+  if (!Array.isArray(value)) return false;
+  return value.every((r) => {
+    if (typeof r !== 'object' || r === null) return false;
+    const x = r as Record<string, unknown>;
+    return typeof x.id === 'string' && (x.statut === 'Acceptée' || x.statut === 'Déclinée');
+  });
+}
+
 function isValidAccountSelfUpdatePayload(body: unknown): body is AccountSelfUpdatePayload {
   if (typeof body !== 'object' || body === null) return false;
   const b = body as Record<string, unknown>;
@@ -160,7 +201,10 @@ function isValidAccountSelfUpdatePayload(body: unknown): body is AccountSelfUpda
     (b.nom === undefined || typeof b.nom === 'string') &&
     (b.telephone === undefined || typeof b.telephone === 'string') &&
     (b.adresse === undefined || typeof b.adresse === 'string') &&
-    (b.moodboards === undefined || isValidMoodboardArray(b.moodboards))
+    (b.moodboards === undefined || isValidMoodboardArray(b.moodboards)) &&
+    (b.partenariat === undefined || isValidSelfPartenariat(b.partenariat)) &&
+    (b.reseau === undefined || isValidSelfReseau(b.reseau)) &&
+    (b.collaborationReponses === undefined || isValidCollaborationReponses(b.collaborationReponses))
   );
 }
 
@@ -181,7 +225,10 @@ function isValidAdminAccountUpsertPayload(body: unknown): body is AdminAccountUp
     (b.factures === undefined || Array.isArray(b.factures)) &&
     (b.abonnement === undefined || b.abonnement === null || typeof b.abonnement === 'object') &&
     (b.moodboards === undefined || isValidMoodboardArray(b.moodboards)) &&
-    (b.partenariat === undefined || b.partenariat === null || typeof b.partenariat === 'object')
+    (b.partenariat === undefined || b.partenariat === null || typeof b.partenariat === 'object') &&
+    (b.promotions === undefined || Array.isArray(b.promotions)) &&
+    (b.reseau === undefined || Array.isArray(b.reseau)) &&
+    (b.collaborations === undefined || Array.isArray(b.collaborations))
   );
 }
 
@@ -241,8 +288,29 @@ async function handleAccountUpdate(request: Request, env: Env, headers: Record<s
     return jsonResponse({ ok: false, error: 'invalid_credentials' }, 401, headers);
   }
 
+  const isPartner = account.type === 'partner';
+  const ownContacts = (body.reseau ?? []).map((c) => ({
+    id: c.id, nom: c.nom.trim(), domaine: c.domaine, role: c.role, contact: c.contact, lien: c.lien, note: c.note,
+    origine: 'partenaire' as const,
+  }));
+  const reseau = isPartner && body.reseau
+    ? [...(account.reseau ?? []).filter((c) => c.origine === 'bunkaio'), ...ownContacts]
+    : account.reseau;
+  const collaborations = isPartner && body.collaborationReponses
+    ? (account.collaborations ?? []).map((c) => {
+        const r = body.collaborationReponses!.find((x) => x.id === c.id);
+        return r && c.statut === 'Proposée' ? { ...c, statut: r.statut } : c;
+      })
+    : account.collaborations;
+  const partenariat = isPartner && body.partenariat
+    ? { ...account.partenariat, ...body.partenariat }
+    : account.partenariat;
+
   const updated = {
     ...account,
+    reseau,
+    collaborations,
+    partenariat,
     nom: body.nom ?? account.nom,
     telephone: body.telephone ?? account.telephone,
     adresse: body.adresse ?? account.adresse,
