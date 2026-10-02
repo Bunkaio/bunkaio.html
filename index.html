@@ -22,7 +22,7 @@
 <meta name="twitter:image" content="https://bunkaio.com/images/logo.webp">
 
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='80' font-family='serif'>⊹</text></svg>">
-<link rel="stylesheet" href="css/style.css?v=202610026">
+<link rel="stylesheet" href="css/style.css?v=202610027">
 
 <script type="application/ld+json">
 {
@@ -740,7 +740,7 @@
   <div class="pf-page">
     <h1 class="page-title" data-lang="portfolio-title">Portfolio</h1>
     <p class="page-sub" data-lang="portfolio-sub">Une sélection de projets réalisés par le studio, classés par univers.</p>
-    <div class="pf-cats" id="pfTabs"></div>
+    <div class="pf-cats" id="pfTabs" style="background: rgba(255,255,255,0.08); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; padding: 12px; margin-bottom: 32px; display: flex; gap: 8px; flex-wrap: wrap;"></div>
     <div class="pf-grid" id="pfGrid"></div>
     <div class="pf-cta-band" onclick="goView('quiz')">
       <div class="pf-cta-left">
@@ -757,7 +757,7 @@
 
 <!-- CONTACT -->
 <div class="view" id="view-contact">
-  <div class="ct-page">
+  <div class="ct-page" style="background: rgba(255,255,255,0.03); border-radius: 16px; padding: 0;">
     <div>
       <h1 class="ct-title" data-lang="contact-title">Contact</h1>
       <p class="ct-sub" data-lang="contact-sub">Une question, un projet, une collaboration&nbsp;? Écrivez-nous — nous répondons sous 24h.</p>
@@ -785,22 +785,22 @@
       </div>
     </div>
     <div>
-      <form id="ctForm" onsubmit="sendContact(event)">
+      <form id="ctForm" onsubmit="sendContact(event)" style="background: rgba(255,255,255,0.08); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.15); border-radius: 16px; padding: 24px;">
         <div class="fgroup">
           <label data-lang="name-label">Nom / Société *</label>
-          <input type="text" id="ctName" required placeholder="Votre nom ou société">
+          <input type="text" id="ctName" required placeholder="Votre nom ou société" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 10px 12px; color: inherit;">
         </div>
         <div class="fgroup">
           <label data-lang="email-label">Email *</label>
-          <input type="email" id="ctEmail" required placeholder="vous@societe.fr">
+          <input type="email" id="ctEmail" required placeholder="vous@societe.fr" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 10px 12px; color: inherit;">
         </div>
         <div class="fgroup">
           <label data-lang="phone-label-opt">Téléphone — optionnel</label>
-          <input type="tel" id="ctPhone" placeholder="06 00 00 00 00">
+          <input type="tel" id="ctPhone" placeholder="06 00 00 00 00" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 10px 12px; color: inherit;">
         </div>
         <div class="fgroup">
           <label data-lang="message-label">Message *</label>
-          <textarea id="ctMsg" required placeholder="Votre message…" style="min-height:140px"></textarea>
+          <textarea id="ctMsg" required placeholder="Votre message…" style="min-height:140px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 10px 12px; color: inherit;"></textarea>
         </div>
         <div class="btn-row" style="margin-top:34px">
           <button type="submit" class="btn btn-solid"><span data-lang="contact-btn">Nous contacter</span></button>
@@ -865,7 +865,7 @@
 <!-- PARTNERS -->
 <div class="view" id="view-partners">
   <div class="partners-page">
-    <h1 class="page-title" data-lang="partners-title">Programme Partenaires Fondateurs</h1>
+    <h1 class="page-title" data-lang="partners-title">Partenariat et collaboration</h1>
 
     <div class="svc-tabs">
       <button class="svc-tab active" id="ptab-program" onclick="setPartnersTab('program')" data-lang="ptab-program">Programme Partenaires</button>
@@ -874,7 +874,7 @@
     </div>
 
     <!-- Programme Partenaires Fondateurs -->
-    <div id="psec-program">
+    <div id="psec-program" style="background: rgba(255,255,255,0.08); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.15); border-radius: 16px; padding: 40px 24px; margin-bottom: 40px;">
       <div id="partnersPitch"></div>
       <!-- Carousel logos -->
       <div class="trust-section rv">
@@ -893,9 +893,9 @@
     </div>
 
     <!-- Candidater — formulaire de candidature au programme Partenaires Fondateurs -->
-    <div id="psec-apply" style="display:none">
-      <h2 class="collab-title" data-lang="apply-title">Candidature — Partenaire Fondateur</h2>
-      <p class="ct-sub collab-sub-full" data-lang="apply-sub">Complétez ce formulaire pour candidater au programme Partenaires Fondateurs. Chaque candidature est étudiée individuellement — réponse personnalisée sous 5 jours ouvrés.</p>
+    <div id="psec-apply" style="display:none; background: rgba(255,255,255,0.08); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.15); border-radius: 16px; padding: 40px 24px;">
+      <h2 class="collab-title" data-lang="apply-title">Rejoindre le réseau</h2>
+      <p class="ct-sub collab-sub-full" data-lang="apply-sub">Complétez ce formulaire pour candidater. Chaque candidature est étudiée individuellement — réponse personnalisée sous 5 jours ouvrés.</p>
       <div class="collab-grid">
         <div>
           <div class="ct-info-block">
@@ -977,8 +977,8 @@
     </div>
 
     <!-- Collaboration — marques, lieux, médias, autres créateur·rice·s -->
-    <div id="psec-collab" style="display:none">
-      <h2 class="collab-title" data-lang="collab-title">Proposer une collaboration</h2>
+    <div id="psec-collab" style="display:none; background: rgba(255,255,255,0.08); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.15); border-radius: 16px; padding: 40px 24px;">
+      <h2 class="collab-title" data-lang="collab-title">Collaborer avec nous</h2>
       <p class="ct-sub collab-sub-full" data-lang="collab-sub">Marque, lieu, média, autre créateur·rice — BUNKAIO est ouvert aux collaborations qui ont du sens avec son univers, en dehors de ses prestations sur-mesure habituelles.</p>
       <div class="collab-grid">
         <div>
@@ -1063,12 +1063,12 @@
     </div>
 
     <!-- FAQ -->
-    <div id="lsec-faq">
+    <div id="lsec-faq" style="background: rgba(255,255,255,0.08); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.15); border-radius: 16px; padding: 24px; margin-top: 24px;">
       <div id="faqAccordion"></div>
     </div>
 
     <!-- Politique de confidentialité -->
-    <div id="lsec-privacy" style="display:none">
+    <div id="lsec-privacy" style="display:none; background: rgba(255,255,255,0.08); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.15); border-radius: 16px; padding: 24px; margin-top: 24px;">
       <div id="privacyAccordion"></div>
     </div>
   </div>
@@ -1144,8 +1144,8 @@
 
 <!-- ESPACE CLIENT / PARTENAIRE -->
 <div class="view" id="view-account">
-  <div class="account-page">
-    <div class="account-head">
+  <div class="account-page" style="background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%); border-radius: 16px; padding: 0;">
+    <div class="account-head" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding: 24px; border-radius: 16px 16px 0 0;">
       <div>
         <div class="account-type-badge" id="accBadge">Espace client</div>
         <div class="account-name" id="accName">—</div>
@@ -1156,7 +1156,7 @@
     <!-- Où en est votre projet — repère visuel sur le projet le plus récent -->
     <div class="status-stepper" id="accStepper" style="display:none"></div>
 
-    <div class="account-tabs">
+    <div class="account-tabs" style="border-bottom: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.04);">
       <button class="pf-cat-tab active" id="atab-orders" onclick="setAccountTab('orders')" data-lang="acc-orders">Mes commandes</button>
       <button class="pf-cat-tab" id="atab-partenariat" onclick="setAccountTab('partenariat')" data-lang="acc-partenariat" style="display:none">Mon partenariat</button>
       <button class="pf-cat-tab" id="atab-promotions" onclick="setAccountTab('promotions')" data-lang="acc-promotions" style="display:none">Mes promotions</button>
@@ -1170,8 +1170,8 @@
       <button class="pf-cat-tab" id="atab-infos" onclick="setAccountTab('infos')" data-lang="acc-infos">Mes informations</button>
     </div>
 
-    <div class="account-section active" id="asec-orders">
-      <div class="table-wrap">
+    <div class="account-section active" id="asec-orders" style="padding: 24px;">
+      <div class="table-wrap" style="overflow-x: auto; background: rgba(255,255,255,0.06); border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
         <table class="data-table">
           <thead>
             <tr>
@@ -1186,24 +1186,24 @@
       </div>
     </div>
 
-    <div class="account-section" id="asec-partenariat">
-      <div id="accPartnerContent"></div>
+    <div class="account-section" id="asec-partenariat" style="padding: 24px;">
+      <div id="accPartnerContent" style="background: rgba(255,255,255,0.06); border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); padding: 20px;"></div>
     </div>
 
-    <div class="account-section" id="asec-promotions"><div id="accPromosContent"></div></div>
-    <div class="account-section" id="asec-reseau"><div id="accReseauContent"></div></div>
-    <div class="account-section" id="asec-collabs"><div id="accCollabsContent"></div></div>
+    <div class="account-section" id="asec-promotions" style="padding: 24px;"><div id="accPromosContent" style="background: rgba(255,255,255,0.06); border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); padding: 20px;"></div></div>
+    <div class="account-section" id="asec-reseau" style="padding: 24px;"><div id="accReseauContent" style="background: rgba(255,255,255,0.06); border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); padding: 20px;"></div></div>
+    <div class="account-section" id="asec-collabs" style="padding: 24px;"><div id="accCollabsContent" style="background: rgba(255,255,255,0.06); border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); padding: 20px;"></div></div>
 
-    <div class="account-section" id="asec-subs">
-      <div id="accSubsContent"></div>
+    <div class="account-section" id="asec-subs" style="padding: 24px;">
+      <div id="accSubsContent" style="background: rgba(255,255,255,0.06); border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); padding: 20px;"></div>
     </div>
 
-    <div class="account-section" id="asec-moodboards">
-      <div id="accMoodboardsContent"></div>
+    <div class="account-section" id="asec-moodboards" style="padding: 24px;">
+      <div id="accMoodboardsContent" style="background: rgba(255,255,255,0.06); border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); padding: 20px;"></div>
     </div>
 
-    <div class="account-section" id="asec-payments">
-      <div class="table-wrap">
+    <div class="account-section" id="asec-payments" style="padding: 24px;">
+      <div class="table-wrap" style="overflow-x: auto; background: rgba(255,255,255,0.06); border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
         <table class="data-table">
           <thead>
             <tr>
@@ -1220,8 +1220,8 @@
       </div>
     </div>
 
-    <div class="account-section" id="asec-factures">
-      <div class="table-wrap">
+    <div class="account-section" id="asec-factures" style="padding: 24px;">
+      <div class="table-wrap" style="overflow-x: auto; background: rgba(255,255,255,0.06); border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
         <table class="data-table">
           <thead>
             <tr>
@@ -1237,16 +1237,16 @@
       </div>
     </div>
 
-    <div class="account-section" id="asec-portfolio">
-      <div class="lr-box">
+    <div class="account-section" id="asec-portfolio" style="padding: 24px;">
+      <div class="lr-box" style="background: rgba(255,255,255,0.06); border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); padding: 24px;">
         <h3 data-lang="lr-title">Votre portfolio sur Adobe Lightroom</h3>
         <p data-lang="lr-text">Vos livrables sont hébergés sur Adobe Lightroom. Connectez-vous avec les identifiants qui vous ont été transmis pour consulter et télécharger vos images.</p>
         <a class="ct-follow" id="accLightroomBtn" href="https://lightroom.adobe.com" target="_blank" rel="noopener"><span data-lang="lr-btn">Accéder à Lightroom</span></a>
       </div>
     </div>
 
-    <div class="account-section" id="asec-infos">
-      <div class="acc-info-card">
+    <div class="account-section" id="asec-infos" style="padding: 24px;">
+      <div class="acc-info-card" style="background: rgba(255,255,255,0.06); border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); padding: 24px;">
         <!-- Vue lecture -->
         <div id="accInfoView">
           <div class="acc-info-row">
@@ -1361,7 +1361,7 @@
   </div>
 </footer>
 
-<script src="config/media.js?v=202610026"></script>
-<script src="js/script.js?v=202610026"></script>
+<script src="config/media.js?v=202610027"></script>
+<script src="js/script.js?v=202610027"></script>
 </body>
 </html>

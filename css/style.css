@@ -446,25 +446,28 @@
 
   /* ─── ACCORDÉONS ─── */
   .accordion-item {
-    border-bottom: 1px solid var(--line);
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.04);
+    border-radius: 8px;
+    margin-bottom: 8px;
   }
-  .accordion-item:first-child { border-top: 1px solid var(--line); }
+  .accordion-item:first-child { border-top: none; }
   .accordion-trigger {
     width: 100%; text-align: left;
     background: none; border: none; font-family: inherit;
     font-size: clamp(16px, 2.2vw, 22px);
     font-weight: 700; letter-spacing: -0.015em;
     color: var(--black); cursor: pointer;
-    padding: 30px 0;
+    padding: 24px 20px;
     display: flex; justify-content: space-between; align-items: center;
     gap: 24px;
-    transition: opacity 0.3s var(--ease);
+    transition: all 0.3s var(--ease);
   }
-  .accordion-trigger:hover { opacity: 0.75; }
+  .accordion-trigger:hover { opacity: 0.9; background: rgba(255,255,255,0.06); }
   .accordion-chevron {
     width: 28px; height: 28px; flex-shrink: 0;
     display: flex; align-items: center; justify-content: center;
-    border: 1px solid var(--line);
+    border: 1px solid rgba(255,255,255,0.2);
     border-radius: 50%;
     transition: transform 0.5s var(--ease-luxe), border-color 0.35s var(--ease);
   }
@@ -478,17 +481,18 @@
     transition: max-height 0.7s var(--ease-luxe);
   }
   .accordion-body.open { max-height: 6000px; }
-  .accordion-content { padding: 0 0 44px; }
+  .accordion-content { padding: 0 20px 24px 20px; font-size: 16px; line-height: 1.7; color: rgba(0,0,0,0.8); }
 
   /* ─── SERVICES TABS ─── */
   .svc-tabs {
     display: flex; gap: 4px;
-    border: 1px solid var(--line);
+    border: 1px solid rgba(255,255,255,0.2);
     padding: 5px;
-    border-radius: 6px;
+    border-radius: 8px;
     margin-bottom: 52px;
-    background: rgba(255,255,255,0.5);
+    background: rgba(255,255,255,0.08);
     width: fit-content;
+    backdrop-filter: blur(10px);
   }
   .svc-tab {
     font-family: inherit; font-size: 12px; font-weight: 600;
@@ -1696,15 +1700,17 @@
   }
   .fgroup input, .fgroup textarea, .fgroup select {
     width: 100%;
-    border: none; border-bottom: 1px solid var(--line);
-    padding: 13px 2px;
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 12px 14px;
     font-family: inherit; font-size: 16px; color: var(--black);
-    outline: none; background: transparent;
-    transition: border-color 0.35s var(--ease);
-    border-radius: 0;
+    outline: none; background: rgba(255,255,255,0.08);
+    transition: all 0.3s var(--ease);
+    border-radius: 8px;
     line-height: 1.5;
+    backdrop-filter: blur(10px);
   }
-  .fgroup input:focus, .fgroup textarea:focus, .fgroup select:focus { border-bottom-color: var(--black); }
+  .fgroup input::placeholder, .fgroup textarea::placeholder { color: rgba(0,0,0,0.4); }
+  .fgroup input:focus, .fgroup textarea:focus, .fgroup select:focus { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,0.12); }
   .fgroup textarea { resize: vertical; min-height: 96px; }
   .fgroup select { cursor: pointer; appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%230a0a0c' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 2px center; }
 
@@ -2568,6 +2574,8 @@
     font-weight: 700; letter-spacing: -0.02em; line-height: 1.2;
     margin-bottom: 14px;
     max-width: 620px;
+    color: var(--black);
+    text-shadow: 0 0 8px rgba(255,255,255,0.1);
   }
   .collab-sub-full { max-width: 620px; margin-bottom: 46px; }
   .collab-grid {
