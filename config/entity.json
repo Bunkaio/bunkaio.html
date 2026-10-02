@@ -47,7 +47,19 @@
     "siteAlternateNames": [
       "bunkaio.com"
     ],
-    "baseCity": "Montpellier"
+    "baseCity": "Montpellier",
+    "openingHours": {
+      "days": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+      ],
+      "opens": "09:00",
+      "closes": "18:00"
+    }
   },
   "person": {
     "name": "Aya Nascimento",

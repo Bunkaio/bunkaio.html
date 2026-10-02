@@ -24,10 +24,11 @@
 <meta name="twitter:title" content="Portfolio photo : portrait, mode, produits, événements | BUNKAIO">
 <meta name="twitter:description" content="Découvrez les réalisations de BUNKAIO, photographe en Occitanie : portrait, mode, packshots produits, événementiel et mariage.">
 <meta name="twitter:image" content="https://bunkaio.com/images/og/portfolio.jpg">
+<meta name="twitter:image:alt" content="Portfolio photo : portrait, mode, produits, événements — BUNKAIO">
 
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='80' font-family='serif'>⊹</text></svg>">
 <link rel="preload" href="fonts/dm-sans-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/style.min.css?v=09886814">
+<link rel="stylesheet" href="css/style.min.css?v=c1643ebf">
 
 <script type="application/ld+json">
 {
@@ -84,6 +85,19 @@
         "Photographie corporate",
         "Photographie événementielle"
       ],
+      "openingHoursSpecification": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday"
+        ],
+        "opens": "09:00",
+        "closes": "18:00"
+      },
       "hasOfferCatalog": {
         "@type": "OfferCatalog",
         "name": "Prestations de photographie",
@@ -757,7 +771,7 @@
       <div class="services-filters" id="servicesFilters"><!--snap--><!--/snap--></div>
       <div class="services-layout" id="servicesLayout">
         <div class="svc-cat-photo" id="svcCatPhoto" style="display:none">
-          <img id="svcCatPhotoImg" src="" alt="">
+          <img id="svcCatPhotoImg" alt="">
         </div>
         <div class="services-grid" id="servicesGrid"><!--snap--><!--/snap--></div>
       </div>
@@ -783,7 +797,7 @@
       <div class="process-grid">
         <div class="process-steps" id="processSteps"><!--snap--><!--/snap--></div>
         <div class="process-img">
-          <div class="side-img ph"><img loading="lazy" src="" id="img-devis-side" alt="Bunkaio — processus"></div>
+          <div class="side-img ph"><img loading="lazy" src="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/devis/illustration.webp" width="900" height="700" id="img-devis-side" alt="Bunkaio — processus"></div>
           <div class="process-info-box">
             <p data-lang="process-payment-info"><strong>Modalités de paiement :</strong> 30 % à la commande à la signature du devis, solde à la livraison des livrables. Chaque versement est réglable en 3x sans frais avec Klarna, par carte bancaire ou par prélèvement automatique.</p>
             <p data-lang="process-cancel-info"><strong>Annulation :</strong> une fois le devis validé, l'acompte de 30 % versé à la commande reste acquis à BUNKAIO et n'est pas remboursé en cas d'annulation de votre part.</p>
@@ -1000,6 +1014,10 @@
         </div>
       </div>
       <div class="ct-info-block">
+        <div class="ct-info-label" data-lang="hours-label">Horaires</div>
+        <div class="ct-info-value" data-lang="hours-value">Du lundi au samedi, de 9h à 18h</div>
+      </div>
+      <div class="ct-info-block">
         <div class="ct-info-label" data-lang="zone-label">Zone d'intervention</div>
         <div class="ct-info-value" data-lang="zone-value">Basé à Montpellier — intervient à Béziers, Montpellier et Toulouse</div>
       </div>
@@ -1074,7 +1092,7 @@
           <p data-lang="about-p1">Aya Nascimento est photographe portraitiste professionnelle, diplômée de l'ETPA (BTS Photographie, 2018). Elle est la photographe de BUNKAIO.</p>
           <p data-lang="about-p2">Spécialisée en photographie de mode, de produit, corporate et événementielle, elle accompagne les particuliers, les marques et les entreprises avec des images premium en haute définition, retouchées avec soin.</p>
           <h2 data-lang="about-h-zone">Un studio mobile en Occitanie</h2>
-          <p data-lang="about-zone-text">BUNKAIO est basé à Montpellier et se déplace : pas d'adresse de studio, mais une intervention à Béziers, Montpellier et Toulouse. Pour un projet ailleurs, chaque demande est étudiée avec des frais de déplacement calculés selon la distance. Besoin d'idées de lieux de séance ? Voir <a href="/conseils/lieux-seance-photo-montpellier-beziers-toulouse/" data-nav="article:lieux-seance-photo-montpellier-beziers-toulouse">où faire une séance photo à Montpellier, Béziers ou Toulouse</a>.</p>
+          <p data-lang="about-zone-text">BUNKAIO est basé à Montpellier et se déplace : pas d'adresse de studio, mais une intervention à Béziers, Montpellier et Toulouse. Les déplacements sont offerts à Montpellier et à Béziers ; ils sont facturés à Toulouse et dans toute autre ville de France. Besoin d'idées de lieux de séance ? Voir <a href="/conseils/lieux-seance-photo-montpellier-beziers-toulouse/" data-nav="article:lieux-seance-photo-montpellier-beziers-toulouse">où faire une séance photo à Montpellier, Béziers ou Toulouse</a>.</p>
         </div>
         <div class="about-stats">
           <div class="about-stat"><div class="about-stat-n">8+</div><div class="about-stat-l" data-lang="about-stat1">ans d'expérience</div></div>
@@ -1267,7 +1285,7 @@
       <p class="ct-sub collab-sub-full" data-lang="collab-sub">Marque, lieu, média, autre créateur·rice — BUNKAIO est ouvert aux collaborations qui ont du sens avec son univers, en dehors de ses prestations sur-mesure habituelles.</p>
       <div class="collab-grid">
         <div>
-          <div class="side-img ph collab-img"><img loading="lazy" src="" id="img-collab-side" alt="Bunkaio — collaboration"></div>
+          <div class="side-img ph collab-img"><img loading="lazy" src="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/partners/collaboration.webp" id="img-collab-side" alt="Bunkaio — collaboration"></div>
           <div class="ct-info-block">
             <div class="ct-info-label" data-lang="collab-select-label">Une sélection au cas par cas</div>
             <div class="ct-info-value" data-lang="collab-select-value">BUNKAIO se réserve le choix de ses collaborations : chaque proposition est étudiée individuellement selon le projet, sa cohérence avec notre univers et nos disponibilités du moment. Vous recevez une réponse personnalisée, y compris en cas de refus.</div>
@@ -1658,9 +1676,9 @@
 
 <script src="config/analytics.js?v=eff8bde4"></script>
 <script src="js/analytics.js?v=e0edf83d"></script>
-<script src="config/articles.js?v=284cfcb8"></script>
+<script src="config/articles.js?v=65615ffe"></script>
 <script src="config/routes.js?v=8000fb7f"></script>
-<script src="config/media.js?v=fbc742f3"></script>
-<script src="js/script.min.js?v=b9de1810"></script>
+<script src="config/media.js?v=6bf2d6b2"></script>
+<script src="js/script.min.js?v=aad72413"></script>
 </body>
 </html>

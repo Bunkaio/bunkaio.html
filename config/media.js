@@ -103,6 +103,9 @@ const IMG = {
      Décrivez ce qu'on voit, sans bourrer de mots-clés. Ex. : 'photo-part': ['Portrait en lumière naturelle d'une femme sur un pont à Béziers', ...]
      Si une entrée manque, un texte générique est utilisé. */
   portfolioAlt: {},
+  /* Texte alternatif de la photo de chaque page prestation (clé = id de la catégorie : 'photo-part', 'mode', 'commercial', 'event', 'lumen').
+     Décrivez ce que montre réellement l'image. Vide = texte générique « Exemple de … réalisé par BUNKAIO ». */
+  serviceAlt: {},
   aboutPhoto: '',                                     // Portrait de la photographe (À propos) — ex. MEDIA_BASE + '/about/aya.webp' après dépôt dans l'admin média
   partners:  MEDIA_BASE + '/hero/partners-1.webp',   // Fond page Partenaires
   legal:     MEDIA_BASE + '/hero/contact-1.webp',    // Fond page FAQ & confidentialité

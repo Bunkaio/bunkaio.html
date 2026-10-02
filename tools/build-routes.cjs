@@ -115,7 +115,7 @@ function setMeta(html, re, replacement) { return re.test(html) ? html.replace(re
 
 /* Données structurées (JSON-LD) : un @graph par page, construit uniquement à partir de
    config/entity.json et des routes — aucune donnée inventée (pas d'avis, pas de note). */
-function buildJsonLd(route, meta) {
+function buildJsonLd(route, meta, snaps) {
   const b = ENTITY.brand, per = ENTITY.person;
   const bizId = SITE + '/#business', siteId = SITE + '/#website', personId = SITE + '/a-propos/#aya';
   const url = SITE + route.path;
@@ -130,6 +130,7 @@ function buildJsonLd(route, meta) {
     address: { '@type': 'PostalAddress', addressLocality: b.baseCity, addressRegion: b.region, addressCountry: 'FR' },
     areaServed: [...b.cities.map((c) => ({ '@type': 'City', name: c })), { '@type': 'AdministrativeArea', name: b.region }],
     knowsAbout: per.knowsAbout,
+    ...(b.openingHours ? { openingHoursSpecification: { '@type': 'OpeningHoursSpecification', dayOfWeek: b.openingHours.days, opens: b.openingHours.opens, closes: b.openingHours.closes } } : {}),
     ...(hasPerson ? { employee: { '@id': personId } } : {}),
     hasOfferCatalog: {
       '@type': 'OfferCatalog', name: 'Prestations de photographie',
@@ -146,12 +147,19 @@ function buildJsonLd(route, meta) {
       knowsAbout: per.knowsAbout,
     });
   }
+  /* Image principale : photo de la prestation (si configurée dans config/media.js) ou carte de partage de l'article. */
+  const fig = route.cat && snaps && snaps.servicePageContent && snaps.servicePageContent.match(/<figure class="svcp-figure[^"]*"><img src="([^"]+)" alt="([^"]*)"/);
+  const unesc = (x) => x.replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+  const imgMeta = { creator: { '@type': 'Organization', name: b.name }, creditText: b.name, copyrightNotice: '© ' + b.name, acquireLicensePage: undefined };
+  delete imgMeta.acquireLicensePage;
+  if (fig) graph.push({ '@type': 'ImageObject', '@id': url + '#primaryimage', url: fig[1], contentUrl: fig[1], caption: unesc(fig[2]), ...imgMeta });
   if (route.cat && meta) {
     const priced = meta.tiers.filter((t) => !t.quote && t.price);
     graph.push({
       '@type': 'Service', '@id': url + '#service', name: route.h1 || meta.name, serviceType: meta.name,
       description: route.description, provider: { '@id': bizId },
       areaServed: b.cities.map((c) => ({ '@type': 'City', name: c })),
+      ...(fig ? { image: { '@id': url + '#primaryimage' } } : {}),
       offers: { '@type': 'AggregateOffer', priceCurrency: 'EUR', lowPrice: Math.min(...priced.map((t) => t.price)), highPrice: Math.max(...priced.map((t) => t.price)), offerCount: meta.tiers.length },
     });
   }
@@ -161,8 +169,10 @@ function buildJsonLd(route, meta) {
       '@type': 'Article', '@id': url + '#article', headline: art.h1, description: art.description,
       datePublished: art.date, dateModified: art.date, inLanguage: 'fr-FR',
       author: { '@id': bizId }, publisher: { '@id': bizId }, mainEntityOfPage: { '@id': url + '#webpage' },
-      image: SITE + (route.ogImage || '/images/og-default.jpg'), articleSection: 'Conseils photo',
+      image: { '@id': url + '#primaryimage' }, articleSection: 'Conseils photo',
     });
+    const artImg = SITE + (route.ogImage || '/images/og-default.jpg');
+    graph.push({ '@type': 'ImageObject', '@id': url + '#primaryimage', url: artImg, contentUrl: artImg, width: 1200, height: 630, caption: art.h1 + ' — ' + b.name, ...imgMeta });
   }
   if (route.view === 'advice') {
     graph.push({ '@type': 'ItemList', '@id': url + '#list', itemListElement: ARTICLES.map((x, i) => ({ '@type': 'ListItem', position: i + 1, url: SITE + '/conseils/' + x.slug + '/', name: x.h1 })) });
@@ -171,6 +181,7 @@ function buildJsonLd(route, meta) {
   const page = { '@type': pageType, '@id': url + '#webpage', url, name: route.title, description: route.description, inLanguage: 'fr-FR', isPartOf: { '@id': siteId }, about: { '@id': bizId } };
   if (route.view === 'about') page.mainEntity = { '@id': personId };
   if (route.cat) page.mainEntity = { '@id': url + '#service' };
+  if (fig || art) page.primaryImageOfPage = { '@id': url + '#primaryimage' };
   if (art) page.mainEntity = { '@id': url + '#article' };
   if (route.view === 'advice') page.mainEntity = { '@id': url + '#list' };
   if (route.path !== '/') page.breadcrumb = { '@id': url + '#breadcrumb' };
@@ -186,6 +197,14 @@ function buildJsonLd(route, meta) {
   return '<script type="application/ld+json">\n' + JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }, null, 2) + '\n</script>';
 }
 
+/* Images du HTML statique : pas de src vide (le JS les renseigne au chargement), pas d'état « image cassée » figé par le pré-rendu. */
+function fixStaticImages(html) {
+  const swap = (id, attrs) => { html = html.replace(new RegExp('<img[^>]*id="' + id + '"[^>]*>'), (tag) => tag.replace(' src=""', attrs ? ' src="' + attrs.src + '"' + (attrs.dims || '') : '')); };
+  swap('img-devis-side', IMG.devis ? { src: IMG.devis, dims: ' width="900" height="700"' } : null);
+  swap('img-collab-side', IMG.collab ? { src: IMG.collab } : null);
+  swap('svcCatPhotoImg', null);
+  return html.replace(/(class="svcp-figure) is-broken"/g, '$1"');
+}
 function buildPage(template, route, snaps, meta) {
   let html = template;
   const url = SITE + route.path;
@@ -196,6 +215,8 @@ function buildPage(template, route, snaps, meta) {
   html = setMeta(html, /<meta property="og:image" content="[^"]*">/, '<meta property="og:image" content="' + ogImg + '">');
   html = setMeta(html, /<meta name="twitter:image" content="[^"]*">/, '<meta name="twitter:image" content="' + ogImg + '">');
   html = setMeta(html, /<meta property="og:image:alt" content="[^"]*">/, '<meta property="og:image:alt" content="' + esc(route.h1 || route.title.split('|')[0].trim()) + ' — BUNKAIO">');
+  html = setMeta(html, /<meta name="twitter:image:alt" content="[^"]*">/, '<meta name="twitter:image:alt" content="' + esc(route.h1 || route.title.split('|')[0].trim()) + ' — BUNKAIO">');
+  html = fixStaticImages(html);
   html = syncDataLang(html);
   html = setMeta(html, /<link rel="canonical" href="[^"]*">/, '<link rel="canonical" href="' + url + '">');
   html = setMeta(html, /<meta property="og:url" content="[^"]*">/, '<meta property="og:url" content="' + url + '">');
@@ -214,7 +235,7 @@ function buildPage(template, route, snaps, meta) {
     html = html.replace('</head>', '<!--hero-preload--><link rel="preconnect" href="' + origin + '"><link rel="preload" as="image" href="' + heroUrl + '" fetchpriority="high"><!--/hero-preload-->\n</head>');
   }
 
-  html = html.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/, buildJsonLd(route, meta));
+  html = html.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/, buildJsonLd(route, meta, snaps));
 
   if (route.slug) {
     const art = ARTICLES.find((x) => x.slug === route.slug);

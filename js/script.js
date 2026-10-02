@@ -125,7 +125,7 @@ const I18N = {
     'about-p1':'Aya Nascimento est photographe portraitiste professionnelle, diplômée de l\'ETPA (BTS Photographie, 2018). Elle est la photographe de BUNKAIO.',
     'about-p2':'Spécialisée en photographie de mode, de produit, corporate et événementielle, elle accompagne les particuliers, les marques et les entreprises avec des images premium en haute définition, retouchées avec soin.',
     'about-h-zone':'Un studio mobile en Occitanie',
-    'about-zone-text':'BUNKAIO est basé à Montpellier et se déplace : pas d\'adresse de studio, mais une intervention à Béziers, Montpellier et Toulouse. Pour un projet ailleurs, chaque demande est étudiée avec des frais de déplacement calculés selon la distance. Besoin d\'idées de lieux de séance ? Voir <a href="/conseils/lieux-seance-photo-montpellier-beziers-toulouse/" data-nav="article:lieux-seance-photo-montpellier-beziers-toulouse">où faire une séance photo à Montpellier, Béziers ou Toulouse</a>.',
+    'about-zone-text':'BUNKAIO est basé à Montpellier et se déplace : pas d\'adresse de studio, mais une intervention à Béziers, Montpellier et Toulouse. Les déplacements sont offerts à Montpellier et à Béziers ; ils sont facturés à Toulouse et dans toute autre ville de France. Besoin d\'idées de lieux de séance ? Voir <a href="/conseils/lieux-seance-photo-montpellier-beziers-toulouse/" data-nav="article:lieux-seance-photo-montpellier-beziers-toulouse">où faire une séance photo à Montpellier, Béziers ou Toulouse</a>.',
     'about-stat1':'ans d\'expérience','about-stat2':'projets réalisés','about-stat3':'diplômée de l\'ETPA · BTS Photographie',
     'about-h-spec':'Spécialités',
     'about-spec1':'Portrait & lifestyle','about-spec2':'Mode, agences et mannequins','about-spec3':'Photo de produit & commercial','about-spec4':'Corporate & entreprises','about-spec5':'Événementiel & mariage (Lumen)',
@@ -133,7 +133,7 @@ const I18N = {
     'about-step1':'Devis personnalisé sous 48 h','about-step2':'Shooting à la date convenue','about-step3':'Retouche et post-production','about-step4':'Livraison en HD dans une galerie privée, depuis votre espace client',
     'about-cta-portfolio':'Voir le portfolio','about-cta-contact':'Contacter BUNKAIO',
     'ft-about':'À propos','ft-privacy':'Confidentialité et mentions légales','legal-title-privacy':'Politique de confidentialité et mentions légales','acc-h1':'Mon espace','ft-advice':'Conseils photo','ft-review':'Laisser un avis Google','cred-about-link':'Qui est derrière BUNKAIO ? →',
-    'zone-label':'Zone d\'intervention','zone-value':'Basé à Montpellier — intervient à Béziers, Montpellier et Toulouse',
+    'hours-label':'Horaires','hours-value':'Du lundi au samedi, de 9h à 18h','zone-label':'Zone d\'intervention','zone-value':'Basé à Montpellier — intervient à Béziers, Montpellier et Toulouse',
     'share-sub':'Vous avez travaillé avec BUNKAIO ? Votre retour aide d\'autres clients à se projeter — et compte énormément pour nous.',
     'share-info-label':'Comment ça marche',
     'share-info-value':'Votre message nous est envoyé directement. Avec votre accord, il pourra être publié (de façon anonymisée si vous le souhaitez) dans la section témoignages du site.',
@@ -460,7 +460,7 @@ const I18N = {
     'about-p1':'Aya Nascimento is a professional portrait photographer, a graduate of ETPA (BTS Photography, 2018). She is the photographer of BUNKAIO.',
     'about-p2':'Specialised in fashion, product, corporate and event photography, she works with individuals, brands and companies, delivering premium high-definition images, carefully retouched.',
     'about-h-zone':'A mobile studio in Occitanie',
-    'about-zone-text':'BUNKAIO is based in Montpellier and travels to you: no studio address, but shoots in Béziers, Montpellier and Toulouse. For a project elsewhere, every request is reviewed with travel costs based on distance.',
+    'about-zone-text':'BUNKAIO is based in Montpellier and travels to you: no studio address, but shoots in Béziers, Montpellier and Toulouse. Travel is free in Montpellier and Béziers; it is charged in Toulouse and in any other city in France.',
     'about-stat1':'years of experience','about-stat2':'projects completed','about-stat3':'ETPA graduate · BTS Photography',
     'about-h-spec':'Specialities',
     'about-spec1':'Portrait & lifestyle','about-spec2':'Fashion, agencies and models','about-spec3':'Product & commercial photography','about-spec4':'Corporate & businesses','about-spec5':'Events & weddings (Lumen)',
@@ -468,7 +468,7 @@ const I18N = {
     'about-step1':'Personalised quote within 48 hours','about-step2':'Shoot on the agreed date','about-step3':'Retouching and post-production','about-step4':'HD delivery in a private gallery, from your client area',
     'about-cta-portfolio':'See the portfolio','about-cta-contact':'Contact BUNKAIO',
     'ft-about':'About','ft-privacy':'Privacy and legal notice','legal-title-privacy':'Privacy policy and legal notice','acc-h1':'My space','ft-advice':'Photo advice','ft-review':'Leave a Google review','cred-about-link':'Who is behind BUNKAIO? →',
-    'zone-label':'Service area','zone-value':'Based in Montpellier — works in Béziers, Montpellier and Toulouse',
+    'hours-label':'Opening hours','hours-value':'Monday to Saturday, 9am to 6pm','zone-label':'Service area','zone-value':'Based in Montpellier — works in Béziers, Montpellier and Toulouse',
     'share-sub':'Have you worked with BUNKAIO? Your feedback helps other clients picture what to expect — and it means a great deal to us.',
     'share-info-label':'How it works',
     'share-info-value':'Your message is sent to us directly. With your consent, it may be published (anonymised if you prefer) in the testimonials section of the site.',
@@ -2692,6 +2692,17 @@ function renderServicePage(catId){
   };
   const hint = PARTNER_HINT[catId];
   const copyBlock = SERVICE_COPY[catId];
+  /* Visuel de la prestation : vrai <img> (indexable par Google Images), texte alternatif modifiable via IMG.serviceAlt. */
+  const SERVICE_ALT_DEFAULT = {
+    'photo-part': {fr:'Exemple de séance photo portrait réalisée par BUNKAIO', en:'Example of a portrait photo session by BUNKAIO'},
+    mode: {fr:'Exemple de photographie de mode réalisée par BUNKAIO', en:'Example of fashion photography by BUNKAIO'},
+    commercial: {fr:'Exemple de photographie de produit réalisée par BUNKAIO', en:'Example of product photography by BUNKAIO'},
+    event: {fr:'Exemple de reportage d\'événement réalisé par BUNKAIO', en:'Example of event photography by BUNKAIO'},
+    lumen: {fr:'Lumen, le photobooth IA de BUNKAIO pour mariages et événements', en:'Lumen, the BUNKAIO IA photobooth for weddings and events'}
+  };
+  const svcPhoto = IMG.servicePhotos && IMG.servicePhotos[catId];
+  const svcAlt = (IMG.serviceAlt && IMG.serviceAlt[catId]) || (SERVICE_ALT_DEFAULT[catId] ? t(SERVICE_ALT_DEFAULT[catId]) : '');
+  const svcFigure = svcPhoto ? `<figure class="svcp-figure"><img src="${svcPhoto}" alt="${escHtml(svcAlt)}" width="900" height="1200" loading="lazy" decoding="async" onerror="this.closest('figure').classList.add('is-broken')"></figure>` : '';
   const chooseHtml = (copyBlock && copyBlock.choose && copyBlock.choose.length === tiers.length)
     ? `<section class="read-panel svcp-panel"><h2>${t({fr:'Quelle formule choisir ?', en:'Which package to choose?'})}</h2><ul class="svcp-list">${tiers.map((tt, i) => `<li><strong>${t(tt.name)} — ${priceLine(tt)}</strong> : ${t(copyBlock.choose[i])}</li>`).join('')}</ul></section>` : '';
   const practical = t({
@@ -2711,7 +2722,7 @@ function renderServicePage(catId){
       <a class="btn btn-ghost" href="/portfolio/" onclick="return navLink(event,'portfolio')"><span>${t({fr:'Voir le portfolio', en:'See the portfolio'})}</span></a>
     </div>
 
-    ${copyBlock && copyBlock.lead ? `<section class="read-panel svcp-panel"><p class="svcp-text svcp-lead">${t(copyBlock.lead)}</p></section>` : ''}
+    ${copyBlock && copyBlock.lead ? `<section class="read-panel svcp-panel"><div class="svcp-lead-grid${svcFigure ? ' has-figure' : ''}"><p class="svcp-text svcp-lead">${t(copyBlock.lead)}</p>${svcFigure}</div></section>` : ''}
 
     <section class="read-panel svcp-panel">
       <h2>${t({fr:'Formules et tarifs', en:'Packages and rates'})}</h2>
@@ -3164,7 +3175,7 @@ function renderPfGalleryInto(container, catId, catLabel, max, emptyText){
       const ph = document.createElement('div');
       ph.className = 'ph rv';
       const customAlt = IMG.portfolioAlt && IMG.portfolioAlt[catId] && IMG.portfolioAlt[catId][i];
-      ph.innerHTML = `<img loading="lazy" src="${src}" alt="${escHtml(customAlt || ((LANG === 'fr' ? 'Photographie' : 'Photography') + ' ' + catLabel + ' — Bunkaio ' + (i + 1)))}">`;
+      ph.innerHTML = `<img loading="lazy" decoding="async" src="${src}" alt="${escHtml(customAlt || ((LANG === 'fr' ? 'Réalisation BUNKAIO — ' : 'BUNKAIO work — ') + catLabel.toLowerCase() + ' (' + (i + 1) + '/' + photos.length + ')'))}">`;
       container.appendChild(ph);
       observe(ph);
     });
@@ -5279,7 +5290,7 @@ function renderFaqAccordion(){
     { title:'Comment accéder à mon espace client, et à quoi sert-il ?', body:`<p>Une fois votre devis confirmé, vous recevez par email votre <strong>code d'accès personnel</strong> : cliquez sur « Connexion » en haut du site. Vous restez connecté sur votre appareil jusqu'à votre déconnexion.</p><p>Vous y suivez l'avancement de votre projet, retrouvez vos <strong>commandes, devis, paiements et factures</strong>, téléchargez vos livrables, gérez vos abonnements et vos informations. Pas encore de code ? Demandez-le depuis la page de connexion : il vous est envoyé sous 24h.</p>` },
     { title:'Qu\'est-ce qu\'un moodboard, et est-il obligatoire ?', body:`<p>Non, il est facultatif mais très utile : un <strong>moodboard par commande</strong> pour nous partager votre vision — direction artistique, ambiance, palette de couleurs, inspirations (Pinterest, liens), et les prestataires impliqués. Vous le complétez depuis votre espace client et vous échangez avec l'équipe grâce aux commentaires.</p>` },
     { title:'Mes informations et mes images sont-elles en sécurité ?', body:`<p>Votre espace est protégé par votre email et un <strong>code d'accès personnel</strong>, conservé sous forme chiffrée. Vos données ne servent qu'à la réalisation de votre projet, et vos visuels vous sont livrés dans une galerie privée. Le détail est dans l'onglet « Politique de confidentialité ».</p>` },
-    { title:'Où intervenez-vous ?', body:`<p>BUNKAIO est basé à <strong>Montpellier</strong> et intervient en déplacement à <strong>Montpellier, Béziers et Toulouse</strong>, et plus largement en Occitanie. Il n'y a pas de studio fixe : le lieu se choisit avec vous (<a href="/conseils/lieux-seance-photo-montpellier-beziers-toulouse/" data-nav="article:lieux-seance-photo-montpellier-beziers-toulouse">idées de lieux</a>). Pour un projet ailleurs, toute demande est étudiée avec des frais de déplacement calculés selon la distance.</p>` },
+    { title:'Où intervenez-vous ?', body:`<p>BUNKAIO est basé à <strong>Montpellier</strong> et intervient en déplacement à <strong>Montpellier, Béziers et Toulouse</strong>, et plus largement en Occitanie. Il n'y a pas de studio fixe : le lieu se choisit avec vous (<a href="/conseils/lieux-seance-photo-montpellier-beziers-toulouse/" data-nav="article:lieux-seance-photo-montpellier-beziers-toulouse">idées de lieux</a>). Les déplacements sont offerts à Montpellier et à Béziers ; ils sont facturés à Toulouse et dans toute autre ville de France (devis selon la distance).</p>` },
     { title:'Comment devenir partenaire, et que propose l\'espace partenaire ?', body:`<p>Candidatez depuis la page <strong>Partenariat et collaboration</strong> : réponse personnalisée sous 5 jours ouvrés. Une fois admis, votre espace partenaire vous donne <strong>-20 % permanent</strong> sur le catalogue, des promotions, des <strong>missions collaboratives rémunérées</strong> que vous acceptez ou déclinez en un clic, et l'accès au réseau de professionnels. Vous choisissez d'être référencé·e ou non dans l'annuaire.</p>` },
     { title:'Qu\'est-ce que Lumen by Bunkaio ?', body:`<p>Lumen est le photobooth IA de Bunkaio, conçu pour les mariages haut de gamme et les événements : il offre aux invités une expérience mémorable et aux mariés des souvenirs durables. Trois formules — Essentiel, Signature et Sur-mesure — selon la durée et la personnalisation souhaitées.</p>` },
   ] : [
@@ -5294,7 +5305,7 @@ function renderFaqAccordion(){
     { title:'How do I access my client area, and what is it for?', body:`<p>Once your quote is confirmed, you receive your <strong>personal access code</strong> by email: click "Sign in" at the top of the site. You stay signed in on your device until you sign out.</p><p>There you follow your project's progress, find your <strong>orders, quotes, payments and invoices</strong>, download your deliverables, and manage your subscriptions and details. No code yet? Request it from the sign-in page: it is sent within 24h.</p>` },
     { title:'What is a moodboard, and is it compulsory?', body:`<p>No, it is optional but very useful: <strong>one moodboard per order</strong> to share your vision — art direction, mood, colour palette, inspiration (Pinterest, links) and the providers involved. You complete it from your client area and chat with the team through comments.</p>` },
     { title:'Are my details and images safe?', body:`<p>Your space is protected by your email and a <strong>personal access code</strong>, stored in encrypted form. Your data is only used to carry out your project, and your visuals are delivered in a private gallery. Details are in the "Privacy policy" tab.</p>` },
-    { title:'Where do you work?', body:`<p>BUNKAIO is based in <strong>Montpellier</strong> and travels to <strong>Montpellier, Béziers and Toulouse</strong>, and more broadly across Occitanie. For a project elsewhere, every request is reviewed, with travel costs calculated based on distance.</p>` },
+    { title:'Where do you work?', body:`<p>BUNKAIO is based in <strong>Montpellier</strong> and travels to <strong>Montpellier, Béziers and Toulouse</strong>, and more broadly across Occitanie. Travel is free in Montpellier and Béziers; it is charged in Toulouse and in any other city in France (quoted by distance).</p>` },
     { title:'How do I become a partner, and what does the partner area offer?', body:`<p>Apply from the <strong>Partnership & collaboration</strong> page: a personal reply within 5 working days. Once admitted, your partner area gives you a <strong>permanent 20% discount</strong> on the catalogue, promotions, <strong>paid collaborative missions</strong> you accept or decline in one click, and access to the professional network. You choose whether to be listed in the directory.</p>` },
     { title:'What is Lumen by Bunkaio?', body:`<p>Lumen is Bunkaio's IA photobooth, designed for luxury weddings and events: it gives guests a memorable experience and couples lasting memories. Three packages — Essentials, Signature and Bespoke — depending on duration and customisation.</p>` },
   ];

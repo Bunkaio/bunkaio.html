@@ -3818,3 +3818,10 @@
 .svcp-lead { margin: 0; }
 .svcp-lead a, .cred-lead a { color: var(--black); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
 a.cta-primary, a.cta-primary:hover { text-decoration: none; }
+
+/* Visuel de prestation à côté du texte d'introduction */
+.svcp-lead-grid.has-figure { display: grid; grid-template-columns: minmax(0, 1fr) 230px; gap: 28px; align-items: center; }
+.svcp-figure { margin: 0; }
+.svcp-figure img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 4; object-fit: cover; border-radius: 12px; background: rgba(10,10,12,0.06); }
+.svcp-figure.is-broken { display: none; }
+@media (max-width: 700px) { .svcp-lead-grid.has-figure { grid-template-columns: 1fr; } .svcp-figure { max-width: 300px; } }

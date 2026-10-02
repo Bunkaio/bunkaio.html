@@ -254,7 +254,7 @@ const ARTICLES = [
       { h: 'Choisir sa formule', html: '<p>Une séance en extérieur peut se faire en un ou plusieurs lieux selon la formule : la formule Édition, par exemple, comprend une journée complète sur 4 lieux différents. Découvrez notre <a href="/services/seance-photo-particuliers/" data-nav="service:photo-part">séance photo particuliers</a>, ou lisez <a href="/conseils/preparer-seance-photo-portrait/" data-nav="article:preparer-seance-photo-portrait">comment préparer votre séance portrait</a>. Pour une estimation, passez par le <a href="/devis/" data-nav="quiz">devis en ligne</a>.</p>' },
     ],
     faq: [
-      { q: 'Dans quelles villes intervenez-vous ?', a: 'À Béziers, Montpellier et Toulouse. Pour un projet ailleurs, chaque demande est étudiée avec des frais de déplacement calculés selon la distance.' },
+      { q: 'Dans quelles villes intervenez-vous ?', a: 'À Béziers, Montpellier et Toulouse. Les déplacements sont offerts à Montpellier et à Béziers ; ils sont facturés à Toulouse et dans toute autre ville de France.' },
       { q: 'Peut-on choisir plusieurs lieux pendant la séance ?', a: 'Oui, selon la formule : la formule Édition prévoit une journée complète sur 4 lieux différents.' },
       { q: 'Faut-il une autorisation pour photographier dans un lieu public ?', a: 'Pour une séance personnelle, en général non ; pour un usage commercial, certains lieux en demandent une. Précisez l\'usage dans votre demande.' },
     ],
