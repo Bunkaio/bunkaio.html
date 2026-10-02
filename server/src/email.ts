@@ -44,8 +44,11 @@ export function buildDepositInvoiceEmail(params: {
       Voici votre facture d'acompte (30 %) pour : <strong>${params.description}</strong>.
     </p>
     <p style="font-size:24px;font-weight:700;margin:0 0 12px;">${params.depositAmountEur.toFixed(2)} €</p>
-    <p style="font-size:13px;color:#76717f;margin:0 0 28px;">
+    <p style="font-size:13px;color:#76717f;margin:0 0 16px;">
       ${payLine}
+    </p>
+    <p style="font-size:13px;line-height:1.6;color:#3a3544;margin:0 0 28px;padding:12px 14px;background:#f6f1fc;border-radius:6px;">
+      <strong>Conditions d'annulation :</strong> cet acompte réserve votre date et votre créneau. Une fois le devis validé, il reste acquis à BUNKAIO et n'est pas remboursé en cas d'annulation de votre part.
     </p>
     <a href="${params.hostedInvoiceUrl}" style="display:inline-block;background:#0a0a0c;color:#ffffff;text-decoration:none;padding:14px 28px;border-radius:4px;font-weight:600;font-size:15px;">
       Voir et payer la facture
@@ -61,6 +64,8 @@ Voici votre facture d'acompte (30 %) pour : ${params.description}.
 
 Montant : ${params.depositAmountEur.toFixed(2)} €
 ${payLine}
+
+Conditions d'annulation : cet acompte réserve votre date et votre créneau. Une fois le devis validé, il reste acquis à BUNKAIO et n'est pas remboursé en cas d'annulation de votre part.
 
 Voir et payer la facture : ${params.hostedInvoiceUrl}
 
