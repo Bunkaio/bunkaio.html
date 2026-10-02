@@ -288,7 +288,7 @@
         <li><strong>Poids visé : 3 à 6 Mo</strong> (10 Mo maximum) pour ne pas pénaliser le chargement mobile.</li>
         <li>Commande ffmpeg conseillée (compression, suppression du son, lecture immédiate) :
 <pre>ffmpeg -i source.mov -an -vf "scale=-2:1080,fps=30" -c:v libx264 -crf 28 -preset slow -pix_fmt yuv420p -movflags +faststart sortie.mp4</pre>
-Si le fichier dépasse 6 Mo, augmenter <code>-crf</code> (30) ou raccourcir la boucle. Les vidéos de l'accueil (<code>videos/home-bg.mp4</code>, <code>videos/mission-bg.mp4</code>) se changent directement sur GitHub, avec les mêmes règles ; chacune a une version mobile allégée (<code>home-bg-m.mp4</code>, <code>mission-bg-m.mp4</code>, largeur 854 px, environ 1 Mo : même commande avec <code>scale=854:-2</code> et <code>-crf 30</code>), puis incrémenter le <code>?v=</code> dans <code>config/media.js</code>.</li>
+Si le fichier dépasse 6 Mo, augmenter <code>-crf</code> (30) ou raccourcir la boucle. Les vidéos de l'accueil (<code>videos/home-bg.mp4</code>, <code>videos/mission-bg.mp4</code>) se changent directement sur GitHub, avec les mêmes règles ; chacune a une version mobile (<code>home-bg-m.mp4</code>, <code>mission-bg-m.mp4</code>, largeur 1280 px, haute qualité, 3 à 5 Mo : même commande avec <code>scale=1280:-2</code> et <code>-crf 21</code>), puis incrémenter le <code>?v=</code> dans <code>config/media.js</code>.</li>
       </ul>
 
       <h3>Compression en ligne de commande (optionnel)</h3>
