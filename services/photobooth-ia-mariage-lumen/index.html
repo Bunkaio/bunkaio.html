@@ -27,7 +27,7 @@
 
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='80' font-family='serif'>⊹</text></svg>">
 <link rel="preload" href="fonts/dm-sans-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/style.css?v=202610041">
+<link rel="stylesheet" href="css/style.css?v=202610042">
 
 <script type="application/ld+json">
 {
@@ -490,6 +490,8 @@
     <a class="cred-faq-link" href="/a-propos/" onclick="return navLink(event,'about')" data-lang="cred-about-link">Qui est derrière BUNKAIO ? →</a>
     <a class="cred-faq-link" onclick="goView('legal')" data-lang="cred-faq-link">Des questions ? Consultez notre FAQ →</a>
   </div>
+
+  <div id="adviceTeaser"><!--snap--><!--/snap--></div>
 
   <div class="testimonials-section">
     <div class="testi-heading rv">
@@ -1059,14 +1061,22 @@
   </div>
 </div>
 
+<!-- CONSEILS PHOTO : hub et articles (contenu rendu par renderAdvicePage / renderArticlePage) -->
+<div class="view" id="view-advice">
+  <div class="services-page service-page"><div id="advicePageContent"><!--snap--><!--/snap--></div></div>
+</div>
+<div class="view" id="view-article">
+  <div class="services-page service-page"><div id="articlePageContent"><!--snap--><!--/snap--></div></div>
+</div>
+
 <!-- PAGE D'UNE PRESTATION (contenu rendu par renderServicePage) -->
 <div class="view active" id="view-service">
   <div class="services-page service-page"><div id="servicePageContent"><!--snap-->
-    <nav class="breadcrumb" aria-label="Fil d'Ariane">
+    <div class="breadcrumb" role="navigation" aria-label="Fil d'Ariane">
       <a href="/" onclick="return navLink(event,'home')">Accueil</a><span aria-hidden="true">›</span>
       <a href="/services/" onclick="return navLink(event,'services')">Services</a><span aria-hidden="true">›</span>
       <span>Lumen</span>
-    </nav>
+    </div>
     <h1 data-pageh1="" class="page-title">Lumen, le photobooth IA pour mariages et événements</h1>
     <p class="page-sub">Photobooth IA — mariages haut de gamme — Un souvenir unique, généré par IA en quelques secondes, sans jamais sacrifier l'élégance de votre réception. Vos invités repartent avec bien plus qu'une photo.</p>
     <div class="svcp-cta-row">
@@ -1165,6 +1175,16 @@
     </div></div>
     </section>
 
+    
+    <section class="read-panel svcp-panel">
+      <h2>Nos conseils pour bien préparer</h2>
+      <div class="advice-grid"><a class="advice-card" href="/conseils/photobooth-mariage-bien-choisir/" data-nav="article:photobooth-mariage-bien-choisir">
+    <span class="advice-card-meta">4 min de lecture</span>
+    <span class="advice-card-title">Photobooth de mariage : comment bien le choisir</span>
+    <span class="advice-card-text">Durée de présence, habillage, impressions, galerie en ligne : les points à vérifier avant de réserver un photobooth.</span>
+    <span class="advice-card-more">Lire le guide →</span>
+  </a></div>
+    </section>
     <section class="read-panel svcp-panel svcp-others">
       <h2>Autres prestations</h2>
       <div class="svcp-others-row">
@@ -1738,6 +1758,7 @@
         <div class="ft-col-title" data-lang="ft-studio">Le studio</div>
         <ul class="ft-list">
           <li><a href="/a-propos/" onclick="return navLink(event,'about')" data-lang="ft-about">À propos</a></li>
+          <li><a href="/conseils/" onclick="return navLink(event,'advice')" data-lang="ft-advice">Conseils photo</a></li>
           <li><a href="/portfolio/" onclick="return navLink(event,'portfolio')" data-lang="portfolio">Portfolio</a></li>
           <li><button onclick="goView('drone')" data-lang="drone">4K Drone</button></li>
           <li><a href="/partenaires/" onclick="return navLink(event,'partners')" data-lang="partners">Partenaires</a></li>
@@ -1756,10 +1777,11 @@
   </div>
 </footer>
 
-<script src="config/analytics.js?v=202610041"></script>
-<script src="js/analytics.js?v=202610041"></script>
-<script src="config/routes.js?v=202610041"></script>
-<script src="config/media.js?v=202610041"></script>
-<script src="js/script.js?v=202610041"></script>
+<script src="config/analytics.js?v=202610042"></script>
+<script src="js/analytics.js?v=202610042"></script>
+<script src="config/articles.js?v=202610042"></script>
+<script src="config/routes.js?v=202610042"></script>
+<script src="config/media.js?v=202610042"></script>
+<script src="js/script.js?v=202610042"></script>
 </body>
 </html>

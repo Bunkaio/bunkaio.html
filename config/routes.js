@@ -93,3 +93,14 @@ const SEO_ROUTES = [
     description:'Votre espace client ou partenaire BUNKAIO.',
     titleEn:'My space | BUNKAIO', descriptionEn:'Your BUNKAIO client or partner area.' },
 ];
+
+/* Pages de conseils : le hub et un article par entrée de ARTICLES (config/articles.js). */
+if (typeof ARTICLES !== 'undefined') {
+  SEO_ROUTES.push({ view:'advice', path:'/conseils/', index:true,
+    title:'Conseils photo : préparer sa séance, son shooting, son événement | BUNKAIO',
+    description:'Guides pratiques d\'un photographe professionnel : préparer une séance portrait, choisir ses tenues, organiser un shooting produit, mode ou événementiel.',
+    titleEn:'Photo advice: prepare your session, shoot or event | BUNKAIO',
+    descriptionEn:'Practical guides from a professional photographer: preparing a portrait session, choosing outfits, planning a product, fashion or event shoot.' });
+  ARTICLES.forEach(a => SEO_ROUTES.push({ view:'article', slug:a.slug, path:'/conseils/' + a.slug + '/', index:true,
+    title:a.title, description:a.description, h1:a.h1, titleEn:a.title, descriptionEn:a.description }));
+}

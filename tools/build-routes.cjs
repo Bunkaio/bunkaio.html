@@ -24,15 +24,18 @@ const { chromium } = require('playwright');
 
 const ROOT = path.resolve(__dirname, '..');
 const SITE = 'https://bunkaio.com';
-const ROUTES = vm.runInNewContext(fs.readFileSync(path.join(ROOT, 'config/routes.js'), 'utf8') + ';SEO_ROUTES', {});
+const ARTICLES = vm.runInNewContext(fs.readFileSync(path.join(ROOT, 'config/articles.js'), 'utf8') + ';ARTICLES', {});
+const ROUTES = vm.runInNewContext(fs.readFileSync(path.join(ROOT, 'config/articles.js'), 'utf8') + fs.readFileSync(path.join(ROOT, 'config/routes.js'), 'utf8') + ';SEO_ROUTES', {});
 
 /* Conteneurs remplis par le JavaScript, à pré-rendre dans le HTML. */
 const SNAPS_BY_VIEW = {
-  home: ['missionServicesTrack'],
+  home: ['missionServicesTrack', 'adviceTeaser'],
   services: ['servicesFilters', 'servicesGrid', 'processSteps'],
   legal: ['faqAccordion', 'privacyAccordion'],
   partners: ['partnersPitch', 'partnersAccordion', 'applyBenefitsAccordion'],
   service: ['servicePageContent'],
+  advice: ['advicePageContent'],
+  article: ['articlePageContent'],
 };
 const SNAPS_ALL = ['ftServices'];
 const ENTITY = JSON.parse(fs.readFileSync(path.join(ROOT, 'config/entity.json'), 'utf8'));
@@ -112,16 +115,31 @@ function buildJsonLd(route, meta) {
       offers: { '@type': 'AggregateOffer', priceCurrency: 'EUR', lowPrice: Math.min(...priced.map((t) => t.price)), highPrice: Math.max(...priced.map((t) => t.price)), offerCount: meta.tiers.length },
     });
   }
-  const pageType = route.view === 'about' ? 'AboutPage' : route.view === 'contact' ? 'ContactPage' : 'WebPage';
+  const art = route.slug ? ARTICLES.find((x) => x.slug === route.slug) : null;
+  if (art) {
+    graph.push({
+      '@type': 'Article', '@id': url + '#article', headline: art.h1, description: art.description,
+      datePublished: art.date, dateModified: art.date, inLanguage: 'fr-FR',
+      author: { '@id': bizId }, publisher: { '@id': bizId }, mainEntityOfPage: { '@id': url + '#webpage' },
+      image: SITE + '/images/og-default.jpg', articleSection: 'Conseils photo',
+    });
+  }
+  if (route.view === 'advice') {
+    graph.push({ '@type': 'ItemList', '@id': url + '#list', itemListElement: ARTICLES.map((x, i) => ({ '@type': 'ListItem', position: i + 1, url: SITE + '/conseils/' + x.slug + '/', name: x.h1 })) });
+  }
+  const pageType = route.view === 'about' ? 'AboutPage' : route.view === 'contact' ? 'ContactPage' : route.view === 'advice' ? 'CollectionPage' : 'WebPage';
   const page = { '@type': pageType, '@id': url + '#webpage', url, name: route.title, description: route.description, inLanguage: 'fr-FR', isPartOf: { '@id': siteId }, about: { '@id': bizId } };
   if (route.view === 'about') page.mainEntity = { '@id': personId };
   if (route.cat) page.mainEntity = { '@id': url + '#service' };
+  if (art) page.mainEntity = { '@id': url + '#article' };
+  if (route.view === 'advice') page.mainEntity = { '@id': url + '#list' };
   if (route.path !== '/') page.breadcrumb = { '@id': url + '#breadcrumb' };
   graph.push(page);
   if (route.path !== '/') {
-    const name = route.cat && meta ? meta.name : route.title.split('|')[0].trim();
+    const name = route.cat && meta ? meta.name : route.slug && art ? art.h1 : route.view === 'advice' ? 'Conseils photo' : route.title.split('|')[0].trim();
     const crumbs = [{ '@type': 'ListItem', position: 1, name: 'Accueil', item: SITE + '/' }];
     if (route.cat) crumbs.push({ '@type': 'ListItem', position: 2, name: 'Services', item: SITE + '/services/' });
+    if (route.slug) crumbs.push({ '@type': 'ListItem', position: 2, name: 'Conseils photo', item: SITE + '/conseils/' });
     crumbs.push({ '@type': 'ListItem', position: crumbs.length + 1, name, item: url });
     graph.push({ '@type': 'BreadcrumbList', '@id': url + '#breadcrumb', itemListElement: crumbs });
   }
@@ -206,13 +224,22 @@ function buildPage(template, route, snaps, meta) {
       return { name: cat.name.fr, tiers };
     }, r.cat);
   }
+  const articleSnaps = {};
+  await page.evaluate(() => goView('advice', null, { initial: true }));
+  await grab(['advicePageContent']);
+  for (const r of ROUTES.filter((x) => x.view === 'article')) {
+    await page.evaluate((sl) => goView('article', sl, { initial: true }), r.slug);
+    articleSnaps[r.slug] = await page.evaluate(() => document.getElementById('articlePageContent').innerHTML);
+  }
+  await page.evaluate(() => goView('home', null, { initial: true }));
+  await grab(['adviceTeaser']);
   await browser.close();
   srv.close();
 
   // 2. Génération des pages
   const template = normalize(fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8'));
   for (const route of ROUTES) {
-    const sn = route.cat ? { ...snaps, servicePageContent: serviceSnaps[route.cat] } : snaps;
+    const sn = route.cat ? { ...snaps, servicePageContent: serviceSnaps[route.cat] } : route.slug ? { ...snaps, articlePageContent: articleSnaps[route.slug] } : snaps;
     const out = buildPage(template, route, sn, serviceMeta[route.cat]);
     const file = route.path === '/' ? path.join(ROOT, 'index.html') : path.join(ROOT, route.path, 'index.html');
     fs.mkdirSync(path.dirname(file), { recursive: true });

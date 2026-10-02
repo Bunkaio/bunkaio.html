@@ -122,7 +122,7 @@ const I18N = {
     'about-h-method':'Comment ça se passe',
     'about-step1':'Devis personnalisé sous 48 h','about-step2':'Shooting à la date convenue','about-step3':'Retouche et post-production','about-step4':'Livraison en HD dans une galerie privée, depuis votre espace client',
     'about-cta-portfolio':'Voir le portfolio','about-cta-contact':'Contacter BUNKAIO',
-    'ft-about':'À propos','cred-about-link':'Qui est derrière BUNKAIO ? →',
+    'ft-about':'À propos','ft-advice':'Conseils photo','cred-about-link':'Qui est derrière BUNKAIO ? →',
     'zone-label':'Zone d\'intervention','zone-value':'Photographe mobile — Béziers, Montpellier, Toulouse',
     'share-sub':'Vous avez travaillé avec BUNKAIO ? Votre retour aide d\'autres clients à se projeter — et compte énormément pour nous.',
     'share-info-label':'Comment ça marche',
@@ -447,7 +447,7 @@ const I18N = {
     'about-h-method':'How it works',
     'about-step1':'Personalised quote within 48 hours','about-step2':'Shoot on the agreed date','about-step3':'Retouching and post-production','about-step4':'HD delivery in a private gallery, from your client area',
     'about-cta-portfolio':'See the portfolio','about-cta-contact':'Contact BUNKAIO',
-    'ft-about':'About','cred-about-link':'Who is behind BUNKAIO? →',
+    'ft-about':'About','ft-advice':'Photo advice','cred-about-link':'Who is behind BUNKAIO? →',
     'zone-label':'Service area','zone-value':'Mobile photographer — Béziers, Montpellier, Toulouse',
     'share-sub':'Have you worked with BUNKAIO? Your feedback helps other clients picture what to expect — and it means a great deal to us.',
     'share-info-label':'How it works',
@@ -799,6 +799,9 @@ function closeMobileMenu(){
 function refreshDynamic(){
   renderClientSpotlights();
   if (currentView === 'service') renderServicePage(currentSub);
+  if (currentView === 'article') renderArticlePage(currentSub);
+  if (currentView === 'advice') renderAdvicePage();
+  renderAdviceTeaser();
   renderSvcAssure();
   renderCats();
   renderMissionServices();
@@ -1528,6 +1531,7 @@ let currentSub = null;
 function seoRouteFor(v, sub){
   if (typeof SEO_ROUTES === 'undefined') return null;
   if (v === 'service') return SEO_ROUTES.find(r => r.view === 'service' && r.cat === sub) || null;
+  if (v === 'article') return SEO_ROUTES.find(r => r.view === 'article' && r.slug === sub) || null;
   return SEO_ROUTES.find(r => r.view === v) || null;
 }
 /* Lien crawlable vers la page d'une prestation (repli sur /services/ si inconnue). */
@@ -1563,13 +1567,13 @@ function navLink(e, v, subTab){
 }
 window.addEventListener('popstate', () => {
   const r = seoRouteForPath(location.pathname);
-  goView(r ? r.view : 'home', r ? r.cat : null, { fromPop: true });
+  goView(r ? r.view : 'home', r ? (r.cat || r.slug || null) : null, { fromPop: true });
 });
 
 function goView(v, subTab, opts){
   opts = opts || {};
   currentView = v;
-  currentSub = v === 'service' ? subTab : null;
+  currentSub = (v === 'service' || v === 'article') ? subTab : null;
   const route = seoRouteFor(v, subTab);
   if (route && !opts.fromPop && !opts.initial && location.pathname.replace(/index\.html$/, '') !== route.path) {
     history.pushState({ v }, '', route.path);
@@ -1607,6 +1611,8 @@ function goView(v, subTab, opts){
       const imgCollab = document.getElementById('img-collab-side'); if (imgCollab && !imgCollab.src) imgCollab.src = IMG.collab;
     }
     if (v === 'service') renderServicePage(subTab);
+    if (v === 'article') renderArticlePage(subTab);
+    if (v === 'advice') renderAdvicePage();
     if (v === 'legal') { renderFaqAccordion(); renderPrivacyAccordion(); setLegalTab('faq'); }
     if (v === 'about') { const ph = document.getElementById('img-about'); if (ph && IMG.aboutPhoto && !ph.getAttribute('src')) { ph.src = IMG.aboutPhoto; ph.hidden = false; } }
     /* Anime au scroll tous les éléments .rv de la vue active — cohérent
@@ -2567,11 +2573,11 @@ function renderServicePage(catId){
   ];
 
   el.innerHTML = `
-    <nav class="breadcrumb" aria-label="${t({fr:'Fil d\'Ariane', en:'Breadcrumb'})}">
+    <div class="breadcrumb" role="navigation" aria-label="${t({fr:'Fil d\'Ariane', en:'Breadcrumb'})}">
       <a href="/" onclick="return navLink(event,'home')">${t({fr:'Accueil', en:'Home'})}</a><span aria-hidden="true">›</span>
       <a href="/services/" onclick="return navLink(event,'services')">Services</a><span aria-hidden="true">›</span>
       <span>${t(c.name)}</span>
-    </nav>
+    </div>
     <h1 data-pageh1 class="page-title">${h1}</h1>
     <p class="page-sub">${t(c.tag)}${c.pitch ? ' — ' + t(c.pitch) : ''}</p>
     <div class="svcp-cta-row">
@@ -2611,6 +2617,11 @@ function renderServicePage(catId){
       <div id="servicePageFaq"></div>
     </section>
 
+    ${(typeof ARTICLES !== 'undefined' && ARTICLES.some(a => a.cat === catId)) ? `
+    <section class="read-panel svcp-panel">
+      <h2>${t({fr:'Nos conseils pour bien préparer', en:'Our tips to prepare'})}</h2>
+      <div class="advice-grid">${ARTICLES.filter(a => a.cat === catId).map(a => adviceCard(a)).join('')}</div>
+    </section>` : ''}
     <section class="read-panel svcp-panel svcp-others">
       <h2>${t({fr:'Autres prestations', en:'Other services'})}</h2>
       <div class="svcp-others-row">
@@ -2620,6 +2631,87 @@ function renderServicePage(catId){
     </section>`;
   renderAccordionInto('servicePageFaq', faq.map(f => ({ title: f.q, body: f.a })), { exclusive: true });
 }
+
+/* ═══════════════ CONSEILS PHOTO (config/articles.js) ═══════════════ */
+const ADVICE_NOTE = { fr: 'Articles rédigés en français.', en: 'Articles are written in French.' };
+function articlePath(slug){ const r = seoRouteFor('article', slug); return r ? r.path : '/conseils/'; }
+function fmtDate(iso){ return new Date(iso + 'T12:00:00').toLocaleDateString(LANG === 'en' ? 'en-GB' : 'fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }); }
+function adviceCard(a){
+  return `<a class="advice-card" href="${articlePath(a.slug)}" data-nav="article:${a.slug}">
+    <span class="advice-card-meta">${a.minutes} ${t({fr:'min de lecture', en:'min read'})}</span>
+    <span class="advice-card-title">${a.h1}</span>
+    <span class="advice-card-text">${a.excerpt}</span>
+    <span class="advice-card-more">${t({fr:'Lire le guide →', en:'Read the guide →'})}</span>
+  </a>`;
+}
+function renderAdviceTeaser(){
+  const el = document.getElementById('adviceTeaser');
+  if (!el || typeof ARTICLES === 'undefined') return;
+  el.innerHTML = `
+    <section class="advice-teaser rv in">
+      <div class="advice-teaser-head">
+        <div>
+          <div class="cs-kicker">${t({fr:'Conseils photo', en:'Photo advice'})}</div>
+          <h2 class="advice-teaser-title">${t({fr:'Bien préparer votre séance ou votre shooting', en:'Prepare your session or shoot'})}</h2>
+        </div>
+        <a class="svcp-link" href="/conseils/" data-nav="advice">${t({fr:'Tous les conseils →', en:'All advice →'})}</a>
+      </div>
+      <div class="advice-grid">${ARTICLES.slice(0, 3).map(a => adviceCard(a)).join('')}</div>
+    </section>`;
+}
+function renderAdvicePage(){
+  const el = document.getElementById('advicePageContent');
+  if (!el || typeof ARTICLES === 'undefined') return;
+  el.innerHTML = `
+    <div class="breadcrumb" role="navigation" aria-label="${t({fr:'Fil d\'Ariane', en:'Breadcrumb'})}">
+      <a href="/" data-nav="home">${t({fr:'Accueil', en:'Home'})}</a><span aria-hidden="true">›</span><span>${t({fr:'Conseils photo', en:'Photo advice'})}</span>
+    </div>
+    <h1 data-pageh1 class="page-title">${t({fr:'Conseils photo', en:'Photo advice'})}</h1>
+    <p class="page-sub">${t({fr:'Des guides pratiques pour préparer une séance portrait, choisir ses tenues, organiser un shooting produit, mode ou événementiel.', en:'Practical guides to prepare a portrait session, choose outfits, and plan a product, fashion or event shoot.'})}${LANG === 'en' ? ' ' + ADVICE_NOTE.en : ''}</p>
+    <section class="read-panel svcp-panel"><div class="advice-grid">${ARTICLES.map(a => adviceCard(a)).join('')}</div></section>`;
+}
+function renderArticlePage(slug){
+  const el = document.getElementById('articlePageContent');
+  if (!el || typeof ARTICLES === 'undefined') return;
+  const a = ARTICLES.find(x => x.slug === slug);
+  if (!a) { el.innerHTML = ''; return; }
+  const related = (a.related || []).map(sl => ARTICLES.find(x => x.slug === sl)).filter(Boolean);
+  const cat = a.cat ? CATS.find(c => c.id === a.cat) : null;
+  el.innerHTML = `
+    <div class="breadcrumb" role="navigation" aria-label="${t({fr:'Fil d\'Ariane', en:'Breadcrumb'})}">
+      <a href="/" data-nav="home">${t({fr:'Accueil', en:'Home'})}</a><span aria-hidden="true">›</span>
+      <a href="/conseils/" data-nav="advice">${t({fr:'Conseils photo', en:'Photo advice'})}</a><span aria-hidden="true">›</span>
+      <span>${a.h1}</span>
+    </div>
+    <h1 data-pageh1 class="page-title">${a.h1}</h1>
+    <p class="page-sub article-meta"><time datetime="${a.date}">${fmtDate(a.date)}</time> · ${a.minutes} ${t({fr:'min de lecture', en:'min read'})} · ${t({fr:'Par l\'équipe BUNKAIO', en:'By the BUNKAIO team'})}</p>
+    <article class="read-panel svcp-panel article">
+      <div class="article-summary"><strong>${t({fr:'En bref', en:'In short'})}</strong><ul>${a.summary.map(x => `<li>${x}</li>`).join('')}</ul></div>
+      ${a.sections.map(sec => `<h2>${sec.h}</h2>${sec.html}`).join('')}
+      <h2>${t({fr:'Questions fréquentes', en:'Frequently asked questions'})}</h2>
+      <div id="articleFaq"></div>
+    </article>
+    <section class="read-panel svcp-panel article-cta">
+      <h2>${t({fr:'Un projet de séance ou de shooting ?', en:'Planning a session or a shoot?'})}</h2>
+      <p class="svcp-text">${t({fr:'Estimez votre projet en quelques minutes : réponse personnalisée sous 48 h.', en:'Estimate your project in a few minutes: personal reply within 48 hours.'})}</p>
+      <div class="svcp-cta-row" style="margin:0">
+        <button type="button" class="cta-primary" onclick="${a.cat ? `goToQuizCategory('${a.cat}')` : `goView('quiz')`}">${t({fr:'Estimer mon projet', en:'Estimate my project'})}</button>
+        ${cat ? `<a class="btn btn-ghost" href="${servicePath(a.cat)}" data-nav="service:${a.cat}"><span>${t(cat.name)}</span></a>` : ''}
+      </div>
+    </section>
+    ${related.length ? `<section class="read-panel svcp-panel"><h2>${t({fr:'À lire aussi', en:'Keep reading'})}</h2><div class="advice-grid">${related.map(x => adviceCard(x)).join('')}</div></section>` : ''}`;
+  renderAccordionInto('articleFaq', a.faq.map(f => ({ title: f.q, body: '<p>' + f.a + '</p>' })), { exclusive: true });
+}
+
+/* Liens internes déclarés par data-nav="vue[:sous-page]" (articles, cartes…) : navigation SPA
+   sans rechargement, tout en gardant un vrai href pour les moteurs et le clic droit. */
+const NAV_ALIASES = { faq: 'legal', conseils: 'advice' };
+document.addEventListener('click', (e) => {
+  const a = e.target.closest ? e.target.closest('a[data-nav]') : null;
+  if (!a) return;
+  const [view, sub] = a.dataset.nav.split(':');
+  if (navLink(e, NAV_ALIASES[view] || view, sub || undefined) === false) e.preventDefault();
+});
 
 /* Garanties de la page Services : 4 puces, une seule ouverte à la fois. */
 let svcAssureOpen = 0;
@@ -4997,7 +5089,7 @@ function renderFaqAccordion(){
     { title:'Quelles prestations proposez-vous ?', body:`<p>Bunkaio est un photographe professionnel : nous produisons des images haut de gamme, en HD, pour <strong>portrait & lifestyle</strong>, <strong>mode, agences et mannequins</strong>, <strong>commercial & produits</strong>, <strong>événementiel</strong>, et <strong>Lumen</strong>, le photobooth IA pour mariages. Chaque univers a ses formules détaillées dans notre <strong>catalogue & prix</strong>.</p>` },
     { title:'Quelle est la qualité des images livrées ?', body:`<p>Des photos <strong>haute définition, retouchées</strong> avec soin, prêtes à être publiées ou imprimées. Elles sont livrées dans une <strong>galerie privée</strong> à télécharger depuis votre espace client, et vous disposez des droits d'utilisation commerciale.</p>` },
     { title:'Comment se déroule une prestation, de la demande à la livraison ?', body:`<p>Quatre étapes simples : <strong>devis</strong> personnalisé sous 48h, <strong>shooting</strong> à la date convenue, <strong>post-production</strong> (tri, retouche, montage), puis <strong>livraison</strong> de vos visuels via votre espace client. Le détail complet est dans l'onglet « Devis & déroulé » de la page Services.</p>` },
-    { title:'Je ne suis pas à l\'aise devant l\'objectif, est-ce un problème ?', body:`<p>Pas du tout : c'est notre rôle de vous mettre en confiance. Nous vous guidons sur les poses et l'ambiance pour obtenir des photos qui vous ressemblent vraiment.</p>` },
+    { title:'Je ne suis pas à l\'aise devant l\'objectif, est-ce un problème ?', body:`<p>Pas du tout : c'est notre rôle de vous mettre en confiance. Nous vous guidons sur les poses et l'ambiance pour obtenir des photos qui vous ressemblent vraiment. Pour vous préparer, consultez notre guide <a href="/conseils/preparer-seance-photo-portrait/" data-nav="article:preparer-seance-photo-portrait">Préparer sa séance photo portrait</a>.</p>` },
     { title:'Quels sont les délais de livraison ?', body:`<p>Ils varient selon la formule choisie et sont indiqués sur chaque offre du catalogue. Ils démarrent à la date du shooting, hors demandes de retouches complémentaires.</p>` },
     { title:'Comment fonctionne le paiement ?', body:`<p>30 % à la commande (signature du devis), solde à la livraison. Paiement par carte bancaire, prélèvement automatique, ou en 3x sans frais avec Klarna.</p>` },
     { title:'Que se passe-t-il si j\'annule ma prestation ?', body:`<p>Votre date et votre créneau sont réservés dès la validation du devis et le versement de l'<strong>acompte de 30 %</strong>. Si vous annulez après cette validation, <strong>l'acompte reste acquis à Bunkaio et n'est pas remboursé</strong>. Pour toute difficulté, contactez-nous le plus tôt possible.</p>` },
@@ -5012,7 +5104,7 @@ function renderFaqAccordion(){
     { title:'What services do you offer?', body:`<p>Bunkaio is a professional photographer: we produce premium, high-definition images for <strong>portrait & lifestyle</strong>, <strong>fashion, agencies and models</strong>, <strong>commercial & products</strong>, <strong>events</strong>, and <strong>Lumen</strong>, the IA photobooth for weddings. Each universe has its packages detailed in our <strong>catalogue & rates</strong>.</p>` },
     { title:'What is the quality of the delivered images?', body:`<p><strong>High-definition, carefully retouched</strong> photos, ready to publish or print. They are delivered in a <strong>private gallery</strong> you can download from your client area, with commercial usage rights.</p>` },
     { title:'How does a project run, from request to delivery?', body:`<p>Four simple steps: a personalised <strong>quote</strong> within 48h, the <strong>shoot</strong> on the agreed date, <strong>post-production</strong> (selection, retouching, editing), then <strong>delivery</strong> via your client area. Full details are under the "Quote & process" tab on the Services page.</p>` },
-    { title:'I\'m not comfortable in front of the camera — is that a problem?', body:`<p>Not at all: it's our job to put you at ease. We guide you on poses and mood so the photos truly look like you.</p>` },
+    { title:'I\'m not comfortable in front of the camera — is that a problem?', body:`<p>Not at all: it's our job to put you at ease. We guide you on poses and mood so the photos truly look like you. To get ready, see our guide <a href="/conseils/preparer-seance-photo-portrait/" data-nav="article:preparer-seance-photo-portrait">Preparing your portrait photo session</a> (in French).</p>` },
     { title:'What are the delivery times?', body:`<p>They depend on the package chosen and are shown on each catalogue offer. They start from the shoot date, excluding any additional retouching requests.</p>` },
     { title:'How does payment work?', body:`<p>30% upon booking (quote signature), balance on delivery. Pay by card, direct debit, or in 3 interest-free instalments with Klarna.</p>` },
     { title:'What happens if I cancel my booking?', body:`<p>Your date and time slot are reserved once the quote is accepted and the <strong>30% deposit</strong> is paid. If you cancel after that point, <strong>the deposit is retained by Bunkaio and is non-refundable</strong>. If you run into any difficulty, please contact us as early as possible.</p>` },
@@ -5152,7 +5244,7 @@ initNavScrollState();
   history.replaceState({ v }, '', location.pathname + location.hash);
   if (window.track) track('pageview');
   if (v === 'home') { applySeoMeta('home'); return; }
-  goView(v === 'account' ? 'login' : v, r ? r.cat : null, { initial: true });
+  goView(v === 'account' ? 'login' : v, r ? (r.cat || r.slug || null) : null, { initial: true });
 })();
 
 restoreSession();
