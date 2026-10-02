@@ -823,19 +823,37 @@ async function handleMediaServe(request: Request, env: Env, mediaPath: string): 
   if (!mediaPath || !isValidMediaPath(mediaPath)) {
     return new Response('Not found', { status: 404 });
   }
-  const object = await env.MEDIA_BUCKET.get(mediaPath);
+  /* Requêtes Range : indispensables pour que les vidéos démarrent sans télécharger tout le fichier (et pour iOS/Safari). */
+  const wantsRange = request.headers.has('Range');
+  const object = await env.MEDIA_BUCKET.get(mediaPath, wantsRange ? { range: request.headers } : undefined);
   if (!object) {
     return new Response('Not found', { status: 404, headers: { 'Cache-Control': 'no-store' } });
   }
   const contentType = object.httpMetadata?.contentType ?? getContentType(mediaPath);
-  return new Response(object.body, {
-    headers: {
-      'Content-Type': contentType,
-      'Cache-Control': 'public, max-age=3600',
-      'ETag': `"${object.etag}"`,
-      'Access-Control-Allow-Origin': '*',
-    },
-  });
+  const headers: Record<string, string> = {
+    'Content-Type': contentType,
+    'Cache-Control': 'public, max-age=3600',
+    'ETag': `"${object.etag}"`,
+    'Accept-Ranges': 'bytes',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Expose-Headers': 'Content-Range, Accept-Ranges, Content-Length',
+  };
+  const range = (object as unknown as { range?: { offset?: number; length?: number; suffix?: number } }).range;
+  if (wantsRange && range) {
+    let start = 0;
+    let end = object.size - 1;
+    if (range.suffix !== undefined) {
+      start = Math.max(0, object.size - range.suffix);
+    } else {
+      start = range.offset ?? 0;
+      end = range.length !== undefined ? start + range.length - 1 : object.size - 1;
+    }
+    headers['Content-Range'] = `bytes ${start}-${end}/${object.size}`;
+    headers['Content-Length'] = String(end - start + 1);
+    return new Response(object.body, { status: 206, headers });
+  }
+  headers['Content-Length'] = String(object.size);
+  return new Response(object.body, { headers });
 }
 
 async function handleListMedia(request: Request, env: Env, headers: Record<string, string>): Promise<Response> {

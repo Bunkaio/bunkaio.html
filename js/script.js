@@ -1412,9 +1412,12 @@ function bgVideoAllowed(){
   return !(c && (c.saveData || /(^|-)2g$/.test(c.effectiveType || '')));
 }
 
-/* Version allégée (≈ 0,7–1 Mo) sur petit écran, version HD sur ordinateur. */
+/* Qualité d'origine pour tout le monde ; la version allégée (1280 px) n'est servie qu'en économie de données
+   ou sur connexion lente (3G) — là où la vidéo d'origine retarderait l'affichage de la page. */
 function pickBgVideo(desktop, mobile){
-  return (mobile && window.matchMedia && window.matchMedia('(max-width: 820px)').matches) ? mobile : desktop;
+  const c = navigator.connection;
+  const slow = c && (c.saveData || /(^|-)3g$/.test(c.effectiveType || ''));
+  return (mobile && slow) ? mobile : desktop;
 }
 
 function createBgVideo(src){
@@ -1580,9 +1583,21 @@ function initHeroCarousel(viewKey){
       gvw.appendChild(vid);
       const overlay = wrap.querySelector('.page-hero-overlay');
       wrap.insertBefore(gvw, overlay || null);
+      /* Dès que la lecture démarre vraiment, les photos de bannière (affichées pendant le chargement) s'effacent. */
+      vid.addEventListener('playing', () => setTimeout(() => {
+        wrap.querySelectorAll('.hero-slide').forEach(sl => sl.remove());
+        clearHeroCarousel();
+      }, 900), { once: true });
     }
     showOnlyVideoWrap(gvw);
-    wrap.querySelectorAll('.hero-slide').forEach(s => s.remove());
+    const gv = gvw.querySelector('video');
+    if (gv && gv.classList.contains('is-playing')) {
+      wrap.querySelectorAll('.hero-slide').forEach(sl => sl.remove());
+    } else {
+      /* Pas d'écran noir pendant le chargement de la vidéo : photos de bannière dessous, la vidéo apparaît en fondu par-dessus. */
+      showHeroImages();
+      wrap.querySelectorAll('.hero-slide').forEach(sl => wrap.insertBefore(sl, gvw));
+    }
     resumeAllBgVideos();
     return;
   }
@@ -5504,3 +5519,17 @@ initNavScrollState();
 })();
 
 restoreSession();
+
+
+/* Vidéo de fond de la page Prestations : on commence à la télécharger dès que le visiteur montre l'intention
+   d'y aller (survol ou toucher d'un lien « Services »), pour qu'elle démarre quasi instantanément à l'ouverture. */
+let _svcVideoWarm = false;
+function warmServicesVideo(){
+  if (_svcVideoWarm || !IMG.servicesVideo || !bgVideoAllowed()) return;
+  _svcVideoWarm = true;
+  fetch(IMG.servicesVideo, { mode: 'cors', credentials: 'omit' }).then(r => r.ok ? r.blob() : null).catch(() => {});
+}
+['pointerover', 'touchstart'].forEach(ev => document.addEventListener(ev, (e) => {
+  const el = e.target && e.target.closest ? e.target.closest('[onclick*="\'services\'"], [data-nav="services"], a[href="/services/"]') : null;
+  if (el) warmServicesVideo();
+}, { passive: true }));

@@ -285,10 +285,10 @@
       <h3>Vidéos de fond</h3>
       <ul>
         <li><strong>.mp4 (H.264), SANS piste audio</strong>, boucle fluide de 8 à 20 s, 1920 × 1080 px (illustration devis : 9:7), 24 à 30 images/s.</li>
-        <li><strong>Poids visé : 3 à 6 Mo</strong> (10 Mo maximum) pour ne pas pénaliser le chargement mobile.</li>
+        <li><strong>Qualité d'abord :</strong> 8 à 15 Mo (20 Mo maximum). Le site charge la vidéo en lecture progressive : elle démarre sans attendre le téléchargement complet, À CONDITION que le fichier soit <code>faststart</code> (option <code>-movflags +faststart</code> ci-dessous).</li>
         <li>Commande ffmpeg conseillée (compression, suppression du son, lecture immédiate) :
-<pre>ffmpeg -i source.mov -an -vf "scale=-2:1080,fps=30" -c:v libx264 -crf 28 -preset slow -pix_fmt yuv420p -movflags +faststart sortie.mp4</pre>
-Si le fichier dépasse 6 Mo, augmenter <code>-crf</code> (30) ou raccourcir la boucle. Les vidéos de l'accueil (<code>videos/home-bg.mp4</code>, <code>videos/mission-bg.mp4</code>) se changent directement sur GitHub, avec les mêmes règles ; chacune a une version mobile (<code>home-bg-m.mp4</code>, <code>mission-bg-m.mp4</code>, largeur 1280 px, haute qualité, 3 à 5 Mo : même commande avec <code>scale=1280:-2</code> et <code>-crf 21</code>), puis incrémenter le <code>?v=</code> dans <code>config/media.js</code>.</li>
+<pre>ffmpeg -i source.mov -an -vf "scale=-2:1080,fps=30" -c:v libx264 -crf 20 -preset slow -pix_fmt yuv420p -movflags +faststart sortie.mp4</pre>
+Si le fichier dépasse 20 Mo, augmenter légèrement <code>-crf</code> (22) ou raccourcir la boucle. Les vidéos de l'accueil (<code>videos/home-bg.mp4</code>, <code>videos/mission-bg.mp4</code>) se changent directement sur GitHub, avec les mêmes règles ; chacune a une version mobile (<code>home-bg-m.mp4</code>, <code>mission-bg-m.mp4</code>, largeur 1280 px, haute qualité, 3 à 5 Mo : même commande avec <code>scale=1280:-2</code> et <code>-crf 21</code>), puis incrémenter le <code>?v=</code> dans <code>config/media.js</code>.</li>
       </ul>
 
       <h3>Compression en ligne de commande (optionnel)</h3>
@@ -335,7 +335,7 @@ const VIDEO_SECTIONS = [
       'Format vidéo : .mp4 (H.264)',
       'Cadrage : paysage 16:9, 1920 × 1080 px minimum',
       'Boucle courte et fluide, SANS piste audio (lue automatiquement en muet, en boucle) — 8 à 20 secondes idéalement',
-      'Poids visé : 3 à 6 Mo (10 Mo maximum) — commande ffmpeg dans la fiche d\'export en haut de page',
+      'Qualité d\'abord : 8 à 15 Mo conviennent (20 Mo maximum). IMPORTANT : le fichier doit être « faststart » (commande ffmpeg avec -movflags +faststart dans la fiche d\'export), sinon il ne démarre qu\'une fois entièrement téléchargé',
     ],
   },
   {
