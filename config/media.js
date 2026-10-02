@@ -95,6 +95,8 @@ const IMG = {
   drone:     MEDIA_BASE + '/hero/drone-1.webp',      // Fond page 4K Drone
   portfolio: MEDIA_BASE + '/hero/portfolio-1.webp',  // Fond page Portfolio
   contact:   MEDIA_BASE + '/hero/contact-1.webp',    // Fond page Contact
+  about:     MEDIA_BASE + '/hero/contact-1.webp',    // Fond page À propos
+  aboutPhoto: '',                                     // Portrait de la photographe (À propos) — ex. MEDIA_BASE + '/about/aya.webp' après dépôt dans l'admin média
   partners:  MEDIA_BASE + '/hero/partners-1.webp',   // Fond page Partenaires
   legal:     MEDIA_BASE + '/hero/contact-1.webp',    // Fond page FAQ & confidentialité
   login:     MEDIA_BASE + '/hero/login-1.webp',      // Fond page Connexion
@@ -163,6 +165,13 @@ const IMG = {
       MEDIA_BASE + '/hero/portfolio-1.webp',
       MEDIA_BASE + '/hero/portfolio-2.webp',
       MEDIA_BASE + '/hero/portfolio-3.webp',
+    ],
+
+    /* ⑥-bis À propos — même fond que Contact ; la photo de portrait de la
+       photographe se renseigne via IMG.about (plus haut). */
+    about: [
+      MEDIA_BASE + '/hero/contact-1.webp',
+      MEDIA_BASE + '/hero/contact-2.webp',
     ],
 
     /* ⑥ Contact */

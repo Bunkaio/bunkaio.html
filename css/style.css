@@ -3682,3 +3682,31 @@
   a.nav-link { display: inline-block; text-decoration: none; }
   a.mobile-link { display: block; text-align: center; text-decoration: none; }
   .ft-list a[href^="/"] { display: inline-block; }
+
+  /* ─── À PROPOS ─── */
+  .about-card { max-width: 1100px; margin: 0 auto 24px; color: var(--black); }
+  .about-grid { display: grid; grid-template-columns: 1.5fr 0.7fr; gap: clamp(24px, 4vw, 56px); align-items: start; }
+  .about-card h2 { font-size: clamp(20px, 2.6vw, 26px); font-weight: 700; letter-spacing: -0.02em; margin: 0 0 12px; }
+  .about-text h2:not(:first-of-type) { margin-top: 28px; }
+  .about-text p { font-size: 14.5px; line-height: 1.9; color: #3a3544; margin: 0 0 14px; max-width: 640px; }
+  .about-photo { width: 100%; max-width: 260px; aspect-ratio: 4/5; object-fit: cover; border-radius: 12px; margin-bottom: 20px; display: block; }
+  .about-photo[hidden] { display: none; }
+  .about-stats { display: grid; gap: 14px; }
+  .about-stat { padding: 18px 20px; border: 1px solid var(--line); border-radius: 12px; background: var(--violet); }
+  .about-stat-n { font-size: clamp(30px, 4vw, 40px); font-weight: 700; letter-spacing: -0.03em; line-height: 1; margin-bottom: 6px; }
+  .about-stat-l { font-size: 12.5px; color: #3a3544; line-height: 1.5; }
+  .about-two { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(24px, 4vw, 56px); }
+  .about-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; font-size: 14px; line-height: 1.6; color: #3a3544; }
+  .about-list a { color: var(--black); font-weight: 600; text-decoration: underline; text-underline-offset: 4px; text-decoration-color: rgba(10,10,12,0.25); }
+  .about-list a:hover { text-decoration-color: var(--black); }
+  .about-steps { counter-reset: st; }
+  .about-steps li { counter-increment: st; display: flex; gap: 12px; align-items: baseline; }
+  .about-steps li::before { content: counter(st); flex: 0 0 24px; height: 24px; border-radius: 50%; background: var(--black); color: var(--white); font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; }
+  .about-cta { max-width: 1100px; margin: 8px auto 0; display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+  @media (max-width: 760px) {
+    .about-grid, .about-two { grid-template-columns: 1fr; }
+    .about-stats { grid-template-columns: repeat(3, 1fr); }
+    .about-stat { padding: 14px 12px; }
+    .about-cta .btn, .about-cta .cta-primary { width: 100%; text-align: center; justify-content: center; }
+  }
+  a.btn { text-decoration: none; display: inline-block; text-align: center; }

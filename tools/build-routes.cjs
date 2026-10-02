@@ -34,6 +34,7 @@ const SNAPS_BY_VIEW = {
   partners: ['partnersPitch', 'partnersAccordion', 'applyBenefitsAccordion'],
 };
 const SNAPS_ALL = ['ftServices'];
+const ENTITY = JSON.parse(fs.readFileSync(path.join(ROOT, 'config/entity.json'), 'utf8'));
 const ALL_SNAP_IDS = [...new Set([...Object.values(SNAPS_BY_VIEW).flat(), ...SNAPS_ALL])];
 
 const MIME = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.webp': 'image/webp', '.mp4': 'video/mp4', '.json': 'application/json', '.xml': 'application/xml' };
@@ -69,6 +70,52 @@ function setSnap(html, id, content) {
 function esc(v) { return v.replace(/&/g, '&amp;').replace(/"/g, '&quot;'); }
 function setMeta(html, re, replacement) { return re.test(html) ? html.replace(re, replacement) : html; }
 
+/* Données structurées (JSON-LD) : un @graph par page, construit uniquement à partir de
+   config/entity.json et des routes — aucune donnée inventée (pas d'avis, pas de note). */
+function buildJsonLd(route) {
+  const b = ENTITY.brand, per = ENTITY.person;
+  const bizId = SITE + '/#business', siteId = SITE + '/#website', personId = SITE + '/a-propos/#aya';
+  const url = SITE + route.path;
+  const graph = [];
+  graph.push({
+    '@type': 'ProfessionalService', '@id': bizId,
+    name: b.name, alternateName: b.alternateName, url: SITE + '/',
+    logo: b.logo, image: b.logo, description: b.description,
+    telephone: b.telephone, email: b.email, priceRange: b.priceRange, sameAs: b.sameAs,
+    address: { '@type': 'PostalAddress', addressRegion: b.region, addressCountry: 'FR' },
+    areaServed: [...b.cities.map((c) => ({ '@type': 'City', name: c })), { '@type': 'AdministrativeArea', name: b.region }],
+    knowsAbout: per.knowsAbout,
+    employee: { '@id': personId },
+    hasOfferCatalog: {
+      '@type': 'OfferCatalog', name: 'Prestations de photographie',
+      itemListElement: b.services.map((sv) => ({ '@type': 'Offer', itemOffered: { '@type': 'Service', name: sv.name, description: sv.description, provider: { '@id': bizId }, areaServed: b.cities.map((c) => ({ '@type': 'City', name: c })) } })),
+    },
+  });
+  graph.push({ '@type': 'WebSite', '@id': siteId, url: SITE + '/', name: b.name, inLanguage: 'fr-FR', publisher: { '@id': bizId } });
+  if (route.view === 'home' || route.view === 'about') {
+    graph.push({
+      '@type': 'Person', '@id': personId, name: per.name, jobTitle: per.jobTitle, description: per.description,
+      url: SITE + '/a-propos/', worksFor: { '@id': bizId },
+      alumniOf: { '@type': 'EducationalOrganization', name: per.alumniOf },
+      hasCredential: { '@type': 'EducationalOccupationalCredential', name: per.credential, credentialCategory: 'degree' },
+      knowsAbout: per.knowsAbout,
+    });
+  }
+  const pageType = route.view === 'about' ? 'AboutPage' : route.view === 'contact' ? 'ContactPage' : 'WebPage';
+  const page = { '@type': pageType, '@id': url + '#webpage', url, name: route.title, description: route.description, inLanguage: 'fr-FR', isPartOf: { '@id': siteId }, about: { '@id': bizId } };
+  if (route.view === 'about') page.mainEntity = { '@id': personId };
+  if (route.path !== '/') page.breadcrumb = { '@id': url + '#breadcrumb' };
+  graph.push(page);
+  if (route.path !== '/') {
+    const name = route.title.split('|')[0].trim();
+    graph.push({ '@type': 'BreadcrumbList', '@id': url + '#breadcrumb', itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Accueil', item: SITE + '/' },
+      { '@type': 'ListItem', position: 2, name, item: url },
+    ] });
+  }
+  return '<script type="application/ld+json">\n' + JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }, null, 2) + '\n</script>';
+}
+
 function buildPage(template, route, snaps) {
   let html = template;
   const url = SITE + route.path;
@@ -81,6 +128,8 @@ function buildPage(template, route, snaps) {
   html = setMeta(html, /<meta property="og:description" content="[^"]*">/, '<meta property="og:description" content="' + esc(route.description) + '">');
   html = setMeta(html, /<meta name="twitter:title" content="[^"]*">/, '<meta name="twitter:title" content="' + esc(route.title) + '">');
   html = setMeta(html, /<meta name="twitter:description" content="[^"]*">/, '<meta name="twitter:description" content="' + esc(route.description) + '">');
+
+  html = html.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/, buildJsonLd(route));
 
   // Vue active = celle de la route
   html = html.replace(/<div class="view( active)?" id="view-([a-z]+)"/g, (m, act, v) => '<div class="view' + (v === route.view ? ' active' : '') + '" id="view-' + v + '"');

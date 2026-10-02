@@ -1,0 +1,56 @@
+{
+  "brand": {
+    "name": "BUNKAIO",
+    "alternateName": "Studio BUNKAIO",
+    "logo": "https://bunkaio.com/images/logo.webp",
+    "description": "BUNKAIO, photographe professionnel mobile en Occitanie (Béziers, Montpellier, Toulouse) : portrait, mode, produit, corporate et événementiel, avec des images haut de gamme en HD.",
+    "telephone": "+33758573161",
+    "email": "contact@bunkaio.com",
+    "priceRange": "À partir de 190 €",
+    "sameAs": [
+      "https://instagram.com/bunkaio"
+    ],
+    "cities": [
+      "Béziers",
+      "Montpellier",
+      "Toulouse"
+    ],
+    "region": "Occitanie",
+    "services": [
+      {
+        "name": "Séance photo — particuliers",
+        "description": "Portrait et lifestyle en extérieur ou en studio, solo, couple ou groupe."
+      },
+      {
+        "name": "Mode, agence et mannequins",
+        "description": "Lookbooks, books mannequins et visuels de marque pour agences et créateurs."
+      },
+      {
+        "name": "Commercial & produits",
+        "description": "Packshots et photographie de produits pour marques, artisans et entreprises."
+      },
+      {
+        "name": "Événementiel",
+        "description": "Reportage photo d'événements : domaines, entreprises, réceptions."
+      },
+      {
+        "name": "Lumen — photobooth IA",
+        "description": "Photobooth IA pour mariages et événements haut de gamme."
+      }
+    ]
+  },
+  "person": {
+    "name": "Aya Nascimento",
+    "jobTitle": "Photographe portraitiste professionnelle",
+    "alumniOf": "ETPA",
+    "credential": "BTS Photographie",
+    "description": "Photographe portraitiste professionnelle diplômée de l'ETPA (BTS Photographie, 2018), spécialisée en photographie de mode, de produit, corporate et événementielle. Plus de 8 ans d'expérience et plus de 200 projets réalisés.",
+    "knowsAbout": [
+      "Photographie de portrait",
+      "Photographie de mode",
+      "Photographie de produit",
+      "Photographie corporate",
+      "Photographie événementielle"
+    ]
+  }
+}
