@@ -1159,7 +1159,6 @@ const PROFILES = [
   { id:'modele',   name:{fr:'Modèle émergent(e)',        en:'Emerging model'},          icon:'person'  },
   { id:'mannequin',name:{fr:'Mannequin',                 en:'Model'},                   icon:'marque'  },
   { id:'createur', name:{fr:'Créateur(trice) de contenu',en:'Content creator'},         icon:'camera'  },
-  { id:'entrepreneur', name:{fr:'Entrepreneur(se)',      en:'Entrepreneur'},            icon:'product' },
   { id:'ei',       name:{fr:'Entreprise individuelle',   en:'Sole proprietorship'},     icon:'artisan' },
   { id:'equipe',   name:{fr:'Équipe / entreprise',       en:'Team / company'},          icon:'agency'  },
   { id:'gastro',   name:{fr:'Restaurateur / hôtelier',   en:'Restaurant / hotel owner'},icon:'gastro'  },
@@ -1173,9 +1172,9 @@ const CAT_PROFILES = {
   immobilier: ['agence', 'promo', 'marque', 'autre'],
   archi:      ['agence', 'promo', 'marque', 'autre'],
   artisan:    ['artisan', 'marque', 'autre'],
-  corporate:  ['entrepreneur', 'ei', 'equipe', 'autre'],
+  corporate:  ['ei', 'equipe', 'autre'],
   mode:       ['modele', 'mannequin', 'createur', 'marque', 'agence', 'autre'],
-  commercial: ['marque', 'agence', 'entrepreneur', 'ei', 'gastro', 'artisan', 'autre'],
+  commercial: ['marque', 'agence', 'ei', 'gastro', 'artisan', 'autre'],
   event:      ['event', 'agence', 'marque', 'autre']
 };
 
@@ -1207,10 +1206,6 @@ const PROFILE_DESCRIPTIONS = {
   createur: {
     fr:'Vous publiez régulièrement et votre image est votre outil de travail. Nous créons des visuels cohérents avec votre univers, pour vos réseaux, votre marque personnelle et vos collaborations.',
     en:'You publish regularly and your image is your working tool. We create visuals consistent with your universe, for your social channels, personal brand and collaborations.'
-  },
-  entrepreneur: {
-    fr:'Vous incarnez votre activité. Des visuels professionnels et crédibles, pour votre site, vos réseaux et vos présentations, qui donnent confiance avant même le premier échange.',
-    en:'You embody your business. Credible, professional visuals for your website, social channels and presentations, building trust before the first conversation.'
   },
   ei: {
     fr:'Vous êtes à votre compte et votre image fait partie de votre offre. Produits, portrait de marque, vitrine : des images soignées à la mesure de votre activité.',
