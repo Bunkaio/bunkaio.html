@@ -333,6 +333,10 @@ export interface AdminAccountUpsertPayload {
   adresse?: string;
   etapeActuelle?: number;
   lightroomUrl?: string;
+  /** Actions d'envoi d'email déclenchées par l'admin à l'enregistrement (non stockées). */
+  sendAccessMail?: boolean;
+  sendPhotosMail?: boolean;
+  lang?: 'fr' | 'en';
   commandes?: AccountOrder[];
   paiements?: AccountPayment[];
   factures?: AccountInvoice[];

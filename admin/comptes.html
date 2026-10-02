@@ -136,6 +136,17 @@
       <input type="text" id="fCode" placeholder="BKO-0000">
       <div class="hint">Obligatoire à la création. Laisse vide à la mise à jour pour garder le code actuel — remplis-le uniquement pour le changer.</div>
     </div>
+    <div class="fgroup">
+      <label><input type="checkbox" id="fSendAccess" style="width:auto;margin-right:8px"> Envoyer le mail « Vos accès » au client (email + code saisi ci-dessus)</label>
+      <div class="hint">Le code n'est jamais stocké en clair : il ne peut être envoyé que s'il est saisi dans ce champ au moment de l'enregistrement.</div>
+    </div>
+    <div class="fgroup">
+      <label><input type="checkbox" id="fSendPhotos" style="width:auto;margin-right:8px"> Envoyer le mail « Vos photos sont prêtes » (avec le lien Lightroom ci-dessous)</label>
+    </div>
+    <div class="fgroup">
+      <label for="fLang">Langue des mails</label>
+      <select id="fLang"><option value="fr">Français</option><option value="en">English</option></select>
+    </div>
   </div>
 
   <div class="section">
@@ -399,6 +410,9 @@ async function saveAccount() {
   };
   const code = document.getElementById('fCode').value.trim();
   if (code) payload.code = code;
+  payload.lang = document.getElementById('fLang').value;
+  if (document.getElementById('fSendAccess').checked) payload.sendAccessMail = true;
+  if (document.getElementById('fSendPhotos').checked) payload.sendPhotosMail = true;
 
   try {
     const res = await fetch(WORKER_BASE + '/accounts', {
@@ -409,8 +423,17 @@ async function saveAccount() {
     const data = await res.json();
     if (res.ok && data.ok) {
       result.className = 'ok';
-      result.textContent = 'Compte enregistré (' + data.account.email + ').';
+      let msg = 'Compte enregistré (' + data.account.email + ').';
+      const em = data.emails || {};
+      if (em.access === true) msg += ' Mail d\'accès envoyé.';
+      if (em.access === false) msg += ' ⚠ Mail d\'accès NON envoyé (saisis le code dans le champ et réessaie).';
+      if (em.photos === true) msg += ' Mail « photos prêtes » envoyé.';
+      if (em.photos === 'no_lightroom_url') msg += ' ⚠ Mail photos non envoyé : renseigne le lien Lightroom.';
+      if (em.photos === false) msg += ' ⚠ Mail photos non envoyé (erreur).';
+      result.textContent = msg;
       document.getElementById('fCode').value = '';
+      document.getElementById('fSendAccess').checked = false;
+      document.getElementById('fSendPhotos').checked = false;
       loadAccounts();
     } else if (data.error === 'code_required_for_new_account') {
       result.className = 'err';

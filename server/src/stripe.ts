@@ -178,6 +178,8 @@ async function createFractionalInvoice(
     // créer ci-dessus : la facture se finalise alors vide (0€) et est
     // auto-marquée payée. C'est la cause des anciennes factures de test à 0€.
     pending_invoice_items_behavior: 'include',
+    // Mention légale obligatoire : entreprise en franchise en base de TVA.
+    footer: customerLang === 'en' ? 'VAT not applicable, art. 293 B of the French Tax Code' : 'TVA non applicable, art. 293 B du CGI',
     metadata: {
       type: metadataType,
       description: input.description,

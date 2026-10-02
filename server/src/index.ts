@@ -3,6 +3,8 @@ import { adminAccountView, getAccount, listAccounts, putAccount, sanitizeAccount
 import { handleCollect, handleStats, purgeOldAnalytics } from './analytics';
 import { appendJournal, diffAccountActivity, flushActivityNotifications, queueActivityNotification } from './activity';
 import {
+  buildAccessCodeEmail,
+  buildPhotosReadyEmail,
   buildAdminPaymentNotificationEmail,
   buildBalanceInvoiceEmail,
   buildDepositInvoiceEmail,
@@ -227,6 +229,9 @@ function isValidAdminAccountUpsertPayload(body: unknown): body is AdminAccountUp
     (b.adresse === undefined || typeof b.adresse === 'string') &&
     (b.etapeActuelle === undefined || typeof b.etapeActuelle === 'number') &&
     (b.lightroomUrl === undefined || typeof b.lightroomUrl === 'string') &&
+    (b.sendAccessMail === undefined || typeof b.sendAccessMail === 'boolean') &&
+    (b.sendPhotosMail === undefined || typeof b.sendPhotosMail === 'boolean') &&
+    (b.lang === undefined || b.lang === 'fr' || b.lang === 'en') &&
     (b.commandes === undefined || Array.isArray(b.commandes)) &&
     (b.paiements === undefined || Array.isArray(b.paiements)) &&
     (b.factures === undefined || Array.isArray(b.factures)) &&
@@ -383,7 +388,35 @@ async function handleAdminAccounts(request: Request, env: Env, headers: Record<s
     try {
       const account = await upsertAccountFromAdmin(env, body);
       console.log('[accounts] compte créé/mis à jour par l\'admin', { type: account.type, email: account.email });
-      return jsonResponse({ ok: true, account: sanitizeAccount(account) }, 200, headers);
+      const lang = normalizeLang(body.lang);
+      const emails: { access?: boolean; photos?: boolean | string } = {};
+      if (body.sendAccessMail && body.code) {
+        try {
+          const m = buildAccessCodeEmail({ customerName: account.nom ?? '', email: account.email, code: body.code, space: account.type, lang });
+          await sendEmail(env, account.email, m.subject, m.html, m.text);
+          emails.access = true;
+        } catch (err) {
+          console.error("[accounts] échec email d'accès", err);
+          emails.access = false;
+        }
+      } else if (body.sendAccessMail) {
+        emails.access = false; // le code n'est connu qu'à la saisie : impossible de l'envoyer sans le retaper
+      }
+      if (body.sendPhotosMail) {
+        if (!account.lightroomUrl) {
+          emails.photos = 'no_lightroom_url';
+        } else {
+          try {
+            const m = buildPhotosReadyEmail({ customerName: account.nom ?? '', lightroomUrl: account.lightroomUrl, space: account.type, lang });
+            await sendEmail(env, account.email, m.subject, m.html, m.text);
+            emails.photos = true;
+          } catch (err) {
+            console.error('[accounts] échec email photos prêtes', err);
+            emails.photos = false;
+          }
+        }
+      }
+      return jsonResponse({ ok: true, account: sanitizeAccount(account), emails }, 200, headers);
     } catch (err) {
       if (err instanceof Error && err.message === 'code_required_for_new_account') {
         return jsonResponse({ ok: false, error: 'code_required_for_new_account' }, 400, headers);
@@ -394,6 +427,15 @@ async function handleAdminAccounts(request: Request, env: Env, headers: Record<s
   }
 
   return jsonResponse({ ok: false, error: 'method_not_allowed' }, 405, headers);
+}
+
+/** Un compte partenaire existe pour cet email → les mails parlent de l'espace partenaire, sinon espace client. */
+async function detectSpace(env: Env, email: string): Promise<'client' | 'partner'> {
+  try {
+    return (await getAccount(env, 'partner', email)) ? 'partner' : 'client';
+  } catch {
+    return 'client';
+  }
 }
 
 async function handleQuizLead(request: Request, env: Env, headers: Record<string, string>): Promise<Response> {
@@ -432,7 +474,7 @@ async function handleQuizLead(request: Request, env: Env, headers: Record<string
     // Email de confirmation au prospect — best-effort, ne doit jamais faire
     // échouer la synchronisation Stripe qui vient de réussir.
     try {
-      const { subject, html, text } = buildQuizConfirmationEmail({ customerName: body.name, lang: normalizeLang(body.lang) });
+      const { subject, html, text } = buildQuizConfirmationEmail({ customerName: body.name, lang: normalizeLang(body.lang), space: await detectSpace(env, body.email) });
       await sendEmail(env, body.email, subject, html, text);
     } catch (emailErr) {
       console.error("[quiz-lead] échec de l'envoi de l'email de confirmation", emailErr);
@@ -481,6 +523,7 @@ async function handleCreateDepositInvoice(request: Request, env: Env, headers: R
         depositAmountEur: result.depositAmountEur,
         hostedInvoiceUrl: result.hostedInvoiceUrl,
         lang: result.customerLang,
+        space: await detectSpace(env, body.email),
       });
       await sendEmail(env, body.email, subject, html, text);
       console.log('[create-deposit-invoice] email envoyé au client');
@@ -537,6 +580,7 @@ async function handleCreateBalanceInvoice(request: Request, env: Env, headers: R
         balanceAmountEur: result.balanceAmountEur,
         hostedInvoiceUrl: result.hostedInvoiceUrl,
         lang: result.customerLang,
+        space: await detectSpace(env, body.email),
       });
       await sendEmail(env, body.email, subject, html, text);
       console.log('[create-balance-invoice] email envoyé au client');
@@ -613,7 +657,7 @@ async function handleStripeWebhook(request: Request, env: Env, headers: Record<s
 
   if (customerEmail) {
     try {
-      const { subject, html, text } = buildPaymentConfirmationEmail({ customerName, description, amountEur, invoiceType: kind, lang: customerLang });
+      const { subject, html, text } = buildPaymentConfirmationEmail({ customerName, description, amountEur, invoiceType: kind, lang: customerLang, space: await detectSpace(env, customerEmail) });
       await sendEmail(env, customerEmail, subject, html, text);
     } catch (err) {
       console.error('[stripe-webhook] échec email de confirmation client', err);
@@ -640,7 +684,7 @@ async function handleStripeWebhook(request: Request, env: Env, headers: Record<s
         ? `${new URL(request.url).origin}${REVIEW_GATEWAY_ROUTE}?c=${encodeURIComponent(customerId)}`
         : env.GOOGLE_REVIEW_URL;
       try {
-        const { subject, html, text } = buildReviewRequestEmail({ customerName, reviewUrl: reviewGatewayUrl, lang: customerLang });
+        const { subject, html, text } = buildReviewRequestEmail({ customerName, reviewUrl: reviewGatewayUrl, lang: customerLang, space: await detectSpace(env, customerEmail) });
         await sendEmail(env, customerEmail, subject, html, text);
       } catch (err) {
         console.error("[stripe-webhook] échec email de demande d'avis", err);
@@ -764,6 +808,7 @@ async function sendOverdueInvoiceReminders(env: Env): Promise<void> {
         invoiceType: kind,
         hostedInvoiceUrl: invoice.hosted_invoice_url ?? '',
         lang: await getCustomerLang(stripe, typeof invoice.customer === 'string' ? invoice.customer : invoice.customer?.id),
+        space: await detectSpace(env, customerEmail),
       });
       await sendEmail(env, customerEmail, subject, html, text);
       await markInvoiceReminded(stripe, invoice);

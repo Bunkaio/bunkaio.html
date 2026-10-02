@@ -5,6 +5,8 @@ const SITE = 'https://bunkaio.com';
 const LOGO_URL = `${SITE}/images/logo-email.png`;
 /** Police du site (DM Sans, auto-hébergée). Les clients mail qui ne chargent pas les polices web (Gmail, Outlook) retombent sur Helvetica/Arial. */
 const FONT_URL = `${SITE}/fonts/dm-sans-latin-opsz-normal.woff2`;
+export const VAT_FR = 'TVA non applicable, art. 293 B du CGI';
+export const VAT_EN = 'VAT not applicable, art. 293 B of the French Tax Code';
 const FONT = "'DM Sans',Helvetica,Arial,sans-serif";
 
 /** Langue des emails envoyés aux clients : celle du site au moment de leur demande (metadata Stripe `langue`). */
@@ -28,7 +30,7 @@ function signatureHtml(lang: Lang): string {
             <a href="${SITE}" style="${link}">bunkaio.com</a> · <a href="https://instagram.com/bunkaio" style="${link}">Instagram @bunkaio</a>
           </p>
           <p style="margin:0 0 16px;font-size:12px;line-height:1.7;${mute}font-family:${FONT};">${tr(lang, 'Montpellier · Béziers · Toulouse — du lundi au samedi, 9h–18h', 'Montpellier · Béziers · Toulouse — Monday to Saturday, 9am–6pm')}</p>
-          <p style="margin:0;font-size:11px;line-height:1.6;color:rgba(255,255,255,0.4);font-family:${FONT};">${tr(lang, 'BUNKAIO — Entreprise Individuelle · SIRET 951 547 587 00034', 'BUNKAIO — Sole proprietorship · SIRET 951 547 587 00034')}</p>
+          <p style="margin:0;font-size:11px;line-height:1.6;color:rgba(255,255,255,0.4);font-family:${FONT};">${tr(lang, 'BUNKAIO — Entreprise Individuelle · SIRET 951 547 587 00034', 'BUNKAIO — Sole proprietorship · SIRET 951 547 587 00034')}<br>${tr(lang, VAT_FR, VAT_EN)}</p>
         </td></tr>`;
 }
 function signatureText(lang: Lang): string {
@@ -36,7 +38,8 @@ function signatureText(lang: Lang): string {
 ${tr(lang, 'Photographe professionnelle · Fondatrice de BUNKAIO', 'Professional photographer · Founder of BUNKAIO')}
 07 58 57 31 61 · contact@bunkaio.com · bunkaio.com · Instagram @bunkaio
 ${tr(lang, 'Montpellier · Béziers · Toulouse — du lundi au samedi, 9h–18h', 'Montpellier · Béziers · Toulouse — Monday to Saturday, 9am–6pm')}
-BUNKAIO — ${tr(lang, 'Entreprise Individuelle', 'Sole proprietorship')} · SIRET 951 547 587 00034`;
+BUNKAIO — ${tr(lang, 'Entreprise Individuelle', 'Sole proprietorship')} · SIRET 951 547 587 00034
+${tr(lang, VAT_FR, VAT_EN)}`;
 }
 /** Remplace la signature de fin de texte par la signature unique. */
 function finalize(lang: Lang, mail: { subject: string; html: string; text: string }): { subject: string; html: string; text: string } {
@@ -71,11 +74,19 @@ body, table, td, p, h1, div, span, a { font-family: ${FONT}; }
 }
 
 /** Bloc « votre espace » (client ou partenaire), adapté à l'étape du parcours où l'email est envoyé. */
-type Stage = 'quote' | 'deposit' | 'balance' | 'delivered' | 'invoice';
+type Stage = 'access' | 'quote' | 'deposit' | 'balance' | 'delivered' | 'invoice';
 function spaceCopy(lang: Lang, space: Space, stage: Stage): { title: string; body: string; button: string } {
   const client = space === 'client';
   const T = (fr: string, en: string): string => tr(lang, fr, en);
   const btn = client ? T('Accéder à mon espace client', 'Go to my client area') : T('Accéder à mon espace partenaire', 'Go to my partner area');
+  if (stage === 'access') return {
+    title: T('Ce que vous y trouverez', 'What you will find there'),
+    body: client
+      ? T("Votre moodboard (direction artistique, ambiance, palette, inspirations), l'avancement de votre projet, vos devis, factures et paiements, et vos photos HD dans « Mon portfolio » une fois votre projet livré.",
+          'Your moodboard (art direction, mood, palette, inspiration), your project’s progress, your quotes, invoices and payments, and your HD photos under “My portfolio” once your project is delivered.')
+      : T("Votre tarif partenaire permanent (-20 %), vos promotions, votre réseau, vos collaborations, vos moodboards et l'avancement de votre projet.",
+          'Your permanent partner rate (-20%), your promotions, your network, your collaborations, your moodboards and your project’s progress.'),
+    button: btn };
   if (stage === 'quote') return client
     ? { title: T('Votre espace client', 'Your client area'),
         body: T("Dès que votre devis est confirmé, vous recevez votre code d'accès personnel. Votre espace client vous permet de créer votre moodboard (direction artistique, ambiance, palette, inspirations), de suivre l'avancement de votre projet, de retrouver vos devis, factures et paiements, et de récupérer vos photos HD dans votre galerie privée.",
@@ -544,6 +555,80 @@ ${stepsText}
 
 ${spaceText(lang, params.space, 'quote')}`;
   return finalize(lang, { subject: tr(lang, 'Bunkaio — Nous avons bien reçu votre demande', 'Bunkaio — We have received your request'), html, text });
+}
+
+/** Email « vos accès » : envoyé quand l'admin crée un compte et coche l'envoi (le code n'est connu qu'à ce moment, il n'est jamais stocké en clair). */
+export function buildAccessCodeEmail(params: { customerName: string; email: string; code: string; space: Space; lang?: Lang }): { subject: string; html: string; text: string } {
+  const lang = params.lang ?? 'fr';
+  const greeting = greet(lang, params.customerName);
+  const client = params.space === 'client';
+  const area = tr(lang, client ? 'espace client' : 'espace partenaire', client ? 'client area' : 'partner area');
+  const url = `${SITE}/connexion/`;
+  const intro = tr(lang,
+    `Votre ${area} BUNKAIO est prêt. Voici vos identifiants de connexion personnels.`,
+    `Your BUNKAIO ${area} is ready. Here are your personal login details.`);
+  const labelEmail = tr(lang, 'Email', 'Email');
+  const labelCode = tr(lang, "Code d'accès", 'Access code');
+  const keep = tr(lang, "Conservez ce code précieusement. En cas de perte, répondez simplement à cet email : nous vous en enverrons un nouveau.", 'Keep this code safe. If you lose it, simply reply to this email and we will send you a new one.');
+  const html = emailShell(`
+    <h1 style="font-size:20px;margin:0 0 16px;">${tr(lang, `Vos accès à votre ${area}`, `Your ${area} access`)}</h1>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">${greeting}</p>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">${intro}</p>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 20px;">
+      <tr><td style="background:#0a0a0c;border-radius:10px;padding:22px 24px;">
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#d9cdf5;margin-bottom:6px;font-family:${FONT};">${labelEmail}</div>
+        <div style="font-size:15px;color:#ffffff;margin-bottom:16px;font-family:${FONT};">${escapeHtml(params.email)}</div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#d9cdf5;margin-bottom:6px;font-family:${FONT};">${labelCode}</div>
+        <div style="font-size:24px;font-weight:700;letter-spacing:0.12em;color:#ffffff;font-family:${FONT};">${escapeHtml(params.code)}</div>
+      </td></tr>
+    </table>
+    <p style="font-size:13px;line-height:1.6;color:#76717f;margin:0 0 24px;">${keep}</p>
+    <a href="${url}" style="${btnStyle}">${tr(lang, 'Me connecter', 'Sign in')}</a>
+    ${spaceBlock(lang, params.space, 'access')}
+  `, lang);
+  const text = `${greeting}
+
+${intro}
+
+${labelEmail} : ${params.email}
+${labelCode} : ${params.code}
+
+${keep}
+
+${tr(lang, 'Me connecter', 'Sign in')} : ${url}
+
+${spaceText(lang, params.space, 'access')}`;
+  return finalize(lang, { subject: tr(lang, `Bunkaio — Vos accès à votre ${area}`, `Bunkaio — Your ${area} access`), html, text });
+}
+
+/** Email « vos photos sont prêtes » : envoyé depuis l'admin, avec le lien de l'album Lightroom partagé. */
+export function buildPhotosReadyEmail(params: { customerName: string; lightroomUrl: string; space: Space; lang?: Lang }): { subject: string; html: string; text: string } {
+  const lang = params.lang ?? 'fr';
+  const greeting = greet(lang, params.customerName);
+  const intro = tr(lang,
+    'Vos photos sont prêtes ! Votre album est disponible en ligne : vous pouvez le parcourir et télécharger vos fichiers HD quand vous le souhaitez.',
+    'Your photos are ready! Your album is available online: browse it and download your HD files whenever you like.');
+  const note = tr(lang,
+    "Retrouvez ce lien à tout moment dans votre espace, rubrique « Mon portfolio ». Un retour ou une retouche à signaler ? Répondez simplement à cet email.",
+    'You can find this link at any time in your area, under “My portfolio”. Any feedback or retouch request? Simply reply to this email.');
+  const html = emailShell(`
+    <h1 style="font-size:20px;margin:0 0 16px;">${tr(lang, 'Vos photos sont prêtes', 'Your photos are ready')}</h1>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">${greeting}</p>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 24px;">${intro}</p>
+    <a href="${params.lightroomUrl}" style="${btnStyle}">${tr(lang, 'Voir mes photos', 'View my photos')}</a>
+    <p style="font-size:13px;line-height:1.6;color:#76717f;margin:24px 0 0;">${note}</p>
+    ${spaceBlock(lang, params.space, 'delivered')}
+  `, lang);
+  const text = `${greeting}
+
+${intro}
+
+${tr(lang, 'Voir mes photos', 'View my photos')} : ${params.lightroomUrl}
+
+${note}
+
+${spaceText(lang, params.space, 'delivered')}`;
+  return finalize(lang, { subject: tr(lang, 'Bunkaio — Vos photos sont prêtes', 'Bunkaio — Your photos are ready'), html, text });
 }
 
 function escapeHtml(value: string): string {
