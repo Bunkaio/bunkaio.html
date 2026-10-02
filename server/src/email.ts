@@ -1,37 +1,128 @@
 import type { AccountType, ActivityEntry, Env } from './types';
 
-/** Logo en PNG (les clients mail n'affichent pas le WebP) : carré sombre à coins arrondis, lisible sur l'en-tête noir. */
-const LOGO_URL = 'https://bunkaio.com/images/logo-bunkaio-512.png';
+const SITE = 'https://bunkaio.com';
+/** Logo officiel (clair, fond transparent, PNG car les clients mail n'affichent pas le WebP) : posé sur fond noir. */
+const LOGO_URL = `${SITE}/images/logo-email.png`;
+/** Police du site (DM Sans, auto-hébergée). Les clients mail qui ne chargent pas les polices web (Gmail, Outlook) retombent sur Helvetica/Arial. */
+const FONT_URL = `${SITE}/fonts/dm-sans-latin-opsz-normal.woff2`;
+const FONT = "'DM Sans',Helvetica,Arial,sans-serif";
 
 /** Langue des emails envoyés aux clients : celle du site au moment de leur demande (metadata Stripe `langue`). */
 export type Lang = 'fr' | 'en';
+export type Space = 'client' | 'partner';
 export function normalizeLang(value: unknown): Lang { return value === 'en' ? 'en' : 'fr'; }
 const tr = (lang: Lang, fr: string, en: string): string => (lang === 'en' ? en : fr);
 const eur = (lang: Lang, n: number): string => (lang === 'en' ? `€${n.toFixed(2)}` : `${n.toFixed(2)} €`);
 
-/** Habillage HTML commun à tous les emails Bunkaio (logo, couleurs, pied de page). */
+/** Signature unique, identique dans tous les emails (logo officiel, coordonnées, mentions légales). */
+function signatureHtml(lang: Lang): string {
+  const mute = 'color:rgba(255,255,255,0.62);';
+  const link = 'color:#d9cdf5;text-decoration:none;';
+  return `
+        <tr><td style="background:#0a0a0c;padding:30px 32px 26px;">
+          <img src="${LOGO_URL}" alt="Bunkaio" width="104" style="display:block;margin:0 0 18px;border:0;">
+          <p style="margin:0 0 2px;font-size:15px;font-weight:700;color:#ffffff;font-family:${FONT};">Aya Nascimento</p>
+          <p style="margin:0 0 14px;font-size:13px;${mute}font-family:${FONT};">${tr(lang, 'Photographe professionnelle · Fondatrice de BUNKAIO', 'Professional photographer · Founder of BUNKAIO')}</p>
+          <p style="margin:0 0 4px;font-size:13px;line-height:1.7;${mute}font-family:${FONT};">
+            <a href="tel:+33758573161" style="${link}">07 58 57 31 61</a> · <a href="mailto:contact@bunkaio.com" style="${link}">contact@bunkaio.com</a><br>
+            <a href="${SITE}" style="${link}">bunkaio.com</a> · <a href="https://instagram.com/bunkaio" style="${link}">Instagram @bunkaio</a>
+          </p>
+          <p style="margin:0 0 16px;font-size:12px;line-height:1.7;${mute}font-family:${FONT};">${tr(lang, 'Montpellier · Béziers · Toulouse — du lundi au samedi, 9h–18h', 'Montpellier · Béziers · Toulouse — Monday to Saturday, 9am–6pm')}</p>
+          <p style="margin:0;font-size:11px;line-height:1.6;color:rgba(255,255,255,0.4);font-family:${FONT};">${tr(lang, 'BUNKAIO — Entreprise Individuelle · SIRET 951 547 587 00034', 'BUNKAIO — Sole proprietorship · SIRET 951 547 587 00034')}</p>
+        </td></tr>`;
+}
+function signatureText(lang: Lang): string {
+  return `Aya Nascimento
+${tr(lang, 'Photographe professionnelle · Fondatrice de BUNKAIO', 'Professional photographer · Founder of BUNKAIO')}
+07 58 57 31 61 · contact@bunkaio.com · bunkaio.com · Instagram @bunkaio
+${tr(lang, 'Montpellier · Béziers · Toulouse — du lundi au samedi, 9h–18h', 'Montpellier · Béziers · Toulouse — Monday to Saturday, 9am–6pm')}
+BUNKAIO — ${tr(lang, 'Entreprise Individuelle', 'Sole proprietorship')} · SIRET 951 547 587 00034`;
+}
+/** Remplace la signature de fin de texte par la signature unique. */
+function finalize(lang: Lang, mail: { subject: string; html: string; text: string }): { subject: string; html: string; text: string } {
+  const body = mail.text.replace(/\n+(?:— BUNKAIO|À très vite,\nL'équipe Bunkaio|See you soon,\nThe Bunkaio team)\s*$/, '').replace(/\s+$/, '');
+  return { ...mail, text: `${body}\n\n${tr(lang, 'À très vite,', 'See you soon,')}\n\n${signatureText(lang)}` };
+}
+
+/** Habillage HTML commun à tous les emails Bunkaio (logo, police du site, signature unique). */
 function emailShell(bodyHtml: string, lang: Lang = 'fr'): string {
   return `<!DOCTYPE html>
 <html lang="${lang}">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head>
-<body style="margin:0;padding:0;background:#f6f1fc;font-family:'DM Sans',Helvetica,Arial,sans-serif;">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+@font-face { font-family: 'DM Sans'; font-style: normal; font-weight: 100 1000; src: url('${FONT_URL}') format('woff2'); }
+body, table, td, p, h1, div, span, a { font-family: ${FONT}; }
+</style></head>
+<body style="margin:0;padding:0;background:#f6f1fc;font-family:${FONT};">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f6f1fc;padding:32px 0;">
     <tr><td align="center">
-      <table role="presentation" width="100%" style="max-width:480px;background:#ffffff;border-radius:8px;overflow:hidden;">
-        <tr><td style="background:#0a0a0c;padding:28px;text-align:center;">
-          <img src="${LOGO_URL}" alt="Bunkaio" width="96" height="96" style="display:block;margin:0 auto;border-radius:20px;">
+      <table role="presentation" width="100%" style="max-width:520px;background:#ffffff;border-radius:10px;overflow:hidden;">
+        <tr><td style="background:#0a0a0c;padding:30px 32px;text-align:center;">
+          <img src="${LOGO_URL}" alt="Bunkaio" width="150" style="display:block;margin:0 auto;border:0;">
         </td></tr>
-        <tr><td style="padding:36px 32px;color:#0a0a0c;">
+        <tr><td style="padding:36px 32px 30px;color:#0a0a0c;font-family:${FONT};">
           ${bodyHtml}
-        </td></tr>
-        <tr><td style="padding:20px 32px;background:#f1ecfa;text-align:center;">
-          <p style="margin:0;font-size:12px;color:#76717f;">${tr(lang, 'BUNKAIO — Entreprise Individuelle', 'BUNKAIO — Sole proprietorship')}</p>
-        </td></tr>
+        </td></tr>${signatureHtml(lang)}
       </table>
     </td></tr>
   </table>
 </body>
 </html>`;
+}
+
+/** Bloc « votre espace » (client ou partenaire), adapté à l'étape du parcours où l'email est envoyé. */
+type Stage = 'quote' | 'deposit' | 'balance' | 'delivered' | 'invoice';
+function spaceCopy(lang: Lang, space: Space, stage: Stage): { title: string; body: string; button: string } {
+  const client = space === 'client';
+  const T = (fr: string, en: string): string => tr(lang, fr, en);
+  const btn = client ? T('Accéder à mon espace client', 'Go to my client area') : T('Accéder à mon espace partenaire', 'Go to my partner area');
+  if (stage === 'quote') return client
+    ? { title: T('Votre espace client', 'Your client area'),
+        body: T("Dès que votre devis est confirmé, vous recevez votre code d'accès personnel. Votre espace client vous permet de créer votre moodboard (direction artistique, ambiance, palette, inspirations), de suivre l'avancement de votre projet, de retrouver vos devis, factures et paiements, et de récupérer vos photos HD dans votre galerie privée.",
+                'As soon as your quote is confirmed, you receive your personal access code. Your client area lets you build your moodboard (art direction, mood, palette, inspiration), follow your project’s progress, find your quotes, invoices and payments, and collect your HD photos from your private gallery.'), button: T('Découvrir mon espace client', 'Discover my client area') }
+    : { title: T('Votre espace partenaire', 'Your partner area'),
+        body: T("Votre espace partenaire réunit votre tarif partenaire permanent (-20 %), vos promotions, votre réseau, vos collaborations et vos moodboards. Vous y suivez aussi l'avancement de votre projet.",
+                'Your partner area brings together your permanent partner rate (-20%), your promotions, your network, your collaborations and your moodboards. You also follow your project’s progress there.'), button: T('Découvrir mon espace partenaire', 'Discover my partner area') };
+  if (stage === 'deposit') return {
+    title: T('Prochaine étape : votre moodboard', 'Next step: your moodboard'),
+    body: client
+      ? T("Une fois l'acompte réglé, votre date est réservée. Connectez-vous à votre espace client avec votre code d'accès pour créer votre moodboard avant le shooting : direction artistique, ambiance, palette de couleurs, inspirations. Vous y suivez aussi l'avancement de votre projet. Code perdu ? Répondez simplement à cet email.",
+          'Once the deposit is paid, your date is booked. Sign in to your client area with your access code to build your moodboard before the shoot: art direction, mood, colour palette, inspiration. You also follow your project’s progress there. Lost your code? Simply reply to this email.')
+      : T("Une fois l'acompte réglé, votre date est réservée. Dans votre espace partenaire, créez votre moodboard avant le shooting et retrouvez votre tarif partenaire (-20 %), vos promotions et vos collaborations. Code perdu ? Répondez simplement à cet email.",
+          'Once the deposit is paid, your date is booked. In your partner area, build your moodboard before the shoot and find your partner rate (-20%), your promotions and your collaborations. Lost your code? Simply reply to this email.'),
+    button: btn };
+  if (stage === 'balance') return {
+    title: T('Vos photos, juste après le règlement', 'Your photos, right after payment'),
+    body: T("L'accès à vos fichiers HD s'ouvre dès le règlement du solde : vous les retrouvez dans votre espace, rubrique « Mon portfolio » (galerie privée Adobe Lightroom). Vos factures et paiements y restent consultables à tout moment.",
+            'Access to your HD files opens as soon as the balance is paid: you will find them in your area, under “My portfolio” (private Adobe Lightroom gallery). Your invoices and payments also remain available there at any time.'),
+    button: btn };
+  if (stage === 'delivered') return {
+    title: T('Vos photos vous attendent', 'Your photos are waiting for you'),
+    body: T("Retrouvez vos photos HD dans votre espace, rubrique « Mon portfolio » (galerie privée Adobe Lightroom), à télécharger quand vous le souhaitez. Vos devis, factures et paiements restent disponibles dans « Mes factures » et « Mes paiements ».",
+            'Find your HD photos in your area, under “My portfolio” (private Adobe Lightroom gallery), ready to download whenever you like. Your quotes, invoices and payments remain available under “My invoices” and “My payments”.'),
+    button: btn };
+  return {
+    title: T('Retrouvez vos factures', 'Find your invoices'),
+    body: T('Toutes vos factures et vos paiements sont aussi consultables dans votre espace, rubrique « Mes factures ».', 'All your invoices and payments can also be viewed in your area, under “My invoices”.'),
+    button: btn };
+}
+function spaceBlock(lang: Lang, space: Space | undefined, stage: Stage): string {
+  const sp = space ?? 'client';
+  const c = spaceCopy(lang, sp, stage);
+  const url = `${SITE}/connexion/`;
+  return `
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:26px 0 24px;">
+      <tr><td style="background:#f6f1fc;border-radius:10px;padding:22px 22px 20px;">
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#6e5aa8;margin-bottom:8px;font-family:${FONT};">${tr(lang, sp === 'client' ? 'Votre espace client' : 'Votre espace partenaire', sp === 'client' ? 'Your client area' : 'Your partner area')}</div>
+        <div style="font-size:16px;font-weight:700;color:#0a0a0c;margin-bottom:8px;font-family:${FONT};">${c.title}</div>
+        <div style="font-size:13.5px;line-height:1.65;color:#3a3544;margin-bottom:16px;font-family:${FONT};">${c.body}</div>
+        <a href="${url}" style="display:inline-block;background:#0a0a0c;color:#ffffff;text-decoration:none;padding:11px 20px;border-radius:4px;font-weight:600;font-size:13.5px;font-family:${FONT};">${c.button} →</a>
+      </td></tr>
+    </table>`;
+}
+function spaceText(lang: Lang, space: Space | undefined, stage: Stage): string {
+  const c = spaceCopy(lang, space ?? 'client', stage);
+  return `${c.title.toUpperCase()}\n${c.body}\n${c.button} : ${SITE}/connexion/`;
 }
 
 const greet = (lang: Lang, name: string): string => (name ? tr(lang, `Bonjour ${name},`, `Hello ${name},`) : tr(lang, 'Bonjour,', 'Hello,'));
@@ -50,6 +141,7 @@ export function buildDepositInvoiceEmail(params: {
   depositAmountEur: number;
   hostedInvoiceUrl: string;
   lang?: Lang;
+  space?: Space;
 }): { subject: string; html: string; text: string } {
   const lang = params.lang ?? 'fr';
   const greeting = greet(lang, params.customerName);
@@ -77,6 +169,7 @@ export function buildDepositInvoiceEmail(params: {
       ${tr(lang, 'Si le bouton ne fonctionne pas, copiez ce lien dans votre navigateur :', 'If the button does not work, copy this link into your browser:')}<br>
       <a href="${params.hostedInvoiceUrl}" style="color:#76717f;">${params.hostedInvoiceUrl}</a>
     </p>
+    ${spaceBlock(lang, params.space, 'deposit')}
   `, lang);
   const text = lang === 'en' ? `${greeting}
 
@@ -89,7 +182,7 @@ Cancellation terms: this deposit secures your date and slot. Once the quote is v
 
 View and pay the invoice: ${params.hostedInvoiceUrl}
 
-— BUNKAIO` : `${greeting}
+${spaceText(lang, params.space, 'deposit')}` : `${greeting}
 
 Voici votre facture d'acompte (30 %) pour : ${params.description}.
 
@@ -100,8 +193,8 @@ Conditions d'annulation : cet acompte réserve votre date et votre créneau. Une
 
 Voir et payer la facture : ${params.hostedInvoiceUrl}
 
-— BUNKAIO`;
-  return { subject: tr(lang, `Bunkaio — Votre facture d'acompte (${amount})`, `Bunkaio — Your deposit invoice (${amount})`), html, text };
+${spaceText(lang, params.space, 'deposit')}`;
+  return finalize(lang, { subject: tr(lang, `Bunkaio — Votre facture d'acompte (${amount})`, `Bunkaio — Your deposit invoice (${amount})`), html, text });
 }
 
 /** Email envoyé au client avec le lien de paiement du solde (remplace l'envoi Stripe bloqué). */
@@ -111,6 +204,7 @@ export function buildBalanceInvoiceEmail(params: {
   balanceAmountEur: number;
   hostedInvoiceUrl: string;
   lang?: Lang;
+  space?: Space;
 }): { subject: string; html: string; text: string } {
   const lang = params.lang ?? 'fr';
   const greeting = greet(lang, params.customerName);
@@ -133,6 +227,7 @@ export function buildBalanceInvoiceEmail(params: {
       ${tr(lang, 'Si le bouton ne fonctionne pas, copiez ce lien dans votre navigateur :', 'If the button does not work, copy this link into your browser:')}<br>
       <a href="${params.hostedInvoiceUrl}" style="color:#76717f;">${params.hostedInvoiceUrl}</a>
     </p>
+    ${spaceBlock(lang, params.space, 'balance')}
   `, lang);
   const text = lang === 'en' ? `${greeting}
 
@@ -143,7 +238,7 @@ ${payLine}
 
 View and pay the invoice: ${params.hostedInvoiceUrl}
 
-— BUNKAIO` : `${greeting}
+${spaceText(lang, params.space, 'balance')}` : `${greeting}
 
 Voici votre facture de solde (70 %) pour : ${params.description}.
 
@@ -152,8 +247,8 @@ ${payLine}
 
 Voir et payer la facture : ${params.hostedInvoiceUrl}
 
-— BUNKAIO`;
-  return { subject: tr(lang, `Bunkaio — Votre facture de solde (${amount})`, `Bunkaio — Your balance invoice (${amount})`), html, text };
+${spaceText(lang, params.space, 'balance')}`;
+  return finalize(lang, { subject: tr(lang, `Bunkaio — Votre facture de solde (${amount})`, `Bunkaio — Your balance invoice (${amount})`), html, text });
 }
 
 /** Email envoyé au client dès que Stripe confirme le paiement d'une facture (acompte ou solde), via le webhook. */
@@ -163,6 +258,7 @@ export function buildPaymentConfirmationEmail(params: {
   amountEur: number;
   invoiceType: 'acompte' | 'solde';
   lang?: Lang;
+  space?: Space;
 }): { subject: string; html: string; text: string } {
   const lang = params.lang ?? 'fr';
   const greeting = greet(lang, params.customerName);
@@ -183,7 +279,7 @@ export function buildPaymentConfirmationEmail(params: {
     <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">${message}</p>
     <p style="font-size:24px;font-weight:700;margin:0 0 8px;">${amount}</p>
     <p style="font-size:13px;color:#76717f;margin:0 0 28px;">${paidLabel} ${tr(lang, 'réglé', 'paid')}</p>
-    <p style="font-size:15px;line-height:1.6;margin:0;">${tr(lang, "À très vite,<br>L'équipe Bunkaio", 'See you soon,<br>The Bunkaio team')}</p>
+    ${spaceBlock(lang, params.space, isDeposit ? 'deposit' : 'delivered')}
   `, lang);
   const text = lang === 'en' ? `${greeting}
 
@@ -191,16 +287,14 @@ ${messageText}
 
 Amount paid: ${amount} (${isDeposit ? 'deposit 30%' : 'balance 70%'})
 
-See you soon,
-The Bunkaio team` : `${greeting}
+${spaceText(lang, params.space, isDeposit ? 'deposit' : 'delivered')}` : `${greeting}
 
 ${messageText}
 
 Montant réglé : ${amount} (${isDeposit ? 'acompte 30 %' : 'solde 70 %'})
 
-À très vite,
-L'équipe Bunkaio`;
-  return { subject: tr(lang, `Bunkaio — Paiement reçu (${amount})`, `Bunkaio — Payment received (${amount})`), html, text };
+${spaceText(lang, params.space, isDeposit ? 'deposit' : 'delivered')}`;
+  return finalize(lang, { subject: tr(lang, `Bunkaio — Paiement reçu (${amount})`, `Bunkaio — Payment received (${amount})`), html, text });
 }
 
 /** Notification interne envoyée à l'administratrice dès qu'un paiement (acompte ou solde) est confirmé par Stripe. */
@@ -220,7 +314,7 @@ export function buildAdminPaymentNotificationEmail(params: {
     `Montant réglé : ${params.amountEur.toFixed(2)} €`,
     `Facture Stripe : ${params.invoiceId}`,
   ];
-  const html = `<p style="font-family:Helvetica,Arial,sans-serif;font-size:14px;line-height:1.6;color:#0a0a0c;">
+  const html = `<p style="font-family:${FONT};font-size:14px;line-height:1.6;color:#0a0a0c;">
     💰 <strong>Paiement reçu</strong><br><br>
     ${lines.join('<br>')}
   </p>`;
@@ -233,6 +327,7 @@ export function buildReviewRequestEmail(params: {
   customerName: string;
   reviewUrl: string;
   lang?: Lang;
+  space?: Space;
 }): { subject: string; html: string; text: string } {
   const lang = params.lang ?? 'fr';
   const greeting = greet(lang, params.customerName);
@@ -250,10 +345,10 @@ export function buildReviewRequestEmail(params: {
     </p>
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 28px;">
       <tr><td style="background:#0a0a0c;border-radius:10px;padding:32px 28px;text-align:center;">
-        <div style="font-size:11px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#d9cdf5;margin-bottom:12px;font-family:Helvetica,Arial,sans-serif;">
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#d9cdf5;margin-bottom:12px;font-family:${FONT};">
           ${t('Votre regard compte', 'Your opinion matters')}
         </div>
-        <div style="font-size:18px;font-weight:700;color:#ffffff;line-height:1.4;margin-bottom:14px;font-family:Helvetica,Arial,sans-serif;">
+        <div style="font-size:18px;font-weight:700;color:#ffffff;line-height:1.4;margin-bottom:14px;font-family:${FONT};">
           ${t("Votre expérience peut éclairer d'autres porteurs de projet", 'Your experience can guide other project owners')}
         </div>
         <div style="font-size:14px;line-height:1.6;color:rgba(255,255,255,0.6);margin-bottom:24px;">
@@ -265,7 +360,7 @@ export function buildReviewRequestEmail(params: {
         </a>
       </td></tr>
     </table>
-    <p style="font-size:15px;line-height:1.6;margin:0;">${t("À très vite,<br>L'équipe Bunkaio", 'See you soon,<br>The Bunkaio team')}</p>
+    ${spaceBlock(lang, params.space, 'delivered')}
   `, lang);
   const text = lang === 'en' ? `${greeting}
 
@@ -279,8 +374,7 @@ Before getting started, many people still hesitate. Honest feedback like yours c
 
 Share my experience: ${params.reviewUrl}
 
-See you soon,
-The Bunkaio team` : `${greeting}
+${spaceText(lang, params.space, 'delivered')}` : `${greeting}
 
 Votre prestation est désormais intégralement réglée — votre projet est officiellement achevé. Merci d'avoir fait confiance à Bunkaio pour le mener à bien, du premier échange jusqu'à la livraison finale.
 
@@ -292,9 +386,8 @@ Avant de se lancer, beaucoup hésitent encore. Un retour sincère comme le vôtr
 
 Partager mon expérience : ${params.reviewUrl}
 
-À très vite,
-L'équipe Bunkaio`;
-  return { subject: t('Bunkaio — Votre projet est officiellement livré', 'Bunkaio — Your project is officially delivered'), html, text };
+${spaceText(lang, params.space, 'delivered')}`;
+  return finalize(lang, { subject: t('Bunkaio — Votre projet est officiellement livré', 'Bunkaio — Your project is officially delivered'), html, text });
 }
 
 /** Email de rappel envoyé automatiquement (cron) quand une facture d'acompte ou de solde reste impayée après son échéance. */
@@ -305,6 +398,7 @@ export function buildOverdueReminderEmail(params: {
   invoiceType: 'acompte' | 'solde';
   hostedInvoiceUrl: string;
   lang?: Lang;
+  space?: Space;
 }): { subject: string; html: string; text: string } {
   const lang = params.lang ?? 'fr';
   const greeting = greet(lang, params.customerName);
@@ -332,6 +426,7 @@ export function buildOverdueReminderEmail(params: {
     <p style="font-size:13px;color:#76717f;margin:28px 0 0;">
       ${tr(lang, "Si vous avez déjà réglé cette facture ou en cas de question, n'hésitez pas à nous répondre directement.", 'If you have already paid this invoice or have a question, feel free to reply to us directly.')}
     </p>
+    ${spaceBlock(lang, params.space, 'invoice')}
   `, lang);
   const text = lang === 'en' ? `${greeting}
 
@@ -344,7 +439,7 @@ ${payLine}
 
 If you have already paid this invoice or have a question, feel free to reply to us directly.
 
-— BUNKAIO` : `${greeting}
+${spaceText(lang, params.space, 'invoice')}` : `${greeting}
 
 Votre facture ${label} pour : ${params.description} n'a pas encore été réglée. Voici le lien pour la payer en ligne :
 
@@ -355,8 +450,8 @@ ${payLine}
 
 Si vous avez déjà réglé cette facture ou en cas de question, n'hésitez pas à nous répondre directement.
 
-— BUNKAIO`;
-  return { subject: tr(lang, `Bunkaio — Rappel : facture ${label} en attente`, `Bunkaio — Reminder: ${label} invoice pending`), html, text };
+${spaceText(lang, params.space, 'invoice')}`;
+  return finalize(lang, { subject: tr(lang, `Bunkaio — Rappel : facture ${label} en attente`, `Bunkaio — Reminder: ${label} invoice pending`), html, text });
 }
 
 /** Étape de la frise "prochaines étapes" affichée dans l'email de confirmation du quiz. */
@@ -389,19 +484,19 @@ function quizNextStepsHtml(lang: Lang): string {
       </tr><tr>
         <td align="center" style="padding:3px 0;"><div style="width:1px;height:28px;background:rgba(241,236,250,0.22);margin:0 auto;"></div></td>`;
     const badge = step.badge
-      ? `<span style="display:inline-block;margin-left:8px;font-size:10px;font-weight:700;letter-spacing:0.05em;color:#0a0a0c;background:#f1ecfa;border-radius:100px;padding:3px 9px;vertical-align:middle;font-family:Helvetica,Arial,sans-serif;">${step.badge}</span>`
+      ? `<span style="display:inline-block;margin-left:8px;font-size:10px;font-weight:700;letter-spacing:0.05em;color:#0a0a0c;background:#f1ecfa;border-radius:100px;padding:3px 9px;vertical-align:middle;font-family:${FONT};">${step.badge}</span>`
       : '';
     return `
       <tr>
         <td width="34" valign="top" style="padding:0;">
           <table role="presentation" cellpadding="0" cellspacing="0"><tr>
-            <td align="center" style="width:28px;height:28px;border-radius:50%;border:1.5px solid rgba(241,236,250,0.4);color:#f1ecfa;font-family:Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;">${i + 1}</td>${connector}
+            <td align="center" style="width:28px;height:28px;border-radius:50%;border:1.5px solid rgba(241,236,250,0.4);color:#f1ecfa;font-family:${FONT};font-size:13px;font-weight:700;">${i + 1}</td>${connector}
           </tr></table>
         </td>
         <td style="padding:0 0 ${isLast ? '0' : '22px'} 14px;" valign="top">
-          <div style="${badge ? 'margin-bottom:3px;' : 'font-size:14px;font-weight:700;color:#ffffff;margin-bottom:3px;font-family:Helvetica,Arial,sans-serif;'}">${
+          <div style="${badge ? 'margin-bottom:3px;' : `font-size:14px;font-weight:700;color:#ffffff;margin-bottom:3px;font-family:${FONT};`}">${
             badge
-              ? `<span style="font-size:14px;font-weight:700;color:#ffffff;font-family:Helvetica,Arial,sans-serif;">${step.title}</span>${badge}`
+              ? `<span style="font-size:14px;font-weight:700;color:#ffffff;font-family:${FONT};">${step.title}</span>${badge}`
               : step.title
           }</div>
           <div style="font-size:13px;line-height:1.55;color:rgba(255,255,255,0.55);">${step.text}</div>
@@ -412,7 +507,7 @@ function quizNextStepsHtml(lang: Lang): string {
   return `
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 28px;">
       <tr><td style="background:#0a0a0c;border-radius:10px;padding:30px 26px 26px;">
-        <div style="font-size:11px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#d9cdf5;margin-bottom:9px;font-family:Helvetica,Arial,sans-serif;">
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#d9cdf5;margin-bottom:9px;font-family:${FONT};">
           ${tr(lang, 'Les prochaines étapes', 'Next steps')}
         </div>
         <div style="font-size:13px;line-height:1.6;color:rgba(255,255,255,0.55);margin-bottom:26px;">
@@ -424,7 +519,7 @@ function quizNextStepsHtml(lang: Lang): string {
 }
 
 /** Email de confirmation envoyé automatiquement après une soumission du quiz. */
-export function buildQuizConfirmationEmail(params: { customerName: string; lang?: Lang }): { subject: string; html: string; text: string } {
+export function buildQuizConfirmationEmail(params: { customerName: string; lang?: Lang; space?: Space }): { subject: string; html: string; text: string } {
   const lang = params.lang ?? 'fr';
   const greeting = greet(lang, params.customerName);
   const intro = tr(lang,
@@ -437,7 +532,7 @@ export function buildQuizConfirmationEmail(params: { customerName: string; lang?
       ${intro}
     </p>
     ${quizNextStepsHtml(lang)}
-    <p style="font-size:15px;line-height:1.6;margin:0;">${tr(lang, "À très vite,<br>L'équipe Bunkaio", 'See you soon,<br>The Bunkaio team')}</p>
+    ${spaceBlock(lang, params.space, 'quote')}
   `, lang);
   const stepsText = QUIZ_NEXT_STEPS[lang].map((s, i) => `${i + 1}. ${s.title}${s.badge ? ` (${s.badge})` : ''} — ${s.text}`).join('\n');
   const text = `${greeting}
@@ -447,8 +542,8 @@ ${intro}
 ${tr(lang, 'LES PROCHAINES ÉTAPES', 'NEXT STEPS')}
 ${stepsText}
 
-${tr(lang, "À très vite,\nL'équipe Bunkaio", 'See you soon,\nThe Bunkaio team')}`;
-  return { subject: tr(lang, 'Bunkaio — Nous avons bien reçu votre demande', 'Bunkaio — We have received your request'), html, text };
+${spaceText(lang, params.space, 'quote')}`;
+  return finalize(lang, { subject: tr(lang, 'Bunkaio — Nous avons bien reçu votre demande', 'Bunkaio — We have received your request'), html, text });
 }
 
 function escapeHtml(value: string): string {
