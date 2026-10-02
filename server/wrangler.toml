@@ -42,12 +42,9 @@ bucket_name = "bunkaio-media"
 binding = "ACCOUNTS_KV"
 id = "54d15558b88840f3af99b6c6e30c6ef7"
 
-# Mesure d'audience (anonyme, sans cookie) — À ACTIVER après création de la base :
-#   npx wrangler d1 create bunkaio-analytics
-#   (copier le database_id affiché ci-dessous, puis décommenter)
-#   npx wrangler d1 execute bunkaio-analytics --remote --file=./migrations/0001_analytics.sql
-#   npm run deploy
-# [[d1_databases]]
-# binding = "ANALYTICS_DB"
-# database_name = "bunkaio-analytics"
-# database_id = "COLLER-ICI-LE-DATABASE-ID"
+# Mesure d'audience (anonyme, sans cookie) — base D1 créée dans le tableau de bord Cloudflare.
+# La table `events` se crée une fois (console D1 ou migrations/0001_analytics.sql).
+[[d1_databases]]
+binding = "ANALYTICS_DB"
+database_name = "bunkaio-analytics"
+database_id = "0c46b85c-c013-4508-afe0-756f9375f854"
