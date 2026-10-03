@@ -43,9 +43,10 @@ BUNKAIO — ${tr(lang, 'Entreprise Individuelle', 'Sole proprietorship')} · SIR
 ${tr(lang, VAT_FR, VAT_EN)}`;
 }
 /** Remplace la signature de fin de texte par la signature unique. */
-function finalize(lang: Lang, mail: { subject: string; html: string; text: string }): { subject: string; html: string; text: string } {
+function finalize(lang: Lang, mail: { subject: string; html: string; text: string; tpl?: string }): { subject: string; html: string; text: string } {
   const body = mail.text.replace(/\n+(?:— BUNKAIO|À très vite,\nL'équipe Bunkaio|See you soon,\nThe Bunkaio team)\s*$/, '').replace(/\s+$/, '');
-  return { ...mail, text: `${body}\n\n${tr(lang, 'À très vite,', 'See you soon,')}\n\n${signatureText(lang)}` };
+  const { tpl, ...rest } = mail;
+  return { ...rest, html: tpl ? `${rest.html}<!--bk-tpl:${tpl}-->` : rest.html, text: `${body}\n\n${tr(lang, 'À très vite,', 'See you soon,')}\n\n${signatureText(lang)}` };
 }
 
 /** Habillage HTML commun à tous les emails Bunkaio (logo, police du site, signature unique). */
@@ -233,7 +234,7 @@ Conditions d'annulation : cet acompte réserve votre date et votre créneau. Une
 Voir et payer la facture : ${params.hostedInvoiceUrl}
 
 ${spaceText(lang, params.space, 'deposit')}`;
-  return finalize(lang, { subject: tr(lang, `Bunkaio — Votre facture d'acompte (${amount})`, `Bunkaio — Your deposit invoice (${amount})`), html, text });
+  return finalize(lang, { tpl: `facture_acompte`, subject: tr(lang, `Bunkaio — Votre facture d'acompte (${amount})`, `Bunkaio — Your deposit invoice (${amount})`), html, text });
 }
 
 /** « Vos photos sont prêtes » : envoyé à la création de la facture de solde. Le paiement du solde ouvre l'accès à l'album Lightroom. */
@@ -281,7 +282,7 @@ ${t('Régler le solde et accéder à mes photos', 'Pay the balance and access my
 ${lr.text}
 
 ${spaceText(lang, params.space, 'balance')}`;
-  return finalize(lang, { subject: t(`Bunkaio — Vos photos sont prêtes (solde ${amount})`, `Bunkaio — Your photos are ready (balance ${amount})`), html, text });
+  return finalize(lang, { tpl: `photos_pretes_solde`, subject: t(`Bunkaio — Vos photos sont prêtes (solde ${amount})`, `Bunkaio — Your photos are ready (balance ${amount})`), html, text });
 }
 
 /** Email envoyé au client dès que Stripe confirme le paiement d'une facture (acompte ou solde), via le webhook. */
@@ -331,7 +332,7 @@ ${messageText}
 Montant réglé : ${amount} (${isDeposit ? 'acompte 30 %' : 'solde 70 %'})
 ${isDeposit ? '\n' + (params.seance ? seanceCardText(lang, params.seance) : tr(lang, "La date, l'heure et le lieu exacts de votre séance vous sont confirmés par email.", 'The exact date, time and location of your session will be confirmed to you by email.')) + '\n' : ''}${isDeposit ? '\n' + deliveryNote(lang) + '\n' : ''}
 ${spaceText(lang, params.space, isDeposit ? 'deposit' : 'delivered')}`;
-  return finalize(lang, { subject: tr(lang, `Bunkaio — Paiement reçu (${amount})`, `Bunkaio — Payment received (${amount})`), html, text });
+  return finalize(lang, { tpl: `paiement_recu`, subject: tr(lang, `Bunkaio — Paiement reçu (${amount})`, `Bunkaio — Payment received (${amount})`), html, text });
 }
 
 /** Notification interne envoyée à l'administratrice dès qu'un paiement (acompte ou solde) est confirmé par Stripe. */
@@ -423,7 +424,7 @@ ${payLine}
 Si vous avez déjà réglé cette facture ou en cas de question, n'hésitez pas à nous répondre directement.
 
 ${spaceText(lang, params.space, 'invoice')}`;
-  return finalize(lang, { subject: tr(lang, `Bunkaio — Rappel : facture ${label} en attente`, `Bunkaio — Reminder: ${label} invoice pending`), html, text });
+  return finalize(lang, { tpl: `rappel_impaye`, subject: tr(lang, `Bunkaio — Rappel : facture ${label} en attente`, `Bunkaio — Reminder: ${label} invoice pending`), html, text });
 }
 
 /** Étape de la frise "prochaines étapes" affichée dans l'email de confirmation du quiz. */
@@ -515,7 +516,7 @@ ${tr(lang, 'LES PROCHAINES ÉTAPES', 'NEXT STEPS')}
 ${stepsText}
 
 ${spaceText(lang, params.space, 'quote')}`;
-  return finalize(lang, { subject: tr(lang, 'Bunkaio — Nous avons bien reçu votre demande', 'Bunkaio — We have received your request'), html, text });
+  return finalize(lang, { tpl: `confirmation_devis_quiz`, subject: tr(lang, 'Bunkaio — Nous avons bien reçu votre demande', 'Bunkaio — We have received your request'), html, text });
 }
 
 /** Email « vos accès » : envoyé quand l'admin crée un compte et coche l'envoi (le code n'est connu qu'à ce moment, il n'est jamais stocké en clair). */
@@ -559,11 +560,11 @@ ${keep}
 ${tr(lang, 'Me connecter', 'Sign in')} : ${url}
 
 ${spaceText(lang, params.space, 'access')}`;
-  return finalize(lang, { subject: tr(lang, `Bunkaio — Vos accès à votre ${area}`, `Bunkaio — Your ${area} access`), html, text });
+  return finalize(lang, { tpl: `acces_espace`, subject: tr(lang, `Bunkaio — Vos accès à votre ${area}`, `Bunkaio — Your ${area} access`), html, text });
 }
 
 /** Bloc « votre avis + remise de -15 % » inséré dans le mail d'accès aux photos (le client réagit à chaud). */
-function reviewBlock(lang: Lang, reviewUrl: string): { html: string; text: string } {
+function reviewBlock(lang: Lang, reviewUrl: string, discount = true): { html: string; text: string } {
   const t = (fr: string, en: string): string => tr(lang, fr, en);
   const head = t('Votre regard compte', 'Your opinion matters');
   const title = t("Vous aimez vos photos ? Dites-le en 1 minute", 'Happy with your photos? Tell us in 1 minute');
@@ -574,17 +575,17 @@ function reviewBlock(lang: Lang, reviewUrl: string): { html: string; text: strin
   const html = `
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:26px 0 8px;">
       <tr><td style="background:#0a0a0c;border-radius:10px;padding:28px 26px;text-align:center;">
-        <div style="display:inline-block;background:#f1ecfa;color:#0a0a0c;font-size:22px;font-weight:700;border-radius:100px;padding:8px 20px;margin-bottom:12px;font-family:${FONT};">-15 %</div>
+        ${discount ? `<div style="display:inline-block;background:#f1ecfa;color:#0a0a0c;font-size:22px;font-weight:700;border-radius:100px;padding:8px 20px;margin-bottom:12px;font-family:${FONT};">-15 %</div>
         <div style="font-size:17px;font-weight:700;color:#ffffff;margin-bottom:8px;font-family:${FONT};">${offerTitle}</div>
         <div style="font-size:13.5px;line-height:1.6;color:rgba(255,255,255,0.65);margin-bottom:24px;font-family:${FONT};">${offer}</div>
-        <div style="height:1px;background:rgba(255,255,255,0.15);margin:0 0 22px;"></div>
+        <div style="height:1px;background:rgba(255,255,255,0.15);margin:0 0 22px;"></div>` : ''}
         <div style="font-size:11px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#d9cdf5;margin-bottom:10px;font-family:${FONT};">${head}</div>
         <div style="font-size:17px;font-weight:700;color:#ffffff;line-height:1.4;margin-bottom:10px;font-family:${FONT};">${title}</div>
         <div style="font-size:13.5px;line-height:1.6;color:rgba(255,255,255,0.65);margin-bottom:22px;font-family:${FONT};">${body}</div>
         <a href="${reviewUrl}" style="display:inline-block;background:#ffffff;color:#0a0a0c;text-decoration:none;padding:14px 32px;border-radius:4px;font-weight:700;font-size:15px;font-family:${FONT};">${btn}</a>
       </td></tr>
     </table>`;
-  const text = `${offerTitle.toUpperCase()}\n${offer}\n\n${head.toUpperCase()}\n${title}\n${body}\n${btn.replace(' →', '')} : ${reviewUrl}`;
+  const text = `${discount ? offerTitle.toUpperCase() + '\n' + offer + '\n\n' : ''}${head.toUpperCase()}\n${title}\n${body}\n${btn.replace(' →', '')} : ${reviewUrl}`;
   return { html, text };
 }
 
@@ -622,7 +623,7 @@ ${rv.text}
 ${lr.text}
 
 ${spaceText(lang, params.space, 'delivered')}`;
-  return finalize(lang, { subject: t('Bunkaio — Votre album photo est accessible', 'Bunkaio — Your photo album is open'), html, text });
+  return finalize(lang, { tpl: `album_accessible`, subject: t('Bunkaio — Votre album photo est accessible', 'Bunkaio — Your photo album is open'), html, text });
 }
 
 /** Remerciement envoyé le lendemain de la séance, avec la date de livraison estimée si elle est connue. */
@@ -646,7 +647,7 @@ export function buildAfterSessionEmail(params: { customerName: string; livraison
     ${spaceBlock(lang, params.space, 'balance')}
   `, lang);
   const text = `${greeting}\n\n${thanks}\n\n${delay.replace(/<[^>]+>/g, '')}\n\n${next}\n\n${lr.text}\n\n${spaceText(lang, params.space, 'balance')}`;
-  return finalize(lang, { subject: t('Bunkaio — Merci pour votre séance', 'Bunkaio — Thank you for your session'), html, text });
+  return finalize(lang, { tpl: `merci_seance`, subject: t('Bunkaio — Merci pour votre séance', 'Bunkaio — Thank you for your session'), html, text });
 }
 
 /** Alerte interne : une livraison arrive à échéance (ou un point reste à traiter). */
@@ -735,7 +736,7 @@ ${intro}
 ${seanceCardText(lang, card)}
 ${after ? '\n' + after.replace(/<[^>]+>/g, '') + '\n' : ''}${stage ? '\n' + spaceText(lang, params.space, stage) : ''}`;
   void afterText;
-  return finalize(lang, { subject, html, text });
+  return finalize(lang, { tpl: `seance_${params.kind}`, subject, html, text });
 }
 
 /** Accusé de réception des formulaires du site (contact, collaboration, candidature partenaire, demande d'espace). */
@@ -770,7 +771,7 @@ export function buildAcknowledgementEmail(params: {
     <p style="font-size:15px;line-height:1.6;margin:0 0 8px;">${copy.body}</p>
     ${block}
   `, lang);
-  return finalize(lang, { subject: copy.subject, html, text: `${greeting}\n\n${copy.body}${blockText}` });
+  return finalize(lang, { tpl: `accuse_${params.kind}`, subject: copy.subject, html, text: `${greeting}\n\n${copy.body}${blockText}` });
 }
 
 /** Relance unique si le prospect n'a pas donné suite à son devis. */
@@ -789,7 +790,7 @@ export function buildQuoteFollowUpEmail(params: { customerName: string; space?: 
     <p style="font-size:15px;line-height:1.6;margin:0 0 8px;">${body2}</p>
     ${spaceBlock(lang, params.space, 'quote')}
   `, lang);
-  return finalize(lang, { subject: t('Bunkaio — Où en est votre projet ?', 'Bunkaio — How is your project coming along?'), html, text: `${greeting}\n\n${body}\n\n${body2}\n\n${spaceText(lang, params.space, 'quote')}` });
+  return finalize(lang, { tpl: `relance_devis_quiz`, subject: t('Bunkaio — Où en est votre projet ?', 'Bunkaio — How is your project coming along?'), html, text: `${greeting}\n\n${body}\n\n${body2}\n\n${spaceText(lang, params.space, 'quote')}` });
 }
 
 /** Rappel envoyé quand l'acompte est réglé mais le moodboard n'a pas été créé. */
@@ -806,7 +807,7 @@ export function buildMoodboardReminderEmail(params: { customerName: string; spac
     <p style="font-size:15px;line-height:1.6;margin:0 0 8px;">${body}</p>
     ${spaceBlock(lang, params.space, 'deposit')}
   `, lang);
-  return finalize(lang, { subject: t('Bunkaio — Créez votre moodboard avant la séance', 'Bunkaio — Create your moodboard before the session'), html, text: `${greeting}\n\n${body}\n\n${spaceText(lang, params.space, 'deposit')}` });
+  return finalize(lang, { tpl: `rappel_moodboard`, subject: t('Bunkaio — Créez votre moodboard avant la séance', 'Bunkaio — Create your moodboard before the session'), html, text: `${greeting}\n\n${body}\n\n${spaceText(lang, params.space, 'deposit')}` });
 }
 
 /** Devis à consulter et signer en ligne. */
@@ -839,7 +840,7 @@ export function buildQuoteEmail(params: { customerName: string; number: string; 
     ${spaceBlock(lang, params.space, 'quote')}
   `, lang);
   const text = `${greeting}\n\n${intro}\n\n${t('Devis', 'Quote')} n° ${params.number} — ${params.prestation}\n${amount}\n${t('Valable jusqu\'au', 'Valid until')} ${until}\n\n${t('Consulter et signer mon devis', 'Review and sign my quote')} : ${params.url}\n\n${how}\n\n${spaceText(lang, params.space, 'quote')}`;
-  return finalize(lang, { subject: params.reminder ? t(`Bunkaio — Rappel : votre devis n° ${params.number}`, `Bunkaio — Reminder: your quote no. ${params.number}`) : t(`Bunkaio — Votre devis n° ${params.number}`, `Bunkaio — Your quote no. ${params.number}`), html, text });
+  return finalize(lang, { tpl: `${params.reminder ? 'relance_devis_envoye' : 'devis_a_signer'}`, subject: params.reminder ? t(`Bunkaio — Rappel : votre devis n° ${params.number}`, `Bunkaio — Reminder: your quote no. ${params.number}`) : t(`Bunkaio — Votre devis n° ${params.number}`, `Bunkaio — Your quote no. ${params.number}`), html, text });
 }
 
 /** Confirmation de signature, avec le lien vers l'exemplaire signé. */
@@ -862,7 +863,55 @@ export function buildQuoteSignedEmail(params: { customerName: string; number: st
     ${spaceBlock(lang, params.space, 'deposit')}
   `, lang);
   const text = `${greeting}\n\n${intro}\n\n${t('Voir mon devis signé', 'View my signed quote')} : ${params.url}\n\n${next}${params.depositUrl ? '\n' + params.depositUrl : ''}\n\n${spaceText(lang, params.space, 'deposit')}`;
-  return finalize(lang, { subject: t(`Bunkaio — Devis n° ${params.number} signé`, `Bunkaio — Quote no. ${params.number} signed`), html, text });
+  return finalize(lang, { tpl: `devis_signe`, subject: t(`Bunkaio — Devis n° ${params.number} signé`, `Bunkaio — Quote no. ${params.number} signed`), html, text });
+}
+
+/** Demande d'avis seule (envoi manuel) ; la mention de la remise de 15 % n'apparaît que si le client y a droit. */
+export function buildReviewRequestEmail(params: { customerName: string; reviewUrl: string; discount?: boolean; space?: Space; lang?: Lang }): { subject: string; html: string; text: string } {
+  const lang = params.lang ?? 'fr';
+  const greeting = greet(lang, params.customerName);
+  const t = (fr: string, en: string): string => tr(lang, fr, en);
+  const intro = t("Nous espérons que vos photos vous plaisent ! Si vous avez une minute, votre avis nous aide beaucoup : il rassure celles et ceux qui hésitent encore à nous confier leur projet.", 'We hope you enjoy your photos! If you have a minute, your review helps us a lot: it reassures those who are still hesitating to entrust us with their project.');
+  const rv = reviewBlock(lang, params.reviewUrl, params.discount === true);
+  const html = emailShell(`
+    <h1 style="font-size:20px;margin:0 0 16px;">${t('Votre avis nous intéresse', 'We would love your feedback')}</h1>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">${greeting}</p>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 8px;">${intro}</p>
+    ${rv.html}
+  `, lang);
+  return finalize(lang, { tpl: 'demande_avis', subject: t('Bunkaio — Votre avis compte', 'Bunkaio — Your opinion matters'), html, text: `${greeting}\n\n${intro}\n\n${rv.text}` });
+}
+
+/** Lien de désinscription signé (HMAC dérivé du token admin) : pas de base d'abonnés à maintenir côté client. */
+export async function unsubscribeToken(env: Env, email: string): Promise<string> {
+  const data = new TextEncoder().encode(`${env.ADMIN_TOKEN}:unsub:${email.trim().toLowerCase()}`);
+  const digest = await crypto.subtle.digest('SHA-256', data);
+  return [...new Uint8Array(digest)].slice(0, 16).map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+/**
+ * Email libre (information, offre, annonce…) rédigé dans le tableau de bord. Le texte est échappé :
+ * paragraphes séparés par une ligne vide, sauts de ligne conservés, {prenom} et {nom} remplacés.
+ * `marketing` ajoute le lien de désinscription obligatoire pour une communication non transactionnelle.
+ */
+export function buildFreeEmail(params: { subject: string; heading?: string; body: string; ctaLabel?: string; ctaUrl?: string; customerName: string; unsubscribeUrl?: string; lang?: Lang }): { subject: string; html: string; text: string } {
+  const lang = params.lang ?? 'fr';
+  const first = (params.customerName || '').trim().split(/\s+/)[0] ?? '';
+  const fill = (s: string): string => s.replace(/\{prenom\}/gi, first).replace(/\{nom\}/gi, params.customerName || first);
+  const greeting = first ? tr(lang, `Bonjour ${first},`, `Hello ${first},`) : tr(lang, 'Bonjour,', 'Hello,');
+  const paragraphs = fill(params.body).split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
+  const bodyHtml = paragraphs.map((p) => `<p style="font-size:15px;line-height:1.65;margin:0 0 16px;">${escapeHtml(p).replace(/\n/g, '<br>')}</p>`).join('');
+  const cta = params.ctaLabel && params.ctaUrl && /^https:\/\//.test(params.ctaUrl)
+    ? `<p style="margin:24px 0 8px;"><a href="${escapeHtml(params.ctaUrl)}" style="${btnStyle}">${escapeHtml(fill(params.ctaLabel))}</a></p>` : '';
+  const unsub = params.unsubscribeUrl
+    ? `<p style="font-size:11.5px;line-height:1.6;color:#9a95a6;margin:28px 0 0;">${tr(lang, "Vous recevez cet email car vous êtes en relation avec BUNKAIO. Pour ne plus recevoir nos emails d'information :", 'You are receiving this email because you are in contact with BUNKAIO. To stop receiving our information emails:')} <a href="${params.unsubscribeUrl}" style="color:#9a95a6;">${tr(lang, 'se désinscrire', 'unsubscribe')}</a></p>` : '';
+  const html = emailShell(`
+    ${params.heading ? `<h1 style="font-size:20px;margin:0 0 16px;">${escapeHtml(fill(params.heading))}</h1>` : ''}
+    <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">${greeting}</p>
+    ${bodyHtml}${cta}${unsub}
+  `, lang);
+  const text = `${greeting}\n\n${paragraphs.join('\n\n')}${params.ctaLabel && params.ctaUrl ? `\n\n${fill(params.ctaLabel)} : ${params.ctaUrl}` : ''}${params.unsubscribeUrl ? `\n\n${tr(lang, 'Se désinscrire', 'Unsubscribe')} : ${params.unsubscribeUrl}` : ''}`;
+  return finalize(lang, { tpl: 'libre', subject: fill(params.subject), html, text });
 }
 
 function escapeHtml(value: string): string {
@@ -901,17 +950,38 @@ export function buildClientActivityEmail(params: { type: AccountType; email: str
 }
 
 /** Envoie un email transactionnel via l'API Resend (https://resend.com). */
-export async function sendEmail(env: Env, to: string, subject: string, html: string, text: string): Promise<void> {
-  const res = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${env.RESEND_API_KEY}`,
-    },
-    body: JSON.stringify({ from: env.EMAIL_FROM, to, subject, html, text }),
-  });
-  if (!res.ok) {
-    const detail = await res.text();
-    throw new Error(`resend_error: ${res.status} ${detail}`);
+export async function sendEmail(env: Env, to: string, subject: string, html: string, text: string, tplOverride?: string): Promise<void> {
+  // Le modèle est repéré par un commentaire HTML invisible posé par les constructeurs (voir finalize).
+  const tpl = tplOverride ?? html.match(/<!--bk-tpl:([a-z_]+)-->/)?.[1] ?? '';
+  let error = '';
+  try {
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${env.RESEND_API_KEY}` },
+      body: JSON.stringify({ from: env.EMAIL_FROM, to, subject, html, text }),
+    });
+    if (!res.ok) {
+      const detail = await res.text();
+      error = `resend_error: ${res.status} ${detail}`;
+    }
+  } catch (err) {
+    error = err instanceof Error ? err.message : 'network_error';
   }
+  // Journal des envois au client (historique visible dans le tableau de bord) — jamais bloquant.
+  if (tpl && to.toLowerCase() !== (env.ADMIN_NOTIFICATION_EMAIL ?? '').toLowerCase()) {
+    await logMail(env, to, tpl, subject, !error).catch((err) => console.error('[maillog] écriture impossible', err));
+  }
+  if (error) throw new Error(error);
+}
+
+const MAILLOG_MAX = 80;
+export interface MailLogEntry { t: string; s: string; d: string; ok: boolean }
+async function logMail(env: Env, to: string, tpl: string, subject: string, ok: boolean): Promise<void> {
+  const key = `maillog:${to.trim().toLowerCase()}`;
+  let log: MailLogEntry[] = [];
+  try { log = JSON.parse((await env.ACCOUNTS_KV.get(key)) ?? '[]') as MailLogEntry[]; } catch { log = []; }
+  const entry: MailLogEntry = { t: tpl, s: subject.slice(0, 200), d: new Date().toISOString(), ok };
+  log.push(entry);
+  if (log.length > MAILLOG_MAX) log = log.slice(-MAILLOG_MAX);
+  await env.ACCOUNTS_KV.put(key, JSON.stringify(log), { metadata: { last: entry.d, t: tpl, n: log.length, ok }, expirationTtl: 3 * 365 * 24 * 3600 });
 }

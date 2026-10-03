@@ -164,6 +164,16 @@
   .form { display: grid; gap: 14px; }
   .fg { display: grid; gap: 6px; min-width: 0; }
   .fg label, .lab { font-size: 10.5px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--grey); }
+  input.mi, textarea.mi { border: 1px solid var(--line); background: #fff; border-radius: 8px; padding: 10px 12px; outline: none; width: 100%; font: inherit; }
+  .tplcard { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; margin-bottom: 8px; cursor: pointer; }
+  .tplcard.on { border-color: var(--ink); background: var(--violet); }
+  .tplcard input { margin-top: 3px; accent-color: var(--ink); }
+  .tplcard b { display: block; font-size: 14px; }
+  .tplcard .d { color: var(--grey); font-size: 12.5px; }
+  .qdots { display: flex; gap: 4px; align-items: center; }
+  .qdots i { width: 9px; height: 9px; border-radius: 50%; background: var(--violet-deep, #e6def5); display: block; }
+  .qdots i.on { background: var(--ok); }
+  .qdots i.cur { background: var(--accent); }
   .fg input, .fg select, .fg textarea { width: 100%; border: 1px solid var(--line); background: #fff; border-radius: 8px; padding: 10px 12px; outline: none; }
   .fg input:focus, .fg select:focus, .fg textarea:focus { border-color: var(--accent); }
   .fg textarea { min-height: 110px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; resize: vertical; }
@@ -212,7 +222,7 @@
   .toast.on { opacity: 1; transform: translateX(-50%); }
   .loading { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); z-index: 300; width: 0; transition: width .4s; }
 
-  @media (max-width: 1100px) { .g3 { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 1100px) { .g3 { grid-template-columns: 1fr 1fr; } #mailTop { grid-template-columns: 1fr !important; } }
   @media (max-width: 900px) {
     .app { flex-direction: column; }
     .side { position: sticky; top: 0; z-index: 30; width: 100%; height: auto; flex: none; flex-direction: row; align-items: center; padding: 10px 12px; gap: 8px; }
@@ -379,6 +389,28 @@
         <div class="card"><div class="list" id="activityFeed"></div></div>
       </section>
 
+      <!-- ═══ Mailing ═══ -->
+      <section class="section" id="sec-mailing">
+        <div class="grid" style="grid-template-columns:minmax(0,1fr) minmax(0,1fr);margin-bottom:18px" id="mailTop">
+          <div class="card"><h3>1. Modèle d'email</h3><div id="mTpls"></div></div>
+          <div class="card"><h3>2. Contenu</h3><div id="mContent"></div></div>
+        </div>
+        <div class="card" style="margin-bottom:18px">
+          <h3>3. Destinataires <span class="badge" id="mSelCount">0 sélectionné</span></h3>
+          <div class="toolbar" style="margin-bottom:10px"><div class="chips" id="mSeg"></div></div>
+          <div class="toolbar"><input id="mSearch" class="mi" placeholder="Filtrer par nom, email…" oninput="mailState.q=this.value;renderMailRecipients()" style="max-width:300px"><button class="btn ghost sm" onclick="mailSelectAll(true)">Tout sélectionner (applicables)</button><button class="btn ghost sm" onclick="mailSelectAll(false)">Tout désélectionner</button><span class="muted small" id="mHint"></span></div>
+          <div id="mRecipients"></div>
+        </div>
+        <div class="card" style="margin-bottom:18px">
+          <h3>4. Aperçu et envoi</h3>
+          <div class="toolbar"><button class="btn ghost sm" onclick="mailPreview()">↻ Actualiser l'aperçu</button><button class="btn ghost sm" onclick="mailTest()">M'envoyer un test</button><span class="grow"></span><button class="btn" id="mSendBtn" onclick="mailSend()">Envoyer</button></div>
+          <div class="small muted" id="mPrevMeta" style="margin-bottom:8px"></div>
+          <iframe id="mPreview" sandbox="" style="width:100%;height:640px;border:1px solid var(--line);border-radius:12px;background:#f6f1fc" title="Aperçu de l'email"></iframe>
+          <div id="mResult"></div>
+        </div>
+        <div class="card"><h3>Historique des envois manuels</h3><div id="mHistory"><div class="empty">Chargement…</div></div></div>
+      </section>
+
       <!-- ═══ Messages ═══ -->
       <section class="section" id="sec-messages">
         <div class="toolbar"><div class="chips" id="msgChips"></div></div>
@@ -475,6 +507,7 @@ const ICON = {
   invoices: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/>',
   sessions: '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
   activity: '<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>',
+  mailing: '<path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/>',
   messages: '<path d="M4 4h16v12H5.2L4 17.2z"/><path d="M8 9h8M8 12h5"/>',
   media: '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/>',
   stats: '<path d="M18 20V10M12 20V4M6 20v-6"/>',
@@ -485,6 +518,7 @@ const SECTIONS = [
   ['quotes', 'Devis', 'Création, envoi, signature en ligne et suivi des devis'],
   ['invoices', 'Factures', 'Acomptes, soldes et encaissements Stripe'],
   ['sessions', 'Séances & automatisations', 'Planning, livraisons et emails automatiques'],
+  ['mailing', 'Mailing', 'Envoyez des emails à votre base : modèles, destinataires, historique'],
   ['messages', 'Messages', 'Formulaires du site : contact, collaborations, candidatures, demandes d\'espace, témoignages'],
   ['activity', 'Activité des espaces', 'Ce que les clients et partenaires modifient dans leur espace'],
   ['media', 'Médias', 'Photos et vidéos du site'],
@@ -587,7 +621,7 @@ function updateCounts() {
 
 function renderAll() {
   renderKpis(); renderPipeStrip(); renderAlerts(); renderNextSessions(); renderRecentActivity(); renderRecentInvoices();
-  renderSegChips(); renderContacts(); renderInvoices(); renderSessions(); renderActivity(); renderMessages(); renderQuotes(); renderVisitorsNote(); updateCounts();
+  renderSegChips(); renderContacts(); renderInvoices(); renderSessions(); renderActivity(); renderMessages(); renderQuotes(); renderMailing(); renderVisitorsNote(); updateCounts();
   if (state.section) $('pageSub').textContent = SECTIONS.find(x => x[0] === state.section)[2] + ' · données de ' + fdt(DB.generatedAt);
 }
 
@@ -710,6 +744,14 @@ const SEGMENTS = [
   ['incomplete', 'Espaces non validés', c => c.accounts.length && c.accounts.some(a => !a.infosCompletes)],
   ['due', 'À encaisser', c => c.totalDue > 0],
   ['message', 'Formulaires', c => c.roles.includes('message')],
+  ['noquote', 'Leads sans devis', c => !!c.lead && !(c.quotes || []).some(q => q.status !== 'annule') && c.stage === 'lead'],
+  ['qopen', 'Devis envoyé non signé', c => (c.quotes || []).some(q => q.status === 'envoye')],
+  ['qunseen', 'Devis jamais ouvert', c => (c.quotes || []).some(q => q.status === 'envoye' && !q.viewedAt)],
+  ['qnodep', 'Signé sans acompte', c => (c.quotes || []).some(q => q.status === 'signe' && !q.depositInvoice && !q.abonnement)],
+  ['soon', 'Séance dans 7 jours', c => c.accounts.some(a => a.seance && a.seance.statut !== 'annulee' && a.seance.date >= today() && a.seance.date <= addDays(7))],
+  ['delivered', 'Livrés', c => c.stage === 'livre'],
+  ['nomail', 'Sans email depuis 30 jours', c => !c.mail || c.mail.last < addDays(-30)],
+  ['unsub', 'Désinscrits', c => c.unsub],
 ];
 function segFn(seg) {
   if (seg.startsWith('stage:')) { const st = seg.slice(6); return c => c.stage === st; }
@@ -748,12 +790,12 @@ function renderContacts() {
   }
   const arrow = k => state.sort.key === k ? (state.sort.dir > 0 ? ' ↑' : ' ↓') : '';
   $('contactsTable').innerHTML = list.length ? `<div class="tbl-wrap"><table><thead><tr>
-    <th class="sort" onclick="sortBy('name')">Contact${arrow('name')}</th><th>Profil</th><th class="sort" onclick="sortBy('stage')">Étape${arrow('stage')}</th><th class="sort" onclick="sortBy('score')">Lead${arrow('score')}</th><th>Projet</th>
-    <th class="num sort" onclick="sortBy('paid')">Encaissé${arrow('paid')}</th><th class="num sort" onclick="sortBy('due')">À payer${arrow('due')}</th><th class="sort" onclick="sortBy('lastActivity')">Activité${arrow('lastActivity')}</th></tr></thead><tbody>
+    <th class="sort" onclick="sortBy('name')">Contact${arrow('name')}</th><th>Profil</th><th class="sort" onclick="sortBy('stage')">Étape${arrow('stage')}</th><th>Devis</th><th class="sort" onclick="sortBy('score')">Lead${arrow('score')}</th><th>Projet</th>
+    <th class="num sort" onclick="sortBy('paid')">Encaissé${arrow('paid')}</th><th class="num sort" onclick="sortBy('due')">À payer${arrow('due')}</th><th>Dernier email</th><th>Prochain email</th><th class="sort" onclick="sortBy('lastActivity')">Activité${arrow('lastActivity')}</th></tr></thead><tbody>
     ${list.map(c => { const st = STAGE[c.stage] || STAGE.contact; const t = c.lead ? TEMP[c.lead.temperature] || TEMP.froid : null; const unseen = allActivity().some(a => a.email === c.email && a.unseen);
       return `<tr class="click" onclick="openDrawer('${esc(c.email)}')"><td class="who"><b>${unseen ? '<span class="dot"></span>' : ''}${esc(c.name || '(sans nom)')}</b><span>${esc(c.email)}</span></td><td>${roleBadges(c)}</td><td><span class="badge ${c.stage === 'livre' ? 'ok' : c.stage === 'annule' ? 'danger' : ''}">${st[1]}</span></td>
-      <td>${t ? `<span class="badge ${t[1]}">${c.lead.score} · ${t[0]}</span>` : '<span class="muted">—</span>'}</td><td class="small">${esc(c.lead ? c.lead.category : (primaryAcc(c) && primaryAcc(c).seance ? primaryAcc(c).seance.prestation || '' : '')) || '<span class="muted">—</span>'}</td>
-      <td class="num">${c.totalPaid ? eur(c.totalPaid) : '—'}</td><td class="num">${c.totalDue ? `<b>${eur(c.totalDue)}</b>` : '—'}</td><td class="small muted">${ago(c.lastActivity)}</td></tr>`; }).join('')}
+      <td>${quoteDots(c)}</td><td>${t ? `<span class="badge ${t[1]}">${c.lead.score} · ${t[0]}</span>` : '<span class="muted">—</span>'}</td><td class="small">${esc(c.lead ? c.lead.category : (primaryAcc(c) && primaryAcc(c).seance ? primaryAcc(c).seance.prestation || '' : '')) || '<span class="muted">—</span>'}</td>
+      <td class="num">${c.totalPaid ? eur(c.totalPaid) : '—'}</td><td class="num">${c.totalDue ? `<b>${eur(c.totalDue)}</b>` : '—'}</td><td class="small">${lastMailCell(c)}</td><td class="small">${nextMailCell(c)}</td><td class="small muted">${ago(c.lastActivity)}</td></tr>`; }).join('')}
     </tbody></table></div>` : '<div class="card"><div class="empty">Aucun contact ne correspond.</div></div>';
 }
 function renderVisitorsNote() {
@@ -892,6 +934,169 @@ function renderActivity() {
   $('actChips').innerHTML = types.map(([id, l]) => `<button class="chip ${state.actFilter === id ? 'on' : ''}" onclick="state.actFilter='${id}';renderActivity()">${l}<span class="c">${all.filter(id === 'all' ? () => true : id === 'unseen' ? a => a.unseen : a => a.type === id).length}</span></button>`).join('');
   const list = all.filter(f);
   $('activityFeed').innerHTML = list.length ? list.map(a => `<div class="li click" onclick="openDrawer('${esc(a.email)}','activity')"><div class="ic">${a.type === 'moodboard' ? '🎨' : a.type === 'infos' ? '🧾' : a.type === 'collaboration' ? '🤝' : '⭐'}</div><div class="tx"><b>${a.unseen ? '<span class="dot"></span>' : ''}${esc(a.name)} <span class="badge line">${a.accType === 'partner' ? 'Partenaire' : 'Client'}</span></b><div>${esc(a.resume)}</div>${a.details && a.details.length ? `<div class="d">${a.details.map(esc).join(' · ')}</div>` : ''}<div class="d">${esc(ACT_LABEL[a.type] || a.type)} · ${fdt(a.date)}</div></div></div>`).join('') : '<div class="empty">Aucune activité.</div>';
+}
+
+/* ── Emails : libellés, étape du devis, emails envoyés / à venir ── */
+const TPL_LABEL = { facture_acompte: 'Facture d\'acompte', photos_pretes_solde: 'Photos prêtes + facture de solde', paiement_recu: 'Paiement reçu', rappel_impaye: 'Rappel de facture impayée', confirmation_devis_quiz: 'Confirmation de demande de devis', acces_espace: 'Vos accès à l\'espace', album_accessible: 'Album accessible + avis + remise', merci_seance: 'Merci + date de livraison', seance_confirmation: 'Confirmation de séance', seance_reminder: 'Rappel de séance J-2', seance_report: 'Report de séance', seance_cancel: 'Annulation de séance', accuse_contact: 'Accusé · contact', accuse_collab: 'Accusé · collaboration', accuse_partner: 'Accusé · candidature partenaire', accuse_account: 'Accusé · demande d\'espace', relance_devis_quiz: 'Relance de devis (quiz)', rappel_moodboard: 'Rappel moodboard', devis_a_signer: 'Devis à signer', relance_devis_envoye: 'Relance du devis envoyé', devis_signe: 'Devis signé (confirmation)', libre: 'Message libre', demande_avis: 'Demande d\'avis' };
+const tplName = t => TPL_LABEL[t] || t;
+function quoteSteps(c) {
+  const qs = (c.quotes || []).filter(q => q.status !== 'annule');
+  const q = qs[0];
+  const depPaid = c.invoices.some(i => i.kind === 'acompte' && i.status === 'paid');
+  const steps = [
+    ['Demande reçue', !!c.lead || qs.length > 0 || c.roles.includes('message')],
+    ['Devis envoyé', !!q && ['envoye', 'signe', 'refuse', 'expire'].includes(q.status) || (c.markers.acompteCree && !q)],
+    ['Devis consulté', !!q && !!q.viewedAt || !!(q && q.status === 'signe')],
+    ['Devis signé', !!q && q.status === 'signe'],
+    ['Acompte payé', depPaid],
+  ];
+  const outside = c.invoices.some(i => i.status === 'paid') || ['reserve', 'postprod', 'solde', 'livre'].includes(c.stage);
+  const label = !q ? (outside ? 'Hors devis en ligne' : c.lead ? 'Devis à faire' : '—') : q.status === 'brouillon' ? 'Brouillon à envoyer' : q.status === 'envoye' ? (q.viewedAt ? 'Consulté, pas signé' : 'Envoyé, pas ouvert') : q.status === 'signe' ? (depPaid ? 'Signé · acompte payé' : q.depositInvoice || q.abonnement ? 'Signé · acompte à régler' : 'Signé · acompte à créer') : q.status === 'expire' ? 'Expiré' : q.status === 'refuse' ? 'Refusé' : '—';
+  return { steps, label, q };
+}
+function quoteDots(c) {
+  const { steps, label } = quoteSteps(c);
+  if (label === '—') return '<span class="muted">—</span>';
+  const firstOff = steps.findIndex(x => !x[1]);
+  return `<div title="${esc(label)}"><div class="qdots">${steps.map((x, k) => `<i class="${x[1] ? 'on' : k === firstOff ? 'cur' : ''}"></i>`).join('')}</div><div class="small muted" style="margin-top:3px;white-space:nowrap">${esc(label)}</div></div>`;
+}
+function lastMailCell(c) {
+  if (!c.mail) return '<span class="muted">—</span>';
+  return `<div>${esc(tplName(c.mail.tpl))}${c.mail.ok === false ? ' <span class="badge danger">échec</span>' : ''}</div><div class="muted">${ago(c.mail.last)}${c.mail.n > 1 ? ' · ' + c.mail.n + ' au total' : ''}</div>`;
+}
+/* Emails automatiques à venir, déduits de l'état du contact (même règles que les tâches planifiées). */
+function plannedMails(c) {
+  const out = []; const now = today();
+  const iso = d => (d || '').slice(0, 10);
+  const add = (label, date, note) => out.push({ label, date: date < now ? now : date, note: note || '' });
+  const qs = c.quotes || []; const acc = primaryAcc(c);
+  const sentQ = qs.find(q => q.status === 'envoye');
+  const hasQuoteFlow = qs.some(q => q.status !== 'annule') || c.markers.qsent;
+  if (c.lead && !hasQuoteFlow && !c.markers.acompteCree && !c.markers.acomptePaye && !c.markers.relanceDevis && c.markers.quizLe) add('Relance de devis (quiz)', iso(new Date(Date.parse(c.markers.quizLe) + 7 * 864e5).toISOString()), '7 jours après la demande');
+  if (sentQ && !sentQ.reminderSentAt && sentQ.sentAt) { const d = iso(new Date(Date.parse(sentQ.sentAt) + 5 * 864e5).toISOString()); if (d <= sentQ.validUntil) add('Relance du devis n° ' + sentQ.number, d, '5 jours après l\'envoi, s\'il n\'est pas signé'); }
+  if (c.markers.acomptePaye && !c.markers.rappelMoodboard && acc && !(acc.moodboards || []).length && !(acc.seance && acc.seance.date < now)) add('Rappel moodboard', iso(new Date(Date.parse(c.markers.acomptePaye) + 3 * 864e5).toISOString()), '3 jours après l\'acompte, si aucun moodboard');
+  if (acc && acc.seance && acc.seance.statut !== 'annulee') {
+    const sd = acc.seance.date;
+    if (sd >= addDays(2)) add('Rappel de séance J-2', new Date(new Date(sd + 'T12:00:00').getTime() - 2 * 864e5).toISOString().slice(0, 10), 'Séance du ' + fdate(sd));
+    if (sd >= addDays(-1)) add('Merci + date de livraison', new Date(new Date(sd + 'T12:00:00').getTime() + 864e5).toISOString().slice(0, 10), 'Lendemain de la séance');
+  }
+  c.invoices.filter(i => i.status === 'open').forEach(i => add('Relance de facture ' + (i.kind === 'solde' ? 'de solde' : i.kind === 'acompte' ? 'd\'acompte' : ''), iso(i.dueDate) || now, i.overdue ? 'Échéance dépassée' : 'Si impayée à l\'échéance'));
+  const sg = qs.find(q => q.status === 'signe' && !q.depositInvoice && !q.abonnement);
+  if (sg) out.push({ label: 'Facture d\'acompte', date: now, note: 'Action requise : à créer depuis le devis', manual: true });
+  if (c.invoices.some(i => i.kind === 'acompte' && i.status === 'open')) out.push({ label: 'Paiement reçu (automatique)', date: '', note: 'Dès le règlement de l\'acompte', manual: false });
+  if (c.invoices.some(i => i.kind === 'solde' && i.status === 'open')) out.push({ label: 'Album accessible + avis + remise 15 %', date: '', note: 'Dès le règlement du solde' });
+  return out.sort((a, b) => (a.date || '9').localeCompare(b.date || '9'));
+}
+function nextMailCell(c) {
+  const p = plannedMails(c);
+  if (!p.length) return '<span class="muted">—</span>';
+  const n = p[0];
+  return `<div>${esc(n.label)}</div><div class="muted">${n.manual ? '⚠ à faire' : n.date ? (n.date <= today() ? 'aujourd\'hui / prochain passage' : fdate(n.date, { day: 'numeric', month: 'short' })) : esc(n.note)}${p.length > 1 ? ' · +' + (p.length - 1) : ''}</div>`;
+}
+
+/* ── Mailing manuel ── */
+const MAIL_TPLS = [
+  ['libre', 'Message libre', 'Information, offre, annonce, nouvelles : vous rédigez l\'objet et le message (variables {prenom} et {nom}), avec un bouton facultatif. Lien de désinscription ajouté automatiquement.', true, 'Information'],
+  ['relance_devis_quiz', 'Relance de devis', 'Pour les leads qui n\'ont pas donné suite à leur demande.', false, 'Relation'],
+  ['rappel_moodboard', 'Rappel moodboard', 'Invite le client à créer son moodboard dans son espace.', false, 'Relation'],
+  ['seance_reminder', 'Rappel de séance', 'Date, heure et lieu de la séance (nécessite une séance planifiée).', false, 'Relation'],
+  ['seance_confirmation', 'Confirmation de séance', 'Détails de la séance et rappel à venir (nécessite une séance planifiée).', false, 'Relation'],
+  ['merci_seance', 'Merci après la séance', 'Remerciement, délai de livraison et fonctionnement de l\'album Lightroom.', false, 'Relation'],
+  ['rappel_impaye', 'Rappel de facture impayée', 'Relance manuelle avec le lien de paiement (nécessite une facture en attente).', false, 'Relation'],
+  ['demande_avis', 'Demande d\'avis', 'Invitation à laisser un avis Google ; la remise de 15 % n\'est citée que si le client y a droit.', false, 'Relation'],
+];
+const mailState = { tpl: 'libre', sel: new Set(), seg: 'all', q: '', p: { subject: '', heading: '', body: '', ctaLabel: '', ctaUrl: '' }, campaigns: null };
+function mailApplicable(tplId, c) {
+  if (!c.email || !c.email.includes('@')) return 'pas d\'email';
+  const acc = primaryAcc(c);
+  const marketing = (MAIL_TPLS.find(t => t[0] === tplId) || [])[3];
+  if (marketing && c.unsub) return 'désinscrit';
+  switch (tplId) {
+    case 'relance_devis_quiz': return c.lead && !(c.quotes || []).some(q => q.status === 'signe') && !c.invoices.some(i => i.status === 'paid') ? '' : 'pas un lead en attente';
+    case 'rappel_moodboard': return acc ? '' : 'pas d\'espace';
+    case 'seance_reminder': case 'seance_confirmation': return acc && acc.seance && acc.seance.date && acc.seance.statut !== 'annulee' ? '' : 'pas de séance planifiée';
+    case 'merci_seance': return acc ? '' : 'pas d\'espace';
+    case 'rappel_impaye': return c.invoices.some(i => i.status === 'open' && i.url) ? '' : 'aucune facture en attente';
+    case 'demande_avis': return c.stage === 'livre' || c.invoices.some(i => i.kind === 'solde' && i.status === 'paid') ? '' : 'projet non livré';
+  }
+  return '';
+}
+function mailCtx(c) {
+  const acc = primaryAcc(c); const inv = c.invoices.find(i => i.status === 'open' && i.url);
+  return { email: c.email, name: (acc && acc.facturation && acc.facturation.contact) || c.name || '', lang: c.lang, space: c.accounts.some(a => a.type === 'partner') && !c.accounts.some(a => a.type === 'client') ? 'partner' : 'client',
+    seance: acc && acc.seance && acc.seance.date ? { date: acc.seance.date, heure: acc.seance.heure, lieu: acc.seance.lieu, prestation: acc.seance.prestation } : undefined,
+    invoice: inv ? { description: inv.description, amount: inv.amountRemaining || inv.amount, kind: inv.kind === 'acompte' ? 'acompte' : 'solde', url: inv.url } : undefined,
+    discount: !!c.markers.remise15, reviewUrl: c.customerId ? WORKER + '/avis?c=' + c.customerId : undefined };
+}
+function mailContacts() { const f = segFn(mailState.seg); return DB.contacts.filter(c => f(c) && matchQ(c, mailState.q)); }
+function renderMailing() {
+  if (!$('mTpls')) return;
+  $('mTpls').innerHTML = MAIL_TPLS.map(([id, l, d, mk, tag]) => `<label class="tplcard ${mailState.tpl === id ? 'on' : ''}"><input type="radio" name="mtpl" ${mailState.tpl === id ? 'checked' : ''} onchange="mailState.tpl='${id}';renderMailing()"><span><b>${l} <span class="badge ${mk ? 'warn' : 'line'}" style="margin-left:6px">${tag}</span></b><span class="d">${d}</span></span></label>`).join('');
+  const lib = mailState.tpl === 'libre'; const P = mailState.p;
+  $('mContent').innerHTML = lib ? `<div class="form">
+    <div class="fg"><label>Objet de l'email</label><input class="mi" id="mpSubject" value="${esc(P.subject)}" oninput="mailState.p.subject=this.value" placeholder="Ex. Nouvelle offre pour vos portraits"></div>
+    <div class="fg"><label>Titre (facultatif)</label><input class="mi" id="mpHeading" value="${esc(P.heading)}" oninput="mailState.p.heading=this.value"></div>
+    <div class="fg"><label>Message</label><textarea class="mi" id="mpBody" style="min-height:190px;font-family:inherit" oninput="mailState.p.body=this.value" placeholder="Bonjour est ajouté automatiquement.&#10;&#10;Séparez les paragraphes par une ligne vide. Variables : {prenom}, {nom}.">${esc(P.body)}</textarea></div>
+    <div class="frow"><div class="fg"><label>Bouton (texte)</label><input class="mi" value="${esc(P.ctaLabel)}" oninput="mailState.p.ctaLabel=this.value" placeholder="Découvrir"></div><div class="fg"><label>Bouton (lien https://)</label><input class="mi" value="${esc(P.ctaUrl)}" oninput="mailState.p.ctaUrl=this.value" placeholder="https://bunkaio.com/devis/"></div></div>
+    <div class="hint small muted">Bonjour {prénom}, la signature BUNKAIO et le lien « se désinscrire » sont ajoutés automatiquement. Les désinscrits sont exclus.</div></div>`
+    : `<div class="msg info">Ce modèle utilise le texte des emails automatiques : il est rempli avec les données de chaque destinataire (nom, séance, facture…). Cliquez sur « Actualiser l'aperçu » pour voir le résultat.</div>`;
+  renderMailSeg(); renderMailRecipients(); renderMailHistory();
+}
+function renderMailSeg() {
+  const segs = SEGMENTS.filter(s => !['hot'].includes(s[0]));
+  $('mSeg').innerHTML = segs.map(([id, l, f]) => `<button class="chip ${mailState.seg === id ? 'on' : ''}" onclick="mailState.seg='${id}';renderMailSeg();renderMailRecipients()">${l}<span class="c">${DB.contacts.filter(f).length}</span></button>`).join('');
+}
+function renderMailRecipients() {
+  const list = mailContacts();
+  const rows = list.map(c => { const why = mailApplicable(mailState.tpl, c); const st = STAGE[c.stage] || STAGE.contact; const dup = c.mail && c.mail.tpl === mailState.tpl && c.mail.last > addDays(-30);
+    return `<tr style="${why ? 'opacity:.5' : ''}"><td style="width:34px"><input type="checkbox" ${why ? 'disabled' : ''} ${mailState.sel.has(c.email) && !why ? 'checked' : ''} onchange="mailToggle('${esc(c.email)}',this.checked)"></td><td class="who"><b>${esc(c.name || '(sans nom)')}</b><span>${esc(c.email)}</span></td><td><span class="badge">${st[1]}</span>${c.lang === 'en' ? ' <span class="badge line">EN</span>' : ''}</td><td class="small">${why ? '<span class="muted">' + esc(why) + '</span>' : dup ? '<span class="badge warn">déjà reçu il y a ' + Math.max(1, Math.round((Date.now() - Date.parse(c.mail.last)) / 864e5)) + ' j</span>' : '<span class="badge ok">applicable</span>'}</td><td class="small">${lastMailCell(c)}</td></tr>`; }).join('');
+  $('mRecipients').innerHTML = list.length ? `<div class="tbl-wrap" style="max-height:420px;overflow:auto"><table><thead><tr><th></th><th>Contact</th><th>Étape</th><th>Statut pour ce modèle</th><th>Dernier email</th></tr></thead><tbody>${rows}</tbody></table></div>` : '<div class="empty">Aucun contact dans ce filtre.</div>';
+  const n = [...mailState.sel].filter(e => { const c = contactByEmail(e); return c && !mailApplicable(mailState.tpl, c); }).length;
+  $('mSelCount').textContent = n + ' sélectionné' + (n > 1 ? 's' : '');
+  $('mSendBtn').textContent = n ? 'Envoyer à ' + n + ' destinataire' + (n > 1 ? 's' : '') : 'Envoyer';
+  $('mHint').textContent = list.length + ' contacts dans ce filtre · ' + list.filter(c => !mailApplicable(mailState.tpl, c)).length + ' applicables';
+}
+function mailToggle(email, on) { if (on) mailState.sel.add(email); else mailState.sel.delete(email); renderMailRecipients(); }
+function mailSelectAll(on) { mailContacts().forEach(c => { if (on && !mailApplicable(mailState.tpl, c)) mailState.sel.add(c.email); if (!on) mailState.sel.delete(c.email); }); renderMailRecipients(); }
+function mailSelected() { return [...mailState.sel].map(contactByEmail).filter(c => c && !mailApplicable(mailState.tpl, c)); }
+function mailBody(action, list) { return JSON.stringify({ action, template: mailState.tpl, params: mailState.p, recipients: list.map(mailCtx) }); }
+async function mailPreview() {
+  const list = mailSelected(); const c = list[0] || mailContacts().find(x => !mailApplicable(mailState.tpl, x));
+  if (!c) { toast('Aucun destinataire applicable pour ce modèle'); return; }
+  if (mailState.tpl === 'libre' && (!mailState.p.subject.trim() || !mailState.p.body.trim())) { toast('Renseignez l\'objet et le message'); return; }
+  try {
+    const { res, data } = await api('/admin/mailing', { method: 'POST', body: mailBody('preview', [c]) });
+    if (!res.ok || !data.ok || data.skip) { $('mPrevMeta').textContent = data.skip || 'Erreur ' + (data.error || res.status); return; }
+    $('mPreview').srcdoc = data.html; $('mPrevMeta').innerHTML = 'Aperçu pour <b>' + esc(c.name || c.email) + '</b> · objet : <b>' + esc(data.subject) + '</b>';
+  } catch (e) {}
+}
+async function mailTest() {
+  const c = mailSelected()[0] || mailContacts().find(x => !mailApplicable(mailState.tpl, x));
+  if (!c) { toast('Aucun destinataire applicable'); return; }
+  try { const { res, data } = await api('/admin/mailing', { method: 'POST', body: mailBody('test', [c]) }); toast(res.ok && data.ok ? 'Test envoyé à ' + data.to : 'Test impossible : ' + (data.error || res.status)); } catch (e) {}
+}
+async function mailSend() {
+  const list = mailSelected();
+  if (!list.length) { toast('Sélectionnez au moins un destinataire'); return; }
+  if (mailState.tpl === 'libre' && (!mailState.p.subject.trim() || !mailState.p.body.trim())) { toast('Renseignez l\'objet et le message'); return; }
+  if (list.length > 100) { toast('Maximum 100 destinataires par envoi : réduisez la sélection'); return; }
+  const tn = (MAIL_TPLS.find(t => t[0] === mailState.tpl) || [])[1];
+  if (!confirm(`Envoyer « ${tn} » à ${list.length} destinataire${list.length > 1 ? 's' : ''} ?\n\n${list.slice(0, 8).map(c => '• ' + (c.name || c.email)).join('\n')}${list.length > 8 ? '\n… et ' + (list.length - 8) + ' autres' : ''}\n\nCette action est définitive. Un test préalable est recommandé.`)) return;
+  $('mSendBtn').disabled = true; $('mSendBtn').textContent = 'Envoi en cours…';
+  try {
+    const { res, data } = await api('/admin/mailing', { method: 'POST', body: mailBody('send', list) });
+    if (!res.ok || !data.ok) { $('mResult').innerHTML = `<div class="msg err">Erreur : ${esc(data.error || res.status)}</div>`; return; }
+    const r = data.results; const ok = r.filter(x => x.status === 'envoye').length, ig = r.filter(x => x.status === 'ignore'), er = r.filter(x => x.status === 'erreur');
+    $('mResult').innerHTML = `<div class="msg ${er.length ? 'warn' : 'ok'}" style="margin-top:12px"><b>${ok} envoyé${ok > 1 ? 's' : ''}</b>${ig.length ? ' · ' + ig.length + ' ignoré(s) (' + ig.map(x => esc(x.email + ' : ' + x.detail)).join(' ; ') + ')' : ''}${er.length ? ' · <b>' + er.length + ' en échec</b> (' + er.map(x => esc(x.email + ' : ' + x.detail)).join(' ; ') + ')' : ''}</div>`;
+    mailState.sel.clear(); mailState.campaigns = null; toast(ok + ' email(s) envoyé(s)');
+    await loadDashboard();
+  } catch (e) {} finally { $('mSendBtn').disabled = false; renderMailRecipients(); }
+}
+async function renderMailHistory() {
+  const box = $('mHistory'); if (!box) return;
+  if (!mailState.campaigns) { try { const { data } = await api('/admin/campaigns'); mailState.campaigns = data.campaigns || []; } catch (e) { return; } }
+  const c = mailState.campaigns;
+  box.innerHTML = c.length ? `<div class="tbl-wrap"><table><thead><tr><th>Date</th><th>Modèle</th><th>Objet</th><th class="num">Envoyés</th><th class="num">Ignorés</th><th class="num">Échecs</th></tr></thead><tbody>${c.map(x => `<tr><td class="small">${fdt(x.date)}</td><td>${esc(tplName(x.template))}</td><td class="small">${esc(x.subject || '—')}</td><td class="num"><b>${x.sent}</b></td><td class="num">${x.ignored}</td><td class="num">${x.failed ? '<b style="color:var(--danger)">' + x.failed + '</b>' : 0}</td></tr>`).join('')}</tbody></table></div>` : '<div class="empty">Aucun envoi manuel pour l\'instant.</div>';
 }
 
 /* ── Devis ── */
@@ -1169,7 +1374,8 @@ function renderStats() {
 }
 
 /* ── Fiche contact ── */
-const DR_TABS = [['summary', 'Résumé'], ['space', 'Espace & coordonnées'], ['session', 'Séance'], ['invoices', 'Factures'], ['activity', 'Activité'], ['advanced', 'Avancé']];
+const DR_TABS = [['summary', 'Résumé'], ['space', 'Espace & coordonnées'], ['session', 'Séance'], ['invoices', 'Factures'], ['emails', 'Emails'], ['activity', 'Activité'], ['advanced', 'Avancé']];
+const EXTRA = {};
 function contactByEmail(email) { return DB.contacts.find(c => c.email === email); }
 function openDrawer(email, tab) {
   const c = contactByEmail(email);
@@ -1198,7 +1404,8 @@ function renderDrawer() {
   $('drHead').innerHTML = `<div class="row1"><div style="min-width:0"><h2>${esc(c ? (c.name || '(sans nom)') : 'Nouvel espace')}</h2><div class="em">${esc(c ? c.email : 'Créer un espace client ou partenaire')}${c && c.phone ? ' · ' + esc(c.phone) : ''}</div></div><button class="close" onclick="closeDrawer()" aria-label="Fermer">✕</button></div>
     ${c ? `<div class="badges"><span class="badge lav">${st[1]}</span>${c.roles.map(r => ROLE_LABEL[r] ? `<span class="badge">${ROLE_LABEL[r][0]}</span>` : '').join('')}${c.lang === 'en' ? '<span class="badge">EN</span>' : ''}${c.totalPaid ? `<span class="badge">Encaissé ${eur(c.totalPaid)}</span>` : ''}${c.totalDue ? `<span class="badge">À payer ${eur(c.totalDue)}</span>` : ''}</div>` : ''}
     <div class="dr-tabs">${(c ? DR_TABS : [['space', 'Espace & coordonnées']]).map(([id, l]) => `<button class="${drawer.tab === id ? 'on' : ''}" onclick="setDrTab('${id}')">${l}</button>`).join('')}</div>`;
-  const fn = { summary: drSummary, space: drSpace, session: drSession, invoices: drInvoices, activity: drActivity, advanced: drAdvanced }[drawer.tab] || drSummary;
+  const fn = { summary: drSummary, space: drSpace, session: drSession, invoices: drInvoices, emails: drEmails, activity: drActivity, advanced: drAdvanced }[drawer.tab] || drSummary;
+  if (drawer.tab === 'emails' && c && !EXTRA[c.email]) loadExtra(c.email);
   $('drBody').innerHTML = fn(c);
   const needsSave = ['space', 'session', 'advanced'].includes(drawer.tab) && (drawer.isNew || currentAcc(c));
   $('drFoot').innerHTML = needsSave ? `<button class="btn" id="drSave" onclick="saveAccount()">${drawer.isNew ? 'Créer l\'espace' : 'Enregistrer'}</button><button class="btn ghost" onclick="closeDrawer()">Fermer</button><span class="small muted">${drawer.tab === 'session' ? 'Le rappel J-2 et le remerciement J+1 partent automatiquement.' : ''}</span>${!drawer.isNew && drawer.tab === 'space' && currentAcc(c) ? `<button class="btn ghost" style="color:var(--danger);margin-left:auto" onclick="deleteContactUI('${currentAcc(c).type}')">Supprimer cet espace</button>` : ''}<div id="drMsg"></div>` : `<button class="btn ghost" onclick="closeDrawer()">Fermer</button>${c ? `<a class="btn ghost" href="mailto:${esc(c.email)}">Écrire un email</a>${c.customerId ? `<a class="btn ghost" href="https://dashboard.stripe.com/customers/${esc(c.customerId)}" target="_blank" rel="noopener">Ouvrir dans Stripe</a>` : ''}${drawer.tab === 'summary' ? `<button class="btn ghost" style="color:var(--danger);margin-left:auto" onclick="deleteContactUI()">Supprimer le contact…</button>` : ''}` : ''}<div id="drMsg"></div>`;
@@ -1310,6 +1517,32 @@ function drInvoices(c) {
   </div>
   ${c.invoices.length ? invTableHtml(c.invoices, false) : '<div class="card"><div class="empty">Aucune facture.</div></div>'}`;
 }
+async function loadExtra(email) {
+  EXTRA[email] = { loading: true };
+  try { const { res, data } = await api('/admin/extra?email=' + encodeURIComponent(email)); EXTRA[email] = res.ok && data.ok ? data : { error: true }; } catch (e) { EXTRA[email] = { error: true }; }
+  if (drawer.email === email && drawer.tab === 'emails') renderDrawer();
+}
+function drEmails(c) {
+  const x = EXTRA[c.email] || {}; const { steps, label } = quoteSteps(c); const planned = plannedMails(c);
+  const firstOff = steps.findIndex(s => !s[1]);
+  return `<div class="grid g2" style="margin-bottom:18px">
+    <div class="card"><h3>Étape du devis</h3><div class="tl">${steps.map((s, k) => `<div class="it ${s[1] ? 'done' : ''}"><b style="${!s[1] && k !== firstOff ? 'opacity:.45' : ''}">${s[0]}</b></div>`).join('')}</div><div class="small" style="margin-top:6px"><b>${esc(label)}</b></div></div>
+    <div class="card"><h3>Emails à venir</h3>${planned.length ? `<div class="list">${planned.map(p => `<div class="li"><div class="ic ${p.manual ? 'warn' : ''}">${p.manual ? '⚠' : '⏳'}</div><div class="tx"><b>${esc(p.label)}</b><div class="d">${p.manual ? 'Action requise' : p.date ? (p.date <= today() ? 'Au prochain passage (8 h UTC)' : fdate(p.date, { weekday: 'short', day: 'numeric', month: 'short' })) : 'Déclenché automatiquement'}${p.note ? ' · ' + esc(p.note) : ''}</div></div></div>`).join('')}</div>` : '<div class="small muted">Aucun email automatique prévu pour l\'instant.</div>'}</div>
+  </div>
+  <div class="card" style="margin-bottom:18px"><h3>Emails envoyés ${x.mails ? '<span class="badge">' + x.mails.length + '</span>' : ''}</h3>${x.loading || !x.mails && !x.error ? '<div class="small muted">Chargement…</div>' : x.error ? '<div class="msg err">Historique indisponible.</div>' : x.mails.length ? `<div class="list">${x.mails.map(m => `<div class="li"><div class="ic ${m.ok ? 'ok' : 'danger'}">${m.ok ? '✉' : '✕'}</div><div class="tx"><b>${esc(tplName(m.t))}</b><div class="d">${esc(m.s)}</div><div class="d">${fdt(m.d)}${m.ok ? '' : ' · échec d\'envoi'}</div></div></div>`).join('')}</div>` : '<div class="small muted">Aucun email envoyé depuis la mise en place du journal (les envois précédents ne sont pas enregistrés).</div>'}</div>
+  <div class="card"><h3>Note interne et préférences</h3><div class="form">
+    <div class="fg"><label>Note (visible par vous seul)</label><textarea class="mi" id="noteText" style="min-height:90px;font-family:inherit" placeholder="Contexte, préférences, rappel à faire…">${esc(x.note || '')}</textarea></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn sm" onclick="saveNote()">Enregistrer la note</button><button class="btn ghost sm" onclick="mailTo('${esc(c.email)}')">✉ Envoyer un email…</button><button class="btn ghost sm" onclick="toggleUnsub('${esc(c.email)}', ${!c.unsub})">${c.unsub ? 'Réabonner aux emails d\'information' : 'Désinscrire des emails d\'information'}</button></div>
+    ${c.unsub ? '<div class="msg warn">Ce contact est désinscrit : il ne reçoit plus les messages libres, mais toujours ses emails liés à un projet (devis, factures, séances).</div>' : ''}</div></div>`;
+}
+async function saveNote() {
+  const email = drawer.email; const note = $('noteText').value;
+  try { const { res } = await api('/admin/note', { method: 'POST', body: JSON.stringify({ email, note }) }); if (res.ok) { if (EXTRA[email]) EXTRA[email].note = note; const c = contactByEmail(email); if (c) c.hasNote = !!note.trim(); toast('Note enregistrée'); } } catch (e) {}
+}
+async function toggleUnsub(email, value) {
+  try { const { res } = await api('/admin/unsub', { method: 'POST', body: JSON.stringify({ email, value }) }); if (res.ok) { const c = contactByEmail(email); if (c) c.unsub = value; toast(value ? 'Contact désinscrit' : 'Contact réabonné'); renderDrawer(); renderMailing(); } } catch (e) {}
+}
+function mailTo(email) { mailState.sel = new Set([email]); mailState.seg = 'all'; mailState.q = ''; closeDrawer(); go('mailing'); }
 function drActivity(c) {
   const list = allActivity().filter(a => a.email === c.email);
   return list.length ? `<div class="card"><div class="list">${list.map(a => `<div class="li"><div class="ic">${a.type === 'moodboard' ? '🎨' : a.type === 'infos' ? '🧾' : a.type === 'collaboration' ? '🤝' : '⭐'}</div><div class="tx"><b>${esc(a.resume)}</b>${a.details && a.details.length ? `<ul style="margin:4px 0 0 16px" class="small">${a.details.map(d => `<li>${esc(d)}</li>`).join('')}</ul>` : ''}<div class="d">${esc(ACT_LABEL[a.type] || a.type)} · ${fdt(a.date)}</div></div></div>`).join('')}</div></div>` : '<div class="card"><div class="empty">Aucune modification faite par ce contact dans son espace.</div></div>';

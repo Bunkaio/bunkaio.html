@@ -49,6 +49,9 @@ export interface DashboardContact {
   accounts: ReturnType<typeof adminAccountView>[];
   messages: FormMessage[];
   quotes: Omit<Quote, 'token'>[];
+  mail: { last: string; tpl: string; n: number; ok: boolean } | null;
+  unsub: boolean;
+  hasNote: boolean;
   markers: Record<string, string>;
   lastActivity: string;
   createdAt: string;
@@ -107,7 +110,7 @@ export async function buildDashboard(env: Env, stripe: Stripe): Promise<Record<s
     const key = norm(email);
     let c = contacts.get(key);
     if (!c) {
-      c = { email: key, name: '', phone: '', lang: 'fr', roles: [], stage: 'contact', lead: null, customerId: null, totalPaid: 0, totalDue: 0, invoices: [], accounts: [], messages: [], quotes: [], markers: {}, lastActivity: '', createdAt: '' };
+      c = { email: key, name: '', phone: '', lang: 'fr', roles: [], stage: 'contact', lead: null, customerId: null, totalPaid: 0, totalDue: 0, invoices: [], accounts: [], messages: [], quotes: [], mail: null, unsub: false, hasNote: false, markers: {}, lastActivity: '', createdAt: '' };
       contacts.set(key, c);
     }
     return c;
@@ -222,8 +225,21 @@ export async function buildDashboard(env: Env, stripe: Stripe): Promise<Record<s
     errors.push('quotes');
   }
 
-  // 5. Marqueurs d'automatisation (relances, rappels…).
-  const prefixes: Record<string, string> = { 'lead:': 'quizLe', 'inv:': 'acompteCree', 'dep:': 'acomptePaye', 'bal:': 'soldeCree', 'fu:': 'relanceDevis', 'mbr:': 'rappelMoodboard' };
+  // 5. Journal des emails (métadonnées seulement), désinscriptions et notes.
+  try {
+    for (const k of (await env.ACCOUNTS_KV.list<{ last: string; t: string; n: number; ok: boolean }>({ prefix: 'maillog:', limit: 1000 })).keys) {
+      const c = contacts.get(k.name.slice(8));
+      if (c && k.metadata) c.mail = { last: k.metadata.last, tpl: k.metadata.t, n: k.metadata.n, ok: k.metadata.ok };
+    }
+    for (const k of (await env.ACCOUNTS_KV.list({ prefix: 'unsub:', limit: 1000 })).keys) { const c = contacts.get(k.name.slice(6)); if (c) c.unsub = true; }
+    for (const k of (await env.ACCOUNTS_KV.list({ prefix: 'note:', limit: 1000 })).keys) { const c = contacts.get(k.name.slice(5)); if (c) c.hasNote = true; }
+  } catch (err) {
+    console.error('[admin] lecture du journal des emails impossible', err);
+    errors.push('maillog');
+  }
+
+  // 6. Marqueurs d'automatisation (relances, rappels…).
+  const prefixes: Record<string, string> = { 'lead:': 'quizLe', 'inv:': 'acompteCree', 'dep:': 'acomptePaye', 'bal:': 'soldeCree', 'fu:': 'relanceDevis', 'mbr:': 'rappelMoodboard', 'qsent:': 'qsent' };
   try {
     for (const [prefix, label] of Object.entries(prefixes)) {
       const list = await env.ACCOUNTS_KV.list({ prefix, limit: 1000 });

@@ -4,6 +4,9 @@ import { handleCollect, handleStats, purgeOldAnalytics } from './analytics';
 import { appendJournal, diffAccountActivity, flushActivityNotifications, queueActivityNotification } from './activity';
 import { billingErrors, cleanBilling, composeAddress } from './billing';
 import { buildDashboard, deleteContact } from './admin';
+import { buildManualMail, getMailLog, isUnsubscribed, listCampaigns, MANUAL_TEMPLATES, saveCampaign, sendMailing, setUnsubscribed } from './mailing';
+import type { ManualTemplate, MailingParams, RecipientCtx } from './mailing';
+import { unsubscribeToken } from './email';
 import { cleanQuoteInput, createQuote, getQuote, isExpired, listQuotes, missingQuoteFields, prepareSend, publicQuote, putQuote, quoteHash, tokenMatches } from './quotes';
 import type { Quote } from './quotes';
 import { getBusinessAddress } from './config';
@@ -614,6 +617,53 @@ async function handleAdminDashboard(request: Request, env: Env, headers: Record<
       console.error('[admin] suppression en échec', err);
       return jsonResponse({ ok: false, error: 'delete_error' }, 502, headers);
     }
+  }
+  if (path === '/admin/extra' && request.method === 'GET') {
+    const email = (new URL(request.url).searchParams.get('email') ?? '').trim().toLowerCase();
+    if (!email.includes('@')) return jsonResponse({ ok: false, error: 'invalid_payload' }, 400, headers);
+    return jsonResponse({ ok: true, mails: (await getMailLog(env, email)).reverse(), note: (await env.ACCOUNTS_KV.get(`note:${email}`)) ?? '', unsub: await isUnsubscribed(env, email) }, 200, headers);
+  }
+  if (path === '/admin/note' && request.method === 'POST') {
+    const body = (await request.json().catch(() => ({}))) as { email?: unknown; note?: unknown };
+    if (typeof body.email !== 'string' || !body.email.includes('@') || typeof body.note !== 'string') return jsonResponse({ ok: false, error: 'invalid_payload' }, 400, headers);
+    const key = `note:${body.email.trim().toLowerCase()}`;
+    if (body.note.trim()) await env.ACCOUNTS_KV.put(key, body.note.trim().slice(0, 4000)); else await env.ACCOUNTS_KV.delete(key);
+    return jsonResponse({ ok: true }, 200, headers);
+  }
+  if (path === '/admin/unsub' && request.method === 'POST') {
+    const body = (await request.json().catch(() => ({}))) as { email?: unknown; value?: unknown };
+    if (typeof body.email !== 'string' || !body.email.includes('@') || typeof body.value !== 'boolean') return jsonResponse({ ok: false, error: 'invalid_payload' }, 400, headers);
+    await setUnsubscribed(env, body.email, body.value);
+    return jsonResponse({ ok: true }, 200, headers);
+  }
+  if (path === '/admin/campaigns' && request.method === 'GET') {
+    return jsonResponse({ ok: true, campaigns: await listCampaigns(env) }, 200, headers);
+  }
+  if (path === '/admin/mailing' && request.method === 'POST') {
+    const body = (await request.json().catch(() => ({}))) as { action?: unknown; template?: unknown; params?: unknown; recipients?: unknown };
+    const template = body.template as ManualTemplate;
+    if (!MANUAL_TEMPLATES.includes(template) || !Array.isArray(body.recipients) || !body.recipients.length) return jsonResponse({ ok: false, error: 'invalid_payload' }, 400, headers);
+    const recipients = body.recipients as RecipientCtx[];
+    const params = (body.params ?? {}) as MailingParams;
+    if (body.action === 'preview') {
+      const mail = await buildManualMail(env, template, recipients[0]!, params);
+      if ('skip' in mail) return jsonResponse({ ok: true, skip: mail.skip }, 200, headers);
+      return jsonResponse({ ok: true, subject: mail.subject, html: mail.html }, 200, headers);
+    }
+    if (body.action === 'test') {
+      const to = env.ADMIN_NOTIFICATION_EMAIL;
+      const mail = await buildManualMail(env, template, { ...recipients[0]!, email: to }, params);
+      if ('skip' in mail) return jsonResponse({ ok: false, error: mail.skip }, 400, headers);
+      try { await sendEmail(env, to, `[TEST] ${mail.subject}`, mail.html, mail.text); } catch (err) { return jsonResponse({ ok: false, error: 'send_error' }, 502, headers); }
+      return jsonResponse({ ok: true, to }, 200, headers);
+    }
+    if (body.action === 'send') {
+      const results = await sendMailing(env, template, recipients, params);
+      const sent = results.filter((x) => x.status === 'envoye').length;
+      await saveCampaign(env, { template, subject: params.subject ?? '', recipients: results.length, sent, ignored: results.filter((x) => x.status === 'ignore').length, failed: results.filter((x) => x.status === 'erreur').length }).catch(() => undefined);
+      return jsonResponse({ ok: true, results }, 200, headers);
+    }
+    return jsonResponse({ ok: false, error: 'unknown_action' }, 400, headers);
   }
   if (path === '/admin/quote' && request.method === 'POST') {
     return handleAdminQuote(request, env, headers);
@@ -1332,6 +1382,13 @@ export default {
     }
 
     const url = new URL(request.url);
+    if (url.pathname === '/unsubscribe') {
+      const email = (url.searchParams.get('e') ?? '').trim().toLowerCase();
+      const valid = email.includes('@') && url.searchParams.get('s') === (await unsubscribeToken(env, email));
+      if (valid) await setUnsubscribed(env, email, true);
+      const msg = valid ? `Vous êtes désinscrit(e) : <b>${email.replace(/[<>&"]/g, '')}</b> ne recevra plus nos emails d'information. Vous continuerez à recevoir les messages liés à vos projets en cours (devis, factures, séances).` : 'Ce lien de désinscription n\'est pas valide. Écrivez-nous à contact@bunkaio.com.';
+      return new Response(`<!doctype html><html lang="fr"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Désinscription — BUNKAIO</title><body style="margin:0;background:#0a0a0c;color:#fff;font-family:system-ui,sans-serif;display:grid;place-items:center;min-height:100vh;padding:24px"><div style="max-width:440px;text-align:center"><h1 style="font-size:22px">BUNKAIO</h1><p style="line-height:1.6;color:rgba(255,255,255,.75)">${msg}</p><p><a href="https://bunkaio.com" style="color:#d9cdf5">bunkaio.com</a></p></div></body></html>`, { status: valid ? 200 : 400, headers: { 'Content-Type': 'text/html; charset=utf-8', 'Referrer-Policy': 'no-referrer' } });
+    }
     if (url.pathname === '/quote' || url.pathname === '/quote/sign') {
       return handlePublicQuote(request, env, headers, url.pathname);
     }
