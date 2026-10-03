@@ -1466,8 +1466,8 @@ async function pushEnable() {
     await navigator.serviceWorker.ready;
     const perm = await Notification.requestPermission();
     if (perm !== 'granted') { toast('Autorisation refusée'); renderPushCard(); return; }
-    const { data } = await api('/admin/push/key');
-    if (!data.publicKey) { toast('Clé de notification indisponible'); return; }
+    const { res: kres, data } = await api('/admin/push/key');
+    if (!data.publicKey) { toast(kres.status === 404 || data.error === 'not_found' ? 'Le Worker n\'est pas à jour : lancez « npx wrangler deploy » dans le dossier server, puis réessayez' : 'Clé de notification indisponible (erreur ' + (data.error || kres.status) + ')'); return; }
     const pad = '='.repeat((4 - data.publicKey.length % 4) % 4);
     const key = Uint8Array.from(atob((data.publicKey + pad).replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0));
     const sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: key });
