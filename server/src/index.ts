@@ -1218,7 +1218,7 @@ async function handleReviewGateway(request: Request, env: Env): Promise<Response
 
 /**
  * Liste les leads issus du quiz, triés du plus chaud au plus froid, pour la
- * page admin/leads.html. Protégée par le même jeton ADMIN_TOKEN que les
+ * tableau de bord admin. Protégée par le même jeton ADMIN_TOKEN que les
  * routes de facturation.
  */
 async function handleListLeads(request: Request, env: Env, headers: Record<string, string>): Promise<Response> {

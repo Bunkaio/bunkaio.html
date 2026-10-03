@@ -75,7 +75,7 @@ export interface BalanceInvoiceResult {
   customerLang?: 'fr' | 'en';
 }
 
-/** Une ligne de la liste des leads renvoyée à admin/leads.html (route /leads). */
+/** Une ligne de la liste des leads renvoyée au tableau de bord admin (route /leads). */
 export interface LeadSummary {
   customerId: string;
   name: string;

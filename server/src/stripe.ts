@@ -112,7 +112,7 @@ export async function upsertQuizCustomer(
 
 /**
  * Liste les leads issus du quiz (metadata `source: quiz_bunkaio`), triés du
- * plus chaud au plus froid, pour la page admin/leads.html. Stripe ne permet
+ * plus chaud au plus froid, pour la tableau de bord admin. Stripe ne permet
  * pas de filtrer `customers.list` par metadata : on récupère les 100 clients
  * les plus récents puis on filtre côté Worker.
  */

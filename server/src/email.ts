@@ -942,10 +942,10 @@ export function buildClientActivityEmail(params: { type: AccountType; email: str
     <h1 style="margin:0 0 6px;font-size:20px;">Espace ${space} mis à jour</h1>
     <p style="margin:0 0 22px;font-size:14px;color:#3a3544;"><strong>${escapeHtml(who)}</strong> — ${escapeHtml(params.email)}</p>
     ${blocks}
-    <p style="margin:24px 0 0;font-size:13px;"><a href="https://bunkaio.com/admin/comptes.html" style="color:#0a0a0c;">Ouvrir la fiche dans l'admin</a></p>`);
+    <p style="margin:24px 0 0;font-size:13px;"><a href="https://bunkaio.com/admin/#contacts" style="color:#0a0a0c;">Ouvrir la fiche dans l'admin</a></p>`);
   const text = `Espace ${space} mis à jour — ${who} (${params.email})\n\n` + params.entries.map((en) =>
     `[${ACTIVITY_LABELS[en.type]} · ${fmt(en.date)}] ${en.resume}` + (en.details?.length ? '\n' + en.details.map((d) => `  - ${d}`).join('\n') : '')).join('\n\n') +
-    '\n\nFiche : https://bunkaio.com/admin/comptes.html';
+    '\n\nFiche : https://bunkaio.com/admin/#contacts';
   return { subject, html, text };
 }
 

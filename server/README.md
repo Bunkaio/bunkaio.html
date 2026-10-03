@@ -301,7 +301,7 @@ toutes les autres données du quiz — aucun nouvel outil n'est nécessaire.
 
 Une nouvelle route protégée par `ADMIN_TOKEN`, `GET /leads`, renvoie la liste
 de tous les leads triés du plus chaud au plus froid. Elle alimente une
-nouvelle page `admin/leads.html` (même fonctionnement que `admin/index.html` :
+nouvelle page le tableau de bord (`admin/`) (même fonctionnement que `admin/index.html` :
 token mémorisé dans le navigateur), qui affiche un tableau avec le nom/email,
 le score et sa température, la catégorie, le montant estimé et la date de
 soumission.
@@ -352,7 +352,7 @@ Les nouvelles routes sont alors actives :
 
 ### 3. Gérer les comptes clients
 
-Une nouvelle page `admin/comptes.html` (même token admin que les autres
+Une nouvelle page le tableau de bord (`admin/`) (même token admin que les autres
 pages `admin/`) permet de créer et modifier les comptes directement,
 sans toucher au code ni à GitHub — c'est elle qui remplace l'édition
 manuelle de `comptes.json`.
@@ -361,7 +361,7 @@ manuelle de `comptes.json`.
 
 `comptes.json` est supprimé du dépôt (il n'est plus lu nulle part). Pour
 recréer le compte de démonstration (`demo@bunkaio.com` / `BKO-DEMO`) dans
-la nouvelle base, le plus simple est d'utiliser `admin/comptes.html` une
+la nouvelle base, le plus simple est d'utiliser le tableau de bord (`admin/`) une
 fois déployé — ou directement en ligne de commande :
 
 ```bash
@@ -413,7 +413,7 @@ déployer côté Cloudflare (pas de nouveau namespace ni de nouvelle route) : un
 simple `npm run deploy` suffit après avoir récupéré le code à jour.
 
 Pour répondre à un moodboard en tant que Bunkaio (ajouter un commentaire côté
-équipe, changer son statut en "Validé"...), c'est admin/comptes.html → champ
+équipe, changer son statut en "Validé"...), c'est le tableau de bord (admin/) → champ
 "Moodboards (JSON)" : charge le compte, édite le tableau à la main (ajoute un
 objet `{"auteur":"bunkaio","texte":"...","date":"..."}` dans `commentaires`),
 réenregistre. Pas d'interface dédiée pour l'instant côté admin — à construire
@@ -475,7 +475,7 @@ Le cron `*/5 * * * *` envoie **un seul email récapitulatif par compte** à
 mais ne déclenche pas d'email. En cas d'échec Resend, l'envoi est retenté au
 passage suivant (7 jours max).
 
-Dans `admin/comptes.html`, le sélecteur de compte trie par activité récente,
+Dans le tableau de bord (`admin/`), le sélecteur de compte trie par activité récente,
 affiche « ● » pour les comptes modifiés depuis votre dernière consultation et
 la fiche montre le journal complet. Après modification du `wrangler.toml`
 (nouveau cron), il faut redéployer : `npm run deploy`.

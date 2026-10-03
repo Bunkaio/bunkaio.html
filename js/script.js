@@ -3876,7 +3876,7 @@ function doRegister(){
       email: em,
       telephone: ph || 'Non renseigné',
       activite: act,
-      action_requise: 'Créer ce compte depuis admin/comptes.html puis envoyer le code d\'accès par email'
+      action_requise: 'Créer ce compte depuis le tableau de bord (bunkaio.com/admin/) puis envoyer le code d\'accès par email'
     })
   }).then(r => r.json()).then(data => {
     if (data.ok || data.next) {
