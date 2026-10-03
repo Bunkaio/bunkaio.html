@@ -1,7 +1,9 @@
 import type Stripe from 'stripe';
 import { adminAccountView, getAccount, listAccounts } from './accounts';
 import { getBusinessAddress, isDemo } from './config';
-import { listQuotes } from './quotes';
+import { listInbox } from './inbox';
+import type { InboxItem } from './inbox';
+import { listQuotes, putQuote } from './quotes';
 import type { Quote } from './quotes';
 import { deleteMessagesOf, listMessages } from './messages';
 import type { FormMessage } from './messages';
@@ -32,6 +34,8 @@ export interface DashboardInvoice {
   paidAt: string | null;
   url: string | null;
   pdf: string | null;
+  /** false = facture créée avec la clé de test Stripe. */
+  live: boolean;
 }
 
 export interface DashboardContact {
@@ -81,6 +85,7 @@ function toInvoice(inv: Stripe.Invoice): DashboardInvoice {
     paidAt: iso(inv.status_transitions?.paid_at),
     url: inv.hosted_invoice_url ?? null,
     pdf: inv.invoice_pdf ?? null,
+    live: inv.livemode,
   };
 }
 
@@ -162,7 +167,10 @@ export async function buildDashboard(env: Env, stripe: Stripe): Promise<Record<s
       touch(c, m.derniere_soumission_quiz);
     }
   }
-  const allInvoices = invoices.map(toInvoice);
+  // Factures masquées à la demande de l'admin (une facture payée ne peut pas être supprimée chez Stripe).
+  const hidden = new Set<string>();
+  try { for (const k of (await env.ACCOUNTS_KV.list({ prefix: 'invhide:', limit: 1000 })).keys) hidden.add(k.name.slice(8)); } catch { /* sans masquage */ }
+  const allInvoices = invoices.filter((i) => !hidden.has(i.id)).map(toInvoice);
   for (const inv of allInvoices) {
     if (!inv.email || isDemo(inv.email) || inv.status === 'draft' || inv.status === 'void') continue;
     const c = get(inv.email);
@@ -260,6 +268,9 @@ export async function buildDashboard(env: Env, stripe: Stripe): Promise<Record<s
     errors.push('markers');
   }
 
+  let inbox: InboxItem[] = [];
+  try { inbox = await listInbox(env); } catch (err) { console.error('[admin] lecture de la boîte de réception impossible', err); errors.push('inbox'); }
+
   const today = new Date().toISOString().slice(0, 10);
   const list = [...contacts.values()];
   for (const c of list) {
@@ -274,6 +285,7 @@ export async function buildDashboard(env: Env, stripe: Stripe): Promise<Record<s
     errors,
     contacts: list,
     messages,
+    inbox,
     quotes,
     business: { address: getBusinessAddress() },
     invoices: allInvoices.filter((i) => i.status !== 'draft' && !isDemo(i.email)).sort((a, b) => b.created.localeCompare(a.created)),
@@ -287,7 +299,7 @@ export async function buildDashboard(env: Env, stripe: Stripe): Promise<Record<s
  *   le client est supprimé s'il n'a aucune facture ; s'il en a, il est conservé (obligation de
  *   conservation comptable des factures) mais ses réponses au devis sont effacées.
  */
-export async function deleteContact(env: Env, stripe: Stripe, email: string, type?: AccountType): Promise<Record<string, unknown>> {
+export async function deleteContact(env: Env, stripe: Stripe, email: string, type?: AccountType, purge = false): Promise<Record<string, unknown>> {
   const key = norm(email);
   const summary: Record<string, unknown> = { email: key };
   const types: AccountType[] = type ? [type] : ['client', 'partner'];
@@ -319,8 +331,13 @@ export async function deleteContact(env: Env, stripe: Stripe, email: string, typ
   let stripeDeleted = 0;
   let stripeKept = 0;
   for (const cu of customers) {
-    const invs = await stripe.invoices.list({ customer: cu.id, limit: 1 });
-    if (invs.data.length) {
+    const invs = await stripe.invoices.list({ customer: cu.id, limit: 100 });
+    if (purge) {
+      // Suppression complète (données de test) : brouillons supprimés, factures ouvertes annulées, puis fiche client supprimée.
+      for (const inv of invs.data) await removeInvoice(env, stripe, inv.id).catch((err) => console.error('[admin] facture non supprimée', inv.id, err));
+      await stripe.customers.del(cu.id);
+      stripeDeleted++;
+    } else if (invs.data.length) {
       const cleared: Record<string, string> = {};
       for (const k of Object.keys(cu.metadata ?? {})) cleared[k] = '';
       await stripe.customers.update(cu.id, { metadata: cleared });
@@ -333,4 +350,44 @@ export async function deleteContact(env: Env, stripe: Stripe, email: string, typ
   summary.stripeDeleted = stripeDeleted;
   summary.stripeKeptWithInvoices = stripeKept;
   return summary;
+}
+
+/**
+ * Supprime « proprement » une facture du point de vue du tableau de bord :
+ * - brouillon : supprimé définitivement chez Stripe ;
+ * - ouverte : annulée (void) chez Stripe, ce qui désactive son lien de paiement et ses relances, puis masquée ;
+ * - payée : Stripe interdit toute suppression (conservation légale) → seulement masquée du tableau de bord.
+ * Nettoie aussi les marqueurs d'automatisation et les devis qui pointaient vers cette facture.
+ */
+export async function removeInvoice(env: Env, stripe: Stripe, id: string): Promise<{ id: string; action: 'supprimee' | 'annulee' | 'masquee'; livemode: boolean }> {
+  const inv = await stripe.invoices.retrieve(id);
+  const email = norm(inv.customer_email);
+  let action: 'supprimee' | 'annulee' | 'masquee';
+  if (inv.status === 'draft') {
+    await stripe.invoices.del(id);
+    action = 'supprimee';
+  } else if (inv.status === 'open' || inv.status === 'uncollectible') {
+    await stripe.invoices.voidInvoice(id);
+    action = 'annulee';
+  } else if (inv.status === 'void') {
+    action = 'annulee';
+  } else {
+    action = 'masquee';
+  }
+  await env.ACCOUNTS_KV.put(`invhide:${id}`, new Date().toISOString());
+
+  if (email) {
+    // Si plus aucune facture active de ce type, on efface les marqueurs qui en dépendaient (relances, rappels…).
+    const remaining = (await stripe.invoices.list({ customer: typeof inv.customer === 'string' ? inv.customer : inv.customer?.id, limit: 100 })).data
+      .filter((i) => i.id !== id && i.status !== 'void' && i.status !== 'draft');
+    const kind = inv.metadata?.type;
+    const hasDeposit = remaining.some((i) => i.metadata?.type === 'acompte_30');
+    const hasBalance = remaining.some((i) => i.metadata?.type === 'solde_70');
+    if (kind === 'acompte_30' && !hasDeposit) { await env.ACCOUNTS_KV.delete(`inv:${email}`); await env.ACCOUNTS_KV.delete(`dep:${email}`); await env.ACCOUNTS_KV.delete(`mbr:${email}`); }
+    if (kind === 'solde_70' && !hasBalance) await env.ACCOUNTS_KV.delete(`bal:${email}`);
+    for (const q of await listQuotes(env)) {
+      if (q.depositInvoice?.id === id) { delete q.depositInvoice; await putQuote(env, q); }
+    }
+  }
+  return { id, action, livemode: inv.livemode };
 }

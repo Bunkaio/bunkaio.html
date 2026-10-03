@@ -10,6 +10,7 @@
     "tail": "wrangler tail"
   },
   "dependencies": {
+    "postal-mime": "^4.0.2",
     "stripe": "^17.3.0"
   },
   "devDependencies": {

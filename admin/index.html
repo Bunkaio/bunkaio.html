@@ -165,6 +165,17 @@
   .fg { display: grid; gap: 6px; min-width: 0; }
   .fg label, .lab { font-size: 10.5px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--grey); }
   input.mi, textarea.mi { border: 1px solid var(--line); background: #fff; border-radius: 8px; padding: 10px 12px; outline: none; width: 100%; font: inherit; }
+  .inbox { display: grid; grid-template-columns: minmax(300px, 400px) minmax(0, 1fr); gap: 18px; align-items: start; }
+  .inlist { background: #fff; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; max-height: calc(100vh - 230px); overflow-y: auto; }
+  .inrow { display: block; width: 100%; text-align: left; background: none; border: 0; border-bottom: 1px solid var(--line); padding: 12px 14px; cursor: pointer; }
+  .inrow:hover { background: #faf8fe; } .inrow.on { background: var(--violet); }
+  .inrow .top1 { display: flex; gap: 8px; align-items: baseline; } .inrow .nm { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .inrow .dt { color: var(--grey); font-size: 11.5px; white-space: nowrap; }
+  .inrow .sj { font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .inrow .pv { color: var(--grey); font-size: 12.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .inrow.unread .nm, .inrow.unread .sj { font-weight: 800; }
+  .inread { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 20px 22px; min-height: 300px; min-width: 0; }
+  .inread h2 { font-size: 19px; letter-spacing: -.01em; margin-bottom: 6px; }
+  .inframe { width: 100%; min-height: 360px; border: 1px solid var(--line); border-radius: 10px; background: #fff; margin-top: 12px; }
   .tplcard { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; margin-bottom: 8px; cursor: pointer; }
   .tplcard.on { border-color: var(--ink); background: var(--violet); }
   .tplcard input { margin-top: 3px; accent-color: var(--ink); }
@@ -223,6 +234,7 @@
   .loading { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); z-index: 300; width: 0; transition: width .4s; }
 
   @media (max-width: 1100px) { .g3 { grid-template-columns: 1fr 1fr; } #mailTop { grid-template-columns: 1fr !important; } }
+  @media (max-width: 1000px) { .inbox { grid-template-columns: 1fr; } .inlist { max-height: 320px; } }
   @media (max-width: 900px) {
     .app { flex-direction: column; }
     .side { position: sticky; top: 0; z-index: 30; width: 100%; height: auto; flex: none; flex-direction: row; align-items: center; padding: 10px 12px; gap: 8px; }
@@ -359,6 +371,7 @@
           </div>
         </div>
         <div class="toolbar"><div class="chips" id="invChips"></div></div>
+        <div class="msg warn" id="invBulk" hidden style="margin-bottom:12px;display:flex;gap:12px;align-items:center;flex-wrap:wrap"><span></span><button class="btn danger sm" onclick="deleteInvoices([...invSel])">Supprimer la sélection</button><button class="btn ghost sm" onclick="invSelAll(false)">Annuler</button></div>
         <div id="invTable"></div>
       </section>
 
@@ -387,6 +400,16 @@
           <button class="btn ghost sm" onclick="markAllSeen()">Tout marquer comme vu</button>
         </div>
         <div class="card"><div class="list" id="activityFeed"></div></div>
+      </section>
+
+      <!-- ═══ Boîte de réception ═══ -->
+      <section class="section" id="sec-inbox">
+        <div id="inboxSetup"></div>
+        <div class="toolbar"><div class="chips" id="inFilters"></div><span class="grow"></span><input class="mi" id="inSearch" placeholder="Rechercher dans les emails…" oninput="inboxState.q=this.value;renderInbox()" style="max-width:260px"></div>
+        <div class="inbox">
+          <div class="inlist" id="inList"></div>
+          <div class="inread" id="inRead"><div class="empty">Sélectionnez un email pour le lire.</div></div>
+        </div>
       </section>
 
       <!-- ═══ Mailing ═══ -->
@@ -507,6 +530,7 @@ const ICON = {
   invoices: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/>',
   sessions: '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
   activity: '<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>',
+  inbox: '<path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 5h13l3.5 7v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-6z"/>',
   mailing: '<path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/>',
   messages: '<path d="M4 4h16v12H5.2L4 17.2z"/><path d="M8 9h8M8 12h5"/>',
   media: '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/>',
@@ -518,6 +542,7 @@ const SECTIONS = [
   ['quotes', 'Devis', 'Création, envoi, signature en ligne et suivi des devis'],
   ['invoices', 'Factures', 'Acomptes, soldes et encaissements Stripe'],
   ['sessions', 'Séances & automatisations', 'Planning, livraisons et emails automatiques'],
+  ['inbox', 'Boîte de réception', 'Les emails reçus sur contact@bunkaio.com : lecture et réponse depuis le tableau de bord'],
   ['mailing', 'Mailing', 'Envoyez des emails à votre base : modèles, destinataires, historique'],
   ['messages', 'Messages', 'Formulaires du site : contact, collaborations, candidatures, demandes d\'espace, témoignages'],
   ['activity', 'Activité des espaces', 'Ce que les clients et partenaires modifient dans leur espace'],
@@ -616,12 +641,13 @@ function updateCounts() {
   set('activity', allActivity().filter(a => a.unseen).length);
   set('invoices', DB.invoices.filter(i => i.overdue).length);
   set('messages', (DB.messages || []).filter(m => m.status === 'nouveau').length);
+  set('inbox', (DB.inbox || []).filter(m => !m.read && !m.archived).length);
   set('quotes', (DB.quotes || []).filter(q => q.status === 'signe' && !q.depositInvoice && !q.abonnement).length);
 }
 
 function renderAll() {
   renderKpis(); renderPipeStrip(); renderAlerts(); renderNextSessions(); renderRecentActivity(); renderRecentInvoices();
-  renderSegChips(); renderContacts(); renderInvoices(); renderSessions(); renderActivity(); renderMessages(); renderQuotes(); renderMailing(); renderVisitorsNote(); updateCounts();
+  renderSegChips(); renderContacts(); renderInvoices(); renderSessions(); renderActivity(); renderMessages(); renderQuotes(); renderMailing(); renderInbox(); renderVisitorsNote(); updateCounts();
   if (state.section) $('pageSub').textContent = SECTIONS.find(x => x[0] === state.section)[2] + ' · données de ' + fdt(DB.generatedAt);
 }
 
@@ -659,6 +685,8 @@ function computeAlerts() {
     if (q.status === 'signe' && q.abonnement && q.signedAt > addDays(-14)) out.push({ lvl: 'warn', ic: '🔁', t: `Abonnement à mettre en place — ${q.client.nom}`, d: `Devis n° ${esc(q.number)} signé le ${fdate(q.signedAt)}.`, email: q.email, quote: q.id });
     if (q.status === 'envoye' && q.validUntil <= addDays(3)) out.push({ lvl: 'info', ic: '⌛', t: `Devis bientôt expiré — ${q.client.nom}`, d: `N° ${esc(q.number)} valable jusqu'au ${fdate(q.validUntil)}${q.viewedAt ? ' · consulté' : ' · jamais ouvert'}.`, email: q.email, quote: q.id });
   });
+  const unreadIn = (DB.inbox || []).filter(m => !m.read && !m.archived);
+  if (unreadIn.length) out.push({ lvl: 'info', ic: '📥', t: `${unreadIn.length} email${unreadIn.length > 1 ? 's' : ''} non lu${unreadIn.length > 1 ? 's' : ''}`, d: esc(unreadIn.slice(0, 3).map(m => (m.fromName || m.fromEmail) + ' : ' + m.subject).join(' · ')), go: 'inbox' });
   (DB.messages || []).filter(m => m.status === 'nouveau').forEach(m => out.push({ lvl: 'info', ic: '✉️', t: `${MSG_KIND[m.kind] || 'Message'} — ${m.name || m.email}`, d: `Reçu ${ago(m.date)}. ${esc((m.details.message || m.details.projet || m.details.temoignage || m.details.activite || '').slice(0, 90))}`, email: m.email, go: 'messages' }));
   const unseen = allActivity().filter(a => a.unseen);
   const byContact = {};
@@ -816,7 +844,7 @@ function exportCSV() {
 }
 
 /* ── Factures ── */
-const INV_FILTERS = [['all', 'Toutes', () => true], ['paid', 'Payées', i => i.status === 'paid'], ['open', 'En attente', i => i.status === 'open' && !i.overdue], ['overdue', 'En retard', i => i.overdue], ['acompte', 'Acomptes', i => i.kind === 'acompte'], ['solde', 'Soldes', i => i.kind === 'solde']];
+const INV_FILTERS = [['all', 'Toutes', () => true], ['paid', 'Payées', i => i.status === 'paid'], ['open', 'En attente', i => i.status === 'open' && !i.overdue], ['overdue', 'En retard', i => i.overdue], ['acompte', 'Acomptes', i => i.kind === 'acompte'], ['solde', 'Soldes', i => i.kind === 'solde'], ['void', 'Annulées', i => i.status === 'void'], ['test', 'Mode test', i => i.live === false]];
 function renderInvoices() {
   const paid = DB.invoices.filter(i => i.status === 'paid'); const open = DB.invoices.filter(i => i.status === 'open');
   const year = String(new Date().getFullYear());
@@ -834,10 +862,29 @@ function renderInvoices() {
   renderRevChart();
 }
 function invTableHtml(list, withClient) {
-  return `<div class="tbl-wrap"><table><thead><tr><th>N°</th>${withClient ? '<th>Client</th>' : ''}<th>Type</th><th>Description</th><th class="num">Montant</th><th>Statut</th><th>Émise</th><th>Échéance / payée</th><th></th></tr></thead><tbody>
-  ${list.map(i => { const st = INV_STATUS[i.status] || [i.status, 'line']; return `<tr${withClient ? ` class="click" onclick="openDrawer('${esc(i.email)}','invoices')"` : ''}><td class="small">${esc(i.number || '—')}</td>${withClient ? `<td class="who"><b>${esc(i.name || '—')}</b><span>${esc(i.email)}</span></td>` : ''}<td><span class="badge ${i.kind === 'solde' ? 'dark' : ''}">${i.kind === 'acompte' ? 'Acompte' : i.kind === 'solde' ? 'Solde' : 'Autre'}</span></td><td class="small">${esc(i.description)}</td><td class="num"><b>${eur(i.amount)}</b>${i.status === 'open' && i.amountPaid ? `<div class="small muted">reste ${eur(i.amountRemaining)}</div>` : ''}</td><td><span class="badge ${i.overdue ? 'danger' : st[1]}">${i.overdue ? 'En retard' : st[0]}</span></td><td class="small">${fdate(i.created)}</td><td class="small">${i.status === 'paid' ? 'payée ' + fdate(i.paidAt) : fdate(i.dueDate)}</td>
-  <td style="white-space:nowrap" onclick="event.stopPropagation()">${i.url ? `<a class="btn ghost sm" href="${esc(i.url)}" target="_blank" rel="noopener">Voir</a> ` : ''}${i.pdf ? `<a class="btn ghost sm" href="${esc(i.pdf)}" target="_blank" rel="noopener">PDF</a> ` : ''}<a class="btn ghost sm" href="https://dashboard.stripe.com/invoices/${esc(i.id)}" target="_blank" rel="noopener">Stripe</a></td></tr>`; }).join('')}
+  return `<div class="tbl-wrap"><table><thead><tr>${withClient ? '<th style="width:30px"><input type="checkbox" onclick="invSelAll(this.checked)" aria-label="Tout sélectionner"></th>' : ''}<th>N°</th>${withClient ? '<th>Client</th>' : ''}<th>Type</th><th>Description</th><th class="num">Montant</th><th>Statut</th><th>Émise</th><th>Échéance / payée</th><th></th></tr></thead><tbody>
+  ${list.map(i => { const st = INV_STATUS[i.status] || [i.status, 'line']; return `<tr${withClient ? ` class="click" onclick="openDrawer('${esc(i.email)}','invoices')"` : ''}>${withClient ? `<td onclick="event.stopPropagation()"><input type="checkbox" class="invsel" value="${esc(i.id)}" ${invSel.has(i.id) ? 'checked' : ''} onchange="invToggle('${esc(i.id)}',this.checked)"></td>` : ''}<td class="small">${esc(i.number || '—')}${i.live === false ? ' <span class="badge warn">TEST</span>' : ''}</td>${withClient ? `<td class="who"><b>${esc(i.name || '—')}</b><span>${esc(i.email)}</span></td>` : ''}<td><span class="badge ${i.kind === 'solde' ? 'dark' : ''}">${i.kind === 'acompte' ? 'Acompte' : i.kind === 'solde' ? 'Solde' : 'Autre'}</span></td><td class="small">${esc(i.description)}</td><td class="num"><b>${eur(i.amount)}</b>${i.status === 'open' && i.amountPaid ? `<div class="small muted">reste ${eur(i.amountRemaining)}</div>` : ''}</td><td><span class="badge ${i.overdue ? 'danger' : st[1]}">${i.overdue ? 'En retard' : st[0]}</span></td><td class="small">${fdate(i.created)}</td><td class="small">${i.status === 'paid' ? 'payée ' + fdate(i.paidAt) : fdate(i.dueDate)}</td>
+  <td style="white-space:nowrap" onclick="event.stopPropagation()">${i.url ? `<a class="btn ghost sm" href="${esc(i.url)}" target="_blank" rel="noopener">Voir</a> ` : ''}${i.pdf ? `<a class="btn ghost sm" href="${esc(i.pdf)}" target="_blank" rel="noopener">PDF</a> ` : ''}<a class="btn ghost sm" href="https://dashboard.stripe.com/${i.live === false ? 'test/' : ''}invoices/${esc(i.id)}" target="_blank" rel="noopener">Stripe</a> <button class="btn ghost sm" style="color:var(--danger)" onclick="deleteInvoices(['${esc(i.id)}'])">Supprimer</button></td></tr>`; }).join('')}
   </tbody></table></div>`;
+}
+const invSel = new Set();
+function invToggle(id, on) { if (on) invSel.add(id); else invSel.delete(id); invBulkBar(); }
+function invSelAll(on) { document.querySelectorAll('.invsel').forEach(cb => { cb.checked = on; if (on) invSel.add(cb.value); else invSel.delete(cb.value); }); invBulkBar(); }
+function invBulkBar() { const el = $('invBulk'); if (!el) return; el.hidden = !invSel.size; el.querySelector('span').textContent = invSel.size + ' facture' + (invSel.size > 1 ? 's' : '') + ' sélectionnée' + (invSel.size > 1 ? 's' : ''); }
+/* Suppression « propre » : brouillon supprimé, facture ouverte annulée (lien de paiement désactivé), facture payée masquée (Stripe interdit de la supprimer). */
+async function deleteInvoices(ids) {
+  const list = DB.invoices.filter(i => ids.includes(i.id));
+  const paid = list.filter(i => i.status === 'paid').length;
+  const msg = `Supprimer ${list.length} facture${list.length > 1 ? 's' : ''} ?\n\n• Brouillon → supprimé définitivement chez Stripe\n• En attente → annulé chez Stripe (lien de paiement désactivé) puis masqué ici\n• Payée → impossible à supprimer chez Stripe (conservation légale) : seulement masquée ici${paid ? '\n\n⚠ ' + paid + ' facture(s) payée(s) dans la sélection. Si de l\'argent réel a été encaissé, remboursez-le d\'abord dans Stripe.' : ''}\n\nLes relances et rappels liés sont arrêtés.`;
+  if (!confirm(msg)) return;
+  try {
+    const { res, data } = await api('/admin/invoices-delete', { method: 'POST', body: JSON.stringify({ ids }) });
+    if (!res.ok || !data.ok) { toast('Erreur : ' + (data.error || res.status)); return; }
+    const r = data.results; const c = k => r.filter(x => x.action === k).length;
+    ids.forEach(id => invSel.delete(id));
+    toast(`${c('supprimee')} supprimée(s) · ${c('annulee')} annulée(s) · ${c('masquee')} masquée(s)${c('erreur') ? ' · ' + c('erreur') + ' erreur(s)' : ''}`);
+    await loadDashboard(); if (drawer.email && drawer.mode !== 'quote') renderDrawer();
+  } catch (e) {}
 }
 function renderRevChart() {
   const months = []; const d = new Date(); d.setDate(1);
@@ -937,7 +984,7 @@ function renderActivity() {
 }
 
 /* ── Emails : libellés, étape du devis, emails envoyés / à venir ── */
-const TPL_LABEL = { facture_acompte: 'Facture d\'acompte', photos_pretes_solde: 'Photos prêtes + facture de solde', paiement_recu: 'Paiement reçu', rappel_impaye: 'Rappel de facture impayée', confirmation_devis_quiz: 'Confirmation de demande de devis', acces_espace: 'Vos accès à l\'espace', album_accessible: 'Album accessible + avis + remise', merci_seance: 'Merci + date de livraison', seance_confirmation: 'Confirmation de séance', seance_reminder: 'Rappel de séance J-2', seance_report: 'Report de séance', seance_cancel: 'Annulation de séance', accuse_contact: 'Accusé · contact', accuse_collab: 'Accusé · collaboration', accuse_partner: 'Accusé · candidature partenaire', accuse_account: 'Accusé · demande d\'espace', relance_devis_quiz: 'Relance de devis (quiz)', rappel_moodboard: 'Rappel moodboard', devis_a_signer: 'Devis à signer', relance_devis_envoye: 'Relance du devis envoyé', devis_signe: 'Devis signé (confirmation)', libre: 'Message libre', demande_avis: 'Demande d\'avis' };
+const TPL_LABEL = { facture_acompte: 'Facture d\'acompte', photos_pretes_solde: 'Photos prêtes + facture de solde', paiement_recu: 'Paiement reçu', rappel_impaye: 'Rappel de facture impayée', confirmation_devis_quiz: 'Confirmation de demande de devis', acces_espace: 'Vos accès à l\'espace', album_accessible: 'Album accessible + avis + remise', merci_seance: 'Merci + date de livraison', seance_confirmation: 'Confirmation de séance', seance_reminder: 'Rappel de séance J-2', seance_report: 'Report de séance', seance_cancel: 'Annulation de séance', accuse_contact: 'Accusé · contact', accuse_collab: 'Accusé · collaboration', accuse_partner: 'Accusé · candidature partenaire', accuse_account: 'Accusé · demande d\'espace', relance_devis_quiz: 'Relance de devis (quiz)', rappel_moodboard: 'Rappel moodboard', devis_a_signer: 'Devis à signer', relance_devis_envoye: 'Relance du devis envoyé', devis_signe: 'Devis signé (confirmation)', libre: 'Message libre', reponse: 'Réponse à un email reçu', demande_avis: 'Demande d\'avis' };
 const tplName = t => TPL_LABEL[t] || t;
 function quoteSteps(c) {
   const qs = (c.quotes || []).filter(q => q.status !== 'annule');
@@ -992,6 +1039,91 @@ function nextMailCell(c) {
   if (!p.length) return '<span class="muted">—</span>';
   const n = p[0];
   return `<div>${esc(n.label)}</div><div class="muted">${n.manual ? '⚠ à faire' : n.date ? (n.date <= today() ? 'aujourd\'hui / prochain passage' : fdate(n.date, { day: 'numeric', month: 'short' })) : esc(n.note)}${p.length > 1 ? ' · +' + (p.length - 1) : ''}</div>`;
+}
+
+/* ── Boîte de réception ── */
+const inboxState = { filter: 'unread', q: '', sel: null, msg: null, images: false, replying: false };
+function renderInbox() {
+  if (!$('inList')) return;
+  const all = DB.inbox || [];
+  const F = [['unread', 'Non lus', m => !m.read && !m.archived], ['all', 'Reçus', m => !m.archived], ['star', 'Favoris', m => m.starred], ['arch', 'Archivés', m => m.archived]];
+  $('inFilters').innerHTML = F.map(([id, l, f]) => `<button class="chip ${inboxState.filter === id ? 'on' : ''}" onclick="inboxState.filter='${id}';renderInbox()">${l}<span class="c">${all.filter(f).length}</span></button>`).join('');
+  const f = F.find(x => x[0] === inboxState.filter)[2]; const q = inboxState.q.toLowerCase();
+  const list = all.filter(m => f(m) && (!q || [m.fromName, m.fromEmail, m.subject, m.preview].join(' ').toLowerCase().includes(q)));
+  $('inboxSetup').innerHTML = !all.length ? `<div class="card" style="margin-bottom:18px"><h3>Recevoir vos emails ici</h3><div class="small" style="line-height:1.7">Aucun email reçu pour l'instant. Pour que les messages envoyés à <b>contact@bunkaio.com</b> arrivent dans cette boîte, il faut les aiguiller vers le Worker avec Cloudflare Email Routing (le domaine doit utiliser les serveurs de noms de Cloudflare) :<ol style="margin:8px 0 0 18px"><li>Cloudflare → votre domaine → <b>Email</b> → Email Routing → activer (il ajoute lui-même les enregistrements MX).</li><li>Destination : vérifier l'adresse de votre vraie boîte mail (celle qui reçoit aujourd'hui).</li><li>Règle : <b>contact@bunkaio.com</b> → action « Envoyer à un Worker » → <b>bunkaio-quiz-stripe</b>.</li><li>Dans le dossier <code>server</code> : <code>npx wrangler secret put INBOX_FORWARD_TO</code> (saisir l'adresse de votre vraie boîte, elle reste secrète) puis <code>npx wrangler deploy</code> : chaque email est alors copié ici <b>et</b> transféré à votre boîte habituelle.</li></ol></div></div>` : '';
+  $('inList').innerHTML = list.length ? list.map(m => `<button class="inrow ${m.read ? '' : 'unread'} ${inboxState.sel === m.id ? 'on' : ''}" onclick="openInbox('${esc(m.id)}')"><div class="top1"><span class="nm">${m.starred ? '★ ' : ''}${esc(m.fromName || m.fromEmail)}</span><span class="dt">${ago(m.date)}</span></div><div class="sj">${esc(m.subject)}${m.attachments ? ' 📎' : ''}${m.replied ? ' ↩' : ''}</div><div class="pv">${esc(m.preview)}</div></button>`).join('') : '<div class="empty">Aucun email dans cette vue.</div>';
+}
+async function openInbox(id) {
+  inboxState.sel = id; inboxState.images = false; inboxState.replying = false;
+  $('inRead').innerHTML = '<div class="empty">Chargement…</div>'; renderInbox();
+  try {
+    const { res, data } = await api('/admin/inbox/message?id=' + encodeURIComponent(id));
+    if (!res.ok || !data.ok) { $('inRead').innerHTML = '<div class="msg err">Email introuvable.</div>'; return; }
+    inboxState.msg = data.message; renderInboxRead();
+    const it = DB.inbox.find(x => x.id === id);
+    if (it && !it.read) { it.read = true; api('/admin/inbox/update', { method: 'POST', body: JSON.stringify({ id, read: true }) }).catch(() => {}); renderInbox(); updateCounts(); }
+  } catch (e) {}
+}
+function inboxDoc(m) {
+  // Corps de l'email dans un cadre isolé : aucun script, images distantes bloquées tant qu'on ne les autorise pas (pisteurs).
+  const csp = `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src data: ${inboxState.images ? 'https: http:' : ''}; style-src 'unsafe-inline'">`;
+  const base = '<base target="_blank">';
+  const body = m.html ? m.html : `<pre style="white-space:pre-wrap;font-family:system-ui,sans-serif;font-size:14px;line-height:1.6">${esc(m.text)}</pre>`;
+  return `<!doctype html><html><head><meta charset="utf-8">${csp}${base}<style>body{margin:0;padding:6px;font-family:system-ui,sans-serif;font-size:14px;color:#0a0a0c;word-break:break-word}img{max-width:100%;height:auto}</style></head><body>${body}</body></html>`;
+}
+function renderInboxRead() {
+  const m = inboxState.msg; if (!m) return;
+  const c = contactByEmail(m.fromEmail);
+  $('inRead').innerHTML = `<h2>${esc(m.subject)}</h2>
+    <div class="small muted" style="margin-bottom:10px"><b style="color:var(--ink)">${esc(m.fromName || m.fromEmail)}</b> &lt;${esc(m.fromEmail)}&gt; · ${fdt(m.date)}${m.repliedAt ? ' · <span class="badge ok">répondu ' + ago(m.repliedAt) + '</span>' : ''}</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px">
+      <button class="btn sm" onclick="inboxReply()">↩ Répondre</button>
+      <button class="btn ghost sm" onclick="inboxUpdate({starred:${!m.starred}})">${m.starred ? '★ Retirer des favoris' : '☆ Favori'}</button>
+      <button class="btn ghost sm" onclick="inboxUpdate({read:false})">Marquer non lu</button>
+      <button class="btn ghost sm" onclick="inboxUpdate({archived:${!m.archived}})">${m.archived ? 'Désarchiver' : 'Archiver'}</button>
+      ${c ? `<button class="btn soft sm" onclick="openDrawer('${esc(c.email)}')">Fiche de ${esc((c.name || c.email).slice(0, 24))}</button>` : `<button class="btn soft sm" onclick="openNewContact('${esc(m.fromEmail)}','${esc(m.fromName).replace(/&#39;/g, '')}')">+ Créer un espace</button>`}
+      ${m.html && !inboxState.images ? '<button class="btn ghost sm" onclick="inboxState.images=true;renderInboxRead()">Afficher les images</button>' : ''}
+      <button class="btn ghost sm" style="color:var(--danger)" onclick="inboxDelete()">Supprimer</button>
+    </div>
+    ${m.attachments.length ? `<div class="msg warn" style="margin:8px 0">📎 ${m.attachments.map(a => esc(a.filename) + ' (' + Math.max(1, Math.round(a.size / 1024)) + ' Ko)').join(' · ')} — les pièces jointes ne sont pas conservées ici : retrouvez-les dans la copie reçue dans votre boîte mail habituelle.</div>` : ''}
+    <iframe class="inframe" sandbox="allow-popups allow-popups-to-escape-sandbox" id="inFrame" title="Contenu de l'email"></iframe>
+    <div id="inReply"></div>`;
+  const fr = $('inFrame'); fr.srcdoc = inboxDoc(m);
+  fr.onload = () => { try { fr.style.height = Math.min(900, Math.max(260, fr.contentDocument.documentElement.scrollHeight + 16)) + 'px'; } catch (e) {} };
+  if (inboxState.replying) renderInboxReply();
+}
+function inboxReply() { inboxState.replying = true; renderInboxReply(); $('inReply').scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
+function renderInboxReply() {
+  const m = inboxState.msg;
+  $('inReply').innerHTML = `<div class="card" style="margin-top:14px;background:var(--violet);border:0"><h3>Réponse à ${esc(m.fromName || m.fromEmail)}</h3><div class="form">
+    <div class="fg"><label>Objet</label><input class="mi" id="rpSubject" value="${esc(/^re\s*:/i.test(m.subject) ? m.subject : 'Re: ' + m.subject)}"></div>
+    <div class="fg"><label>Message</label><textarea class="mi" id="rpBody" style="min-height:170px;font-family:inherit" placeholder="Bonjour ${esc((m.fromName || '').split(' ')[0])},"></textarea><div class="hint small muted">Envoyé depuis contact@bunkaio.com avec votre signature et la citation du message d'origine.</div></div>
+    <div style="display:flex;gap:10px"><button class="btn" id="rpSend" onclick="inboxSendReply()">Envoyer la réponse</button><button class="btn ghost" onclick="inboxState.replying=false;$('inReply').innerHTML=''">Annuler</button></div><div id="rpMsg"></div></div></div>`;
+  $('rpBody').focus();
+}
+async function inboxSendReply() {
+  const body = $('rpBody').value.trim(); if (!body) { $('rpMsg').innerHTML = '<div class="msg err">Écrivez votre message.</div>'; return; }
+  $('rpSend').disabled = true; $('rpSend').textContent = 'Envoi…';
+  try {
+    const { res, data } = await api('/admin/inbox/reply', { method: 'POST', body: JSON.stringify({ id: inboxState.sel, body, subject: $('rpSubject').value }) });
+    if (!res.ok || !data.ok) { $('rpMsg').innerHTML = `<div class="msg err">Envoi impossible (${esc(data.error || res.status)}).</div>`; $('rpSend').disabled = false; $('rpSend').textContent = 'Envoyer la réponse'; return; }
+    toast('Réponse envoyée'); inboxState.replying = false;
+    const it = DB.inbox.find(x => x.id === inboxState.sel); if (it) { it.replied = true; it.read = true; }
+    inboxState.msg.repliedAt = new Date().toISOString(); renderInboxRead(); renderInbox();
+  } catch (e) {}
+}
+async function inboxUpdate(change) {
+  try {
+    const { res } = await api('/admin/inbox/update', { method: 'POST', body: JSON.stringify({ id: inboxState.sel, ...change }) }); if (!res.ok) { toast('Erreur'); return; }
+    Object.assign(inboxState.msg, change); const it = DB.inbox.find(x => x.id === inboxState.sel); if (it) Object.assign(it, change);
+    if (change.archived === true) { toast('Email archivé'); inboxState.sel = null; inboxState.msg = null; $('inRead').innerHTML = '<div class="empty">Sélectionnez un email pour le lire.</div>'; } else renderInboxRead();
+    renderInbox(); updateCounts();
+  } catch (e) {}
+}
+async function inboxDelete() {
+  if (!confirm('Supprimer définitivement cet email du tableau de bord ? (Votre copie dans la boîte mail habituelle n\'est pas touchée.)')) return;
+  try { const { res } = await api('/admin/inbox/update', { method: 'POST', body: JSON.stringify({ id: inboxState.sel, remove: true }) }); if (!res.ok) { toast('Erreur'); return; }
+    DB.inbox = DB.inbox.filter(x => x.id !== inboxState.sel); inboxState.sel = null; inboxState.msg = null; $('inRead').innerHTML = '<div class="empty">Email supprimé.</div>'; renderInbox(); updateCounts(); toast('Email supprimé'); } catch (e) {}
 }
 
 /* ── Mailing manuel ── */
@@ -1327,14 +1459,14 @@ async function deleteMsg(id) {
   if (!confirm('Supprimer définitivement ce message ?')) return;
   try { const { res } = await api('/admin/message', { method: 'POST', body: JSON.stringify({ id, remove: true }) }); if (!res.ok) { toast('Erreur'); return; } toast('Message supprimé'); await loadDashboard(); if (drawer.email) renderDrawer(); } catch (e) {}
 }
-async function deleteContactUI(type) {
+async function deleteContactUI(type, purge) {
   const c = contactByEmail(drawer.email); if (!c) return;
-  const what = type ? `l'espace ${type === 'partner' ? 'partenaire' : 'client'} de ${c.email} (ses factures et messages sont conservés)` : `toutes les données de ${c.email} : espaces, messages, réponses au devis et suivi des automatisations. Les factures Stripe sont conservées (obligation comptable)`;
+  const what = purge ? `TOUTES les données de ${c.email}, y compris sa fiche Stripe : factures en brouillon supprimées, factures en attente annulées, fiche client supprimée (les factures déjà payées restent dans les archives de Stripe, qui ne permet pas de les effacer)` : type ? `l'espace ${type === 'partner' ? 'partenaire' : 'client'} de ${c.email} (ses factures et messages sont conservés)` : `toutes les données de ${c.email} : espaces, messages, réponses au devis et suivi des automatisations. Les factures Stripe sont conservées (obligation comptable)`;
   const typed = prompt(`Vous allez supprimer ${what}.\n\nCette action est définitive. Tapez l'email du contact pour confirmer :`);
   if (typed === null) return;
   if (typed.trim().toLowerCase() !== c.email) { toast('Email différent : suppression annulée'); return; }
   try {
-    const { res, data } = await api('/admin/delete', { method: 'POST', body: JSON.stringify(type ? { email: c.email, type } : { email: c.email }) });
+    const { res, data } = await api('/admin/delete', { method: 'POST', body: JSON.stringify(type ? { email: c.email, type } : { email: c.email, purge: purge === true }) });
     if (!res.ok || !data.ok) { toast('Erreur : ' + (data.error || res.status)); return; }
     const s = data.summary || {};
     toast(type ? 'Espace supprimé' : `Contact supprimé${s.stripeKeptWithInvoices ? ' · fiche Stripe conservée pour les factures' : ''}`);
@@ -1408,7 +1540,7 @@ function renderDrawer() {
   if (drawer.tab === 'emails' && c && !EXTRA[c.email]) loadExtra(c.email);
   $('drBody').innerHTML = fn(c);
   const needsSave = ['space', 'session', 'advanced'].includes(drawer.tab) && (drawer.isNew || currentAcc(c));
-  $('drFoot').innerHTML = needsSave ? `<button class="btn" id="drSave" onclick="saveAccount()">${drawer.isNew ? 'Créer l\'espace' : 'Enregistrer'}</button><button class="btn ghost" onclick="closeDrawer()">Fermer</button><span class="small muted">${drawer.tab === 'session' ? 'Le rappel J-2 et le remerciement J+1 partent automatiquement.' : ''}</span>${!drawer.isNew && drawer.tab === 'space' && currentAcc(c) ? `<button class="btn ghost" style="color:var(--danger);margin-left:auto" onclick="deleteContactUI('${currentAcc(c).type}')">Supprimer cet espace</button>` : ''}<div id="drMsg"></div>` : `<button class="btn ghost" onclick="closeDrawer()">Fermer</button>${c ? `<a class="btn ghost" href="mailto:${esc(c.email)}">Écrire un email</a>${c.customerId ? `<a class="btn ghost" href="https://dashboard.stripe.com/customers/${esc(c.customerId)}" target="_blank" rel="noopener">Ouvrir dans Stripe</a>` : ''}${drawer.tab === 'summary' ? `<button class="btn ghost" style="color:var(--danger);margin-left:auto" onclick="deleteContactUI()">Supprimer le contact…</button>` : ''}` : ''}<div id="drMsg"></div>`;
+  $('drFoot').innerHTML = needsSave ? `<button class="btn" id="drSave" onclick="saveAccount()">${drawer.isNew ? 'Créer l\'espace' : 'Enregistrer'}</button><button class="btn ghost" onclick="closeDrawer()">Fermer</button><span class="small muted">${drawer.tab === 'session' ? 'Le rappel J-2 et le remerciement J+1 partent automatiquement.' : ''}</span>${!drawer.isNew && drawer.tab === 'space' && currentAcc(c) ? `<button class="btn ghost" style="color:var(--danger);margin-left:auto" onclick="deleteContactUI('${currentAcc(c).type}')">Supprimer cet espace</button>` : ''}<div id="drMsg"></div>` : `<button class="btn ghost" onclick="closeDrawer()">Fermer</button>${c ? `<a class="btn ghost" href="mailto:${esc(c.email)}">Écrire un email</a>${c.customerId ? `<a class="btn ghost" href="https://dashboard.stripe.com/customers/${esc(c.customerId)}" target="_blank" rel="noopener">Ouvrir dans Stripe</a>` : ''}${drawer.tab === 'summary' ? `<button class="btn ghost" style="color:var(--danger);margin-left:auto" onclick="deleteContactUI()">Supprimer le contact…</button><button class="btn ghost" style="color:var(--danger)" onclick="deleteContactUI(undefined, true)" title="Contact de test : supprime aussi la fiche Stripe et ses factures">Contact de test : tout effacer…</button>` : ''}` : ''}<div id="drMsg"></div>`;
 }
 function accSwitch(c) {
   if (!c || c.accounts.length < 2) return '';
@@ -1530,6 +1662,7 @@ function drEmails(c) {
     <div class="card"><h3>Emails à venir</h3>${planned.length ? `<div class="list">${planned.map(p => `<div class="li"><div class="ic ${p.manual ? 'warn' : ''}">${p.manual ? '⚠' : '⏳'}</div><div class="tx"><b>${esc(p.label)}</b><div class="d">${p.manual ? 'Action requise' : p.date ? (p.date <= today() ? 'Au prochain passage (8 h UTC)' : fdate(p.date, { weekday: 'short', day: 'numeric', month: 'short' })) : 'Déclenché automatiquement'}${p.note ? ' · ' + esc(p.note) : ''}</div></div></div>`).join('')}</div>` : '<div class="small muted">Aucun email automatique prévu pour l\'instant.</div>'}</div>
   </div>
   <div class="card" style="margin-bottom:18px"><h3>Emails envoyés ${x.mails ? '<span class="badge">' + x.mails.length + '</span>' : ''}</h3>${x.loading || !x.mails && !x.error ? '<div class="small muted">Chargement…</div>' : x.error ? '<div class="msg err">Historique indisponible.</div>' : x.mails.length ? `<div class="list">${x.mails.map(m => `<div class="li"><div class="ic ${m.ok ? 'ok' : 'danger'}">${m.ok ? '✉' : '✕'}</div><div class="tx"><b>${esc(tplName(m.t))}</b><div class="d">${esc(m.s)}</div><div class="d">${fdt(m.d)}${m.ok ? '' : ' · échec d\'envoi'}</div></div></div>`).join('')}</div>` : '<div class="small muted">Aucun email envoyé depuis la mise en place du journal (les envois précédents ne sont pas enregistrés).</div>'}</div>
+  ${(DB.inbox || []).filter(m => m.fromEmail === c.email).length ? `<div class="card" style="margin-bottom:18px"><h3>Emails reçus de ce contact</h3><div class="list">${(DB.inbox || []).filter(m => m.fromEmail === c.email).slice(0, 8).map(m => `<div class="li click" onclick="closeDrawer();go('inbox');openInbox('${esc(m.id)}')"><div class="ic">${m.read ? '✉' : '📥'}</div><div class="tx"><b>${esc(m.subject)}</b><div class="d">${fdt(m.date)}${m.replied ? ' · répondu' : ''}</div></div></div>`).join('')}</div></div>` : ''}
   <div class="card"><h3>Note interne et préférences</h3><div class="form">
     <div class="fg"><label>Note (visible par vous seul)</label><textarea class="mi" id="noteText" style="min-height:90px;font-family:inherit" placeholder="Contexte, préférences, rappel à faire…">${esc(x.note || '')}</textarea></div>
     <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn sm" onclick="saveNote()">Enregistrer la note</button><button class="btn ghost sm" onclick="mailTo('${esc(c.email)}')">✉ Envoyer un email…</button><button class="btn ghost sm" onclick="toggleUnsub('${esc(c.email)}', ${!c.unsub})">${c.unsub ? 'Réabonner aux emails d\'information' : 'Désinscrire des emails d\'information'}</button></div>

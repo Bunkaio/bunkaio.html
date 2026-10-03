@@ -3,7 +3,8 @@ import { adminAccountView, getAccount, listAccounts, putAccount, sanitizeAccount
 import { handleCollect, handleStats, purgeOldAnalytics } from './analytics';
 import { appendJournal, diffAccountActivity, flushActivityNotifications, queueActivityNotification } from './activity';
 import { billingErrors, cleanBilling, composeAddress } from './billing';
-import { buildDashboard, deleteContact } from './admin';
+import { buildDashboard, deleteContact, removeInvoice } from './admin';
+import { getInboxMessage, MAX_RAW, replyTo, storeIncoming, updateInbox } from './inbox';
 import { buildManualMail, getMailLog, isUnsubscribed, listCampaigns, MANUAL_TEMPLATES, saveCampaign, sendMailing, setUnsubscribed } from './mailing';
 import type { ManualTemplate, MailingParams, RecipientCtx } from './mailing';
 import { unsubscribeToken } from './email';
@@ -605,12 +606,12 @@ async function handleAdminDashboard(request: Request, env: Env, headers: Record<
     return jsonResponse({ ok }, ok ? 200 : 404, headers);
   }
   if (path === '/admin/delete' && request.method === 'POST') {
-    const body = (await request.json().catch(() => ({}))) as { email?: unknown; type?: unknown };
+    const body = (await request.json().catch(() => ({}))) as { email?: unknown; type?: unknown; purge?: unknown };
     if (typeof body.email !== 'string' || !body.email.includes('@') || (body.type !== undefined && !isValidAccountType(body.type))) {
       return jsonResponse({ ok: false, error: 'invalid_payload' }, 400, headers);
     }
     try {
-      const summary = await deleteContact(env, createStripeClient(env.STRIPE_SECRET_KEY), body.email, body.type as AccountType | undefined);
+      const summary = await deleteContact(env, createStripeClient(env.STRIPE_SECRET_KEY), body.email, body.type as AccountType | undefined, body.purge === true);
       console.log('[admin] suppression', summary);
       return jsonResponse({ ok: true, summary }, 200, headers);
     } catch (err) {
@@ -622,6 +623,45 @@ async function handleAdminDashboard(request: Request, env: Env, headers: Record<
     const email = (new URL(request.url).searchParams.get('email') ?? '').trim().toLowerCase();
     if (!email.includes('@')) return jsonResponse({ ok: false, error: 'invalid_payload' }, 400, headers);
     return jsonResponse({ ok: true, mails: (await getMailLog(env, email)).reverse(), note: (await env.ACCOUNTS_KV.get(`note:${email}`)) ?? '', unsub: await isUnsubscribed(env, email) }, 200, headers);
+  }
+  if (path === '/admin/invoices-delete' && request.method === 'POST') {
+    const body = (await request.json().catch(() => ({}))) as { ids?: unknown };
+    if (!Array.isArray(body.ids) || !body.ids.length || body.ids.length > 50 || !body.ids.every((x) => typeof x === 'string' && /^in_[A-Za-z0-9]+$/.test(x))) return jsonResponse({ ok: false, error: 'invalid_payload' }, 400, headers);
+    const stripe = createStripeClient(env.STRIPE_SECRET_KEY);
+    const results: Array<Record<string, unknown>> = [];
+    for (const id of body.ids as string[]) {
+      try { results.push(await removeInvoice(env, stripe, id)); } catch (err) { results.push({ id, action: 'erreur', detail: err instanceof Error ? err.message.slice(0, 140) : 'erreur' }); }
+    }
+    console.log('[admin] suppression de factures', results);
+    return jsonResponse({ ok: true, results }, 200, headers);
+  }
+  if (path === '/admin/inbox/message' && request.method === 'GET') {
+    const msg = await getInboxMessage(env, new URL(request.url).searchParams.get('id') ?? '');
+    if (!msg) return jsonResponse({ ok: false, error: 'not_found' }, 404, headers);
+    return jsonResponse({ ok: true, message: msg }, 200, headers);
+  }
+  if (path === '/admin/inbox/update' && request.method === 'POST') {
+    const body = (await request.json().catch(() => ({}))) as { id?: unknown; read?: unknown; starred?: unknown; archived?: unknown; note?: unknown; remove?: unknown };
+    if (typeof body.id !== 'string') return jsonResponse({ ok: false, error: 'invalid_payload' }, 400, headers);
+    const ok = await updateInbox(env, body.id, {
+      read: typeof body.read === 'boolean' ? body.read : undefined,
+      starred: typeof body.starred === 'boolean' ? body.starred : undefined,
+      archived: typeof body.archived === 'boolean' ? body.archived : undefined,
+      note: typeof body.note === 'string' ? body.note : undefined,
+      remove: body.remove === true,
+    });
+    return jsonResponse({ ok }, ok ? 200 : 404, headers);
+  }
+  if (path === '/admin/inbox/reply' && request.method === 'POST') {
+    const body = (await request.json().catch(() => ({}))) as { id?: unknown; body?: unknown; subject?: unknown };
+    if (typeof body.id !== 'string' || typeof body.body !== 'string' || !body.body.trim()) return jsonResponse({ ok: false, error: 'invalid_payload' }, 400, headers);
+    try {
+      await replyTo(env, body.id, body.body, typeof body.subject === 'string' ? body.subject : undefined);
+      return jsonResponse({ ok: true }, 200, headers);
+    } catch (err) {
+      console.error('[inbox] réponse non envoyée', err);
+      return jsonResponse({ ok: false, error: err instanceof Error && err.message === 'not_found' ? 'not_found' : 'send_error' }, 502, headers);
+    }
   }
   if (path === '/admin/note' && request.method === 'POST') {
     const body = (await request.json().catch(() => ({}))) as { email?: unknown; note?: unknown };
@@ -1445,6 +1485,29 @@ export default {
       return handleMediaServe(request, env, mediaPath);
     }
     return jsonResponse({ ok: false, error: 'not_found' }, 404, headers);
+  },
+
+  /**
+   * Réception des emails (Cloudflare Email Routing → ce Worker). Le message est enregistré dans la boîte
+   * de réception du tableau de bord, puis copié vers INBOX_FORWARD_TO si défini : la vraie boîte mail
+   * continue de tout recevoir.
+   */
+  async email(message: ForwardableEmailMessage, env: Env): Promise<void> {
+    let stored = false;
+    try {
+      if (message.rawSize <= MAX_RAW) {
+        const raw = await new Response(message.raw).arrayBuffer();
+        await storeIncoming(env, raw, message.from, message.to);
+        stored = true;
+      }
+    } catch (err) {
+      console.error('[inbox] email non enregistré', err);
+    }
+    if (env.INBOX_FORWARD_TO) {
+      try { await message.forward(env.INBOX_FORWARD_TO); } catch (err) { console.error('[inbox] transfert impossible', err); if (!stored) message.setReject('Temporary failure, please retry later'); }
+    } else if (!stored) {
+      message.setReject('Temporary failure, please retry later');
+    }
   },
 
   async scheduled(event: ScheduledEvent, env: Env): Promise<void> {
