@@ -6,6 +6,7 @@ import { billingErrors, cleanBilling, composeAddress } from './billing';
 import { buildDashboard, deleteContact, removeInvoice } from './admin';
 import { getLastPush, getVapid, notifyAdmin, removeSubscription, saveSubscription } from './push';
 import { setContactTags, setTagNames } from './tags';
+import { autoSms, getSmsSettings, sendSms, setSmsSettings, smsProvider, toE164 } from './sms';
 import { getInboxMessage, previewReply, replyTo, setLabelNames, syncResendInbox, updateInbox } from './inbox';
 import { buildManualMail, getMailLog, isUnsubscribed, listCampaigns, MANUAL_TEMPLATES, saveCampaign, sendMailing, setUnsubscribed } from './mailing';
 import type { ManualTemplate, MailingParams, RecipientCtx } from './mailing';
@@ -645,6 +646,32 @@ async function handleAdminDashboard(request: Request, env: Env, headers: Record<
     if (typeof body.email !== 'string' || !body.email.includes('@') || !Array.isArray(body.tags)) return jsonResponse({ ok: false, error: 'invalid_payload' }, 400, headers);
     return jsonResponse({ ok: true, tags: await setContactTags(env, body.email, body.tags.filter((x): x is string => typeof x === 'string')) }, 200, headers);
   }
+  if (path === '/admin/sms' && request.method === 'GET') {
+    return jsonResponse({ ok: true, provider: smsProvider(env), settings: await getSmsSettings(env) }, 200, headers);
+  }
+  if (path === '/admin/sms/settings' && request.method === 'POST') {
+    const body = (await request.json().catch(() => ({}))) as Record<string, unknown>;
+    const pick = (k: string): boolean | undefined => (typeof body[k] === 'boolean' ? (body[k] as boolean) : undefined);
+    return jsonResponse({ ok: true, settings: await setSmsSettings(env, { enabled: pick('enabled'), ready: pick('ready'), access: pick('access'), reminder: pick('reminder') }) }, 200, headers);
+  }
+  if (path === '/admin/sms/send' && request.method === 'POST') {
+    const body = (await request.json().catch(() => ({}))) as { to?: unknown; text?: unknown; email?: unknown };
+    if (typeof body.to !== 'string' || typeof body.text !== 'string' || !body.text.trim() || !toE164(body.to)) return jsonResponse({ ok: false, error: 'invalid_payload' }, 400, headers);
+    if (!smsProvider(env)) return jsonResponse({ ok: false, error: 'sms_not_configured' }, 400, headers);
+    try {
+      await sendSms(env, { to: body.to, text: body.text, email: typeof body.email === 'string' ? body.email : undefined, tpl: 'sms_manuel' });
+      return jsonResponse({ ok: true }, 200, headers);
+    } catch (err) {
+      return jsonResponse({ ok: false, error: err instanceof Error ? err.message.slice(0, 160) : 'sms_error' }, 502, headers);
+    }
+  }
+  if (path === '/admin/sms/optout' && request.method === 'POST') {
+    const body = (await request.json().catch(() => ({}))) as { email?: unknown; value?: unknown };
+    if (typeof body.email !== 'string' || !body.email.includes('@') || typeof body.value !== 'boolean') return jsonResponse({ ok: false, error: 'invalid_payload' }, 400, headers);
+    const key = `smsoff:${body.email.trim().toLowerCase()}`;
+    if (body.value) await env.ACCOUNTS_KV.put(key, '1'); else await env.ACCOUNTS_KV.delete(key);
+    return jsonResponse({ ok: true }, 200, headers);
+  }
   if (path === '/admin/push/key' && request.method === 'GET') {
     return jsonResponse({ ok: true, publicKey: (await getVapid(env)).publicKey }, 200, headers);
   }
@@ -1052,6 +1079,11 @@ async function handleCreateBalanceInvoice(request: Request, env: Env, headers: R
       });
       await sendEmail(env, body.email, subject, html, text);
       console.log('[create-balance-invoice] email envoyé au client');
+      {
+        const acc = (await getAccount(env, 'client', body.email)) ?? (await getAccount(env, 'partner', body.email));
+        const first = (result.customerName || '').trim().split(/\s+/)[0] ?? '';
+        await autoSms(env, 'ready', { email: body.email, phone: acc?.telephone ?? result.customerPhone, ref: result.invoiceId, text: `BUNKAIO : Bonjour${first ? ' ' + first : ''}, vos photos sont disponibles ! Réglez le solde pour y accéder : ${result.hostedInvoiceUrl}` });
+      }
       return jsonResponse({ ok: true, ...result, emailSent: true, lightroomMissing: await lightroomMissing(env, body.email), infosIncomplete: await infosIncomplete(env, body.email) }, 200, headers);
     } catch (emailErr) {
       console.error("[create-balance-invoice] facture créée mais email non envoyé", emailErr);
@@ -1169,6 +1201,8 @@ async function handleStripeWebhook(request: Request, env: Env, headers: Record<s
           const m = buildPhotosReadyEmail({ customerName, lightroomUrl: account.lightroomUrl, space: account.type, lang: normalizeLang(account.lang ?? customerLang), amountEur, reviewUrl: reviewGatewayUrl });
           await sendEmail(env, customerEmail, m.subject, m.html, m.text);
           accessSent = true;
+          const first = (customerName || '').trim().split(/\s+/)[0] ?? '';
+          await autoSms(env, 'access', { email: customerEmail, phone: account.telephone ?? invoice.customer_phone, ref: invoice.id, text: `BUNKAIO : merci${first ? ' ' + first : ''}, paiement enregistré ! Votre album photo : ${account.lightroomUrl}` });
         } else {
           lightroomMissing = true;
         }

@@ -56,6 +56,7 @@ export interface DashboardContact {
   quotes: Omit<Quote, 'token'>[];
   mail: { last: string; tpl: string; n: number; ok: boolean } | null;
   tags: string[];
+  smsOff: boolean;
   unsub: boolean;
   hasNote: boolean;
   markers: Record<string, string>;
@@ -117,7 +118,7 @@ export async function buildDashboard(env: Env, stripe: Stripe): Promise<Record<s
     const key = norm(email);
     let c = contacts.get(key);
     if (!c) {
-      c = { email: key, name: '', phone: '', lang: 'fr', roles: [], stage: 'contact', lead: null, customerId: null, totalPaid: 0, totalDue: 0, invoices: [], accounts: [], messages: [], quotes: [], mail: null, tags: [], unsub: false, hasNote: false, markers: {}, lastActivity: '', createdAt: '' };
+      c = { email: key, name: '', phone: '', lang: 'fr', roles: [], stage: 'contact', lead: null, customerId: null, totalPaid: 0, totalDue: 0, invoices: [], accounts: [], messages: [], quotes: [], mail: null, tags: [], smsOff: false, unsub: false, hasNote: false, markers: {}, lastActivity: '', createdAt: '' };
       contacts.set(key, c);
     }
     return c;
@@ -241,6 +242,7 @@ export async function buildDashboard(env: Env, stripe: Stripe): Promise<Record<s
       const c = contacts.get(k.name.slice(8));
       if (c && k.metadata) c.mail = { last: k.metadata.last, tpl: k.metadata.t, n: k.metadata.n, ok: k.metadata.ok };
     }
+    for (const k of (await env.ACCOUNTS_KV.list({ prefix: 'smsoff:', limit: 1000 })).keys) { const c = contacts.get(k.name.slice(7)); if (c) c.smsOff = true; }
     for (const k of (await env.ACCOUNTS_KV.list({ prefix: 'unsub:', limit: 1000 })).keys) { const c = contacts.get(k.name.slice(6)); if (c) c.unsub = true; }
     for (const k of (await env.ACCOUNTS_KV.list<{ t: string }>({ prefix: 'tags:', limit: 1000 })).keys) { const c = contacts.get(k.name.slice(5)); if (c && k.metadata?.t) c.tags = k.metadata.t.split(','); }
     for (const k of (await env.ACCOUNTS_KV.list({ prefix: 'note:', limit: 1000 })).keys) { const c = contacts.get(k.name.slice(5)); if (c) c.hasNote = true; }

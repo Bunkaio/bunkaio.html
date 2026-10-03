@@ -521,6 +521,7 @@
           <div class="card"><h3>Séances à venir</h3><div id="sessUpcoming"></div></div>
           <div class="card"><h3>Post-production et livraisons</h3><div id="sessDelivery"></div></div>
         </div>
+        <div class="card" id="smsCard" style="margin-bottom:18px"></div>
         <div class="card">
           <h3>Automatisations <span class="link" style="cursor:default"></span></h3>
           <div class="toolbar" style="margin-bottom:6px">
@@ -761,6 +762,7 @@ function logout(expired) {
   $('tokenInput').value = '';
 }
 function showApp() {
+  loadSms();
   $('login').hidden = true; $('app').hidden = false;
   renderNav();
   go((location.hash || '#overview').slice(1).split('/')[0] || 'overview', true);
@@ -844,7 +846,7 @@ function updateCounts() {
 
 function renderAll() {
   renderKpis(); renderPipeStrip(); renderAlerts(); renderNextSessions(); renderRecentActivity(); renderRecentInvoices();
-  renderSegChips(); renderContacts(); renderInvoices(); renderSessions(); renderActivity(); renderMessages(); renderQuotes(); renderMailing(); renderInbox(); renderAgenda(); renderPushCard(); renderVisitorsNote(); updateCounts();
+  renderSegChips(); renderContacts(); renderInvoices(); renderSessions(); renderActivity(); renderMessages(); renderQuotes(); renderMailing(); renderInbox(); renderAgenda(); renderPushCard(); renderSmsCard(); renderVisitorsNote(); updateCounts();
   if (state.section) $('pageSub').textContent = SECTIONS.find(x => x[0] === state.section)[2] + ' · données de ' + fdt(DB.generatedAt);
 }
 
@@ -1183,7 +1185,7 @@ function renderActivity() {
 }
 
 /* ── Emails : libellés, étape du devis, emails envoyés / à venir ── */
-const TPL_LABEL = { facture_acompte: 'Facture d\'acompte', photos_pretes_solde: 'Photos prêtes + facture de solde', paiement_recu: 'Paiement reçu', rappel_impaye: 'Rappel de facture impayée', confirmation_devis_quiz: 'Confirmation de demande de devis', acces_espace: 'Vos accès à l\'espace', album_accessible: 'Album accessible + avis + remise', merci_seance: 'Merci + date de livraison', seance_confirmation: 'Confirmation de séance', seance_reminder: 'Rappel de séance J-2', seance_report: 'Report de séance', seance_cancel: 'Annulation de séance', accuse_contact: 'Accusé · contact', accuse_collab: 'Accusé · collaboration', accuse_partner: 'Accusé · candidature partenaire', accuse_account: 'Accusé · demande d\'espace', relance_devis_quiz: 'Relance de devis (quiz)', rappel_moodboard: 'Rappel moodboard', devis_a_signer: 'Devis à signer', relance_devis_envoye: 'Relance du devis envoyé', devis_signe: 'Devis signé (confirmation)', libre: 'Message libre', reponse: 'Réponse à un email reçu', demande_avis: 'Demande d\'avis' };
+const TPL_LABEL = { facture_acompte: 'Facture d\'acompte', photos_pretes_solde: 'Photos prêtes + facture de solde', paiement_recu: 'Paiement reçu', rappel_impaye: 'Rappel de facture impayée', confirmation_devis_quiz: 'Confirmation de demande de devis', acces_espace: 'Vos accès à l\'espace', album_accessible: 'Album accessible + avis + remise', merci_seance: 'Merci + date de livraison', seance_confirmation: 'Confirmation de séance', seance_reminder: 'Rappel de séance J-2', seance_report: 'Report de séance', seance_cancel: 'Annulation de séance', accuse_contact: 'Accusé · contact', accuse_collab: 'Accusé · collaboration', accuse_partner: 'Accusé · candidature partenaire', accuse_account: 'Accusé · demande d\'espace', relance_devis_quiz: 'Relance de devis (quiz)', rappel_moodboard: 'Rappel moodboard', devis_a_signer: 'Devis à signer', relance_devis_envoye: 'Relance du devis envoyé', devis_signe: 'Devis signé (confirmation)', sms_photos_pretes: 'SMS · photos disponibles', sms_acces_album: 'SMS · accès à l\'album', sms_rappel_seance: 'SMS · rappel de séance', sms_manuel: 'SMS', libre: 'Message libre', reponse: 'Réponse à un email reçu', demande_avis: 'Demande d\'avis' };
 const tplName = t => TPL_LABEL[t] || t;
 function quoteSteps(c) {
   const qs = (c.quotes || []).filter(q => q.status !== 'annule');
@@ -1505,6 +1507,43 @@ async function editTagNames() {
 }
 
 
+
+/* ── Message au client (copier / SMS) et SMS automatiques ── */
+let SMS = { provider: null, settings: { enabled: false, ready: true, access: true, reminder: true } };
+async function loadSms() { try { const { res, data } = await api('/admin/sms'); if (res.ok && data.ok) { SMS = { provider: data.provider, settings: data.settings }; renderSmsCard(); } } catch (e) {} }
+function lrMessage(c) {
+  const a = accOf(c, 'client') || accOf(c, 'partner'); if (!a) return null;
+  const first = ((a.facturation && a.facturation.contact) || a.nom || c.name || '').trim().split(/\s+/)[0];
+  const bal = c.invoices.find(i => i.kind === 'solde' && i.status === 'open' && i.url);
+  const hi = first ? `Bonjour ${first},` : 'Bonjour,';
+  if (a.photosAcces && a.lightroomUrl) return { kind: 'album', text: `${hi} vos photos sont disponibles ici : ${a.lightroomUrl}\nPour y accéder, créez simplement un compte Adobe Lightroom. Dites-moi si vous souhaitez des ajustements ! Aya, BUNKAIO` };
+  if (bal) return { kind: 'pay', text: `${hi} vos photos sont prêtes ! Pour y accéder, il suffit de régler le solde ici : ${bal.url}\nVous recevrez ensuite le lien de votre album par email. Aya, BUNKAIO` };
+  if (a.lightroomUrl) return { kind: 'unpaid', text: `${hi} vos photos sont disponibles ici : ${a.lightroomUrl}\nPour y accéder, créez simplement un compte Adobe Lightroom. Dites-moi si vous souhaitez des ajustements ! Aya, BUNKAIO` };
+  return null;
+}
+function lrMsgGuard(m) { return m.kind !== 'unpaid' || confirm('Le solde n\'est pas payé ni facturé : ce message donnerait le lien de l\'album AVANT le paiement. Continuer quand même ?'); }
+async function lrCopy(email) { const c = contactByEmail(email); const m = c && lrMessage(c); if (!m) { toast('Ajoutez d\'abord le lien de l\'album ou créez la facture de solde'); return; } if (!lrMsgGuard(m)) return; try { await navigator.clipboard.writeText(m.text); toast('Message copié : collez-le dans WhatsApp, SMS ou Messenger'); } catch (e) { prompt('Copiez ce message :', m.text); } }
+function lrSmsApp(email) { const c = contactByEmail(email); const m = c && lrMessage(c); if (!m) { toast('Ajoutez d\'abord le lien de l\'album ou créez la facture de solde'); return; } if (!lrMsgGuard(m)) return; const ph = ((primaryAcc(c) || {}).telephone || c.phone || '').replace(/[\s.\-()]/g, ''); location.href = `sms:${ph}${isIOS ? '&' : '?'}body=${encodeURIComponent(m.text)}`; }
+async function lrSmsSend(email) {
+  const c = contactByEmail(email); const m = c && lrMessage(c); if (!m) { toast('Ajoutez d\'abord le lien de l\'album ou créez la facture de solde'); return; } if (!lrMsgGuard(m)) return;
+  const ph = (primaryAcc(c) || {}).telephone || c.phone; if (!ph) { toast('Aucun numéro de téléphone pour ce contact'); return; }
+  if (!confirm(`Envoyer ce SMS à ${ph} ?\n\n${m.text}`)) return;
+  try { const { res, data } = await api('/admin/sms/send', { method: 'POST', body: JSON.stringify({ to: ph, text: m.text, email }) }); toast(res.ok && data.ok ? 'SMS envoyé' : 'SMS non envoyé : ' + (data.error || res.status)); if (res.ok) loadDashboard(); } catch (e) {}
+}
+function renderSmsCard() {
+  const box = $('smsCard'); if (!box) return;
+  const st = SMS.settings; const ok = !!SMS.provider;
+  const row = (k, label, d) => `<label class="check" style="margin:8px 0"><input type="checkbox" ${st[k] ? 'checked' : ''} ${!ok ? 'disabled' : ''} onchange="smsSet('${k}',this.checked)"><span><b>${label}</b><div class="small muted">${d}</div></span></label>`;
+  box.innerHTML = `<h3>SMS automatiques ${ok ? `<span class="badge ${st.enabled ? 'ok' : 'line'}">${st.enabled ? 'Activés' : 'Désactivés'}</span>` : '<span class="badge warn">Fournisseur non configuré</span>'}</h3>
+    ${ok ? `<label class="check" style="margin-bottom:6px"><input type="checkbox" ${st.enabled ? 'checked' : ''} onchange="smsSet('enabled',this.checked)"><span><b>Envoyer des SMS aux clients</b><div class="small muted">Fournisseur : ${esc(SMS.provider)}. Chaque SMS n'est envoyé qu'une fois, à un numéro valide, et jamais à un contact qui a refusé les SMS.</div></span></label>
+      <div style="${st.enabled ? '' : 'opacity:.5;pointer-events:none'}">${row('ready', 'Photos disponibles', 'À la création de la facture de solde : SMS avec le lien de paiement (le lien de l\'album n\'est jamais envoyé avant le paiement).')}${row('access', 'Accès à l\'album', 'Dès le solde payé : SMS avec le lien de l\'album Lightroom.')}${row('reminder', 'Rappel de séance', 'Le matin de J-2 : date, heure et lieu.')}</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"><input class="mi" id="smsTestTo" inputmode="tel" placeholder="Votre numéro pour un test" style="max-width:220px"><button class="btn ghost sm" onclick="smsTest()">Envoyer un SMS de test</button></div>`
+    : `<div class="msg warn">Pour envoyer des SMS automatiquement, il faut un fournisseur de SMS (Brevo ou Twilio, quelques centimes par SMS). Une fois votre clé API créée : <code>npx wrangler secret put BREVO_API_KEY</code> puis dans <code>wrangler.toml</code> la variable <code>SMS_PROVIDER = "brevo"</code> (et <code>SMS_SENDER = "BUNKAIO"</code>), puis <code>npx wrangler deploy</code>. En attendant, les boutons « Copier le message » et « Ouvrir dans Messages » des fiches contacts fonctionnent déjà.</div>`}`;
+}
+async function smsSet(k, v) { try { const { res, data } = await api('/admin/sms/settings', { method: 'POST', body: JSON.stringify({ [k]: v }) }); if (res.ok && data.ok) { SMS.settings = data.settings; renderSmsCard(); toast('Réglage enregistré'); } } catch (e) {} }
+async function smsTest() { const to = $('smsTestTo').value.trim(); if (!to) { toast('Saisissez votre numéro'); return; } try { const { res, data } = await api('/admin/sms/send', { method: 'POST', body: JSON.stringify({ to, text: 'BUNKAIO : ceci est un SMS de test, tout fonctionne !' }) }); toast(res.ok && data.ok ? 'SMS de test envoyé' : 'Échec : ' + (data.error || res.status)); } catch (e) {} }
+async function toggleSmsOff(email, value) { try { const { res } = await api('/admin/sms/optout', { method: 'POST', body: JSON.stringify({ email, value }) }); if (res.ok) { const c = contactByEmail(email); if (c) c.smsOff = value; toast(value ? 'Plus de SMS pour ce contact' : 'SMS réactivés pour ce contact'); renderDrawer(); } } catch (e) {} }
+
 /* ── Album Lightroom : ajout rapide du lien de partage ── */
 const lrHostOk = u => /^https:\/\/(lightroom\.adobe\.com|adobe\.ly|lr\.adobe\.com)\//i.test(u);
 function lrCard(c) {
@@ -1521,7 +1560,8 @@ function lrCard(c) {
       ${has ? `<a class="btn ghost sm" href="${esc(a.lightroomUrl)}" target="_blank" rel="noopener">Tester ↗</a>` : ''}
       ${has && !open ? `<button class="btn soft sm" onclick="lrOpen('${esc(c.email)}')">Ouvrir l'accès et prévenir le client</button>` : ''}
       ${open ? `<button class="btn ghost sm" onclick="lrOpen('${esc(c.email)}')">Renvoyer l'email d'accès</button><button class="btn ghost sm" style="color:var(--danger)" onclick="lrRevoke('${esc(c.email)}')">Retirer l'accès</button>` : ''}
-    </div></div>`;
+    </div>
+    ${has || lrMessage(c) ? `<div class="lab" style="margin:16px 0 8px">Prévenir le client</div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn ghost sm" onclick="lrCopy('${esc(c.email)}')">💬 Copier le message</button><button class="btn ghost sm" onclick="lrSmsApp('${esc(c.email)}')">📱 Ouvrir dans Messages</button>${SMS.provider ? `<button class="btn ghost sm" onclick="lrSmsSend('${esc(c.email)}')">Envoyer par SMS</button>` : ''}</div><div class="hint small muted" style="margin-top:6px">${open ? 'Le message contient le lien de l\'album.' : 'Tant que le solde n\'est pas payé, le message contient le lien de paiement, pas celui de l\'album.'}</div>` : ''}</div>`;
 }
 function lrCheck(el) { const v = el.value.trim(); const h = $('lrHint'); if (!h) return; h.style.color = v && !/^https:\/\//i.test(v) ? 'var(--danger)' : ''; if (v && !/^https:\/\//i.test(v)) h.textContent = 'Le lien doit commencer par https://'; else if (v && !lrHostOk(v)) { h.style.color = 'var(--warn)'; h.textContent = 'Ce lien ne ressemble pas à un lien Lightroom (lightroom.adobe.com ou adobe.ly) : vérifiez-le avant d\'enregistrer.'; } }
 async function lrPaste() { try { const t = (await navigator.clipboard.readText()).trim(); if (t) { $('lrInput').value = t; lrCheck($('lrInput')); } else toast('Presse-papiers vide'); } catch (e) { toast('Collez avec Ctrl+V / appui long dans le champ'); } }
@@ -2087,7 +2127,7 @@ function drEmails(c) {
   ${(DB.inbox || []).filter(m => m.fromEmail === c.email).length ? `<div class="card" style="margin-bottom:18px"><h3>Emails reçus de ce contact</h3><div class="list">${(DB.inbox || []).filter(m => m.fromEmail === c.email).slice(0, 8).map(m => `<div class="li click" onclick="closeDrawer();go('inbox');openInbox('${esc(m.id)}')"><div class="ic">${m.read ? '✉' : '📥'}</div><div class="tx"><b>${esc(m.subject)}</b><div class="d">${fdt(m.date)}${m.replied ? ' · répondu' : ''}</div></div></div>`).join('')}</div></div>` : ''}
   <div class="card"><h3>Note interne et préférences</h3><div class="form">
     <div class="fg"><label>Note (visible par vous seul)</label><textarea class="mi" id="noteText" style="min-height:90px;font-family:inherit" placeholder="Contexte, préférences, rappel à faire…">${esc(x.note || '')}</textarea></div>
-    <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn sm" onclick="saveNote()">Enregistrer la note</button><button class="btn ghost sm" onclick="mailTo('${esc(c.email)}')">✉ Envoyer un email…</button><button class="btn ghost sm" onclick="toggleUnsub('${esc(c.email)}', ${!c.unsub})">${c.unsub ? 'Réabonner aux emails d\'information' : 'Désinscrire des emails d\'information'}</button></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn sm" onclick="saveNote()">Enregistrer la note</button><button class="btn ghost sm" onclick="mailTo('${esc(c.email)}')">✉ Envoyer un email…</button><button class="btn ghost sm" onclick="toggleUnsub('${esc(c.email)}', ${!c.unsub})">${c.unsub ? 'Réabonner aux emails d\'information' : 'Désinscrire des emails d\'information'}</button><button class="btn ghost sm" onclick="toggleSmsOff('${esc(c.email)}', ${!c.smsOff})">${c.smsOff ? 'Réactiver les SMS' : 'Ne plus envoyer de SMS'}</button></div>
     ${c.unsub ? '<div class="msg warn">Ce contact est désinscrit : il ne reçoit plus les messages libres, mais toujours ses emails liés à un projet (devis, factures, séances).</div>' : ''}</div></div>`;
 }
 async function saveNote() {

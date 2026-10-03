@@ -1,5 +1,6 @@
 import { getAccount, listAccounts } from './accounts';
 import { isDemo } from './config';
+import { autoSms } from './sms';
 import { listQuotes, putQuote } from './quotes';
 import {
   buildQuoteEmail,
@@ -69,6 +70,8 @@ async function sendSeanceReminders(env: Env): Promise<void> {
       await sendEmail(env, account.email, m.subject, m.html, m.text);
       await env.ACCOUNTS_KV.put(flag, '1', { expirationTtl: 30 * DAY / 1000 });
       console.log('[automatisation] rappel de séance envoyé', { email: account.email, date: s.date });
+      const first = (account.nom ?? '').trim().split(/\s+/)[0] ?? '';
+      await autoSms(env, 'reminder', { email: account.email, phone: account.telephone, ref: `${account.email}:${s.date}`, text: `BUNKAIO : rappel${first ? ' ' + first : ''}, votre séance a lieu le ${s.date.split('-').reverse().slice(0, 2).join('/')}${s.heure ? ' à ' + s.heure : ''}${s.lieu ? ' (' + s.lieu + ')' : ''}. A bientôt !` });
     } catch (err) {
       console.error('[automatisation] échec rappel de séance', err);
     }

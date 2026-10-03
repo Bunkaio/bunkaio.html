@@ -993,7 +993,7 @@ export async function sendEmail(env: Env, to: string, subject: string, html: str
 
 const MAILLOG_MAX = 80;
 export interface MailLogEntry { t: string; s: string; d: string; ok: boolean }
-async function logMail(env: Env, to: string, tpl: string, subject: string, ok: boolean): Promise<void> {
+export async function logMail(env: Env, to: string, tpl: string, subject: string, ok: boolean): Promise<void> {
   const key = `maillog:${to.trim().toLowerCase()}`;
   let log: MailLogEntry[] = [];
   try { log = JSON.parse((await env.ACCOUNTS_KV.get(key)) ?? '[]') as MailLogEntry[]; } catch { log = []; }

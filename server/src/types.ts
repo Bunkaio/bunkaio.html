@@ -13,6 +13,13 @@ export interface Env {
   GOOGLE_REVIEW_URL: string;
   /** Adresse légale (secret Cloudflare) — jamais dans le dépôt ni sur le site. */
   BUSINESS_ADDRESS?: string;
+  /** SMS : 'brevo' ou 'twilio' (secrets BREVO_API_KEY, ou TWILIO_ACCOUNT_SID / TWILIO_AUTH_TOKEN / TWILIO_FROM). */
+  SMS_PROVIDER?: string;
+  SMS_SENDER?: string;
+  BREVO_API_KEY?: string;
+  TWILIO_ACCOUNT_SID?: string;
+  TWILIO_AUTH_TOKEN?: string;
+  TWILIO_FROM?: string;
   MEDIA_BUCKET: R2Bucket;
   ACCOUNTS_KV: KVNamespace;
   ANALYTICS_DB?: D1Database; // mesure d'audience — optionnelle (voir migrations/0001_analytics.sql)
@@ -59,6 +66,8 @@ export interface DepositInvoiceResult {
   invoicePdfUrl: string;
   depositAmountEur: number;
   customerName: string;
+  /** Téléphone de la fiche client Stripe (sert aux SMS). */
+  customerPhone?: string;
   /** Langue du client (metadata Stripe `langue`). */
   customerLang?: 'fr' | 'en';
 }
@@ -70,6 +79,7 @@ export interface BalanceInvoiceResult {
   invoicePdfUrl: string;
   balanceAmountEur: number;
   customerName: string;
+  customerPhone?: string;
   customerLang?: 'fr' | 'en';
 }
 

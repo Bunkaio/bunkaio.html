@@ -152,7 +152,7 @@ async function createFractionalInvoice(
   fraction: number,
   metadataType: 'acompte_30' | 'solde_70',
   itemDescriptionPrefix: string
-): Promise<{ invoiceId: string; hostedInvoiceUrl: string; invoicePdfUrl: string; amountEur: number; customerName: string; customerLang: 'fr' | 'en' }> {
+): Promise<{ invoiceId: string; hostedInvoiceUrl: string; invoicePdfUrl: string; amountEur: number; customerName: string; customerPhone?: string; customerLang: 'fr' | 'en' }> {
   const customer = await findCustomerByEmail(stripe, input.email);
   if (!customer) {
     throw new Error('customer_not_found');
@@ -199,6 +199,7 @@ async function createFractionalInvoice(
     invoicePdfUrl: finalized.invoice_pdf ?? '',
     amountEur,
     customerName: customer.name ?? '',
+    customerPhone: customer.phone ?? undefined,
     customerLang,
   };
 }
