@@ -442,7 +442,7 @@ async function handleAdminAccounts(request: Request, env: Env, headers: Record<s
       }
       console.log('[accounts] compte créé/mis à jour par l\'admin', { type: account.type, email: account.email });
       const lang = normalizeLang(body.lang);
-      const emails: { access?: boolean; photos?: boolean | string; seance?: boolean | string } = {};
+      const emails: { access?: boolean; photos?: boolean | string; seance?: boolean | string; sms?: string } = {};
       if (body.sendAccessMail && body.code) {
         try {
           const m = buildAccessCodeEmail({ customerName: account.nom ?? '', email: account.email, code: body.code, space: account.type, lang });
@@ -465,8 +465,11 @@ async function handleAdminAccounts(request: Request, env: Env, headers: Record<s
         } else {
           try {
             const m = buildPhotosReadyEmail({ customerName: account.nom ?? '', lightroomUrl: account.lightroomUrl, space: account.type, lang, reviewUrl: env.GOOGLE_REVIEW_URL });
-            await sendEmail(env, account.email, m.subject, m.html, m.text);
+            const first = (account.nom ?? '').trim().split(/\s+/)[0] ?? '';
+            const smsP = autoSms(env, 'access', { email: account.email, phone: account.telephone, ref: `${account.email}:manuel:${Date.now()}`, text: `BUNKAIO : Bonjour${first ? ' ' + first : ''}, vos photos sont disponibles ! Votre album : ${account.lightroomUrl}` });
+            await Promise.all([sendEmail(env, account.email, m.subject, m.html, m.text), smsP]);
             emails.photos = true;
+            emails.sms = await smsP;
           } catch (err) {
             console.error('[accounts] échec email photos prêtes', err);
             emails.photos = false;
@@ -1077,13 +1080,12 @@ async function handleCreateBalanceInvoice(request: Request, env: Env, headers: R
         lang: result.customerLang,
         space: await detectSpace(env, body.email),
       });
-      await sendEmail(env, body.email, subject, html, text);
-      console.log('[create-balance-invoice] email envoyé au client');
-      {
-        const acc = (await getAccount(env, 'client', body.email)) ?? (await getAccount(env, 'partner', body.email));
-        const first = (result.customerName || '').trim().split(/\s+/)[0] ?? '';
-        await autoSms(env, 'ready', { email: body.email, phone: acc?.telephone ?? result.customerPhone, ref: result.invoiceId, text: `BUNKAIO : Bonjour${first ? ' ' + first : ''}, vos photos sont disponibles ! Réglez le solde pour y accéder : ${result.hostedInvoiceUrl}` });
-      }
+      // Email et SMS partent en même temps.
+      const acc = (await getAccount(env, 'client', body.email)) ?? (await getAccount(env, 'partner', body.email));
+      const first = (result.customerName || '').trim().split(/\s+/)[0] ?? '';
+      const smsP = autoSms(env, 'ready', { email: body.email, phone: acc?.telephone ?? result.customerPhone, ref: result.invoiceId, text: `BUNKAIO : Bonjour${first ? ' ' + first : ''}, vos photos sont disponibles ! Réglez le solde pour y accéder : ${result.hostedInvoiceUrl}` });
+      await Promise.all([sendEmail(env, body.email, subject, html, text), smsP]);
+      console.log('[create-balance-invoice] email (et SMS) envoyés au client');
       return jsonResponse({ ok: true, ...result, emailSent: true, lightroomMissing: await lightroomMissing(env, body.email), infosIncomplete: await infosIncomplete(env, body.email) }, 200, headers);
     } catch (emailErr) {
       console.error("[create-balance-invoice] facture créée mais email non envoyé", emailErr);
@@ -1199,10 +1201,10 @@ async function handleStripeWebhook(request: Request, env: Env, headers: Record<s
         }
         if (account?.lightroomUrl) {
           const m = buildPhotosReadyEmail({ customerName, lightroomUrl: account.lightroomUrl, space: account.type, lang: normalizeLang(account.lang ?? customerLang), amountEur, reviewUrl: reviewGatewayUrl });
-          await sendEmail(env, customerEmail, m.subject, m.html, m.text);
-          accessSent = true;
           const first = (customerName || '').trim().split(/\s+/)[0] ?? '';
-          await autoSms(env, 'access', { email: customerEmail, phone: account.telephone ?? invoice.customer_phone, ref: invoice.id, text: `BUNKAIO : merci${first ? ' ' + first : ''}, paiement enregistré ! Votre album photo : ${account.lightroomUrl}` });
+          const smsP = autoSms(env, 'access', { email: customerEmail, phone: account.telephone ?? invoice.customer_phone, ref: invoice.id, text: `BUNKAIO : merci${first ? ' ' + first : ''}, paiement enregistré ! Votre album photo : ${account.lightroomUrl}` });
+          await Promise.all([sendEmail(env, customerEmail, m.subject, m.html, m.text), smsP]);
+          accessSent = true;
         } else {
           lightroomMissing = true;
         }

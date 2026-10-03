@@ -79,18 +79,20 @@ export const SMS_TPL: Record<SmsKind, string> = { ready: 'sms_photos_pretes', ac
  * SMS automatique : appliqué seulement si les SMS sont activés (et ce type), si le contact ne les a pas refusés,
  * si le numéro est valide et si ce SMS n'a pas déjà été envoyé pour `ref`. Ne lève jamais d'erreur.
  */
-export async function autoSms(env: Env, kind: SmsKind, p: { email: string; phone?: string | null; text: string; ref: string }): Promise<void> {
+export async function autoSms(env: Env, kind: SmsKind, p: { email: string; phone?: string | null; text: string; ref: string }): Promise<'sent' | 'skipped' | 'failed'> {
   try {
     const st = await getSmsSettings(env);
-    if (!st.enabled || !st[kind] || !smsProvider(env)) return;
+    if (!st.enabled || !st[kind] || !smsProvider(env)) return 'skipped';
     const email = p.email.trim().toLowerCase();
-    if (await env.ACCOUNTS_KV.get(`smsoff:${email}`)) return;
-    if (!toE164(p.phone)) return;
+    if (await env.ACCOUNTS_KV.get(`smsoff:${email}`)) return 'skipped';
+    if (!toE164(p.phone)) return 'skipped';
     const flag = `smsent:${kind}:${p.ref}`;
-    if (await env.ACCOUNTS_KV.get(flag)) return;
+    if (await env.ACCOUNTS_KV.get(flag)) return 'skipped';
     await sendSms(env, { to: p.phone!, text: p.text, email, tpl: SMS_TPL[kind] });
     await env.ACCOUNTS_KV.put(flag, '1', { expirationTtl: 120 * 86400 });
+    return 'sent';
   } catch (err) {
     console.error('[sms] envoi automatique en échec', kind, err);
+    return 'failed';
   }
 }

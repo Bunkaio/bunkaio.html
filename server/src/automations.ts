@@ -67,11 +67,11 @@ async function sendSeanceReminders(env: Env): Promise<void> {
     if (await env.ACCOUNTS_KV.get(flag)) continue;
     try {
       const m = buildSeanceEmail({ kind: 'reminder', customerName: account.nom ?? '', seance: s, space: account.type, lang: normalizeLang(account.lang) });
-      await sendEmail(env, account.email, m.subject, m.html, m.text);
-      await env.ACCOUNTS_KV.put(flag, '1', { expirationTtl: 30 * DAY / 1000 });
-      console.log('[automatisation] rappel de séance envoyé', { email: account.email, date: s.date });
       const first = (account.nom ?? '').trim().split(/\s+/)[0] ?? '';
-      await autoSms(env, 'reminder', { email: account.email, phone: account.telephone, ref: `${account.email}:${s.date}`, text: `BUNKAIO : rappel${first ? ' ' + first : ''}, votre séance a lieu le ${s.date.split('-').reverse().slice(0, 2).join('/')}${s.heure ? ' à ' + s.heure : ''}${s.lieu ? ' (' + s.lieu + ')' : ''}. A bientôt !` });
+      const smsP = autoSms(env, 'reminder', { email: account.email, phone: account.telephone, ref: `${account.email}:${s.date}`, text: `BUNKAIO : rappel${first ? ' ' + first : ''}, votre séance a lieu le ${s.date.split('-').reverse().slice(0, 2).join('/')}${s.heure ? ' à ' + s.heure : ''}${s.lieu ? ' (' + s.lieu + ')' : ''}. A bientôt !` });
+      await Promise.all([sendEmail(env, account.email, m.subject, m.html, m.text), smsP]);
+      await env.ACCOUNTS_KV.put(flag, '1', { expirationTtl: 30 * DAY / 1000 });
+      console.log('[automatisation] rappel de séance envoyé (email + SMS)', { email: account.email, date: s.date });
     } catch (err) {
       console.error('[automatisation] échec rappel de séance', err);
     }

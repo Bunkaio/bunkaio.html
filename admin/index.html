@@ -1573,7 +1573,7 @@ async function lrApi(email, patch, doneMsg, inputId) {
     if (!res.ok || !data.ok) { toast('Erreur : ' + (data.error || res.status)); return null; }
     await loadDashboard(); if (drawer.email === email && drawer.mode !== 'quote') renderDrawer();
     const em = data.emails || {};
-    toast(doneMsg + (em.photos === true ? ' · email envoyé au client' : em.photos === 'no_lightroom_url' ? ' · ⚠ aucun lien' : em.photos === false ? ' · ⚠ email non envoyé' : ''));
+    toast(doneMsg + (em.photos === true ? ' · email' + (em.sms === 'sent' ? ' + SMS' : '') + ' envoyé' + (em.sms === 'sent' ? 's' : '') + ' au client' : em.photos === 'no_lightroom_url' ? ' · ⚠ aucun lien' : em.photos === false ? ' · ⚠ email non envoyé' : ''));
     return data;
   } catch (e) { return null; }
 }
