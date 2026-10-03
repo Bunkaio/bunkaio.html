@@ -234,22 +234,132 @@
   .loading { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); z-index: 300; width: 0; transition: width .4s; }
 
   @media (max-width: 1100px) { .g3 { grid-template-columns: 1fr 1fr; } #mailTop { grid-template-columns: 1fr !important; } }
-  @media (max-width: 1000px) { .inbox { grid-template-columns: 1fr; } .inlist { max-height: 320px; } }
-  @media (max-width: 900px) {
-    .app { flex-direction: column; }
-    .side { position: sticky; top: 0; z-index: 30; width: 100%; height: auto; flex: none; flex-direction: row; align-items: center; padding: 10px 12px; gap: 8px; }
-    .side-logo { padding: 0 6px 0 4px; } .side-logo span { display: none; } .side-logo img { width: 64px; }
-    .nav { flex-direction: row; overflow-x: auto; gap: 4px; }
-    .nav button { padding: 8px 10px; font-size: 12.5px; white-space: nowrap; width: auto; }
-    .nav button svg { display: none; }
-    .side-foot { display: none; }
-    .top { padding: 12px 16px; position: static; }
-    .top-search { flex: 1 1 100%; margin-left: 0; }
-    .content { padding: 18px 16px 60px; }
-    .g2, .g3, .frow { grid-template-columns: 1fr; }
-    .kv { grid-template-columns: 1fr; gap: 2px; } .kv dd { margin-bottom: 8px; }
-    .dr-head, .dr-body, .dr-foot { padding-left: 16px; padding-right: 16px; }
+  /* ── Étiquettes colorées, épingles ── */
+  :root { --lb-rouge:#e5484d; --lb-orange:#f08a24; --lb-jaune:#d9a400; --lb-vert:#2f9e60; --lb-bleu:#3b82f6; --lb-violet:#8b5cf6; --lb-rose:#ec4899; --lb-gris:#8a8794; }
+  .lbl { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 700; border-radius: 100px; padding: 2px 9px 2px 7px; color: #fff; white-space: nowrap; }
+  .lbl::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,.85); }
+  .lb-rouge { background: var(--lb-rouge); } .lb-orange { background: var(--lb-orange); } .lb-jaune { background: var(--lb-jaune); } .lb-vert { background: var(--lb-vert); }
+  .lb-bleu { background: var(--lb-bleu); } .lb-violet { background: var(--lb-violet); } .lb-rose { background: var(--lb-rose); } .lb-gris { background: var(--lb-gris); }
+  .lbpick { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 2px; }
+  .lbpick button { border: 2px solid transparent; opacity: .45; cursor: pointer; font: inherit; }
+  .lbpick button.on { opacity: 1; border-color: var(--ink); }
+  .inrow .lbs { display: flex; gap: 4px; margin-top: 5px; flex-wrap: wrap; }
+  .inrow .lbs .lbl { padding: 0 7px 0 6px; font-size: 10.5px; }
+  .inrow.pinned { background: #fbf8ff; box-shadow: inset 3px 0 0 var(--accent); }
+  .inrow .pin { color: var(--accent); }
+  .lbfilter { width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin-right: 6px; vertical-align: -1px; }
+  .only-m { display: none; }
+  .tabbar, .sheet, .m-search-btn { display: none; }
+  td:empty::before { content: none; }
+
+  @media (max-width: 1000px) {
+    .inbox { grid-template-columns: 1fr; }
+    .inlist { max-height: none; }
+    .inbox.reading .inlist { display: none; }
+    .inbox:not(.reading) .inread { display: none; }
+    .only-m { display: inline-flex; }
   }
+
+  /* ═══ Mobile : navigation du bas, cartes, lisibilité ═══ */
+  @media (max-width: 900px) {
+    body { font-size: 15px; -webkit-text-size-adjust: 100%; }
+    .app { flex-direction: column; }
+    .side { display: none; }
+    .main { padding-bottom: calc(76px + env(safe-area-inset-bottom)); }
+    .top { position: sticky; top: 0; padding: calc(10px + env(safe-area-inset-top)) 14px 10px; gap: 8px; flex-wrap: wrap; }
+    .top h1 { font-size: 19px; }
+    .top .sub { display: none; }
+    .top > div:first-child { flex: 1; min-width: 0; }
+    .top h1 { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .m-search-btn { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line); background: #fff; cursor: pointer; padding: 0; }
+    .m-search-btn svg { width: 18px; height: 18px; stroke: var(--ink); fill: none; stroke-width: 2; }
+    .top-search { display: none; flex: 1 1 100%; margin: 0; order: 3; }
+    .top.searching .top-search { display: block; }
+    .top-search input { font-size: 16px; padding: 12px 16px 12px 38px; }
+    .content { padding: 16px 14px 24px; }
+    .tabbar { display: grid; grid-template-columns: repeat(5, 1fr); position: fixed; left: 0; right: 0; bottom: 0; z-index: 50; background: rgba(10,10,12,.96); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); padding: 6px 4px calc(6px + env(safe-area-inset-bottom)); border-top: 1px solid rgba(255,255,255,.08); }
+    .tabbar button { position: relative; display: flex; flex-direction: column; align-items: center; gap: 3px; background: none; border: 0; color: rgba(255,255,255,.55); font: inherit; font-size: 10.5px; font-weight: 600; padding: 6px 2px; cursor: pointer; min-height: 52px; }
+    .tabbar button svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+    .tabbar button.active { color: #fff; }
+    .tabbar button.active svg { stroke: var(--lav); }
+    .tabbar .cnt { position: absolute; top: 2px; left: calc(50% + 6px); min-width: 17px; height: 17px; border-radius: 9px; background: var(--lav); color: var(--ink); font-size: 10px; font-weight: 800; display: grid; place-items: center; padding: 0 4px; }
+    .sheet { display: block; position: fixed; inset: 0; z-index: 70; pointer-events: none; }
+    .sheet .bd { position: absolute; inset: 0; background: rgba(10,10,12,.45); opacity: 0; transition: opacity .25s; }
+    .sheet .pn { position: absolute; left: 0; right: 0; bottom: 0; background: var(--ink); color: #fff; border-radius: 22px 22px 0 0; padding: 14px 14px calc(18px + env(safe-area-inset-bottom)); transform: translateY(100%); transition: transform .35s var(--ease); max-height: 82vh; overflow-y: auto; }
+    .sheet.on { pointer-events: auto; } .sheet.on .bd { opacity: 1; } .sheet.on .pn { transform: none; }
+    .sheet .grip { width: 38px; height: 4px; border-radius: 4px; background: rgba(255,255,255,.25); margin: 0 auto 14px; }
+    .sheet .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .sheet button, .sheet a { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,.07); border: 0; color: #fff; padding: 14px; border-radius: 14px; font: inherit; font-size: 14px; font-weight: 600; text-decoration: none; cursor: pointer; text-align: left; position: relative; }
+    .sheet button svg { width: 20px; height: 20px; stroke: var(--lav); fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; flex: 0 0 20px; }
+    .sheet .cnt { margin-left: auto; background: var(--lav); color: var(--ink); font-size: 11px; font-weight: 800; border-radius: 100px; padding: 1px 8px; }
+    .sheet .sm { margin-top: 10px; display: grid; gap: 8px; }
+    .sheet .sm button, .sheet .sm a { background: transparent; border: 1px solid rgba(255,255,255,.14); justify-content: center; }
+    .toast { bottom: calc(86px + env(safe-area-inset-bottom)); max-width: 92vw; text-align: center; }
+
+    .g2, .g3, .frow { grid-template-columns: 1fr !important; }
+    .kpis { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .kpi { padding: 14px; } .kpi .n { font-size: 24px; } .kpi .l { font-size: 10px; letter-spacing: .1em; }
+    .card { padding: 16px; border-radius: 16px; }
+    .pipe-strip { display: flex; overflow-x: auto; gap: 8px; margin: 0 -14px 16px; padding: 0 14px; scrollbar-width: none; }
+    .pipe-strip button { flex: 0 0 112px; }
+    .chips { flex-wrap: nowrap; overflow-x: auto; margin: 0 -14px; padding: 2px 14px 6px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+    .chips::-webkit-scrollbar, .pipe-strip::-webkit-scrollbar { display: none; }
+    .chip { flex: 0 0 auto; padding: 9px 14px; }
+    .toolbar { gap: 8px; } .toolbar .grow { display: none; }
+    .toolbar > .btn, .toolbar > .seg { flex: 0 0 auto; }
+    .btn { min-height: 42px; } .btn.sm { min-height: 38px; padding: 8px 14px; }
+    input, select, textarea, input.mi, textarea.mi, .fg input, .fg select, .fg textarea { font-size: 16px !important; }
+    .kv { grid-template-columns: 1fr; gap: 2px; } .kv dd { margin-bottom: 8px; }
+    .kanban { grid-auto-columns: 78vw; margin: 0 -14px; padding: 0 14px 8px; scroll-snap-type: x mandatory; }
+    .col { scroll-snap-align: start; }
+    .li { padding: 14px 0; } .li .ic { width: 36px; height: 36px; flex-basis: 36px; }
+
+    /* Tableaux → cartes */
+    .tbl-wrap { background: transparent; border: 0; overflow: visible; max-height: none !important; }
+    table.rt { display: block; background: transparent; }
+    table.rt thead { display: none; }
+    table.rt tbody { display: grid; gap: 10px; }
+    table.rt tr { display: block; background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 12px 14px; }
+    table.rt td { display: flex; justify-content: space-between; align-items: center; gap: 14px; border: 0; padding: 6px 0; text-align: right; font-size: 13.5px; min-width: 0; }
+    table.rt td::before { content: attr(data-label); color: var(--grey); font-size: 10.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; text-align: left; flex: 0 0 38%; }
+    table.rt td[data-label=""]::before, table.rt td:not([data-label])::before { display: none; }
+    table.rt td.who { display: block; text-align: left; padding: 0 0 6px; border-bottom: 1px solid var(--line); margin-bottom: 4px; }
+    table.rt td.who b { font-size: 15.5px; }
+    table.rt td.num { text-align: right; }
+    table.rt td .badges { justify-content: flex-end; }
+    table.rt td > div { text-align: right; }
+    table.rt td.who > * { text-align: left; }
+    table.rt td:has(> input[type=checkbox]) { position: absolute; right: 12px; top: 12px; padding: 0; }
+    table.rt tr { position: relative; }
+    table.rt td .btn { min-height: 36px; }
+
+    /* Fiche contact / devis en plein écran */
+    .drawer { width: 100%; box-shadow: none; }
+    .dr-head { padding: calc(14px + env(safe-area-inset-top)) 16px 0; }
+    .dr-head h2 { font-size: 19px; }
+    .dr-tabs { margin: 14px -16px 0; padding: 0 12px; scrollbar-width: none; }
+    .dr-tabs::-webkit-scrollbar { display: none; }
+    .dr-tabs button { padding: 12px 14px; }
+    .dr-body { padding: 16px 14px 22px; }
+    .dr-foot { padding: 10px 14px calc(10px + env(safe-area-inset-bottom)); gap: 8px; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+    .dr-foot::-webkit-scrollbar { display: none; }
+    .dr-foot .btn { flex: 0 0 auto; justify-content: center; white-space: nowrap; }
+    .dr-foot .btn[style*="margin-left:auto"] { margin-left: 0 !important; }
+    .dr-foot .msg { flex: 0 0 100%; position: sticky; left: 0; }
+    .toolbar input.mi { max-width: none !important; flex: 1 1 100%; }
+
+    /* Boîte de réception */
+    .inlist { border-radius: 16px; }
+    .inrow { padding: 14px; }
+    .inread { padding: 14px; border-radius: 16px; min-height: 0; }
+    .inread h2 { font-size: 17px; }
+    .inframe { min-height: 280px; }
+    .rdbar { display: flex !important; }
+    iframe#mPreview, iframe#rpPreview { height: 460px !important; }
+    iframe.media { height: calc(100vh - 220px); }
+    .login-card { padding-top: env(safe-area-inset-top); }
+  }
+  .rdbar { display: none; margin: -4px 0 12px; }
 </style>
 </head>
 <body>
@@ -284,6 +394,7 @@
         <h1 id="pageTitle">Tableau de bord</h1>
         <div class="sub" id="pageSub">—</div>
       </div>
+      <button class="m-search-btn" id="mSearchBtn" onclick="document.querySelector('.top').classList.toggle('searching');if(document.querySelector('.top').classList.contains('searching'))$('globalSearch').focus()" aria-label="Rechercher"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
       <label class="top-search">
         <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
         <input type="search" id="globalSearch" placeholder="Rechercher un contact, un email, une facture…" oninput="onGlobalSearch(this.value)">
@@ -405,8 +516,10 @@
       <!-- ═══ Boîte de réception ═══ -->
       <section class="section" id="sec-inbox">
         <div id="inboxSetup"></div>
-        <div class="toolbar"><div class="chips" id="inFilters"></div><span class="grow"></span><button class="btn sm" onclick="mailState.tpl='libre';mailState.sel=new Set();go('mailing')">✉ Nouveau message</button><button class="btn ghost sm" id="inSyncBtn" onclick="inboxSync(true)">↻ Relever le courrier</button><input class="mi" id="inSearch" placeholder="Rechercher dans les emails…" oninput="inboxState.q=this.value;renderInbox()" style="max-width:260px"></div>
-        <div class="inbox">
+        <div id="lbEditor"></div>
+        <div class="toolbar"><div class="chips" id="inFilters"></div><span class="grow"></span><button class="btn sm" onclick="mailState.tpl='libre';mailState.sel=new Set();go('mailing')">✉ Nouveau message</button><button class="btn ghost sm" onclick="toggleLabelEditor()">🏷 Étiquettes</button><button class="btn ghost sm" id="inSyncBtn" onclick="inboxSync(true)">↻ Relever le courrier</button><input class="mi" id="inSearch" placeholder="Rechercher dans les emails…" oninput="inboxState.q=this.value;renderInbox()" style="max-width:260px"></div>
+        <div class="chips" id="inLabels" style="margin-bottom:14px"></div>
+        <div class="inbox" id="inboxWrap">
           <div class="inlist" id="inList"></div>
           <div class="inread" id="inRead"><div class="empty">Sélectionnez un email pour le lire.</div></div>
         </div>
@@ -466,6 +579,8 @@
   <div class="dr-foot" id="drFoot"></div>
 </aside>
 <datalist id="emailList"></datalist>
+<nav class="tabbar" id="tabbar" aria-label="Navigation"></nav>
+<div class="sheet" id="sheet" aria-hidden="true"><div class="bd" onclick="toggleSheet(false)"></div><div class="pn" id="sheetPanel"></div></div>
 <div class="toast" id="toast"></div>
 
 <script src="../js/devis-model.js"></script>
@@ -550,6 +665,17 @@ const SECTIONS = [
   ['stats', 'Statistiques', 'Fréquentation et conversion du site'],
 ];
 
+/* Tableaux : en-têtes recopiés dans chaque cellule (data-label) pour l'affichage en cartes sur mobile. */
+let labelTimer = 0;
+function labelTables() {
+  document.querySelectorAll('.tbl-wrap table:not(.norc)').forEach(t => {
+    t.classList.add('rt');
+    const heads = [...t.querySelectorAll('thead th')].map(h => h.textContent.trim());
+    t.querySelectorAll('tbody tr').forEach(tr => [...tr.children].forEach((td, i) => { if (td.dataset.label === undefined) td.dataset.label = heads[i] || ''; }));
+  });
+}
+new MutationObserver(() => { cancelAnimationFrame(labelTimer); labelTimer = requestAnimationFrame(labelTables); }).observe(document.body, { childList: true, subtree: true });
+
 /* ── Connexion ── */
 async function login() {
   const t = $('tokenInput').value.trim();
@@ -619,12 +745,33 @@ async function refreshAll() { try { await loadDashboard(); await loadStats(STAT_
 
 /* ── Navigation ── */
 function renderNav() {
+  setTimeout(renderTabbar, 0);
   $('nav').innerHTML = SECTIONS.map(([id, label]) => `<button data-s="${id}" onclick="go('${id}')"><svg viewBox="0 0 24 24">${ICON[id]}</svg>${label}<span class="count" id="cnt-${id}" hidden></span></button>`).join('');
   updateCounts();
+}
+const TAB_MAIN = [['overview', 'Accueil'], ['contacts', 'Contacts'], ['quotes', 'Devis'], ['inbox', 'Boîte']];
+function renderTabbar() {
+  const tb = $('tabbar'); if (!tb) return;
+  const cnt = id => { const el = $('cnt-' + id); return el && !el.hidden ? el.textContent : ''; };
+  tb.innerHTML = TAB_MAIN.map(([id, l]) => `<button data-s="${id}" onclick="go('${id}')"><svg viewBox="0 0 24 24">${ICON[id]}</svg>${l}${cnt(id) ? `<span class="cnt">${cnt(id)}</span>` : ''}</button>`).join('') +
+    `<button data-s="more" onclick="toggleSheet(true)"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>Plus</button>`;
+  tb.querySelectorAll('button').forEach(b => b.classList.toggle('active', b.dataset.s === state.section || (b.dataset.s === 'more' && !TAB_MAIN.some(t => t[0] === state.section))));
+}
+function toggleSheet(on) {
+  const sh = $('sheet'); if (!sh) return;
+  if (on) {
+    const rest = SECTIONS.filter(x => !TAB_MAIN.some(t => t[0] === x[0]));
+    const cnt = id => { const el = $('cnt-' + id); return el && !el.hidden ? `<span class="cnt">${el.textContent}</span>` : ''; };
+    $('sheetPanel').innerHTML = `<div class="grip"></div><div class="grid2">${rest.map(([id, l]) => `<button onclick="go('${id}')"><svg viewBox="0 0 24 24">${ICON[id]}</svg>${l}${cnt(id)}</button>`).join('')}</div>
+      <div class="sm"><button onclick="toggleSheet(false);refreshAll()">↻ Actualiser les données</button><a href="../" target="_blank" rel="noopener">↗ Voir le site</a><button onclick="logout()">Se déconnecter</button></div>`;
+  }
+  sh.classList.toggle('on', !!on); sh.setAttribute('aria-hidden', on ? 'false' : 'true');
 }
 function go(id, noPush) {
   if (!SECTIONS.find(s => s[0] === id)) id = 'overview';
   state.section = id;
+  toggleSheet(false);
+  const topEl = document.querySelector('.top'); if (topEl) topEl.classList.remove('searching');
   document.querySelectorAll('.section').forEach(s => s.classList.toggle('active', s.id === 'sec-' + id));
   document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('active', b.dataset.s === id));
   const s = SECTIONS.find(x => x[0] === id);
@@ -633,10 +780,12 @@ function go(id, noPush) {
   if (!noPush) history.replaceState(null, '', '#' + id);
   if (id === 'inbox' && Date.now() - inboxSyncedAt > 60000) inboxSync(false);
   if (id === 'media' && !$('mediaFrame').src) $('mediaFrame').src = 'media.html?embed=1';
+  renderTabbar();
   window.scrollTo({ top: 0 });
 }
 window.addEventListener('hashchange', () => { if (TOKEN) go(location.hash.slice(1), true); });
 function updateCounts() {
+  setTimeout(renderTabbar, 0);
   const set = (id, n) => { const el = $('cnt-' + id); if (!el) return; el.hidden = !n; el.textContent = n; };
   set('overview', computeAlerts().length);
   set('activity', allActivity().filter(a => a.unseen).length);
@@ -1010,7 +1159,7 @@ function quoteDots(c) {
 }
 function lastMailCell(c) {
   if (!c.mail) return '<span class="muted">—</span>';
-  return `<div>${esc(tplName(c.mail.tpl))}${c.mail.ok === false ? ' <span class="badge danger">échec</span>' : ''}</div><div class="muted">${ago(c.mail.last)}${c.mail.n > 1 ? ' · ' + c.mail.n + ' au total' : ''}</div>`;
+  return `<div><div>${esc(tplName(c.mail.tpl))}${c.mail.ok === false ? ' <span class="badge danger">échec</span>' : ''}</div><div class="muted">${ago(c.mail.last)}${c.mail.n > 1 ? ' · ' + c.mail.n + ' au total' : ''}</div></div>`;
 }
 /* Emails automatiques à venir, déduits de l'état du contact (même règles que les tâches planifiées). */
 function plannedMails(c) {
@@ -1039,20 +1188,26 @@ function nextMailCell(c) {
   const p = plannedMails(c);
   if (!p.length) return '<span class="muted">—</span>';
   const n = p[0];
-  return `<div>${esc(n.label)}</div><div class="muted">${n.manual ? '⚠ à faire' : n.date ? (n.date <= today() ? 'aujourd\'hui / prochain passage' : fdate(n.date, { day: 'numeric', month: 'short' })) : esc(n.note)}${p.length > 1 ? ' · +' + (p.length - 1) : ''}</div>`;
+  return `<div><div>${esc(n.label)}</div><div class="muted">${n.manual ? '⚠ à faire' : n.date ? (n.date <= today() ? 'aujourd\'hui / prochain passage' : fdate(n.date, { day: 'numeric', month: 'short' })) : esc(n.note)}${p.length > 1 ? ' · +' + (p.length - 1) : ''}</div></div>`;
 }
 
 /* ── Boîte de réception ── */
-const inboxState = { filter: 'unread', q: '', sel: null, msg: null, images: false, replying: false };
+const inboxState = { filter: 'unread', q: '', label: '', sel: null, msg: null, images: false, replying: false, reading: false };
+const LB_KEYS = ['rouge', 'orange', 'jaune', 'vert', 'bleu', 'violet', 'rose', 'gris'];
+const lbName = k => (DB.inboxLabels && DB.inboxLabels[k]) || k;
+const lbPill = k => `<span class="lbl lb-${k}">${esc(lbName(k))}</span>`;
 function renderInbox() {
   if (!$('inList')) return;
   const all = DB.inbox || [];
-  const F = [['unread', 'Non lus', m => !m.read && !m.archived], ['all', 'Reçus', m => !m.archived], ['star', 'Favoris', m => m.starred], ['arch', 'Archivés', m => m.archived]];
+  const F = [['unread', 'Non lus', m => !m.read && !m.archived], ['all', 'Reçus', m => !m.archived], ['pin', '📌 Épinglés', m => m.pinned && !m.archived], ['star', 'Favoris', m => m.starred], ['arch', 'Archivés', m => m.archived]];
   $('inFilters').innerHTML = F.map(([id, l, f]) => `<button class="chip ${inboxState.filter === id ? 'on' : ''}" onclick="inboxState.filter='${id}';renderInbox()">${l}<span class="c">${all.filter(f).length}</span></button>`).join('');
   const f = F.find(x => x[0] === inboxState.filter)[2]; const q = inboxState.q.toLowerCase();
-  const list = all.filter(m => f(m) && (!q || [m.fromName, m.fromEmail, m.subject, m.preview].join(' ').toLowerCase().includes(q)));
+  const lbf = inboxState.label;
+  const list = all.filter(m => f(m) && (!lbf || (m.labels || []).includes(lbf)) && (!q || [m.fromName, m.fromEmail, m.subject, m.preview].join(' ').toLowerCase().includes(q)))
+    .sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) || b.date.localeCompare(a.date));
+  $('inLabels').innerHTML = LB_KEYS.filter(k => all.some(m => (m.labels || []).includes(k)) || inboxState.label === k).map(k => `<button class="chip ${inboxState.label === k ? 'on' : ''}" onclick="inboxState.label=inboxState.label==='${k}'?'':'${k}';renderInbox()"><span class="lbfilter lb-${k}"></span>${esc(lbName(k))}<span class="c">${all.filter(m => (m.labels || []).includes(k) && !m.archived).length}</span></button>`).join('');
   $('inboxSetup').innerHTML = !all.length ? `<div class="card" style="margin-bottom:18px"><h3>Recevoir vos emails ici</h3><div class="small" style="line-height:1.7">Aucun email reçu pour l'instant. Principe : votre messagerie <b>Zoho</b> continue de recevoir <b>contact@bunkaio.com</b> comme aujourd'hui et en envoie une copie à une adresse de réception Resend ; le tableau de bord relève cette copie toutes les 5 minutes (ou avec « Relever le courrier »).<ol style="margin:8px 0 0 18px"><li><b>Resend</b> → Domains → <b>bunkaio.com</b> → activez <b>Receiving</b> et ajoutez l'enregistrement MX indiqué (sur un sous-domaine du type <code>inbound</code>, sans toucher à vos MX Zoho) dans la zone DNS de votre domaine.</li><li>Adresse de réception : n'importe quelle adresse de ce sous-domaine, par exemple <code>copie@inbound.bunkaio.com</code>.</li><li><b>Zoho Mail</b> → Paramètres → <i>Transfert et POP/IMAP</i> → ajoutez cette adresse en <b>transfert</b> et cochez « conserver une copie ». Le code de vérification de Zoho arrivera ici.</li><li>La clé API Resend du Worker doit avoir l'accès <b>complet</b> (pas seulement « envoi »).</li></ol></div></div>` : '';
-  $('inList').innerHTML = list.length ? list.map(m => `<button class="inrow ${m.read ? '' : 'unread'} ${inboxState.sel === m.id ? 'on' : ''}" onclick="openInbox('${esc(m.id)}')"><div class="top1"><span class="nm">${m.starred ? '★ ' : ''}${esc(m.fromName || m.fromEmail)}</span><span class="dt">${ago(m.date)}</span></div><div class="sj">${esc(m.subject)}${m.attachments ? ' 📎' : ''}${m.replied ? ' ↩' : ''}</div><div class="pv">${esc(m.preview)}</div></button>`).join('') : '<div class="empty">Aucun email dans cette vue.</div>';
+  $('inList').innerHTML = list.length ? list.map(m => `<button class="inrow ${m.read ? '' : 'unread'} ${m.pinned ? 'pinned' : ''} ${inboxState.sel === m.id ? 'on' : ''}" onclick="openInbox('${esc(m.id)}')"><div class="top1"><span class="nm">${m.pinned ? '<span class="pin">📌</span> ' : ''}${m.starred ? '★ ' : ''}${esc(m.fromName || m.fromEmail)}</span><span class="dt">${ago(m.date)}</span></div><div class="sj">${esc(m.subject)}${m.attachments ? ' 📎' : ''}${m.replied ? ' ↩' : ''}</div><div class="pv">${esc(m.preview)}</div>${(m.labels || []).length ? `<div class="lbs">${m.labels.map(lbPill).join('')}</div>` : ''}</button>`).join('') : '<div class="empty">Aucun email dans cette vue.</div>';
 }
 let inboxSyncedAt = 0;
 async function inboxSync(manual) {
@@ -1066,8 +1221,21 @@ async function inboxSync(manual) {
     } else if (data.added) { toast(data.added + ' nouvel email' + (data.added > 1 ? 's' : '')); await loadDashboard(); } else if (manual) toast('Aucun nouvel email');
   } catch (e) {} finally { if (btn) { btn.disabled = false; btn.textContent = '↻ Relever le courrier'; } }
 }
+function setInboxReading(on) { inboxState.reading = on; $('inboxWrap').classList.toggle('reading', on); if (on && matchMedia('(max-width:1000px)').matches) window.scrollTo({ top: 0 }); }
+function inboxBack() { setInboxReading(false); inboxState.sel = null; renderInbox(); }
+function toggleLabelEditor() {
+  const box = $('lbEditor');
+  if (box.innerHTML) { box.innerHTML = ''; return; }
+  box.innerHTML = `<div class="card" style="margin-bottom:14px"><h3>Étiquettes de couleur</h3><div class="small muted" style="margin-bottom:10px">Renommez les 8 couleurs selon votre usage. Un email peut porter plusieurs étiquettes.</div><div class="frow">${LB_KEYS.map(k => `<div class="fg"><label><span class="lbfilter lb-${k}"></span>${k}</label><input class="mi" id="lbn-${k}" maxlength="24" value="${esc(lbName(k))}"></div>`).join('')}</div><div style="display:flex;gap:10px;margin-top:12px"><button class="btn sm" onclick="saveLabelNames()">Enregistrer</button><button class="btn ghost sm" onclick="$('lbEditor').innerHTML=''">Fermer</button></div></div>`;
+}
+async function saveLabelNames() {
+  const names = {}; LB_KEYS.forEach(k => { names[k] = $('lbn-' + k).value.trim(); });
+  try { const { res } = await api('/admin/inbox/labels', { method: 'POST', body: JSON.stringify({ names }) }); if (!res.ok) { toast('Erreur'); return; }
+    DB.inboxLabels = { ...DB.inboxLabels, ...names }; $('lbEditor').innerHTML = ''; renderInbox(); if (inboxState.msg) renderInboxRead(); toast('Étiquettes enregistrées'); } catch (e) {}
+}
 async function openInbox(id) {
   inboxState.sel = id; inboxState.images = false; inboxState.replying = false;
+  setInboxReading(true);
   $('inRead').innerHTML = '<div class="empty">Chargement…</div>'; renderInbox();
   try {
     const { res, data } = await api('/admin/inbox/message?id=' + encodeURIComponent(id));
@@ -1087,10 +1255,11 @@ function inboxDoc(m) {
 function renderInboxRead() {
   const m = inboxState.msg; if (!m) return;
   const c = contactByEmail(m.fromEmail);
-  $('inRead').innerHTML = `<h2>${esc(m.subject)}</h2>
+  $('inRead').innerHTML = `<div class="rdbar"><button class="btn ghost sm" onclick="inboxBack()">← Retour</button></div><h2>${esc(m.subject)}</h2>
     <div class="small muted" style="margin-bottom:10px"><b style="color:var(--ink)">${esc(m.fromName || m.fromEmail)}</b> &lt;${esc(m.fromEmail)}&gt; · ${fdt(m.date)}${m.repliedAt ? ' · <span class="badge ok">répondu ' + ago(m.repliedAt) + '</span>' : ''}</div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px">
       <button class="btn sm" onclick="inboxReply()">↩ Répondre</button>
+      <button class="btn ghost sm" onclick="inboxUpdate({pinned:${!m.pinned}})">${m.pinned ? '📌 Détacher' : '📌 Épingler'}</button>
       <button class="btn ghost sm" onclick="inboxUpdate({starred:${!m.starred}})">${m.starred ? '★ Retirer des favoris' : '☆ Favori'}</button>
       <button class="btn ghost sm" onclick="inboxUpdate({read:false})">Marquer non lu</button>
       <button class="btn ghost sm" onclick="inboxUpdate({archived:${!m.archived}})">${m.archived ? 'Désarchiver' : 'Archiver'}</button>
@@ -1098,6 +1267,7 @@ function renderInboxRead() {
       ${m.html && !inboxState.images ? '<button class="btn ghost sm" onclick="inboxState.images=true;renderInboxRead()">Afficher les images</button>' : ''}
       <button class="btn ghost sm" style="color:var(--danger)" onclick="inboxDelete()">Supprimer</button>
     </div>
+    <div class="lbpick" aria-label="Étiquettes">${LB_KEYS.map(k => `<button class="lbl lb-${k} ${(m.labels || []).includes(k) ? 'on' : ''}" onclick="inboxToggleLabel('${k}')" title="Ajouter ou retirer l'étiquette">${esc(lbName(k))}</button>`).join('')}</div>
     ${m.attachments.length ? `<div class="msg warn" style="margin:8px 0">📎 ${m.attachments.map(a => esc(a.filename) + ' (' + Math.max(1, Math.round(a.size / 1024)) + ' Ko)').join(' · ')} — les pièces jointes ne sont pas conservées ici : retrouvez-les dans la copie reçue dans votre boîte mail habituelle.</div>` : ''}
     <iframe class="inframe" sandbox="allow-popups allow-popups-to-escape-sandbox" id="inFrame" title="Contenu de l'email"></iframe>
     <div id="inReply"></div>`;
@@ -1131,18 +1301,22 @@ async function inboxSendReply() {
     inboxState.msg.repliedAt = new Date().toISOString(); renderInboxRead(); renderInbox();
   } catch (e) {}
 }
+function inboxToggleLabel(k) {
+  const cur = new Set(inboxState.msg.labels || []); if (cur.has(k)) cur.delete(k); else cur.add(k);
+  inboxUpdate({ labels: [...cur] });
+}
 async function inboxUpdate(change) {
   try {
     const { res } = await api('/admin/inbox/update', { method: 'POST', body: JSON.stringify({ id: inboxState.sel, ...change }) }); if (!res.ok) { toast('Erreur'); return; }
     Object.assign(inboxState.msg, change); const it = DB.inbox.find(x => x.id === inboxState.sel); if (it) Object.assign(it, change);
-    if (change.archived === true) { toast('Email archivé'); inboxState.sel = null; inboxState.msg = null; $('inRead').innerHTML = '<div class="empty">Sélectionnez un email pour le lire.</div>'; } else renderInboxRead();
+    if (change.archived === true) { toast('Email archivé'); setInboxReading(false); inboxState.sel = null; inboxState.msg = null; $('inRead').innerHTML = '<div class="empty">Sélectionnez un email pour le lire.</div>'; } else renderInboxRead();
     renderInbox(); updateCounts();
   } catch (e) {}
 }
 async function inboxDelete() {
   if (!confirm('Supprimer définitivement cet email du tableau de bord ? (Votre copie dans la boîte mail habituelle n\'est pas touchée.)')) return;
   try { const { res } = await api('/admin/inbox/update', { method: 'POST', body: JSON.stringify({ id: inboxState.sel, remove: true }) }); if (!res.ok) { toast('Erreur'); return; }
-    DB.inbox = DB.inbox.filter(x => x.id !== inboxState.sel); inboxState.sel = null; inboxState.msg = null; $('inRead').innerHTML = '<div class="empty">Email supprimé.</div>'; renderInbox(); updateCounts(); toast('Email supprimé'); } catch (e) {}
+    DB.inbox = DB.inbox.filter(x => x.id !== inboxState.sel); setInboxReading(false); inboxState.sel = null; inboxState.msg = null; $('inRead').innerHTML = '<div class="empty">Email supprimé.</div>'; renderInbox(); updateCounts(); toast('Email supprimé'); } catch (e) {}
 }
 
 /* ── Mailing manuel ── */

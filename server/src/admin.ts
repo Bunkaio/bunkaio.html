@@ -1,7 +1,7 @@
 import type Stripe from 'stripe';
 import { adminAccountView, getAccount, listAccounts } from './accounts';
 import { getBusinessAddress, isDemo } from './config';
-import { listInbox } from './inbox';
+import { getLabelNames, listInbox } from './inbox';
 import type { InboxItem } from './inbox';
 import { listQuotes, putQuote } from './quotes';
 import type { Quote } from './quotes';
@@ -269,6 +269,8 @@ export async function buildDashboard(env: Env, stripe: Stripe): Promise<Record<s
   }
 
   let inbox: InboxItem[] = [];
+  let inboxLabels: Record<string, string> = {};
+  try { inboxLabels = await getLabelNames(env); } catch { /* étiquettes par défaut côté tableau de bord */ }
   try { inbox = await listInbox(env); } catch (err) { console.error('[admin] lecture de la boîte de réception impossible', err); errors.push('inbox'); }
 
   const today = new Date().toISOString().slice(0, 10);
@@ -286,6 +288,7 @@ export async function buildDashboard(env: Env, stripe: Stripe): Promise<Record<s
     contacts: list,
     messages,
     inbox,
+    inboxLabels,
     quotes,
     business: { address: getBusinessAddress() },
     invoices: allInvoices.filter((i) => i.status !== 'draft' && !isDemo(i.email)).sort((a, b) => b.created.localeCompare(a.created)),

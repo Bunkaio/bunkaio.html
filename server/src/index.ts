@@ -4,7 +4,7 @@ import { handleCollect, handleStats, purgeOldAnalytics } from './analytics';
 import { appendJournal, diffAccountActivity, flushActivityNotifications, queueActivityNotification } from './activity';
 import { billingErrors, cleanBilling, composeAddress } from './billing';
 import { buildDashboard, deleteContact, removeInvoice } from './admin';
-import { getInboxMessage, previewReply, replyTo, syncResendInbox, updateInbox } from './inbox';
+import { getInboxMessage, previewReply, replyTo, setLabelNames, syncResendInbox, updateInbox } from './inbox';
 import { buildManualMail, getMailLog, isUnsubscribed, listCampaigns, MANUAL_TEMPLATES, saveCampaign, sendMailing, setUnsubscribed } from './mailing';
 import type { ManualTemplate, MailingParams, RecipientCtx } from './mailing';
 import { unsubscribeToken } from './email';
@@ -649,16 +649,24 @@ async function handleAdminDashboard(request: Request, env: Env, headers: Record<
     return jsonResponse({ ok: true, message: msg }, 200, headers);
   }
   if (path === '/admin/inbox/update' && request.method === 'POST') {
-    const body = (await request.json().catch(() => ({}))) as { id?: unknown; read?: unknown; starred?: unknown; archived?: unknown; note?: unknown; remove?: unknown };
+    const body = (await request.json().catch(() => ({}))) as { id?: unknown; read?: unknown; starred?: unknown; pinned?: unknown; labels?: unknown; archived?: unknown; note?: unknown; remove?: unknown };
     if (typeof body.id !== 'string') return jsonResponse({ ok: false, error: 'invalid_payload' }, 400, headers);
     const ok = await updateInbox(env, body.id, {
       read: typeof body.read === 'boolean' ? body.read : undefined,
       starred: typeof body.starred === 'boolean' ? body.starred : undefined,
+      pinned: typeof body.pinned === 'boolean' ? body.pinned : undefined,
+      labels: Array.isArray(body.labels) ? body.labels.filter((x): x is string => typeof x === 'string') : undefined,
       archived: typeof body.archived === 'boolean' ? body.archived : undefined,
       note: typeof body.note === 'string' ? body.note : undefined,
       remove: body.remove === true,
     });
     return jsonResponse({ ok }, ok ? 200 : 404, headers);
+  }
+  if (path === '/admin/inbox/labels' && request.method === 'POST') {
+    const body = (await request.json().catch(() => ({}))) as { names?: unknown };
+    if (typeof body.names !== 'object' || body.names === null) return jsonResponse({ ok: false, error: 'invalid_payload' }, 400, headers);
+    await setLabelNames(env, body.names as Record<string, unknown>);
+    return jsonResponse({ ok: true }, 200, headers);
   }
   if (path === '/admin/inbox/reply' && request.method === 'POST') {
     const body = (await request.json().catch(() => ({}))) as { id?: unknown; body?: unknown; subject?: unknown; preview?: unknown };

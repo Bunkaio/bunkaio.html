@@ -19,6 +19,10 @@ export interface InboxMessage {
   messageId: string;
   read: boolean;
   starred: boolean;
+  /** Épinglé : reste en haut de la liste. */
+  pinned?: boolean;
+  /** Clés de couleur (voir LABEL_KEYS). */
+  labels?: string[];
   archived: boolean;
   repliedAt?: string;
   note?: string;
@@ -103,11 +107,26 @@ async function storeReceived(env: Env, m: ResendReceived): Promise<InboxMessage>
 }
 
 /** Métadonnées stockées avec la clé : la liste se lit sans relire chaque message complet. */
+export const LABEL_KEYS = ['rouge', 'orange', 'jaune', 'vert', 'bleu', 'violet', 'rose', 'gris'] as const;
+export const DEFAULT_LABELS: Record<string, string> = { rouge: 'Urgent', orange: 'À traiter', jaune: 'Devis', vert: 'Client', bleu: 'Partenaire', violet: 'À répondre', rose: 'Personnel', gris: 'Info' };
+
 function summary(m: InboxMessage): Record<string, unknown> {
-  return { d: m.date, fn: m.fromName.slice(0, 60), fe: m.fromEmail, s: m.subject.slice(0, 120), p: m.text.replace(/\s+/g, ' ').slice(0, 110), r: m.read, st: m.starred, a: m.archived, att: m.attachments.length, rep: !!m.repliedAt };
+  // Métadonnées KV limitées à 1 024 octets : champs tronqués (accents = 2 octets).
+  const s = { d: m.date, fn: m.fromName.slice(0, 40), fe: m.fromEmail.slice(0, 80), s: m.subject.slice(0, 90), p: m.text.replace(/\s+/g, ' ').slice(0, 90), r: m.read, st: m.starred, pi: m.pinned === true, lb: (m.labels ?? []).join(','), a: m.archived, att: m.attachments.length, rep: !!m.repliedAt };
+  if (JSON.stringify(s).length > 900) s.p = s.p.slice(0, 30);
+  return s;
 }
 
-export interface InboxItem { id: string; date: string; fromName: string; fromEmail: string; subject: string; preview: string; read: boolean; starred: boolean; archived: boolean; attachments: number; replied: boolean }
+export async function getLabelNames(env: Env): Promise<Record<string, string>> {
+  try { return { ...DEFAULT_LABELS, ...(JSON.parse((await env.ACCOUNTS_KV.get('inbox-labels')) ?? '{}') as Record<string, string>) }; } catch { return { ...DEFAULT_LABELS }; }
+}
+export async function setLabelNames(env: Env, names: Record<string, unknown>): Promise<void> {
+  const clean: Record<string, string> = {};
+  for (const k of LABEL_KEYS) if (typeof names[k] === 'string' && (names[k] as string).trim()) clean[k] = (names[k] as string).trim().slice(0, 24);
+  await env.ACCOUNTS_KV.put('inbox-labels', JSON.stringify(clean));
+}
+
+export interface InboxItem { id: string; date: string; fromName: string; fromEmail: string; subject: string; preview: string; read: boolean; starred: boolean; pinned: boolean; labels: string[]; archived: boolean; attachments: number; replied: boolean }
 
 export async function listInbox(env: Env): Promise<InboxItem[]> {
   const out: InboxItem[] = [];
@@ -117,7 +136,7 @@ export async function listInbox(env: Env): Promise<InboxItem[]> {
     for (const k of page.keys) {
       const m = k.metadata;
       if (!m) continue;
-      out.push({ id: k.name.slice(PREFIX.length), date: String(m.d ?? ''), fromName: String(m.fn ?? ''), fromEmail: String(m.fe ?? ''), subject: String(m.s ?? ''), preview: String(m.p ?? ''), read: m.r === true, starred: m.st === true, archived: m.a === true, attachments: Number(m.att ?? 0), replied: m.rep === true });
+      out.push({ id: k.name.slice(PREFIX.length), date: String(m.d ?? ''), fromName: String(m.fn ?? ''), fromEmail: String(m.fe ?? ''), subject: String(m.s ?? ''), preview: String(m.p ?? ''), read: m.r === true, starred: m.st === true, pinned: m.pi === true, labels: typeof m.lb === 'string' && m.lb ? m.lb.split(',') : [], archived: m.a === true, attachments: Number(m.att ?? 0), replied: m.rep === true });
     }
     cursor = page.list_complete ? undefined : (page as { cursor?: string }).cursor;
   } while (cursor && out.length < 3000);
@@ -129,11 +148,12 @@ export async function getInboxMessage(env: Env, id: string): Promise<InboxMessag
   return raw ? (JSON.parse(raw) as InboxMessage) : null;
 }
 
-export async function updateInbox(env: Env, id: string, change: Partial<Pick<InboxMessage, 'read' | 'starred' | 'archived' | 'note'>> & { remove?: boolean }): Promise<boolean> {
+export async function updateInbox(env: Env, id: string, change: Partial<Pick<InboxMessage, 'read' | 'starred' | 'pinned' | 'archived' | 'note'>> & { labels?: string[]; remove?: boolean }): Promise<boolean> {
   const msg = await getInboxMessage(env, id);
   if (!msg) return false;
   if (change.remove) { await env.ACCOUNTS_KV.delete(PREFIX + id); return true; }
-  for (const k of ['read', 'starred', 'archived'] as const) if (typeof change[k] === 'boolean') msg[k] = change[k]!;
+  for (const k of ['read', 'starred', 'pinned', 'archived'] as const) if (typeof change[k] === 'boolean') msg[k] = change[k]!;
+  if (Array.isArray(change.labels)) msg.labels = [...new Set(change.labels.filter((l): l is string => (LABEL_KEYS as readonly string[]).includes(l)))];
   if (typeof change.note === 'string') msg.note = change.note.slice(0, 2000);
   await env.ACCOUNTS_KV.put(PREFIX + id, JSON.stringify(msg), { expirationTtl: TTL, metadata: summary(msg) });
   return true;
