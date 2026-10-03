@@ -4,6 +4,8 @@ import { handleCollect, handleStats, purgeOldAnalytics } from './analytics';
 import { appendJournal, diffAccountActivity, flushActivityNotifications, queueActivityNotification } from './activity';
 import { billingErrors, cleanBilling, composeAddress } from './billing';
 import { buildDashboard, deleteContact, removeInvoice } from './admin';
+import { getLastPush, getVapid, notifyAdmin, removeSubscription, saveSubscription } from './push';
+import { setContactTags, setTagNames } from './tags';
 import { getInboxMessage, previewReply, replyTo, setLabelNames, syncResendInbox, updateInbox } from './inbox';
 import { buildManualMail, getMailLog, isUnsubscribed, listCampaigns, MANUAL_TEMPLATES, saveCampaign, sendMailing, setUnsubscribed } from './mailing';
 import type { ManualTemplate, MailingParams, RecipientCtx } from './mailing';
@@ -528,6 +530,8 @@ async function handleAck(request: Request, env: Env, headers: Record<string, str
   // Le message est conservé pour le tableau de bord admin (rubrique Messages), même sans accusé de réception.
   try {
     await storeMessage(env, { kind: kind as MessageKind, name, email: email.toLowerCase(), lang: normalizeLang(body.lang), details: cleanDetails(body.details) });
+    const labels: Record<string, string> = { contact: 'Message de contact', collab: 'Proposition de collaboration', partner: 'Candidature partenaire', account: "Demande d'espace", share: 'Témoignage' };
+    await notifyAdmin(env, { title: labels[kind as string] ?? 'Nouveau message', body: name || email, url: '/admin/#messages' });
   } catch (err) {
     console.error('[ack] message non enregistré', err);
   }
@@ -634,6 +638,28 @@ async function handleAdminDashboard(request: Request, env: Env, headers: Record<
     }
     console.log('[admin] suppression de factures', results);
     return jsonResponse({ ok: true, results }, 200, headers);
+  }
+  if (path === '/admin/tags' && request.method === 'POST') {
+    const body = (await request.json().catch(() => ({}))) as { email?: unknown; tags?: unknown; names?: unknown };
+    if (typeof body.names === 'object' && body.names !== null) { await setTagNames(env, body.names as Record<string, unknown>); return jsonResponse({ ok: true }, 200, headers); }
+    if (typeof body.email !== 'string' || !body.email.includes('@') || !Array.isArray(body.tags)) return jsonResponse({ ok: false, error: 'invalid_payload' }, 400, headers);
+    return jsonResponse({ ok: true, tags: await setContactTags(env, body.email, body.tags.filter((x): x is string => typeof x === 'string')) }, 200, headers);
+  }
+  if (path === '/admin/push/key' && request.method === 'GET') {
+    return jsonResponse({ ok: true, publicKey: (await getVapid(env)).publicKey }, 200, headers);
+  }
+  if (path === '/admin/push/subscribe' && request.method === 'POST') {
+    const body = (await request.json().catch(() => ({}))) as { subscription?: { endpoint?: unknown }; unsubscribe?: unknown };
+    if (!body.subscription) return jsonResponse({ ok: false, error: 'invalid_payload' }, 400, headers);
+    if (body.unsubscribe === true && typeof body.subscription.endpoint === 'string') { await removeSubscription(env, body.subscription.endpoint); return jsonResponse({ ok: true }, 200, headers); }
+    return jsonResponse({ ok: await saveSubscription(env, body.subscription) }, 200, headers);
+  }
+  if (path === '/admin/push/last' && request.method === 'GET') {
+    return jsonResponse({ ok: true, event: await getLastPush(env) }, 200, headers);
+  }
+  if (path === '/admin/push/test' && request.method === 'POST') {
+    await notifyAdmin(env, { title: 'BUNKAIO ⊹', body: 'Les notifications fonctionnent sur cet appareil.', url: '/admin/' });
+    return jsonResponse({ ok: true }, 200, headers);
   }
   if (path === '/admin/inbox/sync' && request.method === 'POST') {
     try {
@@ -859,6 +885,7 @@ async function handlePublicQuote(request: Request, env: Env, headers: Record<str
       const m = buildQuoteSignedEmail({ customerName: q.client.contact || q.client.nom, number: q.number, url: SIGN_URL(q), depositAmount: q.depositInvoice?.amount, depositUrl: q.depositInvoice?.url, abonnement: q.abonnement, lang: q.lang, space: await detectSpace(env, q.email) });
       await sendEmail(env, q.email, m.subject, m.html, m.text);
     } catch (err) { console.error('[devis] confirmation non envoyée', err); }
+    await notifyAdmin(env, { title: `Devis n° ${q.number} signé`, body: `${q.client.nom} · ${q.totalHT.toFixed(2)} €`, url: '/admin/#quotes' });
     try {
       const a = buildAdminAlertEmail({
         subject: `✍️ Devis n° ${q.number} signé — ${q.client.nom} (${q.totalHT.toFixed(2)} €)`,
@@ -1171,6 +1198,7 @@ async function handleStripeWebhook(request: Request, env: Env, headers: Record<s
     }
   }
 
+  await notifyAdmin(env, { title: kind === 'acompte' ? 'Acompte reçu' : 'Solde reçu', body: `${customerName || customerEmail} · ${amountEur.toFixed(2)} €`, url: '/admin/#invoices' });
   try {
     const { subject, html, text } = buildAdminPaymentNotificationEmail({
       customerName,

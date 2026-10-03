@@ -2,6 +2,7 @@ import type Stripe from 'stripe';
 import { adminAccountView, getAccount, listAccounts } from './accounts';
 import { getBusinessAddress, isDemo } from './config';
 import { getLabelNames, listInbox } from './inbox';
+import { getTagNames } from './tags';
 import type { InboxItem } from './inbox';
 import { listQuotes, putQuote } from './quotes';
 import type { Quote } from './quotes';
@@ -54,6 +55,7 @@ export interface DashboardContact {
   messages: FormMessage[];
   quotes: Omit<Quote, 'token'>[];
   mail: { last: string; tpl: string; n: number; ok: boolean } | null;
+  tags: string[];
   unsub: boolean;
   hasNote: boolean;
   markers: Record<string, string>;
@@ -115,7 +117,7 @@ export async function buildDashboard(env: Env, stripe: Stripe): Promise<Record<s
     const key = norm(email);
     let c = contacts.get(key);
     if (!c) {
-      c = { email: key, name: '', phone: '', lang: 'fr', roles: [], stage: 'contact', lead: null, customerId: null, totalPaid: 0, totalDue: 0, invoices: [], accounts: [], messages: [], quotes: [], mail: null, unsub: false, hasNote: false, markers: {}, lastActivity: '', createdAt: '' };
+      c = { email: key, name: '', phone: '', lang: 'fr', roles: [], stage: 'contact', lead: null, customerId: null, totalPaid: 0, totalDue: 0, invoices: [], accounts: [], messages: [], quotes: [], mail: null, tags: [], unsub: false, hasNote: false, markers: {}, lastActivity: '', createdAt: '' };
       contacts.set(key, c);
     }
     return c;
@@ -240,6 +242,7 @@ export async function buildDashboard(env: Env, stripe: Stripe): Promise<Record<s
       if (c && k.metadata) c.mail = { last: k.metadata.last, tpl: k.metadata.t, n: k.metadata.n, ok: k.metadata.ok };
     }
     for (const k of (await env.ACCOUNTS_KV.list({ prefix: 'unsub:', limit: 1000 })).keys) { const c = contacts.get(k.name.slice(6)); if (c) c.unsub = true; }
+    for (const k of (await env.ACCOUNTS_KV.list<{ t: string }>({ prefix: 'tags:', limit: 1000 })).keys) { const c = contacts.get(k.name.slice(5)); if (c && k.metadata?.t) c.tags = k.metadata.t.split(','); }
     for (const k of (await env.ACCOUNTS_KV.list({ prefix: 'note:', limit: 1000 })).keys) { const c = contacts.get(k.name.slice(5)); if (c) c.hasNote = true; }
   } catch (err) {
     console.error('[admin] lecture du journal des emails impossible', err);
@@ -270,6 +273,8 @@ export async function buildDashboard(env: Env, stripe: Stripe): Promise<Record<s
 
   let inbox: InboxItem[] = [];
   let inboxLabels: Record<string, string> = {};
+  let tagNames: Record<string, string> = {};
+  try { tagNames = await getTagNames(env); } catch { /* noms par défaut côté tableau de bord */ }
   try { inboxLabels = await getLabelNames(env); } catch { /* étiquettes par défaut côté tableau de bord */ }
   try { inbox = await listInbox(env); } catch (err) { console.error('[admin] lecture de la boîte de réception impossible', err); errors.push('inbox'); }
 
@@ -289,6 +294,7 @@ export async function buildDashboard(env: Env, stripe: Stripe): Promise<Record<s
     messages,
     inbox,
     inboxLabels,
+    tagNames,
     quotes,
     business: { address: getBusinessAddress() },
     invoices: allInvoices.filter((i) => i.status !== 'draft' && !isDemo(i.email)).sort((a, b) => b.created.localeCompare(a.created)),

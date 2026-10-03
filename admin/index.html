@@ -6,6 +6,13 @@
 <meta name="robots" content="noindex, nofollow">
 <title>BUNKAIO — Administration</title>
 <link rel="icon" href="../favicon.ico">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="../images/logo-bunkaio-512.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="BUNKAIO">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0a0a0c">
 <style>
   @font-face { font-family: 'DM Sans'; font-style: normal; font-display: swap; font-weight: 100 1000; src: url('../fonts/dm-sans-latin-opsz-normal.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
   @font-face { font-family: 'DM Sans'; font-style: normal; font-display: swap; font-weight: 100 1000; src: url('../fonts/dm-sans-latin-ext-opsz-normal.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
@@ -249,6 +256,20 @@
   .inrow .pin { color: var(--accent); }
   .lbfilter { width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin-right: 6px; vertical-align: -1px; }
   .only-m { display: none; }
+  .cal { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+  .cal .dow { background: #fcfbfe; padding: 9px 6px; font-size: 10.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--grey); text-align: center; }
+  .cal .day { background: #fff; min-height: 108px; padding: 6px; cursor: pointer; display: flex; flex-direction: column; gap: 3px; min-width: 0; text-align: left; border: 0; font: inherit; }
+  .cal .day:hover { background: #faf8fe; }
+  .cal .day.out { background: #fcfbfe; color: var(--grey2); }
+  .cal .day.today .dn { background: var(--ink); color: #fff; }
+  .cal .day.sel { box-shadow: inset 0 0 0 2px var(--accent); }
+  .cal .dn { font-size: 12px; font-weight: 700; width: 24px; height: 24px; display: grid; place-items: center; border-radius: 50%; }
+  .cal .ev { font-size: 11px; font-weight: 600; color: #fff; border-radius: 5px; padding: 1px 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .cal .more { font-size: 10.5px; color: var(--grey); }
+  .ev-seance { background: var(--ink); } .ev-livraison { background: var(--lb-vert); } .ev-facture { background: var(--lb-orange); } .ev-devis { background: var(--lb-violet); }
+  .cal .dots { display: none; gap: 3px; flex-wrap: wrap; }
+  .cal .dots i { width: 7px; height: 7px; border-radius: 50%; display: block; }
+  .tagrow { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 5px; }
   .tabbar, .sheet, .m-search-btn { display: none; }
   td:empty::before { content: none; }
 
@@ -277,6 +298,10 @@
     .top.searching .top-search { display: block; }
     .top-search input { font-size: 16px; padding: 12px 16px 12px 38px; }
     .content { padding: 16px 14px 24px; }
+    .cal .day { min-height: 54px; padding: 4px 2px; align-items: center; }
+    .cal .ev, .cal .more { display: none; }
+    .cal .dots { display: flex; justify-content: center; }
+    .cal .dow { padding: 7px 0; font-size: 9.5px; letter-spacing: 0; }
     .tabbar { display: grid; grid-template-columns: repeat(5, 1fr); position: fixed; left: 0; right: 0; bottom: 0; z-index: 50; background: rgba(10,10,12,.96); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); padding: 6px 4px calc(6px + env(safe-area-inset-bottom)); border-top: 1px solid rgba(255,255,255,.08); }
     .tabbar button { position: relative; display: flex; flex-direction: column; align-items: center; gap: 3px; background: none; border: 0; color: rgba(255,255,255,.55); font: inherit; font-size: 10.5px; font-weight: 600; padding: 6px 2px; cursor: pointer; min-height: 52px; }
     .tabbar button svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
@@ -383,6 +408,7 @@
     <nav class="nav" id="nav"></nav>
     <div class="side-foot">
       <button onclick="refreshAll()">↻ Actualiser les données</button>
+      <button onclick="go('overview');setTimeout(()=>$('pushCard').scrollIntoView({behavior:'smooth'}),80)">🔔 Notifications</button>
       <a href="../" target="_blank" rel="noopener">↗ Voir le site</a>
       <button onclick="logout()">Se déconnecter</button>
     </div>
@@ -406,6 +432,7 @@
       <section class="section" id="sec-overview">
         <div class="kpis" id="kpis"></div>
         <div class="pipe-strip" id="pipeStrip"></div>
+        <div class="card" style="margin-bottom:18px" id="pushCard"></div>
         <div class="grid g2" style="margin-bottom:18px">
           <div class="card"><h3>À traiter <span class="badge" id="alertCount">0</span></h3><div class="list" id="alerts"></div></div>
           <div class="card"><h3>Prochaines séances <button class="link" onclick="go('sessions')">Tout voir →</button></h3><div class="list" id="nextSessions"></div></div>
@@ -511,6 +538,22 @@
           <button class="btn ghost sm" onclick="markAllSeen()">Tout marquer comme vu</button>
         </div>
         <div class="card"><div class="list" id="activityFeed"></div></div>
+      </section>
+
+      <!-- ═══ Agenda ═══ -->
+      <section class="section" id="sec-agenda">
+        <div class="toolbar">
+          <div class="seg"><button class="on" data-av="month" onclick="agendaView('month')">Mois</button><button data-av="list" onclick="agendaView('list')">À venir</button></div>
+          <button class="btn ghost sm" onclick="agendaMove(-1)" aria-label="Mois précédent">←</button>
+          <b id="agTitle" style="min-width:140px;text-align:center;text-transform:capitalize"></b>
+          <button class="btn ghost sm" onclick="agendaMove(1)" aria-label="Mois suivant">→</button>
+          <button class="btn ghost sm" onclick="agendaMove(0)">Aujourd'hui</button>
+          <span class="grow"></span>
+          <button class="btn ghost sm" onclick="exportICS()">📅 Exporter (.ics)</button>
+        </div>
+        <div class="legend" style="margin:0 0 12px;flex-wrap:wrap"><span><i style="background:var(--ink)"></i>Séance</span><span><i style="background:var(--lb-vert)"></i>Livraison estimée</span><span><i style="background:var(--lb-orange)"></i>Échéance de facture</span><span><i style="background:var(--lb-violet)"></i>Fin de validité d'un devis</span></div>
+        <div id="agMonth"></div>
+        <div class="card" style="margin-top:16px" id="agDay"></div>
       </section>
 
       <!-- ═══ Boîte de réception ═══ -->
@@ -645,6 +688,7 @@ const ICON = {
   invoices: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/>',
   sessions: '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
   activity: '<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>',
+  agenda: '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M8 15h2M14 15h2"/>',
   inbox: '<path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 5h13l3.5 7v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-6z"/>',
   mailing: '<path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/>',
   messages: '<path d="M4 4h16v12H5.2L4 17.2z"/><path d="M8 9h8M8 12h5"/>',
@@ -656,6 +700,7 @@ const SECTIONS = [
   ['contacts', 'Base de données', 'Leads, clients, espaces et partenaires réunis par email'],
   ['quotes', 'Devis', 'Création, envoi, signature en ligne et suivi des devis'],
   ['invoices', 'Factures', 'Acomptes, soldes et encaissements Stripe'],
+  ['agenda', 'Agenda', 'Séances, livraisons, échéances de factures et fins de validité des devis'],
   ['sessions', 'Séances & automatisations', 'Planning, livraisons et emails automatiques'],
   ['inbox', 'Boîte de réception', 'Les emails reçus sur contact@bunkaio.com : lecture et réponse depuis le tableau de bord'],
   ['mailing', 'Mailing', 'Envoyez des emails à votre base : modèles, destinataires, historique'],
@@ -797,7 +842,7 @@ function updateCounts() {
 
 function renderAll() {
   renderKpis(); renderPipeStrip(); renderAlerts(); renderNextSessions(); renderRecentActivity(); renderRecentInvoices();
-  renderSegChips(); renderContacts(); renderInvoices(); renderSessions(); renderActivity(); renderMessages(); renderQuotes(); renderMailing(); renderInbox(); renderVisitorsNote(); updateCounts();
+  renderSegChips(); renderContacts(); renderInvoices(); renderSessions(); renderActivity(); renderMessages(); renderQuotes(); renderMailing(); renderInbox(); renderAgenda(); renderPushCard(); renderVisitorsNote(); updateCounts();
   if (state.section) $('pageSub').textContent = SECTIONS.find(x => x[0] === state.section)[2] + ' · données de ' + fdt(DB.generatedAt);
 }
 
@@ -932,12 +977,13 @@ const SEGMENTS = [
   ['unsub', 'Désinscrits', c => c.unsub],
 ];
 function segFn(seg) {
+  if (seg.startsWith('tag:')) { const k = seg.slice(4); return c => (c.tags || []).includes(k); }
   if (seg.startsWith('stage:')) { const st = seg.slice(6); return c => c.stage === st; }
   return (SEGMENTS.find(s => s[0] === seg) || SEGMENTS[0])[2];
 }
 function matchQ(c, q) {
   if (!q) return true;
-  const hay = [c.name, c.email, c.phone, c.lead && c.lead.category, c.lead && c.lead.description, ...c.accounts.map(a => [a.nom, a.facturation && a.facturation.ville, a.facturation && a.facturation.siret].join(' ')), ...c.invoices.map(i => i.number + ' ' + i.description), ...(c.messages || []).map(m => Object.values(m.details || {}).join(' '))].join(' ').toLowerCase();
+  const hay = [c.name, c.email, c.phone, c.lead && c.lead.category, c.lead && c.lead.description, ...c.accounts.map(a => [a.nom, a.facturation && a.facturation.ville, a.facturation && a.facturation.siret].join(' ')), ...c.invoices.map(i => i.number + ' ' + i.description), ...(c.messages || []).map(m => Object.values(m.details || {}).join(' ')), ...(c.tags || []).map(tagName)].join(' ').toLowerCase();
   return q.toLowerCase().split(/\s+/).every(w => hay.includes(w));
 }
 function filteredContacts() {
@@ -949,6 +995,7 @@ function filteredContacts() {
 }
 function renderSegChips() {
   const chips = SEGMENTS.map(([id, label, f]) => `<button class="chip ${state.seg === id ? 'on' : ''}" onclick="state.seg='${id}';renderSegChips();renderContacts()">${label}<span class="c">${DB.contacts.filter(f).length}</span></button>`);
+  LB_KEYS.filter(k => DB.contacts.some(c => (c.tags || []).includes(k))).forEach(k => chips.push(`<button class="chip ${state.seg === 'tag:' + k ? 'on' : ''}" onclick="state.seg='tag:${k}';renderSegChips();renderContacts()"><span class="lbfilter lb-${k}"></span>${esc(tagName(k))}<span class="c">${DB.contacts.filter(c => (c.tags || []).includes(k)).length}</span></button>`));
   if (state.seg.startsWith('stage:')) chips.push(`<button class="chip on" onclick="state.seg='all';renderSegChips();renderContacts()">Étape : ${esc(STAGE[state.seg.slice(6)][1])} ✕</button>`);
   $('segChips').innerHTML = chips.join('');
 }
@@ -971,7 +1018,7 @@ function renderContacts() {
     <th class="sort" onclick="sortBy('name')">Contact${arrow('name')}</th><th>Profil</th><th class="sort" onclick="sortBy('stage')">Étape${arrow('stage')}</th><th>Devis</th><th class="sort" onclick="sortBy('score')">Lead${arrow('score')}</th><th>Projet</th>
     <th class="num sort" onclick="sortBy('paid')">Encaissé${arrow('paid')}</th><th class="num sort" onclick="sortBy('due')">À payer${arrow('due')}</th><th>Dernier email</th><th>Prochain email</th><th class="sort" onclick="sortBy('lastActivity')">Activité${arrow('lastActivity')}</th></tr></thead><tbody>
     ${list.map(c => { const st = STAGE[c.stage] || STAGE.contact; const t = c.lead ? TEMP[c.lead.temperature] || TEMP.froid : null; const unseen = allActivity().some(a => a.email === c.email && a.unseen);
-      return `<tr class="click" onclick="openDrawer('${esc(c.email)}')"><td class="who"><b>${unseen ? '<span class="dot"></span>' : ''}${esc(c.name || '(sans nom)')}</b><span>${esc(c.email)}</span></td><td>${roleBadges(c)}</td><td><span class="badge ${c.stage === 'livre' ? 'ok' : c.stage === 'annule' ? 'danger' : ''}">${st[1]}</span></td>
+      return `<tr class="click" onclick="openDrawer('${esc(c.email)}')"><td class="who"><b>${unseen ? '<span class="dot"></span>' : ''}${esc(c.name || '(sans nom)')}</b><span>${esc(c.email)}</span>${(c.tags || []).length ? `<div class="tagrow">${c.tags.map(tagPill).join('')}</div>` : ''}</td><td>${roleBadges(c)}</td><td><span class="badge ${c.stage === 'livre' ? 'ok' : c.stage === 'annule' ? 'danger' : ''}">${st[1]}</span></td>
       <td>${quoteDots(c)}</td><td>${t ? `<span class="badge ${t[1]}">${c.lead.score} · ${t[0]}</span>` : '<span class="muted">—</span>'}</td><td class="small">${esc(c.lead ? c.lead.category : (primaryAcc(c) && primaryAcc(c).seance ? primaryAcc(c).seance.prestation || '' : '')) || '<span class="muted">—</span>'}</td>
       <td class="num">${c.totalPaid ? eur(c.totalPaid) : '—'}</td><td class="num">${c.totalDue ? `<b>${eur(c.totalDue)}</b>` : '—'}</td><td class="small">${lastMailCell(c)}</td><td class="small">${nextMailCell(c)}</td><td class="small muted">${ago(c.lastActivity)}</td></tr>`; }).join('')}
     </tbody></table></div>` : '<div class="card"><div class="empty">Aucun contact ne correspond.</div></div>';
@@ -987,8 +1034,8 @@ function onGlobalSearch(q) {
 }
 function csvCell(v) { const s = String(v ?? ''); return /[";\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; }
 function exportCSV() {
-  const head = ['Email', 'Nom', 'Téléphone', 'Profils', 'Étape', 'Score lead', 'Température', 'Catégorie', 'Budget', 'Date quiz', 'Encaissé', 'À payer', 'Type de client', 'Forme juridique', 'Contact', 'Adresse', 'Code postal', 'Ville', 'Pays', 'SIRET', 'TVA', 'Espace validé', 'Séance', 'Dernière activité'];
-  const rows = filteredContacts().map(c => { const a = primaryAcc(c) || {}; const f = a.facturation || {}; return [c.email, c.name, c.phone, c.roles.join(' '), (STAGE[c.stage] || STAGE.contact)[1], c.lead ? c.lead.score : '', c.lead ? c.lead.temperature : '', c.lead ? c.lead.category : '', c.lead ? c.lead.budget : '', c.lead ? (c.lead.date || '').slice(0, 10) : '', c.totalPaid, c.totalDue, f.profil || '', FORMES[f.forme] || '', f.contact || '', f.rue || '', f.codePostal || '', f.ville || '', f.pays || '', f.siret || '', f.tvaIntra || '', a.email ? (a.infosCompletes ? 'oui' : 'non') : '', a.seance ? a.seance.date : '', (c.lastActivity || '').slice(0, 10)]; });
+  const head = ['Email', 'Nom', 'Téléphone', 'Profils', 'Étape', 'Score lead', 'Température', 'Catégorie', 'Budget', 'Date quiz', 'Encaissé', 'À payer', 'Type de client', 'Forme juridique', 'Contact', 'Adresse', 'Code postal', 'Ville', 'Pays', 'SIRET', 'TVA', 'Espace validé', 'Séance', 'Dernière activité', 'Étiquettes'];
+  const rows = filteredContacts().map(c => { const a = primaryAcc(c) || {}; const f = a.facturation || {}; return [c.email, c.name, c.phone, c.roles.join(' '), (STAGE[c.stage] || STAGE.contact)[1], c.lead ? c.lead.score : '', c.lead ? c.lead.temperature : '', c.lead ? c.lead.category : '', c.lead ? c.lead.budget : '', c.lead ? (c.lead.date || '').slice(0, 10) : '', c.totalPaid, c.totalDue, f.profil || '', FORMES[f.forme] || '', f.contact || '', f.rue || '', f.codePostal || '', f.ville || '', f.pays || '', f.siret || '', f.tvaIntra || '', a.email ? (a.infosCompletes ? 'oui' : 'non') : '', a.seance ? a.seance.date : '', (c.lastActivity || '').slice(0, 10), (c.tags || []).map(tagName).join(' / ')]; });
   const csv = '﻿' + [head, ...rows].map(r => r.map(csvCell).join(';')).join('\n');
   const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' })); a.download = 'bunkaio-contacts-' + today() + '.csv'; a.click();
 }
@@ -1319,6 +1366,142 @@ async function inboxDelete() {
     DB.inbox = DB.inbox.filter(x => x.id !== inboxState.sel); setInboxReading(false); inboxState.sel = null; inboxState.msg = null; $('inRead').innerHTML = '<div class="empty">Email supprimé.</div>'; renderInbox(); updateCounts(); toast('Email supprimé'); } catch (e) {}
 }
 
+
+/* ── Agenda ── */
+const agenda = { view: 'month', y: new Date().getFullYear(), m: new Date().getMonth(), sel: today() };
+function agendaEvents() {
+  const out = [];
+  DB.contacts.forEach(c => {
+    const name = c.name || c.email;
+    c.accounts.forEach(a => {
+      const se = a.seance;
+      if (se && se.date && se.statut !== 'annulee') {
+        out.push({ date: se.date, kind: 'seance', t: (se.heure ? se.heure + ' · ' : '') + name, d: [se.prestation, se.lieu].filter(Boolean).join(' — '), email: c.email, time: se.heure || '', place: se.lieu || '' });
+        if (se.livraison && c.stage !== 'livre') out.push({ date: se.livraison, kind: 'livraison', t: 'Livraison · ' + name, d: se.prestation || 'Photos à livrer', email: c.email });
+      }
+    });
+    c.invoices.filter(i => i.status === 'open' && i.dueDate).forEach(i => out.push({ date: i.dueDate.slice(0, 10), kind: 'facture', t: eur(i.amountRemaining) + ' · ' + name, d: (i.kind === 'solde' ? 'Solde' : 'Acompte') + ' à payer', email: c.email }));
+    (c.quotes || []).filter(q => q.status === 'envoye' && q.validUntil).forEach(q => out.push({ date: q.validUntil, kind: 'devis', t: 'Devis n° ' + q.number + ' · ' + name, d: 'Dernier jour de validité', email: c.email, quote: q.id }));
+  });
+  return out.sort((a, b) => a.date.localeCompare(b.date) || (a.time || '').localeCompare(b.time || ''));
+}
+function agendaView(v) { agenda.view = v; document.querySelectorAll('[data-av]').forEach(b => b.classList.toggle('on', b.dataset.av === v)); renderAgenda(); }
+function agendaMove(n) { if (n === 0) { const t = new Date(); agenda.y = t.getFullYear(); agenda.m = t.getMonth(); agenda.sel = today(); } else { agenda.m += n; if (agenda.m < 0) { agenda.m = 11; agenda.y--; } if (agenda.m > 11) { agenda.m = 0; agenda.y++; } } renderAgenda(); }
+function agendaPick(d) { agenda.sel = d; renderAgenda(); }
+function evClick(ev) { return ev.quote ? `openQuote('${esc(ev.quote)}')` : `openDrawer('${esc(ev.email)}')`; }
+function evLi(ev) { return `<div class="li click" onclick="${evClick(ev)}"><div class="ic ev-${ev.kind}" style="color:#fff">${{ seance: '📸', livraison: '📦', facture: '€', devis: '⌛' }[ev.kind]}</div><div class="tx"><b>${esc(ev.t)}</b><div class="d">${esc(ev.d || '')}</div></div></div>`; }
+function renderAgenda() {
+  if (!$('agMonth')) return;
+  const evs = agendaEvents(); const by = {}; evs.forEach(e => (by[e.date] = by[e.date] || []).push(e));
+  const first = new Date(agenda.y, agenda.m, 1);
+  $('agTitle').textContent = agenda.view === 'month' ? first.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }) : 'Prochains 60 jours';
+  document.querySelectorAll('#sec-agenda .toolbar .btn[aria-label]').forEach(b => { b.style.visibility = agenda.view === 'month' ? '' : 'hidden'; });
+  if (agenda.view === 'list') {
+    const to = addDays(60); const list = evs.filter(e => e.date >= today() && e.date <= to);
+    const days = [...new Set(list.map(e => e.date))];
+    $('agMonth').innerHTML = days.length ? days.map(d => `<div class="card" style="margin-bottom:12px"><h3>${fdate(d, { weekday: 'long', day: 'numeric', month: 'long' })}${d === today() ? ' <span class="badge dark">Aujourd\'hui</span>' : ''}</h3><div class="list">${list.filter(e => e.date === d).map(evLi).join('')}</div></div>`).join('') : '<div class="card"><div class="empty">Rien de prévu dans les 60 prochains jours.</div></div>';
+    $('agDay').style.display = 'none'; return;
+  }
+  $('agDay').style.display = '';
+  const startOffset = (first.getDay() + 6) % 7; const dim = new Date(agenda.y, agenda.m + 1, 0).getDate();
+  const cells = [];
+  ['lun', 'mar', 'mer', 'jeu', 'ven', 'sam', 'dim'].forEach(d => cells.push(`<div class="dow">${d}</div>`));
+  for (let i = 0; i < Math.ceil((startOffset + dim) / 7) * 7; i++) {
+    const dt = new Date(agenda.y, agenda.m, 1 - startOffset + i); const iso = `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`;
+    const list = by[iso] || [];
+    cells.push(`<button class="day ${dt.getMonth() !== agenda.m ? 'out' : ''} ${iso === today() ? 'today' : ''} ${iso === agenda.sel ? 'sel' : ''}" onclick="agendaPick('${iso}')"><span class="dn">${dt.getDate()}</span>${list.slice(0, 3).map(e => `<span class="ev ev-${e.kind}">${esc(e.t)}</span>`).join('')}${list.length > 3 ? `<span class="more">+${list.length - 3}</span>` : ''}<span class="dots">${list.slice(0, 4).map(e => `<i class="ev-${e.kind}"></i>`).join('')}</span></button>`);
+  }
+  $('agMonth').innerHTML = `<div class="cal">${cells.join('')}</div>`;
+  const dayEvs = by[agenda.sel] || [];
+  $('agDay').innerHTML = `<h3>${fdate(agenda.sel, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</h3>${dayEvs.length ? `<div class="list">${dayEvs.map(evLi).join('')}</div>` : '<div class="empty">Rien de prévu ce jour-là.</div>'}`;
+}
+/* Export iCalendar : séances et livraisons, à importer dans le calendrier du téléphone ou de l'ordinateur. */
+function exportICS() {
+  const evs = agendaEvents().filter(e => e.kind === 'seance' || e.kind === 'livraison');
+  if (!evs.length) { toast('Aucune séance à exporter'); return; }
+  const esc2 = t => String(t || '').replace(/\\/g, '\\\\').replace(/;/g, '\;').replace(/,/g, '\\,').replace(/\n/g, '\\n');
+  const stamp = new Date().toISOString().replace(/[-:]/g, '').slice(0, 15) + 'Z';
+  const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//BUNKAIO//Admin//FR', 'CALSCALE:GREGORIAN', 'X-WR-CALNAME:BUNKAIO ⊹ Séances'];
+  evs.forEach((e, k) => {
+    const d = e.date.replace(/-/g, ''); const m = (e.time || '').match(/(\d{1,2})\s*[h:]\s*(\d{2})?/);
+    lines.push('BEGIN:VEVENT', `UID:bunkaio-${e.kind}-${d}-${k}@bunkaio.com`, `DTSTAMP:${stamp}`);
+    if (m && e.kind === 'seance') { const hh = String(m[1]).padStart(2, '0'), mm = String(m[2] || '00').padStart(2, '0'); const end = String(Math.min(23, +hh + 2)).padStart(2, '0'); lines.push(`DTSTART;TZID=Europe/Paris:${d}T${hh}${mm}00`, `DTEND;TZID=Europe/Paris:${d}T${end}${mm}00`); }
+    else lines.push(`DTSTART;VALUE=DATE:${d}`);
+    lines.push(`SUMMARY:${esc2((e.kind === 'seance' ? 'Séance — ' : 'Livraison — ') + e.t.replace(/^.*· /, ''))}`, `DESCRIPTION:${esc2(e.d)}`);
+    if (e.place) lines.push(`LOCATION:${esc2(e.place)}`);
+    lines.push('END:VEVENT');
+  });
+  lines.push('END:VCALENDAR');
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([lines.join('\r\n')], { type: 'text/calendar;charset=utf-8' })); a.download = 'bunkaio-seances.ics'; a.click();
+}
+
+/* ── Notifications push sur cet appareil ── */
+function idbSet(key, val) { return new Promise((res) => { try { const o = indexedDB.open('bunkaio-admin', 1); o.onupgradeneeded = () => o.result.createObjectStore('kv'); o.onsuccess = () => { const tx = o.result.transaction('kv', 'readwrite'); tx.objectStore('kv').put(val, key); tx.oncomplete = () => res(true); tx.onerror = () => res(false); }; o.onerror = () => res(false); } catch (e) { res(false); } }); }
+const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+const isStandalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+let pushState = 'unknown';
+async function pushStatus() {
+  if (!('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window)) return isIOS && !isStandalone ? 'ios-install' : 'unsupported';
+  if (Notification.permission === 'denied') return 'denied';
+  try { const reg = await navigator.serviceWorker.getRegistration('./'); const sub = reg && await reg.pushManager.getSubscription(); if (sub && Notification.permission === 'granted') return 'on'; } catch (e) {}
+  return 'off';
+}
+async function renderPushCard() {
+  const box = $('pushCard'); if (!box) return;
+  pushState = await pushStatus();
+  const msgs = {
+    on: ['ok', 'Notifications actives sur cet appareil : vous êtes prévenue d\'un nouvel email, d\'un message de formulaire, d\'un devis signé ou d\'un paiement.', '<button class="btn ghost sm" onclick="pushTest()">Envoyer un test</button><button class="btn ghost sm" onclick="pushDisable()">Désactiver</button>'],
+    off: ['info', 'Recevez une notification sur cet appareil à chaque nouvel email, message de formulaire, devis signé ou paiement.', '<button class="btn sm" onclick="pushEnable()">🔔 Activer les notifications</button>'],
+    denied: ['warn', 'Les notifications sont bloquées pour ce site dans votre navigateur. Autorisez-les dans les réglages du navigateur (icône à gauche de l\'adresse), puis rechargez la page.', ''],
+    'ios-install': ['warn', 'Sur iPhone, les notifications fonctionnent une fois le tableau de bord ajouté à l\'écran d\'accueil : dans Safari, touchez Partager puis « Sur l\'écran d\'accueil », ouvrez l\'icône BUNKAIO créée, puis revenez ici pour activer.', ''],
+    unsupported: ['warn', 'Ce navigateur ne gère pas les notifications push. Essayez Chrome, Edge ou Safari (iPhone en version 16.4 ou plus, tableau de bord ajouté à l\'écran d\'accueil).', ''],
+  }[pushState] || ['info', '…', ''];
+  box.innerHTML = `<h3>Notifications sur cet appareil</h3><div class="msg ${msgs[0]}" style="margin-bottom:${msgs[2] ? 12 : 0}px">${msgs[1]}</div>${msgs[2] ? `<div style="display:flex;gap:8px;flex-wrap:wrap">${msgs[2]}</div>` : ''}`;
+}
+async function pushEnable() {
+  try {
+    const reg = await navigator.serviceWorker.register('sw.js', { scope: './' });
+    await navigator.serviceWorker.ready;
+    const perm = await Notification.requestPermission();
+    if (perm !== 'granted') { toast('Autorisation refusée'); renderPushCard(); return; }
+    const { data } = await api('/admin/push/key');
+    if (!data.publicKey) { toast('Clé de notification indisponible'); return; }
+    const pad = '='.repeat((4 - data.publicKey.length % 4) % 4);
+    const key = Uint8Array.from(atob((data.publicKey + pad).replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0));
+    const sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: key });
+    await idbSet('token', TOKEN);
+    const { res } = await api('/admin/push/subscribe', { method: 'POST', body: JSON.stringify({ subscription: sub.toJSON() }) });
+    toast(res.ok ? 'Notifications activées' : 'Abonnement non enregistré');
+  } catch (e) { toast('Activation impossible : ' + (e && e.message ? e.message : 'erreur')); }
+  renderPushCard();
+}
+async function pushDisable() {
+  try { const reg = await navigator.serviceWorker.getRegistration('./'); const sub = reg && await reg.pushManager.getSubscription();
+    if (sub) { await api('/admin/push/subscribe', { method: 'POST', body: JSON.stringify({ subscription: { endpoint: sub.endpoint }, unsubscribe: true }) }); await sub.unsubscribe(); }
+    toast('Notifications désactivées'); } catch (e) {}
+  renderPushCard();
+}
+async function pushTest() { try { await api('/admin/push/test', { method: 'POST' }); toast('Test envoyé : la notification arrive dans quelques secondes'); } catch (e) {} }
+if ('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message', e => { if (e.data && e.data.goto) { try { const h = new URL(e.data.goto).hash.slice(1); if (h) go(h); } catch (x) {} } });
+
+/* ── Étiquettes sur les contacts ── */
+const tagName = k => (DB.tagNames && DB.tagNames[k]) || k;
+const tagPill = k => `<span class="lbl lb-${k}">${esc(tagName(k))}</span>`;
+async function setTags(email, tags) {
+  try { const { res, data } = await api('/admin/tags', { method: 'POST', body: JSON.stringify({ email, tags }) }); if (!res.ok || !data.ok) { toast('Erreur'); return; }
+    const c = contactByEmail(email); if (c) c.tags = data.tags; renderDrawer(); renderContacts(); renderSegChips(); renderMailSeg && renderMailSeg(); } catch (e) {}
+}
+function toggleTag(email, k) { const c = contactByEmail(email); const cur = new Set(c.tags || []); if (cur.has(k)) cur.delete(k); else cur.add(k); setTags(email, [...cur]); }
+function tagPicker(c) {
+  return `<div class="card" style="margin-bottom:18px"><h3>Étiquettes <button class="link" onclick="editTagNames()">Renommer</button></h3><div class="lbpick" style="margin:0">${LB_KEYS.map(k => `<button class="lbl lb-${k} ${(c.tags || []).includes(k) ? 'on' : ''}" onclick="toggleTag('${esc(c.email)}','${k}')">${esc(tagName(k))}</button>`).join('')}</div></div>`;
+}
+async function editTagNames() {
+  const names = {}; let changed = false;
+  for (const k of LB_KEYS) { const v = prompt(`Nom de l'étiquette ${k} :`, tagName(k)); if (v === null) return; if (v.trim() && v.trim() !== tagName(k)) { names[k] = v.trim(); changed = true; } }
+  if (!changed) return;
+  try { const { res } = await api('/admin/tags', { method: 'POST', body: JSON.stringify({ names: { ...DB.tagNames, ...names } }) }); if (res.ok) { DB.tagNames = { ...DB.tagNames, ...names }; renderDrawer(); renderContacts(); renderSegChips(); toast('Étiquettes renommées'); } } catch (e) {}
+}
+
 /* ── Mailing manuel ── */
 const MAIL_TPLS = [
   ['libre', 'Message libre', 'Information, offre, annonce, nouvelles : vous rédigez l\'objet et le message (variables {prenom} et {nom}), avec un bouton facultatif. Lien de désinscription ajouté automatiquement.', true, 'Information'],
@@ -1369,7 +1552,7 @@ function renderMailing() {
 }
 function renderMailSeg() {
   const segs = SEGMENTS.filter(s => !['hot'].includes(s[0]));
-  $('mSeg').innerHTML = segs.map(([id, l, f]) => `<button class="chip ${mailState.seg === id ? 'on' : ''}" onclick="mailState.seg='${id}';renderMailSeg();renderMailRecipients()">${l}<span class="c">${DB.contacts.filter(f).length}</span></button>`).join('');
+  $('mSeg').innerHTML = segs.map(([id, l, f]) => `<button class="chip ${mailState.seg === id ? 'on' : ''}" onclick="mailState.seg='${id}';renderMailSeg();renderMailRecipients()">${l}<span class="c">${DB.contacts.filter(f).length}</span></button>`).join('') + LB_KEYS.filter(k => DB.contacts.some(c => (c.tags || []).includes(k))).map(k => `<button class="chip ${mailState.seg === 'tag:' + k ? 'on' : ''}" onclick="mailState.seg='tag:${k}';renderMailSeg();renderMailRecipients()"><span class="lbfilter lb-${k}"></span>${esc(tagName(k))}<span class="c">${DB.contacts.filter(c => (c.tags || []).includes(k)).length}</span></button>`).join('');
 }
 function renderMailRecipients() {
   const list = mailContacts();
@@ -1763,6 +1946,7 @@ function drSummary(c) {
   if (a) quick.push(`<button class="btn soft sm" onclick="setDrTab('session')">📅 Séance</button>`);
   const msgs = c.messages || [];
   return `<div class="quick">${quick.join('')}</div>
+  ${tagPicker(c)}
   <div class="grid g2">
     <div class="card"><h3>Parcours</h3><div class="tl">${steps.filter(x => x[1]).map(x => `<div class="it ${x[2] ? 'done' : ''}"><b>${x[0]}</b><div class="d">${esc(x[1])}</div></div>`).join('') || '<div class="small muted">Aucune étape pour l\'instant.</div>'}</div></div>
     <div class="card"><h3>Coordonnées</h3>${coordsHtml(c, a)}</div>

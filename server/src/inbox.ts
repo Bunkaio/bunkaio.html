@@ -1,4 +1,5 @@
 import { buildReplyEmail, sendEmail } from './email';
+import { notifyAdmin } from './push';
 import type { Env } from './types';
 
 /**
@@ -65,16 +66,22 @@ export async function syncResendInbox(env: Env): Promise<{ added: number; checke
   const list = await resendGet<{ data?: Array<{ id: string }>; emails?: Array<{ id: string }> }>(env, '/emails/receiving?limit=50');
   const items = list.data ?? list.emails ?? [];
   let added = 0;
+  let lastStored: InboxMessage | null = null;
   for (const it of items) {
     if (!it?.id || (await env.ACCOUNTS_KV.get(`inbox-rid:${it.id}`))) continue;
     try {
       const m = await resendGet<ResendReceived>(env, `/emails/receiving/${encodeURIComponent(it.id)}`);
-      await storeReceived(env, m);
+      const stored = await storeReceived(env, m);
       await env.ACCOUNTS_KV.put(`inbox-rid:${it.id}`, '1', { expirationTtl: 90 * 86400 });
       added++;
+      lastStored = stored;
     } catch (err) {
       console.error('[inbox] email non relevé', it.id, err);
     }
+  }
+  if (added && lastStored) {
+    const from = lastStored.fromName || lastStored.fromEmail;
+    await notifyAdmin(env, added > 1 ? { title: `${added} nouveaux emails`, body: `Dont « ${lastStored.subject} » de ${from}`, url: '/admin/#inbox' } : { title: `Email de ${from}`, body: lastStored.subject, url: '/admin/#inbox' });
   }
   return { added, checked: items.length };
 }

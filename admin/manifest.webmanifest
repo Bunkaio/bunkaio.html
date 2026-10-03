@@ -1,0 +1,14 @@
+{
+  "name": "BUNKAIO ⊹ Administration",
+  "short_name": "BUNKAIO",
+  "description": "Tableau de bord de BUNKAIO : devis, factures, contacts, boîte de réception.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0a0a0c",
+  "theme_color": "#0a0a0c",
+  "icons": [
+    { "src": "../images/logo-bunkaio-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "../images/logo-bunkaio-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
