@@ -4,7 +4,7 @@ import { handleCollect, handleStats, purgeOldAnalytics } from './analytics';
 import { appendJournal, diffAccountActivity, flushActivityNotifications, queueActivityNotification } from './activity';
 import { billingErrors, cleanBilling, composeAddress } from './billing';
 import { buildDashboard, deleteContact, removeInvoice } from './admin';
-import { getInboxMessage, MAX_RAW, replyTo, storeIncoming, updateInbox } from './inbox';
+import { getInboxMessage, replyTo, syncResendInbox, updateInbox } from './inbox';
 import { buildManualMail, getMailLog, isUnsubscribed, listCampaigns, MANUAL_TEMPLATES, saveCampaign, sendMailing, setUnsubscribed } from './mailing';
 import type { ManualTemplate, MailingParams, RecipientCtx } from './mailing';
 import { unsubscribeToken } from './email';
@@ -634,6 +634,14 @@ async function handleAdminDashboard(request: Request, env: Env, headers: Record<
     }
     console.log('[admin] suppression de factures', results);
     return jsonResponse({ ok: true, results }, 200, headers);
+  }
+  if (path === '/admin/inbox/sync' && request.method === 'POST') {
+    try {
+      return jsonResponse({ ok: true, ...(await syncResendInbox(env)) }, 200, headers);
+    } catch (err) {
+      console.error('[inbox] relève impossible', err);
+      return jsonResponse({ ok: false, error: err instanceof Error ? err.message : 'sync_error' }, 502, headers);
+    }
   }
   if (path === '/admin/inbox/message' && request.method === 'GET') {
     const msg = await getInboxMessage(env, new URL(request.url).searchParams.get('id') ?? '');
@@ -1487,33 +1495,11 @@ export default {
     return jsonResponse({ ok: false, error: 'not_found' }, 404, headers);
   },
 
-  /**
-   * Réception des emails (Cloudflare Email Routing → ce Worker). Le message est enregistré dans la boîte
-   * de réception du tableau de bord, puis copié vers INBOX_FORWARD_TO si défini : la vraie boîte mail
-   * continue de tout recevoir.
-   */
-  async email(message: ForwardableEmailMessage, env: Env): Promise<void> {
-    let stored = false;
-    try {
-      if (message.rawSize <= MAX_RAW) {
-        const raw = await new Response(message.raw).arrayBuffer();
-        await storeIncoming(env, raw, message.from, message.to);
-        stored = true;
-      }
-    } catch (err) {
-      console.error('[inbox] email non enregistré', err);
-    }
-    if (env.INBOX_FORWARD_TO) {
-      try { await message.forward(env.INBOX_FORWARD_TO); } catch (err) { console.error('[inbox] transfert impossible', err); if (!stored) message.setReject('Temporary failure, please retry later'); }
-    } else if (!stored) {
-      message.setReject('Temporary failure, please retry later');
-    }
-  },
-
   async scheduled(event: ScheduledEvent, env: Env): Promise<void> {
     configureBusiness(env);
     // Cron "*/5" : envoi des récapitulatifs d'activité clients. Cron quotidien : relances de factures.
     if (event.cron === '*/5 * * * *') {
+      await syncResendInbox(env).catch((err) => console.error('[inbox] relève planifiée en échec', err));
       await flushActivityNotifications(env);
       return;
     }

@@ -1,10 +1,8 @@
-import PostalMime from 'postal-mime';
 import type { Env } from './types';
 
 /**
- * Boîte de réception : les emails reçus sur contact@bunkaio.com sont aiguillés par Cloudflare
- * Email Routing vers ce Worker (handler `email`), enregistrés ici, puis (si INBOX_FORWARD_TO est
- * défini) transférés tels quels vers la vraie boîte mail — l'original n'est donc jamais perdu.
+ * Boîte de réception : la messagerie (Zoho) transfère une copie de contact@bunkaio.com vers une adresse de
+ * réception Resend ; le Worker la relève par l'API Resend. L'original reste dans la messagerie Zoho.
  * Les pièces jointes ne sont pas conservées dans le tableau de bord (seulement leur liste).
  */
 export interface InboxMessage {
@@ -29,27 +27,72 @@ const PREFIX = 'inbox:';
 const TTL = 2 * 365 * 24 * 3600;
 const TEXT_MAX = 30_000;
 const HTML_MAX = 120_000;
-const MAX_RAW = 12 * 1024 * 1024;
 
 const cut = (s: string | undefined, n: number): string => (s ?? '').slice(0, n);
 const randomHex = (n: number): string => Array.from(crypto.getRandomValues(new Uint8Array(n)), (b) => b.toString(16).padStart(2, '0')).join('');
 
-export async function storeIncoming(env: Env, raw: ArrayBuffer | Uint8Array | ReadableStream, envelopeFrom: string, envelopeTo: string): Promise<InboxMessage> {
-  const parsed = await PostalMime.parse(raw as ArrayBuffer);
-  const from = parsed.from;
+const RESEND = 'https://api.resend.com';
+interface ResendAttachment { filename?: string; size?: number; content_type?: string; contentType?: string }
+interface ResendReceived { id: string; from?: string; to?: string[] | string; subject?: string; html?: string | null; text?: string | null; created_at?: string; message_id?: string; reply_to?: string[] | string | null; headers?: Record<string, string> | null; attachments?: ResendAttachment[] }
+
+/** « Nom <adresse> » → { nom, adresse }. */
+function parseAddress(raw: string | undefined): { name: string; email: string } {
+  const s = (raw ?? '').trim();
+  const m = s.match(/^(.*?)<([^>]+)>\s*$/);
+  if (m) return { name: m[1]!.replace(/^["'\s]+|["'\s]+$/g, ''), email: m[2]!.trim().toLowerCase() };
+  return { name: '', email: s.toLowerCase() };
+}
+const firstOf = (v: string[] | string | null | undefined): string => (Array.isArray(v) ? v[0] : v) ?? '';
+
+async function resendGet<T>(env: Env, path: string): Promise<T> {
+  const res = await fetch(`${RESEND}${path}`, { headers: { Authorization: `Bearer ${env.RESEND_API_KEY}` } });
+  if (!res.ok) throw new Error(`resend_${res.status}`);
+  return (await res.json()) as T;
+}
+
+/**
+ * Relève les emails reçus par Resend (adresse de réception dédiée, vers laquelle Zoho transfère une copie
+ * de contact@bunkaio.com) et les range dans la boîte de réception. Sans webhook : appelé par la tâche
+ * planifiée (toutes les 5 minutes) et par le bouton « Relever le courrier ». Chaque email n'est enregistré
+ * qu'une fois (repère par identifiant Resend).
+ */
+export async function syncResendInbox(env: Env): Promise<{ added: number; checked: number }> {
+  const list = await resendGet<{ data?: Array<{ id: string }>; emails?: Array<{ id: string }> }>(env, '/emails/receiving?limit=50');
+  const items = list.data ?? list.emails ?? [];
+  let added = 0;
+  for (const it of items) {
+    if (!it?.id || (await env.ACCOUNTS_KV.get(`inbox-rid:${it.id}`))) continue;
+    try {
+      const m = await resendGet<ResendReceived>(env, `/emails/receiving/${encodeURIComponent(it.id)}`);
+      await storeReceived(env, m);
+      await env.ACCOUNTS_KV.put(`inbox-rid:${it.id}`, '1', { expirationTtl: 90 * 86400 });
+      added++;
+    } catch (err) {
+      console.error('[inbox] email non relevé', it.id, err);
+    }
+  }
+  return { added, checked: items.length };
+}
+
+async function storeReceived(env: Env, m: ResendReceived): Promise<InboxMessage> {
   const now = new Date();
-  const date = parsed.date && !Number.isNaN(Date.parse(parsed.date)) ? new Date(parsed.date) : now;
+  const from = parseAddress(m.from);
+  // Un email transféré par Zoho garde normalement l'expéditeur d'origine ; sinon on prend l'adresse de réponse.
+  const replyTo = parseAddress(firstOf(m.reply_to));
+  const forwarder = !from.email || /@(bunkaio\.com|zoho\.[a-z]+|zohomail\.[a-z]+)$/.test(from.email);
+  const who = forwarder && replyTo.email ? replyTo : from;
+  const created = m.created_at && !Number.isNaN(Date.parse(m.created_at)) ? new Date(m.created_at) : now;
   const msg: InboxMessage = {
-    id: `${now.toISOString()}~${randomHex(3)}`,
-    date: (date.getTime() > now.getTime() + 864e5 ? now : date).toISOString(),
-    fromName: cut(from?.name, 200),
-    fromEmail: cut(from?.address || envelopeFrom, 250).toLowerCase(),
-    to: cut(envelopeTo, 250),
-    subject: cut(parsed.subject || '(sans objet)', 300),
-    text: cut(parsed.text, TEXT_MAX),
-    html: cut(parsed.html, HTML_MAX),
-    attachments: (parsed.attachments ?? []).slice(0, 20).map((a) => ({ filename: cut(a.filename || 'pièce jointe', 200), size: typeof a.content === 'string' ? a.content.length : a.content?.byteLength ?? 0, type: cut(a.mimeType, 100) })),
-    messageId: cut(parsed.messageId, 300),
+    id: `${created.toISOString()}~${(m.id || randomHex(3)).replace(/[^a-z0-9]/gi, '').slice(0, 8)}`,
+    date: created.toISOString(),
+    fromName: cut(who.name, 200),
+    fromEmail: cut(who.email, 250),
+    to: cut(firstOf(m.to), 250),
+    subject: cut(m.subject || '(sans objet)', 300),
+    text: cut(m.text ?? '', TEXT_MAX),
+    html: cut(m.html ?? '', HTML_MAX),
+    attachments: (m.attachments ?? []).slice(0, 20).map((a) => ({ filename: cut(a.filename || 'pièce jointe', 200), size: a.size ?? 0, type: cut(a.content_type || a.contentType, 100) })),
+    messageId: cut(m.message_id, 300),
     read: false,
     starred: false,
     archived: false,
@@ -132,4 +175,3 @@ export async function replyTo(env: Env, id: string, body: string, subject?: stri
   await env.ACCOUNTS_KV.put(key, JSON.stringify(log.slice(-80)), { metadata: { last: entry.d, t: 'reponse', n: log.length, ok: true }, expirationTtl: 3 * 365 * 24 * 3600 });
 }
 
-export { MAX_RAW };

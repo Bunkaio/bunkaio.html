@@ -405,7 +405,7 @@
       <!-- ═══ Boîte de réception ═══ -->
       <section class="section" id="sec-inbox">
         <div id="inboxSetup"></div>
-        <div class="toolbar"><div class="chips" id="inFilters"></div><span class="grow"></span><input class="mi" id="inSearch" placeholder="Rechercher dans les emails…" oninput="inboxState.q=this.value;renderInbox()" style="max-width:260px"></div>
+        <div class="toolbar"><div class="chips" id="inFilters"></div><span class="grow"></span><button class="btn ghost sm" id="inSyncBtn" onclick="inboxSync(true)">↻ Relever le courrier</button><input class="mi" id="inSearch" placeholder="Rechercher dans les emails…" oninput="inboxState.q=this.value;renderInbox()" style="max-width:260px"></div>
         <div class="inbox">
           <div class="inlist" id="inList"></div>
           <div class="inread" id="inRead"><div class="empty">Sélectionnez un email pour le lire.</div></div>
@@ -631,6 +631,7 @@ function go(id, noPush) {
   $('pageTitle').textContent = s[1];
   $('pageSub').textContent = s[2] + (DB.generatedAt ? ' · données de ' + fdt(DB.generatedAt) : '');
   if (!noPush) history.replaceState(null, '', '#' + id);
+  if (id === 'inbox' && Date.now() - inboxSyncedAt > 60000) inboxSync(false);
   if (id === 'media' && !$('mediaFrame').src) $('mediaFrame').src = 'media.html?embed=1';
   window.scrollTo({ top: 0 });
 }
@@ -1050,8 +1051,20 @@ function renderInbox() {
   $('inFilters').innerHTML = F.map(([id, l, f]) => `<button class="chip ${inboxState.filter === id ? 'on' : ''}" onclick="inboxState.filter='${id}';renderInbox()">${l}<span class="c">${all.filter(f).length}</span></button>`).join('');
   const f = F.find(x => x[0] === inboxState.filter)[2]; const q = inboxState.q.toLowerCase();
   const list = all.filter(m => f(m) && (!q || [m.fromName, m.fromEmail, m.subject, m.preview].join(' ').toLowerCase().includes(q)));
-  $('inboxSetup').innerHTML = !all.length ? `<div class="card" style="margin-bottom:18px"><h3>Recevoir vos emails ici</h3><div class="small" style="line-height:1.7">Aucun email reçu pour l'instant. Pour que les messages envoyés à <b>contact@bunkaio.com</b> arrivent dans cette boîte, il faut les aiguiller vers le Worker avec Cloudflare Email Routing (le domaine doit utiliser les serveurs de noms de Cloudflare) :<ol style="margin:8px 0 0 18px"><li>Cloudflare → votre domaine → <b>Email</b> → Email Routing → activer (il ajoute lui-même les enregistrements MX).</li><li>Destination : vérifier l'adresse de votre vraie boîte mail (celle qui reçoit aujourd'hui).</li><li>Règle : <b>contact@bunkaio.com</b> → action « Envoyer à un Worker » → <b>bunkaio-quiz-stripe</b>.</li><li>Dans le dossier <code>server</code> : <code>npx wrangler secret put INBOX_FORWARD_TO</code> (saisir l'adresse de votre vraie boîte, elle reste secrète) puis <code>npx wrangler deploy</code> : chaque email est alors copié ici <b>et</b> transféré à votre boîte habituelle.</li></ol></div></div>` : '';
+  $('inboxSetup').innerHTML = !all.length ? `<div class="card" style="margin-bottom:18px"><h3>Recevoir vos emails ici</h3><div class="small" style="line-height:1.7">Aucun email reçu pour l'instant. Principe : votre messagerie <b>Zoho</b> continue de recevoir <b>contact@bunkaio.com</b> comme aujourd'hui et en envoie une copie à une adresse de réception Resend ; le tableau de bord relève cette copie toutes les 5 minutes (ou avec « Relever le courrier »).<ol style="margin:8px 0 0 18px"><li><b>Resend</b> → Domains → <b>bunkaio.com</b> → activez <b>Receiving</b> et ajoutez l'enregistrement MX indiqué (sur un sous-domaine du type <code>inbound</code>, sans toucher à vos MX Zoho) dans la zone DNS de votre domaine.</li><li>Adresse de réception : n'importe quelle adresse de ce sous-domaine, par exemple <code>copie@inbound.bunkaio.com</code>.</li><li><b>Zoho Mail</b> → Paramètres → <i>Transfert et POP/IMAP</i> → ajoutez cette adresse en <b>transfert</b> et cochez « conserver une copie ». Le code de vérification de Zoho arrivera ici.</li><li>La clé API Resend du Worker doit avoir l'accès <b>complet</b> (pas seulement « envoi »).</li></ol></div></div>` : '';
   $('inList').innerHTML = list.length ? list.map(m => `<button class="inrow ${m.read ? '' : 'unread'} ${inboxState.sel === m.id ? 'on' : ''}" onclick="openInbox('${esc(m.id)}')"><div class="top1"><span class="nm">${m.starred ? '★ ' : ''}${esc(m.fromName || m.fromEmail)}</span><span class="dt">${ago(m.date)}</span></div><div class="sj">${esc(m.subject)}${m.attachments ? ' 📎' : ''}${m.replied ? ' ↩' : ''}</div><div class="pv">${esc(m.preview)}</div></button>`).join('') : '<div class="empty">Aucun email dans cette vue.</div>';
+}
+let inboxSyncedAt = 0;
+async function inboxSync(manual) {
+  const btn = $('inSyncBtn'); if (btn) { btn.disabled = true; btn.textContent = 'Relève…'; }
+  try {
+    const { res, data } = await api('/admin/inbox/sync', { method: 'POST' });
+    inboxSyncedAt = Date.now();
+    if (!res.ok || !data.ok) {
+      const code = String(data.error || res.status);
+      if (manual) $('inboxSetup').insertAdjacentHTML('afterbegin', `<div class="msg warn" style="margin-bottom:12px">Relève impossible (${esc(code)}). ${/401|403/.test(code) ? 'La clé API Resend n\'a probablement pas l\'accès complet : créez-en une avec « Full access » et enregistrez-la avec <code>npx wrangler secret put RESEND_API_KEY</code>.' : /404/.test(code) ? 'La réception n\'est pas encore activée sur le domaine dans Resend.' : 'Réessayez dans un instant.'}</div>`);
+    } else if (data.added) { toast(data.added + ' nouvel email' + (data.added > 1 ? 's' : '')); await loadDashboard(); } else if (manual) toast('Aucun nouvel email');
+  } catch (e) {} finally { if (btn) { btn.disabled = false; btn.textContent = '↻ Relever le courrier'; } }
 }
 async function openInbox(id) {
   inboxState.sel = id; inboxState.images = false; inboxState.replying = false;
