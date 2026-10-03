@@ -914,6 +914,23 @@ export function buildFreeEmail(params: { subject: string; heading?: string; body
   return finalize(lang, { tpl: 'libre', subject: fill(params.subject), html, text });
 }
 
+/**
+ * Réponse à un email reçu : exactement la même mise en page que les emails automatiques (en-tête logo,
+ * typographie, signature unique). Le texte est celui rédigé par l'admin ; le message d'origine est cité en bas.
+ */
+export function buildReplyEmail(params: { subject: string; body: string; quotedFrom: string; quotedDate: string; quotedText: string; lang?: Lang }): { subject: string; html: string; text: string } {
+  const lang = params.lang ?? 'fr';
+  const paragraphs = params.body.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
+  const bodyHtml = paragraphs.map((p) => `<p style="font-size:15px;line-height:1.65;margin:0 0 16px;">${escapeHtml(p).replace(/\n/g, '<br>')}</p>`).join('');
+  const quote = params.quotedText.trim()
+    ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:26px 0 8px;"><tr><td style="border-left:3px solid #d9cdf5;padding:4px 0 4px 16px;">
+        <div style="font-size:12.5px;color:#76717f;margin-bottom:8px;font-family:${FONT};">${tr(lang, 'Le', 'On')} ${escapeHtml(params.quotedDate)}, ${escapeHtml(params.quotedFrom)} ${tr(lang, 'a écrit :', 'wrote:')}</div>
+        <div style="font-size:13.5px;line-height:1.6;color:#76717f;font-family:${FONT};">${escapeHtml(params.quotedText.slice(0, 4000)).replace(/\n/g, '<br>')}</div></td></tr></table>` : '';
+  const html = emailShell(`${bodyHtml}${quote}`, lang) + '<!--bk-tpl:reponse-->';
+  const text = `${paragraphs.join('\n\n')}\n\n${signatureText(lang)}${params.quotedText.trim() ? `\n\n${tr(lang, 'Le', 'On')} ${params.quotedDate}, ${params.quotedFrom} ${tr(lang, 'a écrit :', 'wrote:')}\n${params.quotedText.split('\n').slice(0, 40).map((l) => `> ${l}`).join('\n')}` : ''}`;
+  return { subject: params.subject, html, text };
+}
+
 function escapeHtml(value: string): string {
   return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
@@ -950,7 +967,7 @@ export function buildClientActivityEmail(params: { type: AccountType; email: str
 }
 
 /** Envoie un email transactionnel via l'API Resend (https://resend.com). */
-export async function sendEmail(env: Env, to: string, subject: string, html: string, text: string, tplOverride?: string): Promise<void> {
+export async function sendEmail(env: Env, to: string, subject: string, html: string, text: string, tplOverride?: string, extra?: { headers?: Record<string, string>; replyTo?: string }): Promise<void> {
   // Le modèle est repéré par un commentaire HTML invisible posé par les constructeurs (voir finalize).
   const tpl = tplOverride ?? html.match(/<!--bk-tpl:([a-z_]+)-->/)?.[1] ?? '';
   let error = '';
@@ -958,7 +975,7 @@ export async function sendEmail(env: Env, to: string, subject: string, html: str
     const res = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${env.RESEND_API_KEY}` },
-      body: JSON.stringify({ from: env.EMAIL_FROM, to, subject, html, text }),
+      body: JSON.stringify({ from: env.EMAIL_FROM, to, subject, html, text, ...(extra?.headers && Object.keys(extra.headers).length ? { headers: extra.headers } : {}), ...(extra?.replyTo ? { reply_to: extra.replyTo } : {}) }),
     });
     if (!res.ok) {
       const detail = await res.text();

@@ -1,3 +1,4 @@
+import { buildReplyEmail, sendEmail } from './email';
 import type { Env } from './types';
 
 /**
@@ -138,40 +139,36 @@ export async function updateInbox(env: Env, id: string, change: Partial<Pick<Inb
   return true;
 }
 
-const esc = (v: string): string => v.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-
 /**
  * Réponse envoyée depuis le tableau de bord, avec le chaînage standard (In-Reply-To / References)
  * pour que la conversation reste groupée chez le destinataire. Adresse d'expédition : EMAIL_FROM.
  */
-export async function replyTo(env: Env, id: string, body: string, subject?: string): Promise<void> {
+async function buildReplyFor(env: Env, id: string, body: string, subject?: string): Promise<{ msg: InboxMessage; mail: { subject: string; html: string; text: string }; headers: Record<string, string> }> {
   const msg = await getInboxMessage(env, id);
   if (!msg) throw new Error('not_found');
-  const text = body.trim();
-  if (!text) throw new Error('empty');
+  if (!body.trim()) throw new Error('empty');
   const re = subject?.trim() || (/^re\s*:/i.test(msg.subject) ? msg.subject : `Re: ${msg.subject}`);
-  const quoted = msg.text.split('\n').slice(0, 40).map((l) => `> ${l}`).join('\n');
   const when = new Date(msg.date).toLocaleString('fr-FR', { dateStyle: 'long', timeStyle: 'short', timeZone: 'Europe/Paris' });
-  const signature = 'Aya Nascimento\nBUNKAIO — Photographe professionnelle\n07 58 57 31 61 · contact@bunkaio.com · bunkaio.com';
-  const fullText = `${text}\n\n--\n${signature}\n\nLe ${when}, ${msg.fromName || msg.fromEmail} a écrit :\n${quoted}`;
-  const html = `<div style="font-family:'DM Sans',Helvetica,Arial,sans-serif;font-size:15px;line-height:1.6;color:#0a0a0c;">${esc(text).replace(/\n/g, '<br>')}<br><br><span style="color:#76717f;">--<br>${esc(signature).replace(/\n/g, '<br>')}</span><blockquote style="margin:20px 0 0;padding:0 0 0 14px;border-left:3px solid #d9cdf5;color:#76717f;font-size:13.5px;">Le ${esc(when)}, ${esc(msg.fromName || msg.fromEmail)} a écrit :<br><br>${esc(msg.text.slice(0, 4000)).replace(/\n/g, '<br>')}</blockquote></div>`;
+  const mail = buildReplyEmail({ subject: re, body, quotedFrom: msg.fromName || msg.fromEmail, quotedDate: when, quotedText: msg.text });
   const headers: Record<string, string> = {};
   if (msg.messageId) { headers['In-Reply-To'] = msg.messageId; headers['References'] = msg.messageId; }
-  const res = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${env.RESEND_API_KEY}` },
-    body: JSON.stringify({ from: env.EMAIL_FROM, to: msg.fromEmail, subject: re, html, text: fullText, headers, reply_to: env.ADMIN_NOTIFICATION_EMAIL }),
-  });
-  if (!res.ok) throw new Error(`resend_error: ${res.status} ${(await res.text()).slice(0, 120)}`);
+  return { msg, mail, headers };
+}
+
+/** Aperçu exact de la réponse (même gabarit que les emails automatiques), sans l'envoyer. */
+export async function previewReply(env: Env, id: string, body: string, subject?: string): Promise<{ subject: string; html: string }> {
+  const { mail } = await buildReplyFor(env, id, body, subject);
+  return { subject: mail.subject, html: mail.html };
+}
+
+/**
+ * Réponse envoyée depuis le tableau de bord : même gabarit et même signature que les emails automatiques,
+ * avec le chaînage standard (In-Reply-To / References) pour que la conversation reste groupée chez le destinataire.
+ */
+export async function replyTo(env: Env, id: string, body: string, subject?: string): Promise<void> {
+  const { msg, mail, headers } = await buildReplyFor(env, id, body, subject);
+  await sendEmail(env, msg.fromEmail, mail.subject, mail.html, mail.text, undefined, { headers, replyTo: env.ADMIN_NOTIFICATION_EMAIL });
   msg.repliedAt = new Date().toISOString();
   msg.read = true;
   await env.ACCOUNTS_KV.put(PREFIX + id, JSON.stringify(msg), { expirationTtl: TTL, metadata: summary(msg) });
-  // Trace de la réponse dans l'historique du contact (même journal que les emails automatiques).
-  const key = `maillog:${msg.fromEmail}`;
-  let log: Array<{ t: string; s: string; d: string; ok: boolean }> = [];
-  try { log = JSON.parse((await env.ACCOUNTS_KV.get(key)) ?? '[]'); } catch { log = []; }
-  const entry = { t: 'reponse', s: re.slice(0, 200), d: msg.repliedAt, ok: true };
-  log.push(entry);
-  await env.ACCOUNTS_KV.put(key, JSON.stringify(log.slice(-80)), { metadata: { last: entry.d, t: 'reponse', n: log.length, ok: true }, expirationTtl: 3 * 365 * 24 * 3600 });
 }
-

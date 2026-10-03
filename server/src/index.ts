@@ -4,7 +4,7 @@ import { handleCollect, handleStats, purgeOldAnalytics } from './analytics';
 import { appendJournal, diffAccountActivity, flushActivityNotifications, queueActivityNotification } from './activity';
 import { billingErrors, cleanBilling, composeAddress } from './billing';
 import { buildDashboard, deleteContact, removeInvoice } from './admin';
-import { getInboxMessage, replyTo, syncResendInbox, updateInbox } from './inbox';
+import { getInboxMessage, previewReply, replyTo, syncResendInbox, updateInbox } from './inbox';
 import { buildManualMail, getMailLog, isUnsubscribed, listCampaigns, MANUAL_TEMPLATES, saveCampaign, sendMailing, setUnsubscribed } from './mailing';
 import type { ManualTemplate, MailingParams, RecipientCtx } from './mailing';
 import { unsubscribeToken } from './email';
@@ -661,9 +661,10 @@ async function handleAdminDashboard(request: Request, env: Env, headers: Record<
     return jsonResponse({ ok }, ok ? 200 : 404, headers);
   }
   if (path === '/admin/inbox/reply' && request.method === 'POST') {
-    const body = (await request.json().catch(() => ({}))) as { id?: unknown; body?: unknown; subject?: unknown };
+    const body = (await request.json().catch(() => ({}))) as { id?: unknown; body?: unknown; subject?: unknown; preview?: unknown };
     if (typeof body.id !== 'string' || typeof body.body !== 'string' || !body.body.trim()) return jsonResponse({ ok: false, error: 'invalid_payload' }, 400, headers);
     try {
+      if (body.preview === true) return jsonResponse({ ok: true, ...(await previewReply(env, body.id, body.body, typeof body.subject === 'string' ? body.subject : undefined)) }, 200, headers);
       await replyTo(env, body.id, body.body, typeof body.subject === 'string' ? body.subject : undefined);
       return jsonResponse({ ok: true }, 200, headers);
     } catch (err) {

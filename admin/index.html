@@ -405,7 +405,7 @@
       <!-- ═══ Boîte de réception ═══ -->
       <section class="section" id="sec-inbox">
         <div id="inboxSetup"></div>
-        <div class="toolbar"><div class="chips" id="inFilters"></div><span class="grow"></span><button class="btn ghost sm" id="inSyncBtn" onclick="inboxSync(true)">↻ Relever le courrier</button><input class="mi" id="inSearch" placeholder="Rechercher dans les emails…" oninput="inboxState.q=this.value;renderInbox()" style="max-width:260px"></div>
+        <div class="toolbar"><div class="chips" id="inFilters"></div><span class="grow"></span><button class="btn sm" onclick="mailState.tpl='libre';mailState.sel=new Set();go('mailing')">✉ Nouveau message</button><button class="btn ghost sm" id="inSyncBtn" onclick="inboxSync(true)">↻ Relever le courrier</button><input class="mi" id="inSearch" placeholder="Rechercher dans les emails…" oninput="inboxState.q=this.value;renderInbox()" style="max-width:260px"></div>
         <div class="inbox">
           <div class="inlist" id="inList"></div>
           <div class="inread" id="inRead"><div class="empty">Sélectionnez un email pour le lire.</div></div>
@@ -1110,9 +1110,15 @@ function renderInboxReply() {
   const m = inboxState.msg;
   $('inReply').innerHTML = `<div class="card" style="margin-top:14px;background:var(--violet);border:0"><h3>Réponse à ${esc(m.fromName || m.fromEmail)}</h3><div class="form">
     <div class="fg"><label>Objet</label><input class="mi" id="rpSubject" value="${esc(/^re\s*:/i.test(m.subject) ? m.subject : 'Re: ' + m.subject)}"></div>
-    <div class="fg"><label>Message</label><textarea class="mi" id="rpBody" style="min-height:170px;font-family:inherit" placeholder="Bonjour ${esc((m.fromName || '').split(' ')[0])},"></textarea><div class="hint small muted">Envoyé depuis contact@bunkaio.com avec votre signature et la citation du message d'origine.</div></div>
-    <div style="display:flex;gap:10px"><button class="btn" id="rpSend" onclick="inboxSendReply()">Envoyer la réponse</button><button class="btn ghost" onclick="inboxState.replying=false;$('inReply').innerHTML=''">Annuler</button></div><div id="rpMsg"></div></div></div>`;
+    <div class="fg"><label>Message</label><textarea class="mi" id="rpBody" style="min-height:170px;font-family:inherit" placeholder="Bonjour ${esc((m.fromName || '').split(' ')[0])},"></textarea><div class="hint small muted">Envoyé depuis contact@bunkaio.com avec le même habillage que les emails automatiques (logo, typographie, signature) et la citation du message d'origine.</div></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" id="rpSend" onclick="inboxSendReply()">Envoyer la réponse</button><button class="btn ghost" onclick="inboxPreviewReply()">Aperçu</button><button class="btn ghost" onclick="inboxState.replying=false;$('inReply').innerHTML=''">Annuler</button></div><div id="rpMsg"></div><iframe id="rpPreview" sandbox="" hidden style="width:100%;height:560px;border:1px solid var(--line);border-radius:12px;background:#f6f1fc" title="Aperçu de la réponse"></iframe></div></div>`;
   $('rpBody').focus();
+}
+async function inboxPreviewReply() {
+  const body = $('rpBody').value.trim(); if (!body) { $('rpMsg').innerHTML = '<div class="msg err">Écrivez votre message.</div>'; return; }
+  try { const { res, data } = await api('/admin/inbox/reply', { method: 'POST', body: JSON.stringify({ id: inboxState.sel, body, subject: $('rpSubject').value, preview: true }) });
+    if (!res.ok || !data.ok) { $('rpMsg').innerHTML = '<div class="msg err">Aperçu impossible.</div>'; return; }
+    $('rpMsg').innerHTML = ''; const f = $('rpPreview'); f.hidden = false; f.srcdoc = data.html; f.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch (e) {}
 }
 async function inboxSendReply() {
   const body = $('rpBody').value.trim(); if (!body) { $('rpMsg').innerHTML = '<div class="msg err">Écrivez votre message.</div>'; return; }
@@ -1181,9 +1187,9 @@ function renderMailing() {
   $('mContent').innerHTML = lib ? `<div class="form">
     <div class="fg"><label>Objet de l'email</label><input class="mi" id="mpSubject" value="${esc(P.subject)}" oninput="mailState.p.subject=this.value" placeholder="Ex. Nouvelle offre pour vos portraits"></div>
     <div class="fg"><label>Titre (facultatif)</label><input class="mi" id="mpHeading" value="${esc(P.heading)}" oninput="mailState.p.heading=this.value"></div>
-    <div class="fg"><label>Message</label><textarea class="mi" id="mpBody" style="min-height:190px;font-family:inherit" oninput="mailState.p.body=this.value" placeholder="Bonjour est ajouté automatiquement.&#10;&#10;Séparez les paragraphes par une ligne vide. Variables : {prenom}, {nom}.">${esc(P.body)}</textarea></div>
+    <div class="fg"><label>Message</label><textarea class="mi" id="mpBody" style="min-height:190px;font-family:inherit" oninput="mailState.p.body=this.value" placeholder="« Bonjour {prénom}, » est ajouté automatiquement.&#10;&#10;Séparez les paragraphes par une ligne vide. Variables : {prenom}, {nom}.">${esc(P.body)}</textarea></div>
     <div class="frow"><div class="fg"><label>Bouton (texte)</label><input class="mi" value="${esc(P.ctaLabel)}" oninput="mailState.p.ctaLabel=this.value" placeholder="Découvrir"></div><div class="fg"><label>Bouton (lien https://)</label><input class="mi" value="${esc(P.ctaUrl)}" oninput="mailState.p.ctaUrl=this.value" placeholder="https://bunkaio.com/devis/"></div></div>
-    <div class="hint small muted">Bonjour {prénom}, la signature BUNKAIO et le lien « se désinscrire » sont ajoutés automatiquement. Les désinscrits sont exclus.</div></div>`
+    <div class="hint small muted">Habillage identique aux emails automatiques : en-tête logo, typographie, « À très vite, » et signature BUNKAIO ajoutés automatiquement, avec le lien « se désinscrire » pour les messages d'information. Les désinscrits sont exclus.</div></div>`
     : `<div class="msg info">Ce modèle utilise le texte des emails automatiques : il est rempli avec les données de chaque destinataire (nom, séance, facture…). Cliquez sur « Actualiser l'aperçu » pour voir le résultat.</div>`;
   renderMailSeg(); renderMailRecipients(); renderMailHistory();
 }
