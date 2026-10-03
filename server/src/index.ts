@@ -257,7 +257,7 @@ function isValidAdminAccountUpsertPayload(body: unknown): body is AdminAccountUp
     (b.telephone === undefined || typeof b.telephone === 'string') &&
     (b.adresse === undefined || typeof b.adresse === 'string') &&
     (b.etapeActuelle === undefined || typeof b.etapeActuelle === 'number') &&
-    (b.lightroomUrl === undefined || typeof b.lightroomUrl === 'string') &&
+    (b.lightroomUrl === undefined || (typeof b.lightroomUrl === 'string' && b.lightroomUrl.length <= 600 && (b.lightroomUrl === '' || /^https:\/\/[^\s]+$/.test(b.lightroomUrl)))) &&
     (b.sendAccessMail === undefined || typeof b.sendAccessMail === 'boolean') &&
     (b.sendPhotosMail === undefined || typeof b.sendPhotosMail === 'boolean') &&
     (b.photosAcces === undefined || typeof b.photosAcces === 'boolean') &&

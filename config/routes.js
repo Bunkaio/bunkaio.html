@@ -7,9 +7,9 @@
    ═══════════════════════════════════════════════════════════ */
 const SEO_ROUTES = [
   { view:'home', path:'/', index:true,
-    title:'BUNKAIO ⊹ | Photographe à Montpellier, Béziers et Toulouse',
+    title:'BUNKAIO ⊹',
     description:'BUNKAIO, photographe professionnel basé à Montpellier, mobile à Béziers et Toulouse : portrait, mode, produit, événementiel. Images HD haut de gamme.',
-    titleEn:'BUNKAIO ⊹ | Professional photographer in Occitanie',
+    titleEn:'BUNKAIO ⊹',
     descriptionEn:'BUNKAIO, mobile professional photographer in Béziers, Montpellier and Toulouse: portrait, fashion, products, corporate, events. Premium HD images. Quote in 2 minutes.' },
   { view:'services', path:'/services/', index:true,
     title:'BUNKAIO ⊹ | Prestations photo et tarifs, photographe Occitanie',

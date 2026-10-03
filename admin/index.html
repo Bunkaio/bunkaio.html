@@ -83,6 +83,8 @@
   .btn:disabled { opacity: .45; cursor: not-allowed; box-shadow: none; }
   .card { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 20px 22px; min-width: 0; }
   .card h3 { font-size: 11px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; display: flex; align-items: center; gap: 10px; }
+  .card h3 { flex-wrap: wrap; }
+  .card h3 .badge { letter-spacing: 0; text-transform: none; font-size: 11.5px; }
   .card h3 .link { margin-left: auto; letter-spacing: 0; text-transform: none; font-size: 12.5px; color: var(--grey); font-weight: 600; cursor: pointer; background: none; border: 0; }
   .grid { display: grid; gap: 18px; }
   .g2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -868,7 +870,7 @@ function computeAlerts() {
     const balOpen = inv.some(i => i.kind === 'solde' && i.status === 'open');
     const depPaid = inv.some(i => i.kind === 'acompte' && i.status === 'paid');
     const se = acc && acc.seance;
-    if (balOpen && !(acc && acc.lightroomUrl)) out.push({ lvl: 'danger', ic: '🔗', t: `Lien Lightroom manquant — ${c.name || c.email}`, d: 'Le solde est envoyé : sans lien, le client ne recevra pas son album au paiement.', email: c.email, tab: 'space' });
+    if (balOpen && !(acc && acc.lightroomUrl)) out.push({ lvl: 'danger', ic: '🔗', t: `Lien Lightroom manquant — ${c.name || c.email}`, d: 'Le solde est envoyé : sans lien, le client ne recevra pas son album au paiement.', email: c.email, tab: 'summary' });
     if (depPaid && !c.accounts.length) out.push({ lvl: 'warn', ic: '👤', t: `Espace à créer — ${c.name || c.email}`, d: 'Acompte payé mais aucun espace client : créez-le pour le moodboard et le suivi.', email: c.email, tab: 'space' });
     if (acc && !acc.infosCompletes && (depPaid || acc.type === 'partner')) out.push({ lvl: 'warn', ic: '🧾', t: `Coordonnées incomplètes — ${c.name || c.email}`, d: 'L\'espace n\'est pas validé : informations de devis et de facture à compléter.', email: c.email, tab: 'space' });
     if (se && se.statut !== 'annulee' && se.date < now && !se.livraison && c.stage === 'postprod') out.push({ lvl: 'warn', ic: '📅', t: `Date de livraison à saisir — ${c.name || c.email}`, d: `Séance du ${fdate(se.date)} passée, aucune date de livraison estimée.`, email: c.email, tab: 'session' });
@@ -1140,7 +1142,7 @@ function renderSessions() {
   $('sessUpcoming').innerHTML = up.length ? `<div class="list">${up.map(({ c, s }) => `<div class="li click" onclick="openDrawer('${esc(c.email)}','session')"><div class="ic">📸</div><div class="tx"><b>${fdate(s.date, { weekday: 'long', day: 'numeric', month: 'long' })}${s.heure ? ' · ' + esc(s.heure) : ''}</b><div class="d">${esc(c.name || c.email)}${s.prestation ? ' · ' + esc(s.prestation) : ''}</div><div class="d">${esc(s.lieu || 'Lieu à préciser')}</div></div><div class="act"><span class="badge">${daysUntil(s.date)}</span></div></div>`).join('')}</div>` : '<div class="empty">Aucune séance à venir.</div>';
   const post = DB.contacts.filter(c => ['postprod', 'solde'].includes(c.stage));
   $('sessDelivery').innerHTML = post.length ? `<div class="list">${post.map(c => { const a = primaryAcc(c) || {}; const s = a.seance || {}; const late = s.livraison && s.livraison < today() && c.stage === 'postprod';
-    return `<div class="li click" onclick="openDrawer('${esc(c.email)}','${c.stage === 'postprod' ? 'invoices' : 'space'}')"><div class="ic ${late ? 'danger' : ''}">${c.stage === 'solde' ? '€' : '🎞'}</div><div class="tx"><b>${esc(c.name || c.email)}</b><div class="d">${c.stage === 'solde' ? 'Solde envoyé, en attente du paiement' : 'Séance du ' + fdate(s.date) + ' · livraison ' + (s.livraison ? 'prévue ' + fdate(s.livraison) : 'non datée')}</div></div><div class="act">${a.lightroomUrl ? '<span class="badge ok">Lightroom ✓</span>' : '<span class="badge warn">Lightroom à saisir</span>'}</div></div>`; }).join('')}</div>` : '<div class="empty">Aucun projet en post-production.</div>';
+    return `<div class="li click" onclick="openDrawer('${esc(c.email)}','${c.stage === 'postprod' ? 'invoices' : 'space'}')"><div class="ic ${late ? 'danger' : ''}">${c.stage === 'solde' ? '€' : '🎞'}</div><div class="tx"><b>${esc(c.name || c.email)}</b><div class="d">${c.stage === 'solde' ? 'Solde envoyé, en attente du paiement' : 'Séance du ' + fdate(s.date) + ' · livraison ' + (s.livraison ? 'prévue ' + fdate(s.livraison) : 'non datée')}</div></div><div class="act">${a.lightroomUrl ? '<span class="badge ok">Lightroom ✓</span>' : '<span class="badge warn">Lightroom à saisir</span>'}</div></div>${a.lightroomUrl ? '' : `<div style="display:flex;gap:8px;padding:0 0 12px 44px" onclick="event.stopPropagation()"><input class="mi" id="lrq-${esc(c.email)}" inputmode="url" placeholder="Coller le lien de l'album Lightroom" style="flex:1;min-width:0"><button class="btn sm" onclick="lrSave('${esc(c.email)}','lrq-${esc(c.email)}')">Ajouter</button></div>`}`; }).join('')}</div>` : '<div class="empty">Aucun projet en post-production.</div>';
   // Automatisations : en attente = ce que la prochaine exécution enverra (ou enverra plus tard).
   const c = DB.contacts;
   const leadsWaiting = c.filter(x => x.markers.quizLe && !x.markers.acompteCree && !x.markers.acomptePaye && !x.markers.relanceDevis);
@@ -1501,6 +1503,48 @@ async function editTagNames() {
   if (!changed) return;
   try { const { res } = await api('/admin/tags', { method: 'POST', body: JSON.stringify({ names: { ...DB.tagNames, ...names } }) }); if (res.ok) { DB.tagNames = { ...DB.tagNames, ...names }; renderDrawer(); renderContacts(); renderSegChips(); toast('Étiquettes renommées'); } } catch (e) {}
 }
+
+
+/* ── Album Lightroom : ajout rapide du lien de partage ── */
+const lrHostOk = u => /^https:\/\/(lightroom\.adobe\.com|adobe\.ly|lr\.adobe\.com)\//i.test(u);
+function lrCard(c) {
+  const a = accOf(c, 'client') || accOf(c, 'partner');
+  if (!a) return `<div class="card" style="margin-bottom:18px" id="lrCard"><h3>📷 Album Lightroom</h3><div class="msg warn">Ce contact n'a pas encore d'espace : créez-le pour pouvoir lui donner accès à ses photos.</div><div style="margin-top:12px"><button class="btn sm" onclick="openNewContact('${esc(c.email)}','${esc(c.name).replace(/&#39;/g, '')}','${esc(c.phone)}')">+ Créer l'espace client</button></div></div>`;
+  const has = !!a.lightroomUrl; const open = !!a.photosAcces;
+  const bal = c.invoices.find(i => i.kind === 'solde');
+  const hint = open ? 'Le client a accès à son album (lien visible dans son espace).' : has ? (bal && bal.status === 'open' ? 'Lien prêt : il sera envoyé au client dès le paiement du solde.' : bal && bal.status === 'paid' ? 'Solde payé mais accès fermé : ouvrez-le ci-dessous.' : 'Lien prêt. Créez la facture « Photos prêtes + solde » : le client le recevra à son paiement.') : 'Collez le lien de partage de l\'album Lightroom (Partager → Créer un lien).';
+  return `<div class="card" style="margin-bottom:18px;${has ? '' : 'border-color:var(--lav)'}" id="lrCard"><h3>📷 Album Lightroom ${open ? '<span class="badge ok">Accès ouvert</span>' : has ? '<span class="badge warn">Lien enregistré · accès fermé</span>' : '<span class="badge line">Aucun lien</span>'}</h3>
+    <div class="fg"><input class="mi" id="lrInput" inputmode="url" autocomplete="off" placeholder="https://lightroom.adobe.com/shares/…" value="${esc(a.lightroomUrl || '')}" oninput="lrCheck(this)"><div class="hint small muted" id="lrHint">${hint}</div></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+      <button class="btn sm" onclick="lrSave('${esc(c.email)}')">Enregistrer le lien</button>
+      <button class="btn ghost sm" onclick="lrPaste()">📋 Coller</button>
+      ${has ? `<a class="btn ghost sm" href="${esc(a.lightroomUrl)}" target="_blank" rel="noopener">Tester ↗</a>` : ''}
+      ${has && !open ? `<button class="btn soft sm" onclick="lrOpen('${esc(c.email)}')">Ouvrir l'accès et prévenir le client</button>` : ''}
+      ${open ? `<button class="btn ghost sm" onclick="lrOpen('${esc(c.email)}')">Renvoyer l'email d'accès</button><button class="btn ghost sm" style="color:var(--danger)" onclick="lrRevoke('${esc(c.email)}')">Retirer l'accès</button>` : ''}
+    </div></div>`;
+}
+function lrCheck(el) { const v = el.value.trim(); const h = $('lrHint'); if (!h) return; h.style.color = v && !/^https:\/\//i.test(v) ? 'var(--danger)' : ''; if (v && !/^https:\/\//i.test(v)) h.textContent = 'Le lien doit commencer par https://'; else if (v && !lrHostOk(v)) { h.style.color = 'var(--warn)'; h.textContent = 'Ce lien ne ressemble pas à un lien Lightroom (lightroom.adobe.com ou adobe.ly) : vérifiez-le avant d\'enregistrer.'; } }
+async function lrPaste() { try { const t = (await navigator.clipboard.readText()).trim(); if (t) { $('lrInput').value = t; lrCheck($('lrInput')); } else toast('Presse-papiers vide'); } catch (e) { toast('Collez avec Ctrl+V / appui long dans le champ'); } }
+async function lrApi(email, patch, doneMsg, inputId) {
+  const c = contactByEmail(email); const a = c && (accOf(c, 'client') || accOf(c, 'partner'));
+  if (!a) { toast('Créez d\'abord l\'espace du contact'); return null; }
+  try {
+    const { res, data } = await api('/accounts', { method: 'POST', body: JSON.stringify({ type: a.type, email: a.email, ...patch }) });
+    if (!res.ok || !data.ok) { toast('Erreur : ' + (data.error || res.status)); return null; }
+    await loadDashboard(); if (drawer.email === email && drawer.mode !== 'quote') renderDrawer();
+    const em = data.emails || {};
+    toast(doneMsg + (em.photos === true ? ' · email envoyé au client' : em.photos === 'no_lightroom_url' ? ' · ⚠ aucun lien' : em.photos === false ? ' · ⚠ email non envoyé' : ''));
+    return data;
+  } catch (e) { return null; }
+}
+async function lrSave(email, inputId) {
+  const el = $(inputId || 'lrInput'); const url = (el ? el.value : '').trim();
+  if (url && !/^https:\/\/\S+$/i.test(url)) { toast('Le lien doit commencer par https://'); return; }
+  if (url && !lrHostOk(url) && !confirm('Ce lien ne ressemble pas à un lien Lightroom. L\'enregistrer quand même ?')) return;
+  await lrApi(email, { lightroomUrl: url }, url ? 'Lien Lightroom enregistré' : 'Lien supprimé');
+}
+async function lrOpen(email) { if (!confirm('Ouvrir l\'accès aux photos et envoyer au client l\'email « Votre album est accessible » ?')) return; await lrApi(email, { sendPhotosMail: true }, 'Accès ouvert'); }
+async function lrRevoke(email) { if (!confirm('Retirer l\'accès aux photos ? Le lien disparaît de l\'espace du client. Pensez aussi à retirer le partage dans Lightroom.')) return; await lrApi(email, { revokePhotos: true }, 'Accès retiré'); }
 
 /* ── Mailing manuel ── */
 const MAIL_TPLS = [
@@ -1946,6 +1990,7 @@ function drSummary(c) {
   if (a) quick.push(`<button class="btn soft sm" onclick="setDrTab('session')">📅 Séance</button>`);
   const msgs = c.messages || [];
   return `<div class="quick">${quick.join('')}</div>
+  ${lrCard(c)}
   ${tagPicker(c)}
   <div class="grid g2">
     <div class="card"><h3>Parcours</h3><div class="tl">${steps.filter(x => x[1]).map(x => `<div class="it ${x[2] ? 'done' : ''}"><b>${x[0]}</b><div class="d">${esc(x[1])}</div></div>`).join('') || '<div class="small muted">Aucune étape pour l\'instant.</div>'}</div></div>
@@ -2017,7 +2062,7 @@ function drSession(c) {
   </div>`;
 }
 function drInvoices(c) {
-  return `<div class="card" style="margin-bottom:18px"><h3>Nouvelle facture pour ${esc(c.name || c.email)}</h3>
+  return `${lrCard(c)}<div class="card" style="margin-bottom:18px"><h3>Nouvelle facture pour ${esc(c.name || c.email)}</h3>
     ${c.customerId ? `<div class="form"><div class="frow"><div class="fg"><label>Montant total HT (€)</label><input id="drAmount" type="number" min="0" step="0.01" oninput="$('drSplit').innerHTML=this.value>0?'Acompte <b>'+eur(Math.round(this.value*30)/100)+'</b> · Solde <b>'+eur(Math.round(this.value*70)/100)+'</b>':''" value="${esc(c.invoices.find(i => i.kind === 'acompte') ? Math.round(c.invoices.find(i => i.kind === 'acompte').amount / 0.3 * 100) / 100 : '')}"></div><div class="fg"><label>Répartition</label><div class="small" id="drSplit" style="padding:10px 0"></div></div></div>
       <div class="fg"><label>Description</label><input id="drDesc" value="${esc((c.invoices[0] && c.invoices[0].description) || (primaryAcc(c) && primaryAcc(c).seance && primaryAcc(c).seance.prestation) || (c.lead ? c.lead.category : ''))}"></div>
       <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn invbtn" onclick="createInvoice('deposit',true)">Facture d'acompte (30 %)</button><button class="btn ghost invbtn" onclick="createInvoice('balance',true)">Photos prêtes + solde (70 %)</button></div>
