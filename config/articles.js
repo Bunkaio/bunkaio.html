@@ -11,7 +11,7 @@ const ARTICLES = [
   {
     slug: 'combien-coute-une-seance-photo',
     cat: 'photo-part',
-    title: 'Combien coûte une séance photo ? Tarifs et facteurs | BUNKAIO',
+    title: 'BUNKAIO ⊹ | Combien coûte une séance photo ? Tarifs et facteurs',
     description: 'Durée, lieu, nombre de photos retouchées, droits : ce qui fait varier le prix d\'une séance photo, avec nos tarifs réels.',
     h1: 'Combien coûte une séance photo ?',
     excerpt: 'Ce qui fait varier le prix d\'une séance photo portrait, nos tarifs réels et les questions à poser pour comparer deux devis.',
@@ -35,7 +35,7 @@ const ARTICLES = [
   {
     slug: 'preparer-seance-photo-portrait',
     cat: 'photo-part',
-    title: 'Préparer sa séance photo portrait : guide complet | BUNKAIO',
+    title: 'BUNKAIO ⊹ | Préparer sa séance photo portrait : guide complet',
     description: 'Choisir le lieu, la tenue, la lumière et se préparer : conseils concrets pour réussir une séance photo portrait naturelle et sans stress.',
     h1: 'Préparer sa séance photo portrait : le guide complet',
     excerpt: 'Lieu, tenue, préparation, jour J : tout ce qu\'il faut savoir pour une séance photo portrait naturelle et réussie.',
@@ -63,7 +63,7 @@ const ARTICLES = [
   {
     slug: 'que-porter-seance-photo',
     cat: 'photo-part',
-    title: 'Que porter pour une séance photo ? Nos conseils | BUNKAIO',
+    title: 'BUNKAIO ⊹ | Que porter pour une séance photo ? Nos conseils',
     description: 'Couleurs, matières, coupes et accessoires : les bonnes tenues pour une séance photo réussie, en portrait, en couple ou en famille.',
     h1: 'Que porter pour une séance photo ?',
     excerpt: 'Couleurs, matières, motifs, accessoires : nos repères pour choisir des tenues qui vous ressemblent et se photographient bien.',
@@ -89,7 +89,7 @@ const ARTICLES = [
   {
     slug: 'preparer-shooting-photo-produit',
     cat: 'commercial',
-    title: 'Préparer un shooting photo produit : check-list | BUNKAIO',
+    title: 'BUNKAIO ⊹ | Préparer un shooting photo produit : check-list',
     description: 'Brief, préparation des produits, formats, erreurs à éviter : la check-list pour réussir votre prochain shooting photo produit.',
     h1: 'Préparer un shooting photo produit : brief, produits et erreurs à éviter',
     excerpt: 'Packshot, mise en situation, brief, préparation des produits : les étapes pour un shooting photo produit efficace.',
@@ -115,7 +115,7 @@ const ARTICLES = [
   {
     slug: 'preparer-shooting-mode-lookbook',
     cat: 'mode',
-    title: 'Préparer un shooting mode : lookbook, e-commerce, book | BUNKAIO',
+    title: 'BUNKAIO ⊹ | Préparer un shooting mode : lookbook, e-commerce, book',
     description: 'Lookbook, e-commerce, book : comment préparer un shooting mode (pièces, casting, droit à l\'image, direction artistique).',
     h1: 'Préparer un shooting mode : lookbook, e-commerce ou book',
     excerpt: 'Pièces, casting, direction artistique, droit à l\'image : la check-list pour préparer un shooting mode sereinement.',
@@ -141,7 +141,7 @@ const ARTICLES = [
   {
     slug: 'choisir-photographe-evenementiel',
     cat: 'event',
-    title: 'Comment choisir son photographe d\'événement ? | BUNKAIO',
+    title: 'Comment choisir son photographe d\'BUNKAIO ⊹ | événement ?',
     description: 'Critères, questions à poser au prestataire et check-list de préparation pour choisir la bonne couverture photo de votre événement.',
     h1: 'Comment choisir son photographe d\'événement ?',
     excerpt: 'Critères de choix, questions à poser, déroulé et check-list : pour une couverture photo d\'événement sans mauvaise surprise.',
@@ -166,7 +166,7 @@ const ARTICLES = [
   {
     slug: 'photobooth-mariage-bien-choisir',
     cat: 'lumen',
-    title: 'Photobooth de mariage : comment bien le choisir | BUNKAIO',
+    title: 'BUNKAIO ⊹ | Photobooth de mariage : comment bien le choisir',
     description: 'Durée, personnalisation, impressions, galerie en ligne : les critères et les questions pour choisir un photobooth de mariage ou d\'événement.',
     h1: 'Photobooth de mariage : comment bien le choisir',
     excerpt: 'Durée de présence, habillage, impressions, galerie en ligne : les points à vérifier avant de réserver un photobooth.',
@@ -191,7 +191,7 @@ const ARTICLES = [
   {
     slug: 'polas-mannequin-digitals-agence',
     cat: 'mode',
-    title: 'Polas et digitals de mannequin : à quoi ça sert | BUNKAIO',
+    title: 'BUNKAIO ⊹ | Polas et digitals de mannequin : à quoi ça sert',
     description: 'Polas (digitals) : des photos brutes pour agences de mannequins. Ce qu\'elles montrent, comment s\'y préparer et ce que comprend la formule BUNKAIO.',
     h1: 'Polas et digitals de mannequin : à quoi servent-elles ?',
     excerpt: 'Des photos brutes, sans retouche, destinées aux agences : ce qu\'elles montrent, comment s\'y préparer et ce que comprend notre formule Polas.',
@@ -215,7 +215,7 @@ const ARTICLES = [
   {
     slug: 'packshot-ou-mise-en-scene-photo-produit',
     cat: 'commercial',
-    title: 'Packshot ou photo mise en scène : que choisir ? | BUNKAIO',
+    title: 'BUNKAIO ⊹ | Packshot ou photo mise en scène : que choisir ?',
     description: 'Fond neutre ou produit mis en scène : quel style pour vos fiches produit, votre site et vos réseaux ? Critères de choix et formules BUNKAIO.',
     h1: 'Packshot ou photo de produit mise en scène : que choisir ?',
     excerpt: 'Fond neutre pour la fiche produit, mise en scène pour les réseaux : comment choisir selon l\'usage, et quelle formule retenir.',
@@ -238,7 +238,7 @@ const ARTICLES = [
   {
     slug: 'lieux-seance-photo-montpellier-beziers-toulouse',
     cat: 'photo-part',
-    title: 'Lieux de séance photo à Montpellier, Béziers, Toulouse | BUNKAIO',
+    title: 'BUNKAIO ⊹ | Lieux de séance photo à Montpellier, Béziers, Toulouse',
     description: 'Peyrou, canal du Midi, Pont-Neuf, Plateau des Poètes : des lieux photogéniques à Montpellier, Béziers et Toulouse, et comment choisir le vôtre.',
     h1: 'Où faire une séance photo à Montpellier, Béziers ou Toulouse ?',
     excerpt: 'Des lieux appréciés pour leur lumière et leur décor dans les trois villes où nous intervenons, et les critères pour choisir le bon.',
@@ -262,7 +262,7 @@ const ARTICLES = [
   {
     slug: 'portrait-professionnel-photo-profil-linkedin',
     cat: 'corporate',
-    title: 'Portrait professionnel : photo de profil, site, équipe | BUNKAIO',
+    title: 'BUNKAIO ⊹ | Portrait professionnel : photo de profil, site, équipe',
     description: 'Photo de profil LinkedIn, site web, équipe : comment réussir son portrait professionnel, quoi porter et quelle formule choisir.',
     h1: 'Portrait professionnel : réussir sa photo de profil et de présentation',
     excerpt: 'Pour LinkedIn, votre site ou votre équipe : les clés d\'un portrait professionnel naturel, et la formule adaptée.',

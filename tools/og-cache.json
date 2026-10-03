@@ -1,17 +1,17 @@
 {
-  "services": "f24e396389e76e8917d5623f3e2d2e76f38349a1",
+  "services": "ba708f7394563ef4c85b2a5c2ccf7e65b94ed3ea",
   "services-seance-photo-particuliers": "b9cf401375d28a7b3828a4ff238ef10a09cd1fb0",
   "services-photographe-mode-mannequins": "9fea6554574ebfea05968faeb16d0035f4135a29",
   "services-photo-produits-packshots": "b4a882344749826a55acef092662d16dcf2b64a4",
   "services-photographe-evenementiel": "49522c6bed3090745aba7ed464ac0a0c5d1df6ad",
   "services-photobooth-ia-mariage-lumen": "9ad8ea62e39fdc6c937801da7497dd3d06251a02",
   "a-propos": "3ee0b5ce33e8f06610ed617592942f6ae011cdcf",
-  "devis": "c18cb890b906953cf49dca69ae551fe215372a79",
-  "portfolio": "a2a11faceadbfd87cfd8e227e51fa0a3792d5bc3",
-  "contact": "c7b453470b1930cabf356bda38b522ad0217822e",
+  "devis": "ba708f7394563ef4c85b2a5c2ccf7e65b94ed3ea",
+  "portfolio": "ba708f7394563ef4c85b2a5c2ccf7e65b94ed3ea",
+  "contact": "ba708f7394563ef4c85b2a5c2ccf7e65b94ed3ea",
   "partenaires": "d1d951ef331631c4b6f812711b2046a172a05cc1",
-  "faq": "4e6a0a44e39c560b29be2e63ded68cf7506bbf45",
-  "conseils": "f45d0a52941eaf7fdf602116daae35ffd69d8d91",
+  "faq": "ba708f7394563ef4c85b2a5c2ccf7e65b94ed3ea",
+  "conseils": "ba708f7394563ef4c85b2a5c2ccf7e65b94ed3ea",
   "conseils-combien-coute-une-seance-photo": "b49b7250008215e2dc73e17023dfb2cf5feb1e0f",
   "conseils-preparer-seance-photo-portrait": "e44b8dd98309b96a53eb48c0f62d5278ffc689b9",
   "conseils-que-porter-seance-photo": "9a3956fb6d19c28ec726c1a32a8cfac538ace887",
@@ -25,5 +25,5 @@
   "conseils-portrait-professionnel-photo-profil-linkedin": "18e8282077d214b2c240e330aaf112bfe6f8429b",
   "services-portrait-professionnel-corporate": "2a7cda7a5d014d87a3935e4cd844d47eac2420c1",
   "decouvrir-chaque-prestation": "7b72a597706af48a66584978a119bf2ee7035cf6",
-  "collaboration": "5f02d59f13500c19852bce4bf5350a6c5be6655a"
+  "collaboration": "ba708f7394563ef4c85b2a5c2ccf7e65b94ed3ea"
 }

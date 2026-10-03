@@ -7,7 +7,7 @@
    ═══════════════════════════════════════════════════════════ */
 const ARTICLES_EN = {
   'combien-coute-une-seance-photo': {
-    title: 'How much does a photo session cost? Rates and factors | BUNKAIO',
+    title: 'BUNKAIO ⊹ | How much does a photo session cost? Rates and factors',
     description: 'Length, location, number of retouched photos, usage rights: what drives the price of a photo session, with our actual rates.',
     h1: 'How much does a photo session cost?',
     excerpt: 'What makes the price of a portrait session vary, our actual rates, and the questions to ask when comparing two quotes.',
@@ -27,7 +27,7 @@ const ARTICLES_EN = {
     ]
   },
   'preparer-seance-photo-portrait': {
-    title: 'Preparing your portrait photo session: the complete guide | BUNKAIO',
+    title: 'BUNKAIO ⊹ | Preparing your portrait photo session: the complete guide',
     description: 'Choosing the location, outfit and light, and getting ready: practical advice for a natural, stress-free portrait photo session.',
     h1: 'Preparing your portrait photo session: the complete guide',
     excerpt: 'Location, outfit, preparation, the big day: everything you need to know for a natural, successful portrait session.',
@@ -51,7 +51,7 @@ const ARTICLES_EN = {
     ]
   },
   'que-porter-seance-photo': {
-    title: 'What to wear for a photo session? Our advice | BUNKAIO',
+    title: 'BUNKAIO ⊹ | What to wear for a photo session? Our advice',
     description: 'Colours, fabrics, cuts and accessories: the right outfits for a successful photo session, whether solo, as a couple or as a family.',
     h1: 'What to wear for a photo session?',
     excerpt: 'Colours, fabrics, patterns, accessories: our guidelines for choosing outfits that look like you and photograph well.',
@@ -73,7 +73,7 @@ const ARTICLES_EN = {
     ]
   },
   'preparer-shooting-photo-produit': {
-    title: 'Preparing a product photo shoot: checklist | BUNKAIO',
+    title: 'BUNKAIO ⊹ | Preparing a product photo shoot: checklist',
     description: 'Brief, product preparation, formats, mistakes to avoid: the checklist for a successful product photo shoot.',
     h1: 'Preparing a product photo shoot: brief, products and mistakes to avoid',
     excerpt: 'Packshots, styled shots, brief, product preparation: the steps for an efficient product photo shoot.',
@@ -95,7 +95,7 @@ const ARTICLES_EN = {
     ]
   },
   'preparer-shooting-mode-lookbook': {
-    title: 'Preparing a fashion shoot: lookbook, e-commerce, portfolio | BUNKAIO',
+    title: 'BUNKAIO ⊹ | Preparing a fashion shoot: lookbook, e-commerce, portfolio',
     description: 'Lookbook, e-commerce, portfolio: how to prepare a fashion shoot (garments, casting, image rights, art direction).',
     h1: 'Preparing a fashion shoot: lookbook, e-commerce or portfolio',
     excerpt: 'Garments, casting, art direction, image rights: the checklist for preparing a fashion shoot calmly.',
@@ -117,7 +117,7 @@ const ARTICLES_EN = {
     ]
   },
   'choisir-photographe-evenementiel': {
-    title: 'How to choose your event photographer | BUNKAIO',
+    title: 'BUNKAIO ⊹ | How to choose your event photographer',
     description: 'Criteria, questions to ask the provider and a preparation checklist to choose the right photo coverage for your event.',
     h1: 'How to choose your event photographer',
     excerpt: 'Selection criteria, questions to ask, how the day unfolds and a checklist: for event photo coverage with no unpleasant surprises.',
@@ -138,7 +138,7 @@ const ARTICLES_EN = {
     ]
   },
   'photobooth-mariage-bien-choisir': {
-    title: 'Wedding photobooth: how to choose the right one | BUNKAIO',
+    title: 'BUNKAIO ⊹ | Wedding photobooth: how to choose the right one',
     description: 'Length, personalisation, prints, online gallery: the criteria and questions for choosing a wedding or event photobooth.',
     h1: 'Wedding photobooth: how to choose the right one',
     excerpt: 'Length of presence, branding, prints, online gallery: the points to check before booking a photobooth.',
@@ -159,7 +159,7 @@ const ARTICLES_EN = {
     ]
   },
   'polas-mannequin-digitals-agence': {
-    title: 'Polas and model digitals: what they are for | BUNKAIO',
+    title: 'BUNKAIO ⊹ | Polas and model digitals: what they are for',
     description: 'Polas (digitals): raw photos for modelling agencies. What they show, how to prepare and what the BUNKAIO package includes.',
     h1: 'Polas and model digitals: what are they for?',
     excerpt: 'Raw, unretouched photos made for agencies: what they show, how to prepare and what our Polas package includes.',
@@ -179,7 +179,7 @@ const ARTICLES_EN = {
     ]
   },
   'packshot-ou-mise-en-scene-photo-produit': {
-    title: 'Packshot or styled photo: which to choose? | BUNKAIO',
+    title: 'BUNKAIO ⊹ | Packshot or styled photo: which to choose?',
     description: 'Neutral backdrop or styled product: which style for your product pages, website and social media? Selection criteria and BUNKAIO packages.',
     h1: 'Packshot or styled product photo: which to choose?',
     excerpt: 'Neutral backdrop for the product page, styled setup for social media: how to choose depending on the use, and which package to pick.',
@@ -198,7 +198,7 @@ const ARTICLES_EN = {
     ]
   },
   'lieux-seance-photo-montpellier-beziers-toulouse': {
-    title: 'Photo session locations in Montpellier, Béziers, Toulouse | BUNKAIO',
+    title: 'BUNKAIO ⊹ | Photo session locations in Montpellier, Béziers, Toulouse',
     description: 'Peyrou, Canal du Midi, Pont-Neuf, Plateau des Poètes: photogenic locations in Montpellier, Béziers and Toulouse, and how to choose yours.',
     h1: 'Where to hold a photo session in Montpellier, Béziers or Toulouse?',
     excerpt: 'Locations loved for their light and setting in the three cities where we work, and the criteria for choosing the right one.',
@@ -218,7 +218,7 @@ const ARTICLES_EN = {
     ]
   },
   'portrait-professionnel-photo-profil-linkedin': {
-    title: 'Professional portrait: profile photo, website, team | BUNKAIO',
+    title: 'BUNKAIO ⊹ | Professional portrait: profile photo, website, team',
     description: 'LinkedIn profile photo, website, team: how to get a successful professional portrait, what to wear and which package to choose.',
     h1: 'Professional portrait: getting a great profile and presentation photo',
     excerpt: 'For LinkedIn, your website or your team: the keys to a natural professional portrait, and the right package.',
