@@ -4108,7 +4108,7 @@ a.hero-start { text-decoration: none; display: inline-flex; align-items: center;
 /* Fond qui change avec la prestation affichée */
 .mission-tilebgs { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
 .mt-bg { position: absolute; inset: 0; background: center / cover no-repeat; opacity: 0; transition: opacity 0.9s ease; }
-.mt-bg.on { opacity: 0.5; }
+.mt-bg.on { opacity: var(--mt-bg-op, 0.5); }
 @media (prefers-reduced-motion: reduce) { .ms-pill i { display: none; } .ms-prev.swap .ms-tx, .ms-prev.swap .ms-im { animation: none; } }
 
 /* Formules en accordéon (pages prestation) */

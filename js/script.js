@@ -1940,7 +1940,7 @@ function goToServiceTable(catId){
    montre la photo, le prix « dès », trois points forts et le bouton vers le devis de cette catégorie.
    Le fond de la section prend la photo de la prestation affichée. Survol ou clic = choisir ;
    le survol met le défilement en pause. */
-let msIndex = 0, msTimer = null, msHover = false;
+let msIndex = 0, msTimer = null, msHover = false, msHold = false;
 const MS_DELAY = 5500;
 function missionPillName(c){ return c.lumen ? t({fr:'Photobooth Lumen', en:'Lumen photobooth'}) : String(t(c.name)).split(' — ')[0].split(',')[0]; }
 function missionPreviewHTML(c){
@@ -1974,7 +1974,7 @@ function missionSelect(i, fromAuto){
 }
 function missionTick(){
   const wrap = document.getElementById('missionVideoWrap');
-  if (wrap && wrap.classList.contains('active') && !document.hidden && !msHover) missionSelect(msIndex + 1, true);
+  if (wrap && wrap.classList.contains('active') && !document.hidden && !msHover && !msHold) missionSelect(msIndex + 1, true);
   else { clearTimeout(msTimer); msTimer = setTimeout(missionTick, 1500); }
 }
 function renderMissionServices(){
@@ -5770,6 +5770,9 @@ function initHomeClaimVideo(){
     const op = Math.max(0, Math.min(1, (b - 1.8) / 0.4));
     if (content) { content.style.opacity = String(op); content.style.pointerEvents = op < 0.25 ? 'none' : ''; }
     if (overlay) overlay.style.opacity = String(0.3 + 0.7 * op);
+    /* Texte effacé : la photo de la prestation choisie reste fixe et devient plus visible, par-dessus la vidéo. */
+    msHold = op < 0.6;
+    wrap.style.setProperty('--mt-bg-op', String(0.5 + 0.35 * (1 - op)));
   };
   addEventListener('scroll', () => { if (!tick) { tick = true; requestAnimationFrame(fadeContent); } }, { passive: true });
   addEventListener('resize', fadeContent);
