@@ -4009,7 +4009,8 @@ a.hero-start { text-decoration: none; display: inline-flex; align-items: center;
 #accInfoBanner { margin-bottom: 18px; }
 
 /* Accueil : logo seul sous « Le studio » (espace de défilement) */
-.home-logo-gap { min-height: 60vh; display: flex; align-items: center; justify-content: center; padding: 40px 16px; pointer-events: none; }
+.home-logo-gap { min-height: 60vh; display: flex; align-items: center; justify-content: center; padding: 40px 16px; pointer-events: none !important; }
+.home-logo-gap * { pointer-events: none !important; }
 .home-logo-gap img { width: clamp(120px, 16vw, 190px); height: auto; opacity: 0; transition: opacity 0.2s linear; }
 
 

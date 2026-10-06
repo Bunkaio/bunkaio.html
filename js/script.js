@@ -1996,17 +1996,23 @@ function initMissionServicesAutoplay(){
     const p = e.target.closest ? e.target.closest('.ms-pill') : null;
     if (p && matchMedia('(hover: hover)').matches && +p.dataset.i !== msIndex) missionSelect(+p.dataset.i);
   });
-  /* Clic : souris = la pastille est déjà aperçue au survol, donc on ouvre le devis de la catégorie ;
-     toucher = un premier appui affiche la prestation, un second sur la même pastille ouvre le devis. */
+  /* Clic ou appui sur une pastille : ouvre directement le devis de la catégorie (le survol, sur ordinateur,
+     et le défilement automatique servent d'aperçu). */
   box.addEventListener('click', e => {
     const p = e.target.closest ? e.target.closest('.ms-pill') : null; if (!p) return;
-    const i = +p.dataset.i;
-    if (i === msIndex && p.dataset.armed === '1') { goToQuizCategory(CATS[i].id); return; }
-    missionSelect(i);
-    box.querySelectorAll('.ms-pill').forEach(x => { x.dataset.armed = '0'; });
-    const cur = box.querySelectorAll('.ms-pill')[msIndex]; if (cur) cur.dataset.armed = '1';
-    if (matchMedia('(hover: hover)').matches) goToQuizCategory(CATS[i].id);
+    goToQuizCategory(CATS[+p.dataset.i].id);
   });
+  /* Mobile : glisser la carte d'aperçu vers la gauche / la droite pour parcourir les prestations. */
+  const prev = document.getElementById('missionPreview');
+  if (prev) {
+    let sx = null, sy = 0;
+    prev.addEventListener('touchstart', e => { sx = e.touches[0].clientX; sy = e.touches[0].clientY; }, { passive: true });
+    prev.addEventListener('touchend', e => {
+      if (sx === null) return;
+      const dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy; sx = null;
+      if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.4) missionSelect(msIndex + (dx < 0 ? 1 : -1));
+    }, { passive: true });
+  }
   box.addEventListener('mouseenter', () => { msHover = true; box.classList.add('paused'); clearTimeout(msTimer); });
   box.addEventListener('mouseleave', () => { msHover = false; box.classList.remove('paused'); missionSelect(msIndex); });
   box.addEventListener('touchstart', () => { msHover = true; box.classList.add('paused'); clearTimeout(msTimer); clearTimeout(box._tt); box._tt = setTimeout(() => { msHover = false; box.classList.remove('paused'); missionSelect(msIndex); }, 9000); }, { passive: true });
