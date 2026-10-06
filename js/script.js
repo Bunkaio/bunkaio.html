@@ -1801,12 +1801,11 @@ function quizStep(n){
 
 /* Bouton « Suivant » manuel : actif seulement quand le choix de l'étape est fait. */
 function updateQuizNext(){
-  const ok = { 1: !!S.cat, 2: !!S.prof, 3: !!S.tier };
+  const ok = { 2: !!S.prof, 3: !!S.tier };
   document.querySelectorAll('.qnext').forEach(b => { b.disabled = !ok[+b.dataset.step]; });
 }
 function quizNext(){
-  if (currentStep === 1 && S.cat) { renderProfiles(); quizStep(2); }
-  else if (currentStep === 2 && S.prof) goToTiers();
+  if (currentStep === 2 && S.prof) goToTiers();
   else if (currentStep === 3 && S.tier) { renderRecap(); renderOptions(); quizStep(4); }
 }
 function pickTier(id, card){
@@ -1972,7 +1971,7 @@ function renderCats(){
       document.querySelectorAll('#catList .cat-item').forEach(x => x.classList.toggle('selected', x === d));
       document.getElementById('profQBox').style.display = 'none';
       renderProfiles();
-      updateQuizNext();
+      quizStep(2); /* étape 1 : on avance directement au clic, sans bouton « Suivant » */
     };
     el.appendChild(d);
   });
