@@ -1135,7 +1135,7 @@ function formulaPhotoHTML(cat, tierId, cls){
   const url = `${IMG.formulas}/${cat}-${tierId}.webp`;
   const framed = /^(tier-photo|fx-photo|recap-photo)$/.test(cls || '');
   const err = framed
-    ? "var f=this.dataset.fb;if(f){this.dataset.fb='';this.src=f;this.parentNode.style.setProperty('--ph',\"url('\"+f+\"')\")}else{this.parentNode.remove()}"
+    ? "var f=this.dataset.fb;if(f){this.dataset.fb='';this.src=f;this.parentNode.style.setProperty('--ph','url('+f+')')}else{this.parentNode.remove()}"
     : "var f=this.dataset.fb;if(f){this.dataset.fb='';this.src=f}else{this.remove()}";
   const img = `<img class="formula-photo ${cls || ''}" src="${url}" alt="" loading="lazy" decoding="async" data-fb="${fb}" onerror="${err}">`;
   /* Cadre « photo entière » : l'image n'est jamais recadrée, le fond reprend la même photo en flou. */
@@ -1857,6 +1857,33 @@ function goView(v, subTab, opts){
 let currentStep = 1;
 function setProgress(p){ document.getElementById('progressFill').style.width = p + '%'; }
 
+/* Fond de la page « Devis » : il suit le choix du client — photo de la catégorie dès qu'elle est choisie,
+   puis photo de la formule (la même illustration que dans la liste des formules). Retour à l'étape 1 = fond d'origine. */
+function quizBgPhoto(){
+  if (currentView !== 'quiz') return;
+  const wrap = document.getElementById('pageHeroWrap'); if (!wrap) return;
+  const reset = () => { wrap.querySelectorAll('.hero-slide.dyn-slide').forEach(x => x.remove()); wrap.querySelectorAll('.hero-slide').forEach((x, i) => x.classList.toggle('active', i === 0)); setPageBg('quiz'); };
+  if (!S.cat || currentStep < 2) { reset(); return; }
+  const catUrl = IMG.servicePhotos && IMG.servicePhotos[S.cat];
+  const useTier = S.tier && currentStep >= 3 && IMG.formulas;
+  const url = useTier ? `${IMG.formulas}/${S.cat}-${S.tier}.webp` : catUrl;
+  if (!url) { reset(); return; }
+  clearHeroCarousel();
+  wrap.style.display = '';
+  wrap.querySelectorAll('.hero-slide').forEach(x => x.classList.remove('active'));
+  let slide = [...wrap.querySelectorAll('.hero-slide.dyn-slide')].find(x => x.dataset.url === url);
+  if (!slide) {
+    slide = document.createElement('div'); slide.className = 'hero-slide dyn-slide'; slide.dataset.url = url;
+    const img = document.createElement('img'); img.alt = ''; img.src = url; img.loading = 'eager';
+    img.onerror = () => { if (catUrl && img.src !== catUrl) { img.src = catUrl; slide.dataset.url = catUrl; document.documentElement.style.setProperty('--page-bg-url', 'url(' + catUrl + ')'); } else slide.remove(); };
+    slide.appendChild(img);
+    wrap.insertBefore(slide, wrap.querySelector('.page-hero-overlay') || null);
+  }
+  void slide.offsetWidth; slide.classList.add('active');
+  const dyn = [...wrap.querySelectorAll('.hero-slide.dyn-slide')]; while (dyn.length > 3) { const old = dyn.shift(); if (old !== slide) old.remove(); }
+  document.documentElement.style.setProperty('--page-bg-url', 'url(' + url + ')');
+}
+
 function quizStep(n){
   currentStep = n;
   if (n >= 2 && n <= 5 && window.track) track('quiz_step', String(n));
@@ -1872,6 +1899,7 @@ function quizStep(n){
   window.scrollTo({ top:0, behavior:'instant' });
   if (n === 5) updateQuizPayReassurance();
   updateQuizNext();
+  quizBgPhoto();
 }
 
 /* Bouton « Suivant » manuel : actif seulement quand le choix de l'étape est fait. */
@@ -1887,6 +1915,7 @@ function pickTier(id, card){
   S.tier = id;
   document.querySelectorAll('#tierList .tier-card').forEach(x => { x.classList.toggle('selected', x === card); x.classList.toggle('open', x === card); });
   renderRecap(); renderOptions(); updateQuizNext();
+  quizBgPhoto();
 }
 
 /* Bouton "Retour" toujours visible du questionnaire : remonte d'une
