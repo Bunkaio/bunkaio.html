@@ -1,3 +1,4 @@
+import { getAccount } from './accounts';
 import { buildReplyEmail, sendEmail } from './email';
 import { notifyAdmin } from './push';
 import type { Env } from './types';
@@ -25,6 +26,8 @@ export interface InboxMessage {
   /** Clés de couleur (voir LABEL_KEYS). */
   labels?: string[];
   archived: boolean;
+  /** Rangé automatiquement (ou à la main) dans le dossier Spam. */
+  spam?: boolean;
   repliedAt?: string;
   note?: string;
 }
@@ -73,6 +76,7 @@ export async function syncResendInbox(env: Env): Promise<{ added: number; checke
       const m = await resendGet<ResendReceived>(env, `/emails/receiving/${encodeURIComponent(it.id)}`);
       const stored = await storeReceived(env, m);
       await env.ACCOUNTS_KV.put(`inbox-rid:${it.id}`, '1', { expirationTtl: 90 * 86400 });
+      if (stored.spam) continue;
       added++;
       lastStored = stored;
     } catch (err) {
@@ -109,6 +113,7 @@ async function storeReceived(env: Env, m: ResendReceived): Promise<InboxMessage>
     starred: false,
     archived: false,
   };
+  if (await looksLikeSpam(env, msg)) { msg.spam = true; msg.read = true; }
   await env.ACCOUNTS_KV.put(PREFIX + msg.id, JSON.stringify(msg), { expirationTtl: TTL, metadata: summary(msg) });
   return msg;
 }
@@ -119,7 +124,7 @@ export const DEFAULT_LABELS: Record<string, string> = { rouge: 'Urgent', orange:
 
 function summary(m: InboxMessage): Record<string, unknown> {
   // Métadonnées KV limitées à 1 024 octets : champs tronqués (accents = 2 octets).
-  const s = { d: m.date, fn: m.fromName.slice(0, 40), fe: m.fromEmail.slice(0, 80), s: m.subject.slice(0, 90), p: m.text.replace(/\s+/g, ' ').slice(0, 90), r: m.read, st: m.starred, pi: m.pinned === true, lb: (m.labels ?? []).join(','), a: m.archived, att: m.attachments.length, rep: !!m.repliedAt };
+  const s = { d: m.date, fn: m.fromName.slice(0, 40), fe: m.fromEmail.slice(0, 80), s: m.subject.slice(0, 90), p: m.text.replace(/\s+/g, ' ').slice(0, 90), r: m.read, st: m.starred, pi: m.pinned === true, lb: (m.labels ?? []).join(','), a: m.archived, sp: m.spam === true, att: m.attachments.length, rep: !!m.repliedAt };
   if (JSON.stringify(s).length > 900) s.p = s.p.slice(0, 30);
   return s;
 }
@@ -133,7 +138,7 @@ export async function setLabelNames(env: Env, names: Record<string, unknown>): P
   await env.ACCOUNTS_KV.put('inbox-labels', JSON.stringify(clean));
 }
 
-export interface InboxItem { id: string; date: string; fromName: string; fromEmail: string; subject: string; preview: string; read: boolean; starred: boolean; pinned: boolean; labels: string[]; archived: boolean; attachments: number; replied: boolean }
+export interface InboxItem { id: string; date: string; fromName: string; fromEmail: string; subject: string; preview: string; read: boolean; starred: boolean; pinned: boolean; labels: string[]; archived: boolean; spam: boolean; attachments: number; replied: boolean }
 
 export async function listInbox(env: Env): Promise<InboxItem[]> {
   const out: InboxItem[] = [];
@@ -143,11 +148,71 @@ export async function listInbox(env: Env): Promise<InboxItem[]> {
     for (const k of page.keys) {
       const m = k.metadata;
       if (!m) continue;
-      out.push({ id: k.name.slice(PREFIX.length), date: String(m.d ?? ''), fromName: String(m.fn ?? ''), fromEmail: String(m.fe ?? ''), subject: String(m.s ?? ''), preview: String(m.p ?? ''), read: m.r === true, starred: m.st === true, pinned: m.pi === true, labels: typeof m.lb === 'string' && m.lb ? m.lb.split(',') : [], archived: m.a === true, attachments: Number(m.att ?? 0), replied: m.rep === true });
+      out.push({ id: k.name.slice(PREFIX.length), date: String(m.d ?? ''), fromName: String(m.fn ?? ''), fromEmail: String(m.fe ?? ''), subject: String(m.s ?? ''), preview: String(m.p ?? ''), read: m.r === true, starred: m.st === true, pinned: m.pi === true, labels: typeof m.lb === 'string' && m.lb ? m.lb.split(',') : [], archived: m.a === true, spam: m.sp === true, attachments: Number(m.att ?? 0), replied: m.rep === true });
     }
     cursor = page.list_complete ? undefined : (page as { cursor?: string }).cursor;
   } while (cursor && out.length < 3000);
   return out.sort((a, b) => b.date.localeCompare(a.date));
+}
+
+/* ── Filtre anti-spam ──
+   Règles propres au site (expéditeurs bloqués et mots-clés, modifiables dans le tableau de bord) + une courte liste de
+   formulations très typiques. Un contact connu (compte client/partenaire) n'est jamais classé en spam, ni un email
+   déjà traité (favori, épinglé, étiqueté, répondu). Les emails classés en spam ne déclenchent pas de notification. */
+export interface SpamRules { senders: string[]; keywords: string[] }
+export const DEFAULT_SPAM_KEYWORDS = ['viagra', 'cialis', 'casino en ligne', 'online casino', 'bitcoin', 'crypto-monnaie', 'cryptomonnaie', 'investissement garanti', 'gagnez de l\'argent', 'gagner de l\'argent', 'loterie', 'héritage', 'backlinks', 'première page de google', 'premiere page de google', 'augmenter votre trafic', 'referencement garanti', 'référencement garanti', 'rencontres adultes', 'prêt rapide sans justificatif', 'bark.com'];
+
+export async function getSpamRules(env: Env): Promise<SpamRules> {
+  try {
+    const r = JSON.parse((await env.ACCOUNTS_KV.get('inbox-spam-rules')) ?? '{}') as Partial<SpamRules>;
+    return { senders: Array.isArray(r.senders) ? r.senders.map(String) : [], keywords: Array.isArray(r.keywords) ? r.keywords.map(String) : [] };
+  } catch { return { senders: [], keywords: [] }; }
+}
+export async function setSpamRules(env: Env, input: Partial<Record<keyof SpamRules, unknown>>): Promise<SpamRules> {
+  const clean = (v: unknown, max: number): string[] => [...new Set((Array.isArray(v) ? v : []).map((x) => String(x).trim().toLowerCase()).filter((x) => x.length >= 3 && x.length <= max))].slice(0, 200);
+  const rules = { senders: clean(input.senders, 120), keywords: clean(input.keywords, 80) };
+  await env.ACCOUNTS_KV.put('inbox-spam-rules', JSON.stringify(rules));
+  return rules;
+}
+
+async function isKnownContact(env: Env, email: string): Promise<boolean> {
+  if (!email) return false;
+  try {
+    if (await getAccount(env, 'client', email)) return true;
+    if (await getAccount(env, 'partner', email)) return true;
+    if (await env.ACCOUNTS_KV.get(`lead:${email}`)) return true;
+  } catch { /* en cas de doute, on ne bloque rien */ }
+  return false;
+}
+
+function matchesSpam(msg: Pick<InboxMessage, 'fromEmail' | 'subject' | 'text'>, rules: SpamRules): string | null {
+  const email = msg.fromEmail.toLowerCase();
+  const domain = email.split('@')[1] ?? '';
+  for (const s of rules.senders) if (s.includes('@') ? email === s : (domain === s || domain.endsWith('.' + s))) return `expéditeur ${s}`;
+  const hay = `${msg.subject}\n${msg.text.slice(0, 4000)}`.toLowerCase();
+  for (const k of [...rules.keywords, ...DEFAULT_SPAM_KEYWORDS]) if (hay.includes(k.toLowerCase())) return `mot-clé « ${k} »`;
+  return null;
+}
+
+async function looksLikeSpam(env: Env, msg: InboxMessage): Promise<boolean> {
+  if (await isKnownContact(env, msg.fromEmail)) return false;
+  return matchesSpam(msg, await getSpamRules(env)) !== null;
+}
+
+/** Applique les règles aux emails déjà reçus (hors favoris, épinglés, étiquetés ou déjà traités). */
+export async function rescanSpam(env: Env): Promise<{ moved: number; checked: number }> {
+  const rules = await getSpamRules(env);
+  const items = await listInbox(env);
+  let moved = 0, checked = 0;
+  for (const it of items) {
+    if (it.spam || it.starred || it.pinned || it.labels.length || it.replied) continue;
+    checked++;
+    const msg = await getInboxMessage(env, it.id);
+    if (!msg || msg.repliedAt || msg.starred || msg.pinned) continue;
+    if (await isKnownContact(env, msg.fromEmail)) continue;
+    if (matchesSpam(msg, rules)) { await updateInbox(env, it.id, { spam: true, read: true }); moved++; }
+  }
+  return { moved, checked };
 }
 
 export async function getInboxMessage(env: Env, id: string): Promise<InboxMessage | null> {
@@ -155,11 +220,11 @@ export async function getInboxMessage(env: Env, id: string): Promise<InboxMessag
   return raw ? (JSON.parse(raw) as InboxMessage) : null;
 }
 
-export async function updateInbox(env: Env, id: string, change: Partial<Pick<InboxMessage, 'read' | 'starred' | 'pinned' | 'archived' | 'note'>> & { labels?: string[]; remove?: boolean }): Promise<boolean> {
+export async function updateInbox(env: Env, id: string, change: Partial<Pick<InboxMessage, 'read' | 'starred' | 'pinned' | 'archived' | 'spam' | 'note'>> & { labels?: string[]; remove?: boolean }): Promise<boolean> {
   const msg = await getInboxMessage(env, id);
   if (!msg) return false;
   if (change.remove) { await env.ACCOUNTS_KV.delete(PREFIX + id); return true; }
-  for (const k of ['read', 'starred', 'pinned', 'archived'] as const) if (typeof change[k] === 'boolean') msg[k] = change[k]!;
+  for (const k of ['read', 'starred', 'pinned', 'archived', 'spam'] as const) if (typeof change[k] === 'boolean') msg[k] = change[k]!;
   if (Array.isArray(change.labels)) msg.labels = [...new Set(change.labels.filter((l): l is string => (LABEL_KEYS as readonly string[]).includes(l)))];
   if (typeof change.note === 'string') msg.note = change.note.slice(0, 2000);
   await env.ACCOUNTS_KV.put(PREFIX + id, JSON.stringify(msg), { expirationTtl: TTL, metadata: summary(msg) });

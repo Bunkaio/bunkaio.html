@@ -7,7 +7,7 @@ import { buildDashboard, deleteContact, removeInvoice } from './admin';
 import { getLastPush, getVapid, notifyAdmin, removeSubscription, saveSubscription } from './push';
 import { setContactTags, setTagNames } from './tags';
 import { autoSms, getSmsSettings, sendSms, setSmsSettings, smsProvider, toE164 } from './sms';
-import { getInboxMessage, previewReply, replyTo, setLabelNames, syncResendInbox, updateInbox } from './inbox';
+import { getInboxMessage, getSpamRules, previewReply, replyTo, rescanSpam, setLabelNames, setSpamRules, syncResendInbox, updateInbox } from './inbox';
 import { buildManualMail, getMailLog, isUnsubscribed, listCampaigns, MANUAL_TEMPLATES, saveCampaign, sendMailing, setUnsubscribed } from './mailing';
 import type { ManualTemplate, MailingParams, RecipientCtx } from './mailing';
 import { unsubscribeToken } from './email';
@@ -705,9 +705,10 @@ async function handleAdminDashboard(request: Request, env: Env, headers: Record<
     return jsonResponse({ ok: true, message: msg }, 200, headers);
   }
   if (path === '/admin/inbox/update' && request.method === 'POST') {
-    const body = (await request.json().catch(() => ({}))) as { id?: unknown; read?: unknown; starred?: unknown; pinned?: unknown; labels?: unknown; archived?: unknown; note?: unknown; remove?: unknown };
+    const body = (await request.json().catch(() => ({}))) as { id?: unknown; read?: unknown; starred?: unknown; pinned?: unknown; labels?: unknown; archived?: unknown; spam?: unknown; note?: unknown; remove?: unknown };
     if (typeof body.id !== 'string') return jsonResponse({ ok: false, error: 'invalid_payload' }, 400, headers);
     const ok = await updateInbox(env, body.id, {
+      spam: typeof body.spam === 'boolean' ? body.spam : undefined,
       read: typeof body.read === 'boolean' ? body.read : undefined,
       starred: typeof body.starred === 'boolean' ? body.starred : undefined,
       pinned: typeof body.pinned === 'boolean' ? body.pinned : undefined,
@@ -723,6 +724,15 @@ async function handleAdminDashboard(request: Request, env: Env, headers: Record<
     if (typeof body.names !== 'object' || body.names === null) return jsonResponse({ ok: false, error: 'invalid_payload' }, 400, headers);
     await setLabelNames(env, body.names as Record<string, unknown>);
     return jsonResponse({ ok: true }, 200, headers);
+  }
+  if (path === '/admin/inbox/spam-rules' && request.method === 'GET') {
+    return jsonResponse({ ok: true, rules: await getSpamRules(env) }, 200, headers);
+  }
+  if (path === '/admin/inbox/spam-rules' && request.method === 'POST') {
+    const body = (await request.json().catch(() => ({}))) as { senders?: unknown; keywords?: unknown; rescan?: unknown };
+    const rules = await setSpamRules(env, { senders: body.senders, keywords: body.keywords });
+    const scan = body.rescan === true ? await rescanSpam(env) : null;
+    return jsonResponse({ ok: true, rules, scan }, 200, headers);
   }
   if (path === '/admin/inbox/reply' && request.method === 'POST') {
     const body = (await request.json().catch(() => ({}))) as { id?: unknown; body?: unknown; subject?: unknown; preview?: unknown };

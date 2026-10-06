@@ -563,7 +563,7 @@
       <section class="section" id="sec-inbox">
         <div id="inboxSetup"></div>
         <div id="lbEditor"></div>
-        <div class="toolbar"><div class="chips" id="inFilters"></div><span class="grow"></span><button class="btn sm" onclick="mailState.tpl='libre';mailState.sel=new Set();go('mailing')">✉ Nouveau message</button><button class="btn ghost sm" onclick="toggleLabelEditor()">🏷 Étiquettes</button><button class="btn ghost sm" id="inSyncBtn" onclick="inboxSync(true)">↻ Relever le courrier</button><input class="mi" id="inSearch" placeholder="Rechercher dans les emails…" oninput="inboxState.q=this.value;renderInbox()" style="max-width:260px"></div>
+        <div class="toolbar"><div class="chips" id="inFilters"></div><span class="grow"></span><button class="btn sm" onclick="mailState.tpl='libre';mailState.sel=new Set();go('mailing')">✉ Nouveau message</button><button class="btn ghost sm" onclick="toggleLabelEditor()">🏷 Étiquettes</button><button class="btn ghost sm" onclick="toggleSpamEditor()">🛡 Anti-spam</button><button class="btn ghost sm" id="inSyncBtn" onclick="inboxSync(true)">↻ Relever le courrier</button><input class="mi" id="inSearch" placeholder="Rechercher dans les emails…" oninput="inboxState.q=this.value;renderInbox()" style="max-width:260px"></div>
         <div class="chips" id="inLabels" style="margin-bottom:14px"></div>
         <div class="inbox" id="inboxWrap">
           <div class="inlist" id="inList"></div>
@@ -840,7 +840,7 @@ function updateCounts() {
   set('activity', allActivity().filter(a => a.unseen).length);
   set('invoices', DB.invoices.filter(i => i.overdue).length);
   set('messages', (DB.messages || []).filter(m => m.status === 'nouveau').length);
-  set('inbox', (DB.inbox || []).filter(m => !m.read && !m.archived).length);
+  set('inbox', (DB.inbox || []).filter(m => !m.read && !m.archived && !m.spam).length);
   set('quotes', (DB.quotes || []).filter(q => q.status === 'signe' && !q.depositInvoice && !q.abonnement).length);
 }
 
@@ -884,7 +884,7 @@ function computeAlerts() {
     if (q.status === 'signe' && q.abonnement && q.signedAt > addDays(-14)) out.push({ lvl: 'warn', ic: '🔁', t: `Abonnement à mettre en place — ${q.client.nom}`, d: `Devis n° ${esc(q.number)} signé le ${fdate(q.signedAt)}.`, email: q.email, quote: q.id });
     if (q.status === 'envoye' && q.validUntil <= addDays(3)) out.push({ lvl: 'info', ic: '⌛', t: `Devis bientôt expiré — ${q.client.nom}`, d: `N° ${esc(q.number)} valable jusqu'au ${fdate(q.validUntil)}${q.viewedAt ? ' · consulté' : ' · jamais ouvert'}.`, email: q.email, quote: q.id });
   });
-  const unreadIn = (DB.inbox || []).filter(m => !m.read && !m.archived);
+  const unreadIn = (DB.inbox || []).filter(m => !m.read && !m.archived && !m.spam);
   if (unreadIn.length) out.push({ lvl: 'info', ic: '📥', t: `${unreadIn.length} email${unreadIn.length > 1 ? 's' : ''} non lu${unreadIn.length > 1 ? 's' : ''}`, d: esc(unreadIn.slice(0, 3).map(m => (m.fromName || m.fromEmail) + ' : ' + m.subject).join(' · ')), go: 'inbox' });
   (DB.messages || []).filter(m => m.status === 'nouveau').forEach(m => out.push({ lvl: 'info', ic: '✉️', t: `${MSG_KIND[m.kind] || 'Message'} — ${m.name || m.email}`, d: `Reçu ${ago(m.date)}. ${esc((m.details.message || m.details.projet || m.details.temoignage || m.details.activite || '').slice(0, 90))}`, email: m.email, go: 'messages' }));
   const unseen = allActivity().filter(a => a.unseen);
@@ -1250,13 +1250,14 @@ const lbPill = k => `<span class="lbl lb-${k}">${esc(lbName(k))}</span>`;
 function renderInbox() {
   if (!$('inList')) return;
   const all = DB.inbox || [];
-  const F = [['unread', 'Non lus', m => !m.read && !m.archived], ['all', 'Reçus', m => !m.archived], ['pin', '📌 Épinglés', m => m.pinned && !m.archived], ['star', 'Favoris', m => m.starred], ['arch', 'Archivés', m => m.archived]];
-  $('inFilters').innerHTML = F.map(([id, l, f]) => `<button class="chip ${inboxState.filter === id ? 'on' : ''}" onclick="inboxState.filter='${id}';renderInbox()">${l}<span class="c">${all.filter(f).length}</span></button>`).join('');
-  const f = F.find(x => x[0] === inboxState.filter)[2]; const q = inboxState.q.toLowerCase();
+  const F = [['unread', 'Non lus', m => !m.read && !m.archived && !m.spam], ['all', 'Reçus', m => !m.archived && !m.spam], ['pin', '📌 Épinglés', m => m.pinned && !m.archived && !m.spam], ['star', 'Favoris', m => m.starred && !m.spam], ['arch', 'Archivés', m => m.archived && !m.spam], ['spam', '🚫 Spam', m => m.spam]];
   const lbf = inboxState.label;
+  /* Une couleur choisie cherche dans TOUS les dossiers (hors spam) : sinon, avec « Non lus » actif, les emails étiquetés déjà lus restaient invisibles. */
+  $('inFilters').innerHTML = F.map(([id, l, f]) => `<button class="chip ${!lbf && inboxState.filter === id ? 'on' : ''}" onclick="inboxState.filter='${id}';inboxState.label='';renderInbox()">${l}<span class="c">${all.filter(f).length}</span></button>`).join('');
+  const f = lbf ? (m => !m.spam) : F.find(x => x[0] === inboxState.filter)[2]; const q = inboxState.q.toLowerCase();
   const list = all.filter(m => f(m) && (!lbf || (m.labels || []).includes(lbf)) && (!q || [m.fromName, m.fromEmail, m.subject, m.preview].join(' ').toLowerCase().includes(q)))
     .sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) || b.date.localeCompare(a.date));
-  $('inLabels').innerHTML = LB_KEYS.filter(k => all.some(m => (m.labels || []).includes(k)) || inboxState.label === k).map(k => `<button class="chip ${inboxState.label === k ? 'on' : ''}" onclick="inboxState.label=inboxState.label==='${k}'?'':'${k}';renderInbox()"><span class="lbfilter lb-${k}"></span>${esc(lbName(k))}<span class="c">${all.filter(m => (m.labels || []).includes(k) && !m.archived).length}</span></button>`).join('');
+  $('inLabels').innerHTML = LB_KEYS.filter(k => all.some(m => !m.spam && (m.labels || []).includes(k)) || inboxState.label === k).map(k => `<button class="chip ${inboxState.label === k ? 'on' : ''}" onclick="inboxState.label=inboxState.label==='${k}'?'':'${k}';renderInbox()"><span class="lbfilter lb-${k}"></span>${esc(lbName(k))}<span class="c">${all.filter(m => (m.labels || []).includes(k) && !m.spam).length}</span></button>`).join('');
   $('inboxSetup').innerHTML = !all.length ? `<div class="card" style="margin-bottom:18px"><h3>Recevoir vos emails ici</h3><div class="small" style="line-height:1.7">Aucun email reçu pour l'instant. Principe : votre messagerie <b>Zoho</b> continue de recevoir <b>contact@bunkaio.com</b> comme aujourd'hui et en envoie une copie à une adresse de réception Resend ; le tableau de bord relève cette copie toutes les 5 minutes (ou avec « Relever le courrier »).<ol style="margin:8px 0 0 18px"><li><b>Resend</b> → Domains → <b>bunkaio.com</b> → activez <b>Receiving</b> et ajoutez l'enregistrement MX indiqué (sur un sous-domaine du type <code>inbound</code>, sans toucher à vos MX Zoho) dans la zone DNS de votre domaine.</li><li>Adresse de réception : n'importe quelle adresse de ce sous-domaine, par exemple <code>copie@inbound.bunkaio.com</code>.</li><li><b>Zoho Mail</b> → Paramètres → <i>Transfert et POP/IMAP</i> → ajoutez cette adresse en <b>transfert</b> et cochez « conserver une copie ». Le code de vérification de Zoho arrivera ici.</li><li>La clé API Resend du Worker doit avoir l'accès <b>complet</b> (pas seulement « envoi »).</li></ol></div></div>` : '';
   $('inList').innerHTML = list.length ? list.map(m => `<button class="inrow ${m.read ? '' : 'unread'} ${m.pinned ? 'pinned' : ''} ${inboxState.sel === m.id ? 'on' : ''}" onclick="openInbox('${esc(m.id)}')"><div class="top1"><span class="nm">${m.pinned ? '<span class="pin">📌</span> ' : ''}${m.starred ? '★ ' : ''}${esc(m.fromName || m.fromEmail)}</span><span class="dt">${ago(m.date)}</span></div><div class="sj">${esc(m.subject)}${m.attachments ? ' 📎' : ''}${m.replied ? ' ↩' : ''}</div><div class="pv">${esc(m.preview)}</div>${(m.labels || []).length ? `<div class="lbs">${m.labels.map(lbPill).join('')}</div>` : ''}</button>`).join('') : '<div class="empty">Aucun email dans cette vue.</div>';
 }
@@ -1276,7 +1277,8 @@ function setInboxReading(on) { inboxState.reading = on; $('inboxWrap').classList
 function inboxBack() { setInboxReading(false); inboxState.sel = null; renderInbox(); }
 function toggleLabelEditor() {
   const box = $('lbEditor');
-  if (box.innerHTML) { box.innerHTML = ''; return; }
+  if (box.dataset.mode !== 'spam' && box.innerHTML) { box.innerHTML = ''; return; }
+  box.dataset.mode = 'labels';
   box.innerHTML = `<div class="card" style="margin-bottom:14px"><h3>Étiquettes de couleur</h3><div class="small muted" style="margin-bottom:10px">Renommez les 8 couleurs selon votre usage. Un email peut porter plusieurs étiquettes.</div><div class="frow">${LB_KEYS.map(k => `<div class="fg"><label><span class="lbfilter lb-${k}"></span>${k}</label><input class="mi" id="lbn-${k}" maxlength="24" value="${esc(lbName(k))}"></div>`).join('')}</div><div style="display:flex;gap:10px;margin-top:12px"><button class="btn sm" onclick="saveLabelNames()">Enregistrer</button><button class="btn ghost sm" onclick="$('lbEditor').innerHTML=''">Fermer</button></div></div>`;
 }
 async function saveLabelNames() {
@@ -1314,6 +1316,8 @@ function renderInboxRead() {
       <button class="btn ghost sm" onclick="inboxUpdate({starred:${!m.starred}})">${m.starred ? '★ Retirer des favoris' : '☆ Favori'}</button>
       <button class="btn ghost sm" onclick="inboxUpdate({read:false})">Marquer non lu</button>
       <button class="btn ghost sm" onclick="inboxUpdate({archived:${!m.archived}})">${m.archived ? 'Désarchiver' : 'Archiver'}</button>
+      <button class="btn ghost sm" onclick="inboxSpam(${!m.spam})">${m.spam ? '✓ Pas du spam' : '🚫 Spam'}</button>
+      ${m.spam ? '' : '<button class="btn ghost sm" onclick="inboxBlockSender()" title="Classe cet email en spam et y envoie désormais tous les emails de cet expéditeur">Bloquer l\'expéditeur</button>'}
       ${c ? `<button class="btn soft sm" onclick="openDrawer('${esc(c.email)}')">Fiche de ${esc((c.name || c.email).slice(0, 24))}</button>` : `<button class="btn soft sm" onclick="openNewContact('${esc(m.fromEmail)}','${esc(m.fromName).replace(/&#39;/g, '')}')">+ Créer un espace</button>`}
       ${m.html && !inboxState.images ? '<button class="btn ghost sm" onclick="inboxState.images=true;renderInboxRead()">Afficher les images</button>' : ''}
       <button class="btn ghost sm" style="color:var(--danger)" onclick="inboxDelete()">Supprimer</button>
@@ -1360,9 +1364,41 @@ async function inboxUpdate(change) {
   try {
     const { res } = await api('/admin/inbox/update', { method: 'POST', body: JSON.stringify({ id: inboxState.sel, ...change }) }); if (!res.ok) { toast('Erreur'); return; }
     Object.assign(inboxState.msg, change); const it = DB.inbox.find(x => x.id === inboxState.sel); if (it) Object.assign(it, change);
-    if (change.archived === true) { toast('Email archivé'); setInboxReading(false); inboxState.sel = null; inboxState.msg = null; $('inRead').innerHTML = '<div class="empty">Sélectionnez un email pour le lire.</div>'; } else renderInboxRead();
+    if (change.archived === true || change.spam === true) { toast(change.spam === true ? 'Email classé en spam' : 'Email archivé'); setInboxReading(false); inboxState.sel = null; inboxState.msg = null; $('inRead').innerHTML = '<div class="empty">Sélectionnez un email pour le lire.</div>'; } else renderInboxRead();
     renderInbox(); updateCounts();
   } catch (e) {}
+}
+async function saveSpamRules(rules, rescan) {
+  const { res, data } = await api('/admin/inbox/spam-rules', { method: 'POST', body: JSON.stringify({ ...rules, rescan: !!rescan }) });
+  if (!res.ok || !data.ok) { toast(res.status === 404 ? 'Le Worker n\'est pas à jour : redéployez-le (npx wrangler deploy)' : 'Erreur ' + res.status); return null; }
+  DB.spamRules = data.rules; return data;
+}
+/* Classe l'email ouvert en spam, ou le remet dans la boîte (et retire alors l'expéditeur de la liste noire). */
+async function inboxSpam(on) {
+  const m = inboxState.msg; if (!m) return;
+  if (!on) { const r = DB.spamRules || { senders: [], keywords: [] }; const em = m.fromEmail.toLowerCase(); if ((r.senders || []).includes(em)) await saveSpamRules({ senders: r.senders.filter(x => x !== em), keywords: r.keywords }).catch(() => {}); }
+  inboxUpdate({ spam: on, ...(on ? { read: true } : {}) });
+}
+async function inboxBlockSender() {
+  const m = inboxState.msg; if (!m) return;
+  const r = DB.spamRules || { senders: [], keywords: [] }; const em = m.fromEmail.toLowerCase();
+  try { if (!(r.senders || []).includes(em)) await saveSpamRules({ senders: [...(r.senders || []), em], keywords: r.keywords || [] }); } catch (e) { if (e.message === 'unauthorized') return; }
+  inboxUpdate({ spam: true, read: true });
+}
+function toggleSpamEditor() {
+  const box = $('lbEditor');
+  if (box.dataset.mode === 'spam' && box.innerHTML) { box.innerHTML = ''; box.dataset.mode = ''; return; }
+  const r = DB.spamRules || { senders: [], keywords: [] };
+  box.dataset.mode = 'spam';
+  box.innerHTML = `<div class="card" style="margin-bottom:14px"><h3>Filtre anti-spam</h3><div class="small muted" style="margin-bottom:10px;line-height:1.6">Les nouveaux emails qui correspondent à une règle vont directement dans le dossier <b>Spam</b> (sans notification). Un contact connu (client, partenaire, demande de devis) n'y est jamais envoyé. Une liste de formulations typiques est déjà intégrée ; ajoutez les vôtres ci-dessous, une par ligne.</div><div class="frow"><div class="fg"><label>Expéditeurs ou domaines bloqués</label><textarea class="mi" id="spSenders" style="min-height:110px" placeholder="exemple.com&#10;contact@demarchage.fr">${esc((r.senders || []).join('\n'))}</textarea></div><div class="fg"><label>Mots ou expressions (objet ou texte)</label><textarea class="mi" id="spWords" style="min-height:110px" placeholder="offre exclusive&#10;référencement">${esc((r.keywords || []).join('\n'))}</textarea></div></div><div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap"><button class="btn sm" onclick="saveSpamEditor(false)">Enregistrer</button><button class="btn soft sm" onclick="saveSpamEditor(true)">Enregistrer et trier les emails déjà reçus</button><button class="btn ghost sm" onclick="$('lbEditor').innerHTML=''">Fermer</button></div></div>`;
+}
+async function saveSpamEditor(rescan) {
+  const lines = id => $(id).value.split('\n').map(x => x.trim()).filter(Boolean);
+  try {
+    const data = await saveSpamRules({ senders: lines('spSenders'), keywords: lines('spWords') }, rescan); if (!data) return;
+    if (rescan) { await loadDashboard(); toast(data.scan && data.scan.moved ? data.scan.moved + ' email' + (data.scan.moved > 1 ? 's' : '') + ' classé' + (data.scan.moved > 1 ? 's' : '') + ' en spam' : 'Aucun email à classer en spam'); } else toast('Filtre enregistré');
+    $('lbEditor').innerHTML = ''; $('lbEditor').dataset.mode = ''; renderInbox();
+  } catch (e) { if (e.message !== 'unauthorized') toast('Connexion impossible, réessayez'); }
 }
 async function inboxDelete() {
   if (!confirm('Supprimer définitivement cet email du tableau de bord ? (Votre copie dans la boîte mail habituelle n\'est pas touchée.)')) return;

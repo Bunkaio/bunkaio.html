@@ -1,7 +1,7 @@
 import type Stripe from 'stripe';
 import { adminAccountView, getAccount, listAccounts } from './accounts';
 import { getBusinessAddress, isDemo } from './config';
-import { getLabelNames, listInbox } from './inbox';
+import { getLabelNames, getSpamRules, listInbox } from './inbox';
 import { getTagNames } from './tags';
 import type { InboxItem } from './inbox';
 import { listQuotes, putQuote } from './quotes';
@@ -276,6 +276,8 @@ export async function buildDashboard(env: Env, stripe: Stripe): Promise<Record<s
   let inbox: InboxItem[] = [];
   let inboxLabels: Record<string, string> = {};
   let tagNames: Record<string, string> = {};
+  let spamRules: { senders: string[]; keywords: string[] } = { senders: [], keywords: [] };
+  try { spamRules = await getSpamRules(env); } catch { /* aucune règle personnalisée */ }
   try { tagNames = await getTagNames(env); } catch { /* noms par défaut côté tableau de bord */ }
   try { inboxLabels = await getLabelNames(env); } catch { /* étiquettes par défaut côté tableau de bord */ }
   try { inbox = await listInbox(env); } catch (err) { console.error('[admin] lecture de la boîte de réception impossible', err); errors.push('inbox'); }
@@ -297,6 +299,7 @@ export async function buildDashboard(env: Env, stripe: Stripe): Promise<Record<s
     inbox,
     inboxLabels,
     tagNames,
+    spamRules,
     quotes,
     business: { address: getBusinessAddress() },
     invoices: allInvoices.filter((i) => i.status !== 'draft' && !isDemo(i.email)).sort((a, b) => b.created.localeCompare(a.created)),
