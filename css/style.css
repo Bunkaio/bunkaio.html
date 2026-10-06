@@ -4273,3 +4273,6 @@ a, button { -webkit-tap-highlight-color: rgba(110,90,168,0.18); }
   .fx-body > .fp { aspect-ratio: 1 / 1; max-height: 300px; }
   .recap-box > .fp { aspect-ratio: 4 / 3; max-height: 200px; }
 }
+/* Numéros des étapes : toujours des ronds parfaits (y compris dans la grille mobile) */
+.about-steps li::before { flex: none; width: 24px; min-width: 24px; height: 24px; box-sizing: border-box; padding: 0; }
+@media (max-width: 700px) { .svcp-two .about-steps li { justify-content: flex-start; } }

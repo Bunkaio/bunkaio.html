@@ -3069,7 +3069,7 @@ function fxItem(catId, f){
   return `<div class="fx${f.special ? ' fx-special' : ''}${open}" data-fx="${f.id}">
     <button type="button" class="fx-head" aria-expanded="${!!f.open}">
       ${formulaPhotoHTML(catId, f.id, 'fx-thumb')}
-      <span class="fx-title"><b>${f.name}</b>${f.badge ? `<em>${f.badge}</em>` : ''}<small>${f.delay}</small></span>
+      <span class="fx-title"><b>${f.name}</b>${f.badge && f.badge !== f.name ? `<em>${f.badge}</em>` : ''}<small>${f.delay}</small></span>
       <span class="fx-price">${f.price}</span>
       <i class="fx-chev" aria-hidden="true"></i>
     </button>
