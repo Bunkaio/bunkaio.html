@@ -4097,3 +4097,9 @@ a.hero-start { text-decoration: none; display: inline-flex; align-items: center;
 .svcp-tier-polas .svcp-list { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); column-gap: 24px; margin: 4px 0 8px; }
 .svcp-list li.svcp-choose-polas { background: #f1ecfa; border: 1px solid #6e5aa8; border-radius: 10px; padding: 10px 14px 10px 30px; }
 .svcp-list li.svcp-choose-polas::before { left: 12px; top: 10px; color: #6e5aa8; }
+
+/* Retour au catalogue (pages prestation) */
+.svcp-back { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--black); text-decoration: none; background: rgba(255,255,255,0.85); border: 1px solid rgba(10,10,12,0.15); border-radius: 999px; padding: 10px 18px; margin: 0 0 14px; transition: background 0.3s var(--ease), color 0.3s var(--ease), transform 0.3s var(--ease); }
+.svcp-back:hover { background: var(--black); color: #fff; transform: translateX(-3px); }
+.svcp-back-row { display: flex; justify-content: center; margin-top: 8px; }
+.svcp-back-row .svcp-back { margin: 0; }

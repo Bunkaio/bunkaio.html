@@ -2971,6 +2971,7 @@ function renderServicePage(catId){
     en: 'We work in <strong>Béziers, Montpellier and Toulouse</strong>. Commercial usage rights to the visuals are transferred to you with no time limit. All the answers are in the <a href="/faq/" data-nav="faq">FAQ</a>, and for a specific question, <a href="/contact/" data-nav="contact">get in touch</a>.' });
 
   el.innerHTML = `
+    <a class="svcp-back" href="/services/" onclick="return navLink(event,'services')"><span aria-hidden="true">←</span> ${t({fr:'Retour au catalogue', en:'Back to the catalogue'})}</a>
     <div class="breadcrumb" role="navigation" aria-label="${t({fr:'Fil d\'Ariane', en:'Breadcrumb'})}">
       <a href="/" onclick="return navLink(event,'home')">${t({fr:'Accueil', en:'Home'})}</a><span aria-hidden="true">›</span>
       <a href="/services/" onclick="return navLink(event,'services')">Services</a><span aria-hidden="true">›</span>
@@ -3040,7 +3041,8 @@ function renderServicePage(catId){
         ${others.map(o => `<a class="svcp-chip" href="${servicePath(o.id)}" onclick="return navLink(event,'service','${o.id}')">${t(o.name)}</a>`).join('')}
         <a class="svcp-chip" href="/services/" onclick="return navLink(event,'services')">${t({fr:'Tout le catalogue', en:'Full catalogue'})}</a>
       </div>
-    </section>`;
+    </section>
+    <div class="svcp-back-row"><a class="svcp-back" href="/services/" onclick="return navLink(event,'services')"><span aria-hidden="true">←</span> ${t({fr:'Retour au catalogue', en:'Back to the catalogue'})}</a></div>`;
   renderAccordionInto('servicePageFaq', faq.map(f => ({ title: f.q, body: f.a })), { exclusive: true });
 }
 
