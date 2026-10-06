@@ -1368,7 +1368,8 @@ const PF_CATS = [
   { id:'mode',        label:{fr:'Mode',        en:'Fashion'} },
   { id:'commercial',  label:{fr:'Commercial',  en:'Commercial'} },
   { id:'event',       label:{fr:'Événementiel',en:'Events'} },
-  { id:'lumen',       label:{fr:'Lumen',       en:'Lumen'} }
+  { id:'lumen',       label:{fr:'Lumen',       en:'Lumen'} },
+  { id:'collaboration', label:{fr:'Collaboration', en:'Collaboration'} }
 ];
 
 const DRONE_CATS = [
