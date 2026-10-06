@@ -1186,6 +1186,14 @@ const SPECIAL_OPTIONS = {
    📸  LUMEN — Photobooth IA · mariages haut de gamme
    ════════════════════════════════════════════════════════════════ */
 const LUMEN_TIERS = [
+  { id:'dec',  name:{fr:'Découverte',  en:'Starter'},
+    badge:{fr:'Pour essayer', en:'To try it'},
+    price: 590, priceUSD: 650,
+    delay:{fr:'7 jours ouvrés', en:'7 working days'},
+    items:{
+      fr:['Location du photobooth IA, installé et opérationnel','2 heures de prestation','100 impressions incluses','Galerie privée livrée sous 7 jours'],
+      en:['AI photobooth rental, set up and ready','2 hours service','100 prints included','Private gallery delivered within 7 days'] }
+  },
   { id:'ess',  name:{fr:'Essentiel',  en:'Essentials'},
     badge: null,
     price: 890, priceUSD: 980,
@@ -1235,8 +1243,8 @@ const LUMEN_OPTIONS = [
           en:'Extend your service by one hour. Billed per additional hour.'} },
   { id:'lumen-print', icon:'🖨', price: null,
     name:{fr:'Impressions illimitées', en:'Unlimited prints'},
-    note:{fr:'Tirages photo illimités pendant toute la durée de la prestation. Inclus dans les formules Essentiel et Signature.',
-          en:'Unlimited photo prints throughout the service. Included in the Essentials and Signature packages.'} }
+    note:{fr:'Tirages photo illimités pendant toute la durée de la prestation. Illimitées dans les formules Essentiel et Signature (100 impressions incluses dans la formule Découverte).',
+          en:'Unlimited photo prints throughout the service. Unlimited in the Essentials and Signature packages (100 prints included in the Starter package).'} }
 ];
 
 const PROFILES = [
@@ -2196,8 +2204,8 @@ function renderTiersBase(){
   /* ─── Lumen : trois formules propriétaires ─── */
   if (S.cat === 'lumen') {
     subEl.textContent = LANG === 'fr'
-      ? 'Lumen by Bunkaio — trois formules pour votre mariage, de l\'essentiel à l\'entièrement sur-mesure.'
-      : 'Lumen by Bunkaio — three packages for your wedding, from essentials to fully bespoke.';
+      ? 'Lumen by Bunkaio — quatre formules pour votre mariage, de la découverte (2 h) à l\'entièrement sur-mesure.'
+      : 'Lumen by Bunkaio — four packages for your wedding, from a 2-hour starter to fully bespoke.';
     LUMEN_TIERS.forEach((lt, idx) => {
       const isSurm = lt.id === 'surm';
       const priceStr = isSurm
@@ -6045,7 +6053,7 @@ function renderFaqAccordion(){
     { title:'Mes informations et mes images sont-elles en sécurité ?', body:`<p>Votre espace est protégé par votre email et un <strong>code d'accès personnel</strong>, conservé sous forme chiffrée. Vos données ne servent qu'à la réalisation de votre projet, et vos visuels vous sont livrés dans une galerie privée. Le détail est dans l'onglet « Politique de confidentialité ».</p>` },
     { title:'Où intervenez-vous ?', body:`<p>BUNKAIO est basé à <strong>Montpellier</strong> et intervient en déplacement à <strong>Montpellier, Béziers et Toulouse</strong>, et plus largement en Occitanie. Il n'y a pas de studio fixe : le lieu se choisit avec vous (<a href="/conseils/lieux-seance-photo-montpellier-beziers-toulouse/" data-nav="article:lieux-seance-photo-montpellier-beziers-toulouse">idées de lieux</a>). Les déplacements sont offerts à Montpellier et à Béziers ; ils sont facturés à Toulouse et dans toute autre ville de France (devis selon la distance).</p>` },
     { title:'Comment devenir partenaire, et que propose l\'espace partenaire ?', body:`<p>Candidatez depuis la page <strong>Partenariat et collaboration</strong> : réponse personnalisée sous 5 jours ouvrés. Une fois admis, votre espace partenaire vous donne <strong>-20 % permanent</strong> sur le catalogue, des promotions, des <strong>missions collaboratives rémunérées</strong> que vous acceptez ou déclinez en un clic, et l'accès au réseau de professionnels. Vous choisissez d'être référencé·e ou non dans l'annuaire.</p>` },
-    { title:'Qu\'est-ce que Lumen by Bunkaio ?', body:`<p>Lumen est le photobooth IA de Bunkaio, conçu pour les mariages haut de gamme et les événements, et proposé en location pour la durée de votre événement : il offre aux invités une expérience mémorable et aux mariés des souvenirs durables. Trois formules — Essentiel, Signature et Sur-mesure — selon la durée et la personnalisation souhaitées.</p>` },
+    { title:'Qu\'est-ce que Lumen by Bunkaio ?', body:`<p>Lumen est le photobooth IA de Bunkaio, conçu pour les mariages haut de gamme et les événements, et proposé en location pour la durée de votre événement : il offre aux invités une expérience mémorable et aux mariés des souvenirs durables. Quatre formules — Découverte (2 h), Essentiel, Signature et Sur-mesure — selon la durée et la personnalisation souhaitées.</p>` },
   ] : [
     { title:'What services do you offer?', body:`<p>Bunkaio is a professional photographer: we produce premium, high-definition images for <strong>portrait & lifestyle</strong>, <strong>fashion, agencies and models</strong>, <strong>commercial & products</strong>, <strong>events</strong>, and <strong>Lumen</strong>, the AI photobooth for weddings. Each universe has its packages detailed in our <strong>catalogue & rates</strong>.</p>` },
     { title:'What is the quality of the delivered images?', body:`<p><strong>High-definition, carefully retouched</strong> photos, ready to publish or print. They are delivered in a <strong>private gallery</strong> you can download from your client area, with commercial usage rights.</p>` },
@@ -6060,7 +6068,7 @@ function renderFaqAccordion(){
     { title:'Are my details and images safe?', body:`<p>Your space is protected by your email and a <strong>personal access code</strong>, stored in encrypted form. Your data is only used to carry out your project, and your visuals are delivered in a private gallery. Details are in the "Privacy policy" tab.</p>` },
     { title:'Where do you work?', body:`<p>BUNKAIO is based in <strong>Montpellier</strong> and travels to <strong>Montpellier, Béziers and Toulouse</strong>, and more broadly across Occitanie. Travel is free in Montpellier and Béziers; it is charged in Toulouse and in any other city in France (quoted by distance).</p>` },
     { title:'How do I become a partner, and what does the partner area offer?', body:`<p>Apply from the <strong>Partnership & collaboration</strong> page: a personal reply within 5 working days. Once admitted, your partner area gives you a <strong>permanent 20% discount</strong> on the catalogue, promotions, <strong>paid collaborative missions</strong> you accept or decline in one click, and access to the professional network. You choose whether to be listed in the directory.</p>` },
-    { title:'What is Lumen by Bunkaio?', body:`<p>Lumen is Bunkaio's AI photobooth, designed for luxury weddings and events and available for rental for the duration of your event: it gives guests a memorable experience and couples lasting memories. Three packages — Essentials, Signature and Bespoke — depending on duration and customisation.</p>` },
+    { title:'What is Lumen by Bunkaio?', body:`<p>Lumen is Bunkaio's AI photobooth, designed for luxury weddings and events and available for rental for the duration of your event: it gives guests a memorable experience and couples lasting memories. Four packages — Starter (2 h), Essentials, Signature and Bespoke — depending on duration and customisation.</p>` },
   ];
   renderAccordionInto('faqAccordion', sections, { exclusive: true });
 }
