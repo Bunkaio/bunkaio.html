@@ -1132,7 +1132,14 @@ const POLAS = {
 function formulaPhotoHTML(cat, tierId, cls){
   if (!IMG.formulas || !cat || !tierId) return '';
   const fb = (IMG.servicePhotos && IMG.servicePhotos[cat]) || '';
-  return `<img class="formula-photo ${cls || ''}" src="${IMG.formulas}/${cat}-${tierId}.webp" alt="" loading="lazy" decoding="async" data-fb="${fb}" onerror="var f=this.dataset.fb;if(f){this.dataset.fb='';this.src=f}else{this.remove()}">`;
+  const url = `${IMG.formulas}/${cat}-${tierId}.webp`;
+  const framed = /^(tier-photo|fx-photo|recap-photo)$/.test(cls || '');
+  const err = framed
+    ? "var f=this.dataset.fb;if(f){this.dataset.fb='';this.src=f;this.parentNode.style.setProperty('--ph',\"url('\"+f+\"')\")}else{this.parentNode.remove()}"
+    : "var f=this.dataset.fb;if(f){this.dataset.fb='';this.src=f}else{this.remove()}";
+  const img = `<img class="formula-photo ${cls || ''}" src="${url}" alt="" loading="lazy" decoding="async" data-fb="${fb}" onerror="${err}">`;
+  /* Cadre « photo entière » : l'image n'est jamais recadrée, le fond reprend la même photo en flou. */
+  return framed ? `<span class="fp" style="--ph:url('${url}')">${img}</span>` : img;
 }
 /* Supplément « studio » des formules Découverte (photo particuliers et corporate). */
 const STUDIO_FEE = 80;

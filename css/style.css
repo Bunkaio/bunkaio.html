@@ -4056,11 +4056,11 @@ a.hero-start { text-decoration: none; display: inline-flex; align-items: center;
 
 /* Photos par formule (changent selon la formule) */
 .formula-photo { display: block; width: 100%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: 10px; background: #e9e4f3; }
-.tier-card > .tier-photo { margin-bottom: 14px; aspect-ratio: 16 / 9; }
-.recap-box > .recap-photo { margin-bottom: 18px; max-height: 260px; }
+.tier-card > .fp { margin-bottom: 14px; }
+.recap-box > .fp { margin-bottom: 18px; aspect-ratio: 16 / 9; max-height: 240px; }
 .svcp-tier > .svcp-tier-photo { margin-bottom: 6px; }
 .svcp-tier-polas > .svcp-tier-photo { max-height: 280px; }
-@media (max-width: 700px) { .tier-card > .tier-photo { aspect-ratio: 21 / 9; margin-bottom: 10px; } }
+
 
 /* Mention « prix nets » (franchise en base de TVA) */
 .vat-note { font-size: 12.5px; line-height: 1.6; color: #4b3d7a; margin: 0 0 16px; }
@@ -4129,7 +4129,7 @@ a.hero-start { text-decoration: none; display: inline-flex; align-items: center;
 .fx.open .fx-panel { grid-template-rows: 1fr; }
 .fx-body { overflow: hidden; min-height: 0; display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 0 22px; padding: 0 16px; }
 .fx.open .fx-body { padding-bottom: 18px; }
-.fx-photo { aspect-ratio: 4 / 3; max-height: 220px; width: 100%; object-fit: cover; border-radius: 10px; align-self: start; }
+.fx-body > .fp { aspect-ratio: 4 / 5; max-height: 340px; align-self: start; }
 .fx-body > .fx-info:first-child { grid-column: 1 / -1; }
 .fx-info .svcp-list { margin-bottom: 14px; }
 .fx-actions { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
@@ -4140,7 +4140,7 @@ a.hero-start { text-decoration: none; display: inline-flex; align-items: center;
   .fx-price { font-size: 17px; }
   .fx-body { grid-template-columns: 1fr; padding: 0 12px; gap: 12px 0; }
   .fx.open .fx-body { padding-bottom: 14px; }
-  .fx-photo { max-height: 150px; aspect-ratio: 16 / 9; }
+  .fx-body > .fp { max-height: 250px; aspect-ratio: 4 / 3; }
 }
 
 /* Catalogue (page Services) : fiches repliées sur mobile */
@@ -4225,7 +4225,11 @@ a, button { -webkit-tap-highlight-color: rgba(110,90,168,0.18); }
 .tier-acc.open .tier-more { grid-template-rows: 1fr; }
 .tier-acc .tier-more-in { overflow: hidden; min-height: 0; padding: 0 18px; }
 .tier-acc.open .tier-more-in { padding-bottom: 18px; }
-.tier-acc .tier-more-in > .tier-photo { display: block; width: 100%; aspect-ratio: 16 / 9; max-height: 200px; margin-bottom: 12px; }
+/* Photo entière (jamais recadrée) : 2 colonnes sur ordinateur, photo au-dessus sur mobile */
+.tier-acc .tier-more-in { display: grid; grid-template-columns: minmax(200px, 0.75fr) 1.25fr; column-gap: 22px; align-content: start; }
+.tier-acc .tier-more-in > * { grid-column: 2; }
+.tier-acc .tier-more-in > .fp { grid-column: 1; grid-row: 1 / span 8; aspect-ratio: 4 / 5; max-height: 360px; margin: 0 0 4px; align-self: start; }
+.tier-acc .tier-more-in:not(:has(.fp)) > * { grid-column: 1 / -1; }
 .tier-acc.open .tier-more-in > * { animation: fxIn 0.5s var(--ease-luxe, ease) both; }
 .tier-acc.selected { outline: 0; border-color: rgba(110,90,168,0.55); box-shadow: 0 0 0 1px rgba(110,90,168,0.3), 0 10px 26px rgba(110,90,168,0.15); }
 @media (max-width: 700px) {
@@ -4233,7 +4237,8 @@ a, button { -webkit-tap-highlight-color: rgba(110,90,168,0.18); }
   .tier-acc .tier-thumb { width: 46px; height: 46px; flex-basis: 46px; }
   .tier-acc .tier-more-in { padding: 0 12px; }
   .tier-acc.open .tier-more-in { padding-bottom: 14px; }
-  .tier-acc .tier-more-in > .tier-photo { max-height: 140px; aspect-ratio: 16 / 8; }
+  .tier-acc .tier-more-in { display: block; }
+  .tier-acc .tier-more-in > .fp { aspect-ratio: 4 / 3; max-height: 250px; margin-bottom: 12px; }
 }
 @media (max-width: 700px) { .payment-flex-strip { padding: 14px 16px; gap: 10px; margin-bottom: 14px; } .payment-flex-icon { display: none; } .payment-flex-methods { display: none; } }
 
@@ -4248,8 +4253,8 @@ a, button { -webkit-tap-highlight-color: rgba(110,90,168,0.18); }
 .rc-toggle { display: none; }
 @media (max-width: 700px) {
   .opt-item { padding-top: 12px; padding-bottom: 12px; }
-  .recap-box:not(.rc-open) .recap-items, .recap-box:not(.rc-open) .recap-photo { display: none; }
-  .recap-box .recap-photo { max-height: 130px; }
+  .recap-box:not(.rc-open) .recap-items, .recap-box:not(.rc-open) .fp { display: none; }
+  .recap-box > .fp { max-height: 190px; aspect-ratio: 4 / 3; }
   .rc-toggle { display: inline-flex; margin-top: 12px; font: inherit; font-size: 12.5px; font-weight: 700; color: #4b3d7a; background: none; border: 0; padding: 4px 0; text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
   .recap-box { padding-top: 18px; padding-bottom: 14px; }
 }
@@ -4258,3 +4263,8 @@ a, button { -webkit-tap-highlight-color: rgba(110,90,168,0.18); }
 .tier-badge { border: 1px solid rgba(110,90,168,0.38); border-radius: 999px; padding: 4px 11px; background: rgba(255,255,255,0.45); letter-spacing: 0.16em; }
 .tier-acc .tier-mid .tier-badge { margin-bottom: 2px; }
 .tier-card:hover, .tier-acc:hover { border-color: rgba(110,90,168,0.5); }
+
+/* Cadre « photo entière » des formules */
+.fp { display: block; position: relative; overflow: hidden; border-radius: 12px; background: #ece6f8; }
+.fp::before { content: ''; position: absolute; inset: -24px; background: var(--ph) center / cover no-repeat; filter: blur(20px) saturate(1.1); opacity: 0.85; }
+.fp > .formula-photo { position: relative; display: block; width: 100%; height: 100%; aspect-ratio: auto; max-height: none; margin: 0; border-radius: 0; object-fit: contain; background: transparent; }
