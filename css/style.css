@@ -3380,7 +3380,7 @@
      contenu qui suit (formulaires, FAQ, coordonnées, onglets…) est posé sur
      un panneau blanc dépoli pour rester lisible quelle que soit l'image. */
   .read-panel,
-  #lsec-faq, #lsec-privacy,
+  #lsec-faq, #lsec-privacy, #lsec-cgv,
   #view-contact #ctForm,
   #psec-apply, #psec-collab,
   #partnersAccordion,
@@ -3396,7 +3396,7 @@
   }
   .read-panel .fgroup:last-child { margin-bottom: 0; }
   #view-contact .ct-info-panel { padding-bottom: clamp(4px, 1vw, 12px); }
-  #lsec-faq .accordion-item:first-child, #lsec-privacy .accordion-item:first-child,
+  #lsec-faq .accordion-item:first-child, #lsec-privacy .accordion-item:first-child, #lsec-cgv .accordion-item:first-child,
   #partnersAccordion .accordion-item:first-child { border-top: none; }
   #pfTabs { margin-bottom: 36px; padding: 18px clamp(20px, 3vw, 36px) 0; }
   #psec-apply .collab-sub-full, #psec-collab .collab-sub-full { margin-bottom: 36px; }

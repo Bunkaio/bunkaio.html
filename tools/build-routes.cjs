@@ -34,7 +34,7 @@ const SNAPS_BY_VIEW = {
   quiz: ['catList', 'csSlotQuiz'],
   portfolio: ['pfTabs', 'pfLinks'],
   services: ['servicesFilters', 'servicesGrid', 'svcLinks', 'processSteps', 'csSlotServices'],
-  legal: ['faqAccordion', 'privacyAccordion'],
+  legal: ['faqAccordion', 'privacyAccordion', 'cgvAccordion'],
   partners: ['partnersPitch', 'partnersAccordion', 'applyBenefitsAccordion'],
   service: ['servicePageContent'],
   advice: ['advicePageContent'],
@@ -265,12 +265,13 @@ function buildPage(template, route, snaps, meta) {
   for (const id of ALL_SNAP_IDS) html = setSnap(html, id, '');
   let ids = [...(SNAPS_BY_VIEW[route.view] || []), ...SNAPS_ALL];
   if (route.view === 'legal') {
-    const privacy = route.sub === 'privacy';
-    ids = ids.filter((id) => id !== (privacy ? 'faqAccordion' : 'privacyAccordion'));
-    html = html.replace(/<div id="lsec-faq"[^>]*>/, '<div id="lsec-faq"' + (privacy ? ' style="display:none"' : '') + '>');
-    html = html.replace(/<div id="lsec-privacy"[^>]*>/, '<div id="lsec-privacy"' + (privacy ? '' : ' style="display:none"') + '>');
-    html = html.replace(/id="legaltab-faq"/, 'id="legaltab-faq"').replace(/class="svc-tab( active)?" id="legaltab-(faq|privacy)"/g, (m0, a, t) => 'class="svc-tab' + ((t === 'privacy') === privacy ? ' active' : '') + '" id="legaltab-' + t + '"');
-    if (privacy) html = html.replace(/(data-pageh1[^>]*data-lang=")legal-title(">)[^<]*/, '$1legal-title-privacy$2' + I18N_FR['legal-title-privacy']);
+    const cur = route.sub === 'privacy' || route.sub === 'cgv' ? route.sub : 'faq';
+    ids = ids.filter((id) => id === cur + 'Accordion' || !/^(faq|privacy|cgv)Accordion$/.test(id));
+    for (const k of ['faq', 'privacy', 'cgv']) {
+      html = html.replace(new RegExp('<div id="lsec-' + k + '"[^>]*>'), '<div id="lsec-' + k + '"' + (k === cur ? '' : ' style="display:none"') + '>');
+      html = html.replace(new RegExp('class="svc-tab( active)?" id="legaltab-' + k + '"'), 'class="svc-tab' + (k === cur ? ' active' : '') + '" id="legaltab-' + k + '"');
+    }
+    if (cur !== 'faq') html = html.replace(/(data-pageh1[^>]*data-lang=")legal-title(">)[^<]*/, '$1legal-title-' + cur + '$2' + I18N_FR['legal-title-' + cur]);
   }
   for (const id of ids) if (snaps[id]) html = setSnap(html, id, snaps[id]);
   return html;
@@ -324,7 +325,7 @@ function pinAssets(html) {
   await page.waitForTimeout(300);
   await grab(['servicesFilters', 'servicesGrid', 'svcLinks', 'processSteps']);
   await page.evaluate(() => goView('legal', null, { initial: true }));
-  await grab(['faqAccordion', 'privacyAccordion']);
+  await grab(['faqAccordion', 'privacyAccordion', 'cgvAccordion']);
   await page.evaluate(() => goView('portfolio', null, { initial: true }));
   await page.waitForTimeout(400);
   await grab(['pfTabs', 'pfLinks']);
