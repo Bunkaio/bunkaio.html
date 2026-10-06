@@ -1065,8 +1065,8 @@ const CATS = [
     }},
   { id:'lumen',
     lumen: true,
-    name:{fr:'Lumen', en:'Lumen'},
-    tag:{fr:'Photobooth IA — mariages haut de gamme', en:'AI Photobooth — luxury weddings'},
+    name:{fr:'Lumen — Photobooth IA (location)', en:'Lumen — AI photobooth (rental)'},
+    tag:{fr:'Location de photobooth IA — mariages haut de gamme', en:'AI photobooth rental — luxury weddings'},
     pitch:{fr:'Un souvenir unique, généré par IA en quelques secondes, sans jamais sacrifier l\'élégance de votre réception. Vos invités repartent avec bien plus qu\'une photo.',
       en:'A one-of-a-kind keepsake, AI-generated in seconds, without ever compromising the elegance of your event. Your guests leave with far more than a photo.'},
     icon:'lumen',
@@ -1191,16 +1191,16 @@ const LUMEN_TIERS = [
     price: 690, priceUSD: 750,
     delay:{fr:'7 jours ouvrés', en:'7 working days'},
     items:{
-      fr:['Photobooth IA installé et opérationnel','Jusqu\'à 4 heures de prestation','Impressions illimitées incluses','Galerie privée livrée sous 7 jours'],
-      en:['AI photobooth set up and ready','Up to 4 hours service','Unlimited prints included','Private gallery delivered within 7 days'] }
+      fr:['Location du photobooth IA, installé et opérationnel','Jusqu\'à 4 heures de prestation','Impressions illimitées incluses','Galerie privée livrée sous 7 jours'],
+      en:['AI photobooth rental, set up and ready','Up to 4 hours service','Unlimited prints included','Private gallery delivered within 7 days'] }
   },
   { id:'sig',  name:{fr:'Signature',  en:'Signature'},
     badge:{fr:'Le plus choisi', en:'Most popular'},
     price: 1290, priceUSD: 1400,
     delay:{fr:'5 jours ouvrés', en:'5 working days'},
     items:{
-      fr:['Photobooth IA installé et opérationnel','Jusqu\'à 6 heures de prestation','Style personnalisé (fond, habillage, palette)','Impressions illimitées incluses','Galerie privée livrée sous 5 jours'],
-      en:['AI photobooth set up and ready','Up to 6 hours service','Custom style (backdrop, branding, palette)','Unlimited prints included','Private gallery delivered within 5 days'] }
+      fr:['Location du photobooth IA, installé et opérationnel','Jusqu\'à 6 heures de prestation','Style personnalisé (fond, habillage, palette)','Impressions illimitées incluses','Galerie privée livrée sous 5 jours'],
+      en:['AI photobooth rental, set up and ready','Up to 6 hours service','Custom style (backdrop, branding, palette)','Unlimited prints included','Private gallery delivered within 5 days'] }
   },
   { id:'surm', name:{fr:'Sur-mesure', en:'Bespoke'},
     badge:{fr:'Entièrement personnalisé', en:'Fully bespoke'},
@@ -1942,7 +1942,7 @@ function goToServiceTable(catId){
    le survol met le défilement en pause. */
 let msIndex = 0, msTimer = null, msHover = false;
 const MS_DELAY = 5500;
-function missionPillName(c){ return String(t(c.name)).split(' — ')[0].split(',')[0]; }
+function missionPillName(c){ return c.lumen ? t({fr:'Photobooth Lumen', en:'Lumen photobooth'}) : String(t(c.name)).split(' — ')[0].split(',')[0]; }
 function missionPreviewHTML(c){
   const f = catFacts(c), en = LANG === 'en';
   const to = t({fr:'à', en:'to'}), wd = t({fr:'jours ouvrés', en:'working days'});
