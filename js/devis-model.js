@@ -91,7 +91,7 @@
       duree: 'Illimitée pour les visuels livrés (usage lié à la carrière du modèle)',
       real: [
         "Sessions non utilisées : une session mensuelle non consommée n'est pas reportable et n'est pas remboursée.",
-        "Résiliation : l'abonnement est sans engagement de durée ; le client peut y mettre fin pour la période suivante en prévenant avant le renouvellement.",
+        "Engagement et résiliation : l'abonnement comporte un engagement minimum de 6 mois (comme indiqué sur bunkaio.com) ; au-delà, le client peut y mettre fin pour la période suivante en prévenant avant le renouvellement.",
         "Mineurs : l'autorisation du représentant légal est obligatoire.",
         "Direction artistique : les visuels suivent le moodboard validé dans l'espace client."
       ] }
