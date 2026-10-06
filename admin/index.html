@@ -491,7 +491,7 @@
             <div class="form">
               <div class="fg"><label for="invEmail">Email du client</label><input id="invEmail" list="emailList" placeholder="client@exemple.fr" oninput="invPreview()"></div>
               <div class="frow">
-                <div class="fg"><label for="invAmount">Montant total HT (€)</label><input id="invAmount" type="number" min="0" step="0.01" placeholder="1200" oninput="invPreview()"></div>
+                <div class="fg"><label for="invAmount">Montant total (€)</label><input id="invAmount" type="number" min="0" step="0.01" placeholder="1200" oninput="invPreview()"></div>
                 <div class="fg"><label>Calcul</label><div class="small" id="invSplit" style="padding:10px 0">Acompte 30 % · Solde 70 %</div></div>
               </div>
               <div class="fg"><label for="invDesc">Description</label><input id="invDesc" placeholder="Portrait corporate — Formule Signature"></div>
@@ -1762,7 +1762,7 @@ function renderQuotes() {
   const F = [['all', 'Tous', () => true], ['brouillon', 'Brouillons', q => q.status === 'brouillon'], ['envoye', 'Envoyés', q => q.status === 'envoye'], ['signe', 'Signés', q => q.status === 'signe'], ['clos', 'Expirés / annulés / refusés', q => ['expire', 'annule', 'refuse'].includes(q.status)]];
   $('qChips').innerHTML = F.map(([id, l, f]) => `<button class="chip ${state.qFilter === id ? 'on' : ''}" onclick="state.qFilter='${id}';renderQuotes()">${l}<span class="c">${all.filter(f).length}</span></button>`).join('');
   const list = all.filter(F.find(x => x[0] === state.qFilter)[2]);
-  $('qTable').innerHTML = list.length ? `<div class="tbl-wrap"><table><thead><tr><th>N°</th><th>Client</th><th>Prestation</th><th class="num">Montant HT</th><th>Statut</th><th>Suivi</th><th>Validité</th></tr></thead><tbody>${list.map(q => { const st = Q_STATUS[q.status] || [q.status, 'line'];
+  $('qTable').innerHTML = list.length ? `<div class="tbl-wrap"><table><thead><tr><th>N°</th><th>Client</th><th>Prestation</th><th class="num">Montant</th><th>Statut</th><th>Suivi</th><th>Validité</th></tr></thead><tbody>${list.map(q => { const st = Q_STATUS[q.status] || [q.status, 'line'];
     return `<tr class="click" onclick="openQuote('${esc(q.id)}')"><td><b>${esc(q.number)}</b></td><td class="who"><b>${esc(q.client && q.client.nom)}</b><span>${esc(q.email)}</span></td><td class="small">${esc(q.prestation)}</td><td class="num"><b>${eur(q.totalHT)}</b>${q.abonnement ? '<div class="small muted">/ mois</div>' : ''}</td><td><span class="badge ${st[1]}">${st[0]}</span></td>
     <td class="small">${q.status === 'signe' ? 'Signé ' + fdate(q.signedAt) + (q.signedVia === 'yousign' ? ' (Yousign)' : q.signedVia === 'manuel' ? ' (manuel)' : ' en ligne') + (q.depositInvoice ? ' · acompte envoyé' : q.abonnement ? '' : ' · <b style="color:var(--danger)">acompte à créer</b>') : q.status === 'envoye' ? 'Envoyé ' + fdate(q.sentAt) + (q.viewedAt ? ' · consulté ' + ago(q.viewedAt) : ' · pas encore ouvert') + (q.reminderSentAt ? ' · relancé' : '') : 'Créé ' + fdate(q.createdAt)}</td><td class="small">${fdate(q.validUntil)}</td></tr>`; }).join('')}</tbody></table></div>` : '<div class="card"><div class="empty">Aucun devis. Créez-en un depuis la fiche d\'un lead ou avec « Nouveau devis ».</div></div>';
 }
@@ -1824,7 +1824,7 @@ function renderQuoteDrawer() {
   const q = QE; const st = Q_STATUS[q.status] || [q.status, 'line'];
   const editable = q.status === 'brouillon';
   $('drHead').innerHTML = `<div class="row1"><div style="min-width:0"><h2>${q.number ? 'Devis n° ' + esc(q.number) : 'Nouveau devis'}</h2><div class="em">${esc(q.client.nom || '')}${q.email ? ' · ' + esc(q.email) : ''}</div></div><button class="close" onclick="closeDrawer()" aria-label="Fermer">✕</button></div>
-    <div class="badges"><span class="badge lav">${st[0]}</span>${q.totalHT ? `<span class="badge">${eur(q.totalHT)} HT${q.abonnement ? ' / mois' : ''}</span>` : ''}${q.viewedAt ? '<span class="badge">Consulté ' + ago(q.viewedAt) + '</span>' : ''}${q.signedVia ? '<span class="badge">Signé ' + (q.signedVia === 'en_ligne' ? 'en ligne' : q.signedVia) + '</span>' : ''}</div>
+    <div class="badges"><span class="badge lav">${st[0]}</span>${q.totalHT ? `<span class="badge">${eur(q.totalHT)}${q.abonnement ? ' / mois' : ''}</span>` : ''}${q.viewedAt ? '<span class="badge">Consulté ' + ago(q.viewedAt) + '</span>' : ''}${q.signedVia ? '<span class="badge">Signé ' + (q.signedVia === 'en_ligne' ? 'en ligne' : q.signedVia) + '</span>' : ''}</div>
     <div class="dr-tabs">${(editable ? [['edit', 'Rédaction'], ['preview', 'Aperçu']] : [['preview', 'Devis'], ['track', 'Suivi']]).map(([id, l]) => `<button class="${drawer.tab === id ? 'on' : ''}" onclick="setQTab('${id}')">${l}</button>`).join('')}</div>`;
   if (drawer.tab === 'edit') $('drBody').innerHTML = quoteForm(q);
   else if (drawer.tab === 'track') $('drBody').innerHTML = quoteTrack(q);
@@ -1863,7 +1863,7 @@ function quoteForm(q) {
     <div class="frow"><div class="fg"><label>Date</label><input type="date" id="qeDate" value="${esc(q.seance && q.seance.date)}"></div><div class="fg"><label>Heure</label><input id="qeHeure" value="${esc(q.seance && q.seance.heure)}" placeholder="14h30"></div></div>
     <div class="fg"><label>Lieu</label><input id="qeLieu" value="${esc(q.seance && q.seance.lieu)}"></div>
     <div class="fg"><label>Délai de livraison</label><input id="qeDelai" value="${esc(q.delai)}" placeholder="Ex. 7 ${esc((TPL[q.template] || {}).delai || '')}"></div>
-    <div class="frow"><div class="fg"><label>Montant total HT (€)${q.abonnement ? ' par mois' : ''}</label><input type="number" min="0" step="0.01" id="qeTotal" value="${esc(q.totalHT)}" oninput="$('qeSplit').textContent=this.value>0&&${!q.abonnement}?'Acompte '+eur(Math.round(this.value*30)/100)+' · Solde '+eur(Math.round(this.value*70)/100):''"></div><div class="fg"><label>Valable jusqu'au</label><input type="date" id="qeValid" value="${esc(q.validUntil)}"></div></div>
+    <div class="frow"><div class="fg"><label>Montant total (€)${q.abonnement ? ' par mois' : ''}</label><input type="number" min="0" step="0.01" id="qeTotal" value="${esc(q.totalHT)}" oninput="$('qeSplit').textContent=this.value>0&&${!q.abonnement}?'Acompte '+eur(Math.round(this.value*30)/100)+' · Solde '+eur(Math.round(this.value*70)/100):''"></div><div class="fg"><label>Valable jusqu'au</label><input type="date" id="qeValid" value="${esc(q.validUntil)}"></div></div>
     <div class="small muted" id="qeSplit">${q.totalHT && !q.abonnement ? 'Acompte ' + eur(Math.round(q.totalHT * 30) / 100) + ' · Solde ' + eur(Math.round(q.totalHT * 70) / 100) : ''}</div>
     <div class="fg"><label>Précisions (facultatif)</label><textarea id="qeNotes" style="font-family:inherit;font-size:13.5px;min-height:60px">${esc(q.notes || '')}</textarea></div>
     <div class="lab" style="margin-top:10px">Cession des droits</div>
@@ -1887,7 +1887,7 @@ function signLink(q) { return q._url || '(lien disponible après « Renvoyer l\'
 async function saveQuote(silent) {
   readQuoteForm();
   if (!QE.email || !QE.email.includes('@')) { $('drMsg').innerHTML = '<div class="msg err">Email du client invalide.</div>'; return null; }
-  if (!(QE.totalHT > 0)) { $('drMsg').innerHTML = '<div class="msg err">Indiquez le montant total HT.</div>'; return null; }
+  if (!(QE.totalHT > 0)) { $('drMsg').innerHTML = '<div class="msg err">Indiquez le montant total.</div>'; return null; }
   try {
     const { res, data } = await api('/admin/quote', { method: 'POST', body: JSON.stringify({ action: 'save', id: QE.id || undefined, quote: QE }) });
     if (!res.ok || !data.ok) { $('drMsg').innerHTML = `<div class="msg err">Erreur : ${esc(data.error || res.status)}</div>`; return null; }
@@ -1897,7 +1897,7 @@ async function saveQuote(silent) {
 }
 async function sendQuote() {
   const q = await saveQuote(true); if (!q) return;
-  if (!confirm(`Envoyer le devis n° ${q.number} (${eur(q.totalHT)} HT) à ${q.email} ? Il ne sera plus modifiable.`)) return;
+  if (!confirm(`Envoyer le devis n° ${q.number} (${eur(q.totalHT)}) à ${q.email} ? Il ne sera plus modifiable.`)) return;
   await quoteAction('send', true);
 }
 async function quoteAction(action, skipConfirm) {
@@ -2152,7 +2152,7 @@ function drSession(c) {
 }
 function drInvoices(c) {
   return `${lrCard(c)}<div class="card" style="margin-bottom:18px"><h3>Nouvelle facture pour ${esc(c.name || c.email)}</h3>
-    ${c.customerId ? `<div class="form"><div class="frow"><div class="fg"><label>Montant total HT (€)</label><input id="drAmount" type="number" min="0" step="0.01" oninput="$('drSplit').innerHTML=this.value>0?'Acompte <b>'+eur(Math.round(this.value*30)/100)+'</b> · Solde <b>'+eur(Math.round(this.value*70)/100)+'</b>':''" value="${esc(c.invoices.find(i => i.kind === 'acompte') ? Math.round(c.invoices.find(i => i.kind === 'acompte').amount / 0.3 * 100) / 100 : '')}"></div><div class="fg"><label>Répartition</label><div class="small" id="drSplit" style="padding:10px 0"></div></div></div>
+    ${c.customerId ? `<div class="form"><div class="frow"><div class="fg"><label>Montant total (€)</label><input id="drAmount" type="number" min="0" step="0.01" oninput="$('drSplit').innerHTML=this.value>0?'Acompte <b>'+eur(Math.round(this.value*30)/100)+'</b> · Solde <b>'+eur(Math.round(this.value*70)/100)+'</b>':''" value="${esc(c.invoices.find(i => i.kind === 'acompte') ? Math.round(c.invoices.find(i => i.kind === 'acompte').amount / 0.3 * 100) / 100 : '')}"></div><div class="fg"><label>Répartition</label><div class="small" id="drSplit" style="padding:10px 0"></div></div></div>
       <div class="fg"><label>Description</label><input id="drDesc" value="${esc((c.invoices[0] && c.invoices[0].description) || (primaryAcc(c) && primaryAcc(c).seance && primaryAcc(c).seance.prestation) || (c.lead ? c.lead.category : ''))}"></div>
       <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn invbtn" onclick="createInvoice('deposit',true)">Facture d'acompte (30 %)</button><button class="btn ghost invbtn" onclick="createInvoice('balance',true)">Photos prêtes + solde (70 %)</button></div>
       ${primaryAcc(c) && !primaryAcc(c).lightroomUrl ? '<div class="msg warn">Lien Lightroom non saisi : renseignez-le dans « Espace & coordonnées » avant le solde.</div>' : ''}

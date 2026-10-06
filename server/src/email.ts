@@ -815,7 +815,7 @@ export function buildQuoteEmail(params: { customerName: string; number: string; 
   const lang = params.lang ?? 'fr';
   const greeting = greet(lang, params.customerName);
   const t = (fr: string, en: string): string => tr(lang, fr, en);
-  const amount = eur(lang, params.totalHT) + (params.abonnement ? t(' HT / mois', ' excl. VAT / month') : t(' HT', ' excl. VAT'));
+  const amount = eur(lang, params.totalHT) + (params.abonnement ? t(' / mois', ' / month') : '');
   const until = fmtDate(lang, params.validUntil);
   const intro = params.reminder
     ? t(`Petit rappel : votre devis n° ${params.number} est toujours disponible. Si vous avez la moindre question ou souhaitez un ajustement, répondez simplement à cet email.`,

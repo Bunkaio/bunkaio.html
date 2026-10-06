@@ -288,7 +288,7 @@ prospects les plus prometteurs sans avoir à ouvrir chaque fiche Stripe :
 
 | Critère | Points |
 |---|---|
-| Budget estimé ≥ 1000 € HT | +25 |
+| Budget estimé ≥ 1000 € | +25 |
 | Catégorie immobilier ou architecture | +20 |
 | Intérêt pour la communication récurrente | +15 |
 | Option drone choisie | +10 |
@@ -378,13 +378,13 @@ curl -X POST "https://bunkaio-quiz-stripe.<ton-sous-domaine>.workers.dev/account
     "etapeActuelle": 3,
     "lightroomUrl": "https://lightroom.adobe.com/shares/EXEMPLE-A-REMPLACER",
     "commandes": [
-      { "date": "12/09/2026", "prestation": "Formule Signature — Shooting produit", "montant": "2 400 € HT", "statut": "En production" }
+      { "date": "12/09/2026", "prestation": "Formule Signature — Shooting produit", "montant": "2 400 €", "statut": "En production" }
     ],
     "paiements": [
-      { "date": "12/09/2026", "reference": "ACPT-2026-0142", "methode": "Carte bancaire", "montant": "720 € HT", "statut": "Payé", "factureUrl": "https://invoice.stripe.com/i/EXEMPLE" }
+      { "date": "12/09/2026", "reference": "ACPT-2026-0142", "methode": "Carte bancaire", "montant": "720 €", "statut": "Payé", "factureUrl": "https://invoice.stripe.com/i/EXEMPLE" }
     ],
     "factures": [
-      { "numero": "FAC-2026-0142-A", "date": "12/09/2026", "montant": "720 € HT", "statut": "Payée", "url": "https://invoice.stripe.com/i/EXEMPLE" }
+      { "numero": "FAC-2026-0142-A", "date": "12/09/2026", "montant": "720 €", "statut": "Payée", "url": "https://invoice.stripe.com/i/EXEMPLE" }
     ]
   }'
 ```

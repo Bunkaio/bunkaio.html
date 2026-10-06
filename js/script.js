@@ -102,7 +102,7 @@ const I18N = {
     'partners-title':'Partenariat et collaboration',
     'legal-title':'FAQ : questions fréquentes',
     'legal-sub':'Les réponses aux questions les plus fréquentes, ainsi que nos engagements en matière de confidentialité et de droits d\'utilisation des visuels.',
-    'ctab-contact':'Contact','ctab-about':'À propos','svr-kicker':'Nos prestations','svr-title':'Une image juste pour chaque projet','svr-catalog':'Voir le catalogue complet','svr-aria':'Nos prestations',
+    'ctab-contact':'Contact','ctab-about':'À propos','vat-note':'Prix nets : TVA non applicable (art. 293 B du CGI). Le prix affiché est le prix payé, sans calcul supplémentaire.','svr-kicker':'Nos prestations','svr-title':'Une image juste pour chaque projet','svr-catalog':'Voir le catalogue complet','svr-aria':'Nos prestations',
     'legaltab-faq':'FAQ','legaltab-privacy':'Politique de confidentialité','legaltab-cgv':'Conditions générales de vente','legal-title-cgv':'Conditions générales de vente','ft-cgv':'Conditions générales de vente',
     'p-why':'Pourquoi Bunkaio existe',
     'p-why-1':'Nous vivons dans un monde où les contenus se multiplient, mais où les histoires se raréfient. Chaque jour, des milliers d\'images sont publiées puis oubliées.',
@@ -456,7 +456,7 @@ const I18N = {
     'partners-title':'Partnership & collaboration',
     'legal-title':'FAQ: frequently asked questions',
     'legal-sub':'Answers to the most frequently asked questions, along with our commitments on data privacy and image/video usage rights.',
-    'ctab-contact':'Contact','ctab-about':'About','svr-kicker':'Our services','svr-title':'The right image for every project','svr-catalog':'See the full catalogue','svr-aria':'Our services',
+    'ctab-contact':'Contact','ctab-about':'About','vat-note':'Net prices: VAT not applicable (art. 293 B of the French Tax Code). The price shown is the price you pay, with nothing to add.','svr-kicker':'Our services','svr-title':'The right image for every project','svr-catalog':'See the full catalogue','svr-aria':'Our services',
     'legaltab-faq':'FAQ','legaltab-privacy':'Privacy policy','legaltab-cgv':'Terms of sale','legal-title-cgv':'General terms of sale','ft-cgv':'Terms of sale',
     'p-why':'Why Bunkaio exists',
     'p-why-1':'We live in a world where content keeps multiplying, yet stories are becoming rare. Every day, thousands of images are published and then forgotten.',
@@ -971,16 +971,16 @@ const CATS = [
       en:'No need to feel at ease in front of the camera — that\'s our job. The result: photos that truly look like you, delivered in 5 days.'},
     icon:'camera',
     tiers:{
-      deco:{ price:230, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
-        fr:['1h de séance — extérieur ou studio (+60€)','8 photos HD retouchées','Sélection guidée incluse','Galerie privée de téléchargement'],
-        en:['1h session — outdoor or studio (+€60)','8 retouched HD photos','Guided selection included','Private download gallery'] } },
-      sig:{ price:390, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
+      deco:{ price:290, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
+        fr:['1h de séance — extérieur ou studio (+80€)','8 photos HD retouchées','Sélection guidée incluse','Galerie privée de téléchargement'],
+        en:['1h session — outdoor or studio (+€80)','8 retouched HD photos','Guided selection included','Private download gallery'] } },
+      sig:{ price:490, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
         fr:['2h de séance','15 photos HD retouchées','Direction de pose incluse','Galerie privée de téléchargement'],
         en:['2h session','15 retouched HD photos','Posing guidance included','Private download gallery'] } },
-      prem:{ price:590, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
+      prem:{ price:790, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
         fr:['Demi-journée (4h) — jusqu\'à 2 ambiances','25 photos HD retouchées','2 tenues différentes','Direction artistique complète','Galerie privée de téléchargement'],
         en:['Half-day (4h) — up to 2 moods','25 retouched HD photos','2 different outfits','Full art direction','Private download gallery'] } },
-      edit:{ price:990, delay:{fr:'10 jours ouvrés',en:'10 working days'}, items:{
+      edit:{ price:1390, delay:{fr:'10 jours ouvrés',en:'10 working days'}, items:{
         fr:['Journée complète — 4 lieux différents','4 tenues différentes','30 photos HD retouchées','1 film court (30 secondes)','Direction artistique & stylisme','Publication sur les supports Bunkaio'],
         en:['Full day — 4 different locations','4 different outfits','30 retouched HD photos','1 short film (30 seconds)','Art direction & styling','Featured on Bunkaio channels'] } }
     }},
@@ -991,16 +991,16 @@ const CATS = [
       en:'A natural, polished professional image that builds trust at first glance: profile photo, website, team presentation.'},
     icon:'agency',
     tiers:{
-      deco:{ price:230, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
-        fr:['1h de séance — extérieur ou studio (+60€)','8 photos HD retouchées','Sélection guidée incluse','Galerie privée de téléchargement'],
-        en:['1h session — outdoor or studio (+€60)','8 retouched HD photos','Guided selection included','Private download gallery'] } },
-      sig:{ price:390, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
+      deco:{ price:390, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
+        fr:['1h de séance — extérieur ou studio (+80€)','8 photos HD retouchées','Sélection guidée incluse','Galerie privée de téléchargement'],
+        en:['1h session — outdoor or studio (+€80)','8 retouched HD photos','Guided selection included','Private download gallery'] } },
+      sig:{ price:690, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
         fr:['2h de séance','15 photos HD retouchées','Direction de pose incluse','Galerie privée de téléchargement'],
         en:['2h session','15 retouched HD photos','Posing guidance included','Private download gallery'] } },
-      prem:{ price:590, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
+      prem:{ price:1090, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
         fr:['Demi-journée (4h) — jusqu\'à 2 ambiances','25 photos HD retouchées','2 tenues différentes','Direction artistique complète','Galerie privée de téléchargement'],
         en:['Half-day (4h) — up to 2 moods','25 retouched HD photos','2 different outfits','Full art direction','Private download gallery'] } },
-      edit:{ price:990, delay:{fr:'10 jours ouvrés',en:'10 working days'}, items:{
+      edit:{ price:1790, delay:{fr:'10 jours ouvrés',en:'10 working days'}, items:{
         fr:['Journée complète — 4 lieux différents','4 tenues différentes','30 photos HD retouchées','1 film court (30 secondes)','Direction artistique & stylisme','Publication sur les supports Bunkaio'],
         en:['Full day — 4 different locations','4 different outfits','30 retouched HD photos','1 short film (30 seconds)','Art direction & styling','Featured on Bunkaio channels'] } }
     }},
@@ -1011,16 +1011,16 @@ const CATS = [
       en:'Visuals that sell, not just visuals that please. Every lookbook is built around your brand strategy, from shoot to publication.'},
     icon:'marque',
     tiers:{
-      deco:{ price:490, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
+      deco:{ price:590, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
         fr:['Mini-série — 8 photos HD retouchées','Un produit ou une silhouette','Direction artistique incluse'],
         en:['Mini series — 8 retouched HD photos','One product or one look','Art direction included'] } },
-      sig:{ price:990, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
+      sig:{ price:1190, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
         fr:['Lookbook — 20 photos HD retouchées','1 Reel vertical pour les réseaux','Direction artistique incluse'],
         en:['Lookbook — 20 retouched HD photos','1 vertical Reel for social media','Art direction included'] } },
-      prem:{ price:1590, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
+      prem:{ price:1890, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
         fr:['Lookbook — 30 photos HD retouchées','1 film principal','2 Reels verticaux','Direction artistique incluse'],
         en:['Lookbook — 30 retouched HD photos','1 main film','2 vertical Reels','Art direction included'] } },
-      edit:{ price:2390, delay:{fr:'10 jours ouvrés',en:'10 working days'}, items:{
+      edit:{ price:2790, delay:{fr:'10 jours ouvrés',en:'10 working days'}, items:{
         fr:['Campagne — 35 photos HD retouchées','1 film publicitaire (2 minutes)','3 Reels verticaux','Storytelling de marque','Publication sur les supports Bunkaio'],
         en:['Campaign — 35 retouched HD photos','1 commercial film (2 minutes)','3 vertical Reels','Brand storytelling','Featured on Bunkaio channels'] } }
     }},
@@ -1031,16 +1031,16 @@ const CATS = [
       en:'Crisp, bright packshots built to convert — on your site and your socials alike. Campaign-level quality, whatever the size of your catalogue.'},
     icon:'product',
     tiers:{
-      deco:{ price:350, delay:{fr:'3 jours ouvrés',en:'3 working days'}, items:{
+      deco:{ price:390, delay:{fr:'3 jours ouvrés',en:'3 working days'}, items:{
         fr:['Jusqu\'à 5 produits — 10 photos HD retouchées','Fond neutre studio','Galerie privée de téléchargement'],
         en:['Up to 5 products — 10 retouched HD photos','Neutral studio backdrop','Private download gallery'] } },
-      sig:{ price:690, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
+      sig:{ price:790, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
         fr:['Jusqu\'à 12 produits — 20 photos HD retouchées','Mise en scène incluse','Galerie privée de téléchargement'],
         en:['Up to 12 products — 20 retouched HD photos','Styled setup included','Private download gallery'] } },
-      prem:{ price:1290, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
+      prem:{ price:1390, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
         fr:['Jusqu\'à 25 produits — 35 photos HD retouchées','Mise en scène incluse','1 Reel vertical produit','Galerie privée de téléchargement'],
         en:['Up to 25 products — 35 retouched HD photos','Styled setup included','1 vertical product Reel','Private download gallery'] } },
-      edit:{ price:2190, delay:{fr:'10 jours ouvrés',en:'10 working days'}, items:{
+      edit:{ price:2390, delay:{fr:'10 jours ouvrés',en:'10 working days'}, items:{
         fr:['Catalogue complet — 50 photos HD retouchées','1 film de marque (90 secondes)','2 Reels verticaux','Publication sur les supports Bunkaio'],
         en:['Full catalogue — 50 retouched HD photos','1 brand film (90 seconds)','2 vertical Reels','Featured on Bunkaio channels'] } }
     }},
@@ -1051,16 +1051,16 @@ const CATS = [
       en:'Your day only happens once. We stay discreet so you can live it fully, while we capture every moment that matters.'},
     icon:'event',
     tiers:{
-      deco:{ price:390, delay:{fr:'3 jours ouvrés',en:'3 working days'}, items:{
+      deco:{ price:450, delay:{fr:'3 jours ouvrés',en:'3 working days'}, items:{
         fr:['20 photos HD retouchées','Couverture de 2 heures — les moments essentiels','Galerie privée de téléchargement'],
         en:['20 retouched HD photos','2-hour coverage — the essential moments','Private download gallery'] } },
-      sig:{ price:690, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
+      sig:{ price:790, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
         fr:['40 photos HD retouchées','Couverture jusqu\'à 4 heures — moments clés et ambiance','Galerie privée de téléchargement'],
         en:['40 retouched HD photos','Up to 4-hour coverage — key moments and atmosphere','Private download gallery'] } },
-      prem:{ price:1190, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
+      prem:{ price:1590, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
         fr:['80 photos HD retouchées','Couverture complète de l\'événement','1 teaser vidéo (30 secondes)','Galerie privée de téléchargement'],
         en:['80 retouched HD photos','Full event coverage','1 video teaser (30 seconds)','Private download gallery'] } },
-      edit:{ price:1990, delay:{fr:'10 jours ouvrés',en:'10 working days'}, items:{
+      edit:{ price:2590, delay:{fr:'10 jours ouvrés',en:'10 working days'}, items:{
         fr:['100 photos HD retouchées','1 aftermovie (2 minutes)','2 Reels verticaux','Mise en lumière éditoriale de l\'événement','Publication sur les supports Bunkaio'],
         en:['100 retouched HD photos','1 aftermovie (2 minutes)','2 vertical Reels','Editorial spotlight on the event','Featured on Bunkaio channels'] } }
     }},
@@ -1082,7 +1082,7 @@ const CATS = [
 const SUBS = {
   /* Studio Continu : proposé uniquement aux modèles émergents et mannequins (voir SUB_PROFILES). */
   mode: {
-    price: 750,
+    price: 990,
     audience:{fr:'modèles et mannequins', en:'models'},
     name:{fr:'Studio Continu — Modèles & mannequins', en:'Studio Continu — Models'},
     items:{
@@ -1093,13 +1093,13 @@ const SUBS = {
 const SUB_PROFILES = ['modele', 'mannequin'];
 const subAvailable = cat => !!SUBS[cat] && (!SUB_PROFILES.length || cat !== 'mode' || SUB_PROFILES.includes(S.prof));
 
-/* Formule spécialisée "Polas" — uniquement Mode & créateurs. Studio obligatoire (+60€, voir computeTotal).
+/* Formule spécialisée "Polas" — uniquement Mode & créateurs. Tarif tout compris : studio obligatoire et inclus.
    Polas (digitals) = photos brutes et sans retouche, destinées exclusivement aux agences pour évaluer
    la morphologie, la posture et le potentiel brut du mannequin — aucune mise en scène. */
 const POLAS = {
   /* Formule « Book grossesse » — séance photo particuliers. Tarif haut de gamme, lieu (studio ou extérieur) inclus. */
   'photo-part': {
-    id: 'grossesse', price: 490, studio: 0,
+    id: 'grossesse', price: 590, studio: 0,
     name:{fr:'Book grossesse', en:'Maternity book'},
     badge:{fr:'Spécial grossesse', en:'Maternity special'},
     label:{fr:'Book grossesse', en:'Maternity book'},
@@ -1113,14 +1113,14 @@ const POLAS = {
       en:['1.5-hour session, studio or outdoor of your choice','20 retouched HD photos, natural retouching','Up to 2 outfits (your own, with styling advice beforehand)','Gentle, reassuring posing guidance for every stage','Partner or child welcome to join','Private download gallery'] }
   },
   mode: {
-    id: 'polas', studio: 60,
+    id: 'polas', studio: 0,
     badge:{fr:'Spécial mannequins', en:'For models'},
     label:{fr:'Pour les agences', en:'For agencies'},
-    studioNote:{fr:'Studio inclus (+60€)', en:'Studio included (+€60)'},
+    studioNote:{fr:'Studio inclus', en:'Studio included'},
     short:{fr:'Digitals bruts · studio inclus', en:'Raw digitals · studio included'},
     sub:{fr:'un format Polas pour mannequins, ainsi que quatre formules, de la découverte à l\'expérience éditoriale complète.', en:'a Polas format for models, plus four packages, from the starter offer to the complete editorial experience.'},
     optNote:{fr:'<strong>Bon à savoir :</strong> le format Polas est une expérience clé en main — studio inclus, sans option additionnelle.', en:'<strong>Good to know:</strong> the Polas format is a turnkey experience — studio included, no additional options.'},
-    price: 190,
+    price: 290,
     name:{fr:'Polas', en:'Polas'},
     delay:{fr:'Livraison HD sous 24h', en:'HD delivery within 24h'},
     items:{
@@ -1135,6 +1135,8 @@ function formulaPhotoHTML(cat, tierId, cls){
   const fb = (IMG.servicePhotos && IMG.servicePhotos[cat]) || '';
   return `<img class="formula-photo ${cls || ''}" src="${IMG.formulas}/${cat}-${tierId}.webp" alt="" loading="lazy" decoding="async" data-fb="${fb}" onerror="var f=this.dataset.fb;if(f){this.dataset.fb='';this.src=f}else{this.remove()}">`;
 }
+/* Supplément « studio » des formules Découverte (photo particuliers et corporate). */
+const STUDIO_FEE = 80;
 const specialTotal = sp => sp.price + sp.studio;
 const isSpecialTier = () => !!(S.tier && POLAS[S.cat] && S.tier === POLAS[S.cat].id);
 
@@ -1148,24 +1150,24 @@ const OPTIONS = [
     note:{fr:'Complétez votre reportage avec des visuels supplémentaires.',
           en:'Complement your shoot with extra visuals.'},
     packs:[
-      { id:'p1',  label:{fr:'1 photo à l\'unité',            en:'1 photo (unit price)'},   price:35 },
-      { id:'p10', label:{fr:'Pack 10 photos supplémentaires', en:'Pack of 10 extra photos'}, price:300 },
-      { id:'p15', label:{fr:'Pack 15 photos supplémentaires', en:'Pack of 15 extra photos'}, price:420 },
-      { id:'p20', label:{fr:'Pack 20 photos supplémentaires', en:'Pack of 20 extra photos'}, price:520 },
+      { id:'p1',  label:{fr:'1 photo à l\'unité',            en:'1 photo (unit price)'},   price:45 },
+      { id:'p10', label:{fr:'Pack 10 photos supplémentaires', en:'Pack of 10 extra photos'}, price:390 },
+      { id:'p15', label:{fr:'Pack 15 photos supplémentaires', en:'Pack of 15 extra photos'}, price:540 },
+      { id:'p20', label:{fr:'Pack 20 photos supplémentaires', en:'Pack of 20 extra photos'}, price:680 },
     ]},
-  { id:'drone', icon:'🚁', price:'À partir de 390€', comingSoon: true,
+  { id:'drone', icon:'🚁', price:'À partir de 490€', comingSoon: true,
     name:{fr:'Prises de vue drone additionnelles', en:'Additional drone footage'},
     note:{fr:'Perspectives aériennes supplémentaires par pilote certifié A1/A3 & A2. Précisez le volume souhaité dans votre message.',
           en:'Additional aerial perspectives by A1/A3 & A2 certified pilot. Specify the volume needed in your message.'} },
-  { id:'video', icon:'🎬', price:'À partir de 190€',
+  { id:'video', icon:'🎬', price:'À partir de 290€',
     name:{fr:'Film additionnel', en:'Additional film'},
-    note:{fr:'Reel vertical 60s à partir de 190€ · Film court 60-90s à partir de 390€ · Film principal 2min à partir de 690€. Précisez le format souhaité.',
-          en:'Vertical Reel 60s from €190 · Short film 60-90s from €390 · Main film 2min from €690. Specify the format needed.'} },
-  { id:'social', icon:'📱', price:'190€',
+    note:{fr:'Reel vertical 60s à partir de 290€ · Film court 60-90s à partir de 590€ · Film principal 2min à partir de 990€. Précisez le format souhaité.',
+          en:'Vertical Reel 60s from €290 · Short film 60-90s from €590 · Main film 2min from €990. Specify the format needed.'} },
+  { id:'social', icon:'📱', price:'290€',
     name:{fr:'Pack réseaux renforcé', en:'Enhanced social media pack'},
     note:{fr:'Déclinaisons optimisées pour Instagram, TikTok et LinkedIn — 3 formats × 3 réseaux.',
           en:'Cuts optimised for Instagram, TikTok and LinkedIn — 3 formats × 3 platforms.'} },
-  { id:'express', icon:'⚡', price:'+20%',
+  { id:'express', icon:'⚡', price:'+30%',
     name:{fr:'Livraison express 72h', en:'72-hour express delivery'},
     note:{fr:'Vos livrables passent en priorité absolue et vous sont remis sous 72 heures.',
           en:'Your deliverables become our absolute priority and reach you within 72 hours.'} }
@@ -1187,7 +1189,7 @@ const SPECIAL_OPTIONS = {
 const LUMEN_TIERS = [
   { id:'ess',  name:{fr:'Essentiel',  en:'Essentials'},
     badge: null,
-    price: 550, priceUSD: 600,
+    price: 690, priceUSD: 750,
     delay:{fr:'7 jours ouvrés', en:'7 working days'},
     items:{
       fr:['Photobooth IA installé et opérationnel','Jusqu\'à 4 heures de prestation','Impressions illimitées incluses','Galerie privée livrée sous 7 jours'],
@@ -1195,7 +1197,7 @@ const LUMEN_TIERS = [
   },
   { id:'sig',  name:{fr:'Signature',  en:'Signature'},
     badge:{fr:'Le plus choisi', en:'Most popular'},
-    price: 1100, priceUSD: 1200,
+    price: 1290, priceUSD: 1400,
     delay:{fr:'5 jours ouvrés', en:'5 working days'},
     items:{
       fr:['Photobooth IA installé et opérationnel','Jusqu\'à 6 heures de prestation','Style personnalisé (fond, habillage, palette)','Impressions illimitées incluses','Galerie privée livrée sous 5 jours'],
@@ -1203,7 +1205,7 @@ const LUMEN_TIERS = [
   },
   { id:'surm', name:{fr:'Sur-mesure', en:'Bespoke'},
     badge:{fr:'Entièrement personnalisé', en:'Fully bespoke'},
-    price: 1800, priceUSD: 2000,
+    price: 2190, priceUSD: 2400,
     delay:{fr:'Sur accord', en:'On agreement'},
     items:{
       fr:['Devis personnalisé selon votre projet','Durée, style et options définis ensemble'],
@@ -1228,7 +1230,7 @@ const LUMEN_OPTIONS = [
     name:{fr:'Style personnalisé', en:'Custom style'},
     note:{fr:'Fond dédié, habillage aux couleurs de votre événement, typographie sur mesure. Inclus dans la formule Signature.',
           en:'Dedicated backdrop, branding matching your event colours, bespoke typography. Included in the Signature package.'} },
-  { id:'lumen-heure', icon:'⏱', price: 190,
+  { id:'lumen-heure', icon:'⏱', price: 220,
     name:{fr:'Heure supplémentaire', en:'Additional hour'},
     note:{fr:'Prolongez votre prestation d\'une heure. Facturable par heure additionnelle.',
           en:'Extend your service by one hour. Billed per additional hour.'} },
@@ -2152,7 +2154,7 @@ function renderTiersBase(){
         ${lt.promo ? `<div class="tier-promo">${t(lt.promo)}</div>` : ''}${lt.badge ? `<div class="tier-badge">${t(lt.badge)}</div>` : ''}
         <div class="tier-head">
           <div class="tier-name">${t(lt.name)}</div>
-          <div class="tier-price">${priceStr}<small>HT</small></div>
+          <div class="tier-price">${priceStr}</div>
         </div>
         ${chfLine}
         <div class="tier-pay-line">${payLine}</div>
@@ -2180,7 +2182,7 @@ function renderTiersBase(){
       ${polas.promo ? `<div class="tier-promo">${t(polas.promo)}</div>` : ''}<div class="tier-badge">${badge}</div>
       <div class="tier-head">
         <div class="tier-name">${t(polas.name)}</div>
-        <div class="tier-price">${total.toLocaleString('fr-FR')}€<small>HT</small></div>
+        <div class="tier-price">${total.toLocaleString('fr-FR')}€</div>
       </div>
       <div class="tier-pay-line">${payLine}</div>
       <div class="tier-detail">${t(polas.items).join(' · ')} · ${studioNote}</div>`;
@@ -2198,7 +2200,7 @@ function renderTiersBase(){
       ${td.promo ? `<div class="tier-promo">${t(td.promo)}</div>` : ''}${tier.badge ? `<div class="tier-badge">${t(tier.badge)}</div>` : ''}
       <div class="tier-head">
         <div class="tier-name">${t(tier.name)}</div>
-        <div class="tier-price">${pp(td.price).toLocaleString('fr-FR')}€<small>HT</small></div>
+        <div class="tier-price">${pp(td.price).toLocaleString('fr-FR')}€</div>
       </div>
       <div class="tier-pay-line">${payLine}</div>
       <div class="tier-detail">${t(td.items).join(' · ')}</div>`;
@@ -2218,7 +2220,7 @@ function renderTiersBase(){
       ${sub.promo ? `<div class="tier-promo">${t(sub.promo)}</div>` : ''}<div class="tier-badge">${badge}</div>
       <div class="tier-head">
         <div class="tier-name">${t(sub.name)}</div>
-        <div class="tier-price">${pp(sub.price).toLocaleString('fr-FR')}€<small>HT/${LANG === 'fr' ? 'mois' : 'mo'}</small></div>
+        <div class="tier-price">${pp(sub.price).toLocaleString('fr-FR')}€<small>/${LANG === 'fr' ? 'mois' : 'mo'}</small></div>
       </div>
       <div class="tier-detail">${t(sub.items).join(' · ')}</div>
       <div class="sub-engagement">${engagement} · ${saving}</div>`;
@@ -2248,7 +2250,7 @@ function renderRecapBase(){
       <div class="recap-label">${selLabel}</div>
       <div class="recap-title">
         <span>${t(sub.name)}</span>
-        <span>${pp(sub.price).toLocaleString('fr-FR')}€ HT/${LANG === 'fr' ? 'mois' : 'mo'}</span>
+        <span>${pp(sub.price).toLocaleString('fr-FR')}€/${LANG === 'fr' ? 'mois' : 'mo'}</span>
       </div>
       <div class="recap-payment">${payLine}</div>
       <ul class="recap-items">
@@ -2269,7 +2271,7 @@ function renderRecapBase(){
       <div class="recap-label">${selLabel}</div>
       <div class="recap-title">
         <span>${t(cat.name)} — ${t(polas.name)}</span>
-        <span>${total.toLocaleString('fr-FR')}€ HT</span>
+        <span>${total.toLocaleString('fr-FR')}€</span>
       </div>
       <div class="recap-payment">${payLine}</div>
       <ul class="recap-items">
@@ -2297,7 +2299,7 @@ function renderRecapBase(){
       <div class="recap-label">${selLabel}</div>
       <div class="recap-title">
         <span>Lumen — ${t(lt.name)}</span>
-        <span>${pricePrefix}${(isSurm ? lt.price : pp(lt.price)).toLocaleString('fr-FR')}€${chfLine} HT</span>
+        <span>${pricePrefix}${(isSurm ? lt.price : pp(lt.price)).toLocaleString('fr-FR')}€${chfLine}</span>
       </div>
       <div class="recap-payment">${payLine}</div>
       <ul class="recap-items">
@@ -2309,7 +2311,7 @@ function renderRecapBase(){
   const tier = TIERS.find(x => x.id === S.tier);
   const td = cat.tiers[S.tier];
   const delivLabel = LANG === 'fr' ? 'Livraison' : 'Delivery';
-  const studioSupplement = ((S.cat === 'photo-part' || S.cat === 'corporate') && S.studio) ? ' + 60€ studio' : '';
+  const studioSupplement = ((S.cat === 'photo-part' || S.cat === 'corporate') && S.studio) ? ' + ' + STUDIO_FEE + '€ studio' : '';
   const threeX = Math.round(pp(td.price) / 3).toLocaleString('fr-FR');
   const payLine = LANG === 'fr'
     ? `💳 Soit 3 × ${threeX}€ sans frais avec Klarna — ou carte bancaire, acompte 30 % + solde.`
@@ -2318,7 +2320,7 @@ function renderRecapBase(){
     <div class="recap-label">${selLabel}</div>
     <div class="recap-title">
       <span>${t(cat.name)} — ${t(tier.name)}</span>
-      <span>${pp(td.price).toLocaleString('fr-FR')}€${studioSupplement} HT</span>
+      <span>${pp(td.price).toLocaleString('fr-FR')}€${studioSupplement}</span>
     </div>
     <div class="recap-payment">${payLine}</div>
     <ul class="recap-items">
@@ -2406,14 +2408,14 @@ function renderOptions(){
       ? '<div class="opt-section-label" style="margin-top:0;margin-bottom:16px">Lieu de la séance</div>'
       : '<div class="opt-section-label" style="margin-top:0;margin-bottom:16px">Session location</div>';
     const extLabel = LANG === 'fr' ? 'Extérieur' : 'Outdoor';
-    const stuLabel = LANG === 'fr' ? 'Studio (+60€ — utilisation du matériel studio)' : 'Studio (+€60 — studio equipment fee)';
+    const stuLabel = LANG === 'fr' ? 'Studio (+' + STUDIO_FEE + '€ — utilisation du matériel studio)' : 'Studio (+€' + STUDIO_FEE + ' — studio equipment fee)';
     studioDiv.innerHTML = studioLabel + `
       <div style="display:flex;gap:12px;flex-wrap:wrap">
         <div class="photo-pack" id="loc-ext" data-loc="ext" onclick="selectLocation('ext')" style="flex:1;min-width:130px">
           <span>📍 ${extLabel}</span><span class="photo-pack-price">${LANG==='fr'?'Inclus':'Included'}</span>
         </div>
         <div class="photo-pack" id="loc-stu" data-loc="stu" onclick="selectLocation('stu')" style="flex:1;min-width:130px">
-          <span>🎞 ${stuLabel}</span><span class="photo-pack-price">+60€</span>
+          <span>🎞 ${stuLabel}</span><span class="photo-pack-price">+${STUDIO_FEE}€</span>
         </div>
       </div>`;
     el.insertBefore(studioDiv, el.firstChild);
@@ -2452,7 +2454,7 @@ function renderOptions(){
           </div>
         </div>`;
     } else {
-      const priceDisplay = typeof o.price === 'number' ? '+' + pp(o.price) + '€' : (o.price === '+20%' ? o.price : (LANG==='fr'?'Sur devis':'On request'));
+      const priceDisplay = typeof o.price === 'number' ? '+' + pp(o.price) + '€' : (o.price === '+30%' ? o.price : (LANG==='fr'?'Sur devis':'On request'));
       d.innerHTML = `
         <div class="opt-icon">${o.icon}</div>
         <div class="opt-check"></div>
@@ -2551,7 +2553,7 @@ function computeTotal(){
   let total = cat.tiers[S.tier].price;
   let express = false;
   let hasSurDevis = false;
-  if ((S.cat === 'photo-part' || S.cat === 'corporate') && S.studio) total += 60;
+  if ((S.cat === 'photo-part' || S.cat === 'corporate') && S.studio) total += STUDIO_FEE;
   S.opts.forEach(id => {
     const allOpts = [...OPTIONS, ...((SPECIAL_OPTIONS[S.cat+'_'+S.tier])||[])];
     const o = allOpts.find(x => x.id === id);
@@ -2608,9 +2610,9 @@ function animatePriceCalc(){
     const p = Math.min((now - startTime) / duration, 1);
     const ease = 1 - Math.pow(1 - p, 3);
     const cur = Math.round(targetAmount * ease);
-    amtEl.textContent = cur.toLocaleString('fr-FR') + '€ HT' + (isSub ? monthlyLabel : '');
+    amtEl.textContent = cur.toLocaleString('fr-FR') + '€' + (isSub ? monthlyLabel : '');
     if (p < 1) frame = requestAnimationFrame(step);
-    else amtEl.textContent = targetAmount.toLocaleString('fr-FR') + '€ HT' + (isSub ? monthlyLabel : '');
+    else amtEl.textContent = targetAmount.toLocaleString('fr-FR') + '€' + (isSub ? monthlyLabel : '');
   }
   frame = requestAnimationFrame(step);
 
@@ -2654,29 +2656,29 @@ function submitQuiz(e){
   let formuleLabel, montantLabel, budgetMontantEur;
   if (S.tier === 'sub') {
     const sub = SUBS[S.cat];
-    formuleLabel = 'ABONNEMENT — ' + sub.name.fr + ' (' + pp(sub.price) + '€ HT/mois, engagement 6 mois)';
-    montantLabel = pp(sub.price) + '€ HT/mois';
+    formuleLabel = 'ABONNEMENT — ' + sub.name.fr + ' (' + pp(sub.price) + '€/mois, engagement 6 mois)';
+    montantLabel = pp(sub.price) + '€/mois';
     budgetMontantEur = pp(sub.price);
   } else if (isSpecialTier()) {
     const polas = POLAS[S.cat];
     const res = computeTotal();
-    formuleLabel = polas.name.fr + ' (' + res.amount + '€ HT, ' + (polas.studio ? 'dont ' + polas.studio + '€ studio inclus' : polas.studioNote.fr.toLowerCase()) + ')';
-    montantLabel = res.amount + '€ HT';
+    formuleLabel = polas.name.fr + ' (' + res.amount + '€, ' + (polas.studio ? 'dont ' + polas.studio + '€ studio inclus' : polas.studioNote.fr.toLowerCase()) + ')';
+    montantLabel = res.amount + '€';
     budgetMontantEur = res.amount;
   } else if (S.cat === 'lumen') {
     const lt = LUMEN_TIERS.find(x => x.id === S.tier);
     const res = computeTotal();
-    const priceStr = lt.id === 'surm' ? 'à partir de 1800€ HT' : pp(lt.price) + '€ HT';
+    const priceStr = lt.id === 'surm' ? 'à partir de ' + lt.price + '€' : pp(lt.price) + '€';
     formuleLabel = 'Lumen — ' + lt.name.fr + ' (' + priceStr + ')';
     montantLabel = lt.id === 'surm'
-      ? 'Sur devis (à partir de 1800€ HT)'
-      : res.amount + '€ HT' + (res.surDevis ? ' + options sur devis' : '');
+      ? 'Sur devis (à partir de ' + lt.price + '€)'
+      : res.amount + '€' + (res.surDevis ? ' + options sur devis' : '');
     budgetMontantEur = lt.id === 'surm' ? lt.price : pp(lt.price);
   } else {
     const tier = TIERS.find(x => x.id === S.tier);
     const res = computeTotal();
-    formuleLabel = tier.name.fr + ' (' + res.amount + '€ HT' + (S.studio?', dont 60€ studio':'') + ')';
-    montantLabel = res.amount + '€ HT' + (res.surDevis ? ' + options sur devis' : '');
+    formuleLabel = tier.name.fr + ' (' + res.amount + '€' + (S.studio?', dont ' + STUDIO_FEE + '€ studio':'') + ')';
+    montantLabel = res.amount + '€' + (res.surDevis ? ' + options sur devis' : '');
     budgetMontantEur = res.amount;
   }
   if (isPartnerUser() && !(S.cat === 'lumen' && S.tier === 'surm')) formuleLabel += ' — TARIF PARTENAIRE -' + PARTNER_DISCOUNT + '% (compte ' + USER.email + ')';
@@ -2686,7 +2688,7 @@ function submitQuiz(e){
   const optNames = (S.tier !== 'sub' && S.opts.length)
     ? S.opts.map(id => { const o = allOpts.find(x => x.id === id); return o ? o.name.fr : id; }).filter(Boolean).join(' · ')
     : (S.tier === 'sub' ? '— (abonné : tarif partenaire -20% sur options)' : 'Aucune');
-  const studioNote = isSpecialTier() ? POLAS[S.cat].studioNote.fr : (S.cat === 'photo-part' || S.cat === 'corporate') ? (S.studio ? 'Studio (+60€)' : 'Extérieur') : '';
+  const studioNote = isSpecialTier() ? POLAS[S.cat].studioNote.fr : (S.cat === 'photo-part' || S.cat === 'corporate') ? (S.studio ? 'Studio (+' + STUDIO_FEE + '€)' : 'Extérieur') : '';
   document.getElementById('successName').textContent = S.name;
   document.getElementById('commRedirect').style.display = S.comm ? 'block' : 'none';
   document.getElementById('qSubmit').disabled = true;
@@ -2880,7 +2882,7 @@ function renderDiscoverPage(){
   const el = document.getElementById('discoverPageContent');
   if (!el) return;
   const en = LANG === 'en';
-  const money = n => n.toLocaleString(en ? 'en-GB' : 'fr-FR') + ' € ' + (en ? 'excl. VAT' : 'HT');
+  const money = n => n.toLocaleString(en ? 'en-GB' : 'fr-FR') + ' €';
   const cats = CATS.filter(c => seoRouteFor('service', c.id));
   const facts = Object.fromEntries(cats.map(c => [c.id, catFacts(c)]));
   const allMin = Math.min(...cats.map(c => facts[c.id].dMin)), allMax = Math.max(...cats.map(c => facts[c.id].dMax));
@@ -2978,7 +2980,7 @@ function renderServicePage(catId){
   const route = seoRouteFor('service', catId);
   if (!c || !route) { el.innerHTML = ''; return; }
   const en = LANG === 'en';
-  const price = n => n.toLocaleString(en ? 'en-GB' : 'fr-FR') + ' € ' + (en ? 'excl. VAT' : 'HT');
+  const price = n => n.toLocaleString(en ? 'en-GB' : 'fr-FR') + ' €';
   const tiers = c.lumen
     ? LUMEN_TIERS.map(lt => ({ id: lt.id, name: lt.name, badge: lt.badge, quote: lt.id === 'surm', price: lt.price, delay: lt.delay, items: lt.items }))
     : TIERS.map(tr => ({ id: tr.id, name: tr.name, badge: tr.badge, price: c.tiers[tr.id].price, delay: c.tiers[tr.id].delay, items: c.tiers[tr.id].items }));
@@ -3010,14 +3012,14 @@ function renderServicePage(catId){
   }).filter(Boolean).slice(0, 3);
   const faq = [
     { q: t({fr:'Quels sont les tarifs ?', en:'What are the rates?'}),
-      a: '<ul class="svcp-list">' + tiers.map(tt => `<li><strong>${t(tt.name)}</strong> — ${priceLine(tt)}</li>`).join('') + '</ul>' + (sub ? `<p>${t({fr:'Abonnement ', en:'Subscription '})}${t(sub.name)} : ${sub.price.toLocaleString(en ? 'en-GB' : 'fr-FR')} € ${t({fr:'HT par mois', en:'excl. VAT per month'})}.</p>` : '') },
+      a: '<ul class="svcp-list">' + tiers.map(tt => `<li><strong>${t(tt.name)}</strong> — ${priceLine(tt)}</li>`).join('') + '</ul>' + (sub ? `<p>${t({fr:'Abonnement ', en:'Subscription '})}${t(sub.name)} : ${sub.price.toLocaleString(en ? 'en-GB' : 'fr-FR')} € ${t({fr:'par mois', en:'per month'})}.</p>` : '') },
     { q: t({fr:'Dans quels délais reçoit-on les photos ?', en:'How soon are the photos delivered?'}),
       a: '<ul class="svcp-list">' + tiers.map(tt => `<li><strong>${t(tt.name)}</strong> — ${t(tt.delay)}</li>`).join('') + '</ul><p>' + t({fr:'Les délais démarrent à la date du shooting, hors demandes de retouches complémentaires.', en:'Timelines start on the shoot date, excluding additional retouching requests.'}) + '</p>' },
     ...featureFaq,
     ...(catId === 'photo-part' ? [{ q: t({fr:'Proposez-vous un book grossesse ?', en:'Do you offer a maternity book?'}),
       a: `<p>${t({fr:'Oui : le book grossesse est une formule dédiée, à ' + price(POLAS[catId].price) + '. Séance de 1h30 en studio ou en extérieur (au choix, sans supplément), 20 photos HD retouchées avec une retouche naturelle, une direction de pose douce et bienveillante, et la possibilité de venir en couple. Le moment idéal : entre la 28e et la 36e semaine de grossesse.', en:'Yes: the maternity book is a dedicated package at ' + price(POLAS[catId].price) + '. A 1.5-hour session in the studio or outdoors (your choice, no extra cost), 20 retouched HD photos with natural retouching, gentle posing guidance, and the option to join as a couple. The ideal moment: between weeks 28 and 36 of pregnancy.'})}</p>` }] : []),
     ...(POLAS[catId] && POLAS[catId].id === 'polas' ? [{ q: t({fr:'Qu\'est-ce que la formule Polas ?', en:'What is the Polas package?'}),
-      a: `<p>${t({fr:'Des photos brutes, sans retouche, destinées aux agences de mannequins : séance en studio sur fond blanc, visage, profils et plans en pied, fichiers HD livrés sous 24 h. Tarif : ', en:'Raw, unretouched photos made for model agencies: studio session on a white background, face, profiles and full-body shots, HD files delivered within 24 hours. Rate: '})}${price(POLAS[catId].price)} + ${price(60)} ${t({fr:'de studio.', en:'for the studio.'})}</p><p><a href="/conseils/polas-mannequin-digitals-agence/" data-nav="article:polas-mannequin-digitals-agence">${t({fr:'Polas et digitals de mannequin : à quoi servent-elles ?', en:'Polas and model digitals: what are they for?'})}</a></p>` }] : []),
+      a: `<p>${t({fr:'Des photos brutes, sans retouche, destinées aux agences de mannequins : séance en studio sur fond blanc, visage, profils et plans en pied, fichiers HD livrés sous 24 h. Tarif : ', en:'Raw, unretouched photos made for model agencies: studio session on a white background, face, profiles and full-body shots, HD files delivered within 24 hours. Rate: '})}${price(POLAS[catId].price)}${t({fr:', studio inclus.', en:', studio included.'})}</p><p><a href="/conseils/polas-mannequin-digitals-agence/" data-nav="article:polas-mannequin-digitals-agence">${t({fr:'Polas et digitals de mannequin : à quoi servent-elles ?', en:'Polas and model digitals: what are they for?'})}</a></p>` }] : []),
     ...(catId === 'photo-part' ? [{ q: t({fr:'Peut-on faire une séance en couple ou en groupe ?', en:'Can we book a couple or group session?'}),
       a: `<p>${t({fr:'Oui : la séance se fait en solo, en couple ou en groupe, en extérieur ou en studio. Choisissez la formule selon la durée et le nombre de photos souhaités ; pour vous aider à préparer vos tenues, lisez ', en:'Yes: sessions are available solo, as a couple or in a group, outdoors or in the studio. Pick the package according to the session length and number of photos you want; to prepare your outfits, read '})}<a href="/conseils/que-porter-seance-photo/" data-nav="article:que-porter-seance-photo">${t({fr:'Que porter pour une séance photo ?', en:'What to wear for a photo session?'})}</a>.</p>` }] : []),
     ...(catId === 'photo-part' ? [{ q: t({fr:'Réalisez-vous des portraits professionnels ?', en:'Do you shoot professional portraits?'}),
@@ -3066,6 +3068,7 @@ function renderServicePage(catId){
 
     <section class="read-panel svcp-panel">
       <h2>${t({fr:'Formules et tarifs', en:'Packages and rates'})}</h2>
+      <p class="vat-note">${I18N[LANG]['vat-note']}</p>
       <div class="svcp-tiers">
         ${tiers.map(tt => `
           <div class="svcp-tier">
@@ -3087,7 +3090,7 @@ function renderServicePage(catId){
             ${POLAS[catId].id === 'polas' ? `<a class="svcp-link" href="/conseils/polas-mannequin-digitals-agence/" onclick="return navLink(event,'article','polas-mannequin-digitals-agence')">${t({fr:'Comprendre les Polas →', en:'What are Polas? →'})}</a>` : ''}
           </div>` : ''}
       </div>
-      ${sub ? `<p class="svcp-note">${t({fr:'Besoin régulier ? ', en:'Regular need? '})}<strong>${t(sub.name)}</strong> — ${sub.price.toLocaleString(en ? 'en-GB' : 'fr-FR')} € ${t({fr:'HT / mois', en:'excl. VAT / month'})}.</p>` : ''}
+      ${sub ? `<p class="svcp-note">${t({fr:'Besoin régulier ? ', en:'Regular need? '})}<strong>${t(sub.name)}</strong> — ${sub.price.toLocaleString(en ? 'en-GB' : 'fr-FR')} € ${t({fr:'/ mois', en:'/ month'})}.</p>` : ''}
     </section>
 
     ${chooseHtml}
@@ -3392,7 +3395,7 @@ function renderServices(){
     const subRow = SUBS[c.id] ? `
       <div class="service-sub-row">
         <span class="service-sub-label">${I18N[LANG]['svc-sub-label']}${SUBS[c.id].audience ? ' — ' + t(SUBS[c.id].audience) : ''}${SUBS[c.id].promo ? `<span class="service-tier-promo">${t(SUBS[c.id].promo)}</span>` : ''}</span>
-        <span class="service-sub-price">${SUBS[c.id].price.toLocaleString('fr-FR')}€<small> HT/${LANG === 'fr' ? 'mois' : 'mo'}</small></span>
+        <span class="service-sub-price">${SUBS[c.id].price.toLocaleString('fr-FR')}€<small>/${LANG === 'fr' ? 'mois' : 'mo'}</small></span>
       </div>` : '';
     card.innerHTML = `
       <div class="service-head">
@@ -3406,16 +3409,16 @@ function renderServices(){
           ? LUMEN_TIERS.map(lt => `
               <div class="service-tier">
                 <span class="service-tier-name">${t(lt.name)}${lt.promo ? `<span class="service-tier-promo">${t(lt.promo)}</span>` : ''}</span>
-                <span class="service-tier-price">${lt.id === 'surm' ? (LANG === 'fr' ? 'Devis' : 'Quote') : lt.price.toLocaleString('fr-FR') + '€'}<small>${lt.id === 'surm' ? '' : ' HT'}</small></span>
+                <span class="service-tier-price">${lt.id === 'surm' ? (LANG === 'fr' ? 'Devis' : 'Quote') : lt.price.toLocaleString('fr-FR') + '€'}</span>
               </div>`).join('')
           : TIERS.map(tier => `
               <div class="service-tier">
                 <span class="service-tier-name">${t(tier.name)}${c.tiers[tier.id].promo ? `<span class="service-tier-promo">${t(c.tiers[tier.id].promo)}</span>` : ''}</span>
-                <span class="service-tier-price">${c.tiers[tier.id].price.toLocaleString('fr-FR')}€<small>HT</small></span>
+                <span class="service-tier-price">${c.tiers[tier.id].price.toLocaleString('fr-FR')}€</span>
               </div>`).join('')}
       </div>
       ${subRow}
-      ${POLAS[c.id] ? `<div class="service-polas"><span class="service-tier-name"><strong>${t(POLAS[c.id].name)}</strong> <span class="service-polas-tag">${t(POLAS[c.id].label)}</span><small>${t(POLAS[c.id].short)}</small></span><span class="service-tier-price">${specialTotal(POLAS[c.id]).toLocaleString('fr-FR')}€<small>HT</small></span></div>` : ''}
+      ${POLAS[c.id] ? `<div class="service-polas"><span class="service-tier-name"><strong>${t(POLAS[c.id].name)}</strong> <span class="service-polas-tag">${t(POLAS[c.id].label)}</span><small>${t(POLAS[c.id].short)}</small></span><span class="service-tier-price">${specialTotal(POLAS[c.id]).toLocaleString('fr-FR')}€</span></div>` : ''}
       <button class="service-cta">${I18N[LANG]['svc-cta']}</button>
       <a class="service-more" href="${servicePath(c.id)}" onclick="return navLink(event,'service','${c.id}')">${t(c.name)} : ${t({fr:'détails et tarifs →', en:'details and rates →'})}</a>`;
     card.querySelector('.service-cta').onclick = () => {
@@ -3832,8 +3835,8 @@ function renderApplyBenefits(){
   const ex = CATS.find(c => c.id === 'commercial');
   const exPrice = ex && ex.tiers && ex.tiers.sig && ex.tiers.sig.price;
   const exLine = exPrice ? t({
-    fr:`Exemple : le Pack Signature « Commercial & produits » passe de ${eur(exPrice)} HT à ${eur(partnerPrice(exPrice))} HT, soit ${eur(exPrice - partnerPrice(exPrice))} économisés.`,
-    en:`Example: the "Commercial & products" Signature package goes from ${eur(exPrice)} excl. VAT to ${eur(partnerPrice(exPrice))} excl. VAT — you save ${eur(exPrice - partnerPrice(exPrice))}.`}) : '';
+    fr:`Exemple : le Pack Signature « Commercial & produits » passe de ${eur(exPrice)} à ${eur(partnerPrice(exPrice))}, soit ${eur(exPrice - partnerPrice(exPrice))} économisés.`,
+    en:`Example: the "Commercial & products" Signature package goes from ${eur(exPrice)} to ${eur(partnerPrice(exPrice))} — you save ${eur(exPrice - partnerPrice(exPrice))}.`}) : '';
   const li = arr => '<ul class="ft-list" style="margin-top:12px">' + arr.map(x => `<li style="margin-bottom:8px">⊹ ${x}</li>`).join('') + '</ul>';
   const sections = LANG === 'fr' ? [
     { title:`-${PARTNER_DISCOUNT}% permanent sur tout le catalogue`, body:`<p>Un tarif partenaire appliqué automatiquement à tous vos devis, tant que votre partenariat est actif.</p>${li(['Toutes les prestations du catalogue, options comprises','Abonnements Studio Continu inclus','Remise visible dans le récapitulatif de votre devis'])}${exLine ? `<p style="margin-top:12px"><strong>${exLine}</strong></p>` : ''}` },
@@ -4621,7 +4624,7 @@ function renderAccPromos(){
       <thead><tr><th>${t({fr:'Prestation', en:'Service'})}</th>${TIERS.map(tr => `<th>${t(tr.name)}</th>`).join('')}</tr></thead>
       <tbody>${rows}</tbody>
     </table></div>
-    <p class="pt-foot-note">${t({fr:'Prix HT. Les options ajoutées à une prestation bénéficient également du tarif partenaire.', en:'Prices excl. VAT. Add-ons on any service also get the partner rate.'})}</p>`;
+    <p class="pt-foot-note">${t({fr:'Prix nets, TVA non applicable. Les options ajoutées à une prestation bénéficient également du tarif partenaire.', en:'Net prices, VAT not applicable. Add-ons on any service also get the partner rate.'})}</p>`;
 }
 
 /* ═══════════════ ESPACE PARTENAIRE — MON RÉSEAU ═══════════════
@@ -5790,7 +5793,7 @@ function renderPartnersPitch(){
         <div class="pp-example-label">${t({fr:'Un exemple concret', en:'A concrete example'})}</div>
         <div class="pp-example-body">
           <div>${t({fr:'Pack Signature — Commercial & produits', en:'Signature package — Commercial & products'})}</div>
-          <div class="pp-example-prices"><span class="pt-price-old">${eur(exPrice)} ${t({fr:'HT', en:'excl. VAT'})}</span><strong>${eur(partnerPrice(exPrice))} ${t({fr:'HT', en:'excl. VAT'})}</strong><em>${t({fr:'vous économisez', en:'you save'})} ${eur(exPrice - partnerPrice(exPrice))}</em></div>
+          <div class="pp-example-prices"><span class="pt-price-old">${eur(exPrice)} </span><strong>${eur(partnerPrice(exPrice))} </strong><em>${t({fr:'vous économisez', en:'you save'})} ${eur(exPrice - partnerPrice(exPrice))}</em></div>
         </div>
       </div>` : ''}`,
     universes: `<div class="pp-universes">
@@ -6009,7 +6012,7 @@ function renderPrivacyAccordion(){
     { title:'Hébergement et sécurité des données', body:`<p>Ce site est hébergé par GitHub, Inc. Les échanges sont sécurisés (HTTPS). Aucune base de données client n'est publiquement accessible : les informations transmises via nos formulaires sont traitées de façon confidentielle par BUNKAIO.</p>` },
     { title:'Politique d\'annulation et acompte', body:`<p>L'<strong>acompte de 30 %</strong> versé à la signature du devis réserve votre date et votre créneau. En cas d'<strong>annulation de votre part après la validation du devis</strong>, cet acompte reste acquis à BUNKAIO et n'est pas remboursé. Le solde n'est exigible qu'à la livraison des livrables.</p><p>Pour toute question, écrivez-nous à <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a>.</p>` },
     { title:'Droits d\'auteur et droits d\'utilisation des photos & vidéos', body:`<p>BUNKAIO conserve l'intégralité de ses droits d'auteur (droit moral) sur l'ensemble des photographies et vidéos qu'elle réalise, conformément au Code de la propriété intellectuelle.</p><p>Les <strong>droits d'exploitation</strong> (droits d'utilisation commerciale) des visuels livrés sont cédés au client dans les conditions précisées au devis signé (usages, durée, territoire). La cession des droits d'utilisation est subordonnée au paiement intégral du prix.</p><p>BUNKAIO se réserve le droit d'utiliser les visuels produits dans le cadre de ses propres supports de communication, de son portfolio et de ses réseaux sociaux, sauf demande contraire et écrite du client. Toute réutilisation par un tiers autre que le client nécessite l'autorisation écrite préalable de BUNKAIO.</p>` },
-    { title:'Mentions légales', body:`<p><strong>Éditeur du site :</strong> BUNKAIO, Entreprise Individuelle — SIRET 951 547 587 00034 — France. Contact : <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a> — 07 58 57 31 61.</p><p><strong>Hébergement :</strong> GitHub, Inc.</p><p><strong>Propriété intellectuelle :</strong> le contenu de ce site (textes, identité visuelle, code) est la propriété de BUNKAIO, sauf mention contraire, et ne peut être reproduit sans autorisation préalable.</p><p><strong>Droit applicable :</strong> le présent site est soumis au droit français ; tout litige relève de la compétence des tribunaux français.</p><p><strong>Médiation de la consommation :</strong> ${mediationLine('fr')}</p><p>Les conditions applicables aux prestations sont détaillées dans nos <a href="/conditions-generales-de-vente/" onclick="return navLink(event,'legal','cgv')">conditions générales de vente</a>.</p>` },
+    { title:'Mentions légales', body:`<p><strong>Éditeur du site :</strong> BUNKAIO, Entreprise Individuelle — SIRET 951 547 587 00034 — France. Contact : <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a> — 07 58 57 31 61.</p><p><strong>Hébergement :</strong> GitHub, Inc.</p><p><strong>Propriété intellectuelle :</strong> le contenu de ce site (textes, identité visuelle, code) est la propriété de BUNKAIO, sauf mention contraire, et ne peut être reproduit sans autorisation préalable.</p><p><strong>TVA :</strong> TVA non applicable, art. 293 B du CGI (franchise en base). Les prix affichés sur le site sont des prix nets, sans TVA à ajouter.</p><p><strong>Droit applicable :</strong> le présent site est soumis au droit français ; tout litige relève de la compétence des tribunaux français.</p><p><strong>Médiation de la consommation :</strong> ${mediationLine('fr')}</p><p>Les conditions applicables aux prestations sont détaillées dans nos <a href="/conditions-generales-de-vente/" onclick="return navLink(event,'legal','cgv')">conditions générales de vente</a>.</p>` },
   ] : [
     { title:'Data controller', body:`<p>This site is published by <strong>BUNKAIO</strong>, a French sole proprietorship (Entreprise Individuelle), SIRET 951 547 587 00034, France. For any question regarding your personal data, contact us at <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a>.</p>` },
     { title:'Publisher and hosting', body:`<p><strong>Publisher:</strong> BUNKAIO, sole proprietorship (Aya Nascimento), SIRET 951 547 587 00034, France. <strong>Contact:</strong> <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a> · <a href="tel:+33758573161">07 58 57 31 61</a>. <strong>Publication manager:</strong> Aya Nascimento.</p><p><strong>Site hosting:</strong> GitHub Pages (GitHub, Inc., San Francisco, United States). <strong>Domain management and application services:</strong> Cloudflare, Inc. (San Francisco, United States).</p>` },
@@ -6020,7 +6023,7 @@ function renderPrivacyAccordion(){
     { title:'Hosting and data security', body:`<p>This site is hosted by GitHub, Inc. All exchanges are secured (HTTPS). No client database is publicly accessible: information submitted via our forms is handled confidentially by BUNKAIO.</p>` },
     { title:'Cancellation policy and deposit', body:`<p>The <strong>30% deposit</strong> paid when the quote is signed reserves your date and time slot. If <strong>you cancel after the quote has been accepted</strong>, the deposit is retained by BUNKAIO and is non-refundable. The balance is only due on delivery of the deliverables.</p><p>For any question, write to us at <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a>.</p>` },
     { title:'Copyright and usage rights for photos & videos', body:`<p>BUNKAIO retains full authorship rights (moral rights) over all photographs and videos it produces, in accordance with French intellectual property law.</p><p>The <strong>exploitation rights</strong> (commercial usage rights) to the delivered visuals are transferred to the client under the terms set out in the signed quote (uses, duration, territory). The assignment of usage rights is subject to payment in full of the price.</p><p>BUNKAIO reserves the right to use the visuals it produces for its own communication materials, portfolio and social media, unless the client requests otherwise in writing. Any reuse by a third party other than the client requires BUNKAIO's prior written authorisation.</p>` },
-    { title:'Legal notice', body:`<p><strong>Site publisher:</strong> BUNKAIO, sole proprietorship — SIRET 951 547 587 00034 — France. Contact: <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a> — +33 7 58 57 31 61.</p><p><strong>Hosting:</strong> GitHub, Inc.</p><p><strong>Intellectual property:</strong> the content of this site (text, visual identity, code) is the property of BUNKAIO, unless otherwise stated, and may not be reproduced without prior authorisation.</p><p><strong>Governing law:</strong> this site is governed by French law; any dispute falls under the jurisdiction of the French courts.</p><p><strong>Consumer mediation:</strong> ${mediationLine('en')}</p><p>The terms applying to our services are detailed in our <a href="/conditions-generales-de-vente/" onclick="return navLink(event,'legal','cgv')">general terms of sale</a>.</p>` },
+    { title:'Legal notice', body:`<p><strong>Site publisher:</strong> BUNKAIO, sole proprietorship — SIRET 951 547 587 00034 — France. Contact: <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a> — +33 7 58 57 31 61.</p><p><strong>Hosting:</strong> GitHub, Inc.</p><p><strong>Intellectual property:</strong> the content of this site (text, visual identity, code) is the property of BUNKAIO, unless otherwise stated, and may not be reproduced without prior authorisation.</p><p><strong>VAT:</strong> VAT not applicable, art. 293 B of the French Tax Code (small-business exemption). Prices shown on the site are net prices, with no VAT to add.</p><p><strong>Governing law:</strong> this site is governed by French law; any dispute falls under the jurisdiction of the French courts.</p><p><strong>Consumer mediation:</strong> ${mediationLine('en')}</p><p>The terms applying to our services are detailed in our <a href="/conditions-generales-de-vente/" onclick="return navLink(event,'legal','cgv')">general terms of sale</a>.</p>` },
   ];
   renderAccordionInto('privacyAccordion', sections);
 }
@@ -6048,7 +6051,7 @@ function renderCgvAccordion(){
   const sections = LANG === 'fr' ? [
     { title:'1. Objet et champ d\'application', body:`<p>Les présentes conditions générales de vente (CGV) s'appliquent à toutes les prestations de photographie et de vidéo proposées par <strong>BUNKAIO</strong>, Entreprise Individuelle (Aya Nascimento), SIRET 951 547 587 00034, France, à des clients particuliers (consommateurs) comme à des clients professionnels.</p><p>Chaque prestation fait l'objet d'un devis personnalisé. En cas de différence entre les CGV et le devis signé, <strong>le devis signé prévaut</strong>. Toute commande implique l'acceptation des CGV.</p><p><em>Version du 6 octobre 2026.</em></p>` },
     { title:'2. Devis et commande', body:`<p>Le devis est gratuit et valable pendant la durée indiquée sur le document. Il précise la prestation, la date et le lieu prévus, le délai de livraison, le prix, les droits cédés et les conditions particulières.</p><p>La commande est ferme à la <strong>signature électronique</strong> du devis par le client (nom, date, heure, adresse IP et empreinte du devis enregistrés comme preuve). Un exemplaire signé est envoyé par email.</p>` },
-    { title:'3. Prix', body:`<p>Les prix sont indiqués en euros. BUNKAIO bénéficie de la franchise en base de TVA : <strong>TVA non applicable, art. 293 B du CGI</strong> ; les montants « HT » sont donc des montants nets à payer. Le prix applicable est celui du devis signé. Les frais de déplacement éventuels y sont précisés.</p>` },
+    { title:'3. Prix', body:`<p>Les prix sont indiqués en euros. BUNKAIO bénéficie de la franchise en base de TVA : <strong>TVA non applicable, art. 293 B du CGI</strong> : les prix affichés sont des prix nets, sans TVA à ajouter, et correspondent au montant réellement facturé. Le prix applicable est celui du devis signé. Les frais de déplacement éventuels y sont précisés.</p>` },
     { title:'4. Paiement', body:`<p>Sauf mention contraire au devis : un <strong>acompte de 30 %</strong> est payable à la signature (il réserve la date et le créneau) ; le <strong>solde de 70 %</strong> est facturé lorsque les photos sont prêtes, et son règlement donne accès à l'album.</p><p>Moyens de paiement : carte bancaire, ou paiement en 3 fois sans frais avec Klarna selon éligibilité. Les paiements sont traités de façon sécurisée par Stripe ; BUNKAIO ne conserve aucune donnée de carte.</p><p>Abonnement « Studio Continu » : facturation mensuelle par carte bancaire, sans acompte ni solde, dans les conditions précisées au devis.</p><p><strong>Clients professionnels :</strong> tout retard de paiement entraîne de plein droit des pénalités au taux de trois fois le taux d'intérêt légal et une indemnité forfaitaire de recouvrement de 40 € (art. L441-10 du Code de commerce).</p>` },
     { title:'5. Report et annulation', body:`<p>L'acompte réserve la date et le créneau. Une fois le devis validé, il <strong>reste acquis à BUNKAIO et n'est pas remboursé en cas d'annulation par le client</strong>.</p><p>Le client peut reporter la prestation <strong>une fois, sans frais, s'il prévient au moins 7 jours avant</strong> ; au-delà, ou en cas de second report, un nouvel acompte peut être demandé.</p><p>En cas d'empêchement de BUNKAIO ou de force majeure (maladie, météo pour une séance en extérieur), la prestation est reportée sans frais à une date convenue ensemble.</p>` },
     { title:'6. Réalisation et livraison', body:`<p>BUNKAIO réalise la prestation avec soin et dispose de la liberté artistique dans le cadre convenu. Le client veille à être présent, à l'heure et à fournir les informations nécessaires.</p><p>Les visuels sont livrés dans un <strong>album privé Adobe Lightroom</strong> (création d'un compte Adobe Lightroom par le client), dans le délai indiqué au devis. Un aller-retour de corrections est inclus ; les demandes supplémentaires sont facturées selon un tarif convenu à l'avance.</p><p>BUNKAIO sélectionne et retouche les visuels livrés ; les fichiers non retenus et les fichiers sources (RAW) ne sont pas cédés. Les fichiers livrés sont conservés <strong>12 mois</strong> après la livraison : le client est invité à les exporter et à les sauvegarder.</p>` },
@@ -6061,7 +6064,7 @@ function renderCgvAccordion(){
   ] : [
     { title:'1. Purpose and scope', body:`<p>These general terms of sale apply to all photography and video services provided by <strong>BUNKAIO</strong>, a French sole proprietorship (Aya Nascimento), SIRET 951 547 587 00034, France, to private clients (consumers) as well as business clients.</p><p>Each service is covered by a personalised quote. If these terms differ from the signed quote, <strong>the signed quote prevails</strong>. Placing an order implies acceptance of these terms.</p><p><em>Version of 6 October 2026.</em></p>` },
     { title:'2. Quote and order', body:`<p>The quote is free and valid for the period stated on the document. It specifies the service, the planned date and place, the delivery time, the price, the rights granted and any special conditions.</p><p>The order becomes binding when the client <strong>signs the quote electronically</strong> (name, date, time, IP address and quote fingerprint are recorded as proof). A signed copy is sent by email.</p>` },
-    { title:'3. Prices', body:`<p>Prices are in euros. BUNKAIO benefits from the French VAT exemption for small businesses: <strong>VAT not applicable, art. 293 B of the French Tax Code (CGI)</strong>; amounts shown "excl. tax" are therefore net amounts payable. The price that applies is the one on the signed quote. Any travel costs are specified in it.</p>` },
+    { title:'3. Prices', body:`<p>Prices are in euros. BUNKAIO benefits from the French VAT exemption for small businesses: <strong>VAT not applicable, art. 293 B of the French Tax Code (CGI)</strong>; the prices shown are net prices, with no VAT to add, and match the amount actually invoiced. The price that applies is the one on the signed quote. Any travel costs are specified in it.</p>` },
     { title:'4. Payment', body:`<p>Unless the quote says otherwise: a <strong>30% deposit</strong> is payable on signature (it reserves the date and time slot); the <strong>70% balance</strong> is invoiced once the photos are ready, and paying it gives access to the album.</p><p>Payment methods: bank card, or interest-free payment in 3 instalments with Klarna, subject to eligibility. Payments are processed securely by Stripe; BUNKAIO does not store any card data.</p><p>"Studio Continu" subscription: monthly billing by bank card, with no deposit or balance, under the conditions set out in the quote.</p><p><strong>Business clients:</strong> any late payment automatically incurs penalties at three times the legal interest rate and a flat recovery fee of €40 (art. L441-10 of the French Commercial Code).</p>` },
     { title:'5. Rescheduling and cancellation', body:`<p>The deposit reserves the date and time slot. Once the quote is accepted, it is <strong>retained by BUNKAIO and not refunded if the client cancels</strong>.</p><p>The client may reschedule <strong>once, free of charge, with at least 7 days' notice</strong>; beyond that, or for a second rescheduling, a new deposit may be requested.</p><p>If BUNKAIO is unable to attend, or in case of force majeure (illness, weather for an outdoor session), the service is rescheduled free of charge to a date agreed together.</p>` },
     { title:'6. Performance and delivery', body:`<p>BUNKAIO performs the service with care and has artistic freedom within the agreed framework. The client makes sure to be present, on time, and to provide the necessary information.</p><p>Visuals are delivered in a <strong>private Adobe Lightroom album</strong> (the client creates an Adobe Lightroom account), within the time stated in the quote. One round of corrections is included; additional requests are billed at a rate agreed in advance.</p><p>BUNKAIO selects and retouches the delivered visuals; unselected files and source (RAW) files are not transferred. Delivered files are kept for <strong>12 months</strong> after delivery: the client is invited to export and back them up.</p>` },

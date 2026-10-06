@@ -164,8 +164,8 @@
       (q.notes ? '<tr><th>Précisions</th><td>' + nl(q.notes) + '</td></tr>' : '') + '</table>');
 
     h.push('<h2>2. Prix et paiement</h2><table>' + (q.abonnement
-      ? '<tr class="total"><td>Prix</td><td>' + eur(q.totalHT) + ' HT / mois — net à payer (TVA non applicable, art. 293 B du CGI)</td></tr><tr><th>Facturation</th><td>Mensuelle, par carte bancaire ; sans acompte ni solde</td></tr>'
-      : '<tr class="total"><td>Prix total</td><td>' + eur(q.totalHT) + ' HT — net à payer (TVA non applicable, art. 293 B du CGI)</td></tr>' +
+      ? '<tr class="total"><td>Prix</td><td>' + eur(q.totalHT) + ' / mois — net à payer (TVA non applicable, art. 293 B du CGI)</td></tr><tr><th>Facturation</th><td>Mensuelle, par carte bancaire ; sans acompte ni solde</td></tr>'
+      : '<tr class="total"><td>Prix total</td><td>' + eur(q.totalHT) + ' — net à payer (TVA non applicable, art. 293 B du CGI)</td></tr>' +
         '<tr><th>Acompte à la signature (' + (q.acomptePct || 30) + ' %)</th><td>' + eur(dep) + ' — réserve la date et le créneau</td></tr>' +
         '<tr><th>Solde (' + (100 - (q.acomptePct || 30)) + ' %)</th><td>' + eur(bal) + ' — facture envoyée lorsque les photos sont prêtes ; son règlement ouvre l\'accès à l\'album</td></tr>' +
         '<tr><th>Moyens de paiement</th><td>Carte bancaire ; paiement en 3 fois sans frais avec Klarna, selon éligibilité</td></tr>') + '</table>');

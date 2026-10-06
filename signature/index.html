@@ -69,7 +69,7 @@ function show(q, banner) {
   html += doc;
   if (q.status === 'envoye') {
     const part = (q.client || {}).profil !== 'professionnel';
-    html += '<section class="sign" id="signBox"><h2>Signer le devis</h2><p class="sum">' + esc(q.prestation) + ' · ' + eur(q.totalHT) + (q.abonnement ? ' HT / mois' : ' HT · acompte de ' + eur(dep) + ' à la signature') + '</p>' +
+    html += '<section class="sign" id="signBox"><h2>Signer le devis</h2><p class="sum">' + esc(q.prestation) + ' · ' + eur(q.totalHT) + (q.abonnement ? ' / mois' : ' · acompte de ' + eur(dep) + ' à la signature') + '</p>' +
       '<label class="row"><input type="checkbox" id="accept"><span><b>Bon pour accord.</b> J\'ai lu le devis n° ' + esc(q.number) + ' et ses conditions (cession de droits, report et annulation, conditions de réalisation) et je les accepte.</span></label>' +
       '<div class="row" style="cursor:default"><span style="flex:1"><b>Utilisation des visuels par BUNKAIO</b> pour son portfolio et sa communication<small>Votre choix n\'a aucune incidence sur la prestation ni sur le prix.</small><span class="radios"><label><input type="radio" name="pf" value="1"> J\'autorise</label><label><input type="radio" name="pf" value="0"> Je refuse</label></span></span></div>' +
       (part ? '<label class="row"><input type="checkbox" id="waiver"><span>Je demande que la prestation commence avant la fin de mon délai de rétractation de 14 jours <small>À cocher si la séance a lieu dans les 14 jours suivant la signature. Si je me rétracte après le début de la prestation, je paie la part déjà réalisée.</small></span></label>' : '') +

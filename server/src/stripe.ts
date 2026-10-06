@@ -2,7 +2,7 @@ import { getBusinessAddress } from './config';
 import Stripe from 'stripe';
 import type { BalanceInvoiceResult, DepositInvoiceInput, DepositInvoiceResult, LeadSummary, QuizLeadPayload, UpsertResult } from './types';
 
-/** Montant (€ HT) à partir duquel un lead est considéré "budget élevé" pour le scoring. */
+/** Montant (€) à partir duquel un lead est considéré "budget élevé" pour le scoring. */
 const BUDGET_ELEVE_SEUIL_EUR = 1000;
 
 /**
@@ -215,14 +215,14 @@ export async function getCustomerLang(stripe: Stripe, customerId: string | undef
   }
 }
 
-/** Facture d'acompte (30 % du montant total HT). */
+/** Facture d'acompte (30 % du montant total ; prix nets, franchise en base de TVA). */
 export async function createDepositInvoice(stripe: Stripe, input: DepositInvoiceInput): Promise<DepositInvoiceResult> {
   const result = await createFractionalInvoice(stripe, input, 0.3, 'acompte_30', 'Acompte 30 %');
   const { amountEur, ...rest } = result;
   return { ...rest, depositAmountEur: amountEur };
 }
 
-/** Facture de solde (70 % du montant total HT, à générer quand souhaité). */
+/** Facture de solde (70 % du montant total, à générer quand souhaité). */
 export async function createBalanceInvoice(stripe: Stripe, input: DepositInvoiceInput): Promise<BalanceInvoiceResult> {
   const result = await createFractionalInvoice(stripe, input, 0.7, 'solde_70', 'Solde 70 %');
   const { amountEur, ...rest } = result;

@@ -4135,3 +4135,7 @@ a.hero-start { text-decoration: none; display: inline-flex; align-items: center;
 .svcp-tier > .svcp-tier-photo { margin-bottom: 6px; }
 .svcp-tier-polas > .svcp-tier-photo { max-height: 280px; }
 @media (max-width: 700px) { .tier-card > .tier-photo { aspect-ratio: 21 / 9; margin-bottom: 10px; } }
+
+/* Mention « prix nets » (franchise en base de TVA) */
+.vat-note { font-size: 12.5px; line-height: 1.6; color: #4b3d7a; margin: 0 0 16px; }
+.price-calc-vat { font-size: 12px; opacity: 0.8; margin-top: 8px; line-height: 1.5; }
