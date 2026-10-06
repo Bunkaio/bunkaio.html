@@ -102,7 +102,8 @@ const I18N = {
     'partners-title':'Partenariat et collaboration',
     'legal-title':'FAQ : questions fréquentes',
     'legal-sub':'Les réponses aux questions les plus fréquentes, ainsi que nos engagements en matière de confidentialité et de droits d\'utilisation des visuels.',
-    'ctab-contact':'Contact','ctab-about':'À propos','legaltab-faq':'FAQ','legaltab-privacy':'Politique de confidentialité','legaltab-cgv':'Conditions générales de vente','legal-title-cgv':'Conditions générales de vente','ft-cgv':'Conditions générales de vente',
+    'ctab-contact':'Contact','ctab-about':'À propos','svr-kicker':'Nos prestations','svr-title':'Une image juste pour chaque projet','svr-hint':'Défilement automatique · glissez ou survolez pour mettre en pause','svr-pause':'Pause','svr-aria':'Nos prestations',
+    'legaltab-faq':'FAQ','legaltab-privacy':'Politique de confidentialité','legaltab-cgv':'Conditions générales de vente','legal-title-cgv':'Conditions générales de vente','ft-cgv':'Conditions générales de vente',
     'p-why':'Pourquoi Bunkaio existe',
     'p-why-1':'Nous vivons dans un monde où les contenus se multiplient, mais où les histoires se raréfient. Chaque jour, des milliers d\'images sont publiées puis oubliées.',
     'p-why-2':'Pourtant, derrière chaque lieu, chaque objet et chaque réalisation se cache une histoire qui mérite d\'être racontée.',
@@ -455,7 +456,8 @@ const I18N = {
     'partners-title':'Partnership & collaboration',
     'legal-title':'FAQ: frequently asked questions',
     'legal-sub':'Answers to the most frequently asked questions, along with our commitments on data privacy and image/video usage rights.',
-    'ctab-contact':'Contact','ctab-about':'About','legaltab-faq':'FAQ','legaltab-privacy':'Privacy policy','legaltab-cgv':'Terms of sale','legal-title-cgv':'General terms of sale','ft-cgv':'Terms of sale',
+    'ctab-contact':'Contact','ctab-about':'About','svr-kicker':'Our services','svr-title':'The right image for every project','svr-hint':'Auto-scrolling · drag or hover to pause','svr-pause':'Pause','svr-aria':'Our services',
+    'legaltab-faq':'FAQ','legaltab-privacy':'Privacy policy','legaltab-cgv':'Terms of sale','legal-title-cgv':'General terms of sale','ft-cgv':'Terms of sale',
     'p-why':'Why Bunkaio exists',
     'p-why-1':'We live in a world where content keeps multiplying, yet stories are becoming rare. Every day, thousands of images are published and then forgotten.',
     'p-why-2':'And yet, behind every place, every object and every achievement lies a story that deserves to be told.',
@@ -5478,156 +5480,102 @@ function renderCommBox(){
   box.appendChild(d);
 }
 
-/* ═══════════════ PRESTATIONS — carrousel horizontal natif (Accueil) ═══════════════
-   Section en flux normal de page (pas de calque position:fixed, pas de
-   déclencheur multi-écrans piloté par IntersectionObserver sur un
-   pourcentage de hauteur — l'ancienne mécanique, cassée sur iOS Safari
-   par le bug 100vh de barre d'adresse dynamique, qui pouvait laisser le
-   calque en permanence invisible). Une slide par catégorie (photo +
-   texte dans le même bloc), le scroll horizontal (swipe tactile,
-   glissement trackpad, molette convertie) est géré nativement par le
-   navigateur via scroll-snap — le même mécanisme fiable que n'importe
-   quel carrousel "stories" sur mobile. */
-let _catShowcaseInit = false;
-/* Met à jour les textes du carrousel d'accueil quand la langue change (les slides sont créées une seule fois). */
+/* ═══════════════ PRESTATIONS — ruban continu (Accueil) ═══════════════
+   Une rangée de cartes verticales (photo de chaque prestation, numéro, nom, pastilles) qui défile en
+   boucle toute seule. Mouvement piloté en JS (requestAnimationFrame) pour pouvoir : mettre en pause
+   (survol, doigt posé, bouton Pause, onglet masqué, bandeau hors écran), avancer avec les flèches,
+   et glisser à la souris ou au doigt. Le contenu est généré une fois puis dupliqué (jeu « clone »
+   masqué aux lecteurs d'écran) pour boucler sans à-coup. */
+let _catShowcaseInit = false, _svrPaused = false;
+function svrPaintPP(){
+  const pp = document.getElementById('svrPP'), tx = document.getElementById('svrPPt');
+  if (!pp || !tx) return;
+  pp.setAttribute('aria-pressed', String(_svrPaused));
+  tx.textContent = _svrPaused ? t({fr:'Lecture', en:'Play'}) : t({fr:'Pause', en:'Pause'});
+}
+function svrCardHTML(cat, i){
+  const url = IMG.servicePhotos && IMG.servicePhotos[cat.id];
+  const parts = String(t(cat.tag)).split(' · ').filter(Boolean);
+  return `<a class="svr-card" href="/decouvrir-chaque-prestation/" data-discover="${cat.id}" data-cat="${cat.id}" draggable="false"${url ? ` style="background-image:url('${url}')"` : ''}>
+      <span class="svr-n">${String(i + 1).padStart(2, '0')}</span>
+      <span class="svr-go" aria-hidden="true">→</span>
+      <span class="svr-name">${t(cat.name)}</span>
+      <span class="svr-tags">${parts.map(p => `<span>${p}</span>`).join('')}</span>
+      <span class="svr-sr">${t({fr:'Découvrir cette prestation', en:'Discover this service'})}</span>
+    </a>`;
+}
+/* Met à jour les textes du ruban quand la langue change. */
 function refreshCatShowcase(){
-  document.querySelectorAll('.cat-showcase-slide').forEach(sl => {
-    const cat = CATS.find(c => c.id === sl.dataset.cat); if (!cat) return;
-    const n = sl.querySelector('.cat-showcase-name'), g = sl.querySelector('.cat-showcase-tag'), b = sl.querySelector('.hero-start span');
-    if (n) n.textContent = t(cat.name); if (g) g.textContent = t(cat.tag);
-    if (b) b.textContent = t({fr:'Découvrir cette prestation', en:'Discover this service'});
-  });
+  svrPaintPP();
+  const set = document.getElementById('catShowcaseTrack'), clone = document.getElementById('svrClone');
+  if (!set || !CATS.length || !set.children.length) return;
+  set.innerHTML = CATS.map(svrCardHTML).join('');
+  if (clone) clone.innerHTML = set.innerHTML;
 }
 function initCatShowcase(){
   const root = document.getElementById('catShowcase');
-  const track = document.getElementById('catShowcaseTrack');
-  const dotsWrap = document.getElementById('catShowcaseDots');
-  const arrowPrev = document.getElementById('catShowcaseArrowPrev');
-  const arrowNext = document.getElementById('catShowcaseArrowNext');
-  if (!root || !track || !dotsWrap || _catShowcaseInit) return;
-  if (!CATS.length) return;
+  const track = document.getElementById('svrTrack');
+  const set = document.getElementById('catShowcaseTrack');
+  const clone = document.getElementById('svrClone');
+  const rail = document.getElementById('svrRail');
+  const btnPrev = document.getElementById('catShowcaseArrowPrev');
+  const btnNext = document.getElementById('catShowcaseArrowNext');
+  const pp = document.getElementById('svrPP');
+  if (!root || !track || !set || !clone || _catShowcaseInit || !CATS.length) return;
   _catShowcaseInit = true;
+  set.innerHTML = CATS.map(svrCardHTML).join('');
+  clone.innerHTML = set.innerHTML;
+  clone.querySelectorAll('a').forEach(a => a.setAttribute('tabindex', '-1'));
 
-  /* Fond FIXE : une image par catégorie, empilées derrière le défilement (fondu au changement) — seuls les textes glissent. */
-  const bgs = document.createElement('div');
-  bgs.className = 'cat-showcase-bgs';
-  bgs.setAttribute('aria-hidden', 'true');
-  bgs.innerHTML = CATS.map((cat, i) => {
-    const url = IMG.servicePhotos && IMG.servicePhotos[cat.id];
-    return `<div class="cat-showcase-bg${i === 0 ? ' active' : ''}"${url ? ` data-src="${url}"` : ''}${(i === 0 && url) ? ` style="background-image:url('${url}')"` : ''}></div>`;
-  }).join('') + '<div class="cat-showcase-shade"></div>';
-  root.insertBefore(bgs, track);
-  const bgEls = Array.from(bgs.querySelectorAll('.cat-showcase-bg'));
-  const paintBg = (idx) => bgEls.forEach((b, i) => {
-    if (i === idx && !b.style.backgroundImage && b.dataset.src) b.style.backgroundImage = `url('${b.dataset.src}')`;
-    b.classList.toggle('active', i === idx);
-  });
+  const SPEED = 36; /* px par seconde */
+  let x = 0, last = 0, setW = 0, target = null, inView = false, hover = false, down = false, hold = 0;
+  const measure = () => { setW = clone.offsetLeft - set.offsetLeft; };
+  const wrap = v => { if (!setW) return v; v %= setW; return v > 0 ? v - setW : v; };
+  const paint = () => { track.style.transform = `translate3d(${x}px,0,0)`; };
+  const paused = () => _svrPaused || hover || down || !inView || document.hidden || Date.now() < hold;
 
-  track.innerHTML = CATS.map(cat => {
-    return `
-      <div class="cat-showcase-slide" data-cat="${cat.id}">
-        <div class="cat-showcase-content">
-          <div class="cat-showcase-name">${t(cat.name)}</div>
-          <div class="cat-showcase-tag">${t(cat.tag)}</div>
-          <a class="hero-start" href="/decouvrir-chaque-prestation/" data-discover="${cat.id}"><span>${t({fr:'Découvrir cette prestation',en:'Discover this service'})}</span></a>
-        </div>
-      </div>`;
-  }).join('');
-  dotsWrap.innerHTML = CATS.map((cat, i) => `<div class="cat-showcase-dot${i === 0 ? ' active' : ''}" data-idx="${i}" onclick="_catShowcaseJump(${i})"></div>`).join('');
-
-  const slides = Array.from(track.querySelectorAll('.cat-showcase-slide'));
-  const dots = Array.from(dotsWrap.querySelectorAll('.cat-showcase-dot'));
-  let currentIdx = 0;
-  let hintShown = false;
-
-  /* Estompe la flèche en bord de parcours (pas de "précédent" sur la
-     première catégorie, pas de "suivant" sur la dernière). */
-  const paintArrows = () => { /* flèches toujours actives : le parcours est circulaire */ };
-
-  const setActive = (idx) => {
-    currentIdx = idx;
-    slides.forEach((s, i) => s.classList.toggle('is-active', i === idx));
-    dots.forEach((d, i) => d.classList.toggle('active', i === idx));
-    paintBg(idx);
-    paintArrows(idx);
-  };
-
-  const goTo = (idx, behavior) => {
-    idx = Math.max(0, Math.min(slides.length - 1, idx));
-    track.scrollTo({ left: idx * track.clientWidth, behavior: behavior || 'smooth' });
-  };
-  window._catShowcaseJump = (idx) => goTo(idx); /* points cliquables */
-  const wrapIdx = (i) => (i + slides.length) % slides.length;
-  window._catShowcaseNav = (delta) => goTo(wrapIdx(currentIdx + delta)); /* flèches gauche/droite (circulaires) */
-  if (arrowPrev) arrowPrev.addEventListener('click', () => goTo(wrapIdx(currentIdx - 1)));
-  if (arrowNext) arrowNext.addEventListener('click', () => goTo(wrapIdx(currentIdx + 1)));
-
-  /* Défilement automatique : toutes les 5,5 s tant que la bannière est visible ; se met en pause 9 s après toute
-     interaction (flèche, point, glissement, souris dessus) puis reprend. */
-  let lastTouch = 0, inView = false;
-  const markTouch = () => { lastTouch = Date.now(); };
-  ['pointerdown', 'touchstart', 'wheel', 'keydown'].forEach(ev => root.addEventListener(ev, markTouch, { passive: true }));
-  root.addEventListener('pointerenter', markTouch); root.addEventListener('pointermove', markTouch, { passive: true });
-  if (arrowPrev) arrowPrev.addEventListener('click', markTouch); if (arrowNext) arrowNext.addEventListener('click', markTouch);
-  dotsWrap.addEventListener('click', markTouch);
-  if (!REDUCED_MOTION) setInterval(() => { if (inView && Date.now() - lastTouch > 9000 && !document.hidden) goTo(wrapIdx(currentIdx + 1)); }, 5500);
-  if (window.IntersectionObserver) new IntersectionObserver((es) => { inView = es.some(e => e.isIntersecting); }, { threshold: 0.5 }).observe(root);
-
-  /* Détecte la slide effectivement centrée après un scroll horizontal
-     natif (swipe, trackpad, molette convertie ci-dessous ou scrollTo
-     programmatique) — un simple debounce sur l'évènement scroll du
-     conteneur, sans dépendance à la hauteur du viewport de la page. */
-  let scrollTimer = null, bgFrame = null;
-  track.addEventListener('scroll', () => {
-    if (!bgFrame) bgFrame = requestAnimationFrame(() => { bgFrame = null; paintBg(Math.max(0, Math.min(slides.length - 1, Math.round(track.scrollLeft / track.clientWidth)))); });
-    clearTimeout(scrollTimer);
-    scrollTimer = setTimeout(() => {
-      const idx = Math.round(track.scrollLeft / track.clientWidth);
-      setActive(Math.max(0, Math.min(slides.length - 1, idx)));
-    }, 80);
-  }, { passive: true });
-
-  /* Molette souris classique (pas de trackpad) : convertit un scroll
-     vertical en défilement horizontal du carrousel, pratique tant qu'on
-     n'est pas en bord de parcours — sinon on laisse la page défiler
-     verticalement normalement. Le trackpad (swipe latéral natif,
-     deltaX) n'a besoin d'aucune aide : le navigateur gère déjà le
-     scroll horizontal nativement, tout comme le swipe tactile mobile. */
-  root.addEventListener('wheel', (e) => {
-    const adx = Math.abs(e.deltaX), ady = Math.abs(e.deltaY);
-    if (adx > ady) return; /* déjà horizontal -> laisser faire nativement */
-    const atStart = track.scrollLeft <= 4;
-    const atEnd = track.scrollLeft >= track.scrollWidth - track.clientWidth - 4;
-    if ((e.deltaY > 0 && atEnd) || (e.deltaY < 0 && atStart)) return;
-    e.preventDefault();
-    track.scrollLeft += e.deltaY;
-  }, { passive: false });
-
-  /* Re-snap sur la slide courante après un redimensionnement (rotation
-     d'écran, changement de fenêtre) : la position en pixels calculée
-     pour l'ancienne largeur ne correspond plus. */
-  window.addEventListener('resize', () => goTo(currentIdx, 'auto'));
-
-  /* Révélation flou -> net de la 1ère catégorie + indice "ça glisse" sur
-     les flèches, une seule fois, à la première arrivée réelle sur la
-     section (pas au chargement de la page) — simple IntersectionObserver
-     sur une section d'un seul écran de haut : aucun piège 100vh iOS ici,
-     contrairement à un déclencheur de plusieurs écrans de haut. */
-  paintArrows(0);
-  const revealIO = new IntersectionObserver(entries => {
-    if (!entries[0].isIntersecting) return;
-    slides[currentIdx].classList.add('is-active');
-    bgEls.forEach(b => { if (b.dataset.src) { const im = new Image(); im.src = b.dataset.src; } }); /* précharge les autres fonds */
-    if (!hintShown) {
-      hintShown = true;
-      setTimeout(() => {
-        if (arrowPrev) arrowPrev.classList.add('teach');
-        if (arrowNext) arrowNext.classList.add('teach');
-      }, 500);
+  const frame = (now) => {
+    const dt = Math.min((now - (last || now)) / 1000, 0.1); last = now;
+    if (target !== null) {
+      x += (target - x) * Math.min(1, dt * 7);
+      if (Math.abs(target - x) < 0.5) { x = target; target = null; }
+    } else if (!paused() && !REDUCED_MOTION) {
+      x -= SPEED * dt;
     }
-    revealIO.disconnect();
-  }, { threshold: 0.3 });
-  revealIO.observe(root);
+    x = wrap(x);
+    paint();
+    requestAnimationFrame(frame);
+  };
+  const step = () => { const c = set.querySelector('.svr-card'); return c ? c.offsetWidth + parseFloat(getComputedStyle(set).columnGap || getComputedStyle(set).gap || 18) : 320; };
+  const nudge = d => { hold = Date.now() + 6000; target = (target !== null ? target : x) - d * step(); };
+  if (btnPrev) btnPrev.addEventListener('click', () => nudge(-1));
+  if (btnNext) btnNext.addEventListener('click', () => nudge(1));
+  if (pp) pp.addEventListener('click', () => { _svrPaused = !_svrPaused; svrPaintPP(); });
+  rail.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') hover = true; });
+  rail.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hover = false; });
+
+  /* Glisser à la souris ou au doigt (un clic sans mouvement ouvre la carte normalement) */
+  let sx = 0, sxPos = 0, moved = false;
+  rail.addEventListener('pointerdown', e => { if (e.button) return; down = true; moved = false; sx = e.clientX; sxPos = x; target = null; });
+  window.addEventListener('pointermove', e => {
+    if (!down) return;
+    const d = e.clientX - sx;
+    if (Math.abs(d) > 6) { moved = true; rail.classList.add('is-drag'); }
+    if (moved) x = wrap(sxPos + d);
+  });
+  const up = () => { if (!down) return; down = false; hold = Date.now() + 2500; rail.classList.remove('is-drag'); };
+  window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
+  rail.addEventListener('click', e => { if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; } }, true);
+  rail.addEventListener('dragstart', e => e.preventDefault());
+
+  if (window.IntersectionObserver) new IntersectionObserver(es => { inView = es.some(e => e.isIntersecting); }, { threshold: 0.15 }).observe(root);
+  else inView = true;
+  window.addEventListener('resize', () => { measure(); x = wrap(x); });
+  window.addEventListener('load', measure);
+  measure();
+  /* Les images arrivent après la mise en page : on remesure quand la rangée change de taille. */
+  if (window.ResizeObserver) new ResizeObserver(measure).observe(set);
+  requestAnimationFrame(frame);
 }
 
 /* ═══════════════ VIDÉO "LE STUDIO" — calque fixe plein écran (Accueil) ═══════════════

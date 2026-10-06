@@ -31,7 +31,7 @@
 <link rel="icon" type="image/png" sizes="64x64" href="/images/favicon-64.png">
 <link rel="apple-touch-icon" href="/images/apple-touch-icon.png"><text y='0.9em' font-size='80' font-family='serif'>⊹</text></svg>">
 <link rel="preload" href="fonts/dm-sans-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/style.min.css?v=cb2e3ea0">
+<link rel="stylesheet" href="css/style.min.css?v=5f1dda85">
 
 <script type="application/ld+json">
 {
@@ -450,15 +450,27 @@
        "stories" — le navigateur gère nativement le scroll et le snap,
        fiable sur tous les appareils y compris iOS Safari. Contenu généré
        en JS (voir initCatShowcase(), ordre = CATS dans js/script.js). -->
-  <section class="cat-showcase" id="catShowcase">
-    <div class="cat-showcase-track" id="catShowcaseTrack"><!--snap--><!--/snap--></div>
-    <button class="cat-showcase-arrow cat-showcase-arrow-left" id="catShowcaseArrowPrev" aria-label="Précédent" data-lang-aria="aria-prev">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-    </button>
-    <button class="cat-showcase-arrow cat-showcase-arrow-right" id="catShowcaseArrowNext" aria-label="Suivant" data-lang-aria="aria-next">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-    </button>
-    <div class="cat-showcase-dots" id="catShowcaseDots"></div>
+  <section class="svr" id="catShowcase" aria-roledescription="carousel" data-lang-aria="svr-aria">
+    <div class="svr-head">
+      <div>
+        <p class="svr-kicker" data-lang="svr-kicker">Nos prestations</p>
+        <h2 class="svr-title" data-lang="svr-title">Une image juste pour chaque projet</h2>
+      </div>
+      <div class="svr-ctrl">
+        <button class="svr-btn" id="catShowcaseArrowPrev" aria-label="Précédent" data-lang-aria="aria-prev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+        <button class="svr-btn" id="catShowcaseArrowNext" aria-label="Suivant" data-lang-aria="aria-next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+      </div>
+    </div>
+    <div class="svr-rail" id="svrRail">
+      <div class="svr-track" id="svrTrack">
+        <div class="svr-set" id="catShowcaseTrack"><!--snap--><!--/snap--></div>
+        <div class="svr-set" id="svrClone" aria-hidden="true"></div>
+      </div>
+    </div>
+    <div class="svr-foot">
+      <p data-lang="svr-hint">Défilement automatique · glissez ou survolez pour mettre en pause</p>
+      <button class="svr-pp" id="svrPP" type="button" aria-pressed="false"><span id="svrPPt">Pause</span></button>
+    </div>
   </section>
 
   <div class="home-claim-trigger" id="homeClaimSection"></div>
@@ -1816,6 +1828,6 @@
 <script src="config/articles.en.js?v=a8e286b3"></script>
 <script src="config/routes.js?v=018d4172"></script>
 <script src="config/media.js?v=03cf7f5d"></script>
-<script src="js/script.min.js?v=0bba3cb7"></script>
+<script src="js/script.min.js?v=ddb4eeb5"></script>
 </body>
 </html>

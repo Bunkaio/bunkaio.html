@@ -3103,46 +3103,6 @@
      le scroll), qui rendait l'ancien calque fixe invisible sur certains
      téléphones : plus aucun calcul de hauteur de viewport n'entre en jeu
      dans l'activation de cette section. */
-  .cat-showcase {
-    position: relative;
-    height: 85vh;
-    height: 85svh; /* hauteur stable (petit viewport) : ne varie pas quand la
-                       barre d'adresse mobile se cache/réapparaît pendant le
-                       scroll — sans ça la section "respire" (grandit/rétrécit).
-                       Repli sur 85vh pour les navigateurs sans svh. */
-    min-height: 480px;
-    max-height: 820px;
-    overflow: hidden;
-    background: var(--black);
-    scroll-snap-align: start;
-  }
-  .cat-showcase-track {
-    display: flex;
-    width: 100%; height: 100%;
-    overflow-x: auto;
-    overflow-y: hidden;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-  }
-  .cat-showcase-track::-webkit-scrollbar { display: none; }
-  .cat-showcase-slide {
-    position: relative;
-    flex: 0 0 100%;
-    width: 100%; height: 100%;
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
-    background-size: cover; background-position: center;
-  }
-  .cat-showcase-overlay {
-    position: absolute; inset: 0; z-index: 1;
-    background: linear-gradient(to bottom, rgba(10,10,12,0.45) 0%, rgba(10,10,12,0.12) 45%, rgba(10,10,12,0.55) 100%);
-  }
-  .cat-showcase-content {
-    position: absolute; inset: 0; z-index: 2;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    text-align: center; padding: 60px 32px;
-  }
   /* Le texte/bouton de chaque slide se révèle (flou -> net) quand elle
      devient la slide active, plutôt que de glisser latéralement : le
      déplacement horizontal lui-même est déjà assuré par le scroll natif
@@ -3151,48 +3111,12 @@
      Mêmes réglages (durée, flou, décalage, cadence) que le titre "Nous
      ne documentons pas des projets…" de la section "Le studio" juste
      après (.mission-kicker / .mission-text / .home-claim-cta). */
-  .cat-showcase-tag {
-    opacity: 0; filter: blur(6px); transform: translateY(10px);
-    transition: opacity 1s var(--ease-luxe), filter 1s var(--ease-luxe), transform 1s var(--ease-luxe);
-  }
-  .cat-showcase-name {
-    opacity: 0; filter: blur(10px); transform: translateY(18px);
-    transition: opacity 1.2s var(--ease-luxe), filter 1.2s var(--ease-luxe), transform 1.2s var(--ease-luxe);
-  }
-  .cat-showcase-content .hero-start {
-    opacity: 0; animation: none;
-    transition: opacity 1s var(--ease-luxe);
-  }
-  .cat-showcase-slide.is-active .cat-showcase-tag { opacity: 1; filter: blur(0); transform: translateY(0); transition-delay: 0.15s; }
-  .cat-showcase-slide.is-active .cat-showcase-name { opacity: 1; filter: blur(0); transform: translateY(0); transition-delay: 0.35s; }
-  .cat-showcase-slide.is-active .cat-showcase-content .hero-start { opacity: 1; transition-delay: 0.65s; }
 
   /* Flèches de navigation gauche/droite — desktop et mobile — pour changer
      de catégorie sans dépendre du scroll. Estompées en bord de parcours. */
-  .cat-showcase-arrow {
-    position: absolute; top: 50%; z-index: 3;
-    width: 48px; height: 48px;
-    display: flex; align-items: center; justify-content: center;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.1);
-    border: 1px solid rgba(255,255,255,0.3);
-    backdrop-filter: blur(16px) saturate(1.5);
-    -webkit-backdrop-filter: blur(16px) saturate(1.5);
-    color: var(--white);
-    cursor: pointer;
-    transform: translateY(-50%);
-    transition: background 0.3s var(--ease), border-color 0.3s var(--ease), opacity 0.3s ease;
-  }
-  .cat-showcase-arrow svg { width: 20px; height: 20px; }
-  .cat-showcase-arrow:hover { background: rgba(255,255,255,0.22); border-color: rgba(255,255,255,0.5); }
-  .cat-showcase-arrow-left { left: 20px; }
-  .cat-showcase-arrow-right { right: 20px; }
-  .cat-showcase-arrow.is-disabled { opacity: 0; pointer-events: none; }
   /* Indice "ça glisse" — les flèches se dandinent brièvement la première
      fois qu'on arrive sur le parcours prestations, pour montrer qu'on
      peut naviguer avec elles. Ne se rejoue plus ensuite. */
-  .cat-showcase-arrow-left.teach { animation: archNudgeLeft 1.3s ease-in-out 2; }
-  .cat-showcase-arrow-right.teach { animation: archNudgeRight 1.3s ease-in-out 2; }
   @keyframes archNudgeLeft {
     0%, 100% { transform: translateY(-50%) translateX(0); } 50% { transform: translateY(-50%) translateX(-7px); }
   }
@@ -3200,49 +3124,8 @@
     0%, 100% { transform: translateY(-50%) translateX(0); } 50% { transform: translateY(-50%) translateX(7px); }
   }
   @media (max-width: 600px) {
-    .cat-showcase-arrow { width: 40px; height: 40px; }
-    .cat-showcase-arrow svg { width: 17px; height: 17px; }
-    .cat-showcase-arrow-left { left: 12px; }
-    .cat-showcase-arrow-right { right: 12px; }
   }
-  .cat-showcase-name {
-    font-size: clamp(30px, 5.5vw, 56px);
-    font-weight: 700; letter-spacing: -0.03em; line-height: 1.12;
-    color: var(--white);
-    margin-bottom: 16px;
-    max-width: 780px;
-    text-wrap: balance;
-    /* Ombre portée pour détacher le titre du fond image, quel que soit
-       le sujet ou la luminosité de la photo. */
-    text-shadow: 0 2px 18px rgba(0,0,0,0.5), 0 1px 4px rgba(0,0,0,0.4);
-  }
-  .cat-showcase-tag {
-    font-size: 14px; color: rgba(255,255,255,0.78);
-    margin-bottom: 34px;
-    max-width: 460px;
-    text-wrap: balance;
-    text-shadow: 0 1px 10px rgba(0,0,0,0.45);
-  }
-  .cat-showcase-dots {
-    position: absolute; bottom: 40px; left: 0; right: 0; z-index: 3;
-    display: flex; justify-content: center; gap: 10px;
-  }
-  .cat-showcase-dot {
-    width: 22px; height: 22px;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; pointer-events: auto;
-  }
-  .cat-showcase-dot::before {
-    content: ''; width: 6px; height: 6px; border-radius: 50%;
-    background: rgba(255,255,255,0.4);
-    transition: background 0.3s var(--ease), width 0.3s var(--ease), border-radius 0.3s var(--ease);
-  }
-  .cat-showcase-dot.active::before { background: var(--white); width: 20px; border-radius: 3px; }
-  .cat-showcase-dot:hover::before { background: rgba(255,255,255,0.7); }
   @media (max-width: 600px) {
-    .cat-showcase { height: 78vh; height: 78svh; min-height: 420px; }
-    .cat-showcase-content { padding: 40px 24px; }
-    .cat-showcase-dots { bottom: 26px; }
   }
   @media (max-width: 600px) {
     .mission-video-content { padding: 36px 24px; }
@@ -3683,7 +3566,6 @@
   }
   .hero-start, .cta-primary { padding: 14px 30px; font-size: 13.5px; }
   .hero-start { animation: riseIn 1s var(--ease) 1.35s forwards; }
-  .cat-showcase-content .hero-start { animation: none; }
   .svc-cta-row .cta-primary { animation: none; }
   .cta-primary, .cta-primary.btn { letter-spacing: 0.02em; font-size: 13.5px; border-radius: 10px; }
 
@@ -4121,27 +4003,10 @@ body.menu-open .nav-burger-glyph { color: #0a0a0c; }
 @media (prefers-reduced-motion: reduce) { .disc-acc .cs-acc-item { opacity: 1; transform: none; animation: none !important; } .disc-step.is-lit::after { animation: none !important; } }
 
 /* ─── Bannière des prestations (accueil) : carte arrondie, fond fixe, seuls les textes défilent ─── */
-.cat-showcase {
-  width: calc(100% - 48px); max-width: 1240px; margin: 28px auto 36px;
-  border-radius: 30px; height: min(74vh, 680px); height: min(74svh, 680px); min-height: 440px; max-height: none;
-  box-shadow: 0 22px 60px rgba(10,10,12,0.22);
-  isolation: isolate;
-}
-.cat-showcase-bgs { position: absolute; inset: 0; z-index: 0; }
-.cat-showcase-bg { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: 0; transition: opacity 1s ease; }
-.cat-showcase-bg.active { opacity: 1; }
-.cat-showcase-shade { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(10,10,12,0.42) 0%, rgba(10,10,12,0.12) 45%, rgba(10,10,12,0.58) 100%); }
-.cat-showcase-track { position: relative; z-index: 2; border-radius: inherit; }
-.cat-showcase-slide { background: none !important; }
-.cat-showcase-slide .cat-showcase-overlay { display: none; }
-.cat-showcase-arrow, .cat-showcase-dots { z-index: 3; }
 @media (max-width: 600px) {
-  .cat-showcase { width: calc(100% - 24px); margin: 18px auto 24px; border-radius: 24px; height: 70vh; height: 70svh; min-height: 420px; }
 }
 
 /* Carrousel des prestations : légèrement transparent (on devine le calque derrière) */
-.cat-showcase { background: transparent; }
-.cat-showcase-bgs { opacity: 0.9; }
 
 /* ─── Articles : rubriques en accordéon, illustrations par sujet, photo d'ouverture ─── */
 .art-hero { margin: 0 0 18px; border-radius: 18px; overflow: hidden; max-width: 820px; margin-left: auto; margin-right: auto; }
@@ -4184,3 +4049,38 @@ a.hero-start { text-decoration: none; display: inline-flex; align-items: center;
 #accInfoView[data-profil="professionnel"] .only-part,
 #accInfoEdit[data-profil="professionnel"] .only-part { display: none !important; }
 #accInfoBanner { margin-bottom: 18px; }
+
+/* ─── Prestations (accueil) : ruban continu de cartes, défilement automatique ─── */
+.svr { width: calc(100% - 48px); max-width: 1240px; margin: 28px auto 36px; padding: clamp(22px, 3.2vw, 44px) 0 clamp(18px, 2.4vw, 28px); border-radius: 30px; background: #fbf9fe; border: 1px solid rgba(255,255,255,0.7); box-shadow: 0 18px 50px rgba(10,10,12,0.14); overflow: hidden; color: var(--black); }
+.svr-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; padding: 0 clamp(20px, 3.2vw, 44px); margin-bottom: clamp(18px, 2.4vw, 28px); }
+.svr-kicker { font-size: 11px; letter-spacing: 0.26em; text-transform: uppercase; font-weight: 700; color: #6e5aa8; margin: 0 0 8px; }
+.svr-title { font-size: clamp(24px, 3.4vw, 38px); letter-spacing: -0.03em; line-height: 1.1; margin: 0; max-width: 18ch; text-wrap: balance; }
+.svr-ctrl { display: flex; gap: 8px; }
+.svr-btn { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); background: #fff; color: var(--black); cursor: pointer; display: grid; place-items: center; transition: background 0.3s var(--ease), color 0.3s var(--ease); }
+.svr-btn svg { width: 18px; height: 18px; }
+.svr-btn:hover { background: var(--black); color: #fff; }
+.svr-rail { overflow: hidden; cursor: grab; touch-action: pan-y; -webkit-mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent); mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent); padding: 10px 0 14px; }
+.svr-rail.is-drag { cursor: grabbing; }
+.svr-track { display: flex; width: max-content; will-change: transform; }
+.svr-set { display: flex; gap: 18px; padding-right: 18px; }
+.svr-card { position: relative; flex: 0 0 clamp(240px, 24vw, 300px); aspect-ratio: 3 / 4.2; border-radius: 18px; overflow: hidden; color: #fff; text-decoration: none; display: flex; flex-direction: column; justify-content: flex-end; gap: 10px; padding: 20px; background: #1c1a24 center / cover no-repeat; transition: transform 0.5s var(--ease-luxe), box-shadow 0.5s var(--ease-luxe); -webkit-user-drag: none; user-select: none; }
+.svr-card::before { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10,10,12,0.28) 0%, rgba(10,10,12,0) 28%, rgba(10,10,12,0) 40%, rgba(10,10,12,0.8) 100%); }
+.svr-card > * { position: relative; }
+.svr-card:hover { transform: translateY(-8px); box-shadow: 0 22px 40px rgba(10,10,12,0.28); }
+.svr-n { position: absolute; top: 16px; left: 18px; font-size: 12px; letter-spacing: 0.2em; font-weight: 700; }
+.svr-go { position: absolute; top: 12px; right: 14px; width: 38px; height: 38px; border-radius: 50%; background: #fff; color: var(--black); display: grid; place-items: center; font-size: 16px; transition: transform 0.4s var(--ease-luxe); }
+.svr-card:hover .svr-go { transform: rotate(-45deg); }
+.svr-name { font-size: clamp(19px, 1.8vw, 22px); font-weight: 700; line-height: 1.15; letter-spacing: -0.02em; text-wrap: balance; text-shadow: 0 1px 12px rgba(0,0,0,0.35); }
+.svr-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.svr-tags span { font-size: 11.5px; border: 1px solid rgba(255,255,255,0.4); border-radius: 100px; padding: 3px 10px; background: rgba(255,255,255,0.12); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.svr-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.svr-foot { display: flex; justify-content: space-between; align-items: center; gap: 14px; flex-wrap: wrap; padding: 0 clamp(20px, 3.2vw, 44px); }
+.svr-foot p { margin: 0; font-size: 13.5px; color: #6b6578; }
+.svr-pp { font: inherit; font-size: 13px; font-weight: 600; border: 1px solid var(--line); background: #fff; color: var(--black); border-radius: 100px; padding: 8px 16px; cursor: pointer; }
+.svr-pp:hover { background: var(--black); color: #fff; }
+@media (max-width: 600px) {
+  .svr { width: calc(100% - 24px); margin: 18px auto 24px; border-radius: 24px; }
+  .svr-card { flex-basis: 66vw; }
+  .svr-btn { width: 40px; height: 40px; }
+}
+@media (prefers-reduced-motion: reduce) { .svr-card, .svr-go { transition: none; } }
