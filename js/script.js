@@ -2056,6 +2056,8 @@ function renderProfiles(){
     };
     el.appendChild(d);
   });
+  const phBox = document.getElementById('profQBox');
+  if (phBox) phBox.dataset.ph = t({fr:'Touchez un profil pour voir sa description.', en:'Tap a profile to see its description.'});
   if (S.prof) showProfileDescription(S.prof);
 }
 
