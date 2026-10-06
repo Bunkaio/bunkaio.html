@@ -419,6 +419,19 @@ const SECTIONS = [
     ],
   },
   ...FORMULA_SECTIONS,
+  {
+    id: 'discover-bg',
+    title: '🖼 Découvrir chaque prestation — fond selon la prestation',
+    desc: '1920 × 1200 px, paysage 16:10 (≤ 350 Ko). Le fond de la page change quand le visiteur ouvre une prestation. Sans photo déposée, c\'est la photo de la catégorie qui est utilisée.',
+    slots: [
+      { path: 'discover/photo-part.webp', label: 'Séance photo — particuliers' },
+      { path: 'discover/corporate.webp', label: 'Corporate — portraits professionnels' },
+      { path: 'discover/mode.webp', label: 'Mode, agence et mannequins' },
+      { path: 'discover/commercial.webp', label: 'Commercial & produits' },
+      { path: 'discover/event.webp', label: 'Événementiel' },
+      { path: 'discover/lumen.webp', label: 'Lumen — photobooth IA' },
+    ],
+  },
 
   // ── Portfolio (grille de réalisations, par catégorie) ───────────────────────
   {

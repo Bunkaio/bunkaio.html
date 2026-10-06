@@ -233,6 +233,15 @@ const IMG = {
      ────────────────────────────────────────────────────────────────── */
   /* Photos par formule : MEDIA_BASE/formulas/<catégorie>-<formule>.webp (à déposer dans l'admin média ; repli sur la photo de la catégorie). */
   formulas: MEDIA_BASE + '/formulas',
+  /* Fond de la page « Découvrir chaque prestation » : une photo par prestation, qui change selon la prestation ouverte (repli : photo de la catégorie). */
+  discoverPhotos: {
+    'photo-part': MEDIA_BASE + '/discover/photo-part.webp',
+    corporate:    MEDIA_BASE + '/discover/corporate.webp',
+    mode:         MEDIA_BASE + '/discover/mode.webp',
+    commercial:   MEDIA_BASE + '/discover/commercial.webp',
+    event:        MEDIA_BASE + '/discover/event.webp',
+    lumen:        MEDIA_BASE + '/discover/lumen.webp',
+  },
   servicePhotos: {
     immobilier:   MEDIA_BASE + '/services/immobilier.webp',    // Immobilier prestige
     archi:        MEDIA_BASE + '/services/archi.webp',         // Architecture & design
