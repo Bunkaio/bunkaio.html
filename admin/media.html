@@ -369,6 +369,27 @@ const DRONE_VIDEO_SECTIONS = [
 ];
 
 // ── Slots fixes ──────────────────────────────────────────────────────────────
+// ── Photos par formule (devis, récapitulatif et page de chaque prestation) ──
+// Chemin : formulas/<catégorie>-<formule>.webp. Sans photo déposée, le site reprend la photo de la catégorie.
+const FORMULA_LABELS = { deco: 'Découverte', sig: 'Signature', prem: 'Premium', edit: 'Éditorial Bunkaio' };
+const FORMULA_CATS = [
+  { id: 'photo-part', name: 'Séance photo — particuliers', tiers: ['deco', 'sig', 'prem', 'edit'], extra: { grossesse: 'Book grossesse' } },
+  { id: 'corporate',  name: 'Corporate — portraits professionnels', tiers: ['deco', 'sig', 'prem', 'edit'] },
+  { id: 'mode',       name: 'Mode, agence et mannequins', tiers: ['deco', 'sig', 'prem', 'edit'], extra: { polas: 'Polas (digitals agences)', sub: 'Studio Continu (abonnement)' } },
+  { id: 'commercial', name: 'Commercial & produits', tiers: ['deco', 'sig', 'prem', 'edit'] },
+  { id: 'event',      name: 'Événementiel', tiers: ['deco', 'sig', 'prem', 'edit'] },
+  { id: 'lumen',      name: 'Lumen — photobooth IA', tiers: [], extra: { ess: 'Essentiel', sig: 'Signature', surm: 'Sur-mesure' } },
+];
+const FORMULA_SECTIONS = FORMULA_CATS.map(c => ({
+  id: 'formulas-' + c.id,
+  title: '🎞 Formules — ' + c.name,
+  desc: '1200 × 800 px, paysage 3:2 (≤ 250 Ko). La photo change selon la formule choisie : cartes du devis, récapitulatif et page de la prestation.',
+  slots: [
+    ...c.tiers.map(t => ({ path: 'formulas/' + c.id + '-' + t + '.webp', label: FORMULA_LABELS[t] })),
+    ...Object.entries(c.extra || {}).map(([k, label]) => ({ path: 'formulas/' + c.id + '-' + k + '.webp', label })),
+  ],
+}));
+
 const SECTIONS = [
   // ── Accueil ────────────────────────────────────────────────────────────────
   // Pas de section ici : le fond de la page d'accueil est une vidéo
@@ -397,6 +418,7 @@ const SECTIONS = [
       { path: 'services/lumen.webp', label: 'Lumen — photobooth IA mariages' },
     ],
   },
+  ...FORMULA_SECTIONS,
 
   // ── Portfolio (grille de réalisations, par catégorie) ───────────────────────
   {

@@ -1129,6 +1129,12 @@ const POLAS = {
   }
 };
 
+/* Photo propre à chaque formule (dossier formulas/ de l'admin média). Repli : photo de la catégorie, sinon rien. */
+function formulaPhotoHTML(cat, tierId, cls){
+  if (!IMG.formulas || !cat || !tierId) return '';
+  const fb = (IMG.servicePhotos && IMG.servicePhotos[cat]) || '';
+  return `<img class="formula-photo ${cls || ''}" src="${IMG.formulas}/${cat}-${tierId}.webp" alt="" loading="lazy" decoding="async" data-fb="${fb}" onerror="var f=this.dataset.fb;if(f){this.dataset.fb='';this.src=f}else{this.remove()}">`;
+}
 const specialTotal = sp => sp.price + sp.studio;
 const isSpecialTier = () => !!(S.tier && POLAS[S.cat] && S.tier === POLAS[S.cat].id);
 
@@ -2151,7 +2157,7 @@ function renderTiersBase(){
         ${chfLine}
         <div class="tier-pay-line">${payLine}</div>
         <div class="tier-detail">${t(lt.items).join(' · ')}</div>`;
-      d.dataset.tier = lt.id; if (S.tier === lt.id) d.classList.add('selected'); d.onclick = () => pickTier(lt.id, d);
+      d.insertAdjacentHTML('afterbegin', formulaPhotoHTML(S.cat, lt.id, 'tier-photo')); d.dataset.tier = lt.id; if (S.tier === lt.id) d.classList.add('selected'); d.onclick = () => pickTier(lt.id, d);
       el.appendChild(d);
     });
     return;
@@ -2178,7 +2184,7 @@ function renderTiersBase(){
       </div>
       <div class="tier-pay-line">${payLine}</div>
       <div class="tier-detail">${t(polas.items).join(' · ')} · ${studioNote}</div>`;
-    d.dataset.tier = polas.id; if (S.tier === polas.id) d.classList.add('selected'); d.onclick = () => pickTier(polas.id, d);
+    d.insertAdjacentHTML('afterbegin', formulaPhotoHTML(S.cat, polas.id, 'tier-photo')); d.dataset.tier = polas.id; if (S.tier === polas.id) d.classList.add('selected'); d.onclick = () => pickTier(polas.id, d);
     el.appendChild(d);
   }
   TIERS.forEach((tier) => {
@@ -2196,7 +2202,7 @@ function renderTiersBase(){
       </div>
       <div class="tier-pay-line">${payLine}</div>
       <div class="tier-detail">${t(td.items).join(' · ')}</div>`;
-    d.dataset.tier = tier.id; if (S.tier === tier.id) d.classList.add('selected'); d.onclick = () => pickTier(tier.id, d);
+    d.insertAdjacentHTML('afterbegin', formulaPhotoHTML(S.cat, tier.id, 'tier-photo')); d.dataset.tier = tier.id; if (S.tier === tier.id) d.classList.add('selected'); d.onclick = () => pickTier(tier.id, d);
     el.appendChild(d);
   });
   if (S.tier === 'sub' && !subAvailable(S.cat)) S.tier = null;
@@ -2216,7 +2222,7 @@ function renderTiersBase(){
       </div>
       <div class="tier-detail">${t(sub.items).join(' · ')}</div>
       <div class="sub-engagement">${engagement} · ${saving}</div>`;
-    d.dataset.tier = 'sub'; if (S.tier === 'sub') d.classList.add('selected'); d.onclick = () => pickTier('sub', d);
+    d.insertAdjacentHTML('afterbegin', formulaPhotoHTML(S.cat, 'sub', 'tier-photo')); d.dataset.tier = 'sub'; if (S.tier === 'sub') d.classList.add('selected'); d.onclick = () => pickTier('sub', d);
     el.appendChild(d);
   }
 }
@@ -2224,7 +2230,7 @@ function renderTiersBase(){
 function renderRecap(){
   renderRecapBase();
   const box = document.getElementById('recapBox');
-  if (box) box.insertAdjacentHTML('beforeend', partnerQuizNotice());
+  if (box) { box.insertAdjacentHTML('afterbegin', formulaPhotoHTML(S.cat, S.tier, 'recap-photo')); box.insertAdjacentHTML('beforeend', partnerQuizNotice()); }
 }
 function renderRecapBase(){
   const cat = CATS.find(c => c.id === S.cat);
@@ -2942,8 +2948,8 @@ function renderServicePage(catId){
   const en = LANG === 'en';
   const price = n => n.toLocaleString(en ? 'en-GB' : 'fr-FR') + ' € ' + (en ? 'excl. VAT' : 'HT');
   const tiers = c.lumen
-    ? LUMEN_TIERS.map(lt => ({ name: lt.name, badge: lt.badge, quote: lt.id === 'surm', price: lt.price, delay: lt.delay, items: lt.items }))
-    : TIERS.map(tr => ({ name: tr.name, badge: tr.badge, price: c.tiers[tr.id].price, delay: c.tiers[tr.id].delay, items: c.tiers[tr.id].items }));
+    ? LUMEN_TIERS.map(lt => ({ id: lt.id, name: lt.name, badge: lt.badge, quote: lt.id === 'surm', price: lt.price, delay: lt.delay, items: lt.items }))
+    : TIERS.map(tr => ({ id: tr.id, name: tr.name, badge: tr.badge, price: c.tiers[tr.id].price, delay: c.tiers[tr.id].delay, items: c.tiers[tr.id].items }));
   const others = CATS.filter(x => x.id !== catId && seoRouteFor('service', x.id));
   const h1 = en && route.h1En ? route.h1En : route.h1;
   const sub = SUBS[catId];
@@ -3031,6 +3037,7 @@ function renderServicePage(catId){
       <div class="svcp-tiers">
         ${tiers.map(tt => `
           <div class="svcp-tier">
+            ${formulaPhotoHTML(catId, tt.id, 'svcp-tier-photo')}
             ${tt.badge ? `<div class="svcp-badge">${t(tt.badge)}</div>` : ''}
             <h3>${t(tt.name)}</h3>
             <div class="svcp-price">${priceLine(tt)}</div>
@@ -3039,6 +3046,7 @@ function renderServicePage(catId){
           </div>`).join('')}
         ${POLAS[catId] ? `
           <div class="svcp-tier svcp-tier-polas">
+            ${formulaPhotoHTML(catId, POLAS[catId].id, 'svcp-tier-photo')}
             <div class="svcp-badge">${t(POLAS[catId].label)}</div>
             <h3>${t(POLAS[catId].name)}</h3>
             <div class="svcp-price">${price(specialTotal(POLAS[catId]))}</div>

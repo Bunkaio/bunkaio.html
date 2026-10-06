@@ -231,6 +231,8 @@ const IMG = {
      Apparaît à gauche de la grille quand l'utilisateur filtre par catégorie.
      Une image par catégorie. Format : portrait, ~900×1200px (ratio 3:4)
      ────────────────────────────────────────────────────────────────── */
+  /* Photos par formule : MEDIA_BASE/formulas/<catégorie>-<formule>.webp (à déposer dans l'admin média ; repli sur la photo de la catégorie). */
+  formulas: MEDIA_BASE + '/formulas',
   servicePhotos: {
     immobilier:   MEDIA_BASE + '/services/immobilier.webp',    // Immobilier prestige
     archi:        MEDIA_BASE + '/services/archi.webp',         // Architecture & design
