@@ -2977,6 +2977,35 @@ function renderDiscoverPage(){
   discoverBgSync();
 }
 
+/* Formules en accordéon (pages prestation) : une ligne par formule (nom, prix, délai), le détail s'ouvre au clic.
+   La formule « la plus choisie » est ouverte par défaut ; une seule formule ouverte à la fois. */
+function fxItem(catId, f){
+  const en = LANG === 'en';
+  const open = f.open ? ' open' : '';
+  return `<div class="fx${f.special ? ' fx-special' : ''}${open}" data-fx="${f.id}">
+    <button type="button" class="fx-head" aria-expanded="${!!f.open}">
+      ${formulaPhotoHTML(catId, f.id, 'fx-thumb')}
+      <span class="fx-title"><b>${f.name}</b>${f.badge ? `<em>${f.badge}</em>` : ''}<small>${f.delay}</small></span>
+      <span class="fx-price">${f.price}</span>
+      <i class="fx-chev" aria-hidden="true"></i>
+    </button>
+    <div class="fx-panel"><div class="fx-body">
+      ${formulaPhotoHTML(catId, f.id, 'fx-photo')}
+      <div class="fx-info">
+        <ul class="svcp-list">${f.items.map(i => `<li>${escHtml(i)}</li>`).join('')}</ul>
+        <div class="fx-actions">${quizLink(catId, t({fr:'Choisir cette formule', en:'Choose this package'}))}${f.extra || ''}</div>
+      </div>
+    </div></div>
+  </div>`;
+}
+document.addEventListener('click', (e) => {
+  const head = e.target.closest ? e.target.closest('.fx-head') : null; if (!head) return;
+  const item = head.parentElement, list = item.parentElement;
+  const willOpen = !item.classList.contains('open');
+  list.querySelectorAll('.fx.open').forEach(x => { x.classList.remove('open'); x.querySelector('.fx-head').setAttribute('aria-expanded', 'false'); });
+  if (willOpen) { item.classList.add('open'); head.setAttribute('aria-expanded', 'true'); }
+});
+
 function renderServicePage(catId){
   const el = document.getElementById('servicePageContent');
   if (!el) return;
@@ -3073,26 +3102,9 @@ function renderServicePage(catId){
     <section class="read-panel svcp-panel">
       <h2>${t({fr:'Formules et tarifs', en:'Packages and rates'})}</h2>
       <p class="vat-note">${I18N[LANG]['vat-note']}</p>
-      <div class="svcp-tiers">
-        ${tiers.map(tt => `
-          <div class="svcp-tier">
-            ${formulaPhotoHTML(catId, tt.id, 'svcp-tier-photo')}
-            ${tt.badge ? `<div class="svcp-badge">${t(tt.badge)}</div>` : ''}
-            <h3>${t(tt.name)}</h3>
-            <div class="svcp-price">${priceLine(tt)}</div>
-            <div class="svcp-delay">${t(tt.delay)}</div>
-            <ul class="svcp-list">${(en ? tt.items.en : tt.items.fr).map(i => `<li>${escHtml(i)}</li>`).join('')}</ul>
-          </div>`).join('')}
-        ${POLAS[catId] ? `
-          <div class="svcp-tier svcp-tier-polas">
-            ${formulaPhotoHTML(catId, POLAS[catId].id, 'svcp-tier-photo')}
-            <div class="svcp-badge">${t(POLAS[catId].label)}</div>
-            <h3>${t(POLAS[catId].name)}</h3>
-            <div class="svcp-price">${price(specialTotal(POLAS[catId]))}</div>
-            <div class="svcp-delay">${t(POLAS[catId].delay)} · ${t(POLAS[catId].studioNote)}</div>
-            <ul class="svcp-list">${t(POLAS[catId].items).map(i => `<li>${escHtml(i)}</li>`).join('')}</ul>
-            ${POLAS[catId].id === 'polas' ? `<a class="svcp-link" href="/conseils/polas-mannequin-digitals-agence/" onclick="return navLink(event,'article','polas-mannequin-digitals-agence')">${t({fr:'Comprendre les Polas →', en:'What are Polas? →'})}</a>` : ''}
-          </div>` : ''}
+      <div class="fx-list">
+        ${tiers.map(tt => fxItem(catId, { id: tt.id, name: t(tt.name), badge: tt.badge ? t(tt.badge) : '', price: priceLine(tt), delay: t(tt.delay), items: (en ? tt.items.en : tt.items.fr), open: !!tt.badge && /(choisi|popular)/i.test(t(tt.badge)) })).join('')}
+        ${POLAS[catId] ? fxItem(catId, { id: POLAS[catId].id, name: t(POLAS[catId].name), badge: t(POLAS[catId].label), price: price(specialTotal(POLAS[catId])), delay: t(POLAS[catId].delay) + ' · ' + t(POLAS[catId].studioNote), items: t(POLAS[catId].items), special: true, extra: POLAS[catId].id === 'polas' ? `<a class="svcp-link" href="/conseils/polas-mannequin-digitals-agence/" onclick="return navLink(event,'article','polas-mannequin-digitals-agence')">${t({fr:'Comprendre les Polas →', en:'What are Polas? →'})}</a>` : '' }) : ''}
       </div>
       ${sub ? `<p class="svcp-note">${t({fr:'Besoin régulier ? ', en:'Regular need? '})}<strong>${t(sub.name)}</strong> — ${sub.price.toLocaleString(en ? 'en-GB' : 'fr-FR')} € ${t({fr:'/ mois', en:'/ month'})}.</p>` : ''}
     </section>
@@ -3120,7 +3132,7 @@ function renderServicePage(catId){
     ${(typeof ARTICLES !== 'undefined' && ARTICLES.some(a => a.cat === catId)) ? `
     <section class="read-panel svcp-panel">
       <h2>${t({fr:'Nos conseils pour bien préparer', en:'Our tips to prepare'})}</h2>
-      <div class="advice-grid">${ARTICLES.filter(a => a.cat === catId).map(a => adviceCard(a)).join('')}</div>
+      <div class="advice-grid adv-row">${ARTICLES.filter(a => a.cat === catId).map(a => adviceCard(a)).join('')}</div>
     </section>` : ''}
     <section class="read-panel svcp-panel svcp-others">
       <h2>${t({fr:'Autres prestations', en:'Other services'})}</h2>
@@ -3130,7 +3142,7 @@ function renderServicePage(catId){
       </div>
     </section>
     <div class="svcp-back-row"><a class="svcp-back" href="/services/" onclick="return navLink(event,'services')"><span aria-hidden="true">←</span> ${t({fr:'Retour au catalogue', en:'Back to the catalogue'})}</a></div>`;
-  renderAccordionInto('servicePageFaq', faq.map(f => ({ title: f.q, body: f.a })), { exclusive: true });
+  renderAccordionInto('servicePageFaq', faq.map(f => ({ title: f.q, body: f.a })), { exclusive: true, closed: true });
 }
 
 /* ═══════════════ CONSEILS PHOTO (config/articles.js) ═══════════════ */
@@ -3290,7 +3302,7 @@ function renderArticlePage(slug){
         ${cat ? `<a class="btn btn-ghost" href="${servicePath(a.cat)}" data-nav="service:${a.cat}"><span>${t(cat.name)}</span></a>` : ''}
       </div>
     </section>
-    ${related.length ? `<section class="read-panel svcp-panel"><h2>${t({fr:'À lire aussi', en:'Keep reading'})}</h2><div class="advice-grid">${related.map(x => adviceCard(x)).join('')}</div></section>` : ''}`;
+    ${related.length ? `<section class="read-panel svcp-panel"><h2>${t({fr:'À lire aussi', en:'Keep reading'})}</h2><div class="advice-grid adv-row">${related.map(x => adviceCard(x)).join('')}</div></section>` : ''}`;
   renderAccordionInto('articleFaq', a.faq.map(f => ({ title: f.q, body: '<p>' + f.a + '</p>' })), { exclusive: true });
 }
 
@@ -3405,6 +3417,8 @@ function renderServices(){
       <div class="service-head">
         <div class="service-icon">${getIcon(c.icon)}</div>
         <div class="service-name">${t(c.name)}</div>
+        <span class="service-from">${t({fr:'dès', en:'from'})} ${catFacts(c).from.toLocaleString('fr-FR')} €</span>
+        <i class="service-chev" aria-hidden="true"></i>
       </div>
       <div class="service-tag">${t(c.tag)}</div>
       ${c.pitch ? `<p class="service-pitch">${t(c.pitch)}</p>` : ''}
@@ -3425,6 +3439,9 @@ function renderServices(){
       ${POLAS[c.id] ? `<div class="service-polas"><span class="service-tier-name"><strong>${t(POLAS[c.id].name)}</strong> <span class="service-polas-tag">${t(POLAS[c.id].label)}</span><small>${t(POLAS[c.id].short)}</small></span><span class="service-tier-price">${specialTotal(POLAS[c.id]).toLocaleString('fr-FR')}€</span></div>` : ''}
       <button class="service-cta">${I18N[LANG]['svc-cta']}</button>
       <a class="service-more" href="${servicePath(c.id)}" onclick="return navLink(event,'service','${c.id}')">${t(c.name)} : ${t({fr:'détails et tarifs →', en:'details and rates →'})}</a>`;
+    /* Mobile : fiches repliées (nom + prix « dès »), le détail s'ouvre au toucher ; un filtre actif ouvre la fiche. */
+    if (activeServiceFilter) card.classList.add('is-open');
+    card.querySelector('.service-head').addEventListener('click', () => card.classList.toggle('is-open'));
     card.querySelector('.service-cta').onclick = () => {
       S.cat = c.id; S.tier = null; S.prof = null;
       /* profNext removed */
@@ -5885,13 +5902,14 @@ function renderAccordionInto(elId, sections, opts){
   const el = document.getElementById(elId);
   if (!el) return;
   if (opts && opts.exclusive) el.dataset.exclusive = '1';
+  const openFirst = !(opts && opts.closed);
   el.innerHTML = sections.map((s, i) => `
     <div class="accordion-item">
-      <button class="accordion-trigger" aria-expanded="${i === 0 ? 'true' : 'false'}" onclick="toggleAccordion(this)">
+      <button class="accordion-trigger" aria-expanded="${i === 0 && openFirst ? 'true' : 'false'}" onclick="toggleAccordion(this)">
         <span>${s.title}</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></span>
       </button>
-      <div class="accordion-body ${i === 0 ? 'open' : ''}">
+      <div class="accordion-body ${i === 0 && openFirst ? 'open' : ''}">
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544">${s.body}</div>
       </div>
     </div>`).join('');

@@ -31,7 +31,7 @@
 <link rel="icon" type="image/png" sizes="64x64" href="/images/favicon-64.png">
 <link rel="apple-touch-icon" href="/images/apple-touch-icon.png"><text y='0.9em' font-size='80' font-family='serif'>⊹</text></svg>">
 <link rel="preload" href="fonts/dm-sans-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/style.min.css?v=3a02665e">
+<link rel="stylesheet" href="css/style.min.css?v=74e44350">
 
 <script type="application/ld+json">
 {
@@ -1191,40 +1191,64 @@
     <section class="read-panel svcp-panel">
       <h2>Formules et tarifs</h2>
       <p class="vat-note">Prix nets : TVA non applicable (art. 293 B du CGI). Le prix affiché est le prix payé, sans calcul supplémentaire.</p>
-      <div class="svcp-tiers">
-        
-          <div class="svcp-tier">
-            <img class="formula-photo svcp-tier-photo" src="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/formulas/commercial-deco.webp" alt="" loading="lazy" decoding="async" data-fb="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/services/commercial.webp" onerror="var f=this.dataset.fb;if(f){this.dataset.fb='';this.src=f}else{this.remove()}">
-            <div class="svcp-badge">Pour découvrir</div>
-            <h3>Découverte</h3>
-            <div class="svcp-price">390 €</div>
-            <div class="svcp-delay">3 jours ouvrés</div>
-            <ul class="svcp-list"><li>Jusqu'à 5 produits — 10 photos HD retouchées</li><li>Fond neutre studio</li><li>Galerie privée de téléchargement</li></ul>
-          </div>
-          <div class="svcp-tier">
-            <img class="formula-photo svcp-tier-photo" src="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/formulas/commercial-sig.webp" alt="" loading="lazy" decoding="async" data-fb="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/services/commercial.webp" onerror="var f=this.dataset.fb;if(f){this.dataset.fb='';this.src=f}else{this.remove()}">
-            
-            <h3>Signature</h3>
-            <div class="svcp-price">790 €</div>
-            <div class="svcp-delay">5 jours ouvrés</div>
-            <ul class="svcp-list"><li>Jusqu'à 12 produits — 20 photos HD retouchées</li><li>Mise en scène incluse</li><li>Galerie privée de téléchargement</li></ul>
-          </div>
-          <div class="svcp-tier">
-            <img class="formula-photo svcp-tier-photo" src="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/formulas/commercial-prem.webp" alt="" loading="lazy" decoding="async" data-fb="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/services/commercial.webp" onerror="var f=this.dataset.fb;if(f){this.dataset.fb='';this.src=f}else{this.remove()}">
-            <div class="svcp-badge">Le plus choisi</div>
-            <h3>Premium</h3>
-            <div class="svcp-price">1 390 €</div>
-            <div class="svcp-delay">7 jours ouvrés</div>
-            <ul class="svcp-list"><li>Jusqu'à 25 produits — 35 photos HD retouchées</li><li>Mise en scène incluse</li><li>1 Reel vertical produit</li><li>Galerie privée de téléchargement</li></ul>
-          </div>
-          <div class="svcp-tier">
-            <img class="formula-photo svcp-tier-photo" src="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/formulas/commercial-edit.webp" alt="" loading="lazy" decoding="async" data-fb="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/services/commercial.webp" onerror="var f=this.dataset.fb;if(f){this.dataset.fb='';this.src=f}else{this.remove()}">
-            <div class="svcp-badge">Expérience complète</div>
-            <h3>Éditorial Bunkaio</h3>
-            <div class="svcp-price">2 390 €</div>
-            <div class="svcp-delay">10 jours ouvrés</div>
-            <ul class="svcp-list"><li>Catalogue complet — 50 photos HD retouchées</li><li>1 film de marque (90 secondes)</li><li>2 Reels verticaux</li><li>Publication sur les supports Bunkaio</li></ul>
-          </div>
+      <div class="fx-list">
+        <div class="fx" data-fx="deco">
+    <button type="button" class="fx-head" aria-expanded="false">
+      <img class="formula-photo fx-thumb" src="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/formulas/commercial-deco.webp" alt="" loading="lazy" decoding="async" data-fb="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/services/commercial.webp" onerror="var f=this.dataset.fb;if(f){this.dataset.fb='';this.src=f}else{this.remove()}">
+      <span class="fx-title"><b>Découverte</b><em>Pour découvrir</em><small>3 jours ouvrés</small></span>
+      <span class="fx-price">390 €</span>
+      <i class="fx-chev" aria-hidden="true"></i>
+    </button>
+    <div class="fx-panel"><div class="fx-body">
+      <img class="formula-photo fx-photo" src="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/formulas/commercial-deco.webp" alt="" loading="lazy" decoding="async" data-fb="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/services/commercial.webp" onerror="var f=this.dataset.fb;if(f){this.dataset.fb='';this.src=f}else{this.remove()}">
+      <div class="fx-info">
+        <ul class="svcp-list"><li>Jusqu'à 5 produits — 10 photos HD retouchées</li><li>Fond neutre studio</li><li>Galerie privée de téléchargement</li></ul>
+        <div class="fx-actions"><a class="cta-primary" href="/devis/" data-quiz="commercial">Choisir cette formule</a></div>
+      </div>
+    </div></div>
+  </div><div class="fx" data-fx="sig">
+    <button type="button" class="fx-head" aria-expanded="false">
+      <img class="formula-photo fx-thumb" src="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/formulas/commercial-sig.webp" alt="" loading="lazy" decoding="async" data-fb="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/services/commercial.webp" onerror="var f=this.dataset.fb;if(f){this.dataset.fb='';this.src=f}else{this.remove()}">
+      <span class="fx-title"><b>Signature</b><small>5 jours ouvrés</small></span>
+      <span class="fx-price">790 €</span>
+      <i class="fx-chev" aria-hidden="true"></i>
+    </button>
+    <div class="fx-panel"><div class="fx-body">
+      <img class="formula-photo fx-photo" src="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/formulas/commercial-sig.webp" alt="" loading="lazy" decoding="async" data-fb="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/services/commercial.webp" onerror="var f=this.dataset.fb;if(f){this.dataset.fb='';this.src=f}else{this.remove()}">
+      <div class="fx-info">
+        <ul class="svcp-list"><li>Jusqu'à 12 produits — 20 photos HD retouchées</li><li>Mise en scène incluse</li><li>Galerie privée de téléchargement</li></ul>
+        <div class="fx-actions"><a class="cta-primary" href="/devis/" data-quiz="commercial">Choisir cette formule</a></div>
+      </div>
+    </div></div>
+  </div><div class="fx open" data-fx="prem">
+    <button type="button" class="fx-head" aria-expanded="true">
+      <img class="formula-photo fx-thumb" src="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/formulas/commercial-prem.webp" alt="" loading="lazy" decoding="async" data-fb="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/services/commercial.webp" onerror="var f=this.dataset.fb;if(f){this.dataset.fb='';this.src=f}else{this.remove()}">
+      <span class="fx-title"><b>Premium</b><em>Le plus choisi</em><small>7 jours ouvrés</small></span>
+      <span class="fx-price">1 390 €</span>
+      <i class="fx-chev" aria-hidden="true"></i>
+    </button>
+    <div class="fx-panel"><div class="fx-body">
+      <img class="formula-photo fx-photo" src="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/formulas/commercial-prem.webp" alt="" loading="lazy" decoding="async" data-fb="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/services/commercial.webp" onerror="var f=this.dataset.fb;if(f){this.dataset.fb='';this.src=f}else{this.remove()}">
+      <div class="fx-info">
+        <ul class="svcp-list"><li>Jusqu'à 25 produits — 35 photos HD retouchées</li><li>Mise en scène incluse</li><li>1 Reel vertical produit</li><li>Galerie privée de téléchargement</li></ul>
+        <div class="fx-actions"><a class="cta-primary" href="/devis/" data-quiz="commercial">Choisir cette formule</a></div>
+      </div>
+    </div></div>
+  </div><div class="fx" data-fx="edit">
+    <button type="button" class="fx-head" aria-expanded="false">
+      <img class="formula-photo fx-thumb" src="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/formulas/commercial-edit.webp" alt="" loading="lazy" decoding="async" data-fb="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/services/commercial.webp" onerror="var f=this.dataset.fb;if(f){this.dataset.fb='';this.src=f}else{this.remove()}">
+      <span class="fx-title"><b>Éditorial Bunkaio</b><em>Expérience complète</em><small>10 jours ouvrés</small></span>
+      <span class="fx-price">2 390 €</span>
+      <i class="fx-chev" aria-hidden="true"></i>
+    </button>
+    <div class="fx-panel"><div class="fx-body">
+      <img class="formula-photo fx-photo" src="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/formulas/commercial-edit.webp" alt="" loading="lazy" decoding="async" data-fb="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/services/commercial.webp" onerror="var f=this.dataset.fb;if(f){this.dataset.fb='';this.src=f}else{this.remove()}">
+      <div class="fx-info">
+        <ul class="svcp-list"><li>Catalogue complet — 50 photos HD retouchées</li><li>1 film de marque (90 secondes)</li><li>2 Reels verticaux</li><li>Publication sur les supports Bunkaio</li></ul>
+        <div class="fx-actions"><a class="cta-primary" href="/devis/" data-quiz="commercial">Choisir cette formule</a></div>
+      </div>
+    </div></div>
+  </div>
         
       </div>
       
@@ -1248,11 +1272,11 @@
       <h2>Questions fréquentes</h2>
       <div id="servicePageFaq" data-exclusive="1">
     <div class="accordion-item">
-      <button class="accordion-trigger" aria-expanded="true" onclick="toggleAccordion(this)">
+      <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
         <span>Quels sont les tarifs ?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
-      <div class="accordion-body open">
+      <div class="accordion-body ">
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><ul class="svcp-list"><li><strong>Découverte</strong> — 390 €</li><li><strong>Signature</strong> — 790 €</li><li><strong>Premium</strong> — 1 390 €</li><li><strong>Éditorial Bunkaio</strong> — 2 390 €</li></ul></div>
       </div>
     </div>
@@ -1289,7 +1313,7 @@
     
     <section class="read-panel svcp-panel">
       <h2>Nos conseils pour bien préparer</h2>
-      <div class="advice-grid"><a class="advice-card" href="/conseils/preparer-shooting-photo-produit/" data-nav="article:preparer-shooting-photo-produit">
+      <div class="advice-grid adv-row"><a class="advice-card" href="/conseils/preparer-shooting-photo-produit/" data-nav="article:preparer-shooting-photo-produit">
     <span class="advice-card-meta">5 min de lecture</span>
     <span class="advice-card-title">Préparer un shooting photo produit : brief, produits et erreurs à éviter</span>
     <span class="advice-card-text">Packshot, mise en situation, brief, préparation des produits : les étapes pour un shooting photo produit efficace.</span>
@@ -1941,6 +1965,6 @@
 <script src="config/articles.en.js?v=f5e9d676"></script>
 <script src="config/routes.js?v=32eeabdd"></script>
 <script src="config/media.js?v=e515354a"></script>
-<script src="js/script.min.js?v=48cfa916"></script>
+<script src="js/script.min.js?v=876bf903"></script>
 </body>
 </html>
