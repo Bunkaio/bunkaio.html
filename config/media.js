@@ -108,7 +108,7 @@ const IMG = {
   portfolioAlt: {},
   /* Texte alternatif de la photo de chaque page prestation (clé = id de la catégorie : 'photo-part', 'mode', 'commercial', 'event', 'lumen').
      Décrivez ce que montre réellement l'image. Vide = texte générique « Exemple de … réalisé par BUNKAIO ». */
-  serviceAlt: { corporate: 'Aya Nascimento, photographe, assise dans son studio, un appareil photo Sony à la main' },
+  serviceAlt: { corporate: { fr: 'Aya Nascimento, photographe, assise dans son studio, un appareil photo Sony à la main', en: 'Aya Nascimento, photographer, sitting in her studio holding a Sony camera' } },
   aboutPhoto: '',                                     // Portrait de la photographe (À propos) — ex. MEDIA_BASE + '/about/aya.webp' après dépôt dans l'admin média
   partners:  MEDIA_BASE + '/hero/partners-1.webp',   // Fond page Partenaires
   legal:     MEDIA_BASE + '/hero/contact-1.webp',    // Fond page FAQ & confidentialité

@@ -401,7 +401,12 @@ const I18N = {
     'ph-ct-name':'Votre nom ou société',
     'ph-ct-email':'vous@societe.fr',
     'ph-reg-name':'Votre nom ou société',
-    'ph-reg-email':'vous@societe.fr'
+    'ph-reg-email':'vous@societe.fr',
+    'ph-apply-name':'Votre nom ou votre société',
+    'ph-apply-project':'Décrivez votre activité, vos réalisations marquantes, ce que vous recherchez dans ce partenariat…',
+    'ph-collab-name':'Votre nom ou votre marque',
+    'ph-collab-project':'Décrivez votre proposition : contexte, ce que vous imaginez, ce que vous proposez en échange…',
+    'skip-link':'Aller au contenu'
   },
   en: {
     'estimate':'Quote','services':'Services','portfolio':'Portfolio','drone':'4K Drone','contact':'Contact','partners':'Collaboration','nav-legal':'FAQ',
@@ -749,7 +754,12 @@ const I18N = {
     'ph-ct-name':'Your name or company',
     'ph-ct-email':'you@company.com',
     'ph-reg-name':'Your name or company',
-    'ph-reg-email':'you@company.com'
+    'ph-reg-email':'you@company.com',
+    'ph-apply-name':'Your name or company',
+    'ph-apply-project':'Describe your business, your key achievements and what you are looking for in this partnership…',
+    'ph-collab-name':'Your name or brand',
+    'ph-collab-project':'Describe your proposal: context, what you have in mind, what you offer in exchange…',
+    'skip-link':'Skip to content'
   }
 };
 
@@ -763,7 +773,9 @@ function updatePlaceholders(){
     'qName':'ph-name','qEmail':'ph-email','qPhone':'ph-phone','qProject':'ph-project',
     'ctName':'ph-ct-name','ctEmail':'ph-ct-email','ctPhone':'ph-phone','ctMsg':'ph-message',
     'logEmail':'ph-email','logCode':'ph-code',
-    'regName':'ph-reg-name','regEmail':'ph-reg-email','regPhone':'ph-phone','regActivity':'ph-activity'
+    'regName':'ph-reg-name','regEmail':'ph-reg-email','regPhone':'ph-phone','regActivity':'ph-activity',
+    'applyName':'ph-apply-name','applyEmail':'ph-email','applyProject':'ph-apply-project',
+    'collabName':'ph-collab-name','collabEmail':'ph-email','collabProject':'ph-collab-project'
   };
   Object.entries(PH).forEach(([id, key]) => {
     const el = document.getElementById(id);
@@ -777,6 +789,7 @@ function updateLang(){
     if (I18N[LANG][key] !== undefined) el.innerHTML = I18N[LANG][key];
   });
   document.querySelectorAll('[data-lang-aria]').forEach(el => { const v = I18N[LANG][el.getAttribute('data-lang-aria')]; if (v) el.setAttribute('aria-label', v); });
+  document.querySelectorAll('img[data-alt-en]').forEach(im => { if (!im.dataset.altFr) im.dataset.altFr = im.getAttribute('alt') || ''; im.setAttribute('alt', LANG === 'en' ? im.dataset.altEn : im.dataset.altFr); });
   document.documentElement.lang = LANG;
   applySeoMeta(currentView, currentSub);
   document.querySelectorAll('.lang-toggle').forEach(el => el.textContent = LANG === 'fr' ? 'EN' : 'FR');
@@ -1729,7 +1742,11 @@ function goView(v, subTab, opts){
     if (v === 'services') { renderServices(); renderServiceLinks(); setSvcTab('catalogue'); }
     if (v === 'share') renderGoogleReview();
     if (v === 'drone') { renderDroneCats(); renderDroneProjects(activeDroneCat); }
-    if (v === 'portfolio' && !pfLoaded) { renderPfTabs(); selectPfTab(PF_CATS[0].id); pfLoaded = true; }
+    if (v === 'portfolio') {
+      /* Toujours re-rendre : la langue a pu changer depuis la dernière visite de cette vue */
+      const curPfCat = pfLoaded ? (document.querySelector('#pfTabs .pf-cat-tab.active')?.dataset.cat || PF_CATS[0].id) : PF_CATS[0].id;
+      renderPfTabs(); selectPfTab(curPfCat); pfLoaded = true;
+    }
     if (v === 'portfolio') renderPortfolioLinks();
     if (v === 'partners') {
       renderPartnersAccordion(); renderLogoCarousel();
@@ -2942,7 +2959,7 @@ function renderServicePage(catId){
     lumen: {fr:'Lumen, le photobooth IA de BUNKAIO pour mariages et événements', en:'Lumen, the BUNKAIO AI photobooth for weddings and events'}
   };
   const svcPhoto = IMG.servicePhotos && IMG.servicePhotos[catId];
-  const svcAlt = (IMG.serviceAlt && IMG.serviceAlt[catId]) || (SERVICE_ALT_DEFAULT[catId] ? t(SERVICE_ALT_DEFAULT[catId]) : '');
+  const svcAlt = (IMG.serviceAlt && t(IMG.serviceAlt[catId])) || (SERVICE_ALT_DEFAULT[catId] ? t(SERVICE_ALT_DEFAULT[catId]) : '');
   const svcFigure = svcPhoto ? `<figure class="svcp-figure"><img src="${svcPhoto}" alt="${escHtml(svcAlt)}" width="900" height="1200" loading="lazy" decoding="async" onerror="this.closest('figure').classList.add('is-broken')"></figure>` : '';
   const chooseHtml = (copyBlock && copyBlock.choose && copyBlock.choose.length === tiers.length)
     ? `<section class="read-panel svcp-panel"><h2>${t({fr:'Quelle formule choisir ?', en:'Which package to choose?'})}</h2><ul class="svcp-list">${tiers.map((tt, i) => `<li><strong>${t(tt.name)} — ${priceLine(tt)}</strong> : ${t(copyBlock.choose[i])}</li>`).join('')}</ul></section>` : '';
@@ -3132,7 +3149,7 @@ function renderArticlePage(slug){
   const related = (a.related || []).map(sl => ARTICLES.find(x => x.slug === sl)).filter(Boolean);
   const cat = a.cat ? CATS.find(c => c.id === a.cat) : null;
   const heroSrc = IMG.servicePhotos && IMG.servicePhotos[a.cat];
-  const heroAlt = (IMG.serviceAlt && IMG.serviceAlt[a.cat]) || (ART_ALT[a.cat] ? t(ART_ALT[a.cat]) : '');
+  const heroAlt = (IMG.serviceAlt && t(IMG.serviceAlt[a.cat])) || (ART_ALT[a.cat] ? t(ART_ALT[a.cat]) : '');
   const heroFig = heroSrc ? `<figure class="art-hero"><img src="${heroSrc}" alt="${escHtml(heroAlt)}" width="1200" height="520" loading="lazy" decoding="async" onerror="this.closest('figure').classList.add('is-broken')"></figure>` : '';
   el.innerHTML = `
     <div class="breadcrumb" role="navigation" aria-label="${t({fr:'Fil d\'Ariane', en:'Breadcrumb'})}">
@@ -3156,7 +3173,7 @@ function renderArticlePage(slug){
       <h2>${t({fr:'Questions fréquentes', en:'Frequently asked questions'})}</h2>
       <div id="articleFaq"></div>
       <aside class="author-box" aria-label="${t({fr:'À propos de l\'auteure', en:'About the author'})}">
-        <img src="/images/about/aya-nascimento-photographe-studio.webp" alt="Aya Nascimento, photographe portraitiste" width="72" height="72" loading="lazy" decoding="async">
+        <img src="/images/about/aya-nascimento-photographe-studio.webp" alt="${LANG==='fr'?'Aya Nascimento, photographe portraitiste':'Aya Nascimento, portrait photographer'}" width="72" height="72" loading="lazy" decoding="async">
         <div>
           <p class="author-name"><a href="/a-propos/" data-nav="about" rel="author">Aya Nascimento</a></p>
           <p class="author-role">${t({fr:'Photographe portraitiste professionnelle, diplômée de l\'ETPA (BTS Photographie, 2018). Plus de 8 ans d\'expérience et plus de 200 projets réalisés.', en:'Professional portrait photographer, ETPA graduate (BTS Photography, 2018). Over 8 years of experience and 200+ projects.'})}</p>
