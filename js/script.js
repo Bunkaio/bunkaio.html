@@ -1759,6 +1759,7 @@ function goView(v, subTab, opts){
     if (v === 'advice') renderAdvicePage();
     if (v === 'discover') renderDiscoverPage();
     if (v === 'legal') { renderFaqAccordion(); renderPrivacyAccordion(); renderCgvAccordion(); setLegalTab(subTab === 'privacy' || subTab === 'cgv' ? subTab : 'faq', true); }
+    if (v === 'about') initAboutStats();
     if (v === 'about') { const ph = document.getElementById('img-about'); if (ph && IMG.aboutPhoto && !ph.getAttribute('src')) { ph.src = IMG.aboutPhoto; ph.hidden = false; } }
     /* Anime au scroll tous les éléments .rv de la vue active — cohérent
        sur l'ensemble du site, plus besoin de le câbler page par page.
@@ -6017,6 +6018,35 @@ function renderCgvAccordion(){
     { title:'12. Governing law and disputes', body:`<p>These terms are governed by French law. A consumer client may bring proceedings before the court of the place where they lived when the contract was concluded or when the damaging event occurred. For business clients, failing an amicable settlement, the competent French courts will hear the dispute.</p>` },
   ];
   renderAccordionInto('cgvAccordion', sections);
+}
+
+/* Chiffres clés « À propos » : décompte animé quand le bandeau entre à l'écran (le HTML garde les valeurs finales pour le SEO). */
+let aboutStatsObs = null;
+function initAboutStats(){
+  const box = document.querySelector('.about-stats');
+  if (!box) return;
+  const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const nums = box.querySelectorAll('[data-count]');
+  const run = () => {
+    box.classList.add('is-live');
+    if (reduce) return;
+    nums.forEach(el => {
+      const end = +el.dataset.count, from = +(el.dataset.from || 0), suffix = el.dataset.suffix || '';
+      const t0 = performance.now(), dur = 1500;
+      const step = now => {
+        const p = Math.min((now - t0) / dur, 1), e = 1 - Math.pow(1 - p, 3);
+        el.textContent = Math.round(from + (end - from) * e) + suffix;
+        if (p < 1) requestAnimationFrame(step);
+      };
+      el.textContent = from + suffix;
+      requestAnimationFrame(step);
+    });
+  };
+  box.classList.remove('is-live');
+  if (aboutStatsObs) aboutStatsObs.disconnect();
+  if (!('IntersectionObserver' in window)) { run(); return; }
+  aboutStatsObs = new IntersectionObserver(es => { if (es.some(x => x.isIntersecting)) { aboutStatsObs.disconnect(); run(); } }, { threshold: 0.4 });
+  aboutStatsObs.observe(box);
 }
 
 /* ═══════════════ LOGO CAROUSEL ═══════════════ */
