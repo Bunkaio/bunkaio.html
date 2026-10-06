@@ -102,7 +102,7 @@ const I18N = {
     'partners-title':'Partenariat et collaboration',
     'legal-title':'FAQ : questions fréquentes',
     'legal-sub':'Les réponses aux questions les plus fréquentes, ainsi que nos engagements en matière de confidentialité et de droits d\'utilisation des visuels.',
-    'ctab-contact':'Contact','ctab-about':'À propos','svr-kicker':'Nos prestations','svr-title':'Une image juste pour chaque projet','svr-hint':'Défilement automatique · glissez ou survolez pour mettre en pause','svr-catalog':'Voir le catalogue complet','svr-aria':'Nos prestations',
+    'ctab-contact':'Contact','ctab-about':'À propos','svr-kicker':'Nos prestations','svr-title':'Une image juste pour chaque projet','svr-catalog':'Voir le catalogue complet','svr-aria':'Nos prestations',
     'legaltab-faq':'FAQ','legaltab-privacy':'Politique de confidentialité','legaltab-cgv':'Conditions générales de vente','legal-title-cgv':'Conditions générales de vente','ft-cgv':'Conditions générales de vente',
     'p-why':'Pourquoi Bunkaio existe',
     'p-why-1':'Nous vivons dans un monde où les contenus se multiplient, mais où les histoires se raréfient. Chaque jour, des milliers d\'images sont publiées puis oubliées.',
@@ -456,7 +456,7 @@ const I18N = {
     'partners-title':'Partnership & collaboration',
     'legal-title':'FAQ: frequently asked questions',
     'legal-sub':'Answers to the most frequently asked questions, along with our commitments on data privacy and image/video usage rights.',
-    'ctab-contact':'Contact','ctab-about':'About','svr-kicker':'Our services','svr-title':'The right image for every project','svr-hint':'Auto-scrolling · drag or hover to pause','svr-catalog':'See the full catalogue','svr-aria':'Our services',
+    'ctab-contact':'Contact','ctab-about':'About','svr-kicker':'Our services','svr-title':'The right image for every project','svr-catalog':'See the full catalogue','svr-aria':'Our services',
     'legaltab-faq':'FAQ','legaltab-privacy':'Privacy policy','legaltab-cgv':'Terms of sale','legal-title-cgv':'General terms of sale','ft-cgv':'Terms of sale',
     'p-why':'Why Bunkaio exists',
     'p-why-1':'We live in a world where content keeps multiplying, yet stories are becoming rare. Every day, thousands of images are published and then forgotten.',
@@ -5502,7 +5502,7 @@ function svrCardHTML(cat, i){
   const parts = String(t(cat.tag)).split(' · ').filter(Boolean);
   return `<a class="svr-card" href="/decouvrir-chaque-prestation/" data-discover="${cat.id}" data-cat="${cat.id}" draggable="false"${url ? ` style="background-image:url('${url}')"` : ''}>
       <span class="svr-n">${String(i + 1).padStart(2, '0')}</span>
-      <span class="svr-go" aria-hidden="true">→</span>
+      <span class="svr-go" aria-hidden="true">⊹</span>
       <span class="svr-name">${t(cat.name)}</span>
       <span class="svr-tags">${parts.map(p => `<span>${p}</span>`).join('')}</span>
       <span class="svr-sr">${t({fr:'Découvrir cette prestation', en:'Discover this service'})}</span>

@@ -4068,13 +4068,13 @@ a.hero-start { text-decoration: none; display: inline-flex; align-items: center;
 .svr-card > * { position: relative; }
 .svr-card:hover { transform: translateY(-8px); box-shadow: 0 22px 40px rgba(10,10,12,0.28); }
 .svr-n { position: absolute; top: 16px; left: 18px; font-size: 12px; letter-spacing: 0.2em; font-weight: 700; }
-.svr-go { position: absolute; top: 12px; right: 14px; width: 38px; height: 38px; border-radius: 50%; background: #fff; color: var(--black); display: grid; place-items: center; font-size: 16px; transition: transform 0.4s var(--ease-luxe); }
-.svr-card:hover .svr-go { transform: rotate(-45deg); }
+.svr-go { position: absolute; top: 12px; right: 14px; width: 38px; height: 38px; border-radius: 50%; background: #fff; color: var(--black); display: grid; place-items: center; font-size: 22px; line-height: 1; transition: transform 0.6s var(--ease-luxe); }
+.svr-card:hover .svr-go { transform: rotate(90deg); }
 .svr-name { font-size: clamp(19px, 1.8vw, 22px); font-weight: 700; line-height: 1.15; letter-spacing: -0.02em; text-wrap: balance; text-shadow: 0 1px 12px rgba(0,0,0,0.35); }
 .svr-tags { display: flex; flex-wrap: wrap; gap: 6px; }
 .svr-tags span { font-size: 11.5px; border: 1px solid rgba(255,255,255,0.4); border-radius: 100px; padding: 3px 10px; background: rgba(255,255,255,0.12); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
 .svr-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-.svr-foot { display: flex; justify-content: space-between; align-items: center; gap: 14px; flex-wrap: wrap; padding: 0 clamp(20px, 3.2vw, 44px); }
+.svr-foot { display: flex; justify-content: flex-end; align-items: center; gap: 14px; flex-wrap: wrap; padding: 0 clamp(20px, 3.2vw, 44px); }
 .svr-foot p { margin: 0; font-size: 13.5px; color: #3a3544; }
 .svr-pp { font: inherit; font-size: 13px; font-weight: 700; border: 1px solid var(--line); background: #fff; color: var(--black); border-radius: 100px; padding: 10px 20px; cursor: pointer; text-decoration: none; transition: background 0.3s var(--ease), color 0.3s var(--ease); }
 .svr-pp:hover { background: var(--black); color: #fff; }
