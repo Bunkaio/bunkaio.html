@@ -1909,76 +1909,43 @@ function goToServiceTable(catId){
   goView('services');
 }
 
-/* Carrousel des prestations — section "Le studio" (page Accueil).
-   Une carte par catégorie du formulaire de devis (CATS), cliquable,
-   renvoie directement à l'étape profil pour cette catégorie. */
+/* Prestations — section "Le studio" (page Accueil) : tuiles photo qui défilent en continu.
+   Au survol (ordinateur), la tuile s'ouvre (prix « dès », pastilles) et le fond de la section prend la
+   photo de la prestation ; sur mobile, nom et prix sont toujours visibles. Un clic renvoie à l'étape
+   « profil » du devis pour cette catégorie. Le contenu est généré une fois puis dupliqué (jeu masqué
+   aux lecteurs d'écran) pour boucler sans à-coup. */
+function missionTileHTML(c, i){
+  const url = IMG.servicePhotos && IMG.servicePhotos[c.id];
+  const f = catFacts(c);
+  const tags = String(t(c.tag)).split(' · ').filter(Boolean).slice(0, 3).join(' · ');
+  return `<a class="mt-tile" href="${servicePath(c.id)}" data-cat="${c.id}" draggable="false"${url ? ` style="background-image:url('${url}')"` : ''} onclick="event.preventDefault();goToQuizCategory('${c.id}')">
+      <span class="mt-name">${t(c.name)}</span>
+      <span class="mt-more"><span class="mt-from">${t({fr:'dès', en:'from'})} <b>${f.from.toLocaleString('fr-FR')} €</b></span><span class="mt-tags">${tags}</span></span>
+    </a>`;
+}
 function renderMissionServices(){
-  const track = document.getElementById('missionServicesTrack');
-  if (!track) return;
-  /* Liste doublée : le carrousel boucle sans à-coup (voir msGo). */
-  const cards = CATS.map(c => `
-    <div class="mission-service-card" onclick="goToQuizCategory('${c.id}')">
-      ${getIcon(c.icon)}
-      <div class="mission-service-name">${t(c.name)}</div>
-    </div>`).join('');
-  track.innerHTML = cards + cards;
-  msIndex = 0;
-  msLayout(false);
+  const set = document.getElementById('missionServicesTrack'), clone = document.getElementById('missionClone');
+  if (!set || !CATS.length) return;
+  set.innerHTML = CATS.map(missionTileHTML).join('');
+  if (clone) { clone.innerHTML = set.innerHTML; clone.querySelectorAll('a').forEach(a => a.setAttribute('tabindex', '-1')); }
+  const bgs = document.getElementById('missionTileBgs');
+  if (bgs && !bgs.children.length) bgs.innerHTML = CATS.map(c => { const u = IMG.servicePhotos && IMG.servicePhotos[c.id]; return `<div class="mt-bg" data-cat="${c.id}"${u ? ` style="background-image:url('${u}')"` : ''}></div>`; }).join('');
 }
-
-/* Carrousel « Le studio » : défile seul, une prestation à la fois, avec
-   deux flèches. Le cadre (viewport) est dimensionné pour ne contenir que
-   des cartes entières — jamais de carte coupée sur les bords. */
-let msIndex = 0, msPaused = false, msTimer = null, msBusy = false;
-function msMaxWidth(){
-  const box = document.getElementById('missionServices');
-  const arrows = box ? [...box.querySelectorAll('.mission-arrow')].reduce((w, a) => w + a.offsetWidth + 10, 0) : 0;
-  return box ? Math.max(0, box.clientWidth - arrows) : 0;
-}
-function msLayout(animate){
-  const vp = document.getElementById('missionServicesViewport');
-  const track = document.getElementById('missionServicesTrack');
-  if (!vp || !track || !track.children.length) return;
-  const cards = [...track.children];
-  const n = cards.length / 2;
-  const max = msMaxWidth();
-  const start = cards[msIndex].offsetLeft;
-  let end = start + cards[msIndex].offsetWidth;
-  for (let k = 1; k < n; k++) {
-    const c = cards[msIndex + k];
-    if (!c || c.offsetLeft + c.offsetWidth - start > max) break;
-    end = c.offsetLeft + c.offsetWidth;
-  }
-  const tr = animate ? '' : 'none';
-  vp.style.transition = tr; track.style.transition = tr;
-  vp.style.width = (end - start) + 'px';
-  track.style.transform = 'translateX(' + (-start) + 'px)';
-}
-function msGo(dir){
-  const track = document.getElementById('missionServicesTrack');
-  if (!track || !track.children.length || msBusy) return;
-  const n = track.children.length / 2;
-  if (dir < 0 && msIndex === 0) { msIndex = n; msLayout(false); void track.offsetWidth; }
-  msIndex += dir;
-  msBusy = true;
-  msLayout(true);
-  setTimeout(() => {
-    if (msIndex >= n) { msIndex -= n; msLayout(false); }
-    msBusy = false;
-  }, 650);
+function missionShowBg(catId){
+  document.querySelectorAll('#missionTileBgs .mt-bg').forEach(b => b.classList.toggle('on', b.dataset.cat === catId));
 }
 function initMissionServicesAutoplay(){
   const box = document.getElementById('missionServices');
   if (!box || box.dataset.autoplayInit) return;
   box.dataset.autoplayInit = '1';
-  const pause = ms => { msPaused = true; clearTimeout(msTimer); if (ms) msTimer = setTimeout(() => { msPaused = false; }, ms); };
-  document.getElementById('missionPrev').addEventListener('click', () => { msGo(-1); pause(6000); });
-  document.getElementById('missionNext').addEventListener('click', () => { msGo(1); pause(6000); });
-  setInterval(() => { if (!msPaused && document.getElementById('missionVideoWrap').classList.contains('active')) msGo(1); }, 3200);
-  box.addEventListener('mouseenter', () => { msPaused = true; clearTimeout(msTimer); });
-  box.addEventListener('mouseleave', () => { msPaused = false; });
-  box.addEventListener('touchstart', () => pause(5000), { passive: true });
-  window.addEventListener('resize', () => msLayout(false));
+  const rail = document.getElementById('missionRail');
+  if (rail) {
+    rail.addEventListener('mouseover', e => { const tl = e.target.closest ? e.target.closest('.mt-tile') : null; missionShowBg(tl ? tl.dataset.cat : null); });
+    rail.addEventListener('mouseleave', () => missionShowBg(null));
+    rail.addEventListener('focusin', e => { const tl = e.target.closest ? e.target.closest('.mt-tile') : null; if (tl) missionShowBg(tl.dataset.cat); });
+    rail.addEventListener('focusout', () => missionShowBg(null));
+    rail.addEventListener('touchstart', () => { rail.classList.add('is-touch'); }, { passive: true });
+  }
 }
 
 function renderCats(){
