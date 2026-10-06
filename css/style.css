@@ -1444,8 +1444,9 @@
     transform: rotate(45deg);
   }
   .cat-item:hover .cat-arrow { opacity: 1; transform: translateX(0); }
-  .cat-right { display: flex; align-items: center; gap: 22px; }
-  .cat-left { display: flex; align-items: center; gap: 20px; position: relative; z-index: 1; min-width: 0; }
+  .cat-right { display: flex; align-items: center; justify-content: flex-end; gap: 22px; flex: 1 1 46%; min-width: 0; }
+  .cat-left { display: flex; align-items: center; gap: 20px; position: relative; z-index: 1; min-width: 0; flex: 1 1 42%; }
+  .cat-item { gap: 28px; }
   /* Vraie photo par catégorie (au lieu d'une icône générique) — chaque
      univers se distingue immédiatement d'un coup d'œil. Même image que
      la vignette "Services" filtrée par catégorie (IMG.servicePhotos),

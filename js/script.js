@@ -966,7 +966,7 @@ const CATS_ARCHIVE_SUSPENDED = [
 const CATS = [
   { id:'photo-part',
     name:{fr:'Séance photo — particuliers', en:'Portrait & lifestyle — individuals'},
-    tag:{fr:'Extérieur · studio · solo · couple · groupe', en:'Outdoor · studio · solo · couple · group'},
+    tag:{fr:'Extérieur · studio · solo · couple · groupe · book grossesse', en:'Outdoor · studio · solo · couple · group · maternity book'},
     pitch:{fr:'Pas besoin d\'être à l\'aise devant l\'objectif : c\'est notre rôle de vous mettre en confiance. Résultat, des photos qui vous ressemblent vraiment — livrées en 5 jours.',
       en:'No need to feel at ease in front of the camera — that\'s our job. The result: photos that truly look like you, delivered in 5 days.'},
     icon:'camera',
