@@ -102,7 +102,7 @@ const I18N = {
     'partners-title':'Partenariat et collaboration',
     'legal-title':'FAQ : questions fréquentes',
     'legal-sub':'Les réponses aux questions les plus fréquentes, ainsi que nos engagements en matière de confidentialité et de droits d\'utilisation des visuels.',
-    'ctab-contact':'Contact','ctab-about':'À propos','svr-kicker':'Nos prestations','svr-title':'Une image juste pour chaque projet','svr-hint':'Défilement automatique · glissez ou survolez pour mettre en pause','svr-pause':'Pause','svr-aria':'Nos prestations',
+    'ctab-contact':'Contact','ctab-about':'À propos','svr-kicker':'Nos prestations','svr-title':'Une image juste pour chaque projet','svr-hint':'Défilement automatique · glissez ou survolez pour mettre en pause','svr-catalog':'Voir le catalogue complet','svr-aria':'Nos prestations',
     'legaltab-faq':'FAQ','legaltab-privacy':'Politique de confidentialité','legaltab-cgv':'Conditions générales de vente','legal-title-cgv':'Conditions générales de vente','ft-cgv':'Conditions générales de vente',
     'p-why':'Pourquoi Bunkaio existe',
     'p-why-1':'Nous vivons dans un monde où les contenus se multiplient, mais où les histoires se raréfient. Chaque jour, des milliers d\'images sont publiées puis oubliées.',
@@ -456,7 +456,7 @@ const I18N = {
     'partners-title':'Partnership & collaboration',
     'legal-title':'FAQ: frequently asked questions',
     'legal-sub':'Answers to the most frequently asked questions, along with our commitments on data privacy and image/video usage rights.',
-    'ctab-contact':'Contact','ctab-about':'About','svr-kicker':'Our services','svr-title':'The right image for every project','svr-hint':'Auto-scrolling · drag or hover to pause','svr-pause':'Pause','svr-aria':'Our services',
+    'ctab-contact':'Contact','ctab-about':'About','svr-kicker':'Our services','svr-title':'The right image for every project','svr-hint':'Auto-scrolling · drag or hover to pause','svr-catalog':'See the full catalogue','svr-aria':'Our services',
     'legaltab-faq':'FAQ','legaltab-privacy':'Privacy policy','legaltab-cgv':'Terms of sale','legal-title-cgv':'General terms of sale','ft-cgv':'Terms of sale',
     'p-why':'Why Bunkaio exists',
     'p-why-1':'We live in a world where content keeps multiplying, yet stories are becoming rare. Every day, thousands of images are published and then forgotten.',
@@ -5486,13 +5486,7 @@ function renderCommBox(){
    (survol, doigt posé, bouton Pause, onglet masqué, bandeau hors écran), avancer avec les flèches,
    et glisser à la souris ou au doigt. Le contenu est généré une fois puis dupliqué (jeu « clone »
    masqué aux lecteurs d'écran) pour boucler sans à-coup. */
-let _catShowcaseInit = false, _svrPaused = false;
-function svrPaintPP(){
-  const pp = document.getElementById('svrPP'), tx = document.getElementById('svrPPt');
-  if (!pp || !tx) return;
-  pp.setAttribute('aria-pressed', String(_svrPaused));
-  tx.textContent = _svrPaused ? t({fr:'Lecture', en:'Play'}) : t({fr:'Pause', en:'Pause'});
-}
+let _catShowcaseInit = false, _svrPaused = false; /* _svrPaused : réservé (pause programmatique) */
 function svrCardHTML(cat, i){
   const url = IMG.servicePhotos && IMG.servicePhotos[cat.id];
   const parts = String(t(cat.tag)).split(' · ').filter(Boolean);
@@ -5506,7 +5500,6 @@ function svrCardHTML(cat, i){
 }
 /* Met à jour les textes du ruban quand la langue change. */
 function refreshCatShowcase(){
-  svrPaintPP();
   const set = document.getElementById('catShowcaseTrack'), clone = document.getElementById('svrClone');
   if (!set || !CATS.length || !set.children.length) return;
   set.innerHTML = CATS.map(svrCardHTML).join('');
@@ -5520,7 +5513,6 @@ function initCatShowcase(){
   const rail = document.getElementById('svrRail');
   const btnPrev = document.getElementById('catShowcaseArrowPrev');
   const btnNext = document.getElementById('catShowcaseArrowNext');
-  const pp = document.getElementById('svrPP');
   if (!root || !track || !set || !clone || _catShowcaseInit || !CATS.length) return;
   _catShowcaseInit = true;
   set.innerHTML = CATS.map(svrCardHTML).join('');
@@ -5550,7 +5542,6 @@ function initCatShowcase(){
   const nudge = d => { hold = Date.now() + 6000; target = (target !== null ? target : x) - d * step(); };
   if (btnPrev) btnPrev.addEventListener('click', () => nudge(-1));
   if (btnNext) btnNext.addEventListener('click', () => nudge(1));
-  if (pp) pp.addEventListener('click', () => { _svrPaused = !_svrPaused; svrPaintPP(); });
   rail.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') hover = true; });
   rail.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hover = false; });
 

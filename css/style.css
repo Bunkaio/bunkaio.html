@@ -4076,7 +4076,7 @@ a.hero-start { text-decoration: none; display: inline-flex; align-items: center;
 .svr-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .svr-foot { display: flex; justify-content: space-between; align-items: center; gap: 14px; flex-wrap: wrap; padding: 0 clamp(20px, 3.2vw, 44px); }
 .svr-foot p { margin: 0; font-size: 13.5px; color: #3a3544; }
-.svr-pp { font: inherit; font-size: 13px; font-weight: 600; border: 1px solid var(--line); background: #fff; color: var(--black); border-radius: 100px; padding: 8px 16px; cursor: pointer; }
+.svr-pp { font: inherit; font-size: 13px; font-weight: 700; border: 1px solid var(--line); background: #fff; color: var(--black); border-radius: 100px; padding: 10px 20px; cursor: pointer; text-decoration: none; transition: background 0.3s var(--ease), color 0.3s var(--ease); }
 .svr-pp:hover { background: var(--black); color: #fff; }
 @media (max-width: 600px) {
   .svr { width: calc(100% - 24px); margin: 18px auto 24px; border-radius: 24px; }
