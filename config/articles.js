@@ -11,7 +11,7 @@ const ARTICLES = [
   {
     slug: 'combien-coute-une-seance-photo',
     cat: 'photo-part',
-    title: 'BUNKAIO ⊹ | Combien coûte une séance photo ? Tarifs et facteurs',
+    title: 'BUNKAIO ⊹ | Combien coûte une séance photo ?',
     description: 'Durée, lieu, nombre de photos retouchées, droits : ce qui fait varier le prix d\'une séance photo, avec nos tarifs réels.',
     h1: 'Combien coûte une séance photo ?',
     excerpt: 'Ce qui fait varier le prix d\'une séance photo portrait, nos tarifs réels et les questions à poser pour comparer deux devis.',
@@ -35,7 +35,7 @@ const ARTICLES = [
   {
     slug: 'preparer-seance-photo-portrait',
     cat: 'photo-part',
-    title: 'BUNKAIO ⊹ | Préparer sa séance photo portrait : guide complet',
+    title: 'BUNKAIO ⊹ | Préparer sa séance photo portrait',
     description: 'Choisir le lieu, la tenue, la lumière et se préparer : conseils concrets pour réussir une séance photo portrait naturelle et sans stress.',
     h1: 'Préparer sa séance photo portrait : le guide complet',
     excerpt: 'Lieu, tenue, préparation, jour J : tout ce qu\'il faut savoir pour une séance photo portrait naturelle et réussie.',
@@ -115,7 +115,7 @@ const ARTICLES = [
   {
     slug: 'preparer-shooting-mode-lookbook',
     cat: 'mode',
-    title: 'BUNKAIO ⊹ | Préparer un shooting mode : lookbook, e-commerce, book',
+    title: 'BUNKAIO ⊹ | Préparer un shooting mode et lookbook',
     description: 'Lookbook, e-commerce, book : comment préparer un shooting mode (pièces, casting, droit à l\'image, direction artistique).',
     h1: 'Préparer un shooting mode : lookbook, e-commerce ou book',
     excerpt: 'Pièces, casting, direction artistique, droit à l\'image : la check-list pour préparer un shooting mode sereinement.',
@@ -191,7 +191,7 @@ const ARTICLES = [
   {
     slug: 'polas-mannequin-digitals-agence',
     cat: 'mode',
-    title: 'BUNKAIO ⊹ | Polas et digitals de mannequin : à quoi ça sert',
+    title: 'BUNKAIO ⊹ | Polas et digitals de mannequin',
     description: 'Polas (digitals) : des photos brutes pour agences de mannequins. Ce qu\'elles montrent, comment s\'y préparer et ce que comprend la formule BUNKAIO.',
     h1: 'Polas et digitals de mannequin : à quoi servent-elles ?',
     excerpt: 'Des photos brutes, sans retouche, destinées aux agences : ce qu\'elles montrent, comment s\'y préparer et ce que comprend notre formule Polas.',
@@ -238,7 +238,7 @@ const ARTICLES = [
   {
     slug: 'lieux-seance-photo-montpellier-beziers-toulouse',
     cat: 'photo-part',
-    title: 'BUNKAIO ⊹ | Lieux de séance photo à Montpellier, Béziers, Toulouse',
+    title: 'BUNKAIO ⊹ | Lieux de séance photo à Montpellier',
     description: 'Peyrou, canal du Midi, Pont-Neuf, Plateau des Poètes : des lieux photogéniques à Montpellier, Béziers et Toulouse, et comment choisir le vôtre.',
     h1: 'Où faire une séance photo à Montpellier, Béziers ou Toulouse ?',
     excerpt: 'Des lieux appréciés pour leur lumière et leur décor dans les trois villes où nous intervenons, et les critères pour choisir le bon.',
@@ -262,7 +262,7 @@ const ARTICLES = [
   {
     slug: 'portrait-professionnel-photo-profil-linkedin',
     cat: 'corporate',
-    title: 'BUNKAIO ⊹ | Portrait professionnel : photo de profil, site, équipe',
+    title: 'BUNKAIO ⊹ | Portrait pro : profil LinkedIn, site, équipe',
     description: 'Photo de profil LinkedIn, site web, équipe : comment réussir son portrait professionnel, quoi porter et quelle formule choisir.',
     h1: 'Portrait professionnel : réussir sa photo de profil et de présentation',
     excerpt: 'Pour LinkedIn, votre site ou votre équipe : les clés d\'un portrait professionnel naturel, et la formule adaptée.',
