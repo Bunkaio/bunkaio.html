@@ -4211,3 +4211,30 @@ a, button { -webkit-tap-highlight-color: rgba(110,90,168,0.18); }
 /* CTA principaux : texte toujours centré dans le bouton (y compris en pleine largeur sur mobile) */
 .cta-primary, .svc-cta-row .cta-primary, .svc-cta-row .btn-ghost { justify-content: center; text-align: center; }
 .cta-primary > span, .svc-cta-row .btn-ghost > span { text-align: center; }
+
+/* Niveaux de prestation (devis) en accordéon */
+#tierList { display: grid; gap: 10px; }
+.tier-card.tier-acc { padding: 0; }
+.tier-acc .tier-sum { display: flex; align-items: center; gap: 14px; padding: 12px 18px; position: relative; z-index: 1; }
+.tier-acc .tier-thumb { width: 54px; height: 54px; aspect-ratio: 1; flex: 0 0 54px; border-radius: 10px; object-fit: cover; margin: 0; }
+.tier-acc .tier-mid { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.tier-acc .tier-mid .tier-badge { position: static; align-self: flex-start; margin: 0; }
+.tier-acc .tier-head { margin: 0; flex-wrap: nowrap; }
+.tier-acc .tier-name { font-size: 16px; }
+.tier-chev { width: 9px; height: 9px; flex: 0 0 auto; border-right: 2px solid #6e5aa8; border-bottom: 2px solid #6e5aa8; transform: rotate(45deg); transition: transform 0.4s var(--ease-luxe, ease); margin: 0 4px 3px 2px; }
+.tier-acc.open .tier-chev { transform: rotate(225deg); margin-bottom: -3px; }
+.tier-acc .tier-more { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.5s var(--ease-luxe, ease); position: relative; z-index: 1; }
+.tier-acc.open .tier-more { grid-template-rows: 1fr; }
+.tier-acc .tier-more-in { overflow: hidden; min-height: 0; padding: 0 18px; }
+.tier-acc.open .tier-more-in { padding-bottom: 18px; }
+.tier-acc .tier-more-in > .tier-photo { display: block; width: 100%; aspect-ratio: 16 / 9; max-height: 200px; margin-bottom: 12px; }
+.tier-acc.open .tier-more-in > * { animation: fxIn 0.5s var(--ease-luxe, ease) both; }
+.tier-acc.selected { outline: 2px solid var(--black); outline-offset: -2px; }
+@media (max-width: 700px) {
+  .tier-acc .tier-sum { padding: 10px 12px; gap: 10px; }
+  .tier-acc .tier-thumb { width: 46px; height: 46px; flex-basis: 46px; }
+  .tier-acc .tier-more-in { padding: 0 12px; }
+  .tier-acc.open .tier-more-in { padding-bottom: 14px; }
+  .tier-acc .tier-more-in > .tier-photo { max-height: 140px; aspect-ratio: 16 / 8; }
+}
+@media (max-width: 700px) { .payment-flex-strip { padding: 14px 16px; gap: 10px; margin-bottom: 14px; } .payment-flex-icon { display: none; } .payment-flex-methods { display: none; } }

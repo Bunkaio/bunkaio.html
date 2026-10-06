@@ -1869,7 +1869,7 @@ function quizNext(){
 }
 function pickTier(id, card){
   S.tier = id;
-  document.querySelectorAll('#tierList .tier-card').forEach(x => x.classList.toggle('selected', x === card));
+  document.querySelectorAll('#tierList .tier-card').forEach(x => { x.classList.toggle('selected', x === card); x.classList.toggle('open', x === card); });
   renderRecap(); renderOptions(); updateQuizNext();
 }
 
@@ -2157,8 +2157,33 @@ function getIcon(type){
   return icons[type] || icons.autre;
 }
 
+/* Niveaux de prestation en accordéon : une ligne par formule (photo, nom, badge, prix), le détail se déplie au choix. */
+function tierAccordionize(){
+  const list = document.getElementById('tierList'); if (!list) return;
+  list.querySelectorAll('.tier-card').forEach(card => {
+    if (card.classList.contains('tier-acc')) return;
+    const head = card.querySelector('.tier-head'), badge = card.querySelector('.tier-badge'), photo = card.querySelector('.tier-photo');
+    if (!head) return;
+    card.classList.add('tier-acc');
+    const sum = document.createElement('div'); sum.className = 'tier-sum';
+    if (photo) { const th = photo.cloneNode(); th.className = 'formula-photo tier-thumb'; th.removeAttribute('loading'); sum.appendChild(th); }
+    const mid = document.createElement('div'); mid.className = 'tier-mid';
+    if (badge) mid.appendChild(badge);
+    mid.appendChild(head);
+    sum.appendChild(mid);
+    const chev = document.createElement('i'); chev.className = 'tier-chev'; chev.setAttribute('aria-hidden', 'true'); sum.appendChild(chev);
+    const more = document.createElement('div'); more.className = 'tier-more';
+    const inner = document.createElement('div'); inner.className = 'tier-more-in';
+    [...card.childNodes].forEach(n => inner.appendChild(n));
+    more.appendChild(inner);
+    card.append(sum, more);
+    const isOpen = card.classList.contains('selected') || (!S.tier && badge && /(choisi|popular)/i.test(badge.textContent));
+    card.classList.toggle('open', !!isOpen);
+  });
+}
 function renderTiers(){
   renderTiersBase();
+  tierAccordionize();
   const list = document.getElementById('tierList');
   if (list) list.insertAdjacentHTML('afterbegin', partnerQuizNotice());
 }
