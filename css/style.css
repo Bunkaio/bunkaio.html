@@ -4208,3 +4208,6 @@ a, button { -webkit-tap-highlight-color: rgba(110,90,168,0.18); }
   .fx.open .fx-body > *, .fx.open .svcp-list li { animation: none; }
   .read-panel > h2::after, .svcp-panel > h2::after { transform: scaleX(1); transition: none; }
 }
+/* CTA principaux : texte toujours centré dans le bouton (y compris en pleine largeur sur mobile) */
+.cta-primary, .svc-cta-row .cta-primary, .svc-cta-row .btn-ghost { justify-content: center; text-align: center; }
+.cta-primary > span, .svc-cta-row .btn-ghost > span { text-align: center; }
