@@ -1097,7 +1097,29 @@ const subAvailable = cat => !!SUBS[cat] && (!SUB_PROFILES.length || cat !== 'mod
    Polas (digitals) = photos brutes et sans retouche, destinées exclusivement aux agences pour évaluer
    la morphologie, la posture et le potentiel brut du mannequin — aucune mise en scène. */
 const POLAS = {
+  /* Formule « Book grossesse » — séance photo particuliers. Tarif haut de gamme, lieu (studio ou extérieur) inclus. */
+  'photo-part': {
+    id: 'grossesse', price: 490, studio: 0,
+    name:{fr:'Book grossesse', en:'Maternity book'},
+    badge:{fr:'Spécial grossesse', en:'Maternity special'},
+    label:{fr:'Book grossesse', en:'Maternity book'},
+    delay:{fr:'7 jours ouvrés', en:'7 working days'},
+    studioNote:{fr:'Studio ou extérieur au choix, inclus', en:'Studio or outdoor, included'},
+    short:{fr:'Solo ou en couple · studio ou extérieur inclus', en:'Solo or as a couple · studio or outdoor included'},
+    sub:{fr:'quatre formules, de la découverte à l\'expérience éditoriale complète, ainsi qu\'un book grossesse sur mesure.', en:'four packages, from the starter offer to the complete editorial experience, plus a tailor-made maternity book.'},
+    optNote:{fr:'<strong>Bon à savoir :</strong> le book grossesse est une expérience clé en main — studio ou extérieur au choix, sans option additionnelle. Précisez vos envies (lieu, tenues, présence du conjoint) dans le champ « commentaire » : nous organisons le reste avec vous. La séance se programme idéalement entre la 28<sup>e</sup> et la 36<sup>e</sup> semaine.', en:'<strong>Good to know:</strong> the maternity book is a turnkey experience — studio or outdoor, with no additional options. Tell us what you have in mind (location, outfits, partner joining) in the comment field and we will plan the rest with you. The ideal window is between weeks 28 and 36.'},
+    items:{
+      fr:['Séance de 1h30, en studio ou en extérieur au choix','20 photos HD retouchées, retouche naturelle','Jusqu\'à 2 tenues (les vôtres, nous vous conseillons en amont)','Direction de pose douce et bienveillante, adaptée à chaque étape','Possibilité de venir en couple (conjoint·e, enfant)','Galerie privée de téléchargement'],
+      en:['1.5-hour session, studio or outdoor of your choice','20 retouched HD photos, natural retouching','Up to 2 outfits (your own, with styling advice beforehand)','Gentle, reassuring posing guidance for every stage','Partner or child welcome to join','Private download gallery'] }
+  },
   mode: {
+    id: 'polas', studio: 60,
+    badge:{fr:'Spécial mannequins', en:'For models'},
+    label:{fr:'Pour les agences', en:'For agencies'},
+    studioNote:{fr:'Studio inclus (+60€)', en:'Studio included (+€60)'},
+    short:{fr:'Digitals bruts · studio inclus', en:'Raw digitals · studio included'},
+    sub:{fr:'un format Polas pour mannequins, ainsi que quatre formules, de la découverte à l\'expérience éditoriale complète.', en:'a Polas format for models, plus four packages, from the starter offer to the complete editorial experience.'},
+    optNote:{fr:'<strong>Bon à savoir :</strong> le format Polas est une expérience clé en main — studio inclus, sans option additionnelle.', en:'<strong>Good to know:</strong> the Polas format is a turnkey experience — studio included, no additional options.'},
     price: 190,
     name:{fr:'Polas', en:'Polas'},
     delay:{fr:'Livraison HD sous 24h', en:'HD delivery within 24h'},
@@ -1106,6 +1128,9 @@ const POLAS = {
       en:['Studio session on a plain white background, neutral lighting','Raw shots, no retouching or styling','Face, profiles and full-body shots','HD files ready to send to your agency'] }
   }
 };
+
+const specialTotal = sp => sp.price + sp.studio;
+const isSpecialTier = () => !!(S.tier && POLAS[S.cat] && S.tier === POLAS[S.cat].id);
 
 /* ════════════════════════════════════════════════════════════════
    🔧  OPTIONS — disponibles pour toutes les catégories pro
@@ -2131,21 +2156,17 @@ function renderTiersBase(){
     });
     return;
   }
-  subEl.textContent = POLAS[S.cat]
-    ? (LANG === 'fr'
-        ? t(cat.name) + ' — un format Polas pour mannequins, ainsi que quatre formules, de la découverte à l\'expérience éditoriale complète.'
-        : t(cat.name) + ' — a Polas format for models, plus four packages, from the starter offer to the complete editorial experience.')
-    : (LANG === 'fr'
-        ? t(cat.name) + ' — quatre formules, de la découverte à l\'expérience éditoriale complète.'
-        : t(cat.name) + ' — four packages, from the starter offer to the complete editorial experience.');
+  subEl.textContent = t(cat.name) + ' — ' + (POLAS[S.cat]
+    ? t(POLAS[S.cat].sub)
+    : (LANG === 'fr' ? 'quatre formules, de la découverte à l\'expérience éditoriale complète.' : 'four packages, from the starter offer to the complete editorial experience.'));
   let slot = 0;
   if (POLAS[S.cat]) {
     const polas = POLAS[S.cat];
-    const total = pp(polas.price + 60);
+    const total = pp(specialTotal(polas));
     const threeX = Math.round(total / 3).toLocaleString('fr-FR');
     const payLine = LANG === 'fr' ? `Soit 3 × ${threeX}€ sans frais` : `That's 3 × €${threeX} interest-free`;
-    const badge = LANG === 'fr' ? 'Spécial mannequins' : 'For models';
-    const studioNote = LANG === 'fr' ? 'Studio inclus (+60€)' : 'Studio included (+€60)';
+    const badge = t(polas.badge);
+    const studioNote = t(polas.studioNote);
     const d = document.createElement('div');
     d.className = 'tier-card stagger';
     d.style.animationDelay = (0.24 + slot++ * 0.1) + 's';
@@ -2157,7 +2178,7 @@ function renderTiersBase(){
       </div>
       <div class="tier-pay-line">${payLine}</div>
       <div class="tier-detail">${t(polas.items).join(' · ')} · ${studioNote}</div>`;
-    d.dataset.tier = 'polas'; if (S.tier === 'polas') d.classList.add('selected'); d.onclick = () => pickTier('polas', d);
+    d.dataset.tier = polas.id; if (S.tier === polas.id) d.classList.add('selected'); d.onclick = () => pickTier(polas.id, d);
     el.appendChild(d);
   }
   TIERS.forEach((tier) => {
@@ -2230,14 +2251,14 @@ function renderRecapBase(){
       <div style="margin-top: 18px; font-size: 12px; color: var(--grey); line-height: 1.6;">${engagement}</div>`;
     return;
   }
-  if (S.tier === 'polas') {
+  if (isSpecialTier()) {
     const polas = POLAS[S.cat];
-    const total = pp(polas.price + 60);
+    const total = pp(specialTotal(polas));
     const threeX = Math.round(total / 3).toLocaleString('fr-FR');
     const payLine = LANG === 'fr'
       ? `💳 Soit 3 × ${threeX}€ sans frais avec Klarna — ou carte bancaire, acompte 30 % + solde.`
       : `💳 That's 3 × €${threeX} interest-free with Klarna — or credit card, 30% deposit + balance.`;
-    const studioLabel = LANG === 'fr' ? 'Studio inclus (+60€)' : 'Studio included (+€60)';
+    const studioLabel = t(polas.studioNote);
     box.innerHTML = `
       <div class="recap-label">${selLabel}</div>
       <div class="recap-title">
@@ -2328,15 +2349,13 @@ function renderOptions(){
     return;
   }
 
-  if (S.tier === 'polas') {
-    S.studio = true;
+  if (isSpecialTier()) {
+    if (POLAS[S.cat].studio) S.studio = true;
     label.style.display = 'none';
     const note = document.createElement('div');
     note.className = 'sub-options-note stagger';
     note.style.animationDelay = '0.4s';
-    note.innerHTML = LANG === 'fr'
-      ? '<strong>Bon à savoir :</strong> le format Polas est une expérience clé en main — studio inclus, sans option additionnelle.'
-      : '<strong>Good to know:</strong> the Polas format is a turnkey experience — studio included, no additional options.';
+    note.innerHTML = t(POLAS[S.cat].optNote);
     el.appendChild(note);
     renderCommBox();
     return;
@@ -2509,7 +2528,7 @@ function checkQuizForm(){
 
 function computeTotal(){
   if (S.tier === 'sub') return { amount: pp(SUBS[S.cat].price), surDevis: false };
-  if (S.tier === 'polas') return { amount: pp(POLAS[S.cat].price + 60), surDevis: false };
+  if (isSpecialTier()) return { amount: pp(specialTotal(POLAS[S.cat])), surDevis: false };
   if (S.cat === 'lumen') {
     const lt = LUMEN_TIERS.find(x => x.id === S.tier);
     if (!lt) return { amount: 0, surDevis: true };
@@ -2632,10 +2651,10 @@ function submitQuiz(e){
     formuleLabel = 'ABONNEMENT — ' + sub.name.fr + ' (' + pp(sub.price) + '€ HT/mois, engagement 6 mois)';
     montantLabel = pp(sub.price) + '€ HT/mois';
     budgetMontantEur = pp(sub.price);
-  } else if (S.tier === 'polas') {
+  } else if (isSpecialTier()) {
     const polas = POLAS[S.cat];
     const res = computeTotal();
-    formuleLabel = polas.name.fr + ' (' + res.amount + '€ HT, dont 60€ studio inclus)';
+    formuleLabel = polas.name.fr + ' (' + res.amount + '€ HT, ' + (polas.studio ? 'dont ' + polas.studio + '€ studio inclus' : polas.studioNote.fr.toLowerCase()) + ')';
     montantLabel = res.amount + '€ HT';
     budgetMontantEur = res.amount;
   } else if (S.cat === 'lumen') {
@@ -2661,7 +2680,7 @@ function submitQuiz(e){
   const optNames = (S.tier !== 'sub' && S.opts.length)
     ? S.opts.map(id => { const o = allOpts.find(x => x.id === id); return o ? o.name.fr : id; }).filter(Boolean).join(' · ')
     : (S.tier === 'sub' ? '— (abonné : tarif partenaire -20% sur options)' : 'Aucune');
-  const studioNote = (S.cat === 'photo-part' || S.cat === 'corporate') ? (S.studio ? 'Studio (+60€)' : 'Extérieur') : (S.tier === 'polas' ? 'Studio inclus (+60€)' : '');
+  const studioNote = isSpecialTier() ? POLAS[S.cat].studioNote.fr : (S.cat === 'photo-part' || S.cat === 'corporate') ? (S.studio ? 'Studio (+60€)' : 'Extérieur') : '';
   document.getElementById('successName').textContent = S.name;
   document.getElementById('commRedirect').style.display = S.comm ? 'block' : 'none';
   document.getElementById('qSubmit').disabled = true;
@@ -2957,7 +2976,9 @@ function renderServicePage(catId){
     { q: t({fr:'Dans quels délais reçoit-on les photos ?', en:'How soon are the photos delivered?'}),
       a: '<ul class="svcp-list">' + tiers.map(tt => `<li><strong>${t(tt.name)}</strong> — ${t(tt.delay)}</li>`).join('') + '</ul><p>' + t({fr:'Les délais démarrent à la date du shooting, hors demandes de retouches complémentaires.', en:'Timelines start on the shoot date, excluding additional retouching requests.'}) + '</p>' },
     ...featureFaq,
-    ...(POLAS[catId] ? [{ q: t({fr:'Qu\'est-ce que la formule Polas ?', en:'What is the Polas package?'}),
+    ...(catId === 'photo-part' ? [{ q: t({fr:'Proposez-vous un book grossesse ?', en:'Do you offer a maternity book?'}),
+      a: `<p>${t({fr:'Oui : le book grossesse est une formule dédiée, à ' + price(POLAS[catId].price) + '. Séance de 1h30 en studio ou en extérieur (au choix, sans supplément), 20 photos HD retouchées avec une retouche naturelle, une direction de pose douce et bienveillante, et la possibilité de venir en couple. Le moment idéal : entre la 28e et la 36e semaine de grossesse.', en:'Yes: the maternity book is a dedicated package at ' + price(POLAS[catId].price) + '. A 1.5-hour session in the studio or outdoors (your choice, no extra cost), 20 retouched HD photos with natural retouching, gentle posing guidance, and the option to join as a couple. The ideal moment: between weeks 28 and 36 of pregnancy.'})}</p>` }] : []),
+    ...(POLAS[catId] && POLAS[catId].id === 'polas' ? [{ q: t({fr:'Qu\'est-ce que la formule Polas ?', en:'What is the Polas package?'}),
       a: `<p>${t({fr:'Des photos brutes, sans retouche, destinées aux agences de mannequins : séance en studio sur fond blanc, visage, profils et plans en pied, fichiers HD livrés sous 24 h. Tarif : ', en:'Raw, unretouched photos made for model agencies: studio session on a white background, face, profiles and full-body shots, HD files delivered within 24 hours. Rate: '})}${price(POLAS[catId].price)} + ${price(60)} ${t({fr:'de studio.', en:'for the studio.'})}</p><p><a href="/conseils/polas-mannequin-digitals-agence/" data-nav="article:polas-mannequin-digitals-agence">${t({fr:'Polas et digitals de mannequin : à quoi servent-elles ?', en:'Polas and model digitals: what are they for?'})}</a></p>` }] : []),
     ...(catId === 'photo-part' ? [{ q: t({fr:'Peut-on faire une séance en couple ou en groupe ?', en:'Can we book a couple or group session?'}),
       a: `<p>${t({fr:'Oui : la séance se fait en solo, en couple ou en groupe, en extérieur ou en studio. Choisissez la formule selon la durée et le nombre de photos souhaités ; pour vous aider à préparer vos tenues, lisez ', en:'Yes: sessions are available solo, as a couple or in a group, outdoors or in the studio. Pick the package according to the session length and number of photos you want; to prepare your outfits, read '})}<a href="/conseils/que-porter-seance-photo/" data-nav="article:que-porter-seance-photo">${t({fr:'Que porter pour une séance photo ?', en:'What to wear for a photo session?'})}</a>.</p>` }] : []),
@@ -2984,7 +3005,7 @@ function renderServicePage(catId){
   const svcAlt = (IMG.serviceAlt && t(IMG.serviceAlt[catId])) || (SERVICE_ALT_DEFAULT[catId] ? t(SERVICE_ALT_DEFAULT[catId]) : '');
   const svcFigure = svcPhoto ? `<figure class="svcp-figure"><img src="${svcPhoto}" alt="${escHtml(svcAlt)}" width="900" height="1200" loading="lazy" decoding="async" onerror="this.closest('figure').classList.add('is-broken')"></figure>` : '';
   const chooseHtml = (copyBlock && copyBlock.choose && copyBlock.choose.length === tiers.length)
-    ? `<section class="read-panel svcp-panel"><h2>${t({fr:'Quelle formule choisir ?', en:'Which package to choose?'})}</h2><ul class="svcp-list">${tiers.map((tt, i) => `<li><strong>${t(tt.name)} — ${priceLine(tt)}</strong> : ${t(copyBlock.choose[i])}</li>`).join('')}${POLAS[catId] ? `<li class="svcp-choose-polas"><strong>${t(POLAS[catId].name)} — ${price(POLAS[catId].price + 60)}</strong> : ${t({fr:'vous devez présenter votre profil à une agence ? Des photos brutes, sans retouche ni mise en scène, pour juger la morphologie et le potentiel, livrées en HD sous 24 h (studio inclus).', en:'need to present your profile to an agency? Raw photos with no retouching or styling, to assess build and potential, delivered in HD within 24 h (studio included).'})}</li>` : ''}</ul></section>` : '';
+    ? `<section class="read-panel svcp-panel"><h2>${t({fr:'Quelle formule choisir ?', en:'Which package to choose?'})}</h2><ul class="svcp-list">${tiers.map((tt, i) => `<li><strong>${t(tt.name)} — ${priceLine(tt)}</strong> : ${t(copyBlock.choose[i])}</li>`).join('')}${POLAS[catId] ? `<li class="svcp-choose-polas"><strong>${t(POLAS[catId].name)} — ${price(specialTotal(POLAS[catId]))}</strong> : ${POLAS[catId].id === 'grossesse' ? t({fr:'vous attendez un heureux événement ? Une séance douce de 1h30, en studio ou en extérieur, pour garder des images soignées de cette période (idéalement entre la 28e et la 36e semaine).', en:'expecting a baby? A gentle 1.5-hour session, in the studio or outdoors, to keep beautiful images of this time (ideally between weeks 28 and 36).'}) : t({fr:'vous devez présenter votre profil à une agence ? Des photos brutes, sans retouche ni mise en scène, pour juger la morphologie et le potentiel, livrées en HD sous 24 h (studio inclus).', en:'need to present your profile to an agency? Raw photos with no retouching or styling, to assess build and potential, delivered in HD within 24 h (studio included).'})}</li>` : ''}</ul></section>` : '';
   const practical = t({
     fr: 'Nous intervenons à <strong>Béziers, Montpellier et Toulouse</strong>. Les droits d\'utilisation commerciale des visuels vous sont cédés sans limite de durée. Toutes les réponses sont dans la <a href="/faq/" data-nav="faq">FAQ</a>, et pour une question précise, <a href="/contact/" data-nav="contact">contactez-nous</a>.',
     en: 'We work in <strong>Béziers, Montpellier and Toulouse</strong>. Commercial usage rights to the visuals are transferred to you with no time limit. All the answers are in the <a href="/faq/" data-nav="faq">FAQ</a>, and for a specific question, <a href="/contact/" data-nav="contact">get in touch</a>.' });
@@ -3018,12 +3039,12 @@ function renderServicePage(catId){
           </div>`).join('')}
         ${POLAS[catId] ? `
           <div class="svcp-tier svcp-tier-polas">
-            <div class="svcp-badge">${t({fr:'Pour les agences', en:'For agencies'})}</div>
+            <div class="svcp-badge">${t(POLAS[catId].label)}</div>
             <h3>${t(POLAS[catId].name)}</h3>
-            <div class="svcp-price">${price(POLAS[catId].price + 60)}</div>
-            <div class="svcp-delay">${t(POLAS[catId].delay)} · ${t({fr:'studio inclus', en:'studio included'})}</div>
+            <div class="svcp-price">${price(specialTotal(POLAS[catId]))}</div>
+            <div class="svcp-delay">${t(POLAS[catId].delay)} · ${t(POLAS[catId].studioNote)}</div>
             <ul class="svcp-list">${t(POLAS[catId].items).map(i => `<li>${escHtml(i)}</li>`).join('')}</ul>
-            <a class="svcp-link" href="/conseils/polas-mannequin-digitals-agence/" onclick="return navLink(event,'article','polas-mannequin-digitals-agence')">${t({fr:'Comprendre les Polas →', en:'What are Polas? →'})}</a>
+            ${POLAS[catId].id === 'polas' ? `<a class="svcp-link" href="/conseils/polas-mannequin-digitals-agence/" onclick="return navLink(event,'article','polas-mannequin-digitals-agence')">${t({fr:'Comprendre les Polas →', en:'What are Polas? →'})}</a>` : ''}
           </div>` : ''}
       </div>
       ${sub ? `<p class="svcp-note">${t({fr:'Besoin régulier ? ', en:'Regular need? '})}<strong>${t(sub.name)}</strong> — ${sub.price.toLocaleString(en ? 'en-GB' : 'fr-FR')} € ${t({fr:'HT / mois', en:'excl. VAT / month'})}.</p>` : ''}
@@ -3354,7 +3375,7 @@ function renderServices(){
               </div>`).join('')}
       </div>
       ${subRow}
-      ${POLAS[c.id] ? `<div class="service-polas"><span class="service-tier-name"><strong>${t(POLAS[c.id].name)}</strong> <span class="service-polas-tag">${t({fr:'Pour les agences', en:'For agencies'})}</span><small>${t({fr:'Digitals bruts · studio inclus', en:'Raw digitals · studio included'})}</small></span><span class="service-tier-price">${(POLAS[c.id].price + 60).toLocaleString('fr-FR')}€<small>HT</small></span></div>` : ''}
+      ${POLAS[c.id] ? `<div class="service-polas"><span class="service-tier-name"><strong>${t(POLAS[c.id].name)}</strong> <span class="service-polas-tag">${t(POLAS[c.id].label)}</span><small>${t(POLAS[c.id].short)}</small></span><span class="service-tier-price">${specialTotal(POLAS[c.id]).toLocaleString('fr-FR')}€<small>HT</small></span></div>` : ''}
       <button class="service-cta">${I18N[LANG]['svc-cta']}</button>
       <a class="service-more" href="${servicePath(c.id)}" onclick="return navLink(event,'service','${c.id}')">${t(c.name)} : ${t({fr:'détails et tarifs →', en:'details and rates →'})}</a>`;
     card.querySelector('.service-cta').onclick = () => {
