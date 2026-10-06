@@ -1431,19 +1431,17 @@
     position: relative; z-index: 1;
     text-shadow: 0 1px 8px rgba(0,0,0,0.45);
   }
+  /* Symbole ⊹ (même rotation que le glyphe de la barre de navigation) */
   .cat-arrow {
-    width: 28px; height: 1px; background: var(--white);
-    position: relative; opacity: 0; transform: translateX(-10px);
-    transition: all 0.45s var(--ease); flex-shrink: 0; z-index: 1;
+    width: 28px; height: 28px; flex-shrink: 0; position: relative; z-index: 1;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; line-height: 1; color: var(--white);
+    opacity: 0.75; transform: rotate(0deg);
+    transition: transform 0.45s var(--ease-luxe), opacity 0.3s var(--ease);
     filter: drop-shadow(0 1px 4px rgba(0,0,0,0.4));
   }
-  .cat-arrow::after {
-    content: ''; position: absolute; right: 0; top: -3.5px;
-    width: 7px; height: 7px;
-    border-top: 1px solid var(--white); border-right: 1px solid var(--white);
-    transform: rotate(45deg);
-  }
-  .cat-item:hover .cat-arrow { opacity: 1; transform: translateX(0); }
+  .cat-arrow::before { content: '⊹'; }
+  .cat-item:hover .cat-arrow, .cat-item:active .cat-arrow, .cat-item.selected .cat-arrow { opacity: 1; transform: rotate(135deg); }
   .cat-right { display: flex; align-items: center; justify-content: flex-end; gap: 22px; flex: 1 1 46%; min-width: 0; }
   .cat-left { display: flex; align-items: center; gap: 20px; position: relative; z-index: 1; min-width: 0; flex: 1 1 42%; }
   .cat-item { gap: 28px; }
