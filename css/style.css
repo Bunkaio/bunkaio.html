@@ -4051,9 +4051,9 @@ a.hero-start { text-decoration: none; display: inline-flex; align-items: center;
 #accInfoBanner { margin-bottom: 18px; }
 
 /* ─── Prestations (accueil) : ruban continu de cartes, défilement automatique ─── */
-.svr { width: calc(100% - 48px); max-width: 1240px; margin: 28px auto 36px; padding: clamp(22px, 3.2vw, 44px) 0 clamp(18px, 2.4vw, 28px); border-radius: 30px; background: #fbf9fe; border: 1px solid rgba(255,255,255,0.7); box-shadow: 0 18px 50px rgba(10,10,12,0.14); overflow: hidden; color: var(--black); }
+.svr { width: calc(100% - 48px); max-width: 1240px; margin: 28px auto 36px; padding: clamp(22px, 3.2vw, 44px) 0 clamp(18px, 2.4vw, 28px); border-radius: 30px; background: rgba(255,255,255,0.5); -webkit-backdrop-filter: blur(22px) saturate(1.2); backdrop-filter: blur(22px) saturate(1.2); border: 1px solid rgba(255,255,255,0.6); box-shadow: 0 18px 50px rgba(10,10,12,0.14); overflow: hidden; color: var(--black); }
 .svr-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; padding: 0 clamp(20px, 3.2vw, 44px); margin-bottom: clamp(18px, 2.4vw, 28px); }
-.svr-kicker { font-size: 11px; letter-spacing: 0.26em; text-transform: uppercase; font-weight: 700; color: #6e5aa8; margin: 0 0 8px; }
+.svr-kicker { font-size: 11px; letter-spacing: 0.26em; text-transform: uppercase; font-weight: 700; color: #4b3d7a; margin: 0 0 8px; }
 .svr-title { font-size: clamp(24px, 3.4vw, 38px); letter-spacing: -0.03em; line-height: 1.1; margin: 0; max-width: 18ch; text-wrap: balance; }
 .svr-ctrl { display: flex; gap: 8px; }
 .svr-btn { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); background: #fff; color: var(--black); cursor: pointer; display: grid; place-items: center; transition: background 0.3s var(--ease), color 0.3s var(--ease); }
@@ -4075,7 +4075,7 @@ a.hero-start { text-decoration: none; display: inline-flex; align-items: center;
 .svr-tags span { font-size: 11.5px; border: 1px solid rgba(255,255,255,0.4); border-radius: 100px; padding: 3px 10px; background: rgba(255,255,255,0.12); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
 .svr-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .svr-foot { display: flex; justify-content: space-between; align-items: center; gap: 14px; flex-wrap: wrap; padding: 0 clamp(20px, 3.2vw, 44px); }
-.svr-foot p { margin: 0; font-size: 13.5px; color: #6b6578; }
+.svr-foot p { margin: 0; font-size: 13.5px; color: #3a3544; }
 .svr-pp { font: inherit; font-size: 13px; font-weight: 600; border: 1px solid var(--line); background: #fff; color: var(--black); border-radius: 100px; padding: 8px 16px; cursor: pointer; }
 .svr-pp:hover { background: var(--black); color: #fff; }
 @media (max-width: 600px) {
