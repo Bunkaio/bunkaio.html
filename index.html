@@ -31,7 +31,7 @@
 <link rel="icon" type="image/png" sizes="64x64" href="/images/favicon-64.png">
 <link rel="apple-touch-icon" href="/images/apple-touch-icon.png"><text y='0.9em' font-size='80' font-family='serif'>⊹</text></svg>">
 <link rel="preload" href="fonts/dm-sans-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/style.min.css?v=1a0eadc4">
+<link rel="stylesheet" href="css/style.min.css?v=ae548dbc">
 
 <script type="application/ld+json">
 {
@@ -475,68 +475,9 @@
     
   </section>
 
-  <!-- PRESTATIONS — carrousel horizontal natif (scroll-snap), en flux
-       normal de page (pas de calque position:fixed). Une slide par
-       catégorie, glissée au doigt/trackpad comme n'importe quel carrousel
-       "stories" — le navigateur gère nativement le scroll et le snap,
-       fiable sur tous les appareils y compris iOS Safari. Contenu généré
-       en JS (voir initCatShowcase(), ordre = CATS dans js/script.js). -->
-  <section class="svr" id="catShowcase" aria-roledescription="carousel" data-lang-aria="svr-aria">
-    <div class="svr-head">
-      <div>
-        <p class="svr-kicker" data-lang="svr-kicker">Nos prestations</p>
-        <h2 class="svr-title" data-lang="svr-title">Une image juste pour chaque projet</h2>
-      </div>
-      <div class="svr-ctrl">
-        <button class="svr-btn" id="catShowcaseArrowPrev" aria-label="Précédent" data-lang-aria="aria-prev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
-        <button class="svr-btn" id="catShowcaseArrowNext" aria-label="Suivant" data-lang-aria="aria-next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
-      </div>
-    </div>
-    <div class="svr-rail" id="svrRail">
-      <div class="svr-track" id="svrTrack">
-        <div class="svr-set" id="catShowcaseTrack"><!--snap--><a class="svr-card" href="/decouvrir-chaque-prestation/" data-discover="photo-part" data-cat="photo-part" draggable="false" style="background-image:url('https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/services/photo-part.webp')">
-      <span class="svr-n">01</span>
-      <span class="svr-go" aria-hidden="true">⊹</span>
-      <span class="svr-name">Séance photo — particuliers</span>
-      <span class="svr-tags"><span>Extérieur</span><span>studio</span><span>solo</span><span>couple</span><span>groupe</span><span>book grossesse</span></span>
-      <span class="svr-sr">Découvrir cette prestation</span>
-    </a><a class="svr-card" href="/decouvrir-chaque-prestation/" data-discover="corporate" data-cat="corporate" draggable="false" style="background-image:url('https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/services/corporate.webp')">
-      <span class="svr-n">02</span>
-      <span class="svr-go" aria-hidden="true">⊹</span>
-      <span class="svr-name">Corporate — portraits professionnels</span>
-      <span class="svr-tags"><span>Profil LinkedIn</span><span>site web</span><span>équipe</span><span>dirigeants</span></span>
-      <span class="svr-sr">Découvrir cette prestation</span>
-    </a><a class="svr-card" href="/decouvrir-chaque-prestation/" data-discover="mode" data-cat="mode" draggable="false" style="background-image:url('https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/services/mode.webp')">
-      <span class="svr-n">03</span>
-      <span class="svr-go" aria-hidden="true">⊹</span>
-      <span class="svr-name">Mode, agence et mannequins</span>
-      <span class="svr-tags"><span>Marques</span><span>agences</span><span>e-commerce</span><span>lookbook</span></span>
-      <span class="svr-sr">Découvrir cette prestation</span>
-    </a><a class="svr-card" href="/decouvrir-chaque-prestation/" data-discover="commercial" data-cat="commercial" draggable="false" style="background-image:url('https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/services/commercial.webp')">
-      <span class="svr-n">04</span>
-      <span class="svr-go" aria-hidden="true">⊹</span>
-      <span class="svr-name">Commercial &amp; produits</span>
-      <span class="svr-tags"><span>Packshots</span><span>produits</span><span>marques</span><span>entreprises</span></span>
-      <span class="svr-sr">Découvrir cette prestation</span>
-    </a><a class="svr-card" href="/decouvrir-chaque-prestation/" data-discover="event" data-cat="event" draggable="false" style="background-image:url('https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/services/event.webp')">
-      <span class="svr-n">05</span>
-      <span class="svr-go" aria-hidden="true">⊹</span>
-      <span class="svr-name">Événementiel</span>
-      <span class="svr-tags"><span>Domaines</span><span>entreprises</span><span>réceptions</span></span>
-      <span class="svr-sr">Découvrir cette prestation</span>
-    </a><a class="svr-card" href="/decouvrir-chaque-prestation/" data-discover="lumen" data-cat="lumen" draggable="false" style="background-image:url('https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/services/lumen.webp')">
-      <span class="svr-n">06</span>
-      <span class="svr-go" aria-hidden="true">⊹</span>
-      <span class="svr-name">Lumen</span>
-      <span class="svr-tags"><span>Photobooth IA — mariages haut de gamme</span></span>
-      <span class="svr-sr">Découvrir cette prestation</span>
-    </a><!--/snap--></div>
-        <div class="svr-set" id="svrClone" aria-hidden="true"></div>
-      </div>
-    </div>
-    <div class="svr-foot">
-      <a class="svr-pp" href="/services/" onclick="return navLink(event,'services')" data-lang="svr-catalog">Voir le catalogue complet</a>
-    </div>
+  <!-- Logo : espace de défilement sous le bloc « Le studio » (laisse l'effet de scroll se jouer) -->
+  <section class="home-logo-gap" aria-hidden="true">
+    <img src="/images/logo-hd.webp" alt="" width="320" height="146" loading="lazy" decoding="async">
   </section>
 
   <div class="home-claim-trigger" id="homeClaimSection"></div>
@@ -1890,6 +1831,6 @@
 <script src="config/articles.en.js?v=f5e9d676"></script>
 <script src="config/routes.js?v=32eeabdd"></script>
 <script src="config/media.js?v=e515354a"></script>
-<script src="js/script.min.js?v=51389b90"></script>
+<script src="js/script.min.js?v=9089a963"></script>
 </body>
 </html>

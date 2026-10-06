@@ -4008,40 +4008,10 @@ a.hero-start { text-decoration: none; display: inline-flex; align-items: center;
 #accInfoEdit[data-profil="professionnel"] .only-part { display: none !important; }
 #accInfoBanner { margin-bottom: 18px; }
 
-/* ─── Prestations (accueil) : ruban continu de cartes, défilement automatique ─── */
-.svr { width: calc(100% - 48px); max-width: 1240px; margin: 28px auto 36px; padding: clamp(22px, 3.2vw, 44px) 0 clamp(18px, 2.4vw, 28px); border-radius: 30px; background: rgba(255,255,255,0.5); -webkit-backdrop-filter: blur(22px) saturate(1.2); backdrop-filter: blur(22px) saturate(1.2); border: 1px solid rgba(255,255,255,0.6); box-shadow: 0 18px 50px rgba(10,10,12,0.14); overflow: hidden; color: var(--black); }
-.svr-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; padding: 0 clamp(20px, 3.2vw, 44px); margin-bottom: clamp(18px, 2.4vw, 28px); }
-.svr-kicker { font-size: 11px; letter-spacing: 0.26em; text-transform: uppercase; font-weight: 700; color: #4b3d7a; margin: 0 0 8px; }
-.svr-title { font-size: clamp(24px, 3.4vw, 38px); letter-spacing: -0.03em; line-height: 1.1; margin: 0; max-width: 18ch; text-wrap: balance; }
-.svr-ctrl { display: flex; gap: 8px; }
-.svr-btn { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); background: #fff; color: var(--black); cursor: pointer; display: grid; place-items: center; transition: background 0.3s var(--ease), color 0.3s var(--ease); }
-.svr-btn svg { width: 18px; height: 18px; }
-.svr-btn:hover { background: var(--black); color: #fff; }
-.svr-rail { overflow: hidden; cursor: grab; touch-action: pan-y; -webkit-mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent); mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent); padding: 10px 0 14px; }
-.svr-rail.is-drag { cursor: grabbing; }
-.svr-track { display: flex; width: max-content; will-change: transform; }
-.svr-set { display: flex; gap: 18px; padding-right: 18px; }
-.svr-card { position: relative; flex: 0 0 clamp(240px, 24vw, 300px); aspect-ratio: 3 / 4.2; border-radius: 18px; overflow: hidden; color: #fff; text-decoration: none; display: flex; flex-direction: column; justify-content: flex-end; gap: 10px; padding: 20px; background: #1c1a24 center / cover no-repeat; transition: transform 0.5s var(--ease-luxe), box-shadow 0.5s var(--ease-luxe); -webkit-user-drag: none; user-select: none; }
-.svr-card::before { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10,10,12,0.28) 0%, rgba(10,10,12,0) 28%, rgba(10,10,12,0) 40%, rgba(10,10,12,0.8) 100%); }
-.svr-card > * { position: relative; }
-.svr-card:hover { transform: translateY(-8px); box-shadow: 0 22px 40px rgba(10,10,12,0.28); }
-.svr-n { position: absolute; top: 16px; left: 18px; font-size: 12px; letter-spacing: 0.2em; font-weight: 700; }
-.svr-go { position: absolute; top: 12px; right: 14px; width: 38px; height: 38px; border-radius: 50%; background: #fff; color: var(--black); display: grid; place-items: center; font-size: 22px; line-height: 1; transition: transform 0.6s var(--ease-luxe); }
-.svr-card:hover .svr-go { transform: rotate(90deg); }
-.svr-name { font-size: clamp(19px, 1.8vw, 22px); font-weight: 700; line-height: 1.15; letter-spacing: -0.02em; text-wrap: balance; text-shadow: 0 1px 12px rgba(0,0,0,0.35); }
-.svr-tags { display: flex; flex-wrap: wrap; gap: 6px; }
-.svr-tags span { font-size: 11.5px; border: 1px solid rgba(255,255,255,0.4); border-radius: 100px; padding: 3px 10px; background: rgba(255,255,255,0.12); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
-.svr-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-.svr-foot { display: flex; justify-content: flex-end; align-items: center; gap: 14px; flex-wrap: wrap; padding: 0 clamp(20px, 3.2vw, 44px); }
-.svr-foot p { margin: 0; font-size: 13.5px; color: #3a3544; }
-.svr-pp { font: inherit; font-size: 13px; font-weight: 700; border: 1px solid var(--line); background: #fff; color: var(--black); border-radius: 100px; padding: 10px 20px; cursor: pointer; text-decoration: none; transition: background 0.3s var(--ease), color 0.3s var(--ease); }
-.svr-pp:hover { background: var(--black); color: #fff; }
-@media (max-width: 600px) {
-  .svr { width: calc(100% - 24px); margin: 18px auto 24px; border-radius: 24px; }
-  .svr-card { flex-basis: 66vw; }
-  .svr-btn { width: 40px; height: 40px; }
-}
-@media (prefers-reduced-motion: reduce) { .svr-card, .svr-go { transition: none; } }
+/* Accueil : logo seul sous « Le studio » (espace de défilement) */
+.home-logo-gap { min-height: 60vh; display: flex; align-items: center; justify-content: center; padding: 40px 16px; pointer-events: none; }
+.home-logo-gap img { width: clamp(120px, 16vw, 190px); height: auto; opacity: 0; transition: opacity 0.2s linear; }
+
 
 /* Polas : formule mise en avant dans la grille Mode */
 .svcp-tier-polas { border-color: #6e5aa8; background: linear-gradient(180deg, #f1ecfa, #fff 60%); box-shadow: 0 10px 28px rgba(110,90,168,0.16); }

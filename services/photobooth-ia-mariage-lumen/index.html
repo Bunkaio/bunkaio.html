@@ -31,7 +31,7 @@
 <link rel="icon" type="image/png" sizes="64x64" href="/images/favicon-64.png">
 <link rel="apple-touch-icon" href="/images/apple-touch-icon.png"><text y='0.9em' font-size='80' font-family='serif'>⊹</text></svg>">
 <link rel="preload" href="fonts/dm-sans-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/style.min.css?v=1a0eadc4">
+<link rel="stylesheet" href="css/style.min.css?v=ae548dbc">
 
 <script type="application/ld+json">
 {
@@ -503,32 +503,9 @@
     
   </section>
 
-  <!-- PRESTATIONS — carrousel horizontal natif (scroll-snap), en flux
-       normal de page (pas de calque position:fixed). Une slide par
-       catégorie, glissée au doigt/trackpad comme n'importe quel carrousel
-       "stories" — le navigateur gère nativement le scroll et le snap,
-       fiable sur tous les appareils y compris iOS Safari. Contenu généré
-       en JS (voir initCatShowcase(), ordre = CATS dans js/script.js). -->
-  <section class="svr" id="catShowcase" aria-roledescription="carousel" data-lang-aria="svr-aria">
-    <div class="svr-head">
-      <div>
-        <p class="svr-kicker" data-lang="svr-kicker">Nos prestations</p>
-        <h2 class="svr-title" data-lang="svr-title">Une image juste pour chaque projet</h2>
-      </div>
-      <div class="svr-ctrl">
-        <button class="svr-btn" id="catShowcaseArrowPrev" aria-label="Précédent" data-lang-aria="aria-prev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
-        <button class="svr-btn" id="catShowcaseArrowNext" aria-label="Suivant" data-lang-aria="aria-next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
-      </div>
-    </div>
-    <div class="svr-rail" id="svrRail">
-      <div class="svr-track" id="svrTrack">
-        <div class="svr-set" id="catShowcaseTrack"><!--snap--><!--/snap--></div>
-        <div class="svr-set" id="svrClone" aria-hidden="true"></div>
-      </div>
-    </div>
-    <div class="svr-foot">
-      <a class="svr-pp" href="/services/" onclick="return navLink(event,'services')" data-lang="svr-catalog">Voir le catalogue complet</a>
-    </div>
+  <!-- Logo : espace de défilement sous le bloc « Le studio » (laisse l'effet de scroll se jouer) -->
+  <section class="home-logo-gap" aria-hidden="true">
+    <img src="/images/logo-hd.webp" alt="" width="320" height="146" loading="lazy" decoding="async">
   </section>
 
   <div class="home-claim-trigger" id="homeClaimSection"></div>
@@ -1951,6 +1928,6 @@
 <script src="config/articles.en.js?v=f5e9d676"></script>
 <script src="config/routes.js?v=32eeabdd"></script>
 <script src="config/media.js?v=e515354a"></script>
-<script src="js/script.min.js?v=51389b90"></script>
+<script src="js/script.min.js?v=9089a963"></script>
 </body>
 </html>

@@ -880,7 +880,6 @@ function refreshDynamic(){
   if (currentView === 'advice') renderAdvicePage();
   if (currentView === 'discover') renderDiscoverPage();
   renderAdviceTeaser();
-  refreshCatShowcase();
   renderSvcAssure();
   renderCats();
   renderMissionServices();
@@ -5571,93 +5570,20 @@ function renderCommBox(){
   box.appendChild(d);
 }
 
-/* ═══════════════ PRESTATIONS — ruban continu (Accueil) ═══════════════
-   Une rangée de cartes verticales (photo de chaque prestation, numéro, nom, pastilles) qui défile en
-   boucle toute seule. Mouvement piloté en JS (requestAnimationFrame) pour pouvoir : mettre en pause
-   (survol, doigt posé, bouton Pause, onglet masqué, bandeau hors écran), avancer avec les flèches,
-   et glisser à la souris ou au doigt. Le contenu est généré une fois puis dupliqué (jeu « clone »
-   masqué aux lecteurs d'écran) pour boucler sans à-coup. */
-let _catShowcaseInit = false, _svrPaused = false; /* _svrPaused : réservé (pause programmatique) */
-function svrCardHTML(cat, i){
-  const url = IMG.servicePhotos && IMG.servicePhotos[cat.id];
-  const parts = String(t(cat.tag)).split(' · ').filter(Boolean);
-  return `<a class="svr-card" href="/decouvrir-chaque-prestation/" data-discover="${cat.id}" data-cat="${cat.id}" draggable="false"${url ? ` style="background-image:url('${url}')"` : ''}>
-      <span class="svr-n">${String(i + 1).padStart(2, '0')}</span>
-      <span class="svr-go" aria-hidden="true">⊹</span>
-      <span class="svr-name">${t(cat.name)}</span>
-      <span class="svr-tags">${parts.map(p => `<span>${p}</span>`).join('')}</span>
-      <span class="svr-sr">${t({fr:'Découvrir cette prestation', en:'Discover this service'})}</span>
-    </a>`;
-}
-/* Met à jour les textes du ruban quand la langue change. */
-function refreshCatShowcase(){
-  const set = document.getElementById('catShowcaseTrack'), clone = document.getElementById('svrClone');
-  if (!set || !CATS.length || !set.children.length) return;
-  set.innerHTML = CATS.map(svrCardHTML).join('');
-  if (clone) clone.innerHTML = set.innerHTML;
-}
-function initCatShowcase(){
-  const root = document.getElementById('catShowcase');
-  const track = document.getElementById('svrTrack');
-  const set = document.getElementById('catShowcaseTrack');
-  const clone = document.getElementById('svrClone');
-  const rail = document.getElementById('svrRail');
-  const btnPrev = document.getElementById('catShowcaseArrowPrev');
-  const btnNext = document.getElementById('catShowcaseArrowNext');
-  if (!root || !track || !set || !clone || _catShowcaseInit || !CATS.length) return;
-  _catShowcaseInit = true;
-  set.innerHTML = CATS.map(svrCardHTML).join('');
-  clone.innerHTML = set.innerHTML;
-  clone.querySelectorAll('a').forEach(a => a.setAttribute('tabindex', '-1'));
-
-  const SPEED = 36; /* px par seconde */
-  let x = 0, last = 0, setW = 0, target = null, inView = false, hover = false, down = false, hold = 0;
-  const measure = () => { setW = clone.offsetLeft - set.offsetLeft; };
-  const wrap = v => { if (!setW) return v; v %= setW; return v > 0 ? v - setW : v; };
-  const paint = () => { track.style.transform = `translate3d(${x}px,0,0)`; };
-  const paused = () => _svrPaused || hover || down || !inView || document.hidden || Date.now() < hold;
-
-  const frame = (now) => {
-    const dt = Math.min((now - (last || now)) / 1000, 0.1); last = now;
-    if (target !== null) {
-      x += (target - x) * Math.min(1, dt * 7);
-      if (Math.abs(target - x) < 0.5) { x = target; target = null; }
-    } else if (!paused() && !REDUCED_MOTION) {
-      x -= SPEED * dt;
-    }
-    x = wrap(x);
-    paint();
-    requestAnimationFrame(frame);
+/* Logo sous « Le studio » : s'efface en remontant, pour ne jamais passer par-dessus la phrase d'accroche. */
+function initHomeLogoFade(){
+  const sec = document.querySelector('.home-logo-gap'); const img = sec && sec.querySelector('img');
+  if (!img) return;
+  let tick = false;
+  const upd = () => {
+    tick = false;
+    const r = sec.getBoundingClientRect();
+    const p = (r.top + r.height / 2) / (window.innerHeight || 1);
+    img.style.opacity = String(Math.max(0, Math.min(1, (p - 0.55) / 0.25)) * 0.9);
   };
-  const step = () => { const c = set.querySelector('.svr-card'); return c ? c.offsetWidth + parseFloat(getComputedStyle(set).columnGap || getComputedStyle(set).gap || 18) : 320; };
-  const nudge = d => { hold = Date.now() + 6000; target = (target !== null ? target : x) - d * step(); };
-  if (btnPrev) btnPrev.addEventListener('click', () => nudge(-1));
-  if (btnNext) btnNext.addEventListener('click', () => nudge(1));
-  rail.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') hover = true; });
-  rail.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hover = false; });
-
-  /* Glisser à la souris ou au doigt (un clic sans mouvement ouvre la carte normalement) */
-  let sx = 0, sxPos = 0, moved = false;
-  rail.addEventListener('pointerdown', e => { if (e.button) return; down = true; moved = false; sx = e.clientX; sxPos = x; target = null; });
-  window.addEventListener('pointermove', e => {
-    if (!down) return;
-    const d = e.clientX - sx;
-    if (Math.abs(d) > 6) { moved = true; rail.classList.add('is-drag'); }
-    if (moved) x = wrap(sxPos + d);
-  });
-  const up = () => { if (!down) return; down = false; hold = Date.now() + 2500; rail.classList.remove('is-drag'); };
-  window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
-  rail.addEventListener('click', e => { if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; } }, true);
-  rail.addEventListener('dragstart', e => e.preventDefault());
-
-  if (window.IntersectionObserver) new IntersectionObserver(es => { inView = es.some(e => e.isIntersecting); }, { threshold: 0.15 }).observe(root);
-  else inView = true;
-  window.addEventListener('resize', () => { measure(); x = wrap(x); });
-  window.addEventListener('load', measure);
-  measure();
-  /* Les images arrivent après la mise en page : on remesure quand la rangée change de taille. */
-  if (window.ResizeObserver) new ResizeObserver(measure).observe(set);
-  requestAnimationFrame(frame);
+  window.addEventListener('scroll', () => { if (!tick) { tick = true; requestAnimationFrame(upd); } }, { passive: true });
+  window.addEventListener('resize', upd);
+  upd();
 }
 
 /* ═══════════════ VIDÉO "LE STUDIO" — calque fixe plein écran (Accueil) ═══════════════
@@ -6172,7 +6098,7 @@ function applyImages(){
 renderCats();
 renderMissionServices();
 initMissionServicesAutoplay();
-initCatShowcase();
+initHomeLogoFade();
 renderLogoCarousel();
 renderFooterServices();
 /* Hero image home : seulement si la page demandée est l'accueil (sinon la vidéo d'accueil se téléchargeait
