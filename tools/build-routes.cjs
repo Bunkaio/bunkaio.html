@@ -251,7 +251,7 @@ function buildPage(template, route, snaps, meta) {
 
   // Vue active = celle de la route
   html = html.replace(/<div class="view( active)?" id="view-([a-z]+)"/g, (m, act, v) => '<div class="view' + (v === route.view ? ' active' : '') + '" id="view-' + v + '"');
-  html = html.replace(/<(a|button) class="nav-link( mobile-link)?( active)?" data-view="([a-z]+)"/g, (m, tag, mob, act, v) => '<' + tag + ' class="nav-link' + (mob || '') + (v === (route.view === 'service' ? 'services' : route.view) ? ' active' : '') + '" data-view="' + v + '"');
+  html = html.replace(/<(a|button) class="nav-link( mobile-link)?( active)?" data-view="([a-z]+)"/g, (m, tag, mob, act, v) => '<' + tag + ' class="nav-link' + (mob || '') + (v === (route.view === 'service' ? 'services' : route.view === 'about' ? 'contact' : route.view) ? ' active' : '') + '" data-view="' + v + '"');
 
   // Un seul <h1> : celui de la vue de la page ; les autres deviennent <h2>
   let current = null, keptH1 = false;

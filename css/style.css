@@ -512,6 +512,8 @@
     border-radius: 3px;
     transition: all 0.35s var(--ease);
   }
+  a.svc-tab { text-decoration: none; display: inline-block; }
+  .ct-tabs { margin-bottom: 34px; }
   .svc-tab.active { background: var(--black); color: var(--white); }
   .svc-tab:hover:not(.active) { color: var(--black); }
 
