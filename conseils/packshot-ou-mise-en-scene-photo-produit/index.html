@@ -32,7 +32,7 @@
 <link rel="icon" type="image/png" sizes="64x64" href="/images/favicon-64.png">
 <link rel="apple-touch-icon" href="/images/apple-touch-icon.png"><text y='0.9em' font-size='80' font-family='serif'>⊹</text></svg>">
 <link rel="preload" href="fonts/dm-sans-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/style.min.css?v=74e44350">
+<link rel="stylesheet" href="css/style.min.css?v=a6d20384">
 
 <script type="application/ld+json">
 {
@@ -435,6 +435,7 @@
 <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
 
 <a class="skip-link" href="#main" onclick="var m=document.getElementById('main');if(m){m.focus();}return false;" data-lang="skip-link">Aller au contenu</a>
+<div id="scrollProgress" aria-hidden="true"></div>
 <header>
 <nav>
   <div class="nav-inner">
@@ -1217,35 +1218,35 @@
     <article class="read-panel svcp-panel article">
       <div class="article-summary"><strong>En bref</strong><ul><li>Le packshot isole le produit sur fond neutre : clair, fidèle, idéal pour les fiches produit.</li><li>La mise en scène place le produit dans une ambiance : elle sert surtout les réseaux et les pages de présentation.</li><li>Beaucoup de boutiques ont besoin des deux : un packshot par produit, quelques images d'ambiance.</li><li>Chez BUNKAIO, la formule Découverte est en fond neutre ; la mise en scène est incluse dès Signature.</li></ul></div>
       <div class="art-toolbar"><span>5 rubriques</span><button type="button" class="art-all" data-acc-all="#artAcc" data-label-open="Tout déplier" data-label-close="Tout replier">Tout déplier</button></div>
-      <div class="cs-acc art-acc acc-multi" id="artAcc"><section class="cs-acc-item art-item open">
+      <div class="cs-acc art-acc acc-multi" id="artAcc"><section class="cs-acc-item art-item open rv" style="--rv-d: 0s;">
           <h2 class="art-h2"><button type="button" class="cs-acc-head art-head" aria-expanded="true"><span class="art-n">01</span><svg class="art-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"></path><polyline points="4 7.5 12 12 20 7.5"></polyline><line x1="12" y1="12" x2="12" y2="21"></line></svg><span class="art-t">Le packshot : le produit, rien que le produit</span><i class="cs-acc-chev" aria-hidden="true"></i></button></h2>
           <div class="cs-acc-panel"><div class="art-body"><svg class="art-illus" viewBox="0 0 120 120" aria-hidden="true">
     <rect width="120" height="120" rx="28" fill="#efeaf8"></rect>
     <circle cx="96" cy="24" r="11" fill="#dccff2"></circle><circle cx="22" cy="98" r="7" fill="#e6def5"></circle><circle cx="101" cy="92" r="4" fill="#b9a6dc"></circle>
     <g transform="translate(24 24) scale(3)" fill="none" stroke="#4b3d7a" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"></path><polyline points="4 7.5 12 12 20 7.5"></polyline><line x1="12" y1="12" x2="12" y2="21"></line></g>
   </svg><div class="art-text"><p>Un packshot présente le produit seul, sur un <strong>fond neutre</strong>, avec une lumière maîtrisée. Il montre fidèlement la forme, la matière et les couleurs. C'est le format de référence pour une fiche produit : le visiteur voit exactement ce qu'il achète.</p></div></div></div>
-        </section><section class="cs-acc-item art-item">
+        </section><section class="cs-acc-item art-item rv" style="--rv-d: 0.07s;">
           <h2 class="art-h2"><button type="button" class="cs-acc-head art-head" aria-expanded="false"><span class="art-n">02</span><svg class="art-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"></path><polyline points="4 7.5 12 12 20 7.5"></polyline><line x1="12" y1="12" x2="12" y2="21"></line></svg><span class="art-t">La mise en scène : le produit dans son univers</span><i class="cs-acc-chev" aria-hidden="true"></i></button></h2>
           <div class="cs-acc-panel"><div class="art-body"><svg class="art-illus" viewBox="0 0 120 120" aria-hidden="true">
     <rect width="120" height="120" rx="28" fill="#efeaf8"></rect>
     <circle cx="96" cy="24" r="11" fill="#dccff2"></circle><circle cx="22" cy="98" r="7" fill="#e6def5"></circle><circle cx="101" cy="92" r="4" fill="#b9a6dc"></circle>
     <g transform="translate(24 24) scale(3)" fill="none" stroke="#4b3d7a" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"></path><polyline points="4 7.5 12 12 20 7.5"></polyline><line x1="12" y1="12" x2="12" y2="21"></line></g>
   </svg><div class="art-text"><p>La photo mise en scène place le produit dans un décor, avec des accessoires, une lumière d'ambiance et un parti pris visuel. Elle raconte un usage et une marque, et se prête aux <strong>réseaux sociaux</strong>, à la page d'accueil ou aux supports de communication.</p></div></div></div>
-        </section><section class="cs-acc-item art-item">
+        </section><section class="cs-acc-item art-item rv" style="--rv-d: 0.14s;">
           <h2 class="art-h2"><button type="button" class="cs-acc-head art-head" aria-expanded="false"><span class="art-n">03</span><svg class="art-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 4.4-3.2 7.6-8 9-4.8-1.4-8-4.6-8-9V6z"></path><polyline points="8.5 12 11 14.5 15.5 9.5"></polyline></svg><span class="art-t">Comment choisir selon l'usage</span><i class="cs-acc-chev" aria-hidden="true"></i></button></h2>
           <div class="cs-acc-panel"><div class="art-body"><svg class="art-illus" viewBox="0 0 120 120" aria-hidden="true">
     <rect width="120" height="120" rx="28" fill="#efeaf8"></rect>
     <circle cx="96" cy="24" r="11" fill="#dccff2"></circle><circle cx="22" cy="98" r="7" fill="#e6def5"></circle><circle cx="101" cy="92" r="4" fill="#b9a6dc"></circle>
     <g transform="translate(24 24) scale(3)" fill="none" stroke="#4b3d7a" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.4-3.2 7.6-8 9-4.8-1.4-8-4.6-8-9V6z"></path><polyline points="8.5 12 11 14.5 15.5 9.5"></polyline></g>
   </svg><div class="art-text"><ul><li><strong>Fiches produit et catalogue</strong> : packshot sur fond neutre. Vérifiez les règles de votre plateforme de vente, certaines imposent un type de fond.</li><li><strong>Réseaux sociaux et communication</strong> : mise en scène, pour donner une identité à votre marque.</li><li><strong>Lancement ou campagne</strong> : un mélange des deux, avec une série cohérente.</li></ul></div></div></div>
-        </section><section class="cs-acc-item art-item">
+        </section><section class="cs-acc-item art-item rv" style="--rv-d: 0.21000000000000002s;">
           <h2 class="art-h2"><button type="button" class="cs-acc-head art-head" aria-expanded="false"><span class="art-n">04</span><svg class="art-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="4" x2="12" y2="20"></line><line x1="7" y1="20" x2="17" y2="20"></line><path d="M5 7h14"></path><path d="M5 7l-3 7a3 3 0 0 0 6 0z"></path><path d="M19 7l-3 7a3 3 0 0 0 6 0z"></path></svg><span class="art-t">Ce que comprennent nos formules</span><i class="cs-acc-chev" aria-hidden="true"></i></button></h2>
           <div class="cs-acc-panel"><div class="art-body"><svg class="art-illus" viewBox="0 0 120 120" aria-hidden="true">
     <rect width="120" height="120" rx="28" fill="#efeaf8"></rect>
     <circle cx="96" cy="24" r="11" fill="#dccff2"></circle><circle cx="22" cy="98" r="7" fill="#e6def5"></circle><circle cx="101" cy="92" r="4" fill="#b9a6dc"></circle>
     <g transform="translate(24 24) scale(3)" fill="none" stroke="#4b3d7a" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="4" x2="12" y2="20"></line><line x1="7" y1="20" x2="17" y2="20"></line><path d="M5 7h14"></path><path d="M5 7l-3 7a3 3 0 0 0 6 0z"></path><path d="M19 7l-3 7a3 3 0 0 0 6 0z"></path></g>
   </svg><div class="art-text"><p>Notre prestation <a href="/services/photo-produits-packshots/" data-nav="service:commercial">Commercial &amp; produits</a> couvre les deux styles :</p><ul><li><strong>Découverte, 390 €</strong> : jusqu'à 5 produits, 10 photos HD retouchées, fond neutre studio.</li><li><strong>Signature, 790 €</strong> : jusqu'à 12 produits, 20 photos HD retouchées, mise en scène incluse.</li><li><strong>Premium, 1 390 €</strong> : jusqu'à 25 produits, 35 photos HD retouchées, mise en scène incluse et 1 Reel vertical produit.</li><li><strong>Édition, 2 390 €</strong> : catalogue complet de 50 photos HD retouchées, 1 film de marque de 90 secondes et 2 Reels verticaux.</li></ul></div></div></div>
-        </section><section class="cs-acc-item art-item">
+        </section><section class="cs-acc-item art-item rv" style="--rv-d: 0.28s;">
           <h2 class="art-h2"><button type="button" class="cs-acc-head art-head" aria-expanded="false"><span class="art-n">05</span><svg class="art-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"></rect><polyline points="8.5 8.5 10 10 12.5 7"></polyline><line x1="8.5" y1="14" x2="15.5" y2="14"></line><line x1="8.5" y1="17.5" x2="13" y2="17.5"></line></svg><span class="art-t">Bien préparer avant de choisir</span><i class="cs-acc-chev" aria-hidden="true"></i></button></h2>
           <div class="cs-acc-panel"><div class="art-body"><svg class="art-illus" viewBox="0 0 120 120" aria-hidden="true">
     <rect width="120" height="120" rx="28" fill="#efeaf8"></rect>
@@ -1255,7 +1256,7 @@
         </section></div>
       <h2>Questions fréquentes</h2>
       <div id="articleFaq" data-exclusive="1">
-    <div class="accordion-item">
+    <div class="accordion-item rv" style="--rv-d: 0s;">
       <button class="accordion-trigger" aria-expanded="true" onclick="toggleAccordion(this)">
         <span>Quelle formule choisir pour des fiches produit ?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
@@ -1264,7 +1265,7 @@
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>La formule Découverte propose des photos sur fond neutre studio, adaptées aux fiches produit : jusqu'à 5 produits et 10 photos HD retouchées.</p></div>
       </div>
     </div>
-    <div class="accordion-item">
+    <div class="accordion-item rv" style="--rv-d: 0.07s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
         <span>La mise en scène est-elle incluse ?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
@@ -1273,7 +1274,7 @@
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>Oui, à partir de la formule Signature.</p></div>
       </div>
     </div>
-    <div class="accordion-item">
+    <div class="accordion-item rv" style="--rv-d: 0.14s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
         <span>Les droits d'utilisation sont-ils inclus ?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
@@ -1291,7 +1292,7 @@
         </div>
       </aside>
     </article>
-    <section class="read-panel svcp-panel article-cta">
+    <section class="read-panel svcp-panel article-cta rv" style="--rv-d: 0s;">
       <h2>Un projet de séance ou de shooting ?</h2>
       <p class="svcp-text">Estimez votre projet en quelques minutes : réponse personnalisée sous 48 h. Une question avant de vous lancer ? Consultez la <a href="/faq/" data-nav="faq">FAQ</a> ou <a href="/contact/" data-nav="contact">contactez-nous</a>.</p>
       <div class="svcp-cta-row" style="margin:0">
@@ -1299,7 +1300,7 @@
         <a class="btn btn-ghost" href="/services/photo-produits-packshots/" data-nav="service:commercial"><span>Commercial &amp; produits</span></a>
       </div>
     </section>
-    <section class="read-panel svcp-panel"><h2>À lire aussi</h2><div class="advice-grid adv-row"><a class="advice-card" href="/conseils/preparer-shooting-photo-produit/" data-nav="article:preparer-shooting-photo-produit">
+    <section class="read-panel svcp-panel rv" style="--rv-d: 0.07s;"><h2>À lire aussi</h2><div class="advice-grid adv-row"><a class="advice-card" href="/conseils/preparer-shooting-photo-produit/" data-nav="article:preparer-shooting-photo-produit">
     <span class="advice-card-meta">5 min de lecture</span>
     <span class="advice-card-title">Préparer un shooting photo produit : brief, produits et erreurs à éviter</span>
     <span class="advice-card-text">Packshot, mise en situation, brief, préparation des produits : les étapes pour un shooting photo produit efficace.</span>
@@ -1947,6 +1948,6 @@
 <script src="config/articles.en.js?v=f5e9d676"></script>
 <script src="config/routes.js?v=32eeabdd"></script>
 <script src="config/media.js?v=e515354a"></script>
-<script src="js/script.min.js?v=876bf903"></script>
+<script src="js/script.min.js?v=7621ad72"></script>
 </body>
 </html>

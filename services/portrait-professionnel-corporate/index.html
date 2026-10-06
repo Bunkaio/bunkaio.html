@@ -31,7 +31,7 @@
 <link rel="icon" type="image/png" sizes="64x64" href="/images/favicon-64.png">
 <link rel="apple-touch-icon" href="/images/apple-touch-icon.png"><text y='0.9em' font-size='80' font-family='serif'>⊹</text></svg>">
 <link rel="preload" href="fonts/dm-sans-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/style.min.css?v=74e44350">
+<link rel="stylesheet" href="css/style.min.css?v=a6d20384">
 
 <script type="application/ld+json">
 {
@@ -397,6 +397,7 @@
 <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
 
 <a class="skip-link" href="#main" onclick="var m=document.getElementById('main');if(m){m.focus();}return false;" data-lang="skip-link">Aller au contenu</a>
+<div id="scrollProgress" aria-hidden="true"></div>
 <header>
 <nav>
   <div class="nav-inner">
@@ -1188,11 +1189,11 @@
 
     <section class="read-panel svcp-panel"><div class="svcp-lead-grid has-figure"><p class="svcp-text svcp-lead">BUNKAIO réalise des portraits professionnels pour les dirigeants, les indépendants, les entrepreneurs et les équipes à Béziers, Montpellier et Toulouse : photo de profil LinkedIn, site web, présentation d'équipe, communication. La séance se fait en extérieur ou en studio, avec une direction de pose pour des images naturelles. Pour une équipe, précisez le nombre de personnes dans votre demande ; pour bien vous préparer, voir <a href="/conseils/portrait-professionnel-photo-profil-linkedin/" data-nav="article:portrait-professionnel-photo-profil-linkedin">comment réussir son portrait professionnel</a>.</p><figure class="svcp-figure"><img src="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/services/corporate.webp" alt="Exemple de portrait professionnel réalisé par BUNKAIO" width="900" height="1200" loading="lazy" decoding="async" onerror="this.closest('figure').classList.add('is-broken')"></figure></div></section>
 
-    <section class="read-panel svcp-panel">
+    <section class="read-panel svcp-panel rv" style="--rv-d: 0s;">
       <h2>Formules et tarifs</h2>
       <p class="vat-note">Prix nets : TVA non applicable (art. 293 B du CGI). Le prix affiché est le prix payé, sans calcul supplémentaire.</p>
       <div class="fx-list">
-        <div class="fx" data-fx="deco">
+        <div class="fx rv" data-fx="deco" style="--rv-d: 0s;">
     <button type="button" class="fx-head" aria-expanded="false">
       <img class="formula-photo fx-thumb" src="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/formulas/corporate-deco.webp" alt="" loading="lazy" decoding="async" data-fb="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/services/corporate.webp" onerror="var f=this.dataset.fb;if(f){this.dataset.fb='';this.src=f}else{this.remove()}">
       <span class="fx-title"><b>Découverte</b><em>Pour découvrir</em><small>5 jours ouvrés</small></span>
@@ -1202,11 +1203,12 @@
     <div class="fx-panel"><div class="fx-body">
       <img class="formula-photo fx-photo" src="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/formulas/corporate-deco.webp" alt="" loading="lazy" decoding="async" data-fb="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/services/corporate.webp" onerror="var f=this.dataset.fb;if(f){this.dataset.fb='';this.src=f}else{this.remove()}">
       <div class="fx-info">
+        <p class="fx-hint"><strong>Notre conseil :</strong> pour une photo de profil ou de signature de mail : 1 h de séance et 8 photos retouchées.</p>
         <ul class="svcp-list"><li>1h de séance — extérieur ou studio (+80€)</li><li>8 photos HD retouchées</li><li>Sélection guidée incluse</li><li>Galerie privée de téléchargement</li></ul>
         <div class="fx-actions"><a class="cta-primary" href="/devis/" data-quiz="corporate">Choisir cette formule</a></div>
       </div>
     </div></div>
-  </div><div class="fx" data-fx="sig">
+  </div><div class="fx rv" data-fx="sig" style="--rv-d: 0.07s;">
     <button type="button" class="fx-head" aria-expanded="false">
       <img class="formula-photo fx-thumb" src="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/formulas/corporate-sig.webp" alt="" loading="lazy" decoding="async" data-fb="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/services/corporate.webp" onerror="var f=this.dataset.fb;if(f){this.dataset.fb='';this.src=f}else{this.remove()}">
       <span class="fx-title"><b>Signature</b><small>7 jours ouvrés</small></span>
@@ -1216,11 +1218,12 @@
     <div class="fx-panel"><div class="fx-body">
       <img class="formula-photo fx-photo" src="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/formulas/corporate-sig.webp" alt="" loading="lazy" decoding="async" data-fb="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/services/corporate.webp" onerror="var f=this.dataset.fb;if(f){this.dataset.fb='';this.src=f}else{this.remove()}">
       <div class="fx-info">
+        <p class="fx-hint"><strong>Notre conseil :</strong> pour varier les cadrages (profil, site, presse) : 2 h de séance, 15 photos retouchées et direction de pose.</p>
         <ul class="svcp-list"><li>2h de séance</li><li>15 photos HD retouchées</li><li>Direction de pose incluse</li><li>Galerie privée de téléchargement</li></ul>
         <div class="fx-actions"><a class="cta-primary" href="/devis/" data-quiz="corporate">Choisir cette formule</a></div>
       </div>
     </div></div>
-  </div><div class="fx open" data-fx="prem">
+  </div><div class="fx open rv" data-fx="prem" style="--rv-d: 0.14s;">
     <button type="button" class="fx-head" aria-expanded="true">
       <img class="formula-photo fx-thumb" src="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/formulas/corporate-prem.webp" alt="" loading="lazy" decoding="async" data-fb="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/services/corporate.webp" onerror="var f=this.dataset.fb;if(f){this.dataset.fb='';this.src=f}else{this.remove()}">
       <span class="fx-title"><b>Premium</b><em>Le plus choisi</em><small>7 jours ouvrés</small></span>
@@ -1230,11 +1233,12 @@
     <div class="fx-panel"><div class="fx-body">
       <img class="formula-photo fx-photo" src="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/formulas/corporate-prem.webp" alt="" loading="lazy" decoding="async" data-fb="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/services/corporate.webp" onerror="var f=this.dataset.fb;if(f){this.dataset.fb='';this.src=f}else{this.remove()}">
       <div class="fx-info">
+        <p class="fx-hint"><strong>Notre conseil :</strong> pour couvrir plusieurs usages et tenues : une demi-journée, jusqu'à 2 ambiances, 2 tenues et 25 photos.</p>
         <ul class="svcp-list"><li>Demi-journée (4h) — jusqu'à 2 ambiances</li><li>25 photos HD retouchées</li><li>2 tenues différentes</li><li>Direction artistique complète</li><li>Galerie privée de téléchargement</li></ul>
         <div class="fx-actions"><a class="cta-primary" href="/devis/" data-quiz="corporate">Choisir cette formule</a></div>
       </div>
     </div></div>
-  </div><div class="fx" data-fx="edit">
+  </div><div class="fx rv" data-fx="edit" style="--rv-d: 0.21000000000000002s;">
     <button type="button" class="fx-head" aria-expanded="false">
       <img class="formula-photo fx-thumb" src="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/formulas/corporate-edit.webp" alt="" loading="lazy" decoding="async" data-fb="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/services/corporate.webp" onerror="var f=this.dataset.fb;if(f){this.dataset.fb='';this.src=f}else{this.remove()}">
       <span class="fx-title"><b>Éditorial Bunkaio</b><em>Expérience complète</em><small>10 jours ouvrés</small></span>
@@ -1244,6 +1248,7 @@
     <div class="fx-panel"><div class="fx-body">
       <img class="formula-photo fx-photo" src="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/formulas/corporate-edit.webp" alt="" loading="lazy" decoding="async" data-fb="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/services/corporate.webp" onerror="var f=this.dataset.fb;if(f){this.dataset.fb='';this.src=f}else{this.remove()}">
       <div class="fx-info">
+        <p class="fx-hint"><strong>Notre conseil :</strong> pour une série complète : une journée, 4 lieux, 4 tenues, 30 photos et un film court de 30 secondes.</p>
         <ul class="svcp-list"><li>Journée complète — 4 lieux différents</li><li>4 tenues différentes</li><li>30 photos HD retouchées</li><li>1 film court (30 secondes)</li><li>Direction artistique &amp; stylisme</li><li>Publication sur les supports Bunkaio</li></ul>
         <div class="fx-actions"><a class="cta-primary" href="/devis/" data-quiz="corporate">Choisir cette formule</a></div>
       </div>
@@ -1254,9 +1259,9 @@
       
     </section>
 
-    <section class="read-panel svcp-panel"><h2>Quelle formule choisir ?</h2><ul class="svcp-list"><li><strong>Découverte — 390 €</strong> : pour une photo de profil ou de signature de mail : 1 h de séance et 8 photos retouchées.</li><li><strong>Signature — 690 €</strong> : pour varier les cadrages (profil, site, presse) : 2 h de séance, 15 photos retouchées et direction de pose.</li><li><strong>Premium — 1 090 €</strong> : pour couvrir plusieurs usages et tenues : une demi-journée, jusqu'à 2 ambiances, 2 tenues et 25 photos.</li><li><strong>Éditorial Bunkaio — 1 790 €</strong> : pour une série complète : une journée, 4 lieux, 4 tenues, 30 photos et un film court de 30 secondes.</li></ul></section>
+    
 
-    <section class="read-panel svcp-panel svcp-two">
+    <section class="read-panel svcp-panel svcp-two rv" style="--rv-d: 0.07s;">
       <div>
         <h2>Comment ça se passe</h2>
         <ol class="about-list about-steps"><li>Devis personnalisé sous 48 h</li><li>Shooting à la date convenue</li><li>Retouche et post-production</li><li>Livraison en HD dans une galerie privée, depuis votre espace client</li></ol>
@@ -1268,10 +1273,10 @@
       </div>
     </section>
 
-    <section class="read-panel svcp-panel">
+    <section class="read-panel svcp-panel rv" style="--rv-d: 0.14s;">
       <h2>Questions fréquentes</h2>
       <div id="servicePageFaq" data-exclusive="1">
-    <div class="accordion-item">
+    <div class="accordion-item rv" style="--rv-d: 0s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
         <span>Quels sont les tarifs ?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
@@ -1280,7 +1285,7 @@
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><ul class="svcp-list"><li><strong>Découverte</strong> — 390 €</li><li><strong>Signature</strong> — 690 €</li><li><strong>Premium</strong> — 1 090 €</li><li><strong>Éditorial Bunkaio</strong> — 1 790 €</li></ul></div>
       </div>
     </div>
-    <div class="accordion-item">
+    <div class="accordion-item rv" style="--rv-d: 0.07s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
         <span>Dans quels délais reçoit-on les photos ?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
@@ -1289,7 +1294,7 @@
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><ul class="svcp-list"><li><strong>Découverte</strong> — 5 jours ouvrés</li><li><strong>Signature</strong> — 7 jours ouvrés</li><li><strong>Premium</strong> — 7 jours ouvrés</li><li><strong>Éditorial Bunkaio</strong> — 10 jours ouvrés</li></ul><p>Les délais démarrent à la date du shooting, hors demandes de retouches complémentaires.</p></div>
       </div>
     </div>
-    <div class="accordion-item">
+    <div class="accordion-item rv" style="--rv-d: 0.14s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
         <span>Combien de photos sont livrées ?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
@@ -1298,7 +1303,7 @@
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><ul class="svcp-list"><li><strong>Découverte</strong> — 8 photos HD retouchées</li><li><strong>Signature</strong> — 15 photos HD retouchées</li><li><strong>Premium</strong> — 25 photos HD retouchées</li><li><strong>Éditorial Bunkaio</strong> — 30 photos HD retouchées</li></ul></div>
       </div>
     </div>
-    <div class="accordion-item">
+    <div class="accordion-item rv" style="--rv-d: 0.21000000000000002s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
         <span>Quelles formules incluent de la vidéo ?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
@@ -1307,7 +1312,7 @@
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><ul class="svcp-list"><li><strong>Éditorial Bunkaio</strong> — 1 film court (30 secondes)</li></ul></div>
       </div>
     </div>
-    <div class="accordion-item">
+    <div class="accordion-item rv" style="--rv-d: 0.28s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
         <span>Combien de temps dure la prestation ?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
@@ -1320,7 +1325,7 @@
     </section>
 
     
-    <section class="read-panel svcp-panel">
+    <section class="read-panel svcp-panel rv" style="--rv-d: 0.21000000000000002s;">
       <h2>Nos conseils pour bien préparer</h2>
       <div class="advice-grid adv-row"><a class="advice-card" href="/conseils/portrait-professionnel-photo-profil-linkedin/" data-nav="article:portrait-professionnel-photo-profil-linkedin">
     <span class="advice-card-meta">4 min de lecture</span>
@@ -1329,11 +1334,11 @@
     <span class="advice-card-more">Lire le guide →</span>
   </a></div>
     </section>
-    <section class="read-panel svcp-panel svcp-others">
+    <section class="read-panel svcp-panel svcp-others rv" style="--rv-d: 0.28s;">
       <h2>Autres prestations</h2>
       <div class="svcp-others-row">
-        <a class="svcp-chip" href="/services/seance-photo-particuliers/" onclick="return navLink(event,'service','photo-part')">Séance photo — particuliers</a><a class="svcp-chip" href="/services/photographe-mode-mannequins/" onclick="return navLink(event,'service','mode')">Mode, agence et mannequins</a><a class="svcp-chip" href="/services/photo-produits-packshots/" onclick="return navLink(event,'service','commercial')">Commercial &amp; produits</a><a class="svcp-chip" href="/services/photographe-evenementiel/" onclick="return navLink(event,'service','event')">Événementiel</a><a class="svcp-chip" href="/services/photobooth-ia-mariage-lumen/" onclick="return navLink(event,'service','lumen')">Lumen</a>
-        <a class="svcp-chip" href="/services/" onclick="return navLink(event,'services')">Tout le catalogue</a>
+        <a class="svcp-chip rv" href="/services/seance-photo-particuliers/" onclick="return navLink(event,'service','photo-part')" style="--rv-d: 0s;">Séance photo — particuliers</a><a class="svcp-chip rv" href="/services/photographe-mode-mannequins/" onclick="return navLink(event,'service','mode')" style="--rv-d: 0.07s;">Mode, agence et mannequins</a><a class="svcp-chip rv" href="/services/photo-produits-packshots/" onclick="return navLink(event,'service','commercial')" style="--rv-d: 0.14s;">Commercial &amp; produits</a><a class="svcp-chip rv" href="/services/photographe-evenementiel/" onclick="return navLink(event,'service','event')" style="--rv-d: 0.21000000000000002s;">Événementiel</a><a class="svcp-chip rv" href="/services/photobooth-ia-mariage-lumen/" onclick="return navLink(event,'service','lumen')" style="--rv-d: 0.28s;">Lumen</a>
+        <a class="svcp-chip rv" href="/services/" onclick="return navLink(event,'services')" style="--rv-d: 0.35000000000000003s;">Tout le catalogue</a>
       </div>
     </section>
     <div class="svcp-back-row"><a class="svcp-back" href="/services/" onclick="return navLink(event,'services')"><span aria-hidden="true">←</span> Retour au catalogue</a></div><!--/snap--></div></div>
@@ -1969,6 +1974,6 @@
 <script src="config/articles.en.js?v=f5e9d676"></script>
 <script src="config/routes.js?v=32eeabdd"></script>
 <script src="config/media.js?v=e515354a"></script>
-<script src="js/script.min.js?v=876bf903"></script>
+<script src="js/script.min.js?v=7621ad72"></script>
 </body>
 </html>

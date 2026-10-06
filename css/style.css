@@ -4161,3 +4161,49 @@ a.hero-start { text-decoration: none; display: inline-flex; align-items: center;
   .adv-row::-webkit-scrollbar { display: none; }
   .adv-row .advice-card { flex: 0 0 78%; scroll-snap-align: start; }
 }
+
+/* ═══ Animations et transitions (transform / opacity uniquement ; désactivées si l'utilisateur le demande) ═══ */
+.fx-hint { margin: 0 0 10px; font-size: 13px; line-height: 1.6; color: #4b3d7a; }
+.fx-hint strong { color: var(--black); }
+.rv { transition-delay: var(--rv-d, 0s); }
+#scrollProgress { position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 200; background: linear-gradient(90deg, #6e5aa8, #cbbdf2); transform-origin: 0 50%; transform: scaleX(0); pointer-events: none; }
+/* Filet d'accent qui se dessine sous les titres des panneaux */
+.read-panel > h2::after, .svcp-panel > h2::after { content: ''; display: block; width: 44px; height: 3px; margin-top: 10px; border-radius: 3px; background: #6e5aa8; transform: scaleX(0); transform-origin: 0 50%; transition: transform 0.9s var(--ease-luxe, ease) 0.25s; }
+.read-panel.in > h2::after, .svcp-panel.in > h2::after, .read-panel:not(.rv) > h2::after, .svcp-panel:not(.rv) > h2::after { transform: scaleX(1); }
+/* Retours de survol / appui */
+.fx, .advice-card, .service-card, .svcp-chip, .tier-card, .drone-price-card { transition: transform 0.45s var(--ease-luxe, ease), box-shadow 0.45s, border-color 0.3s, opacity 0.9s var(--ease), background 0.3s; }
+@media (hover: hover) {
+  .fx:not(.open):hover, .advice-card:hover, .svcp-chip:hover, .drone-price-card:hover { transform: translateY(-4px); box-shadow: 0 16px 34px rgba(10,10,12,0.12); }
+  .cta-primary, .btn, .hero-start, .nav-cta { transition: transform 0.35s var(--ease-luxe, ease), box-shadow 0.35s, background 0.3s, color 0.3s; }
+  .cta-primary:hover, .hero-start:hover, .nav-cta:hover { transform: translateY(-2px); }
+  .svcp-link, .ms-link, .service-more, .art-link { background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; transition: background-size 0.4s var(--ease-luxe, ease); text-decoration: none; }
+  .svcp-link:hover, .ms-link:hover, .service-more:hover { background-size: 100% 1px; }
+}
+a, button { -webkit-tap-highlight-color: rgba(110,90,168,0.18); }
+.cta-primary:active, .btn:active, .hero-start:active, .nav-cta:active, .fx-head:active, .ms-pill:active { transform: scale(0.98); }
+/* Pages : entrée un peu plus douce */
+.view.active { animation-duration: 0.7s; }
+/* Accordéons de formule : le contenu apparaît en cascade à l'ouverture */
+.fx.open .fx-body > * { animation: fxIn 0.55s var(--ease-luxe, ease) both; }
+.fx.open .fx-body > *:nth-child(2) { animation-delay: 0.08s; }
+@keyframes fxIn { from { opacity: 0; transform: translateY(10px); } }
+.fx.open .svcp-list li { animation: fxIn 0.5s var(--ease-luxe, ease) both; }
+.fx.open .svcp-list li:nth-child(2) { animation-delay: 0.06s; } .fx.open .svcp-list li:nth-child(3) { animation-delay: 0.12s; } .fx.open .svcp-list li:nth-child(4) { animation-delay: 0.18s; } .fx.open .svcp-list li:nth-child(5) { animation-delay: 0.24s; }
+/* Photo de présentation : léger zoom d'apparition */
+.svcp-figure img, .about-photo, .art-hero img { transition: transform 1.2s var(--ease-luxe, ease), filter 0.8s; }
+.svcp-figure:hover img, .art-hero:hover img { transform: scale(1.04); }
+/* Étapes « Comment ça se passe » : grille compacte */
+.about-steps { counter-reset: st; }
+@media (max-width: 700px) {
+  .svcp-two .about-steps { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .svcp-two .about-steps li { flex-direction: column; align-items: flex-start; gap: 8px; background: #f6f3fb; border-radius: 12px; padding: 12px; font-size: 12.5px; line-height: 1.45; }
+  .svcp-figure { max-height: 210px; overflow: hidden; border-radius: 14px; }
+  .svcp-figure img { width: 100%; height: 210px; object-fit: cover; object-position: center 22%; }
+  .svcp-lead-grid.has-figure { gap: 14px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rv { opacity: 1 !important; transform: none !important; transition: none !important; }
+  #scrollProgress { display: none; }
+  .fx.open .fx-body > *, .fx.open .svcp-list li { animation: none; }
+  .read-panel > h2::after, .svcp-panel > h2::after { transform: scaleX(1); transition: none; }
+}

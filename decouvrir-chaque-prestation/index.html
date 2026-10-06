@@ -31,7 +31,7 @@
 <link rel="icon" type="image/png" sizes="64x64" href="/images/favicon-64.png">
 <link rel="apple-touch-icon" href="/images/apple-touch-icon.png"><text y='0.9em' font-size='80' font-family='serif'>⊹</text></svg>">
 <link rel="preload" href="fonts/dm-sans-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/style.min.css?v=74e44350">
+<link rel="stylesheet" href="css/style.min.css?v=a6d20384">
 
 <script type="application/ld+json">
 {
@@ -390,6 +390,7 @@
 <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
 
 <a class="skip-link" href="#main" onclick="var m=document.getElementById('main');if(m){m.focus();}return false;" data-lang="skip-link">Aller au contenu</a>
+<div id="scrollProgress" aria-hidden="true"></div>
 <header>
 <nav>
   <div class="nav-inner">
@@ -1271,7 +1272,7 @@
     </li></ul>
     </section>
 
-    <section class="read-panel svcp-panel">
+    <section class="read-panel svcp-panel rv" style="--rv-d: 0s;">
       <h2>Comment ça se passe</h2>
       <ol class="disc-steps" data-loop-bound="1"><li class="disc-step"><b>01</b><span>Devis personnalisé sous 48 h</span></li><li class="disc-step"><b>02</b><span>Shooting à la date convenue</span></li><li class="disc-step"><b>03</b><span>Retouche et post-production</span></li><li class="disc-step"><b>04</b><span>Livraison en HD dans une galerie privée, depuis votre espace client</span></li></ol>
       <ul class="disc-why">
@@ -1283,10 +1284,10 @@
       <p class="svcp-text disc-author">Par Aya Nascimento, photographe diplômée de l'ETPA (BTS Photographie, 2018), plus de 8 ans d'expérience et plus de 200 projets : <a href="/a-propos/" data-nav="about">en savoir plus</a>.</p>
     </section>
 
-    <section class="read-panel svcp-panel">
+    <section class="read-panel svcp-panel rv" style="--rv-d: 0.07s;">
       <h2>Questions fréquentes</h2>
       <div id="discoverFaq" data-exclusive="1">
-    <div class="accordion-item">
+    <div class="accordion-item rv" style="--rv-d: 0s;">
       <button class="accordion-trigger" aria-expanded="true" onclick="toggleAccordion(this)">
         <span>Comment choisir ma prestation ?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
@@ -1295,7 +1296,7 @@
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><ul class="svcp-list"><li><strong>Séance photo — particuliers</strong> — Particuliers : portrait, lifestyle, couple, famille ou groupe.</li><li><strong>Corporate — portraits professionnels</strong> — Dirigeants, entreprises individuelles et équipes.</li><li><strong>Mode, agence et mannequins</strong> — Mannequins, modèles émergents, créateurs de contenu, marques et agences.</li><li><strong>Commercial &amp; produits</strong> — Marques, artisans, entreprises individuelles, restaurateurs et agences.</li><li><strong>Événementiel</strong> — Domaines, entreprises, organisateurs et lieux de réception.</li><li><strong>Lumen</strong> — Mariages, wedding planners, domaines et événements haut de gamme.</li></ul><p>Un doute entre deux prestations ? Le devis en ligne vous guide en quelques questions.</p></div>
       </div>
     </div>
-    <div class="accordion-item">
+    <div class="accordion-item rv" style="--rv-d: 0.07s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
         <span>Quels sont les délais et les tarifs ?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
@@ -1304,7 +1305,7 @@
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>Livraison entre 3 et 10 jours ouvrés après le shooting, selon la prestation. Tarifs de départ : Séance photo — particuliers dès 290 € · Corporate — portraits professionnels dès 390 € · Mode, agence et mannequins dès 590 € · Commercial &amp; produits dès 390 € · Événementiel dès 450 € · Lumen dès 690 €. <a href="/services/" data-nav="services">Voir les formules</a>.</p></div>
       </div>
     </div>
-    <div class="accordion-item">
+    <div class="accordion-item rv" style="--rv-d: 0.14s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
         <span>Où intervenez-vous ?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
@@ -1315,7 +1316,7 @@
     </div></div>
     </section>
 
-    <section class="read-panel svcp-panel article-cta">
+    <section class="read-panel svcp-panel article-cta rv" style="--rv-d: 0.14s;">
       <h2>Prêt à lancer votre projet ?</h2>
       <p class="svcp-text">Proposition chiffrée sous 48 h, sans engagement. Un doute ? Lisez nos guides, comme <a href="/conseils/combien-coute-une-seance-photo/" data-nav="article:combien-coute-une-seance-photo">combien coûte une séance photo</a>, ou <a href="/contact/" data-nav="contact">écrivez-nous</a>.</p>
       <div class="svcp-cta-row" style="margin:0"><a class="cta-primary" href="/devis/" data-quiz="">Estimer mon projet</a></div>
@@ -1960,6 +1961,6 @@
 <script src="config/articles.en.js?v=f5e9d676"></script>
 <script src="config/routes.js?v=32eeabdd"></script>
 <script src="config/media.js?v=e515354a"></script>
-<script src="js/script.min.js?v=876bf903"></script>
+<script src="js/script.min.js?v=7621ad72"></script>
 </body>
 </html>

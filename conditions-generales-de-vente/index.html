@@ -31,7 +31,7 @@
 <link rel="icon" type="image/png" sizes="64x64" href="/images/favicon-64.png">
 <link rel="apple-touch-icon" href="/images/apple-touch-icon.png"><text y='0.9em' font-size='80' font-family='serif'>⊹</text></svg>">
 <link rel="preload" href="fonts/dm-sans-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/style.min.css?v=74e44350">
+<link rel="stylesheet" href="css/style.min.css?v=a6d20384">
 
 <script type="application/ld+json">
 {
@@ -338,6 +338,7 @@
 <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
 
 <a class="skip-link" href="#main" onclick="var m=document.getElementById('main');if(m){m.focus();}return false;" data-lang="skip-link">Aller au contenu</a>
+<div id="scrollProgress" aria-hidden="true"></div>
 <header>
 <nav>
   <div class="nav-inner">
@@ -1393,7 +1394,7 @@
     <!-- Conditions générales de vente -->
     <div id="lsec-cgv">
       <div id="cgvAccordion"><!--snap-->
-    <div class="accordion-item">
+    <div class="accordion-item rv" style="--rv-d: 0s;">
       <button class="accordion-trigger" aria-expanded="true" onclick="toggleAccordion(this)">
         <span>1. Objet et champ d'application</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
@@ -1402,7 +1403,7 @@
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>Les présentes conditions générales de vente (CGV) s'appliquent à toutes les prestations de photographie et de vidéo proposées par <strong>BUNKAIO</strong>, Entreprise Individuelle (Aya Nascimento), SIRET 951 547 587 00034, France, à des clients particuliers (consommateurs) comme à des clients professionnels.</p><p>Chaque prestation fait l'objet d'un devis personnalisé. En cas de différence entre les CGV et le devis signé, <strong>le devis signé prévaut</strong>. Toute commande implique l'acceptation des CGV.</p><p><em>Version du 6 octobre 2026.</em></p></div>
       </div>
     </div>
-    <div class="accordion-item">
+    <div class="accordion-item rv" style="--rv-d: 0.07s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
         <span>2. Devis et commande</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
@@ -1411,7 +1412,7 @@
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>Le devis est gratuit et valable pendant la durée indiquée sur le document. Il précise la prestation, la date et le lieu prévus, le délai de livraison, le prix, les droits cédés et les conditions particulières.</p><p>La commande est ferme à la <strong>signature électronique</strong> du devis par le client (nom, date, heure, adresse IP et empreinte du devis enregistrés comme preuve). Un exemplaire signé est envoyé par email.</p></div>
       </div>
     </div>
-    <div class="accordion-item">
+    <div class="accordion-item rv" style="--rv-d: 0.14s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
         <span>3. Prix</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
@@ -1420,7 +1421,7 @@
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>Les prix sont indiqués en euros. BUNKAIO bénéficie de la franchise en base de TVA : <strong>TVA non applicable, art. 293 B du CGI</strong> : les prix affichés sont des prix nets, sans TVA à ajouter, et correspondent au montant réellement facturé. Le prix applicable est celui du devis signé. Les frais de déplacement éventuels y sont précisés.</p></div>
       </div>
     </div>
-    <div class="accordion-item">
+    <div class="accordion-item rv" style="--rv-d: 0.21000000000000002s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
         <span>4. Paiement</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
@@ -1429,7 +1430,7 @@
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>Sauf mention contraire au devis : un <strong>acompte de 30 %</strong> est payable à la signature (il réserve la date et le créneau) ; le <strong>solde de 70 %</strong> est facturé lorsque les photos sont prêtes, et son règlement donne accès à l'album.</p><p>Moyens de paiement : carte bancaire, ou paiement en 3 fois sans frais avec Klarna selon éligibilité. Les paiements sont traités de façon sécurisée par Stripe ; BUNKAIO ne conserve aucune donnée de carte.</p><p>Abonnement « Studio Continu » : facturation mensuelle par carte bancaire, sans acompte ni solde, dans les conditions précisées au devis.</p><p><strong>Clients professionnels :</strong> tout retard de paiement entraîne de plein droit des pénalités au taux de trois fois le taux d'intérêt légal et une indemnité forfaitaire de recouvrement de 40 € (art. L441-10 du Code de commerce).</p></div>
       </div>
     </div>
-    <div class="accordion-item">
+    <div class="accordion-item rv" style="--rv-d: 0.28s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
         <span>5. Report et annulation</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
@@ -1438,7 +1439,7 @@
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>L'acompte réserve la date et le créneau. Une fois le devis validé, il <strong>reste acquis à BUNKAIO et n'est pas remboursé en cas d'annulation par le client</strong>.</p><p>Le client peut reporter la prestation <strong>une fois, sans frais, s'il prévient au moins 7 jours avant</strong> ; au-delà, ou en cas de second report, un nouvel acompte peut être demandé.</p><p>En cas d'empêchement de BUNKAIO ou de force majeure (maladie, météo pour une séance en extérieur), la prestation est reportée sans frais à une date convenue ensemble.</p></div>
       </div>
     </div>
-    <div class="accordion-item">
+    <div class="accordion-item rv" style="--rv-d: 0.35000000000000003s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
         <span>6. Réalisation et livraison</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
@@ -1447,7 +1448,7 @@
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>BUNKAIO réalise la prestation avec soin et dispose de la liberté artistique dans le cadre convenu. Le client veille à être présent, à l'heure et à fournir les informations nécessaires.</p><p>Les visuels sont livrés dans un <strong>album privé Adobe Lightroom</strong> (création d'un compte Adobe Lightroom par le client), dans le délai indiqué au devis. Un aller-retour de corrections est inclus ; les demandes supplémentaires sont facturées selon un tarif convenu à l'avance.</p><p>BUNKAIO sélectionne et retouche les visuels livrés ; les fichiers non retenus et les fichiers sources (RAW) ne sont pas cédés. Les fichiers livrés sont conservés <strong>12 mois</strong> après la livraison : le client est invité à les exporter et à les sauvegarder.</p></div>
       </div>
     </div>
-    <div class="accordion-item">
+    <div class="accordion-item rv" style="--rv-d: 0.35000000000000003s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
         <span>7. Droits d'auteur et cession</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
@@ -1456,7 +1457,7 @@
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>BUNKAIO conserve l'intégralité de ses droits d'auteur, y compris le droit moral. Les droits d'utilisation (reproduction et représentation) sont cédés au client dans les limites précisées au devis : <strong>destination, étendue, territoire et durée</strong> (art. L131-3 du Code de la propriété intellectuelle). Tout usage non prévu nécessite un accord écrit préalable.</p><p><strong>La cession est subordonnée au paiement intégral du prix.</strong> Le client demande, dans la mesure du possible, la mention « Photo : BUNKAIO » lors de toute publication, et s'interdit de dénaturer les visuels (recadrages et déclinaisons de format autorisés).</p><p>Le client choisit à la signature d'autoriser ou non BUNKAIO à utiliser les visuels pour son portfolio et sa communication ; ce choix n'a aucune incidence sur la prestation ni sur le prix.</p></div>
       </div>
     </div>
-    <div class="accordion-item">
+    <div class="accordion-item rv" style="--rv-d: 0.35000000000000003s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
         <span>8. Droit de rétractation (consommateurs)</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
@@ -1465,7 +1466,7 @@
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>Le client consommateur dispose de <strong>14 jours à compter de la signature du devis</strong> pour se rétracter, sans motif, en écrivant à <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a>.</p><p>Si la prestation est prévue avant la fin de ce délai, le client peut demander expressément (case à cocher à la signature) qu'elle commence avant son expiration. S'il se rétracte après le début de la prestation, il paie la part déjà exécutée ; il perd son droit de rétractation une fois la prestation pleinement exécutée, avec son accord préalable exprès et sa renonciation à ce droit.</p><p>Ce droit ne s'applique pas aux clients professionnels agissant dans le cadre de leur activité.</p></div>
       </div>
     </div>
-    <div class="accordion-item">
+    <div class="accordion-item rv" style="--rv-d: 0.35000000000000003s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
         <span>9. Responsabilité</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
@@ -1474,7 +1475,7 @@
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>BUNKAIO est tenue d'une obligation de moyens. Elle est responsable des dommages résultant de sa faute dans les conditions du droit commun ; <strong>à l'égard des clients professionnels</strong>, sa responsabilité est limitée au montant de la prestation, hors faute lourde ou dolosive. Elle ne répond pas des retards ou impossibilités dus à un cas de force majeure.</p><p>En cas de perte ou de détérioration des fichiers non imputable à BUNKAIO après le délai de conservation, aucune responsabilité ne peut lui être imputée.</p></div>
       </div>
     </div>
-    <div class="accordion-item">
+    <div class="accordion-item rv" style="--rv-d: 0.35000000000000003s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
         <span>10. Données personnelles</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
@@ -1483,7 +1484,7 @@
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>Les données collectées servent uniquement à la gestion de votre devis, de votre prestation et de la relation commerciale. Pour en savoir plus et exercer vos droits, consultez notre <a href="/confidentialite/" onclick="return navLink(event,'legal','privacy')">politique de confidentialité</a>.</p></div>
       </div>
     </div>
-    <div class="accordion-item">
+    <div class="accordion-item rv" style="--rv-d: 0.35000000000000003s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
         <span>11. Médiation de la consommation</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
@@ -1492,7 +1493,7 @@
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>Pour toute réclamation, écrivez d'abord à <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a> : nous nous engageons à vous répondre rapidement.</p><p>en cas de litige non résolu avec BUNKAIO, le client consommateur peut recourir gratuitement à un médiateur de la consommation, après une première réclamation écrite adressée à <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a>. Les coordonnées du médiateur sont communiquées sur demande.</p></div>
       </div>
     </div>
-    <div class="accordion-item">
+    <div class="accordion-item rv" style="--rv-d: 0.35000000000000003s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
         <span>12. Droit applicable et litiges</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
@@ -1854,6 +1855,6 @@
 <script src="config/articles.en.js?v=f5e9d676"></script>
 <script src="config/routes.js?v=32eeabdd"></script>
 <script src="config/media.js?v=e515354a"></script>
-<script src="js/script.min.js?v=876bf903"></script>
+<script src="js/script.min.js?v=7621ad72"></script>
 </body>
 </html>

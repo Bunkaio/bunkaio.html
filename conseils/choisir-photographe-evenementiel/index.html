@@ -32,7 +32,7 @@
 <link rel="icon" type="image/png" sizes="64x64" href="/images/favicon-64.png">
 <link rel="apple-touch-icon" href="/images/apple-touch-icon.png"><text y='0.9em' font-size='80' font-family='serif'>⊹</text></svg>">
 <link rel="preload" href="fonts/dm-sans-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/style.min.css?v=74e44350">
+<link rel="stylesheet" href="css/style.min.css?v=a6d20384">
 
 <script type="application/ld+json">
 {
@@ -435,6 +435,7 @@
 <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
 
 <a class="skip-link" href="#main" onclick="var m=document.getElementById('main');if(m){m.focus();}return false;" data-lang="skip-link">Aller au contenu</a>
+<div id="scrollProgress" aria-hidden="true"></div>
 <header>
 <nav>
   <div class="nav-inner">
@@ -1217,56 +1218,56 @@
     <article class="read-panel svcp-panel article">
       <div class="article-summary"><strong>En bref</strong><ul><li>Définissez les moments clés et l'usage des photos (souvenirs, communication).</li><li>Comparez les portfolios sur des événements similaires au vôtre.</li><li>Vérifiez le devis : durée, délais, droits d'utilisation, déplacement.</li><li>Transmettez un déroulé et une liste de personnes ou moments à ne pas manquer.</li><li>Prévenez les invités et les contraintes du lieu (lumière, accès).</li></ul></div>
       <div class="art-toolbar"><span>8 rubriques</span><button type="button" class="art-all" data-acc-all="#artAcc" data-label-open="Tout déplier" data-label-close="Tout replier">Tout déplier</button></div>
-      <div class="cs-acc art-acc acc-multi" id="artAcc"><section class="cs-acc-item art-item open">
+      <div class="cs-acc art-acc acc-multi" id="artAcc"><section class="cs-acc-item art-item open rv" style="--rv-d: 0s;">
           <h2 class="art-h2"><button type="button" class="cs-acc-head art-head" aria-expanded="true"><span class="art-n">01</span><svg class="art-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"></path><circle cx="12" cy="9.5" r="2.6"></circle></svg><span class="art-t">Définir vos besoins</span><i class="cs-acc-chev" aria-hidden="true"></i></button></h2>
           <div class="cs-acc-panel"><div class="art-body"><svg class="art-illus" viewBox="0 0 120 120" aria-hidden="true">
     <rect width="120" height="120" rx="28" fill="#efeaf8"></rect>
     <circle cx="96" cy="24" r="11" fill="#dccff2"></circle><circle cx="22" cy="98" r="7" fill="#e6def5"></circle><circle cx="101" cy="92" r="4" fill="#b9a6dc"></circle>
     <g transform="translate(24 24) scale(3)" fill="none" stroke="#4b3d7a" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"></path><circle cx="12" cy="9.5" r="2.6"></circle></g>
   </svg><div class="art-text"><p>Commencez par clarifier l'objectif : <strong>souvenirs</strong> pour des invités, <strong>communication</strong> pour une entreprise, contenu pour les réseaux sociaux ? Notez la durée, le lieu, le nombre d'invités et les moments à ne pas manquer (arrivée, discours, remises, cocktail, portraits de groupe).</p></div></div></div>
-        </section><section class="cs-acc-item art-item">
+        </section><section class="cs-acc-item art-item rv" style="--rv-d: 0.07s;">
           <h2 class="art-h2"><button type="button" class="cs-acc-head art-head" aria-expanded="false"><span class="art-n">02</span><svg class="art-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="4" x2="12" y2="20"></line><line x1="7" y1="20" x2="17" y2="20"></line><path d="M5 7h14"></path><path d="M5 7l-3 7a3 3 0 0 0 6 0z"></path><path d="M19 7l-3 7a3 3 0 0 0 6 0z"></path></svg><span class="art-t">Les critères pour choisir</span><i class="cs-acc-chev" aria-hidden="true"></i></button></h2>
           <div class="cs-acc-panel"><div class="art-body"><svg class="art-illus" viewBox="0 0 120 120" aria-hidden="true">
     <rect width="120" height="120" rx="28" fill="#efeaf8"></rect>
     <circle cx="96" cy="24" r="11" fill="#dccff2"></circle><circle cx="22" cy="98" r="7" fill="#e6def5"></circle><circle cx="101" cy="92" r="4" fill="#b9a6dc"></circle>
     <g transform="translate(24 24) scale(3)" fill="none" stroke="#4b3d7a" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="4" x2="12" y2="20"></line><line x1="7" y1="20" x2="17" y2="20"></line><path d="M5 7h14"></path><path d="M5 7l-3 7a3 3 0 0 0 6 0z"></path><path d="M19 7l-3 7a3 3 0 0 0 6 0z"></path></g>
   </svg><div class="art-text"><ul><li><strong>Le portfolio</strong> : cherchez des événements proches du vôtre (domaine, entreprise, réception).</li><li><strong>Le style</strong> : reportage discret, images posées, ambiance lumineuse ou plus contrastée.</li><li><strong>La discrétion et la réactivité</strong> : un bon photographe d'événement se fait oublier tout en capturant l'instant.</li><li><strong>Le cadre contractuel</strong> : durée de couverture, délais de livraison, droits d'utilisation, frais de déplacement.</li><li><strong>La transparence du devis</strong> : ce qui est inclus, ce qui est optionnel.</li></ul></div></div></div>
-        </section><section class="cs-acc-item art-item">
+        </section><section class="cs-acc-item art-item rv" style="--rv-d: 0.14s;">
           <h2 class="art-h2"><button type="button" class="cs-acc-head art-head" aria-expanded="false"><span class="art-n">03</span><svg class="art-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"></rect><line x1="8" y1="3" x2="8" y2="7"></line><line x1="16" y1="3" x2="16" y2="7"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg><span class="art-t">Les questions à poser avant de réserver</span><i class="cs-acc-chev" aria-hidden="true"></i></button></h2>
           <div class="cs-acc-panel"><div class="art-body"><svg class="art-illus" viewBox="0 0 120 120" aria-hidden="true">
     <rect width="120" height="120" rx="28" fill="#efeaf8"></rect>
     <circle cx="96" cy="24" r="11" fill="#dccff2"></circle><circle cx="22" cy="98" r="7" fill="#e6def5"></circle><circle cx="101" cy="92" r="4" fill="#b9a6dc"></circle>
     <g transform="translate(24 24) scale(3)" fill="none" stroke="#4b3d7a" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"></rect><line x1="8" y1="3" x2="8" y2="7"></line><line x1="16" y1="3" x2="16" y2="7"></line><line x1="3" y1="10" x2="21" y2="10"></line></g>
   </svg><div class="art-text"><ul><li>Quelle est la durée de couverture incluse et que se passe-t-il si l'événement se prolonge ?</li><li>Combien de photos retouchées seront livrées, sous quel délai, sous quelle forme ?</li><li>Les droits d'utilisation (usage commercial, durée) sont-ils précisés ?</li><li>Comment les photos sont-elles partagées (galerie privée, téléchargement) ?</li></ul></div></div></div>
-        </section><section class="cs-acc-item art-item">
+        </section><section class="cs-acc-item art-item rv" style="--rv-d: 0.21000000000000002s;">
           <h2 class="art-h2"><button type="button" class="cs-acc-head art-head" aria-expanded="false"><span class="art-n">04</span><svg class="art-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"></rect><polyline points="8.5 8.5 10 10 12.5 7"></polyline><line x1="8.5" y1="14" x2="15.5" y2="14"></line><line x1="8.5" y1="17.5" x2="13" y2="17.5"></line></svg><span class="art-t">Préparer l'événement</span><i class="cs-acc-chev" aria-hidden="true"></i></button></h2>
           <div class="cs-acc-panel"><div class="art-body"><svg class="art-illus" viewBox="0 0 120 120" aria-hidden="true">
     <rect width="120" height="120" rx="28" fill="#efeaf8"></rect>
     <circle cx="96" cy="24" r="11" fill="#dccff2"></circle><circle cx="22" cy="98" r="7" fill="#e6def5"></circle><circle cx="101" cy="92" r="4" fill="#b9a6dc"></circle>
     <g transform="translate(24 24) scale(3)" fill="none" stroke="#4b3d7a" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"></rect><polyline points="8.5 8.5 10 10 12.5 7"></polyline><line x1="8.5" y1="14" x2="15.5" y2="14"></line><line x1="8.5" y1="17.5" x2="13" y2="17.5"></line></g>
   </svg><div class="art-text"><p>Transmettez au photographe le <strong>déroulé</strong> (horaires, lieux, temps forts), la liste des personnes importantes et un <strong>contact sur place</strong>. Si possible, organisez un repérage du lieu pour anticiper la lumière, les accès et les contraintes. Informez les invités qu'un photographe est présent.</p></div></div></div>
-        </section><section class="cs-acc-item art-item">
+        </section><section class="cs-acc-item art-item rv" style="--rv-d: 0.28s;">
           <h2 class="art-h2"><button type="button" class="cs-acc-head art-head" aria-expanded="false"><span class="art-n">05</span><svg class="art-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18c1.4 0 2-1 1.6-2.1-.5-1.2.2-2.4 1.6-2.4H17a4 4 0 0 0 4-4C21 6.9 17 3 12 3z"></path><circle cx="7.5" cy="11" r="1.1"></circle><circle cx="10" cy="7" r="1.1"></circle><circle cx="14.5" cy="7" r="1.1"></circle></svg><span class="art-t">Chez BUNKAIO</span><i class="cs-acc-chev" aria-hidden="true"></i></button></h2>
           <div class="cs-acc-panel"><div class="art-body"><svg class="art-illus" viewBox="0 0 120 120" aria-hidden="true">
     <rect width="120" height="120" rx="28" fill="#efeaf8"></rect>
     <circle cx="96" cy="24" r="11" fill="#dccff2"></circle><circle cx="22" cy="98" r="7" fill="#e6def5"></circle><circle cx="101" cy="92" r="4" fill="#b9a6dc"></circle>
     <g transform="translate(24 24) scale(3)" fill="none" stroke="#4b3d7a" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18c1.4 0 2-1 1.6-2.1-.5-1.2.2-2.4 1.6-2.4H17a4 4 0 0 0 4-4C21 6.9 17 3 12 3z"></path><circle cx="7.5" cy="11" r="1.1"></circle><circle cx="10" cy="7" r="1.1"></circle><circle cx="14.5" cy="7" r="1.1"></circle></g>
   </svg><div class="art-text"><p>Notre prestation <a href="/services/photographe-evenementiel/" data-nav="service:event">Événementiel</a> s'adresse aux domaines, entreprises et réceptions, avec des formules dès 450 € et des photos retouchées livrées en 3 à 10 jours ouvrés selon la formule, dans une galerie privée. Pour un mariage, découvrez aussi <a href="/services/photobooth-ia-mariage-lumen/" data-nav="service:lumen">Lumen, notre photobooth IA</a>.</p></div></div></div>
-        </section><section class="cs-acc-item art-item">
+        </section><section class="cs-acc-item art-item rv" style="--rv-d: 0.35000000000000003s;">
           <h2 class="art-h2"><button type="button" class="cs-acc-head art-head" aria-expanded="false"><span class="art-n">06</span><svg class="art-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 15.5 14"></polyline></svg><span class="art-t">Le déroulé idéal d'une couverture</span><i class="cs-acc-chev" aria-hidden="true"></i></button></h2>
           <div class="cs-acc-panel"><div class="art-body"><svg class="art-illus" viewBox="0 0 120 120" aria-hidden="true">
     <rect width="120" height="120" rx="28" fill="#efeaf8"></rect>
     <circle cx="96" cy="24" r="11" fill="#dccff2"></circle><circle cx="22" cy="98" r="7" fill="#e6def5"></circle><circle cx="101" cy="92" r="4" fill="#b9a6dc"></circle>
     <g transform="translate(24 24) scale(3)" fill="none" stroke="#4b3d7a" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 15.5 14"></polyline></g>
   </svg><div class="art-text"><p>Avant l'événement, le photographe arrive en avance pour <strong>repérer les lieux</strong> et la lumière. Pendant, il suit les moments clés de votre programme (accueil, discours, remises, cocktail) et prévoit un temps pour les <strong>portraits de groupe</strong>. Après, il trie et retouche les images avant de les livrer dans une galerie en ligne. Plus votre déroulé est précis, plus la couverture est complète.</p></div></div></div>
-        </section><section class="cs-acc-item art-item">
+        </section><section class="cs-acc-item art-item rv" style="--rv-d: 0.35000000000000003s;">
           <h2 class="art-h2"><button type="button" class="cs-acc-head art-head" aria-expanded="false"><span class="art-n">07</span><svg class="art-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4l9.5 16.5h-19z"></path><line x1="12" y1="10" x2="12" y2="14.5"></line><circle cx="12" cy="17.4" r=".6"></circle></svg><span class="art-t">Les erreurs à éviter</span><i class="cs-acc-chev" aria-hidden="true"></i></button></h2>
           <div class="cs-acc-panel"><div class="art-body"><svg class="art-illus" viewBox="0 0 120 120" aria-hidden="true">
     <rect width="120" height="120" rx="28" fill="#efeaf8"></rect>
     <circle cx="96" cy="24" r="11" fill="#dccff2"></circle><circle cx="22" cy="98" r="7" fill="#e6def5"></circle><circle cx="101" cy="92" r="4" fill="#b9a6dc"></circle>
     <g transform="translate(24 24) scale(3)" fill="none" stroke="#4b3d7a" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4l9.5 16.5h-19z"></path><line x1="12" y1="10" x2="12" y2="14.5"></line><circle cx="12" cy="17.4" r=".6"></circle></g>
   </svg><div class="art-text"><ul><li><strong>Choisir uniquement sur le prix</strong> sans comparer ce qui est inclus.</li><li><strong>Ne pas transmettre le déroulé</strong> : le photographe découvre les temps forts au dernier moment.</li><li><strong>Oublier de prévenir un contact sur place</strong> pour les accès et les imprévus.</li><li><strong>Ne pas prévoir les portraits de groupe</strong> : ils demandent un moment dédié.</li></ul></div></div></div>
-        </section><section class="cs-acc-item art-item">
+        </section><section class="cs-acc-item art-item rv" style="--rv-d: 0.35000000000000003s;">
           <h2 class="art-h2"><button type="button" class="cs-acc-head art-head" aria-expanded="false"><span class="art-n">08</span><svg class="art-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 4.4-3.2 7.6-8 9-4.8-1.4-8-4.6-8-9V6z"></path><polyline points="8.5 12 11 14.5 15.5 9.5"></polyline></svg><span class="art-t">Le droit à l'image des invités</span><i class="cs-acc-chev" aria-hidden="true"></i></button></h2>
           <div class="cs-acc-panel"><div class="art-body"><svg class="art-illus" viewBox="0 0 120 120" aria-hidden="true">
     <rect width="120" height="120" rx="28" fill="#efeaf8"></rect>
@@ -1276,7 +1277,7 @@
         </section></div>
       <h2>Questions fréquentes</h2>
       <div id="articleFaq" data-exclusive="1">
-    <div class="accordion-item">
+    <div class="accordion-item rv" style="--rv-d: 0s;">
       <button class="accordion-trigger" aria-expanded="true" onclick="toggleAccordion(this)">
         <span>Combien de temps à l'avance faut-il réserver ?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
@@ -1285,7 +1286,7 @@
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>Le plus tôt possible : les créneaux sont limités chaque mois pour garantir la qualité de chaque prestation.</p></div>
       </div>
     </div>
-    <div class="accordion-item">
+    <div class="accordion-item rv" style="--rv-d: 0.07s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
         <span>Les photos sont-elles utilisables pour la communication de mon entreprise ?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
@@ -1303,7 +1304,7 @@
         </div>
       </aside>
     </article>
-    <section class="read-panel svcp-panel article-cta">
+    <section class="read-panel svcp-panel article-cta rv" style="--rv-d: 0s;">
       <h2>Un projet de séance ou de shooting ?</h2>
       <p class="svcp-text">Estimez votre projet en quelques minutes : réponse personnalisée sous 48 h. Une question avant de vous lancer ? Consultez la <a href="/faq/" data-nav="faq">FAQ</a> ou <a href="/contact/" data-nav="contact">contactez-nous</a>.</p>
       <div class="svcp-cta-row" style="margin:0">
@@ -1311,7 +1312,7 @@
         <a class="btn btn-ghost" href="/services/photographe-evenementiel/" data-nav="service:event"><span>Événementiel</span></a>
       </div>
     </section>
-    <section class="read-panel svcp-panel"><h2>À lire aussi</h2><div class="advice-grid adv-row"><a class="advice-card" href="/conseils/preparer-seance-photo-portrait/" data-nav="article:preparer-seance-photo-portrait">
+    <section class="read-panel svcp-panel rv" style="--rv-d: 0.07s;"><h2>À lire aussi</h2><div class="advice-grid adv-row"><a class="advice-card" href="/conseils/preparer-seance-photo-portrait/" data-nav="article:preparer-seance-photo-portrait">
     <span class="advice-card-meta">5 min de lecture</span>
     <span class="advice-card-title">Préparer sa séance photo portrait : le guide complet</span>
     <span class="advice-card-text">Lieu, tenue, préparation, jour J : tout ce qu'il faut savoir pour une séance photo portrait naturelle et réussie.</span>
@@ -1959,6 +1960,6 @@
 <script src="config/articles.en.js?v=f5e9d676"></script>
 <script src="config/routes.js?v=32eeabdd"></script>
 <script src="config/media.js?v=e515354a"></script>
-<script src="js/script.min.js?v=876bf903"></script>
+<script src="js/script.min.js?v=7621ad72"></script>
 </body>
 </html>

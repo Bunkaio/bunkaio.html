@@ -1423,6 +1423,32 @@ const io = new IntersectionObserver(entries => {
     }
   });
 }, { threshold: 0.12 });
+/* Apparition progressive au défilement, sur tout le site : les blocs situés sous la ligne de flottaison
+   reçoivent la classe .rv (voir observe()), avec un léger décalage entre frères. Les blocs déjà visibles
+   à l'arrivée restent affichés tout de suite (pas de clignotement). */
+const AUTO_REVEAL = '.read-panel, .svcp-panel, .fx, .advice-card, .accordion-item, .art-item, .cat-item, .reassure-item, .pf-link-card, .svcp-chip, .gear-pill, .cred-item, .drone-price-card, .about-card, .ct-info-block, .service-card, .tier-card';
+function autoReveal(viewEl){
+  if (!viewEl || REDUCED_MOTION) return;
+  const vh = window.innerHeight || 800;
+  const kids = new Map();
+  viewEl.querySelectorAll(AUTO_REVEAL).forEach(el => {
+    if (el.classList.contains('rv') || el.closest('.qstep, .mission-video-wrap, .rv.in, .adv-row')) return;
+    const r = el.getBoundingClientRect();
+    if (r.top < vh * 0.92 && r.bottom > 0) return;
+    const par = el.parentElement; const n = (kids.get(par) || 0); kids.set(par, n + 1);
+    el.style.setProperty('--rv-d', Math.min(n, 5) * 0.07 + 's');
+    el.classList.add('rv');
+  });
+}
+/* Barre de progression de lecture (fine ligne en haut de page) */
+function initScrollProgress(){
+  const bar = document.getElementById('scrollProgress'); if (!bar || REDUCED_MOTION) return;
+  let tick = false;
+  const upd = () => { tick = false; const h = document.documentElement.scrollHeight - innerHeight; bar.style.transform = 'scaleX(' + (h > 0 ? Math.min(1, scrollY / h) : 0) + ')'; };
+  addEventListener('scroll', () => { if (!tick) { tick = true; requestAnimationFrame(upd); } }, { passive: true });
+  addEventListener('resize', upd); upd();
+}
+
 function observe(el){ io.observe(el); }
 
 /* Variante à déclenchement plus tardif (l'élément doit être nettement
@@ -1799,6 +1825,7 @@ function goView(v, subTab, opts){
        sur l'ensemble du site, plus besoin de le câbler page par page.
        .reassure-section utilise un seuil de déclenchement plus tardif
        pour que l'animation soit visible plutôt que déjà terminée. */
+    autoReveal(document.getElementById('view-' + v));
     document.querySelectorAll('#view-' + v + ' .rv:not(.in):not(.reassure-section)').forEach(observe);
     document.querySelectorAll('#view-' + v + ' .reassure-section:not(.in)').forEach(observeLate);
   };
@@ -2992,6 +3019,7 @@ function fxItem(catId, f){
     <div class="fx-panel"><div class="fx-body">
       ${formulaPhotoHTML(catId, f.id, 'fx-photo')}
       <div class="fx-info">
+        ${f.hint ? `<p class="fx-hint"><strong>${t({fr:'Notre conseil', en:'Our advice'})} :</strong> ${f.hint}</p>` : ''}
         <ul class="svcp-list">${f.items.map(i => `<li>${escHtml(i)}</li>`).join('')}</ul>
         <div class="fx-actions">${quizLink(catId, t({fr:'Choisir cette formule', en:'Choose this package'}))}${f.extra || ''}</div>
       </div>
@@ -3077,8 +3105,12 @@ function renderServicePage(catId){
   const svcPhoto = IMG.servicePhotos && IMG.servicePhotos[catId];
   const svcAlt = (IMG.serviceAlt && t(IMG.serviceAlt[catId])) || (SERVICE_ALT_DEFAULT[catId] ? t(SERVICE_ALT_DEFAULT[catId]) : '');
   const svcFigure = svcPhoto ? `<figure class="svcp-figure"><img src="${svcPhoto}" alt="${escHtml(svcAlt)}" width="900" height="1200" loading="lazy" decoding="async" onerror="this.closest('figure').classList.add('is-broken')"></figure>` : '';
-  const chooseHtml = (copyBlock && copyBlock.choose && copyBlock.choose.length === tiers.length)
-    ? `<section class="read-panel svcp-panel"><h2>${t({fr:'Quelle formule choisir ?', en:'Which package to choose?'})}</h2><ul class="svcp-list">${tiers.map((tt, i) => `<li><strong>${t(tt.name)} — ${priceLine(tt)}</strong> : ${t(copyBlock.choose[i])}</li>`).join('')}${POLAS[catId] ? `<li class="svcp-choose-polas"><strong>${t(POLAS[catId].name)} — ${price(specialTotal(POLAS[catId]))}</strong> : ${POLAS[catId].id === 'grossesse' ? t({fr:'vous attendez un heureux événement ? Une séance douce de 1h30, en studio ou en extérieur, pour garder des images soignées de cette période (idéalement entre la 28e et la 36e semaine).', en:'expecting a baby? A gentle 1.5-hour session, in the studio or outdoors, to keep beautiful images of this time (ideally between weeks 28 and 36).'}) : t({fr:'vous devez présenter votre profil à une agence ? 10 photos brutes, sans retouche ni mise en scène, pour juger la morphologie et le potentiel, livrées en HD sous 24 h (studio inclus).', en:'need to present your profile to an agency? 10 raw photos with no retouching or styling, to assess build and potential, delivered in HD within 24 h (studio included).'})}</li>` : ''}</ul></section>` : '';
+  /* « Quelle formule choisir ? » est intégré à chaque ligne de l'accordéon (conseil « Idéal si… »). */
+  const chooseHints = (copyBlock && copyBlock.choose && copyBlock.choose.length === tiers.length) ? copyBlock.choose.map(h => t(h)) : [];
+  const specialHint = POLAS[catId] ? (POLAS[catId].id === 'grossesse'
+    ? t({fr:'vous attendez un heureux événement ? Une séance douce de 1h30, en studio ou en extérieur, pour garder des images soignées de cette période (idéalement entre la 28e et la 36e semaine).', en:'expecting a baby? A gentle 1.5-hour session, in the studio or outdoors, to keep beautiful images of this time (ideally between weeks 28 and 36).'})
+    : t({fr:'vous devez présenter votre profil à une agence ? 10 photos brutes, sans retouche ni mise en scène, pour juger la morphologie et le potentiel, livrées en HD sous 24 h (studio inclus).', en:'need to present your profile to an agency? 10 raw photos with no retouching or styling, to assess build and potential, delivered in HD within 24 h (studio included).'})) : '';
+  const chooseHtml = '';
   const practical = t({
     fr: 'Nous intervenons à <strong>Béziers, Montpellier et Toulouse</strong>. Les droits d\'utilisation commerciale des visuels vous sont cédés sans limite de durée. Toutes les réponses sont dans la <a href="/faq/" data-nav="faq">FAQ</a>, et pour une question précise, <a href="/contact/" data-nav="contact">contactez-nous</a>.',
     en: 'We work in <strong>Béziers, Montpellier and Toulouse</strong>. Commercial usage rights to the visuals are transferred to you with no time limit. All the answers are in the <a href="/faq/" data-nav="faq">FAQ</a>, and for a specific question, <a href="/contact/" data-nav="contact">get in touch</a>.' });
@@ -3103,8 +3135,8 @@ function renderServicePage(catId){
       <h2>${t({fr:'Formules et tarifs', en:'Packages and rates'})}</h2>
       <p class="vat-note">${I18N[LANG]['vat-note']}</p>
       <div class="fx-list">
-        ${tiers.map(tt => fxItem(catId, { id: tt.id, name: t(tt.name), badge: tt.badge ? t(tt.badge) : '', price: priceLine(tt), delay: t(tt.delay), items: (en ? tt.items.en : tt.items.fr), open: !!tt.badge && /(choisi|popular)/i.test(t(tt.badge)) })).join('')}
-        ${POLAS[catId] ? fxItem(catId, { id: POLAS[catId].id, name: t(POLAS[catId].name), badge: t(POLAS[catId].label), price: price(specialTotal(POLAS[catId])), delay: t(POLAS[catId].delay) + ' · ' + t(POLAS[catId].studioNote), items: t(POLAS[catId].items), special: true, extra: POLAS[catId].id === 'polas' ? `<a class="svcp-link" href="/conseils/polas-mannequin-digitals-agence/" onclick="return navLink(event,'article','polas-mannequin-digitals-agence')">${t({fr:'Comprendre les Polas →', en:'What are Polas? →'})}</a>` : '' }) : ''}
+        ${tiers.map((tt, ti) => fxItem(catId, { hint: chooseHints[ti] || '', id: tt.id, name: t(tt.name), badge: tt.badge ? t(tt.badge) : '', price: priceLine(tt), delay: t(tt.delay), items: (en ? tt.items.en : tt.items.fr), open: !!tt.badge && /(choisi|popular)/i.test(t(tt.badge)) })).join('')}
+        ${POLAS[catId] ? fxItem(catId, { id: POLAS[catId].id, name: t(POLAS[catId].name), badge: t(POLAS[catId].label), price: price(specialTotal(POLAS[catId])), delay: t(POLAS[catId].delay) + ' · ' + t(POLAS[catId].studioNote), items: t(POLAS[catId].items), special: true, hint: specialHint, extra: POLAS[catId].id === 'polas' ? `<a class="svcp-link" href="/conseils/polas-mannequin-digitals-agence/" onclick="return navLink(event,'article','polas-mannequin-digitals-agence')">${t({fr:'Comprendre les Polas →', en:'What are Polas? →'})}</a>` : '' }) : ''}
       </div>
       ${sub ? `<p class="svcp-note">${t({fr:'Besoin régulier ? ', en:'Regular need? '})}<strong>${t(sub.name)}</strong> — ${sub.price.toLocaleString(en ? 'en-GB' : 'fr-FR')} € ${t({fr:'/ mois', en:'/ month'})}.</p>` : ''}
     </section>
@@ -6127,6 +6159,7 @@ renderCats();
 renderMissionServices();
 initMissionServicesAutoplay();
 initHomeLogoFade();
+initScrollProgress();
 renderLogoCarousel();
 renderFooterServices();
 /* Hero image home : seulement si la page demandée est l'accueil (sinon la vidéo d'accueil se téléchargeait

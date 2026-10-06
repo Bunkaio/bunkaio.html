@@ -31,7 +31,7 @@
 <link rel="icon" type="image/png" sizes="64x64" href="/images/favicon-64.png">
 <link rel="apple-touch-icon" href="/images/apple-touch-icon.png"><text y='0.9em' font-size='80' font-family='serif'>⊹</text></svg>">
 <link rel="preload" href="fonts/dm-sans-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/style.min.css?v=74e44350">
+<link rel="stylesheet" href="css/style.min.css?v=a6d20384">
 
 <script type="application/ld+json">
 {
@@ -338,6 +338,7 @@
 <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
 
 <a class="skip-link" href="#main" onclick="var m=document.getElementById('main');if(m){m.focus();}return false;" data-lang="skip-link">Aller au contenu</a>
+<div id="scrollProgress" aria-hidden="true"></div>
 <header>
 <nav>
   <div class="nav-inner">
@@ -1401,7 +1402,7 @@
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>Des photos <strong>haute définition, retouchées</strong> avec soin, prêtes à être publiées ou imprimées. Elles sont livrées dans une <strong>galerie privée</strong> à télécharger depuis votre espace client, et vous disposez des droits d'utilisation commerciale.</p></div>
       </div>
     </div>
-    <div class="accordion-item">
+    <div class="accordion-item rv in" style="--rv-d: 0s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
         <span>Comment se déroule une prestation, de la demande à la livraison ?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
@@ -1410,7 +1411,7 @@
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>Quatre étapes simples : <strong>devis</strong> personnalisé sous 48h, <strong>shooting</strong> à la date convenue, <strong>post-production</strong> (tri, retouche, montage), puis <strong>livraison</strong> de vos visuels via votre espace client. Le détail complet est dans l'onglet « Devis &amp; déroulé » de la page Services.</p></div>
       </div>
     </div>
-    <div class="accordion-item">
+    <div class="accordion-item rv" style="--rv-d: 0.07s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
         <span>Je ne suis pas à l'aise devant l'objectif, est-ce un problème ?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
@@ -1419,7 +1420,7 @@
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>Pas du tout : c'est notre rôle de vous mettre en confiance. Nous vous guidons sur les poses et l'ambiance pour obtenir des photos qui vous ressemblent vraiment. Pour vous préparer, consultez notre guide <a href="/conseils/preparer-seance-photo-portrait/" data-nav="article:preparer-seance-photo-portrait">Préparer sa séance photo portrait</a>.</p></div>
       </div>
     </div>
-    <div class="accordion-item">
+    <div class="accordion-item rv" style="--rv-d: 0.14s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
         <span>Quels sont les délais de livraison ?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
@@ -1428,7 +1429,7 @@
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>Ils varient selon la formule choisie et sont indiqués sur chaque offre du catalogue. Ils démarrent à la date du shooting, hors demandes de retouches complémentaires.</p></div>
       </div>
     </div>
-    <div class="accordion-item">
+    <div class="accordion-item rv" style="--rv-d: 0.21000000000000002s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
         <span>Comment fonctionne le paiement ?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
@@ -1437,7 +1438,7 @@
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>30 % à la commande (signature du devis), solde à la livraison. Paiement par carte bancaire, ou en 3x sans frais avec Klarna.</p></div>
       </div>
     </div>
-    <div class="accordion-item">
+    <div class="accordion-item rv" style="--rv-d: 0.28s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
         <span>Que se passe-t-il si j'annule ma prestation ?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
@@ -1446,7 +1447,7 @@
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>Votre date et votre créneau sont réservés dès la validation du devis et le versement de l'<strong>acompte de 30 %</strong>. Si vous annulez après cette validation, <strong>l'acompte reste acquis à Bunkaio et n'est pas remboursé</strong>. Pour toute difficulté, contactez-nous le plus tôt possible.</p></div>
       </div>
     </div>
-    <div class="accordion-item">
+    <div class="accordion-item rv" style="--rv-d: 0.35000000000000003s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
         <span>Puis-je utiliser les visuels pour un usage commercial ?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
@@ -1455,7 +1456,7 @@
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>Oui. L'ensemble des droits d'utilisation des visuels livrés vous est cédé pour un usage commercial, sans limite de durée. Le détail des droits cédés est précisé dans l'onglet « Politique de confidentialité » ci-contre.</p></div>
       </div>
     </div>
-    <div class="accordion-item">
+    <div class="accordion-item rv" style="--rv-d: 0.35000000000000003s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
         <span>Comment accéder à mon espace client, et à quoi sert-il ?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
@@ -1464,7 +1465,7 @@
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>Une fois votre devis confirmé, vous recevez par email votre <strong>code d'accès personnel</strong> : cliquez sur « Connexion » en haut du site. Vous restez connecté sur votre appareil jusqu'à votre déconnexion.</p><p>Vous y suivez l'avancement de votre projet, retrouvez vos <strong>commandes, devis, paiements et factures</strong>, téléchargez vos livrables, gérez vos abonnements et vos informations. Pas encore de code ? Demandez-le depuis la page de connexion : il vous est envoyé sous 24h.</p></div>
       </div>
     </div>
-    <div class="accordion-item">
+    <div class="accordion-item rv" style="--rv-d: 0.35000000000000003s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
         <span>Qu'est-ce qu'un moodboard, et est-il obligatoire ?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
@@ -1473,7 +1474,7 @@
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>Non, il est facultatif mais très utile : un <strong>moodboard par commande</strong> pour nous partager votre vision — direction artistique, ambiance, palette de couleurs, inspirations (Pinterest, liens), et les prestataires impliqués. Vous le complétez depuis votre espace client et vous échangez avec l'équipe grâce aux commentaires.</p></div>
       </div>
     </div>
-    <div class="accordion-item">
+    <div class="accordion-item rv" style="--rv-d: 0.35000000000000003s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
         <span>Mes informations et mes images sont-elles en sécurité ?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
@@ -1482,7 +1483,7 @@
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>Votre espace est protégé par votre email et un <strong>code d'accès personnel</strong>, conservé sous forme chiffrée. Vos données ne servent qu'à la réalisation de votre projet, et vos visuels vous sont livrés dans une galerie privée. Le détail est dans l'onglet « Politique de confidentialité ».</p></div>
       </div>
     </div>
-    <div class="accordion-item">
+    <div class="accordion-item rv" style="--rv-d: 0.35000000000000003s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
         <span>Où intervenez-vous ?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
@@ -1491,7 +1492,7 @@
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>BUNKAIO est basé à <strong>Montpellier</strong> et intervient en déplacement à <strong>Montpellier, Béziers et Toulouse</strong>, et plus largement en Occitanie. Il n'y a pas de studio fixe : le lieu se choisit avec vous (<a href="/conseils/lieux-seance-photo-montpellier-beziers-toulouse/" data-nav="article:lieux-seance-photo-montpellier-beziers-toulouse">idées de lieux</a>). Les déplacements sont offerts à Montpellier et à Béziers ; ils sont facturés à Toulouse et dans toute autre ville de France (devis selon la distance).</p></div>
       </div>
     </div>
-    <div class="accordion-item">
+    <div class="accordion-item rv" style="--rv-d: 0.35000000000000003s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
         <span>Comment devenir partenaire, et que propose l'espace partenaire ?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
@@ -1500,7 +1501,7 @@
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>Candidatez depuis la page <strong>Partenariat et collaboration</strong> : réponse personnalisée sous 5 jours ouvrés. Une fois admis, votre espace partenaire vous donne <strong>-20 % permanent</strong> sur le catalogue, des promotions, des <strong>missions collaboratives rémunérées</strong> que vous acceptez ou déclinez en un clic, et l'accès au réseau de professionnels. Vous choisissez d'être référencé·e ou non dans l'annuaire.</p></div>
       </div>
     </div>
-    <div class="accordion-item">
+    <div class="accordion-item rv" style="--rv-d: 0.35000000000000003s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
         <span>Qu'est-ce que Lumen by Bunkaio ?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
@@ -1872,6 +1873,6 @@
 <script src="config/articles.en.js?v=f5e9d676"></script>
 <script src="config/routes.js?v=32eeabdd"></script>
 <script src="config/media.js?v=e515354a"></script>
-<script src="js/script.min.js?v=876bf903"></script>
+<script src="js/script.min.js?v=7621ad72"></script>
 </body>
 </html>

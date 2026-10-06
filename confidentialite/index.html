@@ -31,7 +31,7 @@
 <link rel="icon" type="image/png" sizes="64x64" href="/images/favicon-64.png">
 <link rel="apple-touch-icon" href="/images/apple-touch-icon.png"><text y='0.9em' font-size='80' font-family='serif'>⊹</text></svg>">
 <link rel="preload" href="fonts/dm-sans-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/style.min.css?v=74e44350">
+<link rel="stylesheet" href="css/style.min.css?v=a6d20384">
 
 <script type="application/ld+json">
 {
@@ -338,6 +338,7 @@
 <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
 
 <a class="skip-link" href="#main" onclick="var m=document.getElementById('main');if(m){m.focus();}return false;" data-lang="skip-link">Aller au contenu</a>
+<div id="scrollProgress" aria-hidden="true"></div>
 <header>
 <nav>
   <div class="nav-inner">
@@ -1388,7 +1389,7 @@
     <!-- Politique de confidentialité -->
     <div id="lsec-privacy">
       <div id="privacyAccordion"><!--snap-->
-    <div class="accordion-item">
+    <div class="accordion-item rv" style="--rv-d: 0s;">
       <button class="accordion-trigger" aria-expanded="true" onclick="toggleAccordion(this)">
         <span>Responsable du traitement des données</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
@@ -1397,7 +1398,7 @@
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>Ce site est édité par <strong>BUNKAIO</strong>, Entreprise Individuelle, SIRET 951 547 587 00034, France. Pour toute question relative à vos données personnelles, contactez-nous à <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a>.</p></div>
       </div>
     </div>
-    <div class="accordion-item">
+    <div class="accordion-item rv" style="--rv-d: 0.07s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
         <span>Éditeur et hébergement</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
@@ -1406,7 +1407,7 @@
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p><strong>Éditeur :</strong> BUNKAIO, Entreprise Individuelle (Aya Nascimento), SIRET 951 547 587 00034, France. <strong>Contact :</strong> <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a> · <a href="tel:+33758573161">07 58 57 31 61</a>. <strong>Responsable de la publication :</strong> Aya Nascimento.</p><p><strong>Hébergement du site :</strong> GitHub Pages (GitHub, Inc., San Francisco, États-Unis). <strong>Gestion du domaine et services applicatifs :</strong> Cloudflare, Inc. (San Francisco, États-Unis).</p></div>
       </div>
     </div>
-    <div class="accordion-item">
+    <div class="accordion-item rv" style="--rv-d: 0.14s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
         <span>Données collectées et finalités</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
@@ -1415,7 +1416,7 @@
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>Nous collectons uniquement les données que vous nous transmettez volontairement : nom, email, téléphone et informations relatives à votre projet via le formulaire de contact, le questionnaire de devis ou votre espace client/partenaire.</p><p>Ces données sont utilisées exclusivement pour répondre à vos demandes, établir vos devis et gérer votre compte. Votre numéro de téléphone peut servir à vous prévenir par SMS de l'avancement de votre commande (photos disponibles, accès à l'album, rappel de séance) ; vous pouvez refuser ces SMS à tout moment en nous écrivant. Elles ne sont ni vendues, ni cédées, ni partagées avec des tiers à des fins commerciales.</p></div>
       </div>
     </div>
-    <div class="accordion-item">
+    <div class="accordion-item rv" style="--rv-d: 0.21000000000000002s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
         <span>Base légale et durée de conservation</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
@@ -1424,7 +1425,7 @@
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>Le traitement repose sur l'exécution de la relation commerciale ou précontractuelle (devis, prestation) et sur notre intérêt légitime à répondre à vos demandes.</p><p>Vos données sont conservées pendant la durée de la relation commerciale, puis archivées le temps imposé par nos obligations légales et comptables, avant suppression ou anonymisation. Les messages envoyés via les formulaires du site sont conservés au plus 3 ans après leur réception.</p></div>
       </div>
     </div>
-    <div class="accordion-item">
+    <div class="accordion-item rv" style="--rv-d: 0.28s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
         <span>Cookies et mesure d'audience</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
@@ -1433,7 +1434,7 @@
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>Ce site n'utilise aucun cookie publicitaire ni traceur tiers. Nous mesurons l'audience de façon <strong>anonyme et sans cookie</strong>, avec un outil développé et hébergé par nos soins (sur notre compte Cloudflare) : pages vues, domaine de provenance, type d'appareil et clics sur les boutons principaux. Aucune adresse IP ni identifiant n'est conservé, aucune donnée n'est transmise à un service de mesure tiers, et les données sont supprimées au bout de 13 mois.</p><p>Cette mesure respecte l'option « Ne pas me suivre » de votre navigateur. Vous pouvez aussi la désactiver sur cet appareil : <button type="button" class="pt-link" onclick="toggleTracking()">Activer / désactiver la mesure</button> <span id="trackToggleState" style="font-size:12px;color:var(--grey)"></span></p></div>
       </div>
     </div>
-    <div class="accordion-item">
+    <div class="accordion-item rv" style="--rv-d: 0.35000000000000003s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
         <span>Vos droits</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
@@ -1442,7 +1443,7 @@
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>Conformément au RGPD et à la loi Informatique et Libertés, vous disposez d'un droit d'accès, de rectification, d'effacement, de limitation, d'opposition et de portabilité sur vos données.</p><p>Vous pouvez exercer ces droits à tout moment en écrivant à <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a>. Vous disposez également du droit d'introduire une réclamation auprès de la CNIL (<a href="https://www.cnil.fr" target="_blank" rel="noopener">www.cnil.fr</a>).</p></div>
       </div>
     </div>
-    <div class="accordion-item">
+    <div class="accordion-item rv" style="--rv-d: 0.35000000000000003s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
         <span>Hébergement et sécurité des données</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
@@ -1451,7 +1452,7 @@
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>Ce site est hébergé par GitHub, Inc. Les échanges sont sécurisés (HTTPS). Aucune base de données client n'est publiquement accessible : les informations transmises via nos formulaires sont traitées de façon confidentielle par BUNKAIO.</p></div>
       </div>
     </div>
-    <div class="accordion-item">
+    <div class="accordion-item rv" style="--rv-d: 0.35000000000000003s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
         <span>Politique d'annulation et acompte</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
@@ -1460,7 +1461,7 @@
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>L'<strong>acompte de 30 %</strong> versé à la signature du devis réserve votre date et votre créneau. En cas d'<strong>annulation de votre part après la validation du devis</strong>, cet acompte reste acquis à BUNKAIO et n'est pas remboursé. Le solde n'est exigible qu'à la livraison des livrables.</p><p>Pour toute question, écrivez-nous à <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a>.</p></div>
       </div>
     </div>
-    <div class="accordion-item">
+    <div class="accordion-item rv" style="--rv-d: 0.35000000000000003s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
         <span>Droits d'auteur et droits d'utilisation des photos &amp; vidéos</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
@@ -1469,7 +1470,7 @@
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>BUNKAIO conserve l'intégralité de ses droits d'auteur (droit moral) sur l'ensemble des photographies et vidéos qu'elle réalise, conformément au Code de la propriété intellectuelle.</p><p>Les <strong>droits d'exploitation</strong> (droits d'utilisation commerciale) des visuels livrés sont cédés au client dans les conditions précisées au devis signé (usages, durée, territoire). La cession des droits d'utilisation est subordonnée au paiement intégral du prix.</p><p>BUNKAIO se réserve le droit d'utiliser les visuels produits dans le cadre de ses propres supports de communication, de son portfolio et de ses réseaux sociaux, sauf demande contraire et écrite du client. Toute réutilisation par un tiers autre que le client nécessite l'autorisation écrite préalable de BUNKAIO.</p></div>
       </div>
     </div>
-    <div class="accordion-item">
+    <div class="accordion-item rv" style="--rv-d: 0.35000000000000003s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
         <span>Mentions légales</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
@@ -1836,6 +1837,6 @@
 <script src="config/articles.en.js?v=f5e9d676"></script>
 <script src="config/routes.js?v=32eeabdd"></script>
 <script src="config/media.js?v=e515354a"></script>
-<script src="js/script.min.js?v=876bf903"></script>
+<script src="js/script.min.js?v=7621ad72"></script>
 </body>
 </html>
