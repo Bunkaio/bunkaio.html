@@ -4103,3 +4103,7 @@ a.hero-start { text-decoration: none; display: inline-flex; align-items: center;
 .svcp-back:hover { background: var(--black); color: #fff; transform: translateX(-3px); }
 .svcp-back-row { display: flex; justify-content: center; margin-top: 8px; }
 .svcp-back-row .svcp-back { margin: 0; }
+
+/* Questionnaire : choix mis en évidence (l'avancée se fait avec « Suivant ») */
+.cat-item.selected, .tier-card.selected { outline: 2px solid var(--black); outline-offset: -2px; }
+.btn-row .btn:disabled { opacity: 0.35; cursor: not-allowed; }

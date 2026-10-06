@@ -66,7 +66,7 @@ const I18N = {
     'step-coords':'05 — Coordonnées','q-coords':'Vos coordonnées','q-coords-sub':'Nous étudions chaque demande personnellement. Réponse assurée sous 48h.',
     'name-label':'Nom / Société *','email-label':'Email *','phone-label':'Téléphone','phone-label-opt':'Téléphone — optionnel','project-label':'Votre projet *','message-label':'Message *',
     'delay-label':'Délai souhaité *','delay-opt-select':'Sélectionnez…','delay-opt-urgent':'Urgent (moins de 2 semaines)','delay-opt-1m':'Dans le mois','delay-opt-2-3m':'2 à 3 mois','delay-opt-flex':'Flexible / pas de contrainte',
-    'back':'← Retour','continue':'Continuer','submit':'Confirmez ma demande de devis',
+    'back':'← Retour','continue':'Suivant →','next':'Suivant →','submit':'Confirmez ma demande de devis',
     'quiz-back':'Retour','quiz-home':'Accueil',
     'success-label':'Demande reçue','success-title':'Votre demande a bien été envoyée',
     'success-text1':'Merci pour votre confiance. Votre demande de devis est entre nos mains : elle sera étudiée et vous recevrez une réponse sous <strong>48 heures</strong>.',
@@ -420,7 +420,7 @@ const I18N = {
     'step-coords':'05 — Your details','q-coords':'Your details','q-coords-sub':'Every request is reviewed personally. We reply within 48 hours.',
     'name-label':'Name / Company *','email-label':'Email *','phone-label':'Phone','phone-label-opt':'Phone — optional','project-label':'Your project *','message-label':'Message *',
     'delay-label':'Desired timeline *','delay-opt-select':'Select…','delay-opt-urgent':'Urgent (under 2 weeks)','delay-opt-1m':'Within a month','delay-opt-2-3m':'2 to 3 months','delay-opt-flex':'Flexible / no constraint',
-    'back':'← Back','continue':'Continue','submit':'Confirm my quote request',
+    'back':'← Back','continue':'Next →','next':'Next →','submit':'Confirm my quote request',
     'quiz-back':'Back','quiz-home':'Home',
     'success-label':'Request received','success-title':'Your request has been sent',
     'success-text1':'Thank you for your trust. Your quote request is in our hands: it will be carefully reviewed and you will receive a reply within <strong>48 hours</strong>.',
@@ -1796,6 +1796,23 @@ function quizStep(n){
      personne n'ait le temps de voir l'effet. */
   window.scrollTo({ top:0, behavior:'instant' });
   if (n === 5) updateQuizPayReassurance();
+  updateQuizNext();
+}
+
+/* Bouton « Suivant » manuel : actif seulement quand le choix de l'étape est fait. */
+function updateQuizNext(){
+  const ok = { 1: !!S.cat, 2: !!S.prof, 3: !!S.tier };
+  document.querySelectorAll('.qnext').forEach(b => { b.disabled = !ok[+b.dataset.step]; });
+}
+function quizNext(){
+  if (currentStep === 1 && S.cat) { renderProfiles(); quizStep(2); }
+  else if (currentStep === 2 && S.prof) goToTiers();
+  else if (currentStep === 3 && S.tier) { renderRecap(); renderOptions(); quizStep(4); }
+}
+function pickTier(id, card){
+  S.tier = id;
+  document.querySelectorAll('#tierList .tier-card').forEach(x => x.classList.toggle('selected', x === card));
+  renderRecap(); renderOptions(); updateQuizNext();
 }
 
 /* Bouton "Retour" toujours visible du questionnaire : remonte d'une
@@ -1949,12 +1966,13 @@ function renderCats(){
         <div class="cat-tag">${t(c.tag)}</div>
         <div class="cat-arrow"></div>
       </div>`;
+    if (S.cat === c.id) d.classList.add('selected');
     d.onclick = () => {
       S.cat = c.id; S.tier = null; S.prof = null;
-      /* profNext removed — auto-advance */
+      document.querySelectorAll('#catList .cat-item').forEach(x => x.classList.toggle('selected', x === d));
       document.getElementById('profQBox').style.display = 'none';
       renderProfiles();
-      quizStep(2);
+      updateQuizNext();
     };
     el.appendChild(d);
   });
@@ -2034,8 +2052,8 @@ function renderProfiles(){
          pour lire l'explication) : laisse le temps de lire avant
          d'avancer automatiquement. clearTimeout évite d'empiler
          plusieurs avances si on reclique vite sur une autre carte. */
-      clearTimeout(_profAdvanceTimer);
-      _profAdvanceTimer = setTimeout(() => goToTiers(), 2400);
+      S.tier = null;
+      updateQuizNext();
     };
     el.appendChild(d);
   });
@@ -2107,7 +2125,7 @@ function renderTiersBase(){
         ${chfLine}
         <div class="tier-pay-line">${payLine}</div>
         <div class="tier-detail">${t(lt.items).join(' · ')}</div>`;
-      d.onclick = () => { S.tier = lt.id; renderRecap(); renderOptions(); quizStep(4); };
+      d.dataset.tier = lt.id; if (S.tier === lt.id) d.classList.add('selected'); d.onclick = () => pickTier(lt.id, d);
       el.appendChild(d);
     });
     return;
@@ -2138,7 +2156,7 @@ function renderTiersBase(){
       </div>
       <div class="tier-pay-line">${payLine}</div>
       <div class="tier-detail">${t(polas.items).join(' · ')} · ${studioNote}</div>`;
-    d.onclick = () => { S.tier = 'polas'; renderRecap(); renderOptions(); quizStep(4); };
+    d.dataset.tier = 'polas'; if (S.tier === 'polas') d.classList.add('selected'); d.onclick = () => pickTier('polas', d);
     el.appendChild(d);
   }
   TIERS.forEach((tier) => {
@@ -2156,7 +2174,7 @@ function renderTiersBase(){
       </div>
       <div class="tier-pay-line">${payLine}</div>
       <div class="tier-detail">${t(td.items).join(' · ')}</div>`;
-    d.onclick = () => { S.tier = tier.id; renderRecap(); renderOptions(); quizStep(4); };
+    d.dataset.tier = tier.id; if (S.tier === tier.id) d.classList.add('selected'); d.onclick = () => pickTier(tier.id, d);
     el.appendChild(d);
   });
   if (S.tier === 'sub' && !subAvailable(S.cat)) S.tier = null;
@@ -2176,7 +2194,7 @@ function renderTiersBase(){
       </div>
       <div class="tier-detail">${t(sub.items).join(' · ')}</div>
       <div class="sub-engagement">${engagement} · ${saving}</div>`;
-    d.onclick = () => { S.tier = 'sub'; renderRecap(); renderOptions(); quizStep(4); };
+    d.dataset.tier = 'sub'; if (S.tier === 'sub') d.classList.add('selected'); d.onclick = () => pickTier('sub', d);
     el.appendChild(d);
   }
 }

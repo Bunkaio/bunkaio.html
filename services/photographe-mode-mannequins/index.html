@@ -31,7 +31,7 @@
 <link rel="icon" type="image/png" sizes="64x64" href="/images/favicon-64.png">
 <link rel="apple-touch-icon" href="/images/apple-touch-icon.png"><text y='0.9em' font-size='80' font-family='serif'>⊹</text></svg>">
 <link rel="preload" href="fonts/dm-sans-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/style.min.css?v=fd212309">
+<link rel="stylesheet" href="css/style.min.css?v=c93f3e17">
 
 <script type="application/ld+json">
 {
@@ -699,6 +699,10 @@
       <h2 class="qstep-title stagger" style="animation-delay:0.12s" data-lang="q-cat">Quel est votre domaine ?</h2>
       <p class="qstep-sub stagger" style="animation-delay:0.2s" data-lang="q-cat-sub">Sélectionnez l'univers de votre projet.</p>
       <div class="cat-list" id="catList"><!--snap--><!--/snap--></div>
+      <div class="btn-row stagger" style="animation-delay:0.55s">
+        <button class="btn btn-ghost" onclick="goView('home')"><span data-lang="quiz-home">Accueil</span></button>
+        <button class="btn btn-solid qnext" data-step="1" onclick="quizNext()" disabled><span data-lang="next">Suivant →</span></button>
+      </div>
     </div>
 
     <div class="qstep" id="qs-2">
@@ -709,6 +713,8 @@
       <div class="prof-q-box" id="profQBox" style="display:none"></div>
       <div class="btn-row stagger" style="animation-delay:0.55s">
         <button class="btn btn-ghost" onclick="quizStep(1)"><span data-lang="back">← Retour</span></button>
+        <button class="btn btn-ghost" onclick="goView('home')"><span data-lang="quiz-home">Accueil</span></button>
+        <button class="btn btn-solid qnext" data-step="2" onclick="quizNext()" disabled><span data-lang="next">Suivant →</span></button>
       </div>
     </div>
 
@@ -731,6 +737,8 @@
       <div class="tier-list" id="tierList"></div>
       <div class="btn-row stagger" style="animation-delay:0.55s">
         <button class="btn btn-ghost" onclick="quizStep(2)"><span data-lang="back">← Retour</span></button>
+        <button class="btn btn-ghost" onclick="goView('home')"><span data-lang="quiz-home">Accueil</span></button>
+        <button class="btn btn-solid qnext" data-step="3" onclick="quizNext()" disabled><span data-lang="next">Suivant →</span></button>
       </div>
     </div>
 
@@ -744,7 +752,8 @@
       <div id="commBox"></div>
       <div class="btn-row stagger" style="animation-delay:0.6s">
         <button class="btn btn-ghost" onclick="quizStep(3)"><span data-lang="back">← Retour</span></button>
-        <button class="btn btn-solid" onclick="goToCoords()"><span data-lang="continue">Continuer</span></button>
+        <button class="btn btn-ghost" onclick="goView('home')"><span data-lang="quiz-home">Accueil</span></button>
+        <button class="btn btn-solid" onclick="goToCoords()"><span data-lang="continue">Suivant →</span></button>
       </div>
     </div>
 
@@ -784,6 +793,7 @@
       </div>
       <div class="btn-row stagger" style="animation-delay:0.58s">
         <button class="btn btn-ghost" onclick="quizStep(4)"><span data-lang="back">← Retour</span></button>
+        <button class="btn btn-ghost" onclick="goView('home')"><span data-lang="quiz-home">Accueil</span></button>
         <button class="btn btn-solid" id="qSubmit" onclick="submitQuiz(event)" disabled><span data-lang="submit">Confirmez ma demande de devis</span></button>
       </div>
       <div class="quiz-microcopy stagger" style="animation-delay:0.64s">Sans engagement · Réponse personnalisée sous 48h</div>
@@ -1968,6 +1978,6 @@
 <script src="config/articles.en.js?v=a8e286b3"></script>
 <script src="config/routes.js?v=018d4172"></script>
 <script src="config/media.js?v=03cf7f5d"></script>
-<script src="js/script.min.js?v=05f00cb7"></script>
+<script src="js/script.min.js?v=5bbbfde1"></script>
 </body>
 </html>
