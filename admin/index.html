@@ -1281,8 +1281,8 @@ function toggleLabelEditor() {
 }
 async function saveLabelNames() {
   const names = {}; LB_KEYS.forEach(k => { names[k] = $('lbn-' + k).value.trim(); });
-  try { const { res } = await api('/admin/inbox/labels', { method: 'POST', body: JSON.stringify({ names }) }); if (!res.ok) { toast('Erreur'); return; }
-    DB.inboxLabels = { ...DB.inboxLabels, ...names }; $('lbEditor').innerHTML = ''; renderInbox(); if (inboxState.msg) renderInboxRead(); toast('Étiquettes enregistrées'); } catch (e) {}
+  try { const { res } = await api('/admin/inbox/labels', { method: 'POST', body: JSON.stringify({ names }) }); if (!res.ok) { toast(res.status === 404 ? 'Le Worker n\'est pas à jour : redéployez-le (npx wrangler deploy)' : 'Erreur ' + res.status + ' : enregistrement impossible'); return; }
+    DB.inboxLabels = { ...DB.inboxLabels, ...names }; $('lbEditor').innerHTML = ''; renderInbox(); if (inboxState.msg) renderInboxRead(); toast('Étiquettes enregistrées'); } catch (e) { if (e.message !== 'unauthorized') toast('Connexion impossible, réessayez'); }
 }
 async function openInbox(id) {
   inboxState.sel = id; inboxState.images = false; inboxState.replying = false;
@@ -1497,16 +1497,22 @@ async function setTags(email, tags) {
 }
 function toggleTag(email, k) { const c = contactByEmail(email); const cur = new Set(c.tags || []); if (cur.has(k)) cur.delete(k); else cur.add(k); setTags(email, [...cur]); }
 function tagPicker(c) {
-  return `<div class="card" style="margin-bottom:18px"><h3>Étiquettes <button class="link" onclick="editTagNames()">Renommer</button></h3><div class="lbpick" style="margin:0">${LB_KEYS.map(k => `<button class="lbl lb-${k} ${(c.tags || []).includes(k) ? 'on' : ''}" onclick="toggleTag('${esc(c.email)}','${k}')">${esc(tagName(k))}</button>`).join('')}</div></div>`;
+  return `<div class="card" style="margin-bottom:18px"><h3>Étiquettes <button class="link" onclick="editTagNames()">Renommer</button></h3><div class="lbpick" style="margin:0">${LB_KEYS.map(k => `<button class="lbl lb-${k} ${(c.tags || []).includes(k) ? 'on' : ''}" onclick="toggleTag('${esc(c.email)}','${k}')">${esc(tagName(k))}</button>`).join('')}</div><div id="tagEditor"></div></div>`;
 }
-async function editTagNames() {
-  const names = {}; let changed = false;
-  for (const k of LB_KEYS) { const v = prompt(`Nom de l'étiquette ${k} :`, tagName(k)); if (v === null) return; if (v.trim() && v.trim() !== tagName(k)) { names[k] = v.trim(); changed = true; } }
-  if (!changed) return;
-  try { const { res } = await api('/admin/tags', { method: 'POST', body: JSON.stringify({ names: { ...DB.tagNames, ...names } }) }); if (res.ok) { DB.tagNames = { ...DB.tagNames, ...names }; renderDrawer(); renderContacts(); renderSegChips(); toast('Étiquettes renommées'); } } catch (e) {}
+/* Renommer les 8 pastilles : formulaire intégré (et non 8 fenêtres « prompt », bloquées par certains navigateurs). */
+function editTagNames() {
+  const box = $('tagEditor'); if (!box) return;
+  if (box.innerHTML) { box.innerHTML = ''; return; }
+  box.innerHTML = `<div style="margin-top:14px;border-top:1px solid var(--line, #e3dff0);padding-top:12px"><div class="small muted" style="margin-bottom:10px">Renommez les 8 couleurs selon votre usage (24 caractères maximum).</div><div class="frow">${LB_KEYS.map(k => `<div class="fg"><label><span class="lbfilter lb-${k}"></span>${k}</label><input class="mi" id="tgn-${k}" maxlength="24" value="${esc(tagName(k))}"></div>`).join('')}</div><div style="display:flex;gap:10px;margin-top:12px"><button class="btn sm" onclick="saveTagNames()">Enregistrer</button><button class="btn ghost sm" onclick="$('tagEditor').innerHTML=''">Fermer</button></div></div>`;
 }
-
-
+async function saveTagNames() {
+  const names = {}; LB_KEYS.forEach(k => { const el = $('tgn-' + k); const v = el ? el.value.trim() : ''; if (v) names[k] = v; });
+  try {
+    const { res, data } = await api('/admin/tags', { method: 'POST', body: JSON.stringify({ names }) });
+    if (!res.ok || data.ok === false) { toast(res.status === 404 || res.status === 400 ? 'Le Worker n\'est pas à jour : redéployez-le (npx wrangler deploy)' : 'Erreur ' + res.status + ' : ' + (data.error || 'enregistrement impossible')); return; }
+    DB.tagNames = { ...DB.tagNames, ...names }; renderDrawer(); renderContacts(); renderSegChips(); toast('Étiquettes renommées');
+  } catch (e) { if (e.message !== 'unauthorized') toast('Connexion impossible, réessayez'); }
+}
 
 /* ── Message au client (copier / SMS) et SMS automatiques ── */
 let SMS = { provider: null, settings: { enabled: false, ready: true, access: true, reminder: true } };
