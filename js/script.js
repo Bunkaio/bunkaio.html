@@ -1925,9 +1925,9 @@ function missionPreviewHTML(c){
   pts.push(f.hasVideo ? t({fr:'Vidéo et Reels selon la formule', en:'Video and Reels depending on the package'}) : t({fr:'Galerie privée de téléchargement', en:'Private download gallery'}));
   if (POLAS[c.id]) pts.push(t(POLAS[c.id].name) + ' — ' + specialTotal(POLAS[c.id]).toLocaleString('fr-FR') + ' €');
   const url = IMG.servicePhotos && IMG.servicePhotos[c.id];
-  return `<div class="ms-im"${url ? ` style="background-image:url('${url}')"` : ''}></div>
+  return `<a class="ms-im" href="${servicePath(c.id)}" aria-label="${t(c.name)}" onclick="event.preventDefault();goToQuizCategory('${c.id}')"${url ? ` style="background-image:url('${url}')"` : ''}></a>
     <div class="ms-tx">
-      <h3>${t(c.name)}</h3>
+      <h3><a href="${servicePath(c.id)}" onclick="event.preventDefault();goToQuizCategory('${c.id}')">${t(c.name)}</a></h3>
       <div class="ms-from">${t({fr:'dès', en:'from'})} <b>${f.from.toLocaleString('fr-FR')} €</b></div>
       <ul>${pts.slice(0, 4).map(p => `<li>${p}</li>`).join('')}</ul>
       <div class="ms-actions"><a class="ms-cta" href="${servicePath(c.id)}" onclick="event.preventDefault();goToQuizCategory('${c.id}')">${t({fr:'Estimer ce projet', en:'Estimate this project'})} →</a><a class="ms-link" href="${servicePath(c.id)}" onclick="return navLink(event,'service','${c.id}')">${t({fr:'Voir la prestation', en:'See the service'})}</a></div>
@@ -1969,7 +1969,17 @@ function initMissionServicesAutoplay(){
     const p = e.target.closest ? e.target.closest('.ms-pill') : null;
     if (p && matchMedia('(hover: hover)').matches && +p.dataset.i !== msIndex) missionSelect(+p.dataset.i);
   });
-  box.addEventListener('click', e => { const p = e.target.closest ? e.target.closest('.ms-pill') : null; if (p) missionSelect(+p.dataset.i); });
+  /* Clic : souris = la pastille est déjà aperçue au survol, donc on ouvre le devis de la catégorie ;
+     toucher = un premier appui affiche la prestation, un second sur la même pastille ouvre le devis. */
+  box.addEventListener('click', e => {
+    const p = e.target.closest ? e.target.closest('.ms-pill') : null; if (!p) return;
+    const i = +p.dataset.i;
+    if (i === msIndex && p.dataset.armed === '1') { goToQuizCategory(CATS[i].id); return; }
+    missionSelect(i);
+    box.querySelectorAll('.ms-pill').forEach(x => { x.dataset.armed = '0'; });
+    const cur = box.querySelectorAll('.ms-pill')[msIndex]; if (cur) cur.dataset.armed = '1';
+    if (matchMedia('(hover: hover)').matches) goToQuizCategory(CATS[i].id);
+  });
   box.addEventListener('mouseenter', () => { msHover = true; box.classList.add('paused'); clearTimeout(msTimer); });
   box.addEventListener('mouseleave', () => { msHover = false; box.classList.remove('paused'); missionSelect(msIndex); });
   box.addEventListener('touchstart', () => { msHover = true; box.classList.add('paused'); clearTimeout(msTimer); clearTimeout(box._tt); box._tt = setTimeout(() => { msHover = false; box.classList.remove('paused'); missionSelect(msIndex); }, 9000); }, { passive: true });
