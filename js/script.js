@@ -2296,7 +2296,13 @@ function renderTiersBase(){
 function renderRecap(){
   renderRecapBase();
   const box = document.getElementById('recapBox');
-  if (box) { box.insertAdjacentHTML('afterbegin', formulaPhotoHTML(S.cat, S.tier, 'recap-photo')); box.insertAdjacentHTML('beforeend', partnerQuizNotice()); }
+  if (box) {
+    box.insertAdjacentHTML('afterbegin', formulaPhotoHTML(S.cat, S.tier, 'recap-photo'));
+    box.insertAdjacentHTML('beforeend', partnerQuizNotice());
+    /* Mobile : détail de la formule replié (nom + prix restent visibles), un bouton le déplie. */
+    box.classList.remove('rc-open');
+    box.insertAdjacentHTML('beforeend', `<button type="button" class="rc-toggle" onclick="this.parentElement.classList.toggle('rc-open');this.textContent=this.parentElement.classList.contains('rc-open')?'${t({fr:'Masquer le détail', en:'Hide details'})}':'${t({fr:'Voir le détail de la formule', en:'See package details'})}'">${t({fr:'Voir le détail de la formule', en:'See package details'})}</button>`);
+  }
 }
 function renderRecapBase(){
   const cat = CATS.find(c => c.id === S.cat);
@@ -2504,6 +2510,8 @@ function renderOptions(){
       return;
     }
     if (o.packs) {
+      d.classList.add('opt-fold');
+      d.addEventListener('click', e => { if (!e.target.closest('.photo-pack')) d.classList.toggle('open'); });
       d.innerHTML = `
         <div class="opt-icon">${o.icon}</div>
         <div class="opt-body">
