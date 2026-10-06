@@ -429,9 +429,9 @@
     <div class="home-claim-text mission-text" data-lang="home-claim-text">Nous ne documentons pas des projets. Nous révélons ce qui les rend uniques.</div>
     <div class="mission-services" id="missionServices" aria-roledescription="carousel" data-lang-aria="svr-aria">
       <div class="ms-sel" id="missionServicesTrack" role="tablist"><!--snap--><button type="button" class="ms-pill on" role="tab" data-i="0" data-cat="photo-part" aria-selected="true">Séance photo<i></i></button><button type="button" class="ms-pill" role="tab" data-i="1" data-cat="corporate" aria-selected="false">Corporate<i></i></button><button type="button" class="ms-pill" role="tab" data-i="2" data-cat="mode" aria-selected="false">Mode<i></i></button><button type="button" class="ms-pill" role="tab" data-i="3" data-cat="commercial" aria-selected="false">Commercial &amp; produits<i></i></button><button type="button" class="ms-pill" role="tab" data-i="4" data-cat="event" aria-selected="false">Événementiel<i></i></button><button type="button" class="ms-pill" role="tab" data-i="5" data-cat="lumen" aria-selected="false">Lumen<i></i></button><!--/snap--></div>
-      <div class="ms-prev" id="missionPreview" aria-live="polite"><!--snap--><a class="ms-im" href="/services/seance-photo-particuliers/" aria-label="Séance photo — particuliers" onclick="event.preventDefault();goToQuizCategory('photo-part')" style="background-image:url('https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/services/photo-part.webp')"></a>
+      <div class="ms-prev" id="missionPreview" aria-live="polite"><!--snap--><a class="ms-im" href="/services/seance-photo-particuliers/" aria-label="Séance photo — particuliers" onclick="return navLink(event,'service','photo-part')" style="background-image:url('https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/services/photo-part.webp')"></a>
     <div class="ms-tx">
-      <h3><a href="/services/seance-photo-particuliers/" onclick="event.preventDefault();goToQuizCategory('photo-part')">Séance photo — particuliers</a></h3>
+      <h3><a href="/services/seance-photo-particuliers/" onclick="return navLink(event,'service','photo-part')">Séance photo — particuliers</a></h3>
       <div class="ms-from">dès <b>290 €</b></div>
       <ul><li>Livraison en 5 à 10 jours ouvrés</li><li>8 à 30 photos HD retouchées</li><li>Vidéo et Reels selon la formule</li><li>Book grossesse — 590 €</li></ul>
       <div class="ms-actions"><a class="ms-cta" href="/services/seance-photo-particuliers/" onclick="event.preventDefault();goToQuizCategory('photo-part')">Estimer ce projet →</a><a class="ms-link" href="/services/seance-photo-particuliers/" onclick="return navLink(event,'service','photo-part')">Voir la prestation</a></div>
@@ -1832,6 +1832,6 @@
 <script src="config/articles.en.js?v=f5e9d676"></script>
 <script src="config/routes.js?v=32eeabdd"></script>
 <script src="config/media.js?v=e515354a"></script>
-<script src="js/script.min.js?v=4728eb0a"></script>
+<script src="js/script.min.js?v=f0b23c31"></script>
 </body>
 </html>
