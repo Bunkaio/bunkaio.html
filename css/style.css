@@ -3526,8 +3526,8 @@
   .svc-cta-row .cta-primary { animation: ctaGlow 3.8s ease-in-out infinite; }
   .svc-cta-row .btn-ghost { color: #fff; background: rgba(10,10,12,.38); border-color: rgba(255,255,255,.75); }
   .svc-cta-row .btn-ghost span { color: #fff; }
-  .svc-cta-row .btn-ghost:hover { color: var(--black); }
-  .svc-cta-row .btn-ghost:hover span { color: var(--black); }
+  .svc-cta-row .btn-ghost:hover { color: #4b3d7a; border-color: #6e5aa8; }
+  .svc-cta-row .btn-ghost:hover span { color: #4b3d7a; }
   @media (max-width: 600px) { .svc-cta-row { margin: -34px 0 34px; } .svc-cta-row .cta-primary { width: 100%; } }
   .cta-primary { border-radius: 18px; }
 
@@ -4084,3 +4084,14 @@ a.hero-start { text-decoration: none; display: inline-flex; align-items: center;
   .svr-btn { width: 40px; height: 40px; }
 }
 @media (prefers-reduced-motion: reduce) { .svr-card, .svr-go { transition: none; } }
+
+/* Polas : formule mise en avant dans la grille Mode */
+.svcp-tier-polas { border-color: #6e5aa8; background: linear-gradient(180deg, #f1ecfa, #fff 60%); box-shadow: 0 10px 28px rgba(110,90,168,0.16); }
+.service-polas { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin: 14px 0 6px; padding: 12px 14px; border: 1px solid #6e5aa8; border-radius: 12px; background: #f1ecfa; }
+.service-polas .service-tier-name { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
+.service-polas .service-tier-name small { flex-basis: 100%; font-size: 11.5px; font-weight: 500; color: #4b3d7a; }
+.service-polas-tag { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; background: #6e5aa8; color: #fff; border-radius: 999px; padding: 3px 9px; }
+/* Espace entre les fiches prestations et la bannière « Découvrir chaque prestation » */
+#svcLinks { margin-top: clamp(40px, 6vw, 72px); }
+.svcp-tier-polas { grid-column: 1 / -1; }
+.svcp-tier-polas .svcp-list { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); column-gap: 24px; margin: 4px 0 8px; }

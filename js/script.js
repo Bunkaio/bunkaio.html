@@ -2996,6 +2996,15 @@ function renderServicePage(catId){
             <div class="svcp-delay">${t(tt.delay)}</div>
             <ul class="svcp-list">${(en ? tt.items.en : tt.items.fr).map(i => `<li>${escHtml(i)}</li>`).join('')}</ul>
           </div>`).join('')}
+        ${POLAS[catId] ? `
+          <div class="svcp-tier svcp-tier-polas">
+            <div class="svcp-badge">${t({fr:'Pour les agences', en:'For agencies'})}</div>
+            <h3>${t(POLAS[catId].name)}</h3>
+            <div class="svcp-price">${price(POLAS[catId].price + 60)}</div>
+            <div class="svcp-delay">${t(POLAS[catId].delay)} · ${t({fr:'studio inclus', en:'studio included'})}</div>
+            <ul class="svcp-list">${t(POLAS[catId].items).map(i => `<li>${escHtml(i)}</li>`).join('')}</ul>
+            <a class="svcp-link" href="/conseils/polas-mannequin-digitals-agence/" onclick="return navLink(event,'article','polas-mannequin-digitals-agence')">${t({fr:'Comprendre les Polas →', en:'What are Polas? →'})}</a>
+          </div>` : ''}
       </div>
       ${sub ? `<p class="svcp-note">${t({fr:'Besoin régulier ? ', en:'Regular need? '})}<strong>${t(sub.name)}</strong> — ${sub.price.toLocaleString(en ? 'en-GB' : 'fr-FR')} € ${t({fr:'HT / mois', en:'excl. VAT / month'})}.</p>` : ''}
     </section>
@@ -3324,6 +3333,7 @@ function renderServices(){
               </div>`).join('')}
       </div>
       ${subRow}
+      ${POLAS[c.id] ? `<div class="service-polas"><span class="service-tier-name"><strong>${t(POLAS[c.id].name)}</strong> <span class="service-polas-tag">${t({fr:'Pour les agences', en:'For agencies'})}</span><small>${t({fr:'Digitals bruts · studio inclus', en:'Raw digitals · studio included'})}</small></span><span class="service-tier-price">${(POLAS[c.id].price + 60).toLocaleString('fr-FR')}€<small>HT</small></span></div>` : ''}
       <button class="service-cta">${I18N[LANG]['svc-cta']}</button>
       <a class="service-more" href="${servicePath(c.id)}" onclick="return navLink(event,'service','${c.id}')">${t(c.name)} : ${t({fr:'détails et tarifs →', en:'details and rates →'})}</a>`;
     card.querySelector('.service-cta').onclick = () => {
