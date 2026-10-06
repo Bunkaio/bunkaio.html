@@ -485,6 +485,7 @@
   .accordion-trigger[aria-expanded="true"] .accordion-chevron {
     transform: rotate(180deg); border-color: var(--black);
   }
+  .accordion-item, .accordion-body { overflow-anchor: none; }
   .accordion-body {
     overflow: hidden;
     max-height: 0;

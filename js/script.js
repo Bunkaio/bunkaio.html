@@ -5813,7 +5813,7 @@ function openPartnersAccordion(i){
   const el = document.getElementById('partnersAccordion');
   if (!el) return;
   const trig = el.querySelectorAll('.accordion-trigger')[i];
-  if (trig && trig.getAttribute('aria-expanded') !== 'true') toggleAccordion(trig);
+  if (trig && trig.getAttribute('aria-expanded') !== 'true') toggleAccordion(trig, false);
   el.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
@@ -5858,20 +5858,43 @@ function initTestiAutoplay(){
   track.addEventListener('touchstart', () => testiPauseTemp(5000), { passive: true });
 }
 
-function toggleAccordion(btn){
+/* Anime l'ouverture/fermeture avec la hauteur réelle du contenu (et non un max-height de 6000 px,
+   qui retardait la fermeture et décalait la page). */
+function setAccordionOpen(trigger, body, open){
+  trigger.setAttribute('aria-expanded', String(open));
+  if (open) {
+    body.classList.add('open');
+    body.style.maxHeight = body.scrollHeight + 'px';
+    setTimeout(() => { if (body.classList.contains('open')) body.style.maxHeight = ''; }, 760);
+  } else {
+    body.style.maxHeight = body.scrollHeight + 'px';
+    void body.offsetHeight;
+    body.classList.remove('open');
+    body.style.maxHeight = '';
+  }
+}
+
+function toggleAccordion(btn, pin){
   const body = btn.nextElementSibling;
   const open = body.classList.contains('open');
+  /* Position du bouton cliqué : on la garde fixe à l'écran pendant l'animation, sinon la fermeture
+     d'un item situé au-dessus fait « sauter » la page (surtout sur mobile). */
+  const top0 = btn.getBoundingClientRect().top;
   /* Accordéon « exclusif » : ouvrir un item referme les autres, pour garder
      une page courte et dynamique. */
   const group = btn.closest('.accordion-item')?.parentElement;
   if (!open && group && group.dataset.exclusive) {
-    group.querySelectorAll('.accordion-trigger[aria-expanded="true"]').forEach(t => {
-      t.setAttribute('aria-expanded', 'false');
-      t.nextElementSibling.classList.remove('open');
-    });
+    group.querySelectorAll('.accordion-trigger[aria-expanded="true"]').forEach(t => setAccordionOpen(t, t.nextElementSibling, false));
   }
-  body.classList.toggle('open', !open);
-  btn.setAttribute('aria-expanded', String(!open));
+  setAccordionOpen(btn, body, !open);
+  if (pin === false) return;
+  const t0 = performance.now();
+  const hold = now => {
+    const d = btn.getBoundingClientRect().top - top0;
+    if (Math.abs(d) > 0.5) window.scrollBy({ top: d, behavior: 'instant' });
+    if (now - t0 < 800) requestAnimationFrame(hold);
+  };
+  requestAnimationFrame(hold);
 }
 
 /* ═══════════════ FAQ & POLITIQUE DE CONFIDENTIALITÉ ═══════════════ */
