@@ -3048,7 +3048,7 @@
      l'animation flou -> net se terminer. Plus de hauteur = plus de
      distance à parcourir = plus de temps réel où la section reste à
      l'écran, quelle que soit la vitesse de scroll. */
-  .home-claim-trigger { min-height: 220vh; pointer-events: none !important; scroll-snap-align: start; }
+  .home-claim-trigger { min-height: 300vh; pointer-events: none !important; scroll-snap-align: start; }
 
   /* ─── PRESTATIONS — carrousel horizontal natif (scroll-snap) ───
      En flux normal de page (pas de position:fixed, pas de déclencheur

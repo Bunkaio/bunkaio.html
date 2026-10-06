@@ -5757,6 +5757,22 @@ function initHomeClaimVideo(){
     déclencheur) et l'activation de celui-ci, laissant voir le fond blanc
     de la page entre les deux. */
   missionIO.observe(trigger);
+  /* Fin de section : le texte et le sélecteur s'estompent, puis la vidéo reste seule à l'écran sur environ
+     0,8 écran de défilement, avant que la suite de la page n'apparaisse. */
+  const content = wrap.querySelector('.mission-video-content');
+  const overlay = wrap.querySelector('.mission-video-overlay');
+  let tick = false;
+  const fadeContent = () => {
+    tick = false;
+    if (!triggerVisible) return;
+    const vh = window.innerHeight || 800;
+    const b = trigger.getBoundingClientRect().bottom / vh;
+    const op = Math.max(0, Math.min(1, (b - 1.8) / 0.4));
+    if (content) { content.style.opacity = String(op); content.style.pointerEvents = op < 0.25 ? 'none' : ''; }
+    if (overlay) overlay.style.opacity = String(0.3 + 0.7 * op);
+  };
+  addEventListener('scroll', () => { if (!tick) { tick = true; requestAnimationFrame(fadeContent); } }, { passive: true });
+  addEventListener('resize', fadeContent);
   if (reassureEl) {
     const reassureIO = new IntersectionObserver(entries => {
       entries.forEach(e => { reassureVisible = e.isIntersecting; });
