@@ -3042,6 +3042,28 @@ document.addEventListener('click', (e) => {
   if (willOpen) { item.classList.add('open'); head.setAttribute('aria-expanded', 'true'); }
 });
 
+/* Page de chaque prestation : le fond reprend la photo de la catégorie (admin média : discover/<catégorie>.webp,
+   sinon services/<catégorie>.webp, sinon le fond habituel de la rubrique Services). */
+function serviceBgSync(catId){
+  const wrap = document.getElementById('pageHeroWrap');
+  const url = discoverPhotoUrl(catId);
+  if (!wrap || !url || currentView !== 'service') return;
+  clearHeroCarousel();
+  wrap.style.display = '';
+  const prevSlide = wrap.querySelector('.hero-slide.svc-slide');
+  if (prevSlide && prevSlide.dataset.cat === catId) { prevSlide.classList.add('active'); }
+  else {
+    wrap.querySelectorAll('.hero-slide').forEach(sl => sl.remove());
+    const slide = document.createElement('div'); slide.className = 'hero-slide svc-slide active'; slide.dataset.cat = catId;
+    const img = document.createElement('img'); img.alt = ''; img.src = url; img.loading = 'eager';
+    const fb = IMG.servicePhotos && IMG.servicePhotos[catId];
+    img.onerror = () => { if (fb && img.src !== fb) img.src = fb; else slide.remove(); };
+    slide.appendChild(img);
+    wrap.insertBefore(slide, wrap.querySelector('.page-hero-overlay') || null);
+  }
+  document.documentElement.style.setProperty('--page-bg-url', 'url(' + url + ')');
+}
+
 function renderServicePage(catId){
   const el = document.getElementById('servicePageContent');
   if (!el) return;
@@ -3183,6 +3205,7 @@ function renderServicePage(catId){
     </section>
     <div class="svcp-back-row"><a class="svcp-back" href="/services/" onclick="return navLink(event,'services')"><span aria-hidden="true">←</span> ${t({fr:'Retour au catalogue', en:'Back to the catalogue'})}</a></div>`;
   renderAccordionInto('servicePageFaq', faq.map(f => ({ title: f.q, body: f.a })), { exclusive: true, closed: true });
+  serviceBgSync(catId);
 }
 
 /* ═══════════════ CONSEILS PHOTO (config/articles.js) ═══════════════ */
