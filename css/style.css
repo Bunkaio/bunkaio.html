@@ -4095,3 +4095,5 @@ a.hero-start { text-decoration: none; display: inline-flex; align-items: center;
 #svcLinks { margin-top: clamp(40px, 6vw, 72px); }
 .svcp-tier-polas { grid-column: 1 / -1; }
 .svcp-tier-polas .svcp-list { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); column-gap: 24px; margin: 4px 0 8px; }
+.svcp-list li.svcp-choose-polas { background: #f1ecfa; border: 1px solid #6e5aa8; border-radius: 10px; padding: 10px 14px 10px 30px; }
+.svcp-list li.svcp-choose-polas::before { left: 12px; top: 10px; color: #6e5aa8; }
