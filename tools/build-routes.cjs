@@ -30,7 +30,7 @@ const ROUTES = vm.runInNewContext(fs.readFileSync(path.join(ROOT, 'config/articl
 
 /* Conteneurs remplis par le JavaScript, à pré-rendre dans le HTML. */
 const SNAPS_BY_VIEW = {
-  home: ['adviceTeaser', 'catShowcaseTrack', 'csSlotHome'],
+  home: ['missionServicesTrack', 'missionPreview', 'adviceTeaser', 'catShowcaseTrack', 'csSlotHome'],
   quiz: ['catList', 'csSlotQuiz'],
   portfolio: ['pfTabs', 'pfLinks'],
   services: ['servicesFilters', 'servicesGrid', 'svcLinks', 'processSteps', 'csSlotServices'],
@@ -319,7 +319,7 @@ function pinAssets(html) {
     }
     Object.assign(snaps, out);
   };
-  await grab(['ftServices', 'catShowcaseTrack', 'csSlotHome', 'csSlotServices', 'csSlotQuiz']);
+  await grab(['missionServicesTrack', 'missionPreview', 'ftServices', 'catShowcaseTrack', 'csSlotHome', 'csSlotServices', 'csSlotQuiz']);
   await page.evaluate(() => goView('services', null, { initial: true }));
   await page.evaluate(() => { setSvcTab('devis'); });
   await page.waitForTimeout(300);

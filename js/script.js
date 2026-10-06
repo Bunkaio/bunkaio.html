@@ -883,6 +883,7 @@ function refreshDynamic(){
   refreshCatShowcase();
   renderSvcAssure();
   renderCats();
+  renderMissionServices();
   renderFooterServices();
   if (S.cat && document.getElementById('qs-2').classList.contains('active')) renderProfiles();
   if (S.cat && document.getElementById('qs-3').classList.contains('active')) renderTiers();
@@ -1906,6 +1907,73 @@ document.addEventListener('click', (e) => {
 function goToServiceTable(catId){
   activeServiceFilter = catId;
   goView('services');
+}
+
+/* Prestations — section "Le studio" (page Accueil) : sélecteur + aperçu.
+   Une pastille par prestation (barre de progression, avance seule toutes les 5,5 s) ; la carte d'aperçu
+   montre la photo, le prix « dès », trois points forts et le bouton vers le devis de cette catégorie.
+   Le fond de la section prend la photo de la prestation affichée. Survol ou clic = choisir ;
+   le survol met le défilement en pause. */
+let msIndex = 0, msTimer = null, msHover = false;
+const MS_DELAY = 5500;
+function missionPillName(c){ return String(t(c.name)).split(' — ')[0].split(',')[0]; }
+function missionPreviewHTML(c){
+  const f = catFacts(c), en = LANG === 'en';
+  const to = t({fr:'à', en:'to'}), wd = t({fr:'jours ouvrés', en:'working days'});
+  const dly = (f.dMin === f.dMax ? f.dMin : f.dMin + ' ' + to + ' ' + f.dMax) + ' ' + wd;
+  const pts = [t({fr:'Livraison en ', en:'Delivery in '}) + dly];
+  if (f.pMax) pts.push((f.pMin === f.pMax ? f.pMin : f.pMin + ' ' + to + ' ' + f.pMax) + ' ' + t({fr:'photos HD retouchées', en:'retouched HD photos'}));
+  pts.push(f.hasVideo ? t({fr:'Vidéo et Reels selon la formule', en:'Video and Reels depending on the package'}) : t({fr:'Galerie privée de téléchargement', en:'Private download gallery'}));
+  if (POLAS[c.id]) pts.push(t(POLAS[c.id].name) + ' — ' + specialTotal(POLAS[c.id]).toLocaleString('fr-FR') + ' €');
+  const url = IMG.servicePhotos && IMG.servicePhotos[c.id];
+  return `<div class="ms-im"${url ? ` style="background-image:url('${url}')"` : ''}></div>
+    <div class="ms-tx">
+      <h3>${t(c.name)}</h3>
+      <div class="ms-from">${t({fr:'dès', en:'from'})} <b>${f.from.toLocaleString('fr-FR')} €</b></div>
+      <ul>${pts.slice(0, 4).map(p => `<li>${p}</li>`).join('')}</ul>
+      <div class="ms-actions"><a class="ms-cta" href="${servicePath(c.id)}" onclick="event.preventDefault();goToQuizCategory('${c.id}')">${t({fr:'Estimer ce projet', en:'Estimate this project'})} →</a><a class="ms-link" href="${servicePath(c.id)}" onclick="return navLink(event,'service','${c.id}')">${t({fr:'Voir la prestation', en:'See the service'})}</a></div>
+    </div>`;
+}
+function missionSelect(i, fromAuto){
+  const sel = document.getElementById('missionServicesTrack'), prev = document.getElementById('missionPreview');
+  if (!sel || !prev || !CATS.length) return;
+  msIndex = ((i % CATS.length) + CATS.length) % CATS.length;
+  const c = CATS[msIndex];
+  [...sel.children].forEach((b, k) => { b.classList.remove('on'); b.setAttribute('aria-selected', String(k === msIndex)); if (k === msIndex) { void b.offsetWidth; b.classList.add('on'); } });
+  prev.classList.remove('swap'); void prev.offsetWidth; prev.classList.add('swap');
+  prev.innerHTML = missionPreviewHTML(c);
+  missionShowBg(c.id);
+  clearTimeout(msTimer);
+  if (!msHover && !REDUCED_MOTION) msTimer = setTimeout(missionTick, MS_DELAY);
+}
+function missionTick(){
+  const wrap = document.getElementById('missionVideoWrap');
+  if (wrap && wrap.classList.contains('active') && !document.hidden && !msHover) missionSelect(msIndex + 1, true);
+  else { clearTimeout(msTimer); msTimer = setTimeout(missionTick, 1500); }
+}
+function renderMissionServices(){
+  const sel = document.getElementById('missionServicesTrack');
+  if (!sel || !CATS.length) return;
+  sel.innerHTML = CATS.map((c, i) => `<button type="button" class="ms-pill" role="tab" data-i="${i}" data-cat="${c.id}">${missionPillName(c)}<i></i></button>`).join('');
+  const bgs = document.getElementById('missionTileBgs');
+  if (bgs && !bgs.children.length) bgs.innerHTML = CATS.map(c => { const u = IMG.servicePhotos && IMG.servicePhotos[c.id]; return `<div class="mt-bg" data-cat="${c.id}"${u ? ` style="background-image:url('${u}')"` : ''}></div>`; }).join('');
+  missionSelect(msIndex);
+}
+function missionShowBg(catId){
+  document.querySelectorAll('#missionTileBgs .mt-bg').forEach(b => b.classList.toggle('on', b.dataset.cat === catId));
+}
+function initMissionServicesAutoplay(){
+  const box = document.getElementById('missionServices');
+  if (!box || box.dataset.autoplayInit) return;
+  box.dataset.autoplayInit = '1';
+  box.addEventListener('mouseover', e => {
+    const p = e.target.closest ? e.target.closest('.ms-pill') : null;
+    if (p && matchMedia('(hover: hover)').matches && +p.dataset.i !== msIndex) missionSelect(+p.dataset.i);
+  });
+  box.addEventListener('click', e => { const p = e.target.closest ? e.target.closest('.ms-pill') : null; if (p) missionSelect(+p.dataset.i); });
+  box.addEventListener('mouseenter', () => { msHover = true; box.classList.add('paused'); clearTimeout(msTimer); });
+  box.addEventListener('mouseleave', () => { msHover = false; box.classList.remove('paused'); missionSelect(msIndex); });
+  box.addEventListener('touchstart', () => { msHover = true; box.classList.add('paused'); clearTimeout(msTimer); clearTimeout(box._tt); box._tt = setTimeout(() => { msHover = false; box.classList.remove('paused'); missionSelect(msIndex); }, 9000); }, { passive: true });
 }
 
 function renderCats(){
@@ -6102,6 +6170,8 @@ function applyImages(){
 
 /* ═══════════════ INIT ═══════════════ */
 renderCats();
+renderMissionServices();
+initMissionServicesAutoplay();
 initCatShowcase();
 renderLogoCarousel();
 renderFooterServices();
