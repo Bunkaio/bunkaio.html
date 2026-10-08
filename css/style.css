@@ -4583,9 +4583,15 @@ a, button { -webkit-tap-highlight-color: rgba(110,90,168,0.18); }
 @keyframes hkUnder { 0% { transform: scaleX(0); opacity: 1; } 60% { transform: scaleX(1); opacity: 1; } 100% { transform: scaleX(1); opacity: 0.45; } }
 @media (max-width: 600px) {
   .hero-title .hero-kicker { gap: 8px; margin-bottom: 24px; }
-  .hero-kicker .hk-a { gap: 12px; letter-spacing: 0.34em; font-size: 12px; }
-  .hero-kicker .hk-a::after { margin-left: -0.34em; }
+  .hero-kicker .hk-a { gap: 10px; letter-spacing: 0.24em; font-size: 12px; white-space: nowrap; }
+  .hero-kicker .hk-a::before, .hero-kicker .hk-a::after { width: 22px; }
+  .hero-kicker .hk-a::after { margin-left: -0.24em; }
   .hero-kicker .hk-b { font-size: 13px; }
+}
+@media (max-width: 350px) {
+  .hero-kicker .hk-a { letter-spacing: 0.18em; font-size: 11px; gap: 8px; }
+  .hero-kicker .hk-a::before, .hero-kicker .hk-a::after { width: 14px; }
+  .hero-kicker .hk-a::after { margin-left: -0.18em; }
 }
 @media (prefers-reduced-motion: reduce) {
   .hero-kicker .hk-a, .hero-kicker .hk-b, .hero-kicker .hk-b em { opacity: 1; filter: none; transform: none; animation: none; }
@@ -4666,3 +4672,9 @@ a, button { -webkit-tap-highlight-color: rgba(110,90,168,0.18); }
 .pb-insitu figure:hover img { transform: scale(1.04); }
 @media (max-width: 600px) { .pb-insitu { gap: 8px; } }
 @media (prefers-reduced-motion: reduce) { .pb-insitu figure { animation: none; } .pb-insitu img { transition: none; } }
+
+/* ═══ Protection des photos (voir protectPhotos dans script.js) : pas de glisser-déposer ni d'appui long « Enregistrer
+   l'image » ; floutage temporaire quand un raccourci de capture est détecté ; photos masquées à l'impression. ═══ */
+img, video, .hero-slide, .ms-im, .pb-insitu figure { -webkit-user-drag: none; user-drag: none; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
+html.photo-shield img, html.photo-shield video, html.photo-shield .hero-slide, html.photo-shield .ms-im { filter: blur(26px) !important; transition: filter 0.05s linear; }
+@media print { img, video, .hero-slide, .ms-im, .page-hero-wrap, .mission-video-wrap { visibility: hidden !important; } }

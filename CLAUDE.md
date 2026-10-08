@@ -31,7 +31,7 @@ Le code est la source de vérité. Ce fichier ne sert qu'à reprendre vite.
 - La stratégie ne touche pas au catalogue : ne pas retirer ni modifier de prestation pour la suivre.
 
 ## Architecture de marque (décision de la propriétaire, 8 oct. 2026)
-- BUNKAIO = « studio d'image pour professionnels, entrepreneurs et mannequins » ; crée des images premium pour les personnes, les marques et les entreprises. Slogan : « BUNKAIO accompagne les personnes qui entreprennent dans la construction de leur image professionnelle. »
+- BUNKAIO = « studio de photographie pour professionnels, entrepreneurs et mannequins » ; crée des images premium pour les personnes, les marques et les entreprises. Slogan : « BUNKAIO accompagne les personnes qui entreprennent dans la construction de leur image professionnelle. »
 - Orientation par marché sur /decouvrir-chaque-prestation/ (entrepreneurs, marques, entreprises & événements, particuliers) ; la stratégie ne vise que les deux premiers.
 - Formule Lancement 320 € = palier `lanc` de la gamme `corporate` (pas une nouvelle gamme) ; `catTiers(c)` n'affiche que les paliers définis par la gamme. Landing : /services/personal-branding-entrepreneurs/ (route `service` / `branding`, `renderBrandingPage`). Mobilité (shooting in situ) = argument central ; déplacements selon `TRAVEL_TXT`, jamais « toujours offerts ». Pas de remise, pas de « low-cost ».
 - Admin média : photo de formule `formulas/corporate-lanc.webp`, fond `discover/branding.webp` (repli : photos corporate), photos in situ `branding/in-situ-1..3.webp` (affichées seulement si présentes, `IMG.brandingInSitu`).

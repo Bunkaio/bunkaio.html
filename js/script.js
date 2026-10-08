@@ -218,7 +218,7 @@ let LANG = 'fr';
 const I18N = {
   fr: {
     'estimate':'Devis','services':'Services','portfolio':'Portfolio','drone':'4K Drone','contact':'Contact','partners':'Collaboration','nav-legal':'FAQ',
-    'hero-kicker':'<span class="hk-a">Studio d\'image</span> <span class="hk-b">pour <span class=\"hk-w\"><em>professionnels</em>,</span> <span class=\"hk-w\"><em>entrepreneurs</em></span> et <span class=\"hk-w\"><em>mannequins</em></span></span>','cred-lead':'BUNKAIO est un studio d\'image mobile, basé à Montpellier, qui crée des images premium pour les personnes, les marques et les entreprises : <a href="/services/personal-branding-entrepreneurs/" data-nav="service:branding">Personal Branding pour entrepreneurs</a>, portraits professionnels et corporate, mode et mannequins, photo de produit, événementiel et séances pour les particuliers, à Béziers, Montpellier et Toulouse. Retrouvez chaque <a href="/services/" data-nav="services">prestation et ses tarifs</a>.','quiz-h1':'Devis photo en ligne','hero-word1':'Imaginez','hero-word2':'votre','hero-word3':'projet','start':'Construire mon projet',
+    'hero-kicker':'<span class="hk-a">Studio de photographie</span> <span class="hk-b">pour <span class=\"hk-w\"><em>professionnels</em>,</span> <span class=\"hk-w\"><em>entrepreneurs</em></span> et <span class=\"hk-w\"><em>mannequins</em></span></span>','cred-lead':'BUNKAIO est un studio de photographie mobile, basé à Montpellier, qui crée des images premium pour les personnes, les marques et les entreprises : <a href="/services/personal-branding-entrepreneurs/" data-nav="service:branding">Personal Branding pour entrepreneurs</a>, portraits professionnels et corporate, mode et mannequins, photo de produit, événementiel et séances pour les particuliers, à Béziers, Montpellier et Toulouse. Retrouvez chaque <a href="/services/" data-nav="services">prestation et ses tarifs</a>.','quiz-h1':'Devis photo en ligne','hero-word1':'Imaginez','hero-word2':'votre','hero-word3':'projet','start':'Construire mon projet',
     'step-cat':'01 — Catégorie','q-cat':'Quel est votre domaine\u00a0?','q-cat-sub':'Sélectionnez l\'univers de votre projet.',
     'step-prof':'02 — Profil','q-prof':'Quel profil êtes-vous\u00a0?','q-prof-sub':'Identifiez-vous pour que nous comprenions précisément votre besoin.',
     'step-tier':'03 — Prestation','q-tier':'Quel niveau de prestation\u00a0?',
@@ -410,7 +410,7 @@ const I18N = {
     'collab-btn':'Envoyer ma proposition',
     'collab-success-title':'Proposition envoyée',
     'collab-success-text':'Merci pour votre proposition. Nous l\'étudions et revenons vers vous sous 5 jours ouvrés.',
-    'footer-claim':'Studio d\'image pour professionnels, entrepreneurs et mannequins — des images premium pour les personnes, les marques et les entreprises.',
+    'footer-claim':'Studio de photographie pour professionnels, entrepreneurs et mannequins — des images premium pour les personnes, les marques et les entreprises.',
     'access-client':'Accès client','access-partner':'Accès partenaire','nav-connect':'Connexion','nav-account-client':'Espace client','nav-account-partner':'Espace partenaire',
     'login-title-client':'Espace client','login-title-partner':'Espace partenaire',
     'login-title':'Espace client',
@@ -541,10 +541,10 @@ const I18N = {
     'comm-redirect-text':'Vous avez exprimé un intérêt pour des services de communication complémentaires. Agency Nascimento, partenaire de BUNKAIO, accompagne nos clients sur la création de site, le SEO, la publicité en ligne et les réseaux sociaux. Découvrez leur approche.',
     'comm-redirect-btn':'Découvrir Agency Nascimento',
     'home-claim-kicker':'Le studio',
-    'li-tag':'Studio d\'image mobile',
+    'li-tag':'Studio de photographie mobile',
     'home-claim-text':'BUNKAIO accompagne les personnes qui entreprennent dans la construction de leur image professionnelle.',
     'ft-services':'Services','ft-studio':'Le studio',
-    'footer-claim2':'Studio d\'image mobile · Béziers · Montpellier · Toulouse',
+    'footer-claim2':'Studio de photographie mobile · Béziers · Montpellier · Toulouse',
     'stab-catalogue':'Catalogue & prix','stab-devis':'Devis & déroulé',
     'p-trust':'Ils ont travaillé avec BUNKAIO',
     'process-payment-info':'<strong>Modalités de paiement :</strong> 30 % à la commande à la signature du devis, solde à la livraison des livrables. Chaque versement est réglable en 3x sans frais avec Klarna, par carte bancaire.',
@@ -575,7 +575,7 @@ const I18N = {
   },
   en: {
     'estimate':'Quote','services':'Services','portfolio':'Portfolio','drone':'4K Drone','contact':'Contact','partners':'Collaboration','nav-legal':'FAQ',
-    'hero-kicker':'<span class="hk-a">Image studio</span> <span class="hk-b">for <span class=\"hk-w\"><em>professionals</em>,</span> <span class=\"hk-w\"><em>entrepreneurs</em></span> and <span class=\"hk-w\"><em>models</em></span></span>','cred-lead':'BUNKAIO is a mobile image studio based in Montpellier, creating premium images for people, brands and companies: <a href="/services/personal-branding-entrepreneurs/" data-nav="service:branding">Personal Branding for entrepreneurs</a>, professional and corporate portraits, fashion and models, product photography, events and sessions for individuals, in Béziers, Montpellier and Toulouse. Browse each <a href="/services/" data-nav="services">service and its rates</a>.','quiz-h1':'Online photo quote','hero-word1':'Imagine','hero-word2':'your','hero-word3':'project','start':'Build my project',
+    'hero-kicker':'<span class="hk-a">Photography studio</span> <span class="hk-b">for <span class=\"hk-w\"><em>professionals</em>,</span> <span class=\"hk-w\"><em>entrepreneurs</em></span> and <span class=\"hk-w\"><em>models</em></span></span>','cred-lead':'BUNKAIO is a mobile photography studio based in Montpellier, creating premium images for people, brands and companies: <a href="/services/personal-branding-entrepreneurs/" data-nav="service:branding">Personal Branding for entrepreneurs</a>, professional and corporate portraits, fashion and models, product photography, events and sessions for individuals, in Béziers, Montpellier and Toulouse. Browse each <a href="/services/" data-nav="services">service and its rates</a>.','quiz-h1':'Online photo quote','hero-word1':'Imagine','hero-word2':'your','hero-word3':'project','start':'Build my project',
     'step-cat':'01 — Category','q-cat':'What is your field?','q-cat-sub':'Select the universe your project belongs to.',
     'step-prof':'02 — Profile','q-prof':'Which profile are you?','q-prof-sub':'Tell us who you are so we can understand exactly what you need.',
     'step-tier':'03 — Service level','q-tier':'Which level of service?',
@@ -767,7 +767,7 @@ const I18N = {
     'collab-btn':'Send my proposal',
     'collab-success-title':'Proposal sent',
     'collab-success-text':'Thank you for your proposal. We\'re reviewing it and will get back to you within 5 working days.',
-    'footer-claim':'Image studio for professionals, entrepreneurs and models — premium images for people, brands and companies.',
+    'footer-claim':'Photography studio for professionals, entrepreneurs and models — premium images for people, brands and companies.',
     'access-client':'Client area','access-partner':'Partner area','nav-connect':'Sign in','nav-account-client':'Client area','nav-account-partner':'Partner area',
     'login-title-client':'Client area','login-title-partner':'Partner area',
     'login-title':'Client area',
@@ -898,10 +898,10 @@ const I18N = {
     'comm-redirect-text':'You expressed an interest in complementary communication services. Agency Nascimento, a BUNKAIO partner, supports our clients with website creation, SEO, online advertising and social media. Discover their approach.',
     'comm-redirect-btn':'Discover Agency Nascimento',
     'home-claim-kicker':'The studio',
-    'li-tag':'Mobile image studio',
+    'li-tag':'Mobile photography studio',
     'home-claim-text':'BUNKAIO helps people who run a business build their professional image.',
     'ft-services':'Services','ft-studio':'The studio',
-    'footer-claim2':'Mobile image studio · Béziers · Montpellier · Toulouse',
+    'footer-claim2':'Mobile photography studio · Béziers · Montpellier · Toulouse',
     'stab-catalogue':'Catalogue & rates','stab-devis':'Quote & process',
     'p-trust':'They worked with BUNKAIO',
     'process-payment-info':'<strong>Payment terms:</strong> 30% deposit upon signing the quote, balance due on delivery of your deliverables. Each payment can be split into 3 interest-free instalments with Klarna, by credit card.',
@@ -6956,6 +6956,32 @@ function renderLogoCarousel(){
   el.innerHTML = make() + make();
 }
 
+
+/* ═══════════════ PROTECTION DES PHOTOS ═══════════════
+   Dissuasion, pas une garantie : un site ne peut pas empêcher une capture d'écran du système (ni une photo de l'écran).
+   - clic droit désactivé sur tout le site (sauf dans les champs de saisie, pour coller ou corriger un texte) ;
+   - glisser-déposer des images et appui long « Enregistrer l'image » (iOS) désactivés (CSS + événements) ;
+   - Ctrl/Cmd + S (enregistrer la page) bloqué ; impression : les photos sont masquées (CSS @media print) ;
+   - raccourcis de capture détectés (Impr. écran, Cmd + Maj + 3/4/5 sur Mac, Win + Maj + S) : les photos sont floutées
+     quelques secondes et le presse-papiers est vidé quand le navigateur le permet. */
+(function protectPhotos(){
+  const editable = el => !!(el && el.closest && el.closest('input, textarea, select, [contenteditable="true"]'));
+  document.addEventListener('contextmenu', e => { if (!editable(e.target)) e.preventDefault(); });
+  document.addEventListener('dragstart', e => { if (e.target && (e.target.tagName === 'IMG' || e.target.tagName === 'VIDEO' || (e.target.closest && e.target.closest('.hero-slide, figure')))) e.preventDefault(); });
+  let shieldTimer = null;
+  const shield = () => {
+    document.documentElement.classList.add('photo-shield');
+    clearTimeout(shieldTimer); shieldTimer = setTimeout(() => document.documentElement.classList.remove('photo-shield'), 3000);
+    try { if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText('').catch(() => {}); } catch (err) {}
+  };
+  document.addEventListener('keydown', e => {
+    const k = (e.key || '').toLowerCase();
+    if ((e.ctrlKey || e.metaKey) && k === 's') { e.preventDefault(); return; }
+    if (k === 'printscreen' || (e.metaKey && e.shiftKey && ['3', '4', '5', 's'].includes(k)) || (e.shiftKey && k === 'meta') || (e.metaKey && k === 'shift')) shield();
+  });
+  document.addEventListener('keyup', e => { if ((e.key || '').toLowerCase() === 'printscreen') shield(); });
+  window.addEventListener('beforeprint', shield);
+})();
 
 /* ═══════════════ FOOTER SERVICES ═══════════════ */
 function renderFooterServices(){
