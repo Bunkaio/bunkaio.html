@@ -1245,7 +1245,7 @@ const CATS = [
 const SUBS = {
   /* Studio Continu : proposé uniquement aux modèles émergents et mannequins (voir SUB_PROFILES). */
   mode: {
-    price: 850,
+    price: 790,
     audience:{fr:'modèles et mannequins', en:'models'},
     name:{fr:'Studio Continu — Modèles & mannequins', en:'Studio Continu — Models'},
     items:{
