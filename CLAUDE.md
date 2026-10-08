@@ -18,7 +18,7 @@ Le code est la source de vérité. Ce fichier ne sert qu'à reprendre vite.
 - Ne pas lancer `pkill -f "http.server"` depuis le shell de l'agent.
 
 ## Grille tarifaire (source : `CATS`, `LUMEN_TIERS`, `SUBS`, `POLAS` dans `js/script.js`)
-- Particuliers 250 / 420 / 650 / 1 090 · Book grossesse 450 · Corporate 250 / 450 / 690 / 1 090.
+- Particuliers 250 / 420 / 650 / 1 090 · Book grossesse 450 · Corporate & personal branding 250 / 320 (Lancement) / 450 / 690 / 1 090.
 - Mode 490 / 990 / 1 690 / 2 490 · Polas 100 · Studio Continu 790 €/mois (6 mois).
 - Commercial 390 / 750 / 1 390 / 2 390 · Événementiel 420 / 750 / 1 290 / 2 190.
 - Lumen : prototype, aucun prix publié, pas de page de formules ; tout lien Lumen mène à /contact/#lumen (message pré-rempli). Modèle de devis et emplacements média inactifs.
@@ -26,7 +26,13 @@ Le code est la source de vérité. Ce fichier ne sert qu'à reprendre vite.
 - Programme partenaires : −20 % permanent (décision de la propriétaire).
 
 ## Priorités commerciales (décision de la propriétaire)
-1. Mode et marques (Mode, Commercial et produits, Studio Continu). 2. Corporate et événementiel. Particuliers et Book grossesse : en vente, sans promotion ni publicité. Lumen : prototype. Plan de référence : artefact « Plan de lancement V3 ».
+1. Mode et marques (Mode, Commercial et produits, Studio Continu). 2. Corporate et événementiel. Particuliers et Book grossesse : en vente, sans promotion ni publicité. Lumen : prototype. Plan de référence : artefact « Plan de lancement V4 » (V3 + porte d'entrée entrepreneurs).
+
+## Architecture de marque (décision de la propriétaire, 8 oct. 2026)
+- BUNKAIO = « studio d'image pour professionnels, entrepreneurs et mannequins » ; crée des images premium pour les personnes, les marques et les entreprises. Slogan : « BUNKAIO accompagne les personnes qui entreprennent dans la construction de leur image professionnelle. »
+- Marchés : particuliers ; entrepreneurs & indépendants ; entreprises & événements (+ mode, marques et mannequins, priorité commerciale). Orientation par marché sur /decouvrir-chaque-prestation/.
+- Formule Lancement 320 € = palier `lanc` de la gamme `corporate` (pas une nouvelle gamme) ; `catTiers(c)` n'affiche que les paliers définis par la gamme. Landing : /services/personal-branding-entrepreneurs/ (route `service` / `branding`, `renderBrandingPage`). Mobilité (shooting in situ) = argument central ; déplacements selon `TRAVEL_TXT`, jamais « toujours offerts ». Pas de remise, pas de « low-cost ».
+- Tracking : `data-track="lancement"` sur les CTA (événement `cta_click`), `form_start` (nécessite le redéploiement du Worker), `quiz_submit` suffixé « · Lancement ». Plan marketing de référence : artefact « Plan de lancement V4 ».
 
 ## Positionnement
 Premium accessible : direction artistique, accompagnement, interlocuteur unique, espace client (moodboard, suivi, devis, factures, séance, galerie privée), 8+ ans d'expérience, 200+ projets, délais annoncés, droits clairs. CTA : « Construire mon projet », « Demander un devis », « Recevoir une proposition », « Parler de mon événement ».

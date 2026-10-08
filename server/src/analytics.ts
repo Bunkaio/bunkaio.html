@@ -12,7 +12,7 @@ const RETENTION_DAYS = 400;
 const EVENT_NAMES = new Set([
   'pageview', 'cta_click', 'quiz_step', 'quiz_submit', 'contact_submit', 'collab_submit',
   'apply_submit', 'share_submit', 'account_request', 'login', 'tel_click', 'mail_click',
-  'social_click', 'lang_toggle',
+  'social_click', 'lang_toggle', 'form_start',
 ]);
 const DEVICES = new Set(['mobile', 'tablet', 'desktop']);
 const BOT_RE = /bot|crawl|spider|slurp|headless|lighthouse|pagespeed|preview|facebookexternalhit|monitor|uptime/i;

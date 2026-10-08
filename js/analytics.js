@@ -67,6 +67,8 @@
     if (href.startsWith('mailto:')) return track('mail_click');
     if (/instagram\.com/.test(href)) return track('social_click', 'instagram');
     if (t.matches('.lang-toggle')) return track('lang_toggle');
+    /* CTA d'une offre précise : <a data-track="lancement"> → cta_click « lancement@<vue> » (même événement, propriété plus fine). */
+    if (t.dataset && t.dataset.track) return track('cta_click', t.dataset.track + '@' + placeOf(t));
     if (t.matches('.cta-primary, .nav-cta, .hero-start')) return track('cta_click', 'estimer@' + placeOf(t));
     if (t.matches('.hero-access')) return track('cta_click', 'acces@home');
     if (t.matches('.pf-cta-btn')) return track('cta_click', 'devis@' + placeOf(t));

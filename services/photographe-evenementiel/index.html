@@ -31,7 +31,7 @@
 <link rel="icon" type="image/png" sizes="64x64" href="/images/favicon-64.png">
 <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
 <link rel="preload" href="fonts/dm-sans-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/style.min.css?v=e2485e08">
+<link rel="stylesheet" href="css/style.min.css?v=0e94cab2">
 
 <script type="application/ld+json">
 {
@@ -55,7 +55,7 @@
       "image": {
         "@id": "https://bunkaio.com/#logo"
       },
-      "description": "BUNKAIO, photographe professionnel basé à Montpellier, mobile en Occitanie (Béziers, Montpellier, Toulouse) : portrait, mode, produit, corporate et événementiel, avec des images haut de gamme en HD.",
+      "description": "BUNKAIO, studio d'image pour professionnels, entrepreneurs et mannequins, basé à Montpellier et mobile en Occitanie (Béziers, Montpellier, Toulouse) : personal branding, portrait, mode, produit, corporate et événementiel, avec des images haut de gamme en HD.",
       "telephone": "+33758573161",
       "email": "contact@bunkaio.com",
       "priceRange": "100-2490 EUR",
@@ -95,6 +95,7 @@
       "knowsAbout": [
         "Photographie de portrait",
         "Photographie de mode",
+        "Personal branding",
         "Photographie de produit",
         "Photographie corporate",
         "Photographie événementielle"
@@ -146,9 +147,35 @@
             "@type": "Offer",
             "itemOffered": {
               "@type": "Service",
-              "name": "Corporate — portraits professionnels",
-              "description": "Portraits professionnels pour dirigeants, indépendants et équipes : profil LinkedIn, site web, présentation.",
+              "name": "Corporate & personal branding",
+              "description": "Portraits professionnels pour dirigeants, équipes et entreprises, dans leurs locaux, en extérieur ou en studio.",
               "url": "https://bunkaio.com/services/portrait-professionnel-corporate/",
+              "provider": {
+                "@id": "https://bunkaio.com/#business"
+              },
+              "areaServed": [
+                {
+                  "@type": "City",
+                  "name": "Béziers"
+                },
+                {
+                  "@type": "City",
+                  "name": "Montpellier"
+                },
+                {
+                  "@type": "City",
+                  "name": "Toulouse"
+                }
+              ]
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Personal branding — entrepreneurs et indépendants",
+              "description": "Formule Lancement : shooting de personal branding au studio ou dans l'environnement professionnel du client, 12 photos HD retouchées.",
+              "url": "https://bunkaio.com/services/personal-branding-entrepreneurs/",
               "provider": {
                 "@id": "https://bunkaio.com/#business"
               },
@@ -434,7 +461,7 @@
   <div class="mission-video-overlay"></div>
   <div class="mission-video-content">
     <div class="home-claim-kicker mission-kicker" data-lang="home-claim-kicker">Le studio</div>
-    <div class="home-claim-text mission-text" data-lang="home-claim-text">Nous ne documentons pas des projets. Nous révélons ce qui les rend uniques.</div>
+    <div class="home-claim-text mission-text" data-lang="home-claim-text">BUNKAIO accompagne les personnes qui entreprennent dans la construction de leur image professionnelle.</div>
     <div class="mission-services" id="missionServices" aria-roledescription="carousel" data-lang-aria="svr-aria">
       <div class="ms-sel" id="missionServicesTrack" role="tablist"><!--snap--><!--/snap--></div>
       <div class="ms-prev" id="missionPreview" aria-live="polite"><!--snap--><!--/snap--></div>
@@ -464,7 +491,7 @@
 <div class="view" id="view-home">
   <section class="hero">
     <h2 data-pageh1 class="hero-title">
-      <span class="hero-kicker" data-lang="hero-kicker">Photographe professionnel · Occitanie</span>
+      <span class="hero-kicker" data-lang="hero-kicker">Studio d'image pour professionnels, entrepreneurs et mannequins</span>
       <span class="word" style="animation-delay:0.45s" data-lang="hero-word1">Imaginez</span>
       <span class="word" style="animation-delay:0.6s" data-lang="hero-word2">votre</span>
       <span class="word" style="animation-delay:0.75s" data-lang="hero-word3">projet</span>
@@ -520,7 +547,7 @@
 
   <!-- Qualifications & zone d'intervention -->
   <div class="credentials-strip rv">
-    <p class="cred-lead" data-lang="cred-lead">BUNKAIO est un studio de photographie professionnelle mobile, basé à Montpellier : séances portrait, portraits professionnels, mode et mannequins, photo de produit, événementiel et photobooth IA Lumen, à Béziers, Montpellier et Toulouse. Retrouvez chaque <a href="/services/" data-nav="services">prestation et ses tarifs</a>.</p>
+    <p class="cred-lead" data-lang="cred-lead">BUNKAIO est un studio d'image mobile, basé à Montpellier, qui crée des images premium pour les personnes, les marques et les entreprises : <a href="/services/personal-branding-entrepreneurs/" data-nav="service:branding">personal branding pour entrepreneurs</a>, portraits professionnels et corporate, mode et mannequins, photo de produit, événementiel et séances pour les particuliers, à Béziers, Montpellier et Toulouse. Retrouvez chaque <a href="/services/" data-nav="services">prestation et ses tarifs</a>.</p>
     <div class="cred-mini">
       <span class="cred-mini-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.5-7-12a7 7 0 0 1 14 0c0 5.5-7 12-7 12z"/><circle cx="12" cy="9" r="2.4"/></svg></span>
       <span class="cred-mini-text" data-lang="cred-mini1">Basé à Montpellier — mobile à Béziers, Montpellier, Toulouse</span>
@@ -749,6 +776,41 @@
         <datalist id="qCityList"></datalist>
         <div class="travel-est" id="qTravelEst" aria-live="polite"></div>
         <div class="travel-hint" data-lang="city-hint">Le montant du déplacement est estimé automatiquement et ajouté à votre devis.</div>
+      </div>
+      <div class="brand-brief stagger" id="qBrandGroup" style="animation-delay:0.48s;display:none">
+        <div class="fgroup">
+          <label for="qActivity" data-lang="brief-activity-label">Votre activité — facultatif</label>
+          <input type="text" id="qActivity" maxlength="120" placeholder="Ex. : coach, cabinet, boutique, atelier, restaurant…">
+        </div>
+        <div class="fgroup">
+          <label for="qLink" data-lang="brief-link-label">Site, Instagram ou LinkedIn — facultatif</label>
+          <input type="text" id="qLink" maxlength="160" autocomplete="url" placeholder="instagram.com/… · linkedin.com/in/…">
+        </div>
+        <div class="brief-row">
+          <div class="fgroup">
+            <label for="qSince" data-lang="brief-since-label">Votre activité existe depuis</label>
+            <select id="qSince">
+              <option value="" data-lang="origin-opt-select">Sélectionnez…</option>
+              <option value="creation" data-lang="brief-since-0">En cours de création</option>
+              <option value="moins_1an" data-lang="brief-since-1">Moins d'un an</option>
+              <option value="1_3ans" data-lang="brief-since-2">1 à 3 ans</option>
+              <option value="plus_3ans" data-lang="brief-since-3">Plus de 3 ans</option>
+            </select>
+          </div>
+          <div class="fgroup">
+            <label for="qPeople" data-lang="brief-people-label">Personnes à photographier</label>
+            <select id="qPeople">
+              <option value="1" data-lang="brief-people-1">1 personne</option>
+              <option value="2_5" data-lang="brief-people-2">2 à 5</option>
+              <option value="6_15" data-lang="brief-people-3">6 à 15</option>
+              <option value="16_plus" data-lang="brief-people-4">16 et plus</option>
+            </select>
+          </div>
+        </div>
+        <div class="fgroup">
+          <span class="brief-label" id="qUsesLabel" data-lang="brief-uses-label">Où utiliserez-vous les images ? — facultatif</span>
+          <div class="brief-uses" id="qUses" role="group" aria-labelledby="qUsesLabel"></div>
+        </div>
       </div>
       <div class="fgroup stagger" style="animation-delay:0.5s">
         <label data-lang="project-label">Votre projet *</label>
@@ -1182,6 +1244,7 @@
     
 
     <section class="read-panel svcp-panel"><div class="svcp-lead-grid has-figure"><p class="svcp-text svcp-lead">BUNKAIO couvre en photo les événements — domaines, entreprises, réceptions — à Béziers, Montpellier et Toulouse, avec discrétion pour que vous puissiez vivre la journée. La couverture se choisit selon la durée : 2 h pour l'essentiel, 4 h pour l'ambiance, ou l'événement complet. Pour comparer les prestataires, voir <a href="/conseils/choisir-photographe-evenementiel/" data-nav="article:choisir-photographe-evenementiel">comment choisir son photographe d'événement</a> ; pour un mariage ou une réception, le photobooth <a href="/contact/#lumen" data-nav="service:lumen">Lumen</a> complète la couverture.</p><figure class="svcp-figure"><img src="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/services/event.webp" alt="Exemple de reportage d'événement réalisé par BUNKAIO" width="900" height="1200" loading="lazy" decoding="async" onerror="this.closest('figure').classList.add('is-broken')"></figure></div></section>
+    
 
     <section class="read-panel svcp-panel rv" style="--rv-d: 0s;">
       <h2>Formules et tarifs</h2>
@@ -1350,8 +1413,9 @@
     <section class="read-panel svcp-panel svcp-others rv" style="--rv-d: 0.35000000000000003s;">
       <h2>Autres prestations</h2>
       <div class="svcp-others-row">
-        <a class="svcp-chip rv" href="/services/seance-photo-particuliers/" onclick="return navLink(event,'service','photo-part')" style="--rv-d: 0s;">Séance photo — particuliers</a><a class="svcp-chip rv" href="/services/portrait-professionnel-corporate/" onclick="return navLink(event,'service','corporate')" style="--rv-d: 0.07s;">Corporate — portraits professionnels</a><a class="svcp-chip rv" href="/services/photographe-mode-mannequins/" onclick="return navLink(event,'service','mode')" style="--rv-d: 0.14s;">Mode, agence et mannequins</a><a class="svcp-chip rv" href="/services/photo-produits-packshots/" onclick="return navLink(event,'service','commercial')" style="--rv-d: 0.21000000000000002s;">Commercial &amp; produits</a>
-        <a class="svcp-chip rv" href="/services/" onclick="return navLink(event,'services')" style="--rv-d: 0.28s;">Tout le catalogue</a>
+        <a class="svcp-chip rv" href="/services/seance-photo-particuliers/" onclick="return navLink(event,'service','photo-part')" style="--rv-d: 0s;">Séance photo — particuliers</a><a class="svcp-chip rv" href="/services/portrait-professionnel-corporate/" onclick="return navLink(event,'service','corporate')" style="--rv-d: 0.07s;">Corporate &amp; personal branding</a><a class="svcp-chip rv" href="/services/photographe-mode-mannequins/" onclick="return navLink(event,'service','mode')" style="--rv-d: 0.14s;">Mode, agence et mannequins</a><a class="svcp-chip rv" href="/services/photo-produits-packshots/" onclick="return navLink(event,'service','commercial')" style="--rv-d: 0.21000000000000002s;">Commercial &amp; produits</a>
+        <a class="svcp-chip rv" href="/services/personal-branding-entrepreneurs/" data-nav="service:branding" style="--rv-d: 0.28s;">Personal branding — entrepreneurs</a>
+        <a class="svcp-chip rv" href="/services/" onclick="return navLink(event,'services')" style="--rv-d: 0.35000000000000003s;">Tout le catalogue</a>
       </div>
     </section>
     <div class="svcp-back-row"><a class="svcp-back" href="/services/" onclick="return navLink(event,'services')"><span aria-hidden="true">←</span> Retour au catalogue</a></div><!--/snap--></div></div>
@@ -1394,7 +1458,7 @@
           <li><a href="/services/seance-photo-particuliers/" onclick="return navLink(event,'service','photo-part')" data-lang="about-spec1">Portrait & lifestyle</a></li>
           <li><a href="/services/photographe-mode-mannequins/" onclick="return navLink(event,'service','mode')" data-lang="about-spec2">Mode, agences et mannequins</a></li>
           <li><a href="/services/photo-produits-packshots/" onclick="return navLink(event,'service','commercial')" data-lang="about-spec3">Photo de produit & commercial</a></li>
-          <li><a href="/services/photo-produits-packshots/" onclick="return navLink(event,'service','commercial')" data-lang="about-spec4">Corporate & entreprises</a></li>
+          <li><a href="/services/portrait-professionnel-corporate/" onclick="return navLink(event,'service','corporate')" data-lang="about-spec4">Corporate & personal branding</a></li>
           <li><a href="/services/photographe-evenementiel/" onclick="return navLink(event,'service','event')" data-lang="about-spec5">Événementiel & mariage (Lumen)</a></li>
         </ul>
       </div>
@@ -1943,7 +2007,7 @@
            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
       <div class="ft-brand-logo" style="display:none">B ⊹</div>
       <div class="ft-brand-studio">studio</div>
-      <div class="ft-claim" data-lang="footer-claim">Photographe professionnel — des images premium en HD qui mettent en valeur vos projets.</div>
+      <div class="ft-claim" data-lang="footer-claim">Studio d'image pour professionnels, entrepreneurs et mannequins — des images premium pour les personnes, les marques et les entreprises.</div>
       <div class="ft-follow">
         <span class="ft-follow-label" data-lang="follow-label">Suivez-nous</span>
         <a class="ft-social" href="https://instagram.com/bunkaio" target="_blank" rel="noopener" aria-label="Instagram Bunkaio">
@@ -1954,7 +2018,7 @@
     <div class="footer-cols-right">
       <div>
         <div class="ft-col-title" data-lang="ft-services">Services</div>
-        <ul class="ft-list" id="ftServices"><!--snap--><li><a href="/services/seance-photo-particuliers/">Séance photo — particuliers</a></li><li><a href="/services/portrait-professionnel-corporate/">Corporate — portraits professionnels</a></li><li><a href="/services/photographe-mode-mannequins/">Mode, agence et mannequins</a></li><li><a href="/services/photo-produits-packshots/">Commercial &amp; produits</a></li><li><a href="/services/photographe-evenementiel/">Événementiel</a></li><li><a href="/contact/#lumen">Lumen — Photobooth IA (location)</a></li><!--/snap--></ul>
+        <ul class="ft-list" id="ftServices"><!--snap--><li><a href="/services/seance-photo-particuliers/">Séance photo — particuliers</a></li><li><a href="/services/portrait-professionnel-corporate/">Corporate &amp; personal branding</a></li><li><a href="/services/personal-branding-entrepreneurs/">Personal branding — entrepreneurs</a></li><li><a href="/services/photographe-mode-mannequins/">Mode, agence et mannequins</a></li><li><a href="/services/photo-produits-packshots/">Commercial &amp; produits</a></li><li><a href="/services/photographe-evenementiel/">Événementiel</a></li><li><a href="/contact/#lumen">Lumen — Photobooth IA (location)</a></li><!--/snap--></ul>
       </div>
       <div>
         <div class="ft-col-title" data-lang="ft-studio">Le studio</div>
@@ -1979,17 +2043,17 @@
     </div>
   </div>
   <div class="footer-bottom">
-    <div class="ft-tag" data-lang="footer-claim2">Photographe mobile · Béziers · Montpellier · Toulouse</div>
+    <div class="ft-tag" data-lang="footer-claim2">Studio d'image mobile · Béziers · Montpellier · Toulouse</div>
     <div class="ft-tag">© 2026 Bunkaio — France · SIRET 951 547 587 00034</div>
   </div>
 </footer>
 
 <script src="config/analytics.js?v=eff8bde4"></script>
-<script src="js/analytics.js?v=e0edf83d"></script>
-<script src="config/articles.js?v=9326c494"></script>
-<script src="config/articles.en.js?v=88cfa3d9"></script>
-<script src="config/routes.js?v=3cb8e4de"></script>
+<script src="js/analytics.js?v=3908fa53"></script>
+<script src="config/articles.js?v=c5b282f6"></script>
+<script src="config/articles.en.js?v=275d6834"></script>
+<script src="config/routes.js?v=02f573b3"></script>
 <script src="config/media.js?v=e515354a"></script>
-<script src="js/script.min.js?v=562ce9e2"></script>
+<script src="js/script.min.js?v=562e2370"></script>
 </body>
 </html>

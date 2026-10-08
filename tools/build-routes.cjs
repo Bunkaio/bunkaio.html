@@ -163,7 +163,9 @@ function buildJsonLd(route, meta, snaps) {
       description: route.description, provider: { '@id': bizId },
       areaServed: b.cities.map((c) => ({ '@type': 'City', name: c })),
       ...(fig ? { image: { '@id': url + '#primaryimage' } } : {}),
-      offers: { '@type': 'AggregateOffer', priceCurrency: 'EUR', lowPrice: Math.min(...priced.map((t) => t.price)), highPrice: Math.max(...priced.map((t) => t.price)), offerCount: meta.tiers.length },
+      offers: priced.length === 1
+        ? { '@type': 'Offer', name: priced[0].name, price: priced[0].price, priceCurrency: 'EUR', url, availability: 'https://schema.org/InStock' }
+        : { '@type': 'AggregateOffer', priceCurrency: 'EUR', lowPrice: Math.min(...priced.map((t) => t.price)), highPrice: Math.max(...priced.map((t) => t.price)), offerCount: meta.tiers.length },
     });
   }
   const art = route.slug ? ARTICLES.find((x) => x.slug === route.slug) : null;
@@ -197,6 +199,7 @@ function buildJsonLd(route, meta, snaps) {
     const name = route.cat && meta ? meta.name : route.slug && art ? art.h1 : route.view === 'advice' ? 'Conseils photo' : route.view === 'discover' ? route.h1 : route.title.split('|')[0].trim();
     const crumbs = [{ '@type': 'ListItem', position: 1, name: 'Accueil', item: SITE + '/' }];
     if (route.cat || route.view === 'discover') crumbs.push({ '@type': 'ListItem', position: 2, name: 'Services', item: SITE + '/services/' });
+    if (route.cat && meta && meta.parent) crumbs.push({ '@type': 'ListItem', position: 3, name: meta.parent.name, item: SITE + meta.parent.path });
     if (route.slug) crumbs.push({ '@type': 'ListItem', position: 2, name: 'Conseils photo', item: SITE + '/conseils/' });
     crumbs.push({ '@type': 'ListItem', position: crumbs.length + 1, name, item: url });
     graph.push({ '@type': 'BreadcrumbList', '@id': url + '#breadcrumb', itemListElement: crumbs });
@@ -338,8 +341,10 @@ function pinAssets(html) {
     await page.evaluate((c) => goView('service', c, { initial: true }), r.cat);
     serviceSnaps[r.cat] = await page.evaluate(() => document.getElementById('servicePageContent').innerHTML);
     serviceMeta[r.cat] = await page.evaluate((c) => {
+      /* Landing personal branding : une seule offre, la formule Lancement de la gamme corporate. */
+      if (c === 'branding') { const corp = CATS.find((x) => x.id === 'corporate'); return { name: 'Personal branding — entrepreneurs et indépendants', parent: { name: corp.name.fr, path: '/services/portrait-professionnel-corporate/' }, tiers: [{ name: 'Lancement', price: corp.tiers.lanc.price }] }; }
       const cat = CATS.find((x) => x.id === c);
-      const tiers = cat.lumen ? LUMEN_TIERS.map((t) => ({ name: t.name.fr, price: t.price, quote: t.id === 'surm' })) : TIERS.map((t) => ({ name: t.name.fr, price: cat.tiers[t.id].price }));
+      const tiers = cat.lumen ? LUMEN_TIERS.map((t) => ({ name: t.name.fr, price: t.price, quote: t.id === 'surm' })) : catTiers(cat).map((t) => ({ name: t.name.fr, price: cat.tiers[t.id].price }));
       return { name: cat.name.fr, tiers };
     }, r.cat);
   }

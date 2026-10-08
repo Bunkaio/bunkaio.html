@@ -4432,3 +4432,19 @@ a, button { -webkit-tap-highlight-color: rgba(110,90,168,0.18); }
   .ms-link { display: none; }
   .ms-cta { white-space: nowrap; }
 }
+
+/* ═══ Personal branding (formule Lancement) : brief du devis, ligne du catalogue, orientation par marché ═══ */
+.brief-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0 24px; }
+.brief-label { display: block; font-size: 10px; font-weight: 600; letter-spacing: 0.24em; text-transform: uppercase; color: var(--grey); margin-bottom: 11px; line-height: 1.5; }
+.brief-uses { display: flex; flex-wrap: wrap; gap: 8px; }
+.brief-use { font: inherit; font-size: 12.5px; font-weight: 600; border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px; min-height: 40px; background: rgba(255,255,255,0.5); color: var(--black); cursor: pointer; transition: all 0.3s var(--ease); }
+.brief-use:hover { border-color: var(--black); }
+.brief-use.selected { border-color: var(--black); background: var(--black); color: var(--white); }
+.service-tier-name a { color: inherit; text-decoration: underline; text-decoration-color: rgba(110,90,168,0.5); text-underline-offset: 3px; }
+.service-tier-for { display: block; font-size: 11px; font-weight: 500; color: #6e5aa8; margin-top: 2px; }
+.disc-market { display: block; font-size: 10px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: #6e5aa8; margin-bottom: 2px; }
+.svcp-entrepreneurs { border-left: 3px solid #6e5aa8; }
+@media (max-width: 600px) { .brief-row { grid-template-columns: 1fr; } }
+/* CTA placé dans un bloc de contenu : pas de remontée négative (réservée à la rangée sous le titre de page). */
+.svcp-panel .svcp-cta-row { margin-top: 18px; }
+@media (max-width: 760px) { .svcp-panel .svcp-cta-row { margin-top: 18px; } }
