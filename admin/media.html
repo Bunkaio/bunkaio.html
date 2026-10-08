@@ -95,6 +95,7 @@
 
   .slot-meta { padding: 9px 10px 10px; }
   .slot-label { font-size: 11px; font-weight: 600; color: var(--black); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .slot-spec { font-size: 10.5px; color: #6e5aa8; margin-top: 2px; font-weight: 600; }
   .slot-path { font-size: 10px; color: #aaa; margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .slot-status { font-size: 10px; margin-top: 4px; min-height: 13px; }
   .slot-status.idle { color: #bbb; }
@@ -257,7 +258,7 @@
   <h2 class="page-title">Gérer les médias</h2>
   <p class="page-sub">
     Glisse-dépose tes photos (et vidéos, tout en haut de page) directement sur chaque emplacement, ou clique dessus pour ouvrir le sélecteur de fichiers.<br>
-    Tout est uploadé en direct sur le site — aucune manipulation de code nécessaire. Les photos sont automatiquement converties en WebP (2400 px max, métadonnées EXIF retirées) avant l'envoi.<br>
+    Tout est uploadé en direct sur le site — aucune manipulation de code nécessaire. Les photos sont automatiquement converties en WebP (jusqu\'à 2560 px selon l\'emplacement, métadonnées EXIF retirées) avant l'envoi.<br>
     <em>Exceptions — ces quelques fichiers sont gérés directement dans le code du site (pas via ce panel) : les vidéos de fond de l'accueil (qualité d'origine + version allégée pour connexions lentes), le logo et le favicon (images/), le portrait d'Aya (images/about/). Dis-le moi directement si tu veux les changer, je m'en occupe.</em>
   </p>
   <details class="export-box" open>
@@ -265,7 +266,7 @@
     <div class="export-body">
       <h3>Règles générales pour les photos</h3>
       <ul>
-        <li><strong>Format :</strong> WebP. Le panel convertit automatiquement JPEG/PNG/HEIC (qualité 82, côté long 2400 px max) et retire les métadonnées EXIF (dont la position GPS). Exporter dès l'origine en JPEG qualité 90+ ou PNG suffit.</li>
+        <li><strong>Format :</strong> WebP. Le panel convertit automatiquement JPEG/PNG/HEIC (qualité 78 à 82, côté long jusqu\'à 2560 px selon l\'emplacement : indiqué sous chaque emplacement) et retire les métadonnées EXIF (dont la position GPS). Exporter dès l'origine en JPEG qualité 90+ ou PNG suffit.</li>
         <li><strong>Couleurs :</strong> exporter en <strong>sRGB</strong> (Lightroom : « Espace colorimétrique sRGB »), sinon les couleurs ternissent sur le web.</li>
         <li><strong>Pas de texte, logo ni cadre incrusté</strong> dans la photo. Sujet <strong>centré</strong> : le site recadre selon l'écran.</li>
         <li><strong>Poids cible :</strong> voir tableau. Les photos du portfolio de plus de 400 Ko s'affichent en orange dans le panel.</li>
@@ -275,8 +276,10 @@
       <h3>Emplacements — dimensions et poids</h3>
       <table>
         <tr><th>Emplacement</th><th>Dimensions</th><th>Ratio</th><th>Poids cible</th><th>Où sur le site</th></tr>
-        <tr><td>Bannières (hero/…)</td><td>1920 × 820 px</td><td>21:9 paysage</td><td>≤ 250 Ko</td><td>Haut des pages Devis, Portfolio, Services, Contact, Collaboration, Connexion, Espace client. <code>contact-1</code> sert aussi de fond à À propos et FAQ ; <code>services-1</code> de fond aux pages prestation, « Découvrir chaque prestation », conseils et articles.</td></tr>
-        <tr><td>Photos prestations (services/…)</td><td>1600 × 2000 px</td><td>portrait 4:5, sujet centré</td><td>≤ 350 Ko</td><td>Carrousel d'accueil, filtre Services, formulaire de devis <strong>et photo de la page de chaque prestation</strong> (recadrée 3:4, avec texte alternatif)</td></tr>
+        <tr><td>Bannières (hero/…)</td><td>2560 × 1440 px</td><td>16:9 paysage</td><td>≤ 450 Ko</td><td>Haut des pages Devis, Portfolio, Services, Contact, Collaboration, Connexion, Espace client. <code>contact-1</code> sert aussi de fond à À propos et FAQ ; <code>services-1</code> de fond aux pages prestation, « Découvrir chaque prestation », conseils et articles.</td></tr>
+        <tr><td>Photos prestations (services/…)</td><td>2000 × 2500 px</td><td>portrait 4:5, sujet centré</td><td>≤ 450 Ko</td><td>Carrousel d'accueil, filtre Services, formulaire de devis <strong>et photo de la page de chaque prestation</strong> (recadrée 3:4, avec texte alternatif)</td></tr>
+        <tr><td>Fonds des prestations (discover/…)</td><td>2560 × 1440 px</td><td>16:9 paysage</td><td>≤ 450 Ko</td><td>Fond de « Découvrir chaque prestation » et de la page de chaque prestation</td></tr>
+        <tr><td>Photos de formules (formulas/…)</td><td>2000 × 2500 px</td><td>portrait 4:5</td><td>≤ 400 Ko</td><td>Illustration de chaque formule <strong>et fond d'écran du devis</strong></td></tr>
         <tr><td>Portfolio (portfolio/&lt;catégorie&gt;/N.webp)</td><td>≈ 900 × 1200 px</td><td>portrait</td><td>≤ 300 Ko</td><td>Galerie du Portfolio, 24 photos max par catégorie</td></tr>
         <tr><td>Illustration « Devis &amp; déroulé »</td><td>900 × 700 px</td><td>9:7</td><td>≤ 150 Ko</td><td>Services → onglet Devis &amp; déroulé</td></tr>
         <tr><td>Illustration « Collaboration »</td><td>900 × 1100 px</td><td>portrait</td><td>≤ 150 Ko</td><td>Page Collaboration → onglet Collaboration</td></tr>
@@ -383,7 +386,7 @@ const FORMULA_CATS = [
 const FORMULA_SECTIONS = FORMULA_CATS.map(c => ({
   id: 'formulas-' + c.id,
   title: '🎞 Formules — ' + c.name,
-  desc: '1200 × 800 px, paysage 3:2 (≤ 250 Ko). La photo change selon la formule choisie : cartes du devis, récapitulatif et page de la prestation.',
+  desc: '2000 × 2500 px, portrait 4:5 (≤ 400 Ko). La photo change selon la formule choisie : cartes du devis, récapitulatif, page de la prestation et FOND d\'écran du devis (exporter en grand pour un fond net sur ordinateur).',
   slots: [
     ...c.tiers.map(t => ({ path: 'formulas/' + c.id + '-' + t + '.webp', label: FORMULA_LABELS[t] })),
     ...Object.entries(c.extra || {}).map(([k, label]) => ({ path: 'formulas/' + c.id + '-' + k + '.webp', label })),
@@ -400,7 +403,7 @@ const SECTIONS = [
   {
     id: 'quiz-hero',
     title: '📝 Devis — bannière en haut de page',
-    desc: '1920 × 820 px, paysage 21:9.',
+    desc: '2560 × 1440 px, paysage 16:9 (≤ 450 Ko). Image affichée en plein écran sur ordinateur : sujet au centre, rien d\'important sur les bords (le site recadre selon l\'écran).',
     slots: [{ path: 'hero/quiz-1.webp', label: 'Photo bannière' }],
   },
 
@@ -408,7 +411,7 @@ const SECTIONS = [
   {
     id: 'services-cats',
     title: '📸 Prestations — 6 catégories actives',
-    desc: '1600 × 2000 px, portrait (cadrage 3:4 à 4:5), sujet CENTRÉ. La même photo sert à 4 endroits (dont la page de chaque prestation, recadrée en 3:4, avec son texte alternatif) : fond plein écran du parcours "prestations" sur l\'accueil, vignette quand on filtre par catégorie sur la page Services, ET miniature de la catégorie à la 1ère étape du questionnaire de devis. La modifier ici la met à jour partout automatiquement.',
+    desc: '2000 × 2500 px, portrait 4:5 (≤ 450 Ko, largeur minimum 1600 px), sujet CENTRÉ. Elle sert aussi de fond d\'écran (devis, accueil) : exporter en grand. La même photo sert à 4 endroits (dont la page de chaque prestation, recadrée en 3:4, avec son texte alternatif) : fond plein écran du parcours "prestations" sur l\'accueil, vignette quand on filtre par catégorie sur la page Services, ET miniature de la catégorie à la 1ère étape du questionnaire de devis. La modifier ici la met à jour partout automatiquement.',
     slots: [
       { path: 'services/photo-part.webp', label: 'Séance photo — particuliers' },
       { path: 'services/corporate.webp', label: 'Corporate — portraits professionnels (optionnel : provisoirement, le portrait d\'Aya est utilisé)' },
@@ -422,7 +425,7 @@ const SECTIONS = [
   {
     id: 'discover-bg',
     title: '🖼 Fond des prestations (page Découvrir + page de chaque prestation)',
-    desc: '1920 × 1200 px, paysage 16:10 (≤ 350 Ko). Le fond de la page « Découvrir chaque prestation » change selon la prestation ouverte, et chaque page de prestation (ex. Portrait professionnel et photo corporate) prend la photo correspondante. Sans photo déposée, c\'est la photo de la catégorie qui est utilisée.',
+    desc: '2560 × 1440 px, paysage 16:9 (≤ 450 Ko). Le fond de la page « Découvrir chaque prestation » change selon la prestation ouverte, et chaque page de prestation (ex. Portrait professionnel et photo corporate) prend la photo correspondante. Sans photo déposée, c\'est la photo de la catégorie qui est utilisée.',
     slots: [
       { path: 'discover/photo-part.webp', label: 'Séance photo — particuliers' },
       { path: 'discover/corporate.webp', label: 'Corporate — portraits professionnels' },
@@ -437,7 +440,7 @@ const SECTIONS = [
   {
     id: 'portfolio-hero',
     title: '🖼 Portfolio — bannière en haut de page',
-    desc: '1920 × 820 px, paysage 21:9.',
+    desc: '2560 × 1440 px, paysage 16:9 (≤ 450 Ko). Image affichée en plein écran sur ordinateur : sujet au centre, rien d\'important sur les bords (le site recadre selon l\'écran).',
     slots: [
       { path: 'hero/portfolio-1.webp', label: 'Photo 1' },
       { path: 'hero/portfolio-2.webp', label: 'Photo 2' },
@@ -449,7 +452,7 @@ const SECTIONS = [
   {
     id: 'services-hero',
     title: '🛠 Services — bannière en haut de page',
-    desc: '1920 × 820 px, paysage 21:9.',
+    desc: '2560 × 1440 px, paysage 16:9 (≤ 450 Ko). Image affichée en plein écran sur ordinateur : sujet au centre, rien d\'important sur les bords (le site recadre selon l\'écran).',
     slots: [
       { path: 'hero/services-1.webp', label: 'Photo 1' },
       { path: 'hero/services-2.webp', label: 'Photo 2' },
@@ -467,7 +470,7 @@ const SECTIONS = [
   {
     id: 'contact-hero',
     title: '✉️ Contact — bannière en haut de page',
-    desc: '1920 × 820 px, paysage 21:9.',
+    desc: '2560 × 1440 px, paysage 16:9 (≤ 450 Ko). Image affichée en plein écran sur ordinateur : sujet au centre, rien d\'important sur les bords (le site recadre selon l\'écran).',
     slots: [
       { path: 'hero/contact-1.webp', label: 'Photo 1' },
       { path: 'hero/contact-2.webp', label: 'Photo 2' },
@@ -476,7 +479,7 @@ const SECTIONS = [
   {
     id: 'partners-hero',
     title: '🤝 Collaboration — bannière en haut de page',
-    desc: '1920 × 820 px, paysage 21:9.',
+    desc: '2560 × 1440 px, paysage 16:9 (≤ 450 Ko). Image affichée en plein écran sur ordinateur : sujet au centre, rien d\'important sur les bords (le site recadre selon l\'écran).',
     slots: [
       { path: 'hero/partners-1.webp', label: 'Photo 1' },
       { path: 'hero/partners-2.webp', label: 'Photo 2' },
@@ -493,7 +496,7 @@ const SECTIONS = [
   {
     id: 'other',
     title: '🔒 Connexion & espace client — bannières',
-    desc: '1920 × 820 px, paysage 21:9.',
+    desc: '2560 × 1440 px, paysage 16:9 (≤ 450 Ko). Image affichée en plein écran sur ordinateur : sujet au centre, rien d\'important sur les bords (le site recadre selon l\'écran).',
     slots: [
       { path: 'hero/login-1.webp', label: 'Page de connexion' },
       { path: 'hero/account-1.webp', label: 'Espace client / partenaire' },
@@ -522,7 +525,7 @@ const DISABLED_SECTIONS = [
   {
     id: 'drone-hero',
     title: '🚁 4K Drone — bannière en haut de page',
-    desc: '1920 × 820 px, paysage 21:9. Rubrique en "Bientôt disponible" — pas urgent.',
+    desc: '2560 × 1440 px, paysage 16:9 (≤ 450 Ko). Rubrique en "Bientôt disponible" — pas urgent.',
     slots: [
       { path: 'hero/drone-1.webp', label: 'Photo 1' },
       { path: 'hero/drone-2.webp', label: 'Photo 2' },
@@ -582,6 +585,22 @@ function slug(path) {
 // ── Conversion WebP (côté navigateur) ───────────────────────────────────────
 // Redimensionne (côté long ≤ maxSide) et convertit en WebP avant l'envoi : poids réduit,
 // métadonnées EXIF (dont position GPS) retirées. Si la conversion échoue, le fichier d'origine est envoyé.
+// ── Dimensions recommandées par type d'emplacement (source unique : sert à la conversion, à l'affichage et au contrôle) ──
+// Les images « fond d'écran » sont affichées en plein écran sur ordinateur : on exporte en grand (2560 px) puis on
+// compresse en WebP. Au-delà, le gain visuel est nul et le site devient plus lent.
+const IMAGE_SPECS = {
+  hero:     { label: '2560 × 1440 px · paysage 16:9 · ≤ 450 Ko',   maxSide: 2560, quality: 0.80, minW: 1920, maxKo: 450 },
+  discover: { label: '2560 × 1440 px · paysage 16:9 · ≤ 450 Ko',   maxSide: 2560, quality: 0.80, minW: 1920, maxKo: 450 },
+  services: { label: '2000 × 2500 px · portrait 4:5 · ≤ 450 Ko',   maxSide: 2500, quality: 0.80, minW: 1600, maxKo: 450 },
+  formulas: { label: '2000 × 2500 px · portrait 4:5 · ≤ 400 Ko',   maxSide: 2500, quality: 0.78, minW: 1400, maxKo: 400 },
+  portfolio:{ label: '1200 × 1600 px · portrait 3:4 · ≤ 300 Ko',   maxSide: 1600, quality: 0.82, minW: 800,  maxKo: 300 },
+  devis:    { label: '1400 × 1100 px · 9:7 · ≤ 200 Ko',          maxSide: 1400, quality: 0.80, minW: 900,  maxKo: 200 },
+  drone:    { label: '1000 × 625 px · 16:10 · ≤ 120 Ko',         maxSide: 1000, quality: 0.80, minW: 640,  maxKo: 120 },
+  partners: { label: '1200 × 1500 px · portrait · ≤ 200 Ko',        maxSide: 1500, quality: 0.82, minW: 700,  maxKo: 200 },
+  _default: { label: '≤ 2400 px · ≤ 350 Ko',                       maxSide: 2400, quality: 0.82, minW: 600,  maxKo: 350 },
+};
+function specFor(path) { return IMAGE_SPECS[(path || '').split('/')[0]] || IMAGE_SPECS._default; }
+
 async function toWebP(file, maxSide = 2400, quality = 0.82) {
   if (!file.type || !file.type.startsWith('image/') || file.type === 'image/gif') return file;
   try {
@@ -619,8 +638,10 @@ async function uploadFile(file, path, card) {
   if (statusEl) { statusEl.textContent = 'Upload en cours…'; statusEl.className = 'slot-status uploading'; }
 
   const original = file;
-  const isHero = path.startsWith('hero/');
-  file = await toWebP(file, isHero ? 1920 : 2400, isHero ? 0.72 : 0.82); /* bannières : plus compressées (arrière-plans) */
+  const spec = specFor(path);
+  file = await toWebP(file, spec.maxSide, spec.quality);
+  let dimTxt = '';
+  try { const bm = await createImageBitmap(file); dimTxt = bm.width + '×' + bm.height + ' px'; if (bm.width < spec.minW) dimTxt += ' ⚠ largeur trop faible (' + spec.minW + ' px conseillés)'; } catch (e) {}
   const formData = new FormData();
   formData.append('file', file);
   formData.append('path', path);
@@ -640,7 +661,7 @@ async function uploadFile(file, path, card) {
         imgEl.style.display = '';
         if (emptyEl) emptyEl.style.display = 'none';
       }
-      if (statusEl) { statusEl.textContent = 'Uploadé ✓ ' + kb(original.size) + ' → ' + kb(file.size); statusEl.className = 'slot-status success'; }
+      if (statusEl) { statusEl.textContent = 'Uploadé ✓ ' + dimTxt + ' · ' + kb(original.size) + ' → ' + kb(file.size) + (file.size > spec.maxKo * 1024 ? ' ⚠ au-dessus de ' + spec.maxKo + ' Ko' : ''); statusEl.className = 'slot-status success'; }
     } else {
       const msg = data.error === 'unauthorized' ? 'Token incorrect' : (data.error || 'Erreur');
       if (statusEl) { statusEl.textContent = msg; statusEl.className = 'slot-status error'; }
@@ -773,6 +794,7 @@ function makeSlotCard(slot) {
     <div class="slot-meta">
       <div class="slot-label">${slot.label}</div>
       <div class="slot-path">${slot.path}</div>
+      <div class="slot-spec">${specFor(slot.path).label}</div>
       <div class="slot-status idle" id="${slug(slot.path)}">Cliquer ou glisser</div>
     </div>
   `;
