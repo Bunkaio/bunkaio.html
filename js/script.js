@@ -126,15 +126,45 @@ function renderTravelField(){
    Tant que cette URL n'est pas configurée, sendQuizLeadToStripe() échoue silencieusement
    et n'a aucun impact sur le quiz (fire-and-forget, voir submitQuiz()). */
 /* Accusé de réception par email (envoyé par le Worker) — best-effort, ne bloque jamais le formulaire. */
+/* Envoi fiable d'un formulaire : deux canaux indépendants, Formspree (email) et Worker /ack (boîte admin).
+   Chaque canal répond true/false sans jamais lever d'erreur ; la page n'annonce le succès que si l'un des deux a abouti,
+   sinon elle affiche une erreur et laisse le visiteur réessayer (voir finishForm). */
+function postFormspree(payload){
+  try {
+    return fetch(FORMSPREE_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(payload) })
+      .then(r => r.ok).catch(() => false);
+  } catch (e) { return Promise.resolve(false); }
+}
 function sendAck(kind, name, email, space, details){
   try {
-    fetch('https://bunkaio-quiz-stripe.bunkaio.workers.dev/ack', {
+    return fetch('https://bunkaio-quiz-stripe.bunkaio.workers.dev/ack', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ kind: kind, name: name, email: email, space: space || 'client', lang: (typeof LANG !== 'undefined' ? LANG : 'fr'), details: details || {} }),
       keepalive: true
-    }).catch(() => {});
-  } catch (e) {}
+    }).then(r => r.ok || r.status === 502).catch(() => false);   /* 502 = message enregistré mais accusé non envoyé */
+  } catch (e) { return Promise.resolve(false); }
+}
+function showFormError(formEl, beforeEl){
+  if (!formEl) return;
+  const old = formEl.querySelector('.form-error'); if (old) old.remove();
+  const d = document.createElement('div'); d.className = 'form-error'; d.setAttribute('role', 'alert');
+  d.textContent = (typeof LANG !== 'undefined' && LANG === 'en')
+    ? 'Your request could not be sent. Please check your connection and try again, or write to us at contact@bunkaio.com.'
+    : 'Votre demande n\'a pas pu être envoyée. Vérifiez votre connexion et réessayez, ou écrivez-nous à contact@bunkaio.com.';
+  if (beforeEl && beforeEl.parentNode === formEl) formEl.insertBefore(d, beforeEl); else formEl.appendChild(d);
+}
+function finishForm(promises, formId, successId, btn){
+  Promise.all(promises).then(rs => {
+    if (rs.some(Boolean)) {
+      document.getElementById(formId).style.display = 'none';
+      document.getElementById(successId).style.display = 'block';
+    } else {
+      if (btn) btn.disabled = false;
+      const f = document.getElementById(formId);
+      showFormError(f, f && f.querySelector('.btn-row'));
+    }
+  });
 }
 const QUIZ_LEAD_WORKER_URL = 'https://bunkaio-quiz-stripe.bunkaio.workers.dev/quiz-lead';
 
@@ -156,17 +186,16 @@ const DELAY_LABELS = {
 function sendQuizLeadToStripe(payload){
   if (!QUIZ_LEAD_WORKER_URL || QUIZ_LEAD_WORKER_URL.includes('TON-SOUS-DOMAINE')) {
     console.warn('[quiz-lead] QUIZ_LEAD_WORKER_URL non configurée — synchronisation Stripe ignorée.');
-    return;
+    return Promise.resolve(false);
   }
   /* La langue du site au moment de la demande détermine la langue des emails envoyés ensuite au client. */
-  fetch(QUIZ_LEAD_WORKER_URL, {
+  return fetch(QUIZ_LEAD_WORKER_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(Object.assign({ lang: LANG }, payload))
   })
-    .then(r => r.json())
-    .then(data => console.log('[quiz-lead] réponse Worker Stripe', data))
-    .catch(err => console.warn('[quiz-lead] échec d\'envoi au Worker Stripe (sans impact pour le visiteur)', err));
+    .then(r => r.ok)
+    .catch(err => { console.warn('[quiz-lead] échec d\'envoi au Worker Stripe', err); return false; });
 }
 
 /* IMG et DRONE_MEDIA sont définis dans config/media.js — chargé avant ce fichier */
@@ -2975,7 +3004,7 @@ function submitQuiz(e){
 
   /* Capture du lead côté Stripe — fire-and-forget, voir sendQuizLeadToStripe().
      N'est jamais "await" ici : ne retarde et ne conditionne en rien la suite. */
-  sendQuizLeadToStripe({
+  const leadP = sendQuizLeadToStripe({
     name: S.name,
     email: S.email,
     phone: S.phone || undefined,
@@ -2994,10 +3023,7 @@ function submitQuiz(e){
   });
 
   if (window.track) track('quiz_submit', cat.name.fr);
-  fetch(FORMSPREE_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-    body: JSON.stringify({
+  const mailP = postFormspree({
       _subject: 'DEMANDE DE DEVIS CLIENT — ' + S.name,
       _replyto: S.email,
       nom_societe: S.name,
@@ -3014,8 +3040,14 @@ function submitQuiz(e){
       lieu_seance: [studioNote, (travelApplies() && S.city) ? 'Ville : ' + ((S.travel && S.travel.city) || S.city) : ''].filter(Boolean).join(' — ') || undefined,
       description_projet: S.project,
       interet_communication: S.comm ? 'OUI — potentiellement intéressé' : 'Non'
-    })
-  }).then(() => { renderQuizPortfolio(); quizStep(6); }).catch(() => { renderQuizPortfolio(); quizStep(6); });
+    });
+  /* La confirmation n'apparaît que si la demande est bien partie par l'un des deux canaux (Worker/Stripe ou email). */
+  Promise.all([leadP, mailP]).then(rs => {
+    if (rs.some(Boolean)) { renderQuizPortfolio(); quizStep(6); return; }
+    document.getElementById('qSubmit').disabled = false;
+    const q5 = document.getElementById('qs-5');
+    showFormError(q5, q5 && q5.querySelector('.btn-row'));
+  });
 }
 
 /* ═══════════════ SERVICES ═══════════════ */
@@ -4025,18 +4057,8 @@ function sendContact(e){
   const msg = document.getElementById('ctMsg').value.trim();
   const btn = document.querySelector('#ctForm .btn-solid');
   if (btn) btn.disabled = true;
-  sendAck('contact', n, em, 'client', { telephone: ph, message: msg });
-  fetch(FORMSPREE_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-    body: JSON.stringify({ _subject: 'CONTACT SITE BUNKAIO — ' + n, _replyto: em, nom_societe: n, email: em, telephone: ph || 'Non renseigné', message: msg })
-  }).then(() => {
-    document.getElementById('ctForm').style.display = 'none';
-    document.getElementById('ctSuccess').style.display = 'block';
-  }).catch(() => {
-    document.getElementById('ctForm').style.display = 'none';
-    document.getElementById('ctSuccess').style.display = 'block';
-  });
+  const PA = sendAck('contact', n, em, 'client', { telephone: ph, message: msg });
+  finishForm([PA, postFormspree({ _subject: 'CONTACT SITE BUNKAIO — ' + n, _replyto: em, nom_societe: n, email: em, telephone: ph || 'Non renseigné', message: msg })], 'ctForm', 'ctSuccess', btn);
 }
 
 /* ═══════════════ PARTAGER MON EXPÉRIENCE (témoignage) ═══════════════ */
@@ -4055,25 +4077,15 @@ function sendShare(e){
   const txt = document.getElementById('shText').value.trim();
   const btn = document.querySelector('#shareForm .btn-solid');
   if (btn) btn.disabled = true;
-  sendAck('share', n, em, 'client', { prestation: spe, temoignage: txt });
-  fetch(FORMSPREE_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-    body: JSON.stringify({
+  const PA = sendAck('share', n, em, 'client', { prestation: spe, temoignage: txt });
+  finishForm([PA, postFormspree({
       _subject: 'NOUVEAU TÉMOIGNAGE — ' + n,
       _replyto: em,
       nom: n,
       email: em,
       prestation_concernee: spe,
       temoignage: txt
-    })
-  }).then(() => {
-    document.getElementById('shareForm').style.display = 'none';
-    document.getElementById('shSuccess').style.display = 'block';
-  }).catch(() => {
-    document.getElementById('shareForm').style.display = 'none';
-    document.getElementById('shSuccess').style.display = 'block';
-  });
+    })], 'shareForm', 'shSuccess', btn);
 }
 
 /* ═══════════════ PARTENAIRES — PROPOSER UNE COLLABORATION ═══════════════ */
@@ -4103,11 +4115,8 @@ function sendCollab(e){
   }
   const btn = document.querySelector('#collabForm .btn-solid');
   if (btn) btn.disabled = true;
-  sendAck('collab', n, em, 'client', { type: type, site: web, projet: proj });
-  fetch(FORMSPREE_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-    body: JSON.stringify({
+  const PA = sendAck('collab', n, em, 'client', { type: type, site: web, projet: proj });
+  finishForm([PA, postFormspree({
       /* Catégorie en tête de l'objet du mail : permet de trier/filtrer
          les propositions par type directement depuis la boîte mail
          (règle de filtrage sur "[Type…]" dans le logiciel de messagerie). */
@@ -4118,14 +4127,7 @@ function sendCollab(e){
       email: em,
       site_reseaux: web || 'Non renseigné',
       projet: proj
-    })
-  }).then(() => {
-    document.getElementById('collabForm').style.display = 'none';
-    document.getElementById('collabSuccess').style.display = 'block';
-  }).catch(() => {
-    document.getElementById('collabForm').style.display = 'none';
-    document.getElementById('collabSuccess').style.display = 'block';
-  });
+    })], 'collabForm', 'collabSuccess', btn);
 }
 
 /* ═══════════════ PARTENAIRES — CANDIDATER (Partenaire Fondateur) ═══════════════ */
@@ -4208,11 +4210,8 @@ function sendApply(e){
   }
   const btn = document.querySelector('#applyForm .btn-solid');
   if (btn) btn.disabled = true;
-  sendAck('partner', n, em, 'partner', { telephone: ph, site: web, secteur: sector, type: provType, projet: proj });
-  fetch(FORMSPREE_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-    body: JSON.stringify({
+  const PA = sendAck('partner', n, em, 'partner', { telephone: ph, site: web, secteur: sector, type: provType, projet: proj });
+  finishForm([PA, postFormspree({
       /* Secteur en tête de l'objet du mail, même convention que les
          demandes de collaboration : tri/filtrage des candidatures par
          secteur directement depuis la boîte mail. */
@@ -4225,14 +4224,7 @@ function sendApply(e){
       telephone: ph || 'Non renseigné',
       site_reseaux: web,
       activite_realisations: proj
-    })
-  }).then(() => {
-    document.getElementById('applyForm').style.display = 'none';
-    document.getElementById('applySuccess').style.display = 'block';
-  }).catch(() => {
-    document.getElementById('applyForm').style.display = 'none';
-    document.getElementById('applySuccess').style.display = 'block';
-  });
+    })], 'applyForm', 'applySuccess', btn);
 }
 
 /* ═══════════════ ESPACE CLIENT / PARTENAIRE ═══════════════ */
@@ -4289,7 +4281,11 @@ function doLogin(){
     .then(r => r.json())
     .then(data => {
       if (btn) btn.disabled = false;
-      if (!data.ok || !data.account) { err.style.display = 'block'; return; }
+      if (!data.ok || !data.account) {
+        if (data.error === 'too_many_attempts') err.textContent = t({fr:'Trop de tentatives. Réessayez dans 15 minutes, ou écrivez-nous pour recevoir un nouveau code.', en:'Too many attempts. Try again in 15 minutes, or write to us for a new code.'});
+        else err.innerHTML = I18N[LANG]['login-error'];
+        err.style.display = 'block'; return;
+      }
       USER = data.account;
       USER_CODE = code;
       saveSession();
@@ -4313,11 +4309,8 @@ function doRegister(){
   if (!n || !em || !em.includes('@') || !act) { err.style.display = 'block'; return; }
   const typeLabel = loginType === 'client' ? 'CLIENT' : 'PARTENAIRE';
   if (btn) btn.disabled = true;
-  sendAck('account', n, em, loginType === 'client' ? 'client' : 'partner', { espace: loginType === 'client' ? 'client' : 'partenaire', telephone: ph, activite: act });
-  fetch(FORMSPREE_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-    body: JSON.stringify({
+  const PA = sendAck('account', n, em, loginType === 'client' ? 'client' : 'partner', { espace: loginType === 'client' ? 'client' : 'partenaire', telephone: ph, activite: act });
+  finishFormRegister([PA, postFormspree({
       _subject: 'CRÉATION DE COMPTE ' + typeLabel + ' — ' + n,
       _replyto: em,
       type: typeLabel,
@@ -4326,19 +4319,19 @@ function doRegister(){
       telephone: ph || 'Non renseigné',
       activite: act,
       action_requise: 'Créer ce compte depuis le tableau de bord (bunkaio.com/admin/) puis envoyer le code d\'accès par email'
-    })
-  }).then(r => r.json()).then(data => {
-    if (data.ok || data.next) {
+    })], btn, err);
+}
+
+function finishFormRegister(promises, btn, err){
+  Promise.all(promises).then(rs => {
+    if (rs.some(Boolean)) {
       document.getElementById('registerForm').style.display = 'none';
       document.getElementById('registerSuccess').style.display = 'block';
     } else {
       if (btn) btn.disabled = false;
-      err.textContent = 'Erreur lors de l\'envoi. Écrivez à contact@bunkaio.com';
+      err.textContent = LANG === 'en' ? 'Your request could not be sent. Write to contact@bunkaio.com' : 'Erreur lors de l\'envoi. Écrivez à contact@bunkaio.com';
       err.style.display = 'block';
     }
-  }).catch(() => {
-    document.getElementById('registerForm').style.display = 'none';
-    document.getElementById('registerSuccess').style.display = 'block';
   });
 }
 

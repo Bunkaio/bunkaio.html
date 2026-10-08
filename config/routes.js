@@ -7,9 +7,9 @@
    ═══════════════════════════════════════════════════════════ */
 const SEO_ROUTES = [
   { view:'home', path:'/', index:true,
-    title:'BUNKAIO ⊹',
+    title:'BUNKAIO ⊹ | Photographe à Montpellier, Béziers et Toulouse',
     description:'BUNKAIO, photographe professionnel basé à Montpellier, mobile à Béziers et Toulouse : portrait, mode, produit, événementiel. Images HD haut de gamme.',
-    titleEn:'BUNKAIO ⊹',
+    titleEn:'BUNKAIO ⊹ | Photographer in Montpellier, Béziers and Toulouse',
     descriptionEn:'BUNKAIO, mobile professional photographer in Béziers, Montpellier and Toulouse: portrait, fashion, products, corporate, events. Premium HD images. Quote in 2 minutes.' },
   { view:'services', path:'/services/', index:true,
     title:'BUNKAIO ⊹ | Prestations photo et tarifs',
@@ -49,7 +49,7 @@ const SEO_ROUTES = [
   { view:'service', cat:'lumen', path:'/services/photobooth-ia-mariage-lumen/', index:true,
     h1:'Lumen, location de photobooth IA pour mariages et événements', h1En:'Lumen, AI photobooth rental for weddings and events',
     title:'BUNKAIO ⊹ | Location photobooth IA mariage, Lumen',
-    description:'Bientôt disponible : location de photobooth IA haut de gamme pour mariages et événements : impressions illimitées, galerie privée. Dès 290 €. Béziers, Montpellier, Toulouse.',
+    description:'Bientôt disponible : location de photobooth IA haut de gamme pour mariages et événements, galerie privée, dès 290 €. Béziers, Montpellier, Toulouse.',
     titleEn:'BUNKAIO ⊹ | AI photobooth rental for weddings, Lumen',
     descriptionEn:'Coming soon: premium AI photobooth rental for weddings and events: set-up, unlimited prints, private gallery. Packages from €290. Béziers, Montpellier, Toulouse.' },
   { view:'discover', path:'/decouvrir-chaque-prestation/', index:true,

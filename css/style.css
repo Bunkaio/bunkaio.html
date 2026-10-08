@@ -4338,3 +4338,13 @@ a, button { -webkit-tap-highlight-color: rgba(110,90,168,0.18); }
 .acc-seance.cancelled .acc-seance-title { color: #9a3d3d; }
 .acc-seance.cancelled .acc-seance-grid dd { text-decoration: line-through; opacity: .6; }
 @media (max-width: 600px) { .acc-seance { padding: 20px 20px; margin-bottom: 26px; } }
+
+/* Échec d'envoi d'un formulaire : message visible, le visiteur peut réessayer. */
+.form-error { margin: 18px 0 0; padding: 12px 16px; border: 1px solid #b3261e; background: rgba(179,38,30,0.08); color: #8c1d18; border-radius: 6px; font-size: 13.5px; line-height: 1.6; }
+/* Cibles tactiles : liens autonomes (pied de page, fil d'Ariane, « Voir la prestation »…) assez hauts pour le pouce. */
+@media (max-width: 700px) {
+  .ft-list li { margin-bottom: 3px; }
+  .ft-list a, .ft-list button { display: inline-block; padding-block: 7px; }
+  .breadcrumb a { display: inline-block; padding-block: 8px; }
+  .ms-link, .art-all, .pp-ghost, .pt-link, .login-switch button { display: inline-block; padding-block: 9px; }
+}

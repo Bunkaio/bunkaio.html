@@ -1,5 +1,5 @@
 import type Stripe from 'stripe';
-import { adminAccountView, getAccount, listAccounts, putAccount, sanitizeAccount, upsertAccountFromAdmin, verifyLogin } from './accounts';
+import { adminAccountView, getAccount, listAccounts, putAccount, sanitizeAccount, upsertAccountFromAdmin, verifyLogin, LoginThrottled } from './accounts';
 import { handleCollect, handleStats, purgeOldAnalytics } from './analytics';
 import { appendJournal, diffAccountActivity, flushActivityNotifications, queueActivityNotification } from './activity';
 import { billingErrors, cleanBilling, composeAddress } from './billing';
@@ -305,7 +305,13 @@ async function handleAuthLogin(request: Request, env: Env, headers: Record<strin
     return jsonResponse({ ok: false, error: 'invalid_payload' }, 400, headers);
   }
 
-  const account = await verifyLogin(env, body.type, body.email, body.code);
+  let account;
+  try {
+    account = await verifyLogin(env, body.type, body.email, body.code, request.headers.get('CF-Connecting-IP') ?? '');
+  } catch (err) {
+    if (err instanceof LoginThrottled) return jsonResponse({ ok: false, error: 'too_many_attempts' }, 429, headers);
+    throw err;
+  }
   if (!account) {
     return jsonResponse({ ok: false, error: 'invalid_credentials' }, 401, headers);
   }
@@ -334,7 +340,13 @@ async function handleAccountUpdate(request: Request, env: Env, headers: Record<s
     return jsonResponse({ ok: false, error: 'invalid_payload' }, 400, headers);
   }
 
-  const account = await verifyLogin(env, body.type, body.email, body.code);
+  let account;
+  try {
+    account = await verifyLogin(env, body.type, body.email, body.code, request.headers.get('CF-Connecting-IP') ?? '');
+  } catch (err) {
+    if (err instanceof LoginThrottled) return jsonResponse({ ok: false, error: 'too_many_attempts' }, 429, headers);
+    throw err;
+  }
   if (!account) {
     return jsonResponse({ ok: false, error: 'invalid_credentials' }, 401, headers);
   }
@@ -983,8 +995,11 @@ async function handleQuizLead(request: Request, env: Env, headers: Record<string
     // Email de confirmation au prospect — best-effort, ne doit jamais faire
     // échouer la synchronisation Stripe qui vient de réussir.
     try {
-      const { subject, html, text } = buildQuizConfirmationEmail({ customerName: body.name, lang: normalizeLang(body.lang), space: await detectSpace(env, body.email) });
-      await sendEmail(env, body.email, subject, html, text);
+      // Un seul accusé par adresse et par heure : l'endpoint est public, sans cette limite il pourrait servir à inonder une boîte mail.
+      if (await claimAckSlot(env, 'quiz', body.email)) {
+        const { subject, html, text } = buildQuizConfirmationEmail({ customerName: body.name, lang: normalizeLang(body.lang), space: await detectSpace(env, body.email) });
+        await sendEmail(env, body.email, subject, html, text);
+      }
     } catch (emailErr) {
       console.error("[quiz-lead] échec de l'envoi de l'email de confirmation", emailErr);
     }

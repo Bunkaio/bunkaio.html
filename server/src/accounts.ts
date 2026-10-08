@@ -67,11 +67,26 @@ export function adminAccountView(record: AccountRecord): AdminAccountRecord {
  * vs "code incorrect") pour ne pas permettre l'énumération des emails
  * enregistrés.
  */
-export async function verifyLogin(env: Env, type: AccountType, email: string, code: string): Promise<AccountRecord | null> {
+/** Trop d'échecs de connexion pour cette adresse depuis cette IP : la route répond 429 jusqu'à la fin de la fenêtre. */
+export class LoginThrottled extends Error {}
+const LOGIN_MAX_FAILS = 8;
+const LOGIN_WINDOW_S = 900;
+
+/**
+ * Vérifie l'email + le code d'accès. Anti force brute : au-delà de LOGIN_MAX_FAILS échecs en 15 minutes
+ * (même adresse, même IP), la connexion est refusée (LoginThrottled), que le compte existe ou non.
+ */
+export async function verifyLogin(env: Env, type: AccountType, email: string, code: string, ip = ''): Promise<AccountRecord | null> {
+  const key = `lf:${type}:${email.trim().toLowerCase()}:${ip}`;
+  const fails = Number((await env.ACCOUNTS_KV.get(key)) ?? '0');
+  if (fails >= LOGIN_MAX_FAILS) throw new LoginThrottled();
   const record = await getAccount(env, type, email);
-  if (!record) return null;
-  const candidateHash = await hashCode(code);
-  if (candidateHash !== record.codeHash) return null;
+  const ok = !!record && (await hashCode(code)) === record.codeHash;
+  if (!ok) {
+    await env.ACCOUNTS_KV.put(key, String(fails + 1), { expirationTtl: LOGIN_WINDOW_S });
+    return null;
+  }
+  if (fails > 0) await env.ACCOUNTS_KV.delete(key);
   return record;
 }
 
