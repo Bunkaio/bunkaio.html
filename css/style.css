@@ -4620,3 +4620,24 @@ a, button { -webkit-tap-highlight-color: rgba(110,90,168,0.18); }
 .service-more .sm-arrow { font-style: normal; font-weight: 700; color: #6e5aa8; transition: transform 0.35s var(--ease-luxe, ease); }
 .service-card .service-more:hover .sm-arrow { transform: translateX(3px); }
 @media (prefers-reduced-motion: reduce) { .service-card .service-cta, .service-cta .sc-arrow, .service-more .sm-arrow { transition: none; } }
+
+/* ═══ Catalogue, ordinateur : cartes alignées ligne par ligne (sous-grille). Dans une même rangée, l'en-tête, la ligne de
+   public, l'accroche, la liste des formules, les encadrés (abonnement, Polas, Book grossesse) et les boutons commencent
+   à la même hauteur, quelle que soit la longueur du texte de chaque carte. ═══ */
+@media (min-width: 921px) {
+  .services-grid { align-items: stretch; }
+  .services-grid .service-card { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: subgrid; grid-row: span 6; row-gap: 0; align-content: start; min-width: 0; }
+  .services-grid .service-card > .service-head { align-self: start; }
+  .services-grid .service-card > .service-head { flex-wrap: wrap; }
+  .services-grid .service-card > .service-head .service-name { flex: 1 1 0; min-width: 0; }
+  .services-grid .service-card > .service-head .soon-chip { flex: 0 0 auto; margin-left: 60px; }
+  .services-grid .service-card > .service-tiers { align-self: start; }
+  .services-grid .service-card > .service-extras { align-self: start; display: flex; flex-direction: column; gap: 10px; }
+  .services-grid .service-card > .service-extras:empty { display: block; }
+  .services-grid .service-card > .service-extras > .service-sub-row, .services-grid .service-card > .service-extras > .service-polas { margin: 0; }
+  .services-grid .service-card > .service-extras:not(:empty) { margin-top: 16px; }
+  .services-grid .service-card > .service-actions { align-self: start; }
+}
+@supports not (grid-template-rows: subgrid) {
+  @media (min-width: 921px) { .services-grid .service-card { display: flex; } .services-grid .service-card > .service-actions { margin-top: auto; padding-top: 22px; } }
+}

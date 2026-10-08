@@ -4152,8 +4152,8 @@ function renderServices(){
                 <span class="service-tier-price">${c.tiers[tier.id].price.toLocaleString('fr-FR')}€</span>
               </div>`).join('')}
       </div>
-      ${subRow}
-      ${POLAS[c.id] ? `<div class="service-polas"><span class="service-tier-name"><strong>${t(POLAS[c.id].name)}</strong> <span class="service-polas-tag">${t(POLAS[c.id].label)}</span><small>${t(POLAS[c.id].short)}</small></span><span class="service-tier-price">${specialTotal(POLAS[c.id]).toLocaleString('fr-FR')}€</span></div>` : ''}
+      <div class="service-extras">${subRow}
+      ${POLAS[c.id] ? `<div class="service-polas"><span class="service-tier-name"><strong>${t(POLAS[c.id].name)}</strong> <span class="service-polas-tag">${t(POLAS[c.id].label)}</span><small>${t(POLAS[c.id].short)}</small></span><span class="service-tier-price">${specialTotal(POLAS[c.id]).toLocaleString('fr-FR')}€</span></div>` : ''}</div>
       <div class="service-actions">
         <button class="service-cta" type="button"><span class="sc-label">${I18N[LANG]['svc-cta']}</span><i class="sc-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></i></button>
         <a class="service-more" href="${servicePath(c.id)}" onclick="return navLink(event,'service','${c.id}')"><span class="sm-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><line x1="8.5" y1="8" x2="15.5" y2="8"/><line x1="8.5" y1="12" x2="15.5" y2="12"/><line x1="8.5" y1="16" x2="12.5" y2="16"/></svg></span><span class="sm-txt"><b>${t({fr:'Détails et tarifs', en:'Details and rates'})}</b><small>${navName(c)}</small></span><i class="sm-arrow" aria-hidden="true">→</i></a>
