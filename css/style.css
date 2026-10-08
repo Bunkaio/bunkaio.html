@@ -4291,3 +4291,32 @@ a, button { -webkit-tap-highlight-color: rgba(110,90,168,0.18); }
 .travel-est.ok { color: #2f6b45; font-weight: 600; }
 .travel-est.warn { color: #9a6b12; }
 .travel-hint { margin-top: 4px; font-size: 12.5px; color: #6e6785; }
+
+/* ═══ Devis en ligne, bureau : un encadré translucide persistant sur TOUTES les étapes ═══
+   Sans lui, titres et textes (blancs ou gris) se posent directement sur la photo de fond et deviennent
+   illisibles selon l'image. Même traitement que .recap-box / .payment-flex-strip, avec les textes passés en foncé. */
+@media (min-width: 901px) {
+  .quiz-wrap { max-width: 860px; }
+  .quiz-wrap .qstep.active {
+    background: rgba(255,255,255,0.74);
+    -webkit-backdrop-filter: blur(12px) saturate(1.1); backdrop-filter: blur(12px) saturate(1.1);
+    border: 1px solid var(--black);
+    padding: 44px 52px 52px;
+  }
+  .quiz-wrap .qstep.active .qstep-meta { color: #4b3d7a; text-shadow: none; }
+  .quiz-wrap .qstep.active .qstep-title { color: var(--black); text-shadow: none; }
+  .quiz-wrap .qstep.active .qstep-sub { color: #3a3544; text-shadow: none; }
+  .quiz-wrap .qstep.active .cat-name { color: var(--black); text-shadow: none; }
+  .quiz-wrap .qstep.active .cat-tag { color: #4b3d7a; text-shadow: none; }
+  .quiz-wrap .qstep.active .cat-arrow { color: var(--black); filter: none; opacity: .6; }
+  .quiz-wrap .qstep.active .cat-item::before { background: linear-gradient(to right, rgba(110,90,168,0), rgba(110,90,168,0.14)); }
+  .quiz-wrap .qstep.active .prof-icon { color: var(--black); filter: none; }
+  .quiz-wrap .qstep.active .prof-name { color: var(--black); text-shadow: none; }
+  .quiz-wrap .qstep.active .prof-card:hover { border-color: rgba(10,10,12,0.25); background: rgba(110,90,168,0.12); }
+  .quiz-wrap .qstep.active .prof-card.selected .prof-icon,
+  .quiz-wrap .qstep.active .prof-card.selected .prof-name { color: var(--white); }
+  /* Les boîtes internes (récapitulatif, paiement, succès) gardent leur style mais sans second cadre noir. */
+  .quiz-wrap .qstep.active .recap-box,
+  .quiz-wrap .qstep.active .payment-flex-strip { background: rgba(255,255,255,0.55); }
+  .quiz-wrap .qstep.active .devis-kicker { color: #4b3d7a; }
+}

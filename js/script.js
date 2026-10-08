@@ -2084,8 +2084,25 @@ function goToComingSoon(catId){
   setTimeout(() => {
     const m = document.getElementById('ctMsg');
     if (m && !m.value) m.value = t({fr:'Bonjour, je souhaite être prévenu(e) de l\'ouverture des réservations de ', en:'Hello, I would like to be notified when bookings open for '}) + (c ? t(c.name) : '') + '.';
-    const f = document.getElementById('ctForm'); if (f) f.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }, 450);
+  scrollToContactForm();
+}
+/* Amène en haut du formulaire de contact. Le haut de la page contact (bannière, photos) finit de se charger
+   après l'arrivée : la position est donc recalée plusieurs fois, sauf si le visiteur reprend la main. */
+function scrollToContactForm(){
+  let cancelled = false;
+  const stop = () => { cancelled = true; };
+  const evs = ['wheel', 'touchstart', 'keydown', 'mousedown'];
+  evs.forEach(ev => window.addEventListener(ev, stop, { once: true, passive: true }));
+  const nav = (parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav-h'), 10) || 90) + 16;
+  const go = behavior => {
+    if (cancelled) return;
+    const f = document.getElementById('ctForm'); if (!f) return;
+    const top = f.getBoundingClientRect().top + window.scrollY - nav;
+    if (Math.abs(top - window.scrollY) > 4) window.scrollTo({ top, behavior });
+  };
+  [[500, 'smooth'], [1200, 'instant'], [2200, 'instant'], [3600, 'instant']].forEach(([ms, b]) => setTimeout(() => go(b), ms));
+  setTimeout(() => evs.forEach(ev => window.removeEventListener(ev, stop)), 4000);
 }
 function goToQuizCategory(catId){
   if (isComingSoon(catId)) { goToComingSoon(catId); return; }
