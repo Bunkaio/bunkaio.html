@@ -1129,8 +1129,8 @@ const CATS = [
   { id:'photo-part',
     name:{fr:'Séance photo — particuliers', en:'Portrait & lifestyle — individuals'},
     tag:{fr:'Extérieur · studio · solo · couple · groupe · book grossesse', en:'Outdoor · studio · solo · couple · group · maternity book'},
-    pitch:{fr:'Pas besoin d\'être à l\'aise devant l\'objectif : c\'est notre rôle de vous mettre en confiance. Résultat, des photos qui vous ressemblent vraiment — livrées en 5 jours.',
-      en:'No need to feel at ease in front of the camera — that\'s our job. The result: photos that truly look like you, delivered in 5 days.'},
+    pitch:{fr:'Pas besoin d\'être à l\'aise devant l\'objectif : c\'est notre rôle de vous mettre en confiance. Résultat, des photos qui vous ressemblent vraiment — livrées en 5 à 10 jours ouvrés selon la formule.',
+      en:'No need to feel at ease in front of the camera — that\'s our job. The result: photos that truly look like you, delivered within 5 to 10 working days depending on the package.'},
     icon:'camera',
     tiers:{
       deco:{ price:250, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
