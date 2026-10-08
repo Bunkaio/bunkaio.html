@@ -4364,7 +4364,7 @@ a, button { -webkit-tap-highlight-color: rgba(110,90,168,0.18); }
 
 /* ─── Menu en majuscules (ordinateur et mobile) ─── */
 .nav-link { text-transform: uppercase; font-size: 12px; letter-spacing: 0.1em; }
-.mobile-link { text-transform: uppercase; letter-spacing: 0.14em; font-size: clamp(14px, 3.8vw, 16px); }
+.mobile-link { text-transform: uppercase; letter-spacing: 0.14em; font-size: clamp(11px, 3vw, 13px); }
 
 /* ─── Menu mobile : tient toujours dans la partie visible de l'écran (barres Safari comprises) ───
    100dvh = hauteur réellement visible ; espacements proportionnels à cette hauteur ; défilement interne en dernier recours. */
