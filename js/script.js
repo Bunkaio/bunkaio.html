@@ -6526,3 +6526,13 @@ function warmServicesVideo(){
   const el = e.target && e.target.closest ? e.target.closest('[onclick*="\'services\'"], [data-nav="services"], a[href="/services/"]') : null;
   if (el) warmServicesVideo();
 }, { passive: true }));
+
+/* Accessibilité : relie chaque <label> à son champ (for/id) pour les lecteurs d'écran et pour que le clic sur le libellé
+   place le curseur dans le champ. Les libellés du site sont posés à côté du champ dans un .fgroup, sans attribut for. */
+(function linkFormLabels(){
+  document.querySelectorAll('.fgroup').forEach(g => {
+    const labels = g.querySelectorAll(':scope > label');
+    const ctl = g.querySelectorAll('input:not([type=hidden]), select, textarea');
+    if (labels.length === 1 && ctl.length === 1 && ctl[0].id && !labels[0].htmlFor) labels[0].htmlFor = ctl[0].id;
+  });
+})();
