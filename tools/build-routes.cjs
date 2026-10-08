@@ -223,7 +223,6 @@ function buildPage(template, route, snaps, meta) {
   html = setMeta(html, /<meta name="twitter:image" content="[^"]*">/, '<meta name="twitter:image" content="' + ogImg + '">');
   html = setMeta(html, /<meta property="og:image:alt" content="[^"]*">/, '<meta property="og:image:alt" content="' + esc(route.h1 || route.title.split('|')[0].trim()) + ' — BUNKAIO">');
   html = setMeta(html, /<meta name="twitter:image:alt" content="[^"]*">/, '<meta name="twitter:image:alt" content="' + esc(route.h1 || route.title.split('|')[0].trim()) + ' — BUNKAIO">');
-  html = fixStaticImages(html);
   html = syncDataLang(html);
   html = setMeta(html, /<link rel="canonical" href="[^"]*">/, '<link rel="canonical" href="' + url + '">');
   html = setMeta(html, /<meta property="og:url" content="[^"]*">/, '<meta property="og:url" content="' + url + '">');
@@ -274,7 +273,7 @@ function buildPage(template, route, snaps, meta) {
     if (cur !== 'faq') html = html.replace(/(data-pageh1[^>]*data-lang=")legal-title(">)[^<]*/, '$1legal-title-' + cur + '$2' + I18N_FR['legal-title-' + cur]);
   }
   for (const id of ids) if (snaps[id]) html = setSnap(html, id, snaps[id]);
-  return html;
+  return fixStaticImages(html);
 }
 
 /* Minification (esbuild, dispo dans server/node_modules) : les pages chargent css/style.min.css et
