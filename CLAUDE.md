@@ -34,6 +34,7 @@ Le code est la source de vérité. Ce fichier ne sert qu'à reprendre vite.
 - BUNKAIO = « studio d'image pour professionnels, entrepreneurs et mannequins » ; crée des images premium pour les personnes, les marques et les entreprises. Slogan : « BUNKAIO accompagne les personnes qui entreprennent dans la construction de leur image professionnelle. »
 - Orientation par marché sur /decouvrir-chaque-prestation/ (entrepreneurs, marques, entreprises & événements, particuliers) ; la stratégie ne vise que les deux premiers.
 - Formule Lancement 320 € = palier `lanc` de la gamme `corporate` (pas une nouvelle gamme) ; `catTiers(c)` n'affiche que les paliers définis par la gamme. Landing : /services/personal-branding-entrepreneurs/ (route `service` / `branding`, `renderBrandingPage`). Mobilité (shooting in situ) = argument central ; déplacements selon `TRAVEL_TXT`, jamais « toujours offerts ». Pas de remise, pas de « low-cost ».
+- Admin média : photo de formule `formulas/corporate-lanc.webp`, fond `discover/branding.webp` (repli : photos corporate), photos in situ `branding/in-situ-1..3.webp` (affichées seulement si présentes, `IMG.brandingInSitu`).
 - Tracking : `data-track="lancement"` sur les CTA (événement `cta_click`), `form_start` (nécessite le redéploiement du Worker), `quiz_submit` suffixé « · Lancement ». Plan marketing de référence : artefact « Plan de lancement V5 ».
 
 ## Positionnement

@@ -237,11 +237,19 @@ const IMG = {
   discoverPhotos: {
     'photo-part': MEDIA_BASE + '/discover/photo-part.webp',
     corporate:    MEDIA_BASE + '/discover/corporate.webp',
+    branding:     MEDIA_BASE + '/discover/branding.webp',   // Personal Branding (repli : photos corporate)
     mode:         MEDIA_BASE + '/discover/mode.webp',
     commercial:   MEDIA_BASE + '/discover/commercial.webp',
     event:        MEDIA_BASE + '/discover/event.webp',
     lumen:        MEDIA_BASE + '/discover/lumen.webp',
   },
+  /* Personal Branding : photos in situ affichées sur la page dédiée (admin média, rubrique « Personal Branding — photos in situ »).
+     Un fichier absent n'affiche rien. */
+  brandingInSitu: [
+    MEDIA_BASE + '/branding/in-situ-1.webp',
+    MEDIA_BASE + '/branding/in-situ-2.webp',
+    MEDIA_BASE + '/branding/in-situ-3.webp',
+  ],
   servicePhotos: {
     immobilier:   MEDIA_BASE + '/services/immobilier.webp',    // Immobilier prestige
     archi:        MEDIA_BASE + '/services/archi.webp',         // Architecture & design

@@ -3303,6 +3303,12 @@ function catFacts(c){
 
 /* Page « Découvrir chaque prestation » : le fond change selon la prestation ouverte.
    Photos : IMG.discoverPhotos[catégorie] (admin média : discover/<catégorie>.webp), sinon photo de la catégorie, sinon fond de la page. */
+/* Photos de repli d'un fond de prestation, dans l'ordre (la page Personal Branding reprend celles du Corporate). */
+function bgFallbacks(id){
+  const L = id === 'branding' ? [IMG.discoverPhotos && IMG.discoverPhotos.corporate, IMG.servicePhotos && IMG.servicePhotos.corporate] : [IMG.servicePhotos && IMG.servicePhotos[id]];
+  return L.filter(Boolean);
+}
+function chainFallback(img, slide, id){ const fbs = bgFallbacks(id); img.onerror = () => { const n = fbs.shift(); if (n) img.src = n; else slide.remove(); }; }
 function discoverPhotoUrl(catId){
   if (catId === 'branding' && !(IMG.discoverPhotos && IMG.discoverPhotos.branding)) catId = 'corporate';
   return (IMG.discoverPhotos && IMG.discoverPhotos[catId]) || (IMG.servicePhotos && IMG.servicePhotos[catId]) || '';
@@ -3321,8 +3327,7 @@ function discoverBgSync(){
       const url = discoverPhotoUrl(id); if (!url) return;
       const slide = document.createElement('div'); slide.className = 'hero-slide disc-slide'; slide.dataset.cat = id;
       const img = document.createElement('img'); img.alt = ''; img.src = url; img.loading = 'eager';
-      const fb = IMG.servicePhotos && IMG.servicePhotos[id];
-      img.onerror = () => { if (fb && img.src !== fb) img.src = fb; else slide.remove(); };
+      chainFallback(img, slide, id);
       slide.appendChild(img); wrap.insertBefore(slide, overlay || null);
     });
   }
@@ -3481,8 +3486,7 @@ function serviceBgSync(catId){
     wrap.querySelectorAll('.hero-slide').forEach(sl => sl.remove());
     const slide = document.createElement('div'); slide.className = 'hero-slide svc-slide active'; slide.dataset.cat = catId;
     const img = document.createElement('img'); img.alt = ''; img.src = url; img.loading = 'eager';
-    const fb = IMG.servicePhotos && IMG.servicePhotos[catId];
-    img.onerror = () => { if (fb && img.src !== fb) img.src = fb; else slide.remove(); };
+    chainFallback(img, slide, catId);
     slide.appendChild(img);
     wrap.insertBefore(slide, wrap.querySelector('.page-hero-overlay') || null);
   }
@@ -3801,6 +3805,7 @@ function renderBrandingPage(){
         ${eq.map((x, i) => `${i ? `<i aria-hidden="true">${i === eq.length - 1 ? '=' : '+'}</i>` : ''}<span class="${i === eq.length - 1 ? 'pb-eq-res' : ''}">${artIllus(x[0], false)}${t(x[1])}</span>`).join('')}
       </div>
       <p class="svcp-text">${t({fr:'Les images ne montrent plus seulement votre visage, mais ce que vous faites, comment vous travaillez, vos outils, vos produits, votre équipe et votre univers. Elles sont plus crédibles qu\'un portrait sur fond neutre, parce qu\'elles sont vraies.', en:'The images no longer show just your face, but what you do, how you work, your tools, your products, your team and your world. They are more credible than a portrait on a plain backdrop, because they are real.'})}</p>
+      <div class="pb-insitu" id="pbInsitu" hidden></div>
       <p class="svcp-note"><strong>${t({fr:'Exemples de mises en situation', en:'Examples of real-work set-ups'})}</strong> ${t({fr:'(cas d\'usage illustratifs) :', en:'(illustrative use cases):'})}</p>
       ${chips(situations)}
       <div class="svcp-cta-row">${dispo(t({fr:'Préparer mon shooting', en:'Prepare my shoot'}))}</div>
@@ -3857,7 +3862,16 @@ function renderBrandingPage(){
     io.observe(box);
   });
   initReassureLoop();
-  serviceBgSync('corporate');
+  serviceBgSync('branding');
+  /* Photos in situ (admin média) : seules celles qui existent sont affichées ; aucune → la rangée reste masquée. */
+  const insitu = document.getElementById('pbInsitu');
+  if (insitu && Array.isArray(IMG.brandingInSitu)) {
+    Promise.all(IMG.brandingInSitu.map(u => probeImageExists(u).then(ok => ok ? u : null))).then(list => {
+      const ok = list.filter(Boolean); if (!ok.length || !document.body.contains(insitu)) return;
+      insitu.innerHTML = ok.map((u, i) => `<figure><img src="${u}" alt="${escHtml(t({fr:'Shooting de Personal Branding réalisé par BUNKAIO dans le lieu de travail d\'un entrepreneur', en:'Personal Branding shoot by BUNKAIO at an entrepreneur\'s workplace'}))} (${i + 1})" width="600" height="800" loading="lazy" decoding="async"></figure>`).join('');
+      insitu.dataset.n = String(ok.length); insitu.hidden = false;
+    });
+  }
 }
 
 /* ═══════════════ CONSEILS PHOTO (config/articles.js) ═══════════════ */

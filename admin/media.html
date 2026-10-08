@@ -311,10 +311,10 @@ const DRONE_VIDEO_SECTIONS = [
 // ── Slots fixes ──────────────────────────────────────────────────────────────
 // ── Photos par formule (devis, récapitulatif et page de chaque prestation) ──
 // Chemin : formulas/<catégorie>-<formule>.webp. Sans photo déposée, le site reprend la photo de la catégorie.
-const FORMULA_LABELS = { deco: 'Découverte', sig: 'Signature', prem: 'Premium', edit: 'Éditorial Bunkaio' };
+const FORMULA_LABELS = { deco: 'Découverte', lanc: 'Lancement (Personal Branding)', sig: 'Signature', prem: 'Premium', edit: 'Éditorial Bunkaio' };
 const FORMULA_CATS = [
   { id: 'photo-part', name: 'Séance photo — particuliers', tiers: ['deco', 'sig', 'prem', 'edit'], extra: { grossesse: 'Book grossesse' } },
-  { id: 'corporate',  name: 'Corporate — portraits professionnels', tiers: ['deco', 'sig', 'prem', 'edit'] },
+  { id: 'corporate',  name: 'Corporate & Personal Branding', tiers: ['deco', 'lanc', 'sig', 'prem', 'edit'] },
   { id: 'mode',       name: 'Mode, agence et mannequins', tiers: ['deco', 'sig', 'prem', 'edit'], extra: { polas: 'Polas (digitals agences)', sub: 'Studio Continu (abonnement)' } },
   { id: 'commercial', name: 'Commercial & produits', tiers: ['deco', 'sig', 'prem', 'edit'] },
   { id: 'event',      name: 'Événementiel', tiers: ['deco', 'sig', 'prem', 'edit'] },
@@ -350,7 +350,7 @@ const SECTIONS = [
     desc: '2000 × 2500 px, portrait 4:5 (≤ 450 Ko, largeur minimum 1600 px), sujet CENTRÉ. Elle sert aussi de fond d\'écran (devis, accueil) : exporter en grand. La même photo sert à 4 endroits (dont la page de chaque prestation, recadrée en 3:4, avec son texte alternatif) : fond plein écran du parcours "prestations" sur l\'accueil, vignette quand on filtre par catégorie sur la page Services, ET miniature de la catégorie à la 1ère étape du questionnaire de devis. La modifier ici la met à jour partout automatiquement.',
     slots: [
       { path: 'services/photo-part.webp', label: 'Séance photo — particuliers' },
-      { path: 'services/corporate.webp', label: 'Corporate — portraits professionnels (optionnel : provisoirement, le portrait d\'Aya est utilisé)' },
+      { path: 'services/corporate.webp', label: 'Corporate & Personal Branding (optionnel : provisoirement, le portrait d\'Aya est utilisé)' },
       { path: 'services/mode.webp', label: 'Mode, agence et mannequins' },
       { path: 'services/commercial.webp', label: 'Commercial & produits' },
       { path: 'services/event.webp', label: 'Événementiel' },
@@ -363,10 +363,21 @@ const SECTIONS = [
     desc: '2560 × 1440 px, paysage 16:9 (≤ 450 Ko). Le fond de la page « Découvrir chaque prestation » change selon la prestation ouverte, et chaque page de prestation (ex. Portrait professionnel et photo corporate) prend la photo correspondante. Sans photo déposée, c\'est la photo de la catégorie qui est utilisée.',
     slots: [
       { path: 'discover/photo-part.webp', label: 'Séance photo — particuliers' },
-      { path: 'discover/corporate.webp', label: 'Corporate — portraits professionnels' },
+      { path: 'discover/corporate.webp', label: 'Corporate — entreprises & équipes' },
+      { path: 'discover/branding.webp', label: 'Personal Branding — entrepreneurs (page dédiée ; sans photo, celle du Corporate est utilisée)' },
       { path: 'discover/mode.webp', label: 'Mode, agence et mannequins' },
       { path: 'discover/commercial.webp', label: 'Commercial & produits' },
       { path: 'discover/event.webp', label: 'Événementiel' },
+    ],
+  },
+  {
+    id: 'branding-insitu',
+    title: '🏢 Personal Branding — photos in situ',
+    desc: 'Format portrait 3:4 conseillé (par ex. 1500 × 2000 px), ≤ 350 Ko après conversion. Trois photos d\'entrepreneurs photographiés dans leur lieu de travail (bureau, atelier, cabinet, boutique…), affichées sur la page Personal Branding dans la section « Votre activité devient votre décor ». Un emplacement vide n\'affiche rien. Uniquement de vrais shootings, avec l\'accord écrit de la personne photographiée.',
+    slots: [
+      { path: 'branding/in-situ-1.webp', label: 'Photo in situ 1' },
+      { path: 'branding/in-situ-2.webp', label: 'Photo in situ 2' },
+      { path: 'branding/in-situ-3.webp', label: 'Photo in situ 3' },
     ],
   },
 

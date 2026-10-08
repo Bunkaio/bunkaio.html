@@ -4656,3 +4656,13 @@ a, button { -webkit-tap-highlight-color: rgba(110,90,168,0.18); }
 @keyframes hkGlow { to { opacity: 1; } }
 @media (max-width: 600px) { .hero-title .hero-kicker::before { left: -8%; right: -8%; top: -40%; bottom: -40%; } }
 @media (prefers-reduced-motion: reduce) { .hero-title .hero-kicker::before { opacity: 1; animation: none; } }
+
+/* Personal Branding : photos in situ déposées dans l'admin média (1 à 3), en rangée sous l'équation. */
+.pb-insitu { display: grid; grid-template-columns: repeat(var(--n, 3), minmax(0, 1fr)); gap: 12px; margin: 6px 0 20px; }
+.pb-insitu[data-n="1"] { --n: 1; max-width: 360px; } .pb-insitu[data-n="2"] { --n: 2; max-width: 620px; }
+.pb-insitu figure { margin: 0; border-radius: 14px; overflow: hidden; aspect-ratio: 3 / 4; background: #efeaf8; box-shadow: 0 10px 24px rgba(110,90,168,0.16); animation: advIn 0.7s var(--ease-luxe, ease) both; }
+.pb-insitu figure:nth-child(2) { animation-delay: 0.12s; } .pb-insitu figure:nth-child(3) { animation-delay: 0.24s; }
+.pb-insitu img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.8s var(--ease-luxe, ease); }
+.pb-insitu figure:hover img { transform: scale(1.04); }
+@media (max-width: 600px) { .pb-insitu { gap: 8px; } }
+@media (prefers-reduced-motion: reduce) { .pb-insitu figure { animation: none; } .pb-insitu img { transition: none; } }
