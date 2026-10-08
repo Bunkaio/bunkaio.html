@@ -13,7 +13,7 @@ Le code est la source de vérité. Ce fichier ne sert qu'à reprendre vite.
 - Ne pas modifier les dimensions d'export : `IMAGE_SPECS` et `toWebP` dans `admin/media.html`, images de partage 1200×630.
 - Aucune adresse personnelle, clé ou donnée client dans le dépôt (l'adresse légale est un secret du Worker).
 - Pas de redesign. Pas de promotion de lancement, pas de prix barré. Prix nets (franchise de TVA).
-- Pas de fausse preuve sociale ni de service inventé. Les collections du portfolio sont des collaborations, pas des clients. Accueil et page Collaboration : les 10 marques réelles (collaborations), aucun témoignage inventé.
+- Pas de fausse preuve sociale ni de service inventé. Les 10 marques réelles (Musardise Bijoux… Studio Doutor) sont présentées comme « Ils ont travaillé avec BUNKAIO » : ne pas écrire « collaboration » (lu comme non rémunéré, décision de la propriétaire) ni « clients » ; aucun témoignage inventé.
 - Lien d'avis Google unique : `config/media.js` (`GOOGLE_REVIEW_URL`) et `server/wrangler.toml` doivent rester identiques.
 - Ne pas lancer `pkill -f "http.server"` depuis le shell de l'agent.
 

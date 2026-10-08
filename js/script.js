@@ -328,7 +328,7 @@ const I18N = {
     'share-btn':'Envoyer mon témoignage',
     'share-success-title':'Merci pour votre retour',
     'share-success-text':'Votre témoignage a bien été reçu. Nous vous recontacterons si nous souhaitons le publier.',
-    'trust-label':'Ils ont collaboré avec BUNKAIO','collab-card-tag':'Collaboration','collab-card-text':'Shooting réalisé en collaboration avec la marque.','collab-role-1':'Bijoux','collab-role-2':'Thé','collab-role-3':'Cameroon Wax','collab-role-4':'Restauration','collab-role-5':'Lunetterie','collab-role-6':'Cosmétique','collab-role-7':'Book Palmynala','collab-role-8':'Capsule et lookbook STDR','collab-role-9':'Boutique',
+    'trust-label':'Ils ont travaillé avec BUNKAIO','collab-card-tag':'Shooting de marque','collab-card-text':'Shooting et images réalisés par BUNKAIO pour la marque.','collab-role-1':'Bijoux','collab-role-2':'Thé','collab-role-3':'Cameroon Wax','collab-role-4':'Restauration','collab-role-5':'Lunetterie','collab-role-6':'Cosmétique','collab-role-7':'Book Palmynala','collab-role-8':'Capsule et lookbook STDR','collab-role-9':'Boutique',
     'p-who':'Qui peut devenir Partenaire Fondateur\u00a0?',
     'p-who-text':'Le programme Partenaires Fondateurs est réservé aux entreprises et professionnels dont les réalisations, les valeurs et l\'exigence correspondent à l\'univers Bunkaio. Nous recherchons notamment\u00a0:',
     'p-list-1':'Portrait & lifestyle — coiffeurs, maquilleurs, coachs en image, instituts, studios',
@@ -520,7 +520,7 @@ const I18N = {
     'ft-services':'Services','ft-studio':'Le studio',
     'footer-claim2':'Photographe mobile · Béziers · Montpellier · Toulouse',
     'stab-catalogue':'Catalogue & prix','stab-devis':'Devis & déroulé',
-    'p-trust':'Ils ont collaboré avec BUNKAIO',
+    'p-trust':'Ils ont travaillé avec BUNKAIO',
     'process-payment-info':'<strong>Modalités de paiement :</strong> 30 % à la commande à la signature du devis, solde à la livraison des livrables. Chaque versement est réglable en 3x sans frais avec Klarna, par carte bancaire.',
     'process-cancel-info':'<strong>Annulation :</strong> une fois le devis validé, l\'acompte de 30 % versé à la commande reste acquis à BUNKAIO et n\'est pas remboursé en cas d\'annulation de votre part.',
     'process-delay-info':'Les délais indiqués sur chaque formule démarrent à la date du shooting.',
@@ -659,7 +659,7 @@ const I18N = {
     'share-btn':'Send my testimonial',
     'share-success-title':'Thank you for your feedback',
     'share-success-text':'Your testimonial has been received. We will get back to you if we would like to publish it.',
-    'trust-label':'They collaborated with BUNKAIO','collab-card-tag':'Collaboration','collab-card-text':'Shoot created in collaboration with the brand.','collab-role-1':'Jewellery','collab-role-2':'Tea','collab-role-3':'Cameroon Wax','collab-role-4':'Street food','collab-role-5':'Eyewear','collab-role-6':'Cosmetics','collab-role-7':'Palmynala book','collab-role-8':'STDR capsule and lookbook','collab-role-9':'Boutique',
+    'trust-label':'They worked with BUNKAIO','collab-card-tag':'Brand shoot','collab-card-text':'Shoot and images created by BUNKAIO for the brand.','collab-role-1':'Jewellery','collab-role-2':'Tea','collab-role-3':'Cameroon Wax','collab-role-4':'Street food','collab-role-5':'Eyewear','collab-role-6':'Cosmetics','collab-role-7':'Palmynala book','collab-role-8':'STDR capsule and lookbook','collab-role-9':'Boutique',
     'p-who':'Who can become a Founding Partner?',
     'p-who-text':'The Founding Partners programme is reserved for companies and professionals whose work, values and standards align with the Bunkaio universe. We are particularly looking for:',
     'p-list-1':'Portrait & lifestyle — hairstylists, make-up artists, image coaches, wellness studios, studios',
@@ -851,7 +851,7 @@ const I18N = {
     'ft-services':'Services','ft-studio':'The studio',
     'footer-claim2':'Mobile photographer · Béziers · Montpellier · Toulouse',
     'stab-catalogue':'Catalogue & rates','stab-devis':'Quote & process',
-    'p-trust':'They collaborated with BUNKAIO',
+    'p-trust':'They worked with BUNKAIO',
     'process-payment-info':'<strong>Payment terms:</strong> 30% deposit upon signing the quote, balance due on delivery of your deliverables. Each payment can be split into 3 interest-free instalments with Klarna, by credit card.',
     'process-cancel-info':'<strong>Cancellation:</strong> once the quote is accepted, the 30% deposit paid at booking is retained by BUNKAIO and is non-refundable if you cancel.',
     'process-delay-info':'The delivery timelines indicated on each package begin on the day of the shoot.',
@@ -6494,7 +6494,7 @@ function initAboutStats(){
 }
 
 /* ═══════════════ LOGO CAROUSEL ═══════════════ */
-/* Marques avec lesquelles BUNKAIO a réalisé des collaborations (noms en texte, aucun logo reproduit). */
+/* Marques avec lesquelles BUNKAIO a travaillé (noms en texte, aucun logo reproduit). */
 const PARTNER_LOGOS = [
   { name:'Musardise Bijoux', style:'font-weight:300;letter-spacing:0.28em;text-transform:uppercase' },
   { name:'Art Tea Shop', style:'font-family:Georgia,serif;font-weight:700;font-style:italic;letter-spacing:0' },
