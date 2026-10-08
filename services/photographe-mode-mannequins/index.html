@@ -31,7 +31,7 @@
 <link rel="icon" type="image/png" sizes="64x64" href="/images/favicon-64.png">
 <link rel="apple-touch-icon" href="/images/apple-touch-icon.png"><text y='0.9em' font-size='80' font-family='serif'>⊹</text></svg>">
 <link rel="preload" href="fonts/dm-sans-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/style.min.css?v=25272ec3">
+<link rel="stylesheet" href="css/style.min.css?v=9b2b4edc">
 
 <script type="application/ld+json">
 {
@@ -757,6 +757,13 @@
           <option value="flexible" data-lang="delay-opt-flex">Flexible / pas de contrainte</option>
         </select>
       </div>
+      <div class="fgroup stagger" id="qCityGroup" style="animation-delay:0.47s;display:none">
+        <label for="qCity" data-lang="city-label">Ville de la prestation *</label>
+        <input type="text" id="qCity" list="qCityList" autocomplete="off" placeholder="Ex. : Béziers, Nîmes, Toulouse…" oninput="onTravelCityInput()">
+        <datalist id="qCityList"></datalist>
+        <div class="travel-est" id="qTravelEst" aria-live="polite"></div>
+        <div class="travel-hint" data-lang="city-hint">Le montant du déplacement est estimé automatiquement et ajouté à votre devis.</div>
+      </div>
       <div class="fgroup stagger" style="animation-delay:0.5s">
         <label data-lang="project-label">Votre projet *</label>
         <textarea id="qProject" placeholder="Décrivez votre projet en quelques mots…" oninput="checkQuizForm()"></textarea>
@@ -1193,7 +1200,7 @@
     <section class="read-panel svcp-panel rv" style="--rv-d: 0s;">
       <h2>Formules et tarifs</h2>
       <p class="vat-note">Prix nets : TVA non applicable (art. 293 B du CGI). Le prix affiché est le prix payé, sans calcul supplémentaire.</p>
-      <p class="vat-note travel-note">🚗 Déplacements offerts jusqu'à 30 km autour de Montpellier et de Béziers ; au-delà, 0,60 € par km (aller-retour) sur la distance excédentaire.</p>
+      <p class="vat-note travel-note">🚗 Déplacements offerts jusqu'à 30 km autour de Montpellier et de Béziers ; forfait de 50 € à Toulouse et son agglomération ; ailleurs, 0,60 € par km (aller-retour) au-delà de 30 km. Calculé automatiquement dans votre devis en ligne.</p>
       <div class="fx-list">
         <div class="fx rv" data-fx="deco" style="--rv-d: 0s;">
     <button type="button" class="fx-head" aria-expanded="false">
@@ -1386,7 +1393,7 @@
           <p data-lang="about-p1">Aya Nascimento est photographe portraitiste professionnelle, diplômée de l'ETPA (BTS Photographie, 2018). Elle est la photographe de BUNKAIO.</p>
           <p data-lang="about-p2">Spécialisée en photographie de mode, de produit, corporate et événementielle, elle accompagne les particuliers, les marques et les entreprises avec des images premium en haute définition, retouchées avec soin.</p>
           <h2 data-lang="about-h-zone">Un studio mobile en Occitanie</h2>
-          <p data-lang="about-zone-text">BUNKAIO est basé à Montpellier et se déplace : pas d'adresse de studio, mais une intervention à Béziers, Montpellier et Toulouse. Les déplacements sont offerts dans un rayon de 30 km autour de Montpellier et de Béziers. Au-delà, ils sont facturés 0,60 € par km, aller-retour, sur la distance qui dépasse ces 30 km, arrondie aux 5 € près (estimations : Nîmes ≈ 30 €, Carcassonne ≈ 70 €, Perpignan ≈ 80 €, Toulouse ≈ 200 €). Le montant exact figure sur votre devis, avant toute signature. Besoin d'idées de lieux de séance ? Voir <a href="/conseils/lieux-seance-photo-montpellier-beziers-toulouse/" data-nav="article:lieux-seance-photo-montpellier-beziers-toulouse">où faire une séance photo à Montpellier, Béziers ou Toulouse</a>.</p>
+          <p data-lang="about-zone-text">BUNKAIO est basé à Montpellier et se déplace : pas d'adresse de studio, mais une intervention à Béziers, Montpellier et Toulouse. Les déplacements sont offerts dans un rayon de 30 km autour de Montpellier et de Béziers. Toulouse et son agglomération : forfait de 50 €. Ailleurs, ils sont facturés 0,60 € par km, aller-retour, sur la distance qui dépasse ces 30 km, arrondie aux 5 € près (estimations : Nîmes ≈ 35 €, Carcassonne ≈ 70 €, Perpignan ≈ 80 €). Le devis en ligne calcule le montant à partir de la ville de la prestation ; il est confirmé sur votre devis, avant toute signature. Besoin d'idées de lieux de séance ? Voir <a href="/conseils/lieux-seance-photo-montpellier-beziers-toulouse/" data-nav="article:lieux-seance-photo-montpellier-beziers-toulouse">où faire une séance photo à Montpellier, Béziers ou Toulouse</a>.</p>
         </div>
         <div class="about-stats">
           <div class="about-stat"><div class="about-stat-n" data-count="8" data-suffix="+">8+</div><div class="about-stat-l" data-lang="about-stat1">ans d'expérience</div></div>
@@ -1992,10 +1999,10 @@
 
 <script src="config/analytics.js?v=eff8bde4"></script>
 <script src="js/analytics.js?v=e0edf83d"></script>
-<script src="config/articles.js?v=2688afd8"></script>
-<script src="config/articles.en.js?v=76a860b3"></script>
+<script src="config/articles.js?v=640b1efb"></script>
+<script src="config/articles.en.js?v=20965174"></script>
 <script src="config/routes.js?v=2b36891d"></script>
 <script src="config/media.js?v=e515354a"></script>
-<script src="js/script.min.js?v=dafadedb"></script>
+<script src="js/script.min.js?v=dab1d9d6"></script>
 </body>
 </html>

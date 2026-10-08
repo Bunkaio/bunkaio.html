@@ -7,18 +7,118 @@ const FORMSPREE_URL = 'https://formspree.io/f/mnjybndv';
    (distance routière depuis le pôle le plus proche). Modifier ici pour changer tous les textes du site. */
 const TRAVEL_FREE_KM = 30;
 const TRAVEL_PER_KM = '0,60';
+const TRAVEL_TOULOUSE_FEE = 50;
 const TRAVEL_TXT = {
   fr: {
-    list: 'Déplacements offerts jusqu\'à ' + TRAVEL_FREE_KM + ' km autour de Montpellier et de Béziers',
-    note: 'Déplacements offerts jusqu\'à ' + TRAVEL_FREE_KM + ' km autour de Montpellier et de Béziers ; au-delà, ' + TRAVEL_PER_KM + ' € par km (aller-retour) sur la distance excédentaire.',
-    full: 'Les déplacements sont offerts dans un rayon de ' + TRAVEL_FREE_KM + ' km autour de Montpellier et de Béziers. Au-delà, ils sont facturés ' + TRAVEL_PER_KM + ' € par km, aller-retour, sur la distance qui dépasse ces ' + TRAVEL_FREE_KM + ' km, arrondie aux 5 € près (estimations : Nîmes ≈ 30 €, Carcassonne ≈ 70 €, Perpignan ≈ 80 €, Toulouse ≈ 200 €). Le montant exact figure sur votre devis, avant toute signature.'
+    list: 'Déplacements offerts jusqu\'à ' + TRAVEL_FREE_KM + ' km autour de Montpellier et de Béziers, forfait de ' + TRAVEL_TOULOUSE_FEE + ' € à Toulouse',
+    note: 'Déplacements offerts jusqu\'à ' + TRAVEL_FREE_KM + ' km autour de Montpellier et de Béziers ; forfait de ' + TRAVEL_TOULOUSE_FEE + ' € à Toulouse et son agglomération ; ailleurs, ' + TRAVEL_PER_KM + ' € par km (aller-retour) au-delà de ' + TRAVEL_FREE_KM + ' km. Calculé automatiquement dans votre devis en ligne.',
+    full: 'Les déplacements sont offerts dans un rayon de ' + TRAVEL_FREE_KM + ' km autour de Montpellier et de Béziers. Toulouse et son agglomération : forfait de ' + TRAVEL_TOULOUSE_FEE + ' €. Ailleurs, ils sont facturés ' + TRAVEL_PER_KM + ' € par km, aller-retour, sur la distance qui dépasse ces ' + TRAVEL_FREE_KM + ' km, arrondie aux 5 € près (estimations : Nîmes ≈ 35 €, Carcassonne ≈ 70 €, Perpignan ≈ 80 €). Le devis en ligne calcule le montant à partir de la ville de la prestation ; il est confirmé sur votre devis, avant toute signature.'
   },
   en: {
-    list: 'Free travel within ' + TRAVEL_FREE_KM + ' km of Montpellier and Béziers',
-    note: 'Free travel within ' + TRAVEL_FREE_KM + ' km of Montpellier and Béziers; beyond that, €' + TRAVEL_PER_KM.replace(',', '.') + ' per km (round trip) on the extra distance.',
-    full: 'Travel is free within ' + TRAVEL_FREE_KM + ' km of Montpellier and Béziers. Beyond that it is charged at €' + TRAVEL_PER_KM.replace(',', '.') + ' per km, round trip, on the distance exceeding those ' + TRAVEL_FREE_KM + ' km, rounded to the nearest €5 (estimates: Nîmes ≈ €30, Carcassonne ≈ €70, Perpignan ≈ €80, Toulouse ≈ €200). The exact amount is shown on your quote, before you sign anything.'
+    list: 'Free travel within ' + TRAVEL_FREE_KM + ' km of Montpellier and Béziers, flat €' + TRAVEL_TOULOUSE_FEE + ' in Toulouse',
+    note: 'Free travel within ' + TRAVEL_FREE_KM + ' km of Montpellier and Béziers; flat €' + TRAVEL_TOULOUSE_FEE + ' in Toulouse and its suburbs; elsewhere, €' + TRAVEL_PER_KM.replace(',', '.') + ' per km (round trip) beyond ' + TRAVEL_FREE_KM + ' km. Calculated automatically in your online quote.',
+    full: 'Travel is free within ' + TRAVEL_FREE_KM + ' km of Montpellier and Béziers. Toulouse and its suburbs: flat fee of €' + TRAVEL_TOULOUSE_FEE + '. Elsewhere it is charged at €' + TRAVEL_PER_KM.replace(',', '.') + ' per km, round trip, on the distance exceeding those ' + TRAVEL_FREE_KM + ' km, rounded to the nearest €5 (estimates: Nîmes ≈ €35, Carcassonne ≈ €70, Perpignan ≈ €80). The online quote calculates the amount from the session city; it is confirmed on your quote, before you sign anything.'
   }
 };
+
+/* Calculateur du devis en ligne : la ville saisie est localisée (API publique geo.api.gouv.fr, repli sur une
+   liste locale) puis comparée aux deux pôles. Distance routière estimée = distance à vol d'oiseau × 1,25. */
+const TRAVEL_POLES = [{ lat: 43.6108, lon: 3.8767 }, { lat: 43.3442, lon: 3.2158 }];   /* Montpellier, Béziers */
+const TRAVEL_TOULOUSE = { lat: 43.6047, lon: 1.4442, radiusKm: 15 };
+const TRAVEL_ROAD = 1.25, TRAVEL_RATE = 0.6, TRAVEL_MAX_KM = 350;
+const TRAVEL_FALLBACK = {
+  'montpellier':[43.6108,3.8767],'beziers':[43.3442,3.2158],'sete':[43.4075,3.6967],'agde':[43.3108,3.4758],'narbonne':[43.1839,3.0036],
+  'nimes':[43.8367,4.3601],'lunel':[43.6750,4.1350],'pezenas':[43.4611,3.4244],'carcassonne':[43.2130,2.3491],'perpignan':[42.6887,2.8948],
+  'ales':[44.1250,4.0817],'albi':[43.9298,2.1480],'castres':[43.6056,2.2400],'toulouse':[43.6047,1.4442],'blagnac':[43.6366,1.3903],
+  'tarbes':[43.2328,0.0781],'rodez':[44.3498,2.5750],'cahors':[44.4475,1.4417],'mende':[44.5180,3.5010],'auch':[43.6459,0.5854],
+  'montauban':[44.0175,1.3550],'foix':[42.9650,1.6050],'saint-gaudens':[43.1086,0.7253],'millau':[44.0997,3.0780],'sommieres':[43.7850,4.0870]
+};
+function travelNorm(x){ return String(x || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s*\(\d+[ab]?\)\s*$/i, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
+function travelKm(a, b, c, d){
+  const r = x => x * Math.PI / 180, dl = r(c - a), dn = r(d - b);
+  const h = Math.sin(dl / 2) ** 2 + Math.cos(r(a)) * Math.cos(r(c)) * Math.sin(dn / 2) ** 2;
+  return 2 * 6371 * Math.asin(Math.sqrt(h));
+}
+function travelFromCoords(lat, lon, label){
+  if (travelKm(lat, lon, TRAVEL_TOULOUSE.lat, TRAVEL_TOULOUSE.lon) <= TRAVEL_TOULOUSE.radiusKm) return { kind: 'flat', fee: TRAVEL_TOULOUSE_FEE, km: null, city: label };
+  const km = Math.round(Math.min(...TRAVEL_POLES.map(p => travelKm(lat, lon, p.lat, p.lon))) * TRAVEL_ROAD);
+  if (km <= TRAVEL_FREE_KM) return { kind: 'free', fee: 0, km, city: label };
+  if (km > TRAVEL_MAX_KM) return { kind: 'quote', fee: null, km, city: label };
+  return { kind: 'km', fee: Math.round((km - TRAVEL_FREE_KM) * 2 * TRAVEL_RATE / 5) * 5, km, city: label };
+}
+/* Le déplacement ne s'applique ni à l'abonnement, ni au format Polas (studio), ni à une séance en studio. */
+function travelApplies(){ return !!S.tier && S.tier !== 'sub' && !(isSpecialTier() && S.cat === 'mode') && !S.studio; }
+function travelFee(){ return travelApplies() && S.travel && typeof S.travel.fee === 'number' ? S.travel.fee : 0; }
+function travelMessage(tr){
+  const fr = LANG === 'fr', c = tr.city;
+  if (tr.kind === 'free') return fr ? `${c} : déplacement offert.` : `${c}: travel is free.`;
+  if (tr.kind === 'flat') return fr ? `${c} : forfait déplacement de ${tr.fee} €, ajouté à votre estimation.` : `${c}: flat travel fee of €${tr.fee}, added to your estimate.`;
+  if (tr.kind === 'km') return fr ? `${c} (≈ ${tr.km} km) : déplacement estimé à ${tr.fee} €, ajouté à votre estimation.` : `${c} (≈ ${tr.km} km): travel estimated at €${tr.fee}, added to your estimate.`;
+  if (tr.kind === 'quote') return fr ? `${c} : trop éloignée pour une estimation automatique, le déplacement sera chiffré sur votre devis.` : `${c}: too far for an automatic estimate, travel will be priced on your quote.`;
+  return fr ? 'Ville non reconnue : vérifiez l\'orthographe, sinon le déplacement sera précisé sur votre devis.' : 'City not recognised: check the spelling, otherwise travel will be specified on your quote.';
+}
+function renderTravelResult(state){
+  const el = document.getElementById('qTravelEst');
+  if (!el) return;
+  if (state === 'loading') { el.className = 'travel-est'; el.textContent = LANG === 'fr' ? 'Calcul en cours…' : 'Calculating…'; return; }
+  if (!S.travel) { el.className = 'travel-est'; el.textContent = ''; return; }
+  el.className = 'travel-est ' + (S.travel.kind === 'unknown' ? 'warn' : 'ok');
+  el.textContent = travelMessage(S.travel) + (S.travel.kind === 'unknown' ? '' : (LANG === 'fr' ? ' Estimation confirmée sur votre devis.' : ' Estimate confirmed on your quote.'));
+}
+function travelSummary(){
+  if (!travelApplies() || !S.city) return { fee: 0, text: '' };
+  const tr = S.travel;
+  if (!tr) return { fee: 0, text: 'Déplacement : ' + S.city + ' (à chiffrer sur devis)' };
+  if (tr.kind === 'free') return { fee: 0, text: 'Déplacement : ' + tr.city + ' (offert)' };
+  if (tr.kind === 'flat') return { fee: tr.fee, text: 'Déplacement : ' + tr.city + ' (forfait Toulouse +' + tr.fee + '€)' };
+  if (tr.kind === 'km') return { fee: tr.fee, text: 'Déplacement : ' + tr.city + ' (≈ ' + tr.km + ' km, +' + tr.fee + '€)' };
+  return { fee: 0, text: 'Déplacement : ' + (tr.city || S.city) + ' (à chiffrer sur devis)' };
+}
+let _travelTimer = null, _travelReq = 0;
+function onTravelCityInput(){
+  const inp = document.getElementById('qCity');
+  S.city = inp ? inp.value.trim() : '';
+  S.travel = null;
+  clearTimeout(_travelTimer);
+  if (S.city.length < 2) { renderTravelResult(); updateQuizPayReassurance(); checkQuizForm(); return; }
+  renderTravelResult('loading');
+  checkQuizForm();
+  _travelTimer = setTimeout(estimateTravel, 450);
+}
+async function estimateTravel(){
+  const raw = S.city, q = raw.replace(/\s*\(\d+[ab]?\)\s*$/i, '');
+  const id = ++_travelReq;
+  let hit = null, list = [];
+  try {
+    const ctrl = new AbortController(); const to = setTimeout(() => ctrl.abort(), 4500);
+    const r = await fetch('https://geo.api.gouv.fr/communes?nom=' + encodeURIComponent(q) + '&fields=nom,centre,departement&boost=population&limit=6', { signal: ctrl.signal });
+    clearTimeout(to);
+    list = (await r.json()).filter(c => c && c.centre && c.centre.coordinates);
+  } catch (e) { list = []; }
+  if (id !== _travelReq) return;
+  const dl = document.getElementById('qCityList');
+  if (dl) dl.innerHTML = list.map(c => `<option value="${c.nom} (${c.departement ? c.departement.code : ''})"></option>`).join('');
+  const label = c => c.nom + (c.departement ? ' (' + c.departement.code + ')' : '');
+  const exact = list.find(c => label(c).toLowerCase() === raw.toLowerCase()) || list.find(c => travelNorm(c.nom) === travelNorm(q)) || list[0];
+  if (exact) hit = { lat: exact.centre.coordinates[1], lon: exact.centre.coordinates[0], label: label(exact) };
+  else {
+    const fb = TRAVEL_FALLBACK[travelNorm(q)];
+    if (fb) hit = { lat: fb[0], lon: fb[1], label: q.charAt(0).toUpperCase() + q.slice(1) };
+  }
+  S.travel = hit ? travelFromCoords(hit.lat, hit.lon, hit.label) : { kind: 'unknown', fee: null, city: raw };
+  renderTravelResult();
+  updateQuizPayReassurance();
+  checkQuizForm();
+}
+function renderTravelField(){
+  const g = document.getElementById('qCityGroup');
+  if (!g) return;
+  const on = travelApplies();
+  g.style.display = on ? '' : 'none';
+  if (!on) { S.city = ''; S.travel = null; const i = document.getElementById('qCity'); if (i) i.value = ''; }
+  else if (S.city) onTravelCityInput();
+  renderTravelResult();
+}
 
 
 /* ═══════════════ STRIPE LEAD CAPTURE (Cloudflare Worker — voir /server) ═══════════════
@@ -85,7 +185,7 @@ const I18N = {
     'options':'Options supplémentaires',
     'step-coords':'05 — Coordonnées','q-coords':'Vos coordonnées','q-coords-sub':'Nous étudions chaque demande personnellement. Réponse assurée sous 48h.',
     'name-label':'Nom / Société *','email-label':'Email *','phone-label':'Téléphone','phone-label-opt':'Téléphone — optionnel','project-label':'Votre projet *','message-label':'Message *',
-    'delay-label':'Délai souhaité *','delay-opt-select':'Sélectionnez…','delay-opt-urgent':'Urgent (moins de 2 semaines)','delay-opt-1m':'Dans le mois','delay-opt-2-3m':'2 à 3 mois','delay-opt-flex':'Flexible / pas de contrainte',
+    'city-label':'Ville de la prestation *','city-ph':'Ex. : Béziers, Nîmes, Toulouse…','city-hint':'Le montant du déplacement est estimé automatiquement et ajouté à votre devis.','delay-label':'Délai souhaité *','delay-opt-select':'Sélectionnez…','delay-opt-urgent':'Urgent (moins de 2 semaines)','delay-opt-1m':'Dans le mois','delay-opt-2-3m':'2 à 3 mois','delay-opt-flex':'Flexible / pas de contrainte',
     'back':'← Retour','continue':'Suivant →','next':'Suivant →','submit':'Confirmez ma demande de devis',
     'quiz-back':'Retour','quiz-home':'Accueil',
     'success-label':'Demande reçue','success-title':'Votre demande a bien été envoyée',
@@ -439,7 +539,7 @@ const I18N = {
     'options':'Additional options',
     'step-coords':'05 — Your details','q-coords':'Your details','q-coords-sub':'Every request is reviewed personally. We reply within 48 hours.',
     'name-label':'Name / Company *','email-label':'Email *','phone-label':'Phone','phone-label-opt':'Phone — optional','project-label':'Your project *','message-label':'Message *',
-    'delay-label':'Desired timeline *','delay-opt-select':'Select…','delay-opt-urgent':'Urgent (under 2 weeks)','delay-opt-1m':'Within a month','delay-opt-2-3m':'2 to 3 months','delay-opt-flex':'Flexible / no constraint',
+    'city-label':'Session city *','city-ph':'E.g. Béziers, Nîmes, Toulouse…','city-hint':'Travel is estimated automatically and added to your quote.','delay-label':'Desired timeline *','delay-opt-select':'Select…','delay-opt-urgent':'Urgent (under 2 weeks)','delay-opt-1m':'Within a month','delay-opt-2-3m':'2 to 3 months','delay-opt-flex':'Flexible / no constraint',
     'back':'← Back','continue':'Next →','next':'Next →','submit':'Confirm my quote request',
     'quiz-back':'Back','quiz-home':'Home',
     'success-label':'Request received','success-title':'Your request has been sent',
@@ -792,7 +892,7 @@ function t(obj){ return typeof obj === 'object' ? obj[LANG] : obj; }
 
 function updatePlaceholders(){
   const PH = {
-    'qName':'ph-name','qEmail':'ph-email','qPhone':'ph-phone','qProject':'ph-project',
+    'qName':'ph-name','qEmail':'ph-email','qPhone':'ph-phone','qProject':'ph-project','qCity':'city-ph',
     'ctName':'ph-ct-name','ctEmail':'ph-ct-email','ctPhone':'ph-phone','ctMsg':'ph-message',
     'logEmail':'ph-email','logCode':'ph-code',
     'regName':'ph-reg-name','regEmail':'ph-reg-email','regPhone':'ph-phone','regActivity':'ph-activity',
@@ -1448,7 +1548,7 @@ const DRONE_CATS = [
 ];
 
 /* ═══════════════ ÉTAT ═══════════════ */
-const S = { cat:null, tier:null, prof:null, opts:[], comm:false, studio:false, photoPack:null, name:'', email:'', phone:'', project:'', delay:'' };
+const S = { cat:null, tier:null, prof:null, opts:[], comm:false, studio:false, photoPack:null, name:'', email:'', phone:'', project:'', delay:'', city:'', travel:null };
 
 
 const io = new IntersectionObserver(entries => {
@@ -1918,7 +2018,7 @@ function quizStep(n){
      remontée et l'étape apparaissait déjà entièrement visible, sans que
      personne n'ait le temps de voir l'effet. */
   window.scrollTo({ top:0, behavior:'instant' });
-  if (n === 5) updateQuizPayReassurance();
+  if (n === 5) { renderTravelField(); updateQuizPayReassurance(); }
   updateQuizNext();
   quizBgPhoto();
 }
@@ -1956,7 +2056,7 @@ function updateQuizPayReassurance(){
     return;
   }
   const res = computeTotal();
-  const threeX = Math.round(res.amount / 3).toLocaleString('fr-FR');
+  const threeX = Math.round((res.amount + travelFee()) / 3).toLocaleString('fr-FR');
   el.innerHTML = LANG === 'fr'
     ? `<strong>Côté règlement :</strong> soit 3 × ${threeX}€ sans frais avec Klarna — ou carte bancaire, ou acompte 30 % + solde. Sans aucun frais supplémentaire.`
     : `<strong>On the payment side:</strong> that's 3 × €${threeX} interest-free with Klarna — or credit card, or a 30% deposit + balance. No extra fees.`;
@@ -2687,7 +2787,8 @@ function checkQuizForm(){
   S.email   = document.getElementById('qEmail').value.trim();
   S.project = document.getElementById('qProject').value.trim();
   S.delay   = document.getElementById('qDelay').value;
-  document.getElementById('qSubmit').disabled = !(S.name && S.email && S.email.includes('@') && S.project.length > 0 && S.delay);
+  const cityOk = !travelApplies() || S.city.length >= 2;
+  document.getElementById('qSubmit').disabled = !(S.name && S.email && S.email.includes('@') && S.project.length > 0 && S.delay && cityOk);
 }
 
 function computeTotal(){
@@ -2737,7 +2838,7 @@ function animatePriceCalc(){
     monthlyLabel = LANG === 'fr' ? '/mois' : '/mo';
   } else {
     const res = computeTotal();
-    targetAmount = res.amount;
+    targetAmount = res.amount + travelFee();
     surDevis     = res.surDevis;
   }
 
@@ -2773,9 +2874,12 @@ function animatePriceCalc(){
   frame = requestAnimationFrame(step);
 
   /* Sur devis note */
-  noteEl.style.display = surDevis ? 'block' : 'none';
+  const trv = travelSummary();
+  noteEl.style.display = (surDevis || trv.text) ? 'block' : 'none';
+  noteEl.textContent = '';
+  if (trv.text) noteEl.textContent = (LANG === 'fr' ? trv.text : trv.text.replace('Déplacement :', 'Travel:').replace('offert', 'free').replace('forfait Toulouse', 'Toulouse flat fee').replace('à chiffrer sur devis', 'to be priced on your quote')) + '. ';
   if (surDevis) {
-    noteEl.textContent = LANG === 'fr'
+    noteEl.textContent += LANG === 'fr'
       ? 'Certaines options sélectionnées sont proposées sur devis. Le montant indiqué ci-dessus correspond à votre formule de base. Le prix final sera ajusté selon ces options lors de l\'établissement du devis.'
       : 'Some selected options are priced on request. The amount shown above reflects your base package. The final price will be adjusted based on these options when the quote is issued.';
   }
@@ -2845,6 +2949,9 @@ function submitQuiz(e){
     ? S.opts.map(id => { const o = allOpts.find(x => x.id === id); return o ? o.name.fr : id; }).filter(Boolean).join(' · ')
     : (S.tier === 'sub' ? '— (abonné : tarif partenaire -20% sur options)' : 'Aucune');
   const studioNote = isSpecialTier() ? POLAS[S.cat].studioNote.fr : (S.cat === 'photo-part' || S.cat === 'corporate') ? (S.studio ? 'Studio (+' + STUDIO_FEE + '€)' : 'Extérieur') : '';
+  const trv = travelSummary();
+  if (trv.fee) { budgetMontantEur += trv.fee; montantLabel += ' + déplacement ' + trv.fee + '€'; }
+  const optsOut = [optNames === 'Aucune' ? '' : optNames, trv.text].filter(Boolean).join(' · ') || 'Aucune';
   document.getElementById('successName').textContent = S.name;
   document.getElementById('commRedirect').style.display = S.comm ? 'block' : 'none';
   document.getElementById('qSubmit').disabled = true;
@@ -2862,7 +2969,7 @@ function submitQuiz(e){
     budgetEstime: montantLabel,
     budgetMontantEur: budgetMontantEur,
     delaiSouhaite: (DELAY_LABELS[S.delay] && DELAY_LABELS[S.delay].fr) || S.delay || undefined,
-    optionsChoisies: optNames,
+    optionsChoisies: optsOut,
     interetCommunication: S.comm
   });
 
@@ -2879,10 +2986,12 @@ function submitQuiz(e){
       profil: prof.name.fr,
       categorie: cat.name.fr,
       formule: formuleLabel,
-      options_choisies: optNames,
+      options_choisies: optsOut,
+      ville_prestation: (travelApplies() && S.city) || undefined,
+      frais_deplacement_estimes: travelApplies() && S.city ? (trv.fee ? trv.fee + '€' : trv.text.replace('Déplacement : ', '')) : undefined,
       montant_total_estime: montantLabel,
       delai_souhaite: (DELAY_LABELS[S.delay] && DELAY_LABELS[S.delay].fr) || S.delay || 'Non renseigné',
-      lieu_seance: studioNote || undefined,
+      lieu_seance: [studioNote, (travelApplies() && S.city) ? 'Ville : ' + S.city : ''].filter(Boolean).join(' — ') || undefined,
       description_projet: S.project,
       interet_communication: S.comm ? 'OUI — potentiellement intéressé' : 'Non'
     })
