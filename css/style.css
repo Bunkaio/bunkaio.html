@@ -4393,3 +4393,22 @@ a, button { -webkit-tap-highlight-color: rgba(110,90,168,0.18); }
   .service-card .service-head .soon-chip { order: 3; flex: 0 0 auto; margin-left: 60px; }
   .service-card .service-chev { margin-left: auto; flex: 0 0 auto; }
 }
+
+/* ─── Devis, étape Profil, mobile : intitulés des profils en noir avec une lueur violette derrière (lisibles sur la photo).
+   Survol / sélection : fond noir, écriture et icône blanches. ─── */
+@media (max-width: 900px) {
+  .quiz-wrap .qstep.active .prof-name {
+    color: #0a0a0c; font-weight: 700;
+    text-shadow: 0 0 6px rgba(190,170,255,0.95), 0 0 14px rgba(160,135,255,0.85), 0 0 26px rgba(140,115,240,0.7);
+  }
+  .quiz-wrap .qstep.active .prof-icon {
+    color: #0a0a0c;
+    filter: drop-shadow(0 0 5px rgba(190,170,255,0.95)) drop-shadow(0 0 12px rgba(150,125,250,0.8));
+  }
+  .quiz-wrap .qstep.active .prof-card:hover,
+  .quiz-wrap .qstep.active .prof-card.selected { background: var(--black); border: 1px solid var(--black); transform: none; }
+  .quiz-wrap .qstep.active .prof-card:hover .prof-name,
+  .quiz-wrap .qstep.active .prof-card.selected .prof-name { color: var(--white); text-shadow: none; }
+  .quiz-wrap .qstep.active .prof-card:hover .prof-icon,
+  .quiz-wrap .qstep.active .prof-card.selected .prof-icon { color: var(--white); filter: none; }
+}
