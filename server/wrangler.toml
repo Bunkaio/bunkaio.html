@@ -14,7 +14,7 @@ EMAIL_FROM = "BUNKAIO <contact@bunkaio.com>"
 ADMIN_NOTIFICATION_EMAIL = "contact@bunkaio.com"
 # Lien vers la page d'avis Google de Bunkaio, utilisé dans l'email envoyé
 # au client une fois le solde payé.
-GOOGLE_REVIEW_URL = "https://g.page/r/CaRPILV6GmYIEBM/review"
+GOOGLE_REVIEW_URL = "https://g.page/r/CaRPlLV6GmYlECE/review"
 # SMS aux clients (voir src/sms.ts). La clé API Brevo est un secret : npx wrangler secret put BREVO_API_KEY
 SMS_PROVIDER = "brevo"
 SMS_SENDER = "BUNKAIO"
