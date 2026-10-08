@@ -541,7 +541,6 @@ const I18N = {
     'comm-redirect-text':'Vous avez exprimé un intérêt pour des services de communication complémentaires. Agency Nascimento, partenaire de BUNKAIO, accompagne nos clients sur la création de site, le SEO, la publicité en ligne et les réseaux sociaux. Découvrez leur approche.',
     'comm-redirect-btn':'Découvrir Agency Nascimento',
     'home-claim-kicker':'Le studio',
-    'li-tag':'Studio de photographie mobile',
     'home-claim-text':'BUNKAIO accompagne les personnes qui entreprennent dans la construction de leur image professionnelle.',
     'ft-services':'Services','ft-studio':'Le studio',
     'footer-claim2':'Studio de photographie mobile · Béziers · Montpellier · Toulouse',
@@ -898,7 +897,6 @@ const I18N = {
     'comm-redirect-text':'You expressed an interest in complementary communication services. Agency Nascimento, a BUNKAIO partner, supports our clients with website creation, SEO, online advertising and social media. Discover their approach.',
     'comm-redirect-btn':'Discover Agency Nascimento',
     'home-claim-kicker':'The studio',
-    'li-tag':'Mobile photography studio',
     'home-claim-text':'BUNKAIO helps people who run a business build their professional image.',
     'ft-services':'Services','ft-studio':'The studio',
     'footer-claim2':'Mobile photography studio · Béziers · Montpellier · Toulouse',
@@ -1670,7 +1668,7 @@ const ioLate = new IntersectionObserver(entries => {
       ioLate.unobserve(e.target);
     }
   });
-}, { threshold: 0.35 });
+}, { threshold: 0, rootMargin: '0px 0px -10% 0px' });
 function observeLate(el){ ioLate.observe(el); }
 
 /* ═══════════════ I18N ═══════════════ */
@@ -2301,6 +2299,8 @@ function missionSelect(i, fromAuto){
   msIndex = ((i % CATS.length) + CATS.length) % CATS.length;
   const c = CATS[msIndex];
   [...sel.children].forEach((b, k) => { b.classList.remove('on'); b.setAttribute('aria-selected', String(k === msIndex)); if (k === msIndex) { void b.offsetWidth; b.classList.add('on'); } });
+  const onB = sel.children[msIndex];
+  if (onB && sel.scrollWidth > sel.clientWidth + 2) sel.scrollTo({ left: onB.offsetLeft - (sel.clientWidth - onB.offsetWidth) / 2, behavior: REDUCED_MOTION ? 'auto' : 'smooth' });
   prev.classList.remove('swap'); void prev.offsetWidth; prev.classList.add('swap');
   prev.innerHTML = missionPreviewHTML(c);
   missionShowBg(c.id);
@@ -6433,42 +6433,6 @@ function initHomeLogoFade(){
   upd();
 }
 
-/* Interlude logo (accueil) : entre la fin de la vidéo « Le studio » et le bandeau de réassurance, l'écran restait blanc.
-   Le logo se place au centre de cet espace libre (entre la barre de navigation et le haut du bandeau), apparaît en
-   se nettoyant du flou dès que le bandeau entre à l'écran, puis s'efface en grandissant légèrement quand le texte
-   du bandeau arrive (révélation à 35 % de visibilité, voir ioLate). Calque fixe, aucun clic intercepté. */
-function initLogoInterlude(){
-  const el = document.getElementById('logoInterlude');
-  const re = document.querySelector('#view-home .reassure-section');
-  const wrap = document.getElementById('missionVideoWrap');
-  if (!el || !re) return;
-  /* La vue porte une transform : un enfant position:fixed y défilerait avec la page. Le calque est donc rattaché au body. */
-  if (el.parentElement !== document.body) document.body.appendChild(el);
-  const clamp = v => Math.max(0, Math.min(1, v));
-  let tick = false;
-  const upd = () => {
-    tick = false;
-    if (currentView !== 'home') { el.style.opacity = '0'; el.classList.remove('on'); return; }
-    const vh = window.innerHeight || 800;
-    const navH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav-h'), 10) || 70;
-    const top = re.getBoundingClientRect().top;
-    const videoOn = wrap && wrap.classList.contains('active');
-    const pin = clamp((vh - top) / (vh * 0.22));
-    const pout = clamp((vh * 0.7 - top) / (vh * 0.22));
-    const op = videoOn || top > vh ? 0 : pin * (1 - pout);
-    const room = Math.max(0, top - navH);
-    el.style.setProperty('--li-y', (navH + room / 2) + 'px');
-    el.style.setProperty('--li-w', Math.max(120, Math.min(window.innerWidth * 0.66, 420, room * 1.1)) + 'px');
-    el.style.setProperty('--li-in', pin.toFixed(3));
-    el.style.setProperty('--li-out', pout.toFixed(3));
-    el.style.opacity = op.toFixed(3);
-    el.classList.toggle('on', op > 0.02);
-  };
-  addEventListener('scroll', () => { if (!tick) { tick = true; requestAnimationFrame(upd); } }, { passive: true });
-  addEventListener('resize', upd);
-  upd();
-}
-
 /* ═══════════════ VIDÉO "LE STUDIO" — calque fixe plein écran (Accueil) ═══════════════
    Même mécanique que le hero : la vidéo vit dans un calque position:fixed
    partagé, et son opacité est pilotée par un IntersectionObserver dédié
@@ -6497,11 +6461,8 @@ function initHomeClaimVideo(){
   }, { rootMargin: '300px 0px' }).observe(trigger);
 
   /* Activation : dès que le déclencheur (100vh) entre à l'écran.
-     Désactivation : dès que la section blanche suivante (réassurance)
-     commence elle-même à apparaître, même d'un pixel — priorité au
-     fond blanc. Combiné à un fondu rapide (0.25s en CSS), la vidéo a
-     disparu avant que le texte (en retrait de 64px dans la section)
-     ne devienne réellement lisible à l'écran. */
+     Désactivation : quand la section blanche suivante (réassurance) a
+     recouvert l'écran (voir checkReassure). */
   const reassureEl = document.querySelector('.reassure-section');
   let triggerVisible = false;
   let reassureVisible = false;
@@ -6536,12 +6497,19 @@ function initHomeClaimVideo(){
   };
   addEventListener('scroll', () => { if (!tick) { tick = true; requestAnimationFrame(fadeContent); } }, { passive: true });
   addEventListener('resize', fadeContent);
+  /* La section blanche suivante (fond opaque, au-dessus du calque) glisse par-dessus la vidéo : le calque ne s'éteint
+     qu'une fois qu'elle couvre l'écran jusqu'à la barre de navigation, sans bande vide entre les deux. */
   if (reassureEl) {
-    const reassureIO = new IntersectionObserver(entries => {
-      entries.forEach(e => { reassureVisible = e.isIntersecting; });
-      updateMissionWrap();
-    }, { threshold: 0 });
-    reassureIO.observe(reassureEl);
+    let rTick = false;
+    const checkReassure = () => {
+      rTick = false;
+      const navH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav-h'), 10) || 70;
+      const covered = reassureEl.getBoundingClientRect().top <= navH;
+      if (covered !== reassureVisible) { reassureVisible = covered; updateMissionWrap(); }
+    };
+    addEventListener('scroll', () => { if (!rTick) { rTick = true; requestAnimationFrame(checkReassure); } }, { passive: true });
+    addEventListener('resize', checkReassure);
+    checkReassure();
   }
 }
 
@@ -7033,7 +7001,6 @@ renderCats();
 renderMissionServices();
 initMissionServicesAutoplay();
 initHomeLogoFade();
-initLogoInterlude();
 initScrollProgress();
 renderLogoCarousel();
 renderFooterServices();

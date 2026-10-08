@@ -4460,20 +4460,6 @@ a, button { -webkit-tap-highlight-color: rgba(110,90,168,0.18); }
 .svcp-panel .svcp-cta-row { margin-top: 18px; }
 @media (max-width: 760px) { .svcp-panel .svcp-cta-row { margin-top: 18px; } }
 
-/* ═══ Interlude logo de l'accueil (initLogoInterlude) : remplit l'espace blanc avant la réassurance ═══
-   Le logo HD est blanc : il sert ici de masque sur un dégradé encre / violet qui balaie la marque. */
-.logo-interlude { position: fixed; left: 0; right: 0; top: 0; height: 0; z-index: 2; pointer-events: none; opacity: 0; --li-in: 0; --li-out: 0; --li-w: 300px; --li-y: 50vh; }
-.logo-interlude .li-inner { position: absolute; left: 50%; top: var(--li-y); width: var(--li-w); transform: translate(-50%, -50%) scale(calc(0.86 + 0.14 * var(--li-in) + 0.12 * var(--li-out))); filter: blur(calc((1 - var(--li-in)) * 10px + var(--li-out) * 8px)); display: flex; flex-direction: column; align-items: center; gap: 14px; }
-.logo-interlude .li-mark { display: block; width: 100%; aspect-ratio: 640 / 291; max-width: 100%;
-  background: linear-gradient(110deg, #0a0a0c 0%, #0a0a0c 38%, #8b74c9 48%, #d9cdf5 50%, #8b74c9 52%, #0a0a0c 62%, #0a0a0c 100%); background-size: 260% 100%; background-position: 100% 0;
-  -webkit-mask: url(/images/logo-hd.webp) center / contain no-repeat; mask: url(/images/logo-hd.webp) center / contain no-repeat; }
-.logo-interlude.on .li-mark { animation: liSheen 3.2s cubic-bezier(.45,.05,.25,1) 0.2s infinite; }
-@keyframes liSheen { 0% { background-position: 100% 0; } 55%, 100% { background-position: 0% 0; } }
-.logo-interlude .li-glow { position: absolute; left: 50%; top: 42%; width: 150%; aspect-ratio: 1.6; transform: translate(-50%, -50%) scale(calc(0.6 + 0.4 * var(--li-in))); background: radial-gradient(closest-side, rgba(139,116,201,0.22), rgba(139,116,201,0.08) 55%, transparent); z-index: -1; }
-.logo-interlude .li-line { display: block; height: 1px; width: 70%; background: linear-gradient(90deg, transparent, #8b74c9, transparent); transform: scaleX(var(--li-in)); }
-.logo-interlude .li-tag { font-size: 10.5px; font-weight: 600; letter-spacing: calc(0.24em + 0.18em * var(--li-in)); text-transform: uppercase; color: #5f5970; white-space: nowrap; opacity: var(--li-in); }
-@media (prefers-reduced-motion: reduce) { .logo-interlude .li-inner { filter: none; transform: translate(-50%, -50%); } .logo-interlude.on .li-mark { animation: none; background-position: 0 0; background: #0a0a0c; } }
-
 /* ═══ Landing personal branding : chiffres clés, équation, accordéon à pictogrammes ═══ */
 .pb-keys { list-style: none; margin: 4px 0 26px; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
 .pb-keys li { display: flex; flex-direction: column; gap: 4px; padding: 16px 16px 14px; border-radius: 14px; background: rgba(255,255,255,0.86); border: 1px solid rgba(110,90,168,0.18); box-shadow: 0 8px 22px rgba(110,90,168,0.10); opacity: 0; transform: translateY(16px); }
@@ -4678,3 +4664,26 @@ a, button { -webkit-tap-highlight-color: rgba(110,90,168,0.18); }
 img, video, .hero-slide, .ms-im, .pb-insitu figure { -webkit-user-drag: none; user-drag: none; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
 html.photo-shield img, html.photo-shield video, html.photo-shield .hero-slide, html.photo-shield .ms-im { filter: blur(26px) !important; transition: filter 0.05s linear; }
 @media print { img, video, .hero-slide, .ms-im, .page-hero-wrap, .mission-video-wrap { visibility: hidden !important; } }
+
+/* ═══ Accueil, bloc « Le studio » : le contenu tient dans la hauteur de l'écran (sous la barre de navigation).
+   Avant, sur téléphone, le slogan passait sous la barre et le bouton sortait par le bas. ═══ */
+.mission-video-content { padding-top: calc(var(--nav-h, 70px) + 14px); padding-bottom: 18px; justify-content: safe center; }
+.mission-kicker { margin-bottom: clamp(10px, 2.4svh, 26px); }
+.mission-text { font-size: clamp(21px, min(4.4vw, 5.4svh), 48px); }
+.mission-services { margin: clamp(14px, 3svh, 30px) 0 clamp(8px, 1.6svh, 10px); }
+@media (max-width: 700px) {
+  .mission-video-content { padding-left: 20px; padding-right: 20px; }
+  .mission-text { font-size: clamp(20px, min(6.4vw, 4.1svh), 28px); line-height: 1.22; }
+  /* Pastilles sur une seule ligne qui glisse au doigt ; la pastille active est ramenée au centre (missionSelect). */
+  .ms-sel { position: relative; flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+    margin: 0 -20px 12px; padding: 2px 20px;
+    -webkit-mask: linear-gradient(90deg, transparent, #000 20px, #000 calc(100% - 20px), transparent); mask: linear-gradient(90deg, transparent, #000 20px, #000 calc(100% - 20px), transparent); }
+  .ms-sel::-webkit-scrollbar { display: none; }
+  .ms-pill { flex: 0 0 auto; white-space: nowrap; }
+  .ms-im { height: clamp(110px, 19svh, 190px); }
+  .home-claim-cta { margin-top: 4px; }
+}
+@media (min-width: 701px) and (max-height: 820px) {
+  .ms-prev, .ms-im { min-height: 220px; }
+  .ms-tx { padding: 18px 24px; gap: 8px; }
+}
