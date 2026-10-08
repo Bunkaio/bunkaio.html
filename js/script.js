@@ -218,7 +218,7 @@ let LANG = 'fr';
 const I18N = {
   fr: {
     'estimate':'Devis','services':'Services','portfolio':'Portfolio','drone':'4K Drone','contact':'Contact','partners':'Collaboration','nav-legal':'FAQ',
-    'hero-kicker':'Photographe professionnel · Occitanie','cred-lead':'BUNKAIO est un studio de photographie professionnelle mobile, basé à Montpellier : séances portrait, portraits professionnels, mode et mannequins, photo de produit, événementiel et photobooth IA Lumen, à Béziers, Montpellier et Toulouse. Retrouvez chaque <a href="/services/" data-nav="services">prestation et ses tarifs</a>.','quiz-h1':'Devis photo en ligne','hero-word1':'Estimez','hero-word2':'votre','hero-word3':'projet','start':'Estimer mon projet',
+    'hero-kicker':'Photographe professionnel · Occitanie','cred-lead':'BUNKAIO est un studio de photographie professionnelle mobile, basé à Montpellier : séances portrait, portraits professionnels, mode et mannequins, photo de produit, événementiel et photobooth IA Lumen, à Béziers, Montpellier et Toulouse. Retrouvez chaque <a href="/services/" data-nav="services">prestation et ses tarifs</a>.','quiz-h1':'Devis photo en ligne','hero-word1':'Imaginez','hero-word2':'votre','hero-word3':'projet','start':'Construire mon projet',
     'step-cat':'01 — Catégorie','q-cat':'Quel est votre domaine\u00a0?','q-cat-sub':'Sélectionnez l\'univers de votre projet.',
     'step-prof':'02 — Profil','q-prof':'Quel profil êtes-vous\u00a0?','q-prof-sub':'Identifiez-vous pour que nous comprenions précisément votre besoin.',
     'step-tier':'03 — Prestation','q-tier':'Quel niveau de prestation\u00a0?',
@@ -228,17 +228,17 @@ const I18N = {
     'name-label':'Nom / Société *','email-label':'Email *','phone-label':'Téléphone','phone-label-opt':'Téléphone — optionnel','project-label':'Votre projet *','message-label':'Message *',
     'origin-label':'Comment nous avez-vous connus ? — facultatif','origin-opt-select':'Sélectionnez…','origin-opt-instagram':'Instagram','origin-opt-reco':'Recommandé par une personne (client, ami, collaborateur)','origin-opt-partner':'Recommandé par une marque, un lieu ou une agence','origin-opt-google':'Recherche Google','origin-opt-collab':'Un projet ou une publication de BUNKAIO','origin-opt-other':'Autre',
     'city-label':'Ville de la prestation *','city-ph':'Ex. : Béziers, Nîmes, Toulouse…','city-hint':'Le montant du déplacement est estimé automatiquement et ajouté à votre devis.','delay-label':'Délai souhaité *','delay-opt-select':'Sélectionnez…','delay-opt-urgent':'Urgent (moins de 2 semaines)','delay-opt-1m':'Dans le mois','delay-opt-2-3m':'2 à 3 mois','delay-opt-flex':'Flexible / pas de contrainte',
-    'back':'← Retour','continue':'Suivant →','next':'Suivant →','submit':'Confirmez ma demande de devis',
+    'back':'← Retour','continue':'Suivant →','next':'Suivant →','submit':'Recevoir ma proposition personnalisée',
     'quiz-back':'Retour','quiz-home':'Accueil',
     'success-label':'Demande reçue','success-title':'Votre demande a bien été envoyée',
     'success-text1':'Merci pour votre confiance. Votre demande de devis est entre nos mains : elle sera étudiée et vous recevrez une réponse sous <strong>48 heures</strong>.',
     'success-text2':'Chaque demande est évaluée individuellement et n\'est acceptée que si elle correspond à la <strong>ligne éditoriale de BUNKAIO</strong>. Nous travaillons uniquement avec des projets qui résonnent avec notre univers — c\'est ce qui garantit la qualité de chaque collaboration.',
     'success-text3':'Une fois votre devis confirmé, direction votre espace client : vous pourrez y construire votre <strong>moodboard</strong> pour partager votre vision — direction artistique, ambiance, inspirations — et nous arriver parfaitement alignés le jour du shooting.',
     'home-btn':'Retour à l\'accueil','see-portfolio':'Voir tout le portfolio',
-    'pf-cta-title':'Prêt à donner vie à votre projet&nbsp;?','pf-cta-sub':'Chaque collaboration commence par une estimation — simple, rapide, sans engagement.','pf-cta-btn':'Recevoir mon devis personnalisé','footer-cta-headline':'Un projet en tête&nbsp;?',
+    'pf-cta-title':'Prêt à donner vie à votre projet&nbsp;?','pf-cta-sub':'Chaque projet commence par une proposition personnalisée — simple, rapide, sans engagement.','pf-cta-btn':'Recevoir mon devis personnalisé','footer-cta-headline':'Un projet en tête&nbsp;?',
     'aria-next':'Suivant','aria-prev':'Précédent','aria-back':'Retour','aria-menu':'Menu','aria-home':'Accueil',
     'svc-reserve':'Je réserve ma séance','studio-reserve':'Je réserve ma séance en ligne','svc-discover':'Découvrir chaque prestation','ft-discover':'Découvrir chaque prestation','scroll-hint':'Scroll','services-title':'Prestations & tarifs photo','services-sub':'Photographe professionnel à Béziers, Montpellier et Toulouse : des images haut de gamme, en HD, pour mettre en valeur votre projet. Nos prestations et leurs tarifs, par univers.',
-    'svc-all':'Tous','svc-cta':'Estimer ce projet →','svc-sub-label':'Abonnement mensuel',
+    'svc-all':'Tous','svc-cta':'Construire ce projet →','svc-sub-label':'Abonnement mensuel',
     'svc-trust1-title':'Réponse sous 48h','svc-trust1-text':'Chaque demande est étudiée puis traitée personnellement — jamais de réponse automatique.',
     'svc-trust2-title':'Un parcours accompagné','svc-trust2-text':'De la demande à la livraison, 7 étapes claires — dont la création de votre moodboard pour partager votre vision — <span class="svc-trust-link" onclick="goToProcess()">voir le déroulé complet</span>.',
     'svc-trust3-title':'Vos droits garantis','svc-trust3-text':'Les visuels livrés vous appartiennent, avec des conditions d\'usage définies noir sur blanc dès le devis.',
@@ -282,21 +282,21 @@ const I18N = {
     'cred-mini1':'Basé à Montpellier — mobile à Béziers, Montpellier, Toulouse',
     'cred-mini2':'Photographe professionnelle diplômée de l\'ETPA — BTS Photographie 2018',
     'cred-mini3':'Matériel professionnel haut de gamme',
-    'cred-mini4':'8 ans d\'expérience · 200+ projets réalisés',
+    'cred-mini4':'8+ ans d\'expérience · 200+ projets réalisés',
     'cred-faq-link':'Des questions ? Consultez notre FAQ →',
     'testi-share-btn':'Partager mon expérience',
     'share-title':'Partager mon expérience',
     'about-title':'Aya Nascimento, photographe portraitiste professionnelle',
     'about-partner-h':'Vous êtes un professionnel de l\'image, de la beauté ou de l\'événementiel ?',
     'about-partner-p':'Coiffeurs, maquilleurs, stylistes, agences, wedding planners, lieux de réception : BUNKAIO propose un <a href="/collaboration/" data-nav="partners">programme de partenariat</a> avec un tarif partenaire permanent, des missions collaboratives et un réseau de professionnels.',
-    'about-cta-quote':'Estimer mon projet',
+    'about-cta-quote':'Construire mon projet',
     'ct-extra-h':'Pour recevoir une réponse rapide',
     'ct-extra-intro':'Précisez dans votre message :',
     'ct-extra-1':'le type de projet (portrait, mode, produits, événement…)',
     'ct-extra-2':'la date souhaitée et le lieu (Béziers, Montpellier, Toulouse ou autre)',
     'ct-extra-3':'l\'usage prévu des photos (personnel, réseaux, site, publicité)',
     'ct-extra-4':'un budget indicatif, si vous en avez un',
-    'ct-extra-links':'Vous préférez une estimation immédiate ? Utilisez le <a href="/devis/" data-nav="quiz">devis en ligne</a> (2 minutes) ou consultez la <a href="/faq/" data-nav="faq">FAQ</a>.',
+    'ct-extra-links':'Vous préférez construire votre projet en ligne ? Utilisez le <a href="/devis/" data-nav="quiz">devis en ligne</a> (2 minutes) ou consultez la <a href="/faq/" data-nav="faq">FAQ</a>.',
     'about-sub':'La photographe derrière BUNKAIO : des images haut de gamme, en HD, pour mettre en valeur vos projets.',
     'about-h-bio':'Une photographe, un regard',
     'about-p1':'Aya Nascimento est photographe portraitiste professionnelle, diplômée de l\'ETPA (BTS Photographie, 2018). Elle est la photographe de BUNKAIO.',
@@ -364,7 +364,7 @@ const I18N = {
     'p-benefits':'Les avantages du programme',
     'p-b1-title':'Une mise en lumière éditoriale.','p-b1-text':'Votre activité n\'est pas présentée comme une simple prestation : elle est racontée à travers une histoire, selon la méthode éditoriale Bunkaio — la Découverte, la Vision, le Défi, le Savoir-Faire, Mon Regard, la Révélation.',
     'p-b2-title':'Une visibilité renforcée.','p-b2-text':'Présence privilégiée sur le site Bunkaio, les réseaux sociaux et les futurs supports éditoriaux de la marque.',
-    'p-b3-title':'Une relation privilégiée.','p-b3-text':'Accès prioritaire aux disponibilités, offres préférentielles de lancement et collaboration sur le long terme.',
+    'p-b3-title':'Une relation privilégiée.','p-b3-text':'Accès prioritaire aux disponibilités, un tarif partenaire permanent et une collaboration sur le long terme.',
     'p-b4-title':'Une appartenance à un écosystème.','p-b4-text':'Rejoindre Bunkaio, c\'est intégrer un cercle de professionnels partageant l\'exigence, le goût du détail et l\'amour du travail bien fait.',
     'p-places':'Les places disponibles',
     'p-places-text':'Afin de préserver la qualité des collaborations, le nombre de partenaires fondateurs est volontairement limité\u00a0: 10 places par univers (portrait & lifestyle, mode & mannequins, commercial & produits, événementiel, mariage & Lumen), soit un maximum de <strong>60 partenaires fondateurs</strong> sur l\'ensemble du territoire.',
@@ -437,10 +437,10 @@ const I18N = {
     'acc-subs-manage-btn':'Nous écrire',
     'acc-subs-upsell-title':'Un projet ponctuel en plus de votre abonnement ?',
     'acc-subs-upsell-text':'Vos options supplémentaires sont au tarif partenaire (-20%).',
-    'acc-subs-upsell-btn':'Estimer un projet',
+    'acc-subs-upsell-btn':'Imaginer un projet',
     'acc-upsell-title':'Un nouveau projet en tête ?',
-    'acc-upsell-text':'Estimez votre prochain projet en quelques minutes.',
-    'acc-upsell-btn':'Estimer mon projet',
+    'acc-upsell-text':'Construisez votre prochain projet en quelques minutes.',
+    'acc-upsell-btn':'Imaginer mon projet',
     'acc-moodboards':'Mes moodboards',
     'acc-partenariat':'Mon partenariat',
     'partner-no-sector':'Secteur non renseigné',
@@ -573,7 +573,7 @@ const I18N = {
   },
   en: {
     'estimate':'Quote','services':'Services','portfolio':'Portfolio','drone':'4K Drone','contact':'Contact','partners':'Collaboration','nav-legal':'FAQ',
-    'hero-kicker':'Professional photographer · Occitanie','cred-lead':'BUNKAIO is a mobile professional photography studio based in Montpellier: portrait sessions, professional portraits, fashion and models, product photography, events and the Lumen AI photobooth, in Béziers, Montpellier and Toulouse. Browse each <a href="/services/" data-nav="services">service and its rates</a>.','quiz-h1':'Online photo quote','hero-word1':'Estimate','hero-word2':'your','hero-word3':'project','start':'Estimate my project',
+    'hero-kicker':'Professional photographer · Occitanie','cred-lead':'BUNKAIO is a mobile professional photography studio based in Montpellier: portrait sessions, professional portraits, fashion and models, product photography, events and the Lumen AI photobooth, in Béziers, Montpellier and Toulouse. Browse each <a href="/services/" data-nav="services">service and its rates</a>.','quiz-h1':'Online photo quote','hero-word1':'Imagine','hero-word2':'your','hero-word3':'project','start':'Build my project',
     'step-cat':'01 — Category','q-cat':'What is your field?','q-cat-sub':'Select the universe your project belongs to.',
     'step-prof':'02 — Profile','q-prof':'Which profile are you?','q-prof-sub':'Tell us who you are so we can understand exactly what you need.',
     'step-tier':'03 — Service level','q-tier':'Which level of service?',
@@ -583,17 +583,17 @@ const I18N = {
     'name-label':'Name / Company *','email-label':'Email *','phone-label':'Phone','phone-label-opt':'Phone — optional','project-label':'Your project *','message-label':'Message *',
     'origin-label':'How did you hear about us? — optional','origin-opt-select':'Select…','origin-opt-instagram':'Instagram','origin-opt-reco':'Recommended by a person (client, friend, collaborator)','origin-opt-partner':'Recommended by a brand, a venue or an agency','origin-opt-google':'Google search','origin-opt-collab':'A BUNKAIO project or post','origin-opt-other':'Other',
     'city-label':'Session city *','city-ph':'E.g. Béziers, Nîmes, Toulouse…','city-hint':'Travel is estimated automatically and added to your quote.','delay-label':'Desired timeline *','delay-opt-select':'Select…','delay-opt-urgent':'Urgent (under 2 weeks)','delay-opt-1m':'Within a month','delay-opt-2-3m':'2 to 3 months','delay-opt-flex':'Flexible / no constraint',
-    'back':'← Back','continue':'Next →','next':'Next →','submit':'Confirm my quote request',
+    'back':'← Back','continue':'Next →','next':'Next →','submit':'Receive my personalised proposal',
     'quiz-back':'Back','quiz-home':'Home',
     'success-label':'Request received','success-title':'Your request has been sent',
     'success-text1':'Thank you for your trust. Your quote request is in our hands: it will be carefully reviewed and you will receive a reply within <strong>48 hours</strong>.',
     'success-text2':'Every request is assessed individually and is only accepted if it aligns with <strong>BUNKAIO\'s editorial line</strong>. We work exclusively with projects that resonate with our universe — this is what guarantees the quality of every collaboration.',
     'success-text3':'Once your quote is confirmed, head to your client area: you\'ll be able to build your <strong>moodboard</strong> there to share your vision — art direction, mood, inspirations — so we arrive on the day perfectly aligned with your project.',
     'home-btn':'Back to home','see-portfolio':'View the full portfolio',
-    'pf-cta-title':'Ready to bring your project to life?','pf-cta-sub':'Every collaboration starts with an estimate — simple, quick, no commitment.','pf-cta-btn':'Get my personalised quote','footer-cta-headline':'Got a project in mind?',
+    'pf-cta-title':'Ready to bring your project to life?','pf-cta-sub':'Every project starts with a personalised proposal — simple, quick, no commitment.','pf-cta-btn':'Get my personalised quote','footer-cta-headline':'Got a project in mind?',
     'aria-next':'Next','aria-prev':'Previous','aria-back':'Back','aria-menu':'Menu','aria-home':'Home',
     'svc-reserve':'Book my session','studio-reserve':'Book my session online','svc-discover':'Explore each service','ft-discover':'Explore each service','scroll-hint':'Scroll','services-title':'Photography services & rates','services-sub':'Professional photographer in Béziers, Montpellier and Toulouse: premium, high-definition images that showcase your project. Our services and rates, by universe.',
-    'svc-all':'All','svc-cta':'Get a quote for this →','svc-sub-label':'Monthly plan',
+    'svc-all':'All','svc-cta':'Build this project →','svc-sub-label':'Monthly plan',
     'svc-trust1-title':'Reply within 48h','svc-trust1-text':'Every request is reviewed and handled personally — never an automated reply.',
     'svc-trust2-title':'A guided journey','svc-trust2-text':'From request to delivery, 7 clear steps — including building your moodboard to share your vision — <span class="svc-trust-link" onclick="goToProcess()">see the full process</span>.',
     'svc-trust3-title':'Your rights guaranteed','svc-trust3-text':'The delivered visuals belong to you, with usage terms clearly defined from the quote onward.',
@@ -637,14 +637,14 @@ const I18N = {
     'cred-mini1':'Based in Montpellier — mobile in Béziers, Montpellier, Toulouse',
     'cred-mini2':'Professional photographer, ETPA graduate — BTS Photography 2018',
     'cred-mini3':'Professional-grade equipment',
-    'cred-mini4':'8 years of experience · 200+ projects completed',
+    'cred-mini4':'8+ years of experience · 200+ projects completed',
     'cred-faq-link':'Any questions? Check our FAQ →',
     'testi-share-btn':'Share my experience',
     'share-title':'Share my experience',
     'about-title':'Aya Nascimento, professional portrait photographer',
     'about-partner-h':'Are you an image, beauty or events professional?',
     'about-partner-p':'Hairstylists, make-up artists, stylists, agencies, wedding planners, venues: BUNKAIO offers a <a href="/collaboration/" data-nav="partners">partnership programme</a> with a permanent partner rate, collaborative missions and a professional network.',
-    'about-cta-quote':'Estimate my project',
+    'about-cta-quote':'Build my project',
     'ct-extra-h':'To get a quick reply',
     'ct-extra-intro':'Please mention in your message:',
     'ct-extra-1':'the type of project (portrait, fashion, products, event…)',
@@ -719,7 +719,7 @@ const I18N = {
     'p-benefits':'Programme benefits',
     'p-b1-title':'An editorial spotlight.','p-b1-text':'Your work is not presented as a mere service: it is told as a story, following the Bunkaio editorial method — Discovery, Vision, Challenge, Craftsmanship, My Perspective, Revelation.',
     'p-b2-title':'Enhanced visibility.','p-b2-text':'A privileged presence on the Bunkaio website, our social channels and the brand\'s future editorial publications.',
-    'p-b3-title':'A privileged relationship.','p-b3-text':'Priority access to our schedule, preferential launch rates and a long-term working relationship.',
+    'p-b3-title':'A privileged relationship.','p-b3-text':'Priority access to our schedule, a permanent partner rate and a long-term working relationship.',
     'p-b4-title':'Belonging to an ecosystem.','p-b4-text':'Joining Bunkaio means entering a circle of professionals who share the same high standards, eye for detail and love of work well done.',
     'p-places':'Available places',
     'p-places-text':'To preserve the quality of every collaboration, the number of founding partners is deliberately limited: 10 places per universe (portrait & lifestyle, fashion & models, commercial & products, events, weddings & Lumen), for a maximum of <strong>60 founding partners</strong> nationwide.',
@@ -792,10 +792,10 @@ const I18N = {
     'acc-subs-manage-btn':'Write to us',
     'acc-subs-upsell-title':'A one-off project alongside your subscription?',
     'acc-subs-upsell-text':'Your add-ons are billed at partner rate (-20%).',
-    'acc-subs-upsell-btn':'Estimate a project',
+    'acc-subs-upsell-btn':'Imagine a project',
     'acc-upsell-title':'A new project in mind?',
-    'acc-upsell-text':'Estimate your next project in a few minutes.',
-    'acc-upsell-btn':'Estimate my project',
+    'acc-upsell-text':'Build your next project in a few minutes.',
+    'acc-upsell-btn':'Imagine my project',
     'acc-moodboards':'My moodboards',
     'acc-partenariat':'My partnership',
     'partner-no-sector':'Sector not set',
@@ -1153,16 +1153,16 @@ const CATS = [
       en:'A natural, polished professional image that builds trust at first glance: profile photo, website, team presentation.'},
     icon:'agency',
     tiers:{
-      deco:{ price:290, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
+      deco:{ price:250, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
         fr:['1h de séance — extérieur ou studio (+60€)','8 photos HD retouchées','Sélection guidée incluse','Galerie privée de téléchargement'],
         en:['1h session — outdoor or studio (+€60)','8 retouched HD photos','Guided selection included','Private download gallery'] } },
-      sig:{ price:490, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
+      sig:{ price:450, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
         fr:['2h de séance','15 photos HD retouchées','Direction de pose incluse','Galerie privée de téléchargement'],
         en:['2h session','15 retouched HD photos','Posing guidance included','Private download gallery'] } },
-      prem:{ price:790, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
+      prem:{ price:690, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
         fr:['Demi-journée (4h) — jusqu\'à 2 ambiances','25 photos HD retouchées','2 tenues différentes','Direction artistique complète','Galerie privée de téléchargement'],
         en:['Half-day (4h) — up to 2 moods','25 retouched HD photos','2 different outfits','Full art direction','Private download gallery'] } },
-      edit:{ price:1290, delay:{fr:'10 jours ouvrés',en:'10 working days'}, items:{
+      edit:{ price:1090, delay:{fr:'10 jours ouvrés',en:'10 working days'}, items:{
         fr:['Journée complète — 4 lieux différents','4 tenues différentes','30 photos HD retouchées','1 film court (30 secondes)','Direction artistique & stylisme','Publication sur les supports Bunkaio'],
         en:['Full day — 4 different locations','4 different outfits','30 retouched HD photos','1 short film (30 seconds)','Art direction & styling','Featured on Bunkaio channels'] } }
     }},
@@ -1173,16 +1173,16 @@ const CATS = [
       en:'Visuals that sell, not just visuals that please. Every lookbook is built around your brand strategy, from shoot to publication.'},
     icon:'marque',
     tiers:{
-      deco:{ price:450, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
+      deco:{ price:490, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
         fr:['Mini-série — 8 photos HD retouchées','Un produit ou une silhouette','Direction artistique incluse'],
         en:['Mini series — 8 retouched HD photos','One product or one look','Art direction included'] } },
-      sig:{ price:890, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
+      sig:{ price:990, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
         fr:['Lookbook — 20 photos HD retouchées','1 Reel vertical pour les réseaux','Direction artistique incluse'],
         en:['Lookbook — 20 retouched HD photos','1 vertical Reel for social media','Art direction included'] } },
-      prem:{ price:1390, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
+      prem:{ price:1690, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
         fr:['Lookbook — 30 photos HD retouchées','1 film principal','2 Reels verticaux','Direction artistique incluse'],
         en:['Lookbook — 30 retouched HD photos','1 main film','2 vertical Reels','Art direction included'] } },
-      edit:{ price:2190, delay:{fr:'10 jours ouvrés',en:'10 working days'}, items:{
+      edit:{ price:2490, delay:{fr:'10 jours ouvrés',en:'10 working days'}, items:{
         fr:['Campagne — 35 photos HD retouchées','1 film publicitaire (2 minutes)','3 Reels verticaux','Storytelling de marque','Publication sur les supports Bunkaio'],
         en:['Campaign — 35 retouched HD photos','1 commercial film (2 minutes)','3 vertical Reels','Brand storytelling','Featured on Bunkaio channels'] } }
     }},
@@ -1193,16 +1193,16 @@ const CATS = [
       en:'Crisp, bright packshots built to convert — on your site and your socials alike. Campaign-level quality, whatever the size of your catalogue.'},
     icon:'product',
     tiers:{
-      deco:{ price:290, delay:{fr:'3 jours ouvrés',en:'3 working days'}, items:{
+      deco:{ price:390, delay:{fr:'3 jours ouvrés',en:'3 working days'}, items:{
         fr:['Jusqu\'à 5 produits — 10 photos HD retouchées','Fond neutre studio','Galerie privée de téléchargement'],
         en:['Up to 5 products — 10 retouched HD photos','Neutral studio backdrop','Private download gallery'] } },
-      sig:{ price:590, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
+      sig:{ price:750, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
         fr:['Jusqu\'à 12 produits — 20 photos HD retouchées','Mise en scène incluse','Galerie privée de téléchargement'],
         en:['Up to 12 products — 20 retouched HD photos','Styled setup included','Private download gallery'] } },
-      prem:{ price:990, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
+      prem:{ price:1390, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
         fr:['Jusqu\'à 25 produits — 35 photos HD retouchées','Mise en scène incluse','1 Reel vertical produit','Galerie privée de téléchargement'],
         en:['Up to 25 products — 35 retouched HD photos','Styled setup included','1 vertical product Reel','Private download gallery'] } },
-      edit:{ price:1790, delay:{fr:'10 jours ouvrés',en:'10 working days'}, items:{
+      edit:{ price:2390, delay:{fr:'10 jours ouvrés',en:'10 working days'}, items:{
         fr:['Catalogue complet — 50 photos HD retouchées','1 film de marque (90 secondes)','2 Reels verticaux','Publication sur les supports Bunkaio'],
         en:['Full catalogue — 50 retouched HD photos','1 brand film (90 seconds)','2 vertical Reels','Featured on Bunkaio channels'] } }
     }},
@@ -1213,16 +1213,16 @@ const CATS = [
       en:'Your day only happens once. We stay discreet so you can live it fully, while we capture every moment that matters.'},
     icon:'event',
     tiers:{
-      deco:{ price:390, delay:{fr:'3 jours ouvrés',en:'3 working days'}, items:{
+      deco:{ price:420, delay:{fr:'3 jours ouvrés',en:'3 working days'}, items:{
         fr:['20 photos HD retouchées','Couverture de 2 heures — les moments essentiels','Galerie privée de téléchargement'],
         en:['20 retouched HD photos','2-hour coverage — the essential moments','Private download gallery'] } },
-      sig:{ price:690, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
+      sig:{ price:750, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
         fr:['40 photos HD retouchées','Couverture jusqu\'à 4 heures — moments clés et ambiance','Galerie privée de téléchargement'],
         en:['40 retouched HD photos','Up to 4-hour coverage — key moments and atmosphere','Private download gallery'] } },
-      prem:{ price:1190, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
+      prem:{ price:1290, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
         fr:['80 photos HD retouchées','Couverture complète de l\'événement','1 teaser vidéo (30 secondes)','Galerie privée de téléchargement'],
         en:['80 retouched HD photos','Full event coverage','1 video teaser (30 seconds)','Private download gallery'] } },
-      edit:{ price:1990, delay:{fr:'10 jours ouvrés',en:'10 working days'}, items:{
+      edit:{ price:2190, delay:{fr:'10 jours ouvrés',en:'10 working days'}, items:{
         fr:['100 photos HD retouchées','1 aftermovie (2 minutes)','2 Reels verticaux','Mise en lumière éditoriale de l\'événement','Publication sur les supports Bunkaio'],
         en:['100 retouched HD photos','1 aftermovie (2 minutes)','2 vertical Reels','Editorial spotlight on the event','Featured on Bunkaio channels'] } }
     }},
@@ -1230,7 +1230,7 @@ const CATS = [
     lumen: true,
     comingSoon: true,
     name:{fr:'Lumen — Photobooth IA (location)', en:'Lumen — AI photobooth (rental)'},
-    tag:{fr:'Location de photobooth IA — mariages haut de gamme', en:'AI photobooth rental — luxury weddings'},
+    tag:{fr:'Expérience photo IA — mariages et événements haut de gamme', en:'AI photo experience — weddings and high-end events'},
     pitch:{fr:'Un souvenir unique, généré par IA en quelques secondes, sans jamais sacrifier l\'élégance de votre réception. Vos invités repartent avec bien plus qu\'une photo.',
       en:'A one-of-a-kind keepsake, AI-generated in seconds, without ever compromising the elegance of your event. Your guests leave with far more than a photo.'},
     icon:'lumen',
@@ -1357,37 +1357,32 @@ const SPECIAL_OPTIONS = {
    📸  LUMEN — Photobooth IA · mariages haut de gamme
    ════════════════════════════════════════════════════════════════ */
 const LUMEN_TIERS = [
-  { id:'dec',  name:{fr:'Découverte',  en:'Starter'},
-    badge:{fr:'Pour essayer', en:'To try it'},
-    price: 290, priceUSD: 320,
+  { id:'dec',  name:{fr:'Découverte',  en:'Discovery'},
+    badge:{fr:'L\'expérience Lumen', en:'The Lumen experience'},
+    line:{fr:'L\'expérience complète sur 4 heures : photobooth IA, impressions illimitées et galerie privée.', en:'The full experience over 4 hours: AI photobooth, unlimited prints and a private gallery.'},
+    price: 590, priceUSD: 650,
     delay:{fr:'7 jours ouvrés', en:'7 working days'},
     items:{
-      fr:['Location du photobooth IA, installé et opérationnel','2 heures de prestation','100 impressions incluses','Galerie privée livrée sous 7 jours'],
-      en:['AI photobooth rental, set up and ready','2 hours service','100 prints included','Private gallery delivered within 7 days'] }
-  },
-  { id:'ess',  name:{fr:'Essentiel',  en:'Essentials'},
-    badge: null,
-    price: 490, priceUSD: 540,
-    delay:{fr:'7 jours ouvrés', en:'7 working days'},
-    items:{
-      fr:['Location du photobooth IA, installé et opérationnel','Jusqu\'à 4 heures de prestation','Impressions illimitées incluses','Galerie privée livrée sous 7 jours'],
-      en:['AI photobooth rental, set up and ready','Up to 4 hours service','Unlimited prints included','Private gallery delivered within 7 days'] }
+      fr:['Photobooth IA installé et opérationnel','Jusqu\'à 4 heures de prestation','Impressions illimitées incluses','Galerie privée livrée sous 7 jours'],
+      en:['AI photobooth set up and ready','Up to 4 hours of service','Unlimited prints included','Private gallery delivered within 7 days'] }
   },
   { id:'sig',  name:{fr:'Signature',  en:'Signature'},
-    badge:{fr:'Le plus choisi', en:'Most popular'},
-    price: 790, priceUSD: 870,
+    badge:{fr:'Recommandée', en:'Recommended'},
+    line:{fr:'Pour un événement à votre image : 6 heures et un style personnalisé à vos couleurs.', en:'For an event that looks like you: 6 hours and a custom style in your colours.'},
+    price: 1190, priceUSD: 1300,
     delay:{fr:'5 jours ouvrés', en:'5 working days'},
     items:{
-      fr:['Location du photobooth IA, installé et opérationnel','Jusqu\'à 6 heures de prestation','Style personnalisé (fond, habillage, palette)','Impressions illimitées incluses','Galerie privée livrée sous 5 jours'],
-      en:['AI photobooth rental, set up and ready','Up to 6 hours service','Custom style (backdrop, branding, palette)','Unlimited prints included','Private gallery delivered within 5 days'] }
+      fr:['Photobooth IA installé et opérationnel','Jusqu\'à 6 heures de prestation','Style personnalisé : fond, habillage et palette à l\'univers de l\'événement','Impressions illimitées incluses','Galerie privée livrée sous 5 jours'],
+      en:['AI photobooth set up and ready','Up to 6 hours of service','Custom style: backdrop, branding and palette matched to your event','Unlimited prints included','Private gallery delivered within 5 days'] }
   },
-  { id:'surm', name:{fr:'Sur-mesure', en:'Bespoke'},
-    badge:{fr:'Entièrement personnalisé', en:'Fully bespoke'},
-    price: 1190, priceUSD: 1300,
+  { id:'surm', name:{fr:'Premium', en:'Premium'},
+    badge:{fr:'Sur mesure', en:'Bespoke'},
+    line:{fr:'Un dispositif pensé avec vous : durée, style et options définis ensemble.', en:'A set-up designed with you: duration, style and options defined together.'},
+    price: null, priceUSD: null,
     delay:{fr:'Sur accord', en:'On agreement'},
     items:{
-      fr:['Devis personnalisé selon votre projet','Durée, style et options définis ensemble'],
-      en:['Personalised quote based on your project','Duration, style and options defined together'] }
+      fr:['Proposition personnalisée selon votre événement','Durée, style et options définis ensemble avec BUNKAIO'],
+      en:['A personalised proposal for your event','Duration, style and options defined together with BUNKAIO'] }
   }
 ];
 
@@ -1414,8 +1409,8 @@ const LUMEN_OPTIONS = [
           en:'Extend your service by one hour. Billed per additional hour.'} },
   { id:'lumen-print', icon:'🖨', price: null,
     name:{fr:'Impressions illimitées', en:'Unlimited prints'},
-    note:{fr:'Tirages photo illimités pendant toute la durée de la prestation. Illimitées dans les formules Essentiel et Signature (100 impressions incluses dans la formule Découverte).',
-          en:'Unlimited photo prints throughout the service. Unlimited in the Essentials and Signature packages (100 prints included in the Starter package).'} }
+    note:{fr:'Tirages photo illimités pendant toute la durée de la prestation. Incluses en illimité dans les formules Découverte et Signature.',
+          en:'Unlimited photo prints throughout the service. Unlimited prints are included in the Discovery and Signature packages.'} }
 ];
 
 const PROFILES = [
@@ -1522,10 +1517,14 @@ const PROFILE_DESCRIPTIONS = {
    n'est activée par défaut : à ajouter au cas par cas selon les offres
    réellement en cours. */
 const TIERS = [
-  { id:'deco', name:{fr:'Découverte', en:'Starter'},         badge:{fr:'Pour découvrir',     en:'To get started'} },
-  { id:'sig',  name:{fr:'Signature',  en:'Signature'},        badge:null },
-  { id:'prem', name:{fr:'Premium',    en:'Premium'},           badge:{fr:'Le plus choisi',     en:'Most popular'} },
-  { id:'edit', name:{fr:'Éditorial Bunkaio', en:'Bunkaio editorial'}, badge:{fr:'Expérience complète', en:'The complete experience'} }
+  { id:'deco', name:{fr:'Découverte', en:'Discovery'},        badge:{fr:'L\'essentiel, bien fait', en:'The essentials, done right'},
+    line:{fr:'Une porte d\'entrée soignée : même exigence, format resserré.', en:'A polished way in: the same standards, a tighter format.'} },
+  { id:'sig',  name:{fr:'Signature',  en:'Signature'},        badge:{fr:'Recommandée', en:'Recommended'},
+    line:{fr:'Le meilleur équilibre entre durée, accompagnement et résultat.', en:'The best balance of time, guidance and result.'} },
+  { id:'prem', name:{fr:'Premium',    en:'Premium'},          badge:{fr:'Plus complète', en:'More complete'},
+    line:{fr:'Un projet plus complet, plus travaillé, plus accompagné.', en:'A fuller, more crafted, more guided project.'} },
+  { id:'edit', name:{fr:'Éditorial Bunkaio', en:'Bunkaio editorial'}, badge:{fr:'Production complète', en:'Full production'},
+    line:{fr:'Une production sur mesure, de la direction artistique à la livraison.', en:'A bespoke production, from art direction to delivery.'} }
 ];
 
 /* Portfolio : aligné sur le catalogue actuel. Les rubriques suspendues (immobilier,
@@ -1539,7 +1538,6 @@ const PF_CATS = [
   { id:'mode',        label:{fr:'Mode',        en:'Fashion'} },
   { id:'commercial',  label:{fr:'Commercial',  en:'Commercial'} },
   { id:'event',       label:{fr:'Événementiel',en:'Events'} },
-  { id:'lumen',       label:{fr:'Lumen',       en:'Lumen'} },
   { id:'collaboration', label:{fr:'Collaboration', en:'Collaboration'} }
 ];
 
@@ -2196,7 +2194,7 @@ function missionPreviewHTML(c){
       <h3><a href="${servicePath(c.id)}" onclick="return navLink(event,'service','${c.id}')">${t(c.name)}</a></h3>
       <div class="ms-from">${t({fr:'dès', en:'from'})} <b>${f.from.toLocaleString('fr-FR')} €</b></div>
       <ul>${pts.slice(0, 4).map(p => `<li>${p}</li>`).join('')}</ul>
-      <div class="ms-actions"><a class="ms-cta" href="${servicePath(c.id)}" onclick="event.preventDefault();goToQuizCategory('${c.id}')">${c.comingSoon ? t({fr:'Me prévenir de l\'ouverture', en:'Notify me when it opens'}) : t({fr:'Estimer ce projet', en:'Estimate this project'})} →</a><a class="ms-link" href="${servicePath(c.id)}" onclick="return navLink(event,'service','${c.id}')">${t({fr:'Voir la prestation', en:'See the service'})}</a></div>
+      <div class="ms-actions"><a class="ms-cta" href="${servicePath(c.id)}" onclick="event.preventDefault();goToQuizCategory('${c.id}')">${c.comingSoon ? t({fr:'Me prévenir de l\'ouverture', en:'Notify me when it opens'}) : ctaLabel(c.id)} →</a><a class="ms-link" href="${servicePath(c.id)}" onclick="return navLink(event,'service','${c.id}')">${t({fr:'Voir la prestation', en:'See the service'})}</a></div>
     </div>`;
 }
 function missionSelect(i, fromAuto){
@@ -2436,12 +2434,12 @@ function renderTiersBase(){
   /* ─── Lumen : trois formules propriétaires ─── */
   if (S.cat === 'lumen') {
     subEl.textContent = LANG === 'fr'
-      ? 'Lumen by Bunkaio — quatre formules pour votre mariage, de la découverte (2 h) à l\'entièrement sur-mesure.'
-      : 'Lumen by Bunkaio — four packages for your wedding, from a 2-hour starter to fully bespoke.';
+      ? 'Lumen by Bunkaio — trois formules pour votre événement, de la découverte au sur-mesure.'
+      : 'Lumen by Bunkaio — three packages for your event, from discovery to fully bespoke.';
     LUMEN_TIERS.forEach((lt, idx) => {
       const isSurm = lt.id === 'surm';
       const priceStr = isSurm
-        ? (LANG === 'fr' ? 'À partir de ' : 'From ') + lt.price.toLocaleString('fr-FR') + '€'
+        ? (LANG === 'fr' ? 'Sur mesure' : 'Bespoke')
         : pp(lt.price).toLocaleString('fr-FR') + '€';
       const chfLine = (LANG === 'en' && lt.priceUSD)
         ? `<div style="font-size:12px;color:var(--grey);margin-top:4px">$${lt.priceUSD.toLocaleString('en-US')}</div>`
@@ -2461,6 +2459,7 @@ function renderTiersBase(){
           <div class="tier-price">${priceStr}</div>
         </div>
         ${chfLine}
+        ${lt.line ? `<div class="tier-line">${t(lt.line)}</div>` : ''}
         <div class="tier-pay-line">${payLine}</div>
         <div class="tier-detail">${t(lt.items).join(' · ')}</div>`;
       d.insertAdjacentHTML('afterbegin', formulaPhotoHTML(S.cat, lt.id, 'tier-photo')); d.dataset.tier = lt.id; if (S.tier === lt.id) d.classList.add('selected'); d.onclick = () => pickTier(lt.id, d);
@@ -2506,6 +2505,7 @@ function renderTiersBase(){
         <div class="tier-name">${t(tier.name)}</div>
         <div class="tier-price">${pp(td.price).toLocaleString('fr-FR')}€</div>
       </div>
+      ${tier.line ? `<div class="tier-line">${t(tier.line)}</div>` : ''}
       <div class="tier-pay-line">${payLine}</div>
       <div class="tier-detail">${t(td.items).join(' · ')}</div>`;
     d.insertAdjacentHTML('afterbegin', formulaPhotoHTML(S.cat, tier.id, 'tier-photo')); d.dataset.tier = tier.id; if (S.tier === tier.id) d.classList.add('selected'); d.onclick = () => pickTier(tier.id, d);
@@ -2564,6 +2564,7 @@ function renderRecapBase(){
       </div>
       <div class="recap-payment">${payLine}</div>
       <div class="travel-note">🚗 ${TRAVEL_TXT[LANG].note}</div>
+      <div class="travel-note value-note">✦ ${t({fr:'Votre projet est centralisé dans votre espace client dès la validation du devis : moodboard, suivi, factures et galerie privée.', en:'Your project is centralised in your client area as soon as the quote is confirmed: moodboard, tracking, invoices and private gallery.'})}</div>
       <ul class="recap-items">
         ${t(sub.items).map(i => `<li>${i}</li>`).join('')}
       </ul>
@@ -2586,6 +2587,7 @@ function renderRecapBase(){
       </div>
       <div class="recap-payment">${payLine}</div>
       <div class="travel-note">🚗 ${TRAVEL_TXT[LANG].note}</div>
+      <div class="travel-note value-note">✦ ${t({fr:'Votre projet est centralisé dans votre espace client dès la validation du devis : moodboard, suivi, factures et galerie privée.', en:'Your project is centralised in your client area as soon as the quote is confirmed: moodboard, tracking, invoices and private gallery.'})}</div>
       <ul class="recap-items">
         ${t(polas.items).map(i => `<li>${i}</li>`).join('')}
         <li>${studioLabel}</li>
@@ -2598,8 +2600,7 @@ function renderRecapBase(){
     if (!lt) return;
     const isSurm = lt.id === 'surm';
     const chfLine = (LANG === 'en' && lt.priceUSD) ? ` / $${lt.priceUSD.toLocaleString('en-US')}` : '';
-    const pricePrefix = isSurm ? (LANG === 'fr' ? 'À partir de ' : 'From ') : '';
-    const threeX = Math.round(pp(lt.price) / 3).toLocaleString('fr-FR');
+    const threeX = isSurm ? '' : Math.round(pp(lt.price) / 3).toLocaleString('fr-FR');
     const payLine = isSurm
       ? (LANG === 'fr'
           ? '💳 Devis personnalisé — nous vous revenons sous 48h ouvrées.'
@@ -2611,10 +2612,11 @@ function renderRecapBase(){
       <div class="recap-label">${selLabel}</div>
       <div class="recap-title">
         <span>Lumen — ${t(lt.name)}</span>
-        <span>${pricePrefix}${(isSurm ? lt.price : pp(lt.price)).toLocaleString('fr-FR')}€${chfLine}</span>
+        <span>${isSurm ? (LANG === 'fr' ? 'Sur mesure' : 'Bespoke') : pp(lt.price).toLocaleString('fr-FR') + '€' + chfLine}</span>
       </div>
       <div class="recap-payment">${payLine}</div>
       <div class="travel-note">🚗 ${TRAVEL_TXT[LANG].note}</div>
+      <div class="travel-note value-note">✦ ${t({fr:'Votre projet est centralisé dans votre espace client dès la validation du devis : moodboard, suivi, factures et galerie privée.', en:'Your project is centralised in your client area as soon as the quote is confirmed: moodboard, tracking, invoices and private gallery.'})}</div>
       <ul class="recap-items">
         ${t(lt.items).map(i => `<li>${i}</li>`).join('')}
       </ul>
@@ -2637,6 +2639,7 @@ function renderRecapBase(){
     </div>
     <div class="recap-payment">${payLine}</div>
       <div class="travel-note">🚗 ${TRAVEL_TXT[LANG].note}</div>
+      <div class="travel-note value-note">✦ ${t({fr:'Votre projet est centralisé dans votre espace client dès la validation du devis : moodboard, suivi, factures et galerie privée.', en:'Your project is centralised in your client area as soon as the quote is confirmed: moodboard, tracking, invoices and private gallery.'})}</div>
     <ul class="recap-items">
       ${t(td.items).map(i => `<li>${i}</li>`).join('')}
     </ul>
@@ -2857,14 +2860,15 @@ function computeTotal(){
   if (S.cat === 'lumen') {
     const lt = LUMEN_TIERS.find(x => x.id === S.tier);
     if (!lt) return { amount: 0, surDevis: true };
+    if (lt.id === 'surm') return { amount: 0, surDevis: true };
     let total = lt.price;
-    let hasSurDevis = lt.id === 'surm';
+    let hasSurDevis = false;
     S.opts.forEach(id => {
       const o = LUMEN_OPTIONS.find(x => x.id === id);
       if (o && typeof o.price === 'number') total += o.price;
       else if (o) hasSurDevis = true;
     });
-    return { amount: lt.id === 'surm' ? total : pp(total), surDevis: hasSurDevis };
+    return { amount: pp(total), surDevis: hasSurDevis };
   }
   const cat = CATS.find(c => c.id === S.cat);
   let total = cat.tiers[S.tier].price;
@@ -2918,6 +2922,8 @@ function animatePriceCalc(){
         : `💳 That's 3 × €${threeX} interest-free with Klarna, or by credit card.`;
     }
   }
+
+  if (S.cat === 'lumen' && S.tier === 'surm') { amtEl.textContent = LANG === 'fr' ? 'Sur mesure' : 'Bespoke'; noteEl.style.display = 'none'; return; }
 
   /* Counter animation */
   const duration = 1600;
@@ -2988,12 +2994,12 @@ function submitQuiz(e){
   } else if (S.cat === 'lumen') {
     const lt = LUMEN_TIERS.find(x => x.id === S.tier);
     const res = computeTotal();
-    const priceStr = lt.id === 'surm' ? 'à partir de ' + lt.price + '€' : pp(lt.price) + '€';
+    const priceStr = lt.id === 'surm' ? 'sur mesure' : pp(lt.price) + '€';
     formuleLabel = 'Lumen — ' + lt.name.fr + ' (' + priceStr + ')';
     montantLabel = lt.id === 'surm'
-      ? 'Sur devis (à partir de ' + lt.price + '€)'
+      ? 'Sur mesure : proposition personnalisée'
       : res.amount + '€' + (res.surDevis ? ' + options sur devis' : '');
-    budgetMontantEur = lt.id === 'surm' ? lt.price : pp(lt.price);
+    budgetMontantEur = lt.id === 'surm' ? 0 : pp(lt.price);
   } else {
     const tier = TIERS.find(x => x.id === S.tier);
     const res = computeTotal();
@@ -3135,8 +3141,8 @@ const SERVICE_COPY = {
     ]
   },
   'lumen': {
-    lead:{fr:'Lumen est le photobooth IA de BUNKAIO pour les mariages et les événements haut de gamme, proposé <strong>en location</strong> pour la durée de votre événement (vous ne l\'achetez pas) : un souvenir généré par IA en quelques secondes pour chaque invité, avec impressions illimitées et galerie privée selon la formule. Pour bien le choisir : <a href="/conseils/photobooth-mariage-bien-choisir/" data-nav="article:photobooth-mariage-bien-choisir">les critères à comparer</a>.',
-          en:'Lumen is BUNKAIO\'s AI photobooth for weddings and high-end events, <strong>available for rental</strong> for the duration of your event (you do not buy it): a keepsake generated by AI in seconds for each guest, with unlimited prints and a private gallery depending on the package. To choose well: <a href="/conseils/photobooth-mariage-bien-choisir/" data-nav="article:photobooth-mariage-bien-choisir">the criteria to compare</a>.'}
+    lead:{fr:'Lumen est l\'expérience photo IA de BUNKAIO pour les mariages et les événements haut de gamme : le photobooth est installé et opérationnel pendant votre événement (proposé <strong>en location</strong> pour sa durée, vous ne l\'achetez pas) et chaque invité repart avec un souvenir généré par IA en quelques secondes. Impressions illimitées et galerie privée, style personnalisé selon la formule. Pour bien le choisir : <a href="/conseils/photobooth-mariage-bien-choisir/" data-nav="article:photobooth-mariage-bien-choisir">les critères à comparer</a>.',
+          en:'Lumen is BUNKAIO\'s AI photo experience for weddings and high-end events: the photobooth is set up and running throughout your event (offered as a <strong>rental</strong> for its duration, you do not buy it) and every guest leaves with a keepsake generated by AI in seconds. Unlimited prints and a private gallery, with a custom style depending on the package. To choose well: <a href="/conseils/photobooth-mariage-bien-choisir/" data-nav="article:photobooth-mariage-bien-choisir">the criteria to compare</a>.'}
   }
 };
 
@@ -3166,7 +3172,7 @@ const DISCOVER_COPY = {
   },
   lumen: {
     for:{fr:'Mariages, wedding planners, domaines et événements haut de gamme.', en:'Weddings, wedding planners, estates and high-end events.'},
-    why:{fr:'Un souvenir unique généré par IA en quelques secondes pour chaque invité, avec impressions illimitées et galerie privée selon la formule.', en:'A one-of-a-kind keepsake generated by AI in seconds for each guest, with unlimited prints and a private gallery depending on the package.'}
+    why:{fr:'Une expérience photo pour vos invités : un souvenir unique généré par IA en quelques secondes, impressions illimitées et galerie privée selon la formule.', en:'A photo experience for your guests: a one-of-a-kind keepsake generated by AI in seconds, unlimited prints and a private gallery depending on the package.'}
   }
 };
 
@@ -3241,7 +3247,7 @@ function renderDiscoverPage(){
         <ul class="disc-chips"><li>${dly(f)}</li>${phs(f) ? `<li>${phs(f)}</li>` : ''}${f.hasVideo ? `<li>${t({fr:'Vidéo / Reels', en:'Video / Reels'})}</li>` : ''}</ul>
         <div class="discover-actions">
           <a class="btn btn-ghost" href="${servicePath(c.id)}" data-nav="service:${c.id}"><span>${t({fr:'Voir la prestation', en:'See the service'})}</span></a>
-          ${quizLink(c.id, t({fr:'Estimer ce projet', en:'Estimate this project'}))}
+          ${quizLink(c.id, ctaLabel(c.id))}
         </div>
       </div></div>
     </li>`;
@@ -3257,7 +3263,7 @@ function renderDiscoverPage(){
     <h1 data-pageh1 class="page-title">${t({fr:'Découvrir chaque prestation', en:'Explore each service'})}</h1>
     <p class="page-sub" data-tw data-tw-delay="200">${t({fr:'Portrait, corporate, mode, produit, événementiel et photobooth IA : une prestation pour chaque besoin, à Montpellier, Béziers et Toulouse. Ouvrez celle qui vous correspond.', en:'Portrait, corporate, fashion, product, events and AI photobooth: a service for every need, in Montpellier, Béziers and Toulouse. Open the one that suits you.'})}</p>
     <div class="svcp-cta-row">
-      ${quizLink('', t({fr:'Estimer mon projet', en:'Estimate my project'}))}
+      ${quizLink('', t({fr:'Construire mon projet', en:'Build my project'}))}
       <a class="btn btn-ghost" href="/services/" data-nav="services"><span>${t({fr:'Voir les tarifs détaillés', en:'See detailed rates'})}</span></a>
     </div>
 
@@ -3271,6 +3277,8 @@ function renderDiscoverPage(){
       <ol class="disc-steps">${stepItems}</ol>
       <ul class="disc-why">
         <li>${t({fr:TRAVEL_TXT.fr.list, en:TRAVEL_TXT.en.list})}</li>
+        <li>${t({fr:'8+ ans d\'expérience, 200+ projets réalisés, un interlocuteur unique du premier échange à la livraison', en:'8+ years of experience, 200+ projects delivered, a single point of contact from first exchange to delivery'})}</li>
+        <li>${t({fr:'Votre projet centralisé dans votre espace client : moodboard, suivi, devis, factures et galerie privée', en:'Your project centralised in your client area: moodboard, tracking, quotes, invoices and private gallery'})}</li>
         <li>${t({fr:'Droits d\'utilisation commerciale cédés sans limite de durée', en:'Commercial usage rights with no time limit'})}</li>
         <li>${t({fr:'Livraison HD en ' + allMin + ' à ' + allMax + ' jours ouvrés', en:'HD delivery in ' + allMin + ' to ' + allMax + ' working days'})}</li>
         <li>${t({fr:'Acompte de 30 %, paiement en 3 fois sans frais possible', en:'30% deposit, 3 interest-free instalments available'})}</li>
@@ -3286,7 +3294,7 @@ function renderDiscoverPage(){
     <section class="read-panel svcp-panel article-cta">
       <h2>${t({fr:'Prêt à lancer votre projet ?', en:'Ready to start your project?'})}</h2>
       <p class="svcp-text">${t({fr:'Proposition chiffrée sous 48 h, sans engagement. Un doute ? Lisez nos guides, comme ', en:'Priced proposal within 48 hours, no commitment. In doubt? Read our guides, such as '})}<a href="/conseils/combien-coute-une-seance-photo/" data-nav="article:combien-coute-une-seance-photo">${t({fr:'combien coûte une séance photo', en:'how much a photo session costs'})}</a>${t({fr:', ou ', en:', or '})}<a href="/contact/" data-nav="contact">${t({fr:'écrivez-nous', en:'write to us'})}</a>.</p>
-      <div class="svcp-cta-row" style="margin:0">${quizLink('', t({fr:'Estimer mon projet', en:'Estimate my project'}))}</div>
+      <div class="svcp-cta-row" style="margin:0">${quizLink('', t({fr:'Construire mon projet', en:'Build my project'}))}</div>
     </section>`;
 
   renderAccordionInto('discoverFaq', [
@@ -3323,9 +3331,10 @@ function fxItem(catId, f){
     <div class="fx-panel"><div class="fx-body">
       ${formulaPhotoHTML(catId, f.id, 'fx-photo')}
       <div class="fx-info">
+        ${f.line ? `<p class="fx-line">${f.line}</p>` : ''}
         ${f.hint ? `<p class="fx-hint"><strong>${t({fr:'Notre conseil', en:'Our advice'})} :</strong> ${f.hint}</p>` : ''}
         <ul class="svcp-list">${f.items.map(i => `<li>${escHtml(i)}</li>`).join('')}</ul>
-        <div class="fx-actions">${quizLink(catId, t({fr:'Choisir cette formule', en:'Choose this package'}))}${f.extra || ''}</div>
+        <div class="fx-actions">${quizLink(catId, t({fr:'Demander un devis', en:'Request a quote'}))}${f.extra || ''}</div>
       </div>
     </div></div>
   </div>`;
@@ -3360,6 +3369,31 @@ function serviceBgSync(catId){
   document.documentElement.style.setProperty('--page-bg-url', 'url(' + url + ')');
 }
 
+/* Bande « ce que BUNKAIO apporte » des pages prestation : mêmes faits que le reste du site (ancienneté, projets, interlocuteur unique,
+   espace client, délais calculés depuis les formules, droits). Pour Lumen : ce qui est réellement inclus dans les formules. */
+function valueStripHTML(catId, tiers){
+  const en = LANG === 'en';
+  const days = tiers.map(x => parseInt((en ? x.delay.en : x.delay.fr), 10)).filter(Boolean);
+  const dMin = days.length ? Math.min(...days) : 0, dMax = days.length ? Math.max(...days) : 0;
+  const delivery = dMin ? (dMin === dMax ? dMin : dMin + ' ' + t({fr:'à', en:'to'}) + ' ' + dMax) + ' ' + t({fr:'jours ouvrés selon la formule, dans une galerie privée.', en:'working days depending on the package, in a private gallery.'}) : '';
+  const items = catId === 'lumen' ? [
+    [t({fr:'Une expérience pour vos invités', en:'An experience for your guests'}), t({fr:'Chaque invité repart avec un souvenir généré par IA en quelques secondes.', en:'Every guest leaves with a keepsake generated by AI in seconds.'})],
+    [t({fr:'Installé et opérationnel', en:'Set up and running'}), t({fr:'Jusqu\'à 4 heures (Découverte) ou 6 heures (Signature) de prestation.', en:'Up to 4 hours (Discovery) or 6 hours (Signature) of service.'})],
+    [t({fr:'Impressions illimitées', en:'Unlimited prints'}), t({fr:'Incluses dans les formules Découverte et Signature.', en:'Included in the Discovery and Signature packages.'})],
+    [t({fr:'À l\'univers de l\'événement', en:'In your event\'s world'}), t({fr:'Style personnalisé inclus en Signature (fond, habillage, palette) ; Premium entièrement sur mesure.', en:'Custom style included in Signature (backdrop, branding, palette); Premium fully bespoke.'})],
+    [t({fr:'Galerie privée', en:'Private gallery'}), delivery || t({fr:'Livrée après l\'événement.', en:'Delivered after the event.'})],
+    [t({fr:'Un interlocuteur unique', en:'A single point of contact'}), t({fr:'Du premier échange à la livraison, avec votre projet centralisé dans votre espace client.', en:'From first exchange to delivery, with your project centralised in your client area.'})]
+  ] : [
+    [t({fr:'8+ ans d\'expérience · 200+ projets', en:'8+ years of experience · 200+ projects'}), t({fr:'Une pratique rodée, du portrait à l\'événement.', en:'A well-honed practice, from portraits to events.'})],
+    [t({fr:'Direction artistique', en:'Art direction'}), t({fr:'Cadrage, univers visuel, intentions : une image pensée, pas une simple prise de vue.', en:'Framing, visual world, intentions: a considered image, not just a shot.'})],
+    [t({fr:'Un interlocuteur unique', en:'A single point of contact'}), t({fr:'Du premier échange à la livraison, la même personne, sans sous-traitance.', en:'From first exchange to delivery, the same person, no subcontracting.'})],
+    [t({fr:'Projet centralisé', en:'A centralised project'}), t({fr:'Moodboard, suivi des étapes, devis, factures et galerie privée dans votre espace client.', en:'Moodboard, progress tracking, quotes, invoices and private gallery in your client area.'})],
+    [t({fr:'Livraison annoncée', en:'Announced delivery'}), delivery],
+    [t({fr:'Droits d\'utilisation clairs', en:'Clear usage rights'}), t({fr:'Conditions définies dès le devis ; droits d\'utilisation commerciale cédés sans limite de durée.', en:'Terms set from the quote; commercial usage rights transferred with no time limit.'})]
+  ];
+  return `<section class="read-panel svcp-panel value-panel"><h2>${t({fr:'Ce que BUNKAIO apporte à votre projet', en:'What BUNKAIO brings to your project'})}</h2><ul class="value-grid">${items.filter(x => x[1]).map(x => `<li><b>${x[0]}</b><span>${x[1]}</span></li>`).join('')}</ul></section>`;
+}
+
 function renderServicePage(catId){
   const el = document.getElementById('servicePageContent');
   if (!el) return;
@@ -3369,13 +3403,13 @@ function renderServicePage(catId){
   const en = LANG === 'en';
   const price = n => n.toLocaleString(en ? 'en-GB' : 'fr-FR') + ' €';
   const tiers = c.lumen
-    ? LUMEN_TIERS.map(lt => ({ id: lt.id, name: lt.name, badge: lt.badge, quote: lt.id === 'surm', price: lt.price, delay: lt.delay, items: lt.items }))
-    : TIERS.map(tr => ({ id: tr.id, name: tr.name, badge: tr.badge, price: c.tiers[tr.id].price, delay: c.tiers[tr.id].delay, items: c.tiers[tr.id].items }));
+    ? LUMEN_TIERS.map(lt => ({ id: lt.id, name: lt.name, badge: lt.badge, line: lt.line, quote: lt.id === 'surm', price: lt.price, delay: lt.delay, items: lt.items }))
+    : TIERS.map(tr => ({ id: tr.id, name: tr.name, badge: tr.badge, line: tr.line, price: c.tiers[tr.id].price, delay: c.tiers[tr.id].delay, items: c.tiers[tr.id].items }));
   const others = CATS.filter(x => x.id !== catId && seoRouteFor('service', x.id));
   const h1 = en && route.h1En ? route.h1En : route.h1;
   const sub = SUBS[catId];
   const steps = ['about-step1', 'about-step2', 'about-step3', 'about-step4'];
-  const priceLine = tt => tt.quote ? t({fr:'Sur devis', en:'On quote'}) : price(tt.price);
+  const priceLine = tt => tt.quote ? t({fr:'Sur mesure', en:'Bespoke'}) : price(tt.price);
 
   /* Questions propres à chaque prestation : calculées à partir du contenu réel des formules. */
   const FEATURES = [
@@ -3451,23 +3485,29 @@ function renderServicePage(catId){
     <h1 data-pageh1 class="page-title">${h1}</h1>
     <p class="page-sub">${t(c.tag)}${c.pitch ? ' — ' + t(c.pitch) : ''}</p>
     <div class="svcp-cta-row">
-      ${quizLink(catId, t({fr:'Estimer ce projet', en:'Estimate this project'}))}
+      ${quizLink(catId, ctaLabel(catId))}
       <a class="btn btn-ghost" href="/portfolio/" onclick="return navLink(event,'portfolio')"><span>${t({fr:'Voir le portfolio', en:'See the portfolio'})}</span></a>
     </div>
-    ${isComingSoon(catId) ? `<div class="soon-banner"><b>${t({fr:'Bientôt disponible', en:'Coming soon'})}</b> ${t({fr:'Lumen ouvre prochainement à la réservation. Les tarifs ci-dessous sont ceux de lancement ; laissez-nous un message pour être prévenu(e) en premier de l\'ouverture.', en:'Lumen will soon open for bookings. The rates below are the launch rates; leave us a message to be the first to know when it opens.'})}</div>` : ''}
+    ${isComingSoon(catId) ? `<div class="soon-banner"><b>${t({fr:'Bientôt disponible', en:'Coming soon'})}</b> ${t({fr:'Lumen ouvre prochainement à la réservation. Les tarifs ci-dessous sont les tarifs officiels ; laissez-nous un message pour être prévenu(e) de l\'ouverture.', en:'Lumen will soon open for bookings. The rates below are the official rates; leave us a message to be notified when it opens.'})}</div>` : ''}
 
     ${copyBlock && copyBlock.lead ? `<section class="read-panel svcp-panel"><div class="svcp-lead-grid${svcFigure ? ' has-figure' : ''}"><p class="svcp-text svcp-lead">${t(copyBlock.lead)}</p>${svcFigure}</div></section>` : ''}
 
     <section class="read-panel svcp-panel">
       <h2>${t({fr:'Formules et tarifs', en:'Packages and rates'})}</h2>
+      <p class="svcp-text svcp-why">${catId === 'lumen'
+        ? t({fr:'Lumen n\'est pas une borne à louer : c\'est une expérience photo pour vos invités, installée et opérationnelle pendant votre événement, avec impressions et galerie privée.', en:'Lumen is not a booth to hire: it is a photo experience for your guests, set up and running throughout your event, with prints and a private gallery.'})
+        : t({fr:'Vous ne payez pas des heures de prise de vue : vous réservez un projet accompagné, avec direction artistique, galerie privée et un interlocuteur unique, du premier échange à la livraison.', en:'You are not paying for hours behind the camera: you book a guided project, with art direction, a private gallery and a single point of contact from first exchange to delivery.'})}</p>
       <p class="vat-note">${I18N[LANG]['vat-note']}</p>
       <p class="vat-note travel-note">🚗 ${TRAVEL_TXT[LANG].note}</p>
       <div class="fx-list">
-        ${tiers.map((tt, ti) => fxItem(catId, { hint: chooseHints[ti] || '', id: tt.id, name: t(tt.name), badge: tt.badge ? t(tt.badge) : '', price: priceLine(tt), delay: t(tt.delay), items: (en ? tt.items.en : tt.items.fr), open: !!tt.badge && /(choisi|popular)/i.test(t(tt.badge)) })).join('')}
+        ${tiers.map((tt, ti) => fxItem(catId, { hint: chooseHints[ti] || '', id: tt.id, name: t(tt.name), badge: tt.badge ? t(tt.badge) : '', line: tt.line ? t(tt.line) : '', price: priceLine(tt), delay: t(tt.delay), items: (en ? tt.items.en : tt.items.fr), open: !!tt.badge && /(recommand|choisi|popular)/i.test(t(tt.badge)) })).join('')}
         ${POLAS[catId] ? fxItem(catId, { id: POLAS[catId].id, name: t(POLAS[catId].name), badge: t(POLAS[catId].label), price: price(specialTotal(POLAS[catId])), delay: t(POLAS[catId].delay) + ' · ' + t(POLAS[catId].studioNote), items: t(POLAS[catId].items), special: true, hint: specialHint, extra: POLAS[catId].id === 'polas' ? `<a class="svcp-link" href="/conseils/polas-mannequin-digitals-agence/" onclick="return navLink(event,'article','polas-mannequin-digitals-agence')">${t({fr:'Comprendre les Polas →', en:'What are Polas? →'})}</a>` : '' }) : ''}
       </div>
       ${sub ? `<p class="svcp-note">${t({fr:'Besoin régulier ? ', en:'Regular need? '})}<strong>${t(sub.name)}</strong> — ${sub.price.toLocaleString(en ? 'en-GB' : 'fr-FR')} € ${t({fr:'/ mois', en:'/ month'})}.</p>` : ''}
     </section>
+
+    ${valueStripHTML(catId, tiers)}
+    <div class="cs-slot" data-variant="compact"></div>
 
     ${chooseHtml}
 
@@ -3503,6 +3543,7 @@ function renderServicePage(catId){
     </section>
     <div class="svcp-back-row"><a class="svcp-back" href="/services/" onclick="return navLink(event,'services')"><span aria-hidden="true">←</span> ${t({fr:'Retour au catalogue', en:'Back to the catalogue'})}</a></div>`;
   renderAccordionInto('servicePageFaq', faq.map(f => ({ title: f.q, body: f.a })), { exclusive: true, closed: true });
+  renderClientSpotlights();
   serviceBgSync(catId);
 }
 
@@ -3657,9 +3698,9 @@ function renderArticlePage(slug){
     </article>
     <section class="read-panel svcp-panel article-cta">
       <h2>${t({fr:'Un projet de séance ou de shooting ?', en:'Planning a session or a shoot?'})}</h2>
-      <p class="svcp-text">${t({fr:'Estimez votre projet en quelques minutes : réponse personnalisée sous 48 h. Une question avant de vous lancer ? Consultez la <a href="/faq/" data-nav="faq">FAQ</a> ou <a href="/contact/" data-nav="contact">contactez-nous</a>.', en:'Estimate your project in a few minutes: personal reply within 48 hours. A question first? See the <a href="/faq/" data-nav="faq">FAQ</a> or <a href="/contact/" data-nav="contact">get in touch</a>.'})}</p>
+      <p class="svcp-text">${t({fr:'Construisez votre projet en quelques minutes : proposition personnalisée sous 48 h. Une question avant de vous lancer ? Consultez la <a href="/faq/" data-nav="faq">FAQ</a> ou <a href="/contact/" data-nav="contact">contactez-nous</a>.', en:'Estimate your project in a few minutes: personal reply within 48 hours. A question first? See the <a href="/faq/" data-nav="faq">FAQ</a> or <a href="/contact/" data-nav="contact">get in touch</a>.'})}</p>
       <div class="svcp-cta-row" style="margin:0">
-        ${quizLink(a.cat, t({fr:'Estimer mon projet', en:'Estimate my project'}))}
+        ${quizLink(a.cat, ctaLabel(a.cat))}
         ${cat ? `<a class="btn btn-ghost" href="${servicePath(a.cat)}" data-nav="service:${a.cat}"><span>${t(cat.name)}</span></a>` : ''}
       </div>
     </section>
@@ -3671,6 +3712,12 @@ function renderArticlePage(slug){
    sans rechargement, tout en gardant un vrai href pour les moteurs et le clic droit. */
 const NAV_ALIASES = { faq: 'legal', conseils: 'advice' };
 /* Lien vers le devis : un vrai <a href="/devis/"> (crawlable, ancre explicite) qui présélectionne l'univers. */
+/* Libellé d'appel à l'action selon la prestation : toujours orienté vers une proposition personnalisée. */
+function ctaLabel(catId){
+  if (catId === 'event' || catId === 'lumen') return t({fr:'Parler de mon événement', en:'Talk about my event'});
+  if (catId === 'mode' || catId === 'commercial') return t({fr:'Recevoir une proposition', en:'Receive a proposal'});
+  return t({fr:'Demander un devis', en:'Request a quote'});
+}
 function quizLink(catId, label, cls){ if (catId && isComingSoon(catId)) label = t({fr:'Me prévenir de l\'ouverture', en:'Notify me when it opens'}); return `<a class="${cls || 'cta-primary'}" href="/devis/" data-quiz="${catId || ''}">${label}</a>`; }
 document.addEventListener('click', (e) => {
   const a = e.target.closest ? e.target.closest('a[data-quiz]') : null;
@@ -3788,7 +3835,7 @@ function renderServices(){
           ? LUMEN_TIERS.map(lt => `
               <div class="service-tier">
                 <span class="service-tier-name">${t(lt.name)}${lt.promo ? `<span class="service-tier-promo">${t(lt.promo)}</span>` : ''}</span>
-                <span class="service-tier-price">${lt.id === 'surm' ? (LANG === 'fr' ? 'Devis' : 'Quote') : lt.price.toLocaleString('fr-FR') + '€'}</span>
+                <span class="service-tier-price">${lt.id === 'surm' ? (LANG === 'fr' ? 'Sur mesure' : 'Bespoke') : lt.price.toLocaleString('fr-FR') + '€'}</span>
               </div>`).join('')
           : TIERS.map(tier => `
               <div class="service-tier">
@@ -4194,14 +4241,14 @@ function renderApplyBenefits(){
   const li = arr => '<ul class="ft-list" style="margin-top:12px">' + arr.map(x => `<li style="margin-bottom:8px">⊹ ${x}</li>`).join('') + '</ul>';
   const sections = LANG === 'fr' ? [
     { title:`-${PARTNER_DISCOUNT}% permanent sur tout le catalogue`, body:`<p>Un tarif partenaire appliqué automatiquement à tous vos devis, tant que votre partenariat est actif.</p>${li(['Toutes les prestations du catalogue, options comprises','Abonnements Studio Continu inclus','Remise visible dans le récapitulatif de votre devis'])}${exLine ? `<p style="margin-top:12px"><strong>${exLine}</strong></p>` : ''}` },
-    { title:'Promotions supplémentaires sur certaines prestations', body:`<p>Bunkaio peut vous accorder des promotions ciblées, en plus de la remise permanente : offre de lancement, prestation offerte, tarif spécial sur une période. Elles apparaissent dans l'onglet <strong>« Mes promotions »</strong> de votre espace partenaire.</p>` },
+    { title:'Promotions supplémentaires sur certaines prestations', body:`<p>Bunkaio peut vous accorder des promotions ciblées, en plus de la remise permanente : prestation offerte ou tarif spécial sur une période. Elles apparaissent dans l'onglet <strong>« Mes promotions »</strong> de votre espace partenaire.</p>` },
     { title:'Des missions collaboratives rémunérées', body:`<p>Selon votre type de prestataire, Bunkaio vous sollicite pour intervenir sur des projets clients. Vous acceptez ou déclinez en un clic depuis <strong>« Mes collaborations »</strong>, et vous indiquez quand vous êtes disponible.</p>` },
     { title:'Visibilité et réseau', body:`<p>Une mise en lumière éditoriale de votre savoir-faire, une présence sur le site et les réseaux Bunkaio, et l'accès à l'<strong>annuaire du réseau</strong> pour trouver d'autres professionnels (traiteurs, lieux, créateurs…) et être mis en relation. Vous choisissez d'y être référencé·e ou non.</p>` },
     { title:'Un espace partenaire dédié', body:`<p>Vos promotions, votre réseau, vos collaborations, vos commandes et vos <strong>moodboards personnalisés</strong> (un par commande) au même endroit, avec un accès prioritaire à nos disponibilités.</p>` },
     { title:'Comment se passe la candidature ?', body:`<p>Vous candidatez ci-dessous, nous étudions votre profil individuellement et vous répondons sous 5 jours ouvrés. Une fois accepté·e, vous recevez vos accès et vous confirmez votre type de prestataire dans votre espace.</p>` },
   ] : [
     { title:`-${PARTNER_DISCOUNT}% permanent across the catalogue`, body:`<p>A partner rate applied automatically to all your quotes for as long as your partnership is active.</p>${li(['Every catalogue service, add-ons included','Studio Continu subscriptions included','Discount shown in your quote summary'])}${exLine ? `<p style="margin-top:12px"><strong>${exLine}</strong></p>` : ''}` },
-    { title:'Extra promotions on selected services', body:`<p>Bunkaio can grant you targeted promotions on top of the permanent discount: launch offers, a free service, a special rate for a period. They appear in the <strong>"My promotions"</strong> tab of your partner space.</p>` },
+    { title:'Extra promotions on selected services', body:`<p>Bunkaio can grant you targeted promotions on top of the permanent discount: a free service or a special rate for a period. They appear in the <strong>"My promotions"</strong> tab of your partner space.</p>` },
     { title:'Paid collaborative missions', body:`<p>Depending on your provider type, Bunkaio calls on you for client projects. You accept or decline in one click from <strong>"My collaborations"</strong>, and you tell us when you are available.</p>` },
     { title:'Visibility and network', body:`<p>An editorial spotlight on your craft, a presence on Bunkaio's site and social channels, and access to the <strong>network directory</strong> to find other professionals (caterers, venues, designers…) and get introduced. You choose whether to be listed.</p>` },
     { title:'A dedicated partner space', body:`<p>Your promotions, network, collaborations, orders and <strong>personalised moodboards</strong> (one per order) in one place, with priority access to our schedule.</p>` },
@@ -4487,12 +4534,14 @@ function renderClientSpotlights(){
   const cta = open ? t({fr:'Ouvrir mon espace', en:'Open my space'}) : t({fr:'Accéder à mon espace client', en:'Access my client area'});
   const check = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12.5 10 17.5 19 7.5"/></svg>';
   const points = [
-    { head:t({fr:'Un moodboard par commande', en:'One moodboard per order'}),
+    { head:t({fr:'Brief et moodboard', en:'Brief and moodboard'}),
       body:t({fr:'Direction artistique, ambiance, palette de couleurs, inspirations (Pinterest, liens) et prestataires impliqués. Vous le complétez depuis votre espace et échangez avec l\'équipe par commentaires.', en:'Art direction, mood, colour palette, inspiration (Pinterest, links) and the providers involved. You complete it from your space and chat with the team through comments.'}) },
     { head:t({fr:'Suivi de votre projet', en:'Track your project'}),
       body:t({fr:'Chaque commande affiche son avancement, du devis confirmé à la livraison de vos photos, étape par étape.', en:'Each order shows its progress, from the confirmed quote to the delivery of your photos, step by step.'}) },
-    { head:t({fr:'Devis, factures, paiements et livrables', en:'Quotes, invoices, payments and deliverables'}),
-      body:t({fr:'Retrouvez vos devis, vos factures et vos paiements, et téléchargez vos photos HD depuis votre galerie privée, à tout moment.', en:'Find your quotes, invoices and payments, and download your HD photos from your private gallery at any time.'}) },
+    { head:t({fr:'Devis, factures et paiements', en:'Quotes, invoices and payments'}),
+      body:t({fr:'Retrouvez vos devis, vos factures et vos paiements au même endroit, sans chercher dans vos emails.', en:'Find your quotes, invoices and payments in one place, without digging through your emails.'}) },
+    { head:t({fr:'Votre séance et vos livrables', en:'Your session and deliverables'}),
+      body:t({fr:'Date, lieu et livraison estimée de votre séance, puis vos photos HD dans votre galerie privée, à télécharger à tout moment.', en:'The date, location and estimated delivery of your session, then your HD photos in your private gallery, to download at any time.'}) },
   ];
   const act = `<button type="button" class="cs-btn" onclick="${open ? "renderAccount();goView('account')" : "openLogin('client')"}">${cta}</button>`;
   slots.forEach(el => {
@@ -4502,10 +4551,10 @@ function renderClientSpotlights(){
       <section class="cs-spotlight ${compact ? 'cs-compact' : ''} ${noVisual && !compact ? 'cs-novisual' : ''} rv in">
         <div class="cs-main">
           <div class="cs-kicker">${t({fr:'Votre espace client', en:'Your client area'})}</div>
-          <h2 class="cs-title" data-tw data-tw-delay="150">${t({fr:'Une commande, un moodboard personnalisé', en:'One order, one personalised moodboard'})}</h2>
-          <p class="cs-lead" data-tw data-tw-delay="900">${t({fr:'Dès votre devis confirmé, retrouvez tout au même endroit — et créez pour chaque commande un moodboard sur mesure pour nous partager votre vision.', en:'Once your quote is confirmed, find everything in one place — and create a tailor-made moodboard for each order to share your vision with us.'})}</p>
+          <h2 class="cs-title" data-tw data-tw-delay="150">${t({fr:'Votre projet, centralisé', en:'Your project, centralised'})}</h2>
+          <p class="cs-lead" data-tw data-tw-delay="900">${t({fr:'Votre projet ne repose pas sur une succession d\'emails et de fichiers dispersés. Tout est centralisé dans votre espace client BUNKAIO, dès votre devis confirmé.', en:'Your project does not rest on a string of emails and scattered files. Everything is centralised in your BUNKAIO client area, as soon as your quote is confirmed.'})}</p>
           ${compact ? '' : `<ul class="cs-points cs-acc">${points.map((x, k) => `<li class="cs-acc-item${k === 0 ? ' open' : ''}"><button type="button" class="cs-acc-head" aria-expanded="${k === 0}">${check}<span>${x.head}</span><i class="cs-acc-chev" aria-hidden="true"></i></button><div class="cs-acc-panel"><p>${x.body}</p></div></li>`).join('')}</ul>`}
-          <div class="cs-actions">${act}${compact || open ? '' : `<button type="button" class="cta-primary" onclick="goView('quiz')">${t({fr:'Estimer mon projet', en:'Estimate my project'})}</button>`}</div>
+          <div class="cs-actions">${act}${compact || open ? '' : `<button type="button" class="cta-primary" onclick="goView('quiz')">${t({fr:'Construire mon projet', en:'Build my project'})}</button>`}</div>
         </div>
         ${noVisual ? '' : `
         <div class="cs-visual" aria-hidden="true">
@@ -6296,7 +6345,7 @@ function renderFaqAccordion(){
     { title:'Mes informations et mes images sont-elles en sécurité ?', body:`<p>Votre espace est protégé par votre email et un <strong>code d'accès personnel</strong>, conservé sous forme chiffrée. Vos données ne servent qu'à la réalisation de votre projet, et vos visuels vous sont livrés dans une galerie privée. Le détail est dans l'onglet « Politique de confidentialité ».</p>` },
     { title:'Où intervenez-vous ?', body:`<p>BUNKAIO est basé à <strong>Montpellier</strong> et intervient en déplacement à <strong>Montpellier, Béziers et Toulouse</strong>, et plus largement en Occitanie. Il n'y a pas de studio fixe : le lieu se choisit avec vous (<a href="/conseils/lieux-seance-photo-montpellier-beziers-toulouse/" data-nav="article:lieux-seance-photo-montpellier-beziers-toulouse">idées de lieux</a>). ${TRAVEL_TXT.fr.full}</p>` },
     { title:'Comment devenir partenaire, et que propose l\'espace partenaire ?', body:`<p>Candidatez depuis la page <strong>Partenariat et collaboration</strong> : réponse personnalisée sous 5 jours ouvrés. Une fois admis, votre espace partenaire vous donne <strong>-20 % permanent</strong> sur le catalogue, des promotions, des <strong>missions collaboratives rémunérées</strong> que vous acceptez ou déclinez en un clic, et l'accès au réseau de professionnels. Vous choisissez d'être référencé·e ou non dans l'annuaire.</p>` },
-    { title:'Qu\'est-ce que Lumen by Bunkaio ?', body:`<p>Lumen est le photobooth IA de Bunkaio, conçu pour les mariages haut de gamme et les événements, et proposé en location pour la durée de votre événement : il offre aux invités une expérience mémorable et aux mariés des souvenirs durables. Quatre formules — Découverte (2 h), Essentiel, Signature et Sur-mesure — selon la durée et la personnalisation souhaitées.</p>` },
+    { title:'Qu\'est-ce que Lumen by Bunkaio ?', body:`<p>Lumen est l\'expérience photo IA de Bunkaio, conçue pour les mariages haut de gamme et les événements : le photobooth est installé et opérationnel pendant votre événement (proposé en location pour sa durée), pour offrir aux invités une expérience mémorable et vous laisser des souvenirs durables. Trois formules — Découverte, Signature et Premium sur mesure — selon la durée et la personnalisation souhaitées.</p>` },
   ] : [
     { title:'What services do you offer?', body:`<p>Bunkaio is a professional photographer: we produce premium, high-definition images for <strong>portrait & lifestyle</strong>, <strong>fashion, agencies and models</strong>, <strong>commercial & products</strong>, <strong>events</strong>, and <strong>Lumen</strong>, the AI photobooth for weddings. Each universe has its packages detailed in our <strong>catalogue & rates</strong>.</p>` },
     { title:'What is the quality of the delivered images?', body:`<p><strong>High-definition, carefully retouched</strong> photos, ready to publish or print. They are delivered in a <strong>private gallery</strong> you can download from your client area, with commercial usage rights.</p>` },
@@ -6311,7 +6360,7 @@ function renderFaqAccordion(){
     { title:'Are my details and images safe?', body:`<p>Your space is protected by your email and a <strong>personal access code</strong>, stored in encrypted form. Your data is only used to carry out your project, and your visuals are delivered in a private gallery. Details are in the "Privacy policy" tab.</p>` },
     { title:'Where do you work?', body:`<p>BUNKAIO is based in <strong>Montpellier</strong> and travels to <strong>Montpellier, Béziers and Toulouse</strong>, and more broadly across Occitanie. ${TRAVEL_TXT.en.full}</p>` },
     { title:'How do I become a partner, and what does the partner area offer?', body:`<p>Apply from the <strong>Partnership & collaboration</strong> page: a personal reply within 5 working days. Once admitted, your partner area gives you a <strong>permanent 20% discount</strong> on the catalogue, promotions, <strong>paid collaborative missions</strong> you accept or decline in one click, and access to the professional network. You choose whether to be listed in the directory.</p>` },
-    { title:'What is Lumen by Bunkaio?', body:`<p>Lumen is Bunkaio's AI photobooth, designed for luxury weddings and events and available for rental for the duration of your event: it gives guests a memorable experience and couples lasting memories. Four packages — Starter (2 h), Essentials, Signature and Bespoke — depending on duration and customisation.</p>` },
+    { title:'What is Lumen by Bunkaio?', body:`<p>Lumen is Bunkaio's AI photo experience, designed for luxury weddings and events: the photobooth is set up and running throughout your event (offered as a rental for its duration), giving guests a memorable experience and leaving you lasting memories. Three packages — Discovery, Signature and a bespoke Premium — depending on duration and customisation.</p>` },
   ];
   renderAccordionInto('faqAccordion', sections, { exclusive: true });
 }

@@ -74,8 +74,8 @@
         "Imprévus : en cas d'annulation de l'événement par l'organisateur, les conditions d'annulation ci-dessus s'appliquent."
       ] },
     lumen: { label: 'Photobooth IA Lumen', profil: 'particulier', category: /lumen|photobooth/i,
-      prestation: 'Photobooth IA Lumen', contenuHint: "Durée (4 h Essentiel, 6 h Signature), style personnalisé, impressions illimitées incluses, horaires d'installation",
-      delai: 'jours ouvrés après l\'événement (7 pour Essentiel, 5 pour Signature)',
+      prestation: 'Photobooth IA Lumen', contenuHint: "Durée (4 h Découverte, 6 h Signature, sur mesure en Premium), style personnalisé, impressions illimitées incluses, horaires d'installation",
+      delai: 'jours ouvrés après l\'événement (7 pour Découverte, 5 pour Signature)',
       destination: "Usage personnel et familial des visuels générés (partage avec les invités et les proches, réseaux sociaux personnels, souvenirs imprimés) ; pour un événement d'entreprise : communication du client sur ses propres supports. Sont exclus, sauf accord écrit : revente, cession à des tiers, usage publicitaire.",
       duree: 'Illimitée pour un usage personnel ; 5 ans pour un client professionnel',
       real: [
