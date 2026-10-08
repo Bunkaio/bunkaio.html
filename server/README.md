@@ -288,11 +288,16 @@ prospects les plus prometteurs sans avoir à ouvrir chaque fiche Stripe :
 
 | Critère | Points |
 |---|---|
-| Budget estimé ≥ 1000 € | +25 |
-| Catégorie immobilier ou architecture | +20 |
-| Intérêt pour la communication récurrente | +15 |
+| Budget estimé (déplacement inclus) : dès 400 € / dès 650 € / dès 1 000 € | +15 / +25 / +35 |
+| Corporate, commercial, événementiel, Lumen | +15 |
+| Mode, agence et mannequins | +10 |
+| Délai souhaité urgent / « dans le mois » | +20 / +10 |
+| Intérêt pour la communication récurrente | +10 |
 | Option drone choisie | +10 |
-| Délai souhaité urgent | +10 |
+| Téléphone renseigné | +5 |
+| Projet décrit en détail (80 caractères ou plus) | +5 |
+
+Les paliers de budget suivent la grille tarifaire (Signature particuliers 420 €, Premium 650 €, formules haut de gamme et événementiel à partir de 1 000 €) : ils se règlent dans `BUDGET_PALIERS_EUR`, `server/src/stripe.ts`.
 
 Le score est ensuite classé en trois niveaux : **chaud** (≥ 70), **tiède**
 (40-69), **froid** (< 40). Ces deux informations (`lead_score`,

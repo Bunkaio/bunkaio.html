@@ -2,27 +2,33 @@ import { getBusinessAddress } from './config';
 import Stripe from 'stripe';
 import type { BalanceInvoiceResult, DepositInvoiceInput, DepositInvoiceResult, LeadSummary, QuizLeadPayload, UpsertResult } from './types';
 
-/** Montant (€) à partir duquel un lead est considéré "budget élevé" pour le scoring. */
-const BUDGET_ELEVE_SEUIL_EUR = 1000;
+/** Paliers de budget (€) du scoring, calés sur la grille tarifaire : dès 400 € (Signature particuliers), dès 650 € (Premium, Corporate Signature+), dès 1 000 € (formules haut de gamme, événementiel). */
+const BUDGET_PALIERS_EUR: Array<[number, number]> = [[1000, 35], [650, 25], [400, 15]];
 
 /**
  * Calcule un score de 0 à 100 à partir des réponses du quiz, pour prioriser
  * les leads sans avoir à ouvrir chaque fiche Stripe individuellement.
- * Barème : budget élevé (+25), catégorie immobilier ou architecture (+20),
- * intérêt pour la communication récurrente (+15), option drone (+10), délai
- * urgent (+10). Seuils : 0-39 froid, 40-69 tiède, 70-100 chaud.
+ * Barème : budget (+15 dès 400 €, +25 dès 650 €, +35 dès 1 000 €), projet professionnel ou événement
+ * (corporate, commercial, événementiel, Lumen : +15, mode : +10), délai urgent (+20) ou « dans le mois » (+10),
+ * intérêt pour la communication récurrente (+10), option drone (+10), téléphone renseigné (+5),
+ * projet décrit en détail (+5). Seuils : 0-39 froid, 40-69 tiède, 70-100 chaud.
  */
 function computeLeadScore(payload: QuizLeadPayload): { score: number; temperature: 'froid' | 'tiede' | 'chaud' } {
   let score = 0;
-  if (typeof payload.budgetMontantEur === 'number' && payload.budgetMontantEur >= BUDGET_ELEVE_SEUIL_EUR) {
-    score += 25;
+  if (typeof payload.budgetMontantEur === 'number') {
+    const palier = BUDGET_PALIERS_EUR.find(([seuil]) => payload.budgetMontantEur! >= seuil);
+    if (palier) score += palier[1];
   }
   const category = payload.category.toLowerCase();
-  if (category.includes('immobilier')) score += 20;
-  if (category.includes('architecture')) score += 20;
-  if (payload.interetCommunication) score += 15;
+  if (/(corporate|commercial|v[ée]nementiel|lumen|immobilier|architecture)/.test(category)) score += 15;
+  else if (category.includes('mode')) score += 10;
+  const delai = (payload.delaiSouhaite || '').toLowerCase();
+  if (delai.includes('urgent')) score += 20;
+  else if (delai.includes('dans le mois') || delai.includes('within the month')) score += 10;
+  if (payload.interetCommunication) score += 10;
   if ((payload.optionsChoisies || '').toLowerCase().includes('drone')) score += 10;
-  if ((payload.delaiSouhaite || '').toLowerCase().includes('urgent')) score += 10;
+  if ((payload.phone || '').trim().length >= 8) score += 5;
+  if ((payload.project || '').trim().length >= 80) score += 5;
 
   const temperature = score >= 70 ? 'chaud' : score >= 40 ? 'tiede' : 'froid';
   return { score, temperature };

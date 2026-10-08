@@ -4582,6 +4582,28 @@ function statusClass(statut){
    plus récent du client — absent ou hors de cette plage, le repère
    reste masqué plutôt que d'afficher un état incorrect. */
 const ACCOUNT_STEPS = ['acc-step-devis', 'acc-step-shoot', 'acc-step-post', 'acc-step-livre'];
+/* Carte « Ma séance » : date, heure, lieu et livraison estimée des photos, saisis dans l'admin. */
+function renderAccSeance(){
+  const el = document.getElementById('accSeance');
+  if (!el) return;
+  const s = USER && USER.seance;
+  if (!s || !s.date) { el.style.display = 'none'; el.innerHTML = ''; return; }
+  const loc = LANG === 'fr' ? 'fr-FR' : 'en-GB';
+  const fmt = d => { try { return new Date(d + 'T12:00:00').toLocaleDateString(loc, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }); } catch (e) { return d; } };
+  const today = new Date(); const iso = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+  const cancelled = s.statut === 'annulee', past = !cancelled && s.date < iso;
+  const title = cancelled ? t({fr:'Séance annulée', en:'Session cancelled'}) : past ? t({fr:'Ma dernière séance', en:'My last session'}) : t({fr:'Ma prochaine séance', en:'My next session'});
+  const rows = [
+    [t({fr:'Date', en:'Date'}), fmt(s.date) + (s.heure ? (LANG === 'fr' ? ' à ' : ' at ') + s.heure : '')],
+    s.lieu ? [t({fr:'Lieu', en:'Location'}), s.lieu] : null,
+    s.prestation ? [t({fr:'Prestation', en:'Service'}), s.prestation] : null,
+    (s.livraison && !USER.photosAcces && !cancelled) ? [t({fr:'Livraison estimée des photos', en:'Estimated photo delivery'}), fmt(s.livraison)] : null
+  ].filter(Boolean);
+  const esc2 = v => String(v).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  el.className = 'acc-seance' + (cancelled ? ' cancelled' : '');
+  el.innerHTML = `<div class="acc-seance-title">${title}</div><dl class="acc-seance-grid">${rows.map(r => `<div><dt>${r[0]}</dt><dd>${esc2(r[1])}</dd></div>`).join('')}</dl>`;
+  el.style.display = '';
+}
 function renderAccountStepper(){
   const el = document.getElementById('accStepper');
   const n = USER && USER.etapeActuelle;
@@ -5686,6 +5708,7 @@ function renderAccount(){
   });
   if (isPartner) { renderAccPartner(); renderAccPromos(); renderAccReseau(); renderAccCollabs(); }
   renderAccountStepper();
+  renderAccSeance();
   renderAccSubs();
   mbView = 'list'; mbActiveId = null;
   renderAccMoodboards();

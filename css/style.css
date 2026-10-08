@@ -4322,3 +4322,19 @@ a, button { -webkit-tap-highlight-color: rgba(110,90,168,0.18); }
 }
 /* Champ « Ville de la prestation » : on masque la flèche native de la liste de suggestions (incohérente avec les autres champs). */
 #qCity::-webkit-calendar-picker-indicator { display: none !important; opacity: 0; }
+
+/* Espace client : carte « Ma séance » */
+.acc-seance {
+  border: 1px solid rgba(255,255,255,0.5); background: rgba(255,255,255,0.92);
+  -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.3); border-radius: 8px;
+  padding: 26px 32px; margin-bottom: 36px; color: var(--black);
+}
+.acc-seance-title { font-size: 11px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: #4b3d7a; margin-bottom: 16px; }
+.acc-seance-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 16px 28px; margin: 0; }
+.acc-seance-grid dt { font-size: 10px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--grey); margin-bottom: 4px; }
+.acc-seance-grid dd { margin: 0; font-size: 15px; line-height: 1.5; text-transform: none; }
+.acc-seance-grid dd::first-letter { text-transform: uppercase; }
+.acc-seance.cancelled .acc-seance-title { color: #9a3d3d; }
+.acc-seance.cancelled .acc-seance-grid dd { text-decoration: line-through; opacity: .6; }
+@media (max-width: 600px) { .acc-seance { padding: 20px 20px; margin-bottom: 26px; } }
