@@ -239,7 +239,7 @@ const I18N = {
     'pf-cta-title':'Prêt à donner vie à votre projet&nbsp;?','pf-cta-sub':'Chaque projet commence par une proposition personnalisée — simple, rapide, sans engagement.','pf-cta-btn':'Recevoir mon devis personnalisé','footer-cta-headline':'Un projet en tête&nbsp;?',
     'aria-next':'Suivant','aria-prev':'Précédent','aria-back':'Retour','aria-menu':'Menu','aria-home':'Accueil',
     'svc-reserve':'Je réserve ma séance','studio-reserve':'Je réserve ma séance en ligne','svc-discover':'Découvrir chaque prestation','ft-discover':'Découvrir chaque prestation','scroll-hint':'Scroll','services-title':'Prestations & tarifs photo','services-sub':'Photographe professionnel à Béziers, Montpellier et Toulouse : des images haut de gamme, en HD, pour mettre en valeur votre projet. Nos prestations et leurs tarifs, par univers.',
-    'svc-all':'Tous','svc-cta':'Construire ce projet →','svc-sub-label':'Abonnement mensuel',
+    'svc-all':'Tous','svc-cta':'Construire ce projet','svc-sub-label':'Abonnement mensuel',
     'svc-trust1-title':'Réponse sous 48h','svc-trust1-text':'Chaque demande est étudiée puis traitée personnellement — jamais de réponse automatique.',
     'svc-trust2-title':'Un parcours accompagné','svc-trust2-text':'De la demande à la livraison, 7 étapes claires — dont la création de votre moodboard pour partager votre vision — <span class="svc-trust-link" onclick="goToProcess()">voir le déroulé complet</span>.',
     'svc-trust3-title':'Vos droits garantis','svc-trust3-text':'Les visuels livrés vous appartiennent, avec des conditions d\'usage définies noir sur blanc dès le devis.',
@@ -596,7 +596,7 @@ const I18N = {
     'pf-cta-title':'Ready to bring your project to life?','pf-cta-sub':'Every project starts with a personalised proposal — simple, quick, no commitment.','pf-cta-btn':'Get my personalised quote','footer-cta-headline':'Got a project in mind?',
     'aria-next':'Next','aria-prev':'Previous','aria-back':'Back','aria-menu':'Menu','aria-home':'Home',
     'svc-reserve':'Book my session','studio-reserve':'Book my session online','svc-discover':'Explore each service','ft-discover':'Explore each service','scroll-hint':'Scroll','services-title':'Photography services & rates','services-sub':'Professional photographer in Béziers, Montpellier and Toulouse: premium, high-definition images that showcase your project. Our services and rates, by universe.',
-    'svc-all':'All','svc-cta':'Build this project →','svc-sub-label':'Monthly plan',
+    'svc-all':'All','svc-cta':'Build this project','svc-sub-label':'Monthly plan',
     'svc-trust1-title':'Reply within 48h','svc-trust1-text':'Every request is reviewed and handled personally — never an automated reply.',
     'svc-trust2-title':'A guided journey','svc-trust2-text':'From request to delivery, 7 clear steps — including building your moodboard to share your vision — <span class="svc-trust-link" onclick="goToProcess()">see the full process</span>.',
     'svc-trust3-title':'Your rights guaranteed','svc-trust3-text':'The delivered visuals belong to you, with usage terms clearly defined from the quote onward.',
@@ -4154,12 +4154,14 @@ function renderServices(){
       </div>
       ${subRow}
       ${POLAS[c.id] ? `<div class="service-polas"><span class="service-tier-name"><strong>${t(POLAS[c.id].name)}</strong> <span class="service-polas-tag">${t(POLAS[c.id].label)}</span><small>${t(POLAS[c.id].short)}</small></span><span class="service-tier-price">${specialTotal(POLAS[c.id]).toLocaleString('fr-FR')}€</span></div>` : ''}
-      <button class="service-cta">${I18N[LANG]['svc-cta']}</button>
-      <a class="service-more" href="${servicePath(c.id)}" onclick="return navLink(event,'service','${c.id}')">${t(c.name)} : ${t({fr:'détails et tarifs →', en:'details and rates →'})}</a>`;
+      <div class="service-actions">
+        <button class="service-cta" type="button"><span class="sc-label">${I18N[LANG]['svc-cta']}</span><i class="sc-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></i></button>
+        <a class="service-more" href="${servicePath(c.id)}" onclick="return navLink(event,'service','${c.id}')"><span class="sm-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><line x1="8.5" y1="8" x2="15.5" y2="8"/><line x1="8.5" y1="12" x2="15.5" y2="12"/><line x1="8.5" y1="16" x2="12.5" y2="16"/></svg></span><span class="sm-txt"><b>${t({fr:'Détails et tarifs', en:'Details and rates'})}</b><small>${navName(c)}</small></span><i class="sm-arrow" aria-hidden="true">→</i></a>
+      </div>`;
     /* Mobile : fiches repliées (nom + prix « dès »), le détail s'ouvre au toucher ; un filtre actif ouvre la fiche. */
     if (activeServiceFilter) card.classList.add('is-open');
     card.querySelector('.service-head').addEventListener('click', () => card.classList.toggle('is-open'));
-    if (c.comingSoon) card.querySelector('.service-cta').textContent = t({fr:'Nous contacter', en:'Contact us'});
+    if (c.comingSoon) card.querySelector('.service-cta .sc-label').textContent = t({fr:'Nous contacter', en:'Contact us'});
     card.querySelector('.service-cta').onclick = () => {
       if (c.comingSoon) { goToComingSoon(c.id); return; }
       S.cat = c.id; S.tier = null; S.prof = null;

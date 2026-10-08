@@ -4588,3 +4588,32 @@ a, button { -webkit-tap-highlight-color: rgba(110,90,168,0.18); }
   .hero-title .hero-kicker::before, .hero-kicker .hk-a, .hero-kicker .hk-b em::after { animation: none; }
   .hero-kicker .hk-a { color: #0a0a0c; background: none; }
 }
+
+/* ═══ Catalogue : actions de chaque carte. Action principale (bouton plein, flèche qui avance) et lien vers la page détaillée
+   (carte claire avec icône, « Détails et tarifs » + nom de la prestation) : deux rôles visuellement distincts. ═══ */
+.service-actions { display: flex; flex-direction: column; gap: 10px; margin-top: 22px; }
+.service-card .service-cta {
+  margin-top: 0; align-self: stretch; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 9px 8px 9px 18px; border-radius: 999px; background: #0a0a0c; color: #fff; gap: 10px;
+  font-size: 13px; font-weight: 700; letter-spacing: 0; text-transform: none; white-space: nowrap;
+  box-shadow: 0 10px 22px rgba(10,10,12,0.18); transition: background 0.35s ease, box-shadow 0.35s ease, transform 0.35s var(--ease-luxe, ease);
+}
+.service-card .service-cta::after { display: none; }
+.service-cta .sc-arrow { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex: 0 0 32px; border-radius: 50%; background: #6e5aa8; color: #fff; transition: transform 0.4s var(--ease-luxe, ease), background 0.35s ease; }
+.service-cta .sc-arrow svg { width: 15px; height: 15px; }
+.service-card .service-cta:hover, .service-card .service-cta:focus-visible { background: #1d1726; box-shadow: 0 14px 28px rgba(110,90,168,0.32); transform: translateY(-1px); }
+.service-card .service-cta:hover .sc-arrow, .service-card .service-cta:focus-visible .sc-arrow { transform: translateX(3px); background: #8b74c9; }
+.service-card .service-more {
+  margin-top: 0; display: flex; align-items: center; gap: 12px; padding: 11px 14px; border-radius: 14px;
+  border: 1px solid rgba(110,90,168,0.28); background: rgba(255,255,255,0.75); color: var(--black);
+  text-decoration: none; background-image: none; transition: border-color 0.35s ease, background 0.35s ease, box-shadow 0.35s ease;
+}
+.service-card .service-more:hover, .service-card .service-more:focus-visible { border-color: #6e5aa8; background: #fff; box-shadow: 0 8px 20px rgba(110,90,168,0.14); background-size: auto; }
+.service-more .sm-ico { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex: 0 0 32px; border-radius: 10px; background: #efeaf8; color: #4b3d7a; }
+.service-more .sm-ico svg { width: 17px; height: 17px; }
+.service-more .sm-txt { flex: 1; min-width: 0; display: flex; flex-direction: column; line-height: 1.3; }
+.service-more .sm-txt b { font-size: 13px; font-weight: 700; }
+.service-more .sm-txt small { font-size: 11.5px; color: #6b6578; overflow-wrap: anywhere; }
+.service-more .sm-arrow { font-style: normal; font-weight: 700; color: #6e5aa8; transition: transform 0.35s var(--ease-luxe, ease); }
+.service-card .service-more:hover .sm-arrow { transform: translateX(3px); }
+@media (prefers-reduced-motion: reduce) { .service-card .service-cta, .service-cta .sc-arrow, .service-more .sm-arrow { transition: none; } }
