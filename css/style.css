@@ -4536,9 +4536,9 @@ a, button { -webkit-tap-highlight-color: rgba(110,90,168,0.18); }
 .pb-acc .cs-acc-item.open .cs-acc-panel p { padding-bottom: 0; }
 .pb-acc .cs-acc-panel .pb-compare p { margin: 0 0 8px; }
 
-/* ═══ Accueil : « Studio d'image pour professionnels, entrepreneurs et mannequins » — version typographique, sans encadré ═══
+/* ═══ Accueil : « Studio de photographie pour professionnels, entrepreneurs et mannequins » — version typographique, sans encadré ═══
    Noir (décision de la propriétaire pour ce titre) avec une lueur claire pour rester lisible sur les photos du carrousel ;
-   le violet de la charte ne sert qu'en accent : deux filets qui se tracent de part et d'autre de « Studio d'image », un
+   le violet de la charte ne sert qu'en accent : deux filets qui se tracent de part et d'autre de « Studio de photographie », un
    reflet unique, puis les trois publics qui arrivent l'un après l'autre avec un soulignement fin. Animations jouées une fois. */
 .hero-title .hero-kicker {
   display: flex; flex-direction: column; align-items: center; gap: 10px; width: fit-content; max-width: min(92vw, 640px);
@@ -4648,7 +4648,7 @@ a, button { -webkit-tap-highlight-color: rgba(110,90,168,0.18); }
   @media (min-width: 921px) { .services-grid .service-card { display: flex; } .services-grid .service-card > .service-actions { margin-top: auto; padding-top: 22px; } }
 }
 
-/* Accueil : lueur violet pâle derrière « Studio d'image pour professionnels, entrepreneurs et mannequins ».
+/* Accueil : lueur violet pâle derrière « Studio de photographie pour professionnels, entrepreneurs et mannequins ».
    Halo flou sans bord (pas d'encadré) + légère lueur sur les lettres, pour détacher le texte noir des photos du carrousel. */
 .hero-title .hero-kicker {
   position: relative; isolation: isolate;
