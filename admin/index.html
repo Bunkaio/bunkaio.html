@@ -1922,7 +1922,7 @@ function quoteForm(q) {
     <div class="frow"><div class="fg"><label>Téléphone</label><input id="qeTel" value="${esc(c.telephone)}"></div><div class="fg"><label>SIRET</label><input id="qeSiret" value="${esc(c.siret)}"></div></div>
     <div class="fg"><label>N° TVA intracommunautaire</label><input id="qeTva" value="${esc(c.tvaIntra)}"></div>
     <div class="lab" style="margin-top:10px">Prestation</div>
-    <div class="fg"><label>Modèle</label><select id="qeTpl" onchange="applyTemplate()">${Object.entries(TPL).map(([k, t]) => opt(k, q.template, t.label)).join('')}</select><div class="hint">Changer de modèle remplace prestation, délai, droits et conditions.</div></div>
+    <div class="fg"><label>Modèle</label><select id="qeTpl" onchange="applyTemplate()">${Object.entries(TPL).filter(([k, t]) => !t.inactive || k === q.template).map(([k, t]) => opt(k, q.template, t.label)).join('')}</select><div class="hint">Changer de modèle remplace prestation, délai, droits et conditions.</div></div>
     <div class="fg"><label>Intitulé de la prestation</label><input id="qePresta" value="${esc(q.prestation)}"></div>
     <div class="fg"><label>Contenu / livrables</label><textarea id="qeContenu" style="font-family:inherit;font-size:13.5px;min-height:90px" placeholder="${esc((TPL[q.template] || {}).contenuHint || '')}">${esc(q.contenu)}</textarea></div>
     <div class="frow"><div class="fg"><label>Date</label><input type="date" id="qeDate" value="${esc(q.seance && q.seance.date)}"></div><div class="fg"><label>Heure</label><input id="qeHeure" value="${esc(q.seance && q.seance.heure)}" placeholder="14h30"></div></div>

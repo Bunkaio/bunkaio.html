@@ -318,7 +318,6 @@ const FORMULA_CATS = [
   { id: 'mode',       name: 'Mode, agence et mannequins', tiers: ['deco', 'sig', 'prem', 'edit'], extra: { polas: 'Polas (digitals agences)', sub: 'Studio Continu (abonnement)' } },
   { id: 'commercial', name: 'Commercial & produits', tiers: ['deco', 'sig', 'prem', 'edit'] },
   { id: 'event',      name: 'Événementiel', tiers: ['deco', 'sig', 'prem', 'edit'] },
-  { id: 'lumen',      name: 'Lumen — photobooth IA', tiers: [], extra: { dec: 'Découverte', sig: 'Signature', surm: 'Premium (sur mesure)' } },
 ];
 const FORMULA_SECTIONS = FORMULA_CATS.map(c => ({
   id: 'formulas-' + c.id,
@@ -347,7 +346,7 @@ const SECTIONS = [
   // ── Parcours prestations (accueil) + filtre catégorie (Services) + formulaire ──
   {
     id: 'services-cats',
-    title: '📸 Prestations — 6 catégories actives',
+    title: '📸 Prestations — 5 catégories actives',
     desc: '2000 × 2500 px, portrait 4:5 (≤ 450 Ko, largeur minimum 1600 px), sujet CENTRÉ. Elle sert aussi de fond d\'écran (devis, accueil) : exporter en grand. La même photo sert à 4 endroits (dont la page de chaque prestation, recadrée en 3:4, avec son texte alternatif) : fond plein écran du parcours "prestations" sur l\'accueil, vignette quand on filtre par catégorie sur la page Services, ET miniature de la catégorie à la 1ère étape du questionnaire de devis. La modifier ici la met à jour partout automatiquement.',
     slots: [
       { path: 'services/photo-part.webp', label: 'Séance photo — particuliers' },
@@ -355,7 +354,6 @@ const SECTIONS = [
       { path: 'services/mode.webp', label: 'Mode, agence et mannequins' },
       { path: 'services/commercial.webp', label: 'Commercial & produits' },
       { path: 'services/event.webp', label: 'Événementiel' },
-      { path: 'services/lumen.webp', label: 'Lumen — photobooth IA mariages' },
     ],
   },
   ...FORMULA_SECTIONS,
@@ -369,7 +367,6 @@ const SECTIONS = [
       { path: 'discover/mode.webp', label: 'Mode, agence et mannequins' },
       { path: 'discover/commercial.webp', label: 'Commercial & produits' },
       { path: 'discover/event.webp', label: 'Événementiel' },
-      { path: 'discover/lumen.webp', label: 'Lumen — photobooth IA' },
     ],
   },
 
@@ -448,6 +445,14 @@ const SECTIONS = [
 // alimenter tant que ce n'est pas réactivé.
 const DISABLED_SECTIONS = [
   {
+    id: 'lumen-inactive',
+    title: '💡 Lumen — prototype, inactif',
+    desc: 'Lumen est un prototype : aucune formule ni page de présentation sur le site, ses liens mènent au formulaire de contact. Ces emplacements restent ici pour plus tard ; inutile de les remplir pour l\'instant.',
+    slots: [
+      { path: 'services/lumen.webp', label: 'Photo de la carte Lumen (carrousel d\'accueil, page Services)' },
+    ],
+  },
+  {
     id: 'services-cats-archive',
     title: '🗄 Catégories archivées — non utilisées actuellement',
     desc: '900 × 1200 px, portrait 3:4. Ces prestations sont désactivées du catalogue en ligne ; inutile d\'exporter ces photos tant que tu ne les réactives pas.',
@@ -497,7 +502,7 @@ const PF_CATS = [
 
 // Catégories portfolio archivées — repliées dans l'accordéon plus bas.
 const PF_CATS_DISABLED = [
-  { id: 'lumen', label: 'Lumen (bientôt disponible : retiré du portfolio)' },
+  { id: 'lumen', label: 'Lumen (prototype : inactif)' },
   { id: 'immobilier', label: 'Immobilier (archivé)' },
   { id: 'archi', label: 'Architecture (archivé)' },
   { id: 'artisan', label: 'Artisanat (archivé)' },

@@ -388,12 +388,14 @@ function pinAssets(html) {
   }
 
   /* Anciennes URL renommées : page de redirection (GitHub Pages ne gère pas les 301). Hors sitemap. */
-  for (const rd of [{ from: '/partenaires/', to: '/collaboration/', label: 'Collaboration' }]) {
+  for (const rd of [{ from: '/partenaires/', to: '/collaboration/', label: 'Collaboration' },
+                   /* Lumen (prototype) : plus de page de formules, renvoi vers le formulaire de contact pré-rempli. */
+                   { from: '/services/photobooth-ia-mariage-lumen/', to: '/contact/#lumen', label: 'Contact' }]) {
     const f = path.join(ROOT, rd.from, 'index.html');
     fs.mkdirSync(path.dirname(f), { recursive: true });
     fs.writeFileSync(f, `<!DOCTYPE html>
 <html lang="fr"><head><meta charset="UTF-8"><title>BUNKAIO ⊹ | ${rd.label}</title>
-<meta name="robots" content="noindex, follow"><link rel="canonical" href="${SITE}${rd.to}">
+<meta name="robots" content="noindex, follow"><link rel="canonical" href="${SITE}${rd.to.split('#')[0]}">
 <meta http-equiv="refresh" content="0; url=${rd.to}"></head>
 <body><p><a href="${rd.to}">${rd.label} — BUNKAIO</a></p><script>location.replace('${rd.to}'+location.hash);</script></body></html>
 `);

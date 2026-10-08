@@ -42,11 +42,6 @@
         "name": "Événementiel",
         "description": "Reportage photo d'événements : domaines, entreprises, réceptions.",
         "path": "/services/photographe-evenementiel/"
-      },
-      {
-        "name": "Lumen — photobooth IA",
-        "description": "Photobooth IA pour mariages et événements haut de gamme.",
-        "path": "/services/photobooth-ia-mariage-lumen/"
       }
     ],
     "siret": "95154758700034",

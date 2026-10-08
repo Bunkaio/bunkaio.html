@@ -328,31 +328,7 @@ const I18N = {
     'share-btn':'Envoyer mon témoignage',
     'share-success-title':'Merci pour votre retour',
     'share-success-text':'Votre témoignage a bien été reçu. Nous vous recontacterons si nous souhaitons le publier.',
-    'trust-label':'Ils ont fait confiance à BUNKAIO',
-    'testi1-tag':'Portrait extérieur',
-    'testi1-text':'Je redoutais la séance, comme beaucoup. Bunkaio a pris le temps qu\'il fallait pour que j\'oublie l\'appareil — les photos ne ressemblent à aucune photo de profil que j\'ai eue avant. J\'y ressemble enfin.',
-    'testi1-role':'Consultant indépendant · Aix-en-Provence',
-    'testi2-tag':'Photo produits',
-    'testi2-text':'J\'avais peur que mes bijoux paraissent froids en photo. C\'est l\'inverse qui s\'est produit — chaque pièce a l\'air presque vivante. Mes clientes me disent qu\'elles ont "senti" la matière avant même d\'ouvrir le colis.',
-    'testi2-role':'Fondatrice · Atelier Maren, joaillerie, Paris',
-    'testi3-tag':'Campagne corporate',
-    'testi3-text':'Personne dans l\'équipe n\'aime être pris en photo. Bunkaio a réussi à capturer 40 personnes qui n\'ont jamais eu l\'air aussi naturelles. Notre rapport annuel a enfin une âme.',
-    'testi3-role':'Directeur de la communication · Lyon',
-    'testi4-tag':'Événementiel',
-    'testi4-text':'200 invités, une seule soirée, aucun droit à l\'erreur. Bunkaio était partout sans jamais se faire remarquer. Le lendemain matin, tout le monde avait déjà ses photos — c\'est rare, et ça change tout.',
-    'testi4-role':'Chargée d\'événementiel · Bordeaux',
-    'testi5-tag':'Portrait extérieur',
-    'testi5-text':'On a marché dans le vieux Lyon pendant une heure, sans jamais vraiment poser. Le résultat est le portrait le plus honnête qu\'on ait jamais fait de moi. Mes proches n\'arrêtent pas de me le dire.',
-    'testi5-role':'Coach en reconversion · Lyon',
-    'testi6-tag':'Photo produits',
-    'testi6-text':'On avait déjà fait photographier nos produits ailleurs, sans grande conviction. Avec Bunkaio, on a enfin compris pourquoi certaines marques donnent envie et d\'autres non. C\'est une question de lumière, de patience, de regard.',
-    'testi6-role':'Co-fondateur · Marque de cosmétiques bio, Nantes',
-    'testi7-tag':'Campagne corporate',
-    'testi7-text':'On voulait éviter les clichés habituels — costumes figés, sourires forcés. Le résultat raconte vraiment qui on est en tant qu\'entreprise, pas seulement ce qu\'on fait.',
-    'testi7-role':'Responsable RH · PME industrielle, Toulouse',
-    'testi8-tag':'Événementiel',
-    'testi8-text':'Ce que j\'ai préféré, c\'est n\'avoir jamais eu à diriger qui que ce soit. Les meilleurs moments de la soirée ont été capturés sans qu\'on s\'en aperçoive. C\'est ça, la vraie différence.',
-    'testi8-role':'Organisateur d\'événements d\'entreprise · Marseille',
+    'trust-label':'Ils ont collaboré avec BUNKAIO','collab-card-tag':'Collaboration','collab-card-text':'Shooting réalisé en collaboration avec la marque.','collab-role-1':'Bijoux','collab-role-2':'Thé','collab-role-3':'Cameroon Wax','collab-role-4':'Restauration','collab-role-5':'Lunetterie','collab-role-6':'Cosmétique','collab-role-7':'Book Palmynala','collab-role-8':'Capsule et lookbook STDR','collab-role-9':'Boutique',
     'p-who':'Qui peut devenir Partenaire Fondateur\u00a0?',
     'p-who-text':'Le programme Partenaires Fondateurs est réservé aux entreprises et professionnels dont les réalisations, les valeurs et l\'exigence correspondent à l\'univers Bunkaio. Nous recherchons notamment\u00a0:',
     'p-list-1':'Portrait & lifestyle — coiffeurs, maquilleurs, coachs en image, instituts, studios',
@@ -544,7 +520,7 @@ const I18N = {
     'ft-services':'Services','ft-studio':'Le studio',
     'footer-claim2':'Photographe mobile · Béziers · Montpellier · Toulouse',
     'stab-catalogue':'Catalogue & prix','stab-devis':'Devis & déroulé',
-    'p-trust':'Ils nous ont fait confiance',
+    'p-trust':'Ils ont collaboré avec BUNKAIO',
     'process-payment-info':'<strong>Modalités de paiement :</strong> 30 % à la commande à la signature du devis, solde à la livraison des livrables. Chaque versement est réglable en 3x sans frais avec Klarna, par carte bancaire.',
     'process-cancel-info':'<strong>Annulation :</strong> une fois le devis validé, l\'acompte de 30 % versé à la commande reste acquis à BUNKAIO et n\'est pas remboursé en cas d\'annulation de votre part.',
     'process-delay-info':'Les délais indiqués sur chaque formule démarrent à la date du shooting.',
@@ -683,31 +659,7 @@ const I18N = {
     'share-btn':'Send my testimonial',
     'share-success-title':'Thank you for your feedback',
     'share-success-text':'Your testimonial has been received. We will get back to you if we would like to publish it.',
-    'trust-label':'They trusted BUNKAIO',
-    'testi1-tag':'Outdoor portrait',
-    'testi1-text':'I dreaded the session, like most people do. Bunkaio took exactly the time needed for me to forget the camera was there — these photos look nothing like any profile picture I\'ve had before. I finally recognise myself in them.',
-    'testi1-role':'Independent consultant · Aix-en-Provence',
-    'testi2-tag':'Product photography',
-    'testi2-text':'I was afraid my jewellery would look cold in photos. The opposite happened — each piece feels almost alive. My customers tell me they could "feel" the material before even opening the box.',
-    'testi2-role':'Founder · Atelier Maren, jewellery, Paris',
-    'testi3-tag':'Corporate campaign',
-    'testi3-text':'No one on the team likes having their photo taken. Bunkaio managed to capture 40 people who have never looked so natural. Our annual report finally has a soul.',
-    'testi3-role':'Head of communications · Lyon',
-    'testi4-tag':'Events',
-    'testi4-text':'200 guests, one single evening, no room for error. Bunkaio was everywhere without ever being noticed. By the next morning, everyone already had their photos — that\'s rare, and it changes everything.',
-    'testi4-role':'Event manager · Bordeaux',
-    'testi5-tag':'Outdoor portrait',
-    'testi5-text':'We walked through old Lyon for an hour, never really posing. The result is the most honest portrait anyone has ever taken of me. My friends keep telling me so.',
-    'testi5-role':'Career transition coach · Lyon',
-    'testi6-tag':'Product photography',
-    'testi6-text':'We\'d had our products photographed elsewhere before, without much conviction. With Bunkaio, we finally understood why some brands make you want to buy and others don\'t. It\'s a matter of light, patience, and a certain eye.',
-    'testi6-role':'Co-founder · Organic cosmetics brand, Nantes',
-    'testi7-tag':'Corporate campaign',
-    'testi7-text':'We wanted to avoid the usual clichés — stiff suits, forced smiles. The result truly tells who we are as a company, not just what we do.',
-    'testi7-role':'HR manager · Industrial SME, Toulouse',
-    'testi8-tag':'Events',
-    'testi8-text':'What I appreciated most is that I never had to direct anyone. The best moments of the evening were captured without anyone noticing. That\'s the real difference.',
-    'testi8-role':'Corporate event organiser · Marseille',
+    'trust-label':'They collaborated with BUNKAIO','collab-card-tag':'Collaboration','collab-card-text':'Shoot created in collaboration with the brand.','collab-role-1':'Jewellery','collab-role-2':'Tea','collab-role-3':'Cameroon Wax','collab-role-4':'Street food','collab-role-5':'Eyewear','collab-role-6':'Cosmetics','collab-role-7':'Palmynala book','collab-role-8':'STDR capsule and lookbook','collab-role-9':'Boutique',
     'p-who':'Who can become a Founding Partner?',
     'p-who-text':'The Founding Partners programme is reserved for companies and professionals whose work, values and standards align with the Bunkaio universe. We are particularly looking for:',
     'p-list-1':'Portrait & lifestyle — hairstylists, make-up artists, image coaches, wellness studios, studios',
@@ -899,7 +851,7 @@ const I18N = {
     'ft-services':'Services','ft-studio':'The studio',
     'footer-claim2':'Mobile photographer · Béziers · Montpellier · Toulouse',
     'stab-catalogue':'Catalogue & rates','stab-devis':'Quote & process',
-    'p-trust':'They trusted us',
+    'p-trust':'They collaborated with BUNKAIO',
     'process-payment-info':'<strong>Payment terms:</strong> 30% deposit upon signing the quote, balance due on delivery of your deliverables. Each payment can be split into 3 interest-free instalments with Klarna, by credit card.',
     'process-cancel-info':'<strong>Cancellation:</strong> once the quote is accepted, the 30% deposit paid at booking is retained by BUNKAIO and is non-refundable if you cancel.',
     'process-delay-info':'The delivery timelines indicated on each package begin on the day of the shoot.',
@@ -1360,7 +1312,7 @@ const LUMEN_TIERS = [
   { id:'dec',  name:{fr:'Découverte',  en:'Discovery'},
     badge:{fr:'L\'expérience Lumen', en:'The Lumen experience'},
     line:{fr:'L\'expérience complète sur 4 heures : photobooth IA, impressions illimitées et galerie privée.', en:'The full experience over 4 hours: AI photobooth, unlimited prints and a private gallery.'},
-    price: 590, priceUSD: 650,
+    price: null, priceUSD: null, /* prototype : pas de prix publié */
     delay:{fr:'7 jours ouvrés', en:'7 working days'},
     items:{
       fr:['Photobooth IA installé et opérationnel','Jusqu\'à 4 heures de prestation','Impressions illimitées incluses','Galerie privée livrée sous 7 jours'],
@@ -1369,7 +1321,7 @@ const LUMEN_TIERS = [
   { id:'sig',  name:{fr:'Signature',  en:'Signature'},
     badge:{fr:'Recommandée', en:'Recommended'},
     line:{fr:'Pour un événement à votre image : 6 heures et un style personnalisé à vos couleurs.', en:'For an event that looks like you: 6 hours and a custom style in your colours.'},
-    price: 1190, priceUSD: 1300,
+    price: null, priceUSD: null, /* prototype : pas de prix publié */
     delay:{fr:'5 jours ouvrés', en:'5 working days'},
     items:{
       fr:['Photobooth IA installé et opérationnel','Jusqu\'à 6 heures de prestation','Style personnalisé : fond, habillage et palette à l\'univers de l\'événement','Impressions illimitées incluses','Galerie privée livrée sous 5 jours'],
@@ -1910,7 +1862,7 @@ function seoRouteFor(v, sub){
   return same.find(r => (r.sub || null) === (sub || null)) || same.find(r => !r.sub) || null;
 }
 /* Lien crawlable vers la page d'une prestation (repli sur /services/ si inconnue). */
-function servicePath(catId){ const r = seoRouteFor('service', catId); return r ? r.path : '/services/'; }
+function servicePath(catId){ if (catId === 'lumen') return '/contact/#lumen'; const r = seoRouteFor('service', catId); return r ? r.path : '/services/'; }
 function seoRouteForPath(path){
   if (typeof SEO_ROUTES === 'undefined') return null;
   const p = path.replace(/index\.html$/, '');
@@ -1947,6 +1899,8 @@ window.addEventListener('popstate', () => {
 
 function goView(v, subTab, opts){
   opts = opts || {};
+  /* Lumen est un prototype : aucune page de formules, tout lien mène au formulaire de contact pré-rempli. */
+  if (v === 'service' && subTab === 'lumen') { goToComingSoon('lumen'); return; }
   currentView = v;
   currentSub = (v === 'service' || v === 'article' || v === 'legal') ? (subTab || null) : null;
   const route = seoRouteFor(v, subTab);
@@ -2124,7 +2078,9 @@ function goToComingSoon(catId){
   goView('contact');
   setTimeout(() => {
     const m = document.getElementById('ctMsg');
-    if (m && !m.value) m.value = t({fr:'Bonjour, je souhaite être prévenu(e) de l\'ouverture des réservations de ', en:'Hello, I would like to be notified when bookings open for '}) + (c ? t(c.name) : '') + '.';
+    if (m && !m.value) m.value = catId === 'lumen'
+      ? t({fr:'Bonjour, je souhaite en savoir plus sur Lumen, le photobooth IA de BUNKAIO, pour mon événement.\nDate : \nLieu : \nNombre d\'invités : ', en:'Hello, I would like to know more about Lumen, the BUNKAIO AI photobooth, for my event.\nDate: \nVenue: \nNumber of guests: '})
+      : t({fr:'Bonjour, je souhaite être prévenu(e) de l\'ouverture des réservations de ', en:'Hello, I would like to be notified when bookings open for '}) + (c ? t(c.name) : '') + '.';
   }, 450);
   scrollToContactForm();
 }
@@ -2181,6 +2137,17 @@ const MS_DELAY = 5500;
 function missionPillName(c){ return c.lumen ? t({fr:'Photobooth Lumen · bientôt', en:'Lumen photobooth · soon'}) : String(t(c.name)).split(' — ')[0].split(',')[0]; }
 function missionPreviewHTML(c){
   const f = catFacts(c), en = LANG === 'en';
+  if (f.proto) {
+    const url0 = IMG.servicePhotos && IMG.servicePhotos[c.id];
+    return `<a class="ms-im" href="/contact/#lumen" aria-label="${t(c.name)}" onclick="event.preventDefault();goToComingSoon('${c.id}')"${url0 ? ` style="background-image:url('${url0}')"` : ''}></a>
+    <div class="ms-tx">
+      <span class="soon-chip">${t({fr:'Bientôt disponible', en:'Coming soon'})}</span>
+      <h3><a href="/contact/#lumen" onclick="event.preventDefault();goToComingSoon('${c.id}')">${t(c.name)}</a></h3>
+      <div class="ms-from">${t({fr:'Prototype en cours de finalisation', en:'Prototype being finalised'})}</div>
+      <ul><li>${t({fr:'Photobooth IA pour mariages et événements', en:'AI photobooth for weddings and events'})}</li><li>${t({fr:'Parlez-nous de votre événement : nous vous répondons', en:'Tell us about your event: we will get back to you'})}</li></ul>
+      <div class="ms-actions"><a class="ms-cta" href="/contact/#lumen" onclick="event.preventDefault();goToComingSoon('${c.id}')">${t({fr:'Nous contacter', en:'Contact us'})} →</a></div>
+    </div>`;
+  }
   const to = t({fr:'à', en:'to'}), wd = t({fr:'jours ouvrés', en:'working days'});
   const dly = (f.dMin === f.dMax ? f.dMin : f.dMin + ' ' + to + ' ' + f.dMax) + ' ' + wd;
   const pts = [t({fr:'Livraison en ', en:'Delivery in '}) + dly];
@@ -3131,8 +3098,8 @@ const SERVICE_COPY = {
     ]
   },
   'event': {
-    lead:{fr:'BUNKAIO couvre en photo les événements — domaines, entreprises, réceptions — à Béziers, Montpellier et Toulouse, avec discrétion pour que vous puissiez vivre la journée. La couverture se choisit selon la durée : 2 h pour l\'essentiel, 4 h pour l\'ambiance, ou l\'événement complet. Pour comparer les prestataires, voir <a href="/conseils/choisir-photographe-evenementiel/" data-nav="article:choisir-photographe-evenementiel">comment choisir son photographe d\'événement</a> ; pour un mariage ou une réception, le photobooth <a href="/services/photobooth-ia-mariage-lumen/" data-nav="service:lumen">Lumen</a> complète la couverture.',
-          en:'BUNKAIO covers events — estates, companies, receptions — in Béziers, Montpellier and Toulouse, discreetly so you can enjoy the day. Coverage is chosen by duration: 2 hours for the essentials, 4 hours for the atmosphere, or the full event. To compare providers, see <a href="/conseils/choisir-photographe-evenementiel/" data-nav="article:choisir-photographe-evenementiel">how to choose your event photographer</a>; for a wedding or reception, the <a href="/services/photobooth-ia-mariage-lumen/" data-nav="service:lumen">Lumen</a> photobooth complements the coverage.'},
+    lead:{fr:'BUNKAIO couvre en photo les événements — domaines, entreprises, réceptions — à Béziers, Montpellier et Toulouse, avec discrétion pour que vous puissiez vivre la journée. La couverture se choisit selon la durée : 2 h pour l\'essentiel, 4 h pour l\'ambiance, ou l\'événement complet. Pour comparer les prestataires, voir <a href="/conseils/choisir-photographe-evenementiel/" data-nav="article:choisir-photographe-evenementiel">comment choisir son photographe d\'événement</a> ; pour un mariage ou une réception, le photobooth <a href="/contact/#lumen" data-nav="service:lumen">Lumen</a> complète la couverture.',
+          en:'BUNKAIO covers events — estates, companies, receptions — in Béziers, Montpellier and Toulouse, discreetly so you can enjoy the day. Coverage is chosen by duration: 2 hours for the essentials, 4 hours for the atmosphere, or the full event. To compare providers, see <a href="/conseils/choisir-photographe-evenementiel/" data-nav="article:choisir-photographe-evenementiel">how to choose your event photographer</a>; for a wedding or reception, the <a href="/contact/#lumen" data-nav="service:lumen">Lumen</a> photobooth complements the coverage.'},
     choose:[
       {fr:'pour les moments essentiels : couverture de 2 h et 20 photos.', en:'for the key moments: 2 hours of coverage and 20 photos.'},
       {fr:'pour les moments clés et l\'ambiance : couverture jusqu\'à 4 h et 40 photos.', en:'for key moments and atmosphere: up to 4 hours of coverage and 40 photos.'},
@@ -3178,9 +3145,8 @@ const DISCOVER_COPY = {
 
 function catFacts(c){
   const en = LANG === 'en';
-  const tiers = c.lumen
-    ? LUMEN_TIERS.filter(x => x.id !== 'surm' && x.price).map(x => ({ price: x.price, delay: x.delay, items: x.items }))
-    : TIERS.map(tr => ({ price: c.tiers[tr.id].price, delay: c.tiers[tr.id].delay, items: c.tiers[tr.id].items }));
+  if (c.lumen) return { from: null, dMin: 0, dMax: 0, pMin: 0, pMax: 0, hasVideo: false, proto: true };
+  const tiers = TIERS.map(tr => ({ price: c.tiers[tr.id].price, delay: c.tiers[tr.id].delay, items: c.tiers[tr.id].items }));
   const prices = tiers.map(x => x.price);
   const days = tiers.map(x => parseInt((en ? x.delay.en : x.delay.fr), 10)).filter(Boolean);
   const photos = tiers.map(x => { const m = (en ? x.items.en : x.items.fr).join(' ').match(/(\d+)\s+(?:retouched\s+)?(?:HD\s+)?(?:photos|photographs|retouched)/i); return m ? parseInt(m[1], 10) : 0; }).filter(Boolean);
@@ -3718,7 +3684,7 @@ function ctaLabel(catId){
   if (catId === 'mode' || catId === 'commercial') return t({fr:'Recevoir une proposition', en:'Receive a proposal'});
   return t({fr:'Demander un devis', en:'Request a quote'});
 }
-function quizLink(catId, label, cls){ if (catId && isComingSoon(catId)) label = t({fr:'Me prévenir de l\'ouverture', en:'Notify me when it opens'}); return `<a class="${cls || 'cta-primary'}" href="/devis/" data-quiz="${catId || ''}">${label}</a>`; }
+function quizLink(catId, label, cls){ if (catId && isComingSoon(catId)) label = t({fr:'Nous contacter', en:'Contact us'}); return `<a class="${cls || 'cta-primary'}" href="/devis/" data-quiz="${catId || ''}">${label}</a>`; }
 document.addEventListener('click', (e) => {
   const a = e.target.closest ? e.target.closest('a[data-quiz]') : null;
   if (!a) return;
@@ -3825,18 +3791,14 @@ function renderServices(){
       <div class="service-head">
         <div class="service-icon">${getIcon(c.icon)}</div>
         <div class="service-name">${t(c.name)}</div>
-        ${c.comingSoon ? `<span class="soon-chip">${t({fr:'Bientôt disponible', en:'Coming soon'})}</span>` : ''}<span class="service-from">${t({fr:'dès', en:'from'})} ${catFacts(c).from.toLocaleString('fr-FR')} €</span>
+        ${c.comingSoon ? `<span class="soon-chip">${t({fr:'Bientôt disponible', en:'Coming soon'})}</span>` : ''}${c.lumen ? '' : `<span class="service-from">${t({fr:'dès', en:'from'})} ${catFacts(c).from.toLocaleString('fr-FR')} €</span>`}
         <i class="service-chev" aria-hidden="true"></i>
       </div>
       <div class="service-tag">${t(c.tag)}</div>
       ${c.pitch ? `<p class="service-pitch">${t(c.pitch)}</p>` : ''}
       <div class="service-tiers">
         ${c.lumen
-          ? LUMEN_TIERS.map(lt => `
-              <div class="service-tier">
-                <span class="service-tier-name">${t(lt.name)}${lt.promo ? `<span class="service-tier-promo">${t(lt.promo)}</span>` : ''}</span>
-                <span class="service-tier-price">${lt.id === 'surm' ? (LANG === 'fr' ? 'Sur mesure' : 'Bespoke') : lt.price.toLocaleString('fr-FR') + '€'}</span>
-              </div>`).join('')
+          ? `<div class="service-tier"><span class="service-tier-name">${t({fr:'Prototype en cours de finalisation', en:'Prototype being finalised'})}</span><span class="service-tier-price">${t({fr:'Sur demande', en:'On request'})}</span></div>`
           : TIERS.map(tier => `
               <div class="service-tier">
                 <span class="service-tier-name">${t(tier.name)}${c.tiers[tier.id].promo ? `<span class="service-tier-promo">${t(c.tiers[tier.id].promo)}</span>` : ''}</span>
@@ -3850,7 +3812,7 @@ function renderServices(){
     /* Mobile : fiches repliées (nom + prix « dès »), le détail s'ouvre au toucher ; un filtre actif ouvre la fiche. */
     if (activeServiceFilter) card.classList.add('is-open');
     card.querySelector('.service-head').addEventListener('click', () => card.classList.toggle('is-open'));
-    if (c.comingSoon) card.querySelector('.service-cta').textContent = t({fr:'Me prévenir de l\'ouverture', en:'Notify me when it opens'});
+    if (c.comingSoon) card.querySelector('.service-cta').textContent = t({fr:'Nous contacter', en:'Contact us'});
     card.querySelector('.service-cta').onclick = () => {
       if (c.comingSoon) { goToComingSoon(c.id); return; }
       S.cat = c.id; S.tier = null; S.prof = null;
@@ -6392,7 +6354,7 @@ function renderAccordionInto(elId, sections, opts){
 
 function renderFaqAccordion(){
   const sections = LANG === 'fr' ? [
-    { title:'Quelles prestations proposez-vous ?', body:`<p>Bunkaio est un photographe professionnel : nous produisons des images haut de gamme, en HD, pour <strong>portrait & lifestyle</strong>, <strong>mode, agences et mannequins</strong>, <strong>commercial & produits</strong>, <strong>événementiel</strong>, et <strong>Lumen</strong>, le photobooth IA pour mariages. Chaque univers a ses formules détaillées dans notre <strong>catalogue & prix</strong>.</p>` },
+    { title:'Quelles prestations proposez-vous ?', body:`<p>Bunkaio est un photographe professionnel : nous produisons des images haut de gamme, en HD, pour <strong>portrait & lifestyle</strong>, <strong>mode, agences et mannequins</strong>, <strong>commercial & produits</strong>, <strong>événementiel</strong>, et <strong>Lumen</strong>, le photobooth IA pour mariages (en cours de finalisation). Chaque univers a ses formules détaillées dans notre <strong>catalogue & prix</strong>.</p>` },
     { title:'Quelle est la qualité des images livrées ?', body:`<p>Des photos <strong>haute définition, retouchées</strong> avec soin, prêtes à être publiées ou imprimées. Elles sont livrées dans une <strong>galerie privée</strong> à télécharger depuis votre espace client, et vous disposez des droits d'utilisation commerciale.</p>` },
     { title:'Comment se déroule une prestation, de la demande à la livraison ?', body:`<p>Quatre étapes simples : <strong>devis</strong> personnalisé sous 48h, <strong>shooting</strong> à la date convenue, <strong>post-production</strong> (tri, retouche, montage), puis <strong>livraison</strong> de vos visuels via votre espace client. Le détail complet est dans l'onglet « Devis & déroulé » de la page Services.</p>` },
     { title:'Je ne suis pas à l\'aise devant l\'objectif, est-ce un problème ?', body:`<p>Pas du tout : c'est notre rôle de vous mettre en confiance. Nous vous guidons sur les poses et l'ambiance pour obtenir des photos qui vous ressemblent vraiment. Pour vous préparer, consultez notre guide <a href="/conseils/preparer-seance-photo-portrait/" data-nav="article:preparer-seance-photo-portrait">Préparer sa séance photo portrait</a>.</p>` },
@@ -6407,7 +6369,7 @@ function renderFaqAccordion(){
     { title:'Comment devenir partenaire, et que propose l\'espace partenaire ?', body:`<p>Candidatez depuis la page <strong>Partenariat et collaboration</strong> : réponse personnalisée sous 5 jours ouvrés. Une fois admis, votre espace partenaire vous donne <strong>-20 % permanent</strong> sur le catalogue, des promotions, des <strong>missions collaboratives rémunérées</strong> que vous acceptez ou déclinez en un clic, et l'accès au réseau de professionnels. Vous choisissez d'être référencé·e ou non dans l'annuaire.</p>` },
     { title:'Qu\'est-ce que Lumen by Bunkaio ?', body:`<p>Lumen est l\'expérience photo IA de Bunkaio, conçue pour les mariages haut de gamme et les événements : le photobooth est installé et opérationnel pendant votre événement (proposé en location pour sa durée), pour offrir aux invités une expérience mémorable et vous laisser des souvenirs durables. Trois formules — Découverte, Signature et Premium sur mesure — selon la durée et la personnalisation souhaitées.</p>` },
   ] : [
-    { title:'What services do you offer?', body:`<p>Bunkaio is a professional photographer: we produce premium, high-definition images for <strong>portrait & lifestyle</strong>, <strong>fashion, agencies and models</strong>, <strong>commercial & products</strong>, <strong>events</strong>, and <strong>Lumen</strong>, the AI photobooth for weddings. Each universe has its packages detailed in our <strong>catalogue & rates</strong>.</p>` },
+    { title:'What services do you offer?', body:`<p>Bunkaio is a professional photographer: we produce premium, high-definition images for <strong>portrait & lifestyle</strong>, <strong>fashion, agencies and models</strong>, <strong>commercial & products</strong>, <strong>events</strong>, and <strong>Lumen</strong>, the AI photobooth for weddings (being finalised). Each universe has its packages detailed in our <strong>catalogue & rates</strong>.</p>` },
     { title:'What is the quality of the delivered images?', body:`<p><strong>High-definition, carefully retouched</strong> photos, ready to publish or print. They are delivered in a <strong>private gallery</strong> you can download from your client area, with commercial usage rights.</p>` },
     { title:'How does a project run, from request to delivery?', body:`<p>Four simple steps: a personalised <strong>quote</strong> within 48h, the <strong>shoot</strong> on the agreed date, <strong>post-production</strong> (selection, retouching, editing), then <strong>delivery</strong> via your client area. Full details are under the "Quote & process" tab on the Services page.</p>` },
     { title:'I\'m not comfortable in front of the camera — is that a problem?', body:`<p>Not at all: it's our job to put you at ease. We guide you on poses and mood so the photos truly look like you. To get ready, see our guide <a href="/conseils/preparer-seance-photo-portrait/" data-nav="article:preparer-seance-photo-portrait">Preparing your portrait photo session</a> (in French).</p>` },
@@ -6532,19 +6494,18 @@ function initAboutStats(){
 }
 
 /* ═══════════════ LOGO CAROUSEL ═══════════════ */
+/* Marques avec lesquelles BUNKAIO a réalisé des collaborations (noms en texte, aucun logo reproduit). */
 const PARTNER_LOGOS = [
-  { name:'Atelier Blanc',   mark:'<circle cx="12" cy="12" r="9"/><path d="M12 3v18"/>', style:'font-weight:300;letter-spacing:0.28em;text-transform:uppercase' },
-  { name:'Maison Cuvée',    mark:'<path d="M12 3c4 4 6 7 6 10a6 6 0 0 1-12 0c0-3 2-6 6-10z"/>', style:'font-family:Georgia,serif;font-weight:700;font-style:italic;letter-spacing:0' },
-  { name:'STUDIO FORMA',    mark:'<rect x="4" y="4" width="16" height="16" rx="1"/><path d="M4 12h16M12 4v16"/>', style:'font-weight:800;letter-spacing:0.12em' },
-  { name:'Domaine Vallier', mark:'<path d="M3 19 12 5l9 14z"/>', style:'font-family:Georgia,serif;font-weight:400;letter-spacing:0.08em;text-transform:uppercase' },
-  { name:'Label Matière',   mark:'<path d="M5 12a7 7 0 0 1 14 0M5 12a7 7 0 0 0 14 0"/><circle cx="12" cy="12" r="1.6"/>', style:'font-weight:600;letter-spacing:0.02em' },
-  { name:'Bloom',           mark:'<circle cx="12" cy="7" r="3"/><circle cx="7" cy="15" r="3"/><circle cx="17" cy="15" r="3"/>', style:'font-weight:700;letter-spacing:0.18em;text-transform:uppercase' },
-  { name:'Event & Sens',    mark:'<path d="M12 3l2.4 6.6L21 12l-6.6 2.4L12 21l-2.4-6.6L3 12l6.6-2.4z"/>', style:'font-weight:500;letter-spacing:0.04em' },
-  { name:'Artisans du Sud', mark:'<path d="M4 18c3-8 5-12 8-12s5 4 8 12"/><path d="M8 18h8"/>', style:'font-family:Georgia,serif;font-weight:700;letter-spacing:0.02em' },
-  { name:'MARQUE CÉLESTE',  mark:'<circle cx="12" cy="12" r="3.2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>', style:'font-weight:300;letter-spacing:0.2em' },
-  { name:'Piscines Azur',   mark:'<path d="M3 15c3-3 6 3 9 0s6 3 9 0M3 10c3-3 6 3 9 0s6 3 9 0"/>', style:'font-weight:700;letter-spacing:-0.01em' },
-  { name:'Nord & Cie',      mark:'<path d="M6 19V5l12 14V5"/>', style:'font-weight:800;letter-spacing:0.06em;text-transform:uppercase' },
-  { name:'Espace Cuisine',  mark:'<path d="M7 4v7a2 2 0 0 0 2 2v7M7 4v5M11 4v5M15 4c-2 2-2 6 0 8v8"/>', style:'font-weight:500;letter-spacing:0.1em;text-transform:uppercase' }
+  { name:'Musardise Bijoux', style:'font-weight:300;letter-spacing:0.28em;text-transform:uppercase' },
+  { name:'Art Tea Shop', style:'font-family:Georgia,serif;font-weight:700;font-style:italic;letter-spacing:0' },
+  { name:'Waxeba', style:'font-weight:800;letter-spacing:0.12em;text-transform:uppercase' },
+  { name:'Ness Boutique', style:'font-family:Georgia,serif;font-weight:400;letter-spacing:0.08em;text-transform:uppercase' },
+  { name:'Hot Dog Street', style:'font-weight:600;letter-spacing:0.02em' },
+  { name:'Maison Sarima', style:'font-weight:300;letter-spacing:0.28em;text-transform:uppercase' },
+  { name:'Paname Lunetier', style:'font-family:Georgia,serif;font-weight:700;font-style:italic;letter-spacing:0' },
+  { name:'Royal R Cosmétique', style:'font-weight:800;letter-spacing:0.12em;text-transform:uppercase' },
+  { name:'Palmynala', style:'font-family:Georgia,serif;font-weight:400;letter-spacing:0.08em;text-transform:uppercase' },
+  { name:'Studio Doutor', style:'font-weight:600;letter-spacing:0.02em' }
 ];
 
 function renderLogoCarousel(){
@@ -6552,7 +6513,6 @@ function renderLogoCarousel(){
   if (!el) return;
   const make = () => PARTNER_LOGOS.map(l => `
     <div class="logo-item" aria-label="${l.name}">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${l.mark}</svg>
       <span style="${l.style}">${l.name}</span>
     </div>`).join('');
   el.innerHTML = make() + make();
@@ -6612,6 +6572,8 @@ initHomeClaimVideo();
 initTestiAutoplay();
 initWhiteScrollHint();
 initUsdPrices();
+/* Ancien lien Lumen (/services/photobooth-ia-mariage-lumen/ → /contact/#lumen) : message pré-rempli et formulaire à l'écran. */
+if (location.hash === '#lumen') setTimeout(() => goToComingSoon('lumen'), 300);
 updatePlaceholders();
 updateLang();
 applyImages();

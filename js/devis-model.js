@@ -73,7 +73,8 @@
         "Accès : l'organisateur garantit à BUNKAIO l'accès à tous les lieux utiles (badge, stationnement, repas si la journée est longue).",
         "Imprévus : en cas d'annulation de l'événement par l'organisateur, les conditions d'annulation ci-dessus s'appliquent."
       ] },
-    lumen: { label: 'Photobooth IA Lumen', profil: 'particulier', category: /lumen|photobooth/i,
+    /* Lumen : prototype, modèle inactif (non proposé à la création d'un devis). */
+    lumen: { inactive: true, label: 'Photobooth IA Lumen (inactif : prototype)', profil: 'particulier', category: /lumen|photobooth/i,
       prestation: 'Photobooth IA Lumen', contenuHint: "Durée (4 h Découverte, 6 h Signature, sur mesure en Premium), style personnalisé, impressions illimitées incluses, horaires d'installation",
       delai: 'jours ouvrés après l\'événement (7 pour Découverte, 5 pour Signature)',
       destination: "Usage personnel et familial des visuels générés (partage avec les invités et les proches, réseaux sociaux personnels, souvenirs imprimés) ; pour un événement d'entreprise : communication du client sur ses propres supports. Sont exclus, sauf accord écrit : revente, cession à des tiers, usage publicitaire.",
@@ -109,7 +110,7 @@
     return x.toLocaleDateString('fr-FR', long ? { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' } : { day: 'numeric', month: 'long', year: 'numeric' });
   }
   function guessTemplate(category) {
-    for (var k in TEMPLATES) if (TEMPLATES[k].category.test(category || '')) return k;
+    for (var k in TEMPLATES) if (!TEMPLATES[k].inactive && TEMPLATES[k].category.test(category || '')) return k;
     return 'part';
   }
 
