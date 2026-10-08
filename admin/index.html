@@ -1779,7 +1779,7 @@ function quoteFromContact(email) {
     email: c.email, lang: c.lang === 'en' ? 'en' : 'fr', template: tplKey,
     client: { nom: (a && a.nom) || c.name, profil, contact: f.contact || '', forme: f.forme || '', adresse: [f.rue, [f.codePostal, f.ville].filter(Boolean).join(' '), f.pays].filter(Boolean).join(', ') || (a && a.adresse) || '', telephone: (a && a.telephone) || c.phone || '', siret: f.siret || '', tvaIntra: f.tvaIntra || '' },
     prestation: t.prestation + (c.lead && c.lead.formule ? ' — Formule ' + c.lead.formule : ''),
-    contenu: c.lead ? [c.lead.description, c.lead.options && c.lead.options !== 'aucune' ? 'Options : ' + c.lead.options : '', c.lead.ville ? 'Ville de la prestation : ' + c.lead.ville + (c.lead.deplacement ? ' (déplacement : ' + c.lead.deplacement + ')' : '') : ''].filter(Boolean).join('\n') : '',
+    contenu: c.lead ? [c.lead.description, c.lead.options && c.lead.options !== 'aucune' ? 'Options : ' + c.lead.options : ''].filter(Boolean).join('\n') : '',
     seance: a && a.seance ? { date: a.seance.date, heure: a.seance.heure, lieu: a.seance.lieu || (c.lead && c.lead.ville) || '' } : (c.lead && c.lead.ville ? { lieu: c.lead.ville } : {}),
     delai: t.abonnement ? t.delai : '', totalHT: '', abonnement: !!t.abonnement,
     droits: { destination: t.destination, duree: t.duree, territoire: 'Monde entier (diffusion en ligne)', exclusivite: 'Non exclusive' },

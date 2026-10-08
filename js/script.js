@@ -53,7 +53,7 @@ function travelMessage(tr){
   const fr = LANG === 'fr', c = tr.city;
   if (tr.kind === 'free') return fr ? `${c} : déplacement offert.` : `${c}: travel is free.`;
   if (tr.kind === 'flat') return fr ? `${c} : forfait déplacement de ${tr.fee} €, ajouté à votre estimation.` : `${c}: flat travel fee of €${tr.fee}, added to your estimate.`;
-  if (tr.kind === 'km') return fr ? `${c} (≈ ${tr.km} km) : déplacement estimé à ${tr.fee} €, ajouté à votre estimation.` : `${c} (≈ ${tr.km} km): travel estimated at €${tr.fee}, added to your estimate.`;
+  if (tr.kind === 'km') return fr ? `${c} · ≈ ${tr.km} km : déplacement estimé à ${tr.fee} €, ajouté à votre estimation.` : `${c} · ≈ ${tr.km} km: travel estimated at €${tr.fee}, added to your estimate.`;
   if (tr.kind === 'quote') return fr ? `${c} : trop éloignée pour une estimation automatique, le déplacement sera chiffré sur votre devis.` : `${c}: too far for an automatic estimate, travel will be priced on your quote.`;
   return fr ? 'Ville non reconnue : vérifiez l\'orthographe, sinon le déplacement sera précisé sur votre devis.' : 'City not recognised: check the spelling, otherwise travel will be specified on your quote.';
 }
@@ -63,7 +63,7 @@ function renderTravelResult(state){
   if (state === 'loading') { el.className = 'travel-est'; el.textContent = LANG === 'fr' ? 'Calcul en cours…' : 'Calculating…'; return; }
   if (!S.travel) { el.className = 'travel-est'; el.textContent = ''; return; }
   el.className = 'travel-est ' + (S.travel.kind === 'unknown' ? 'warn' : 'ok');
-  el.textContent = travelMessage(S.travel) + (S.travel.kind === 'unknown' ? '' : (LANG === 'fr' ? ' Estimation confirmée sur votre devis.' : ' Estimate confirmed on your quote.'));
+  el.textContent = travelMessage(S.travel) + (['unknown', 'quote'].includes(S.travel.kind) ? '' : (LANG === 'fr' ? ' Estimation confirmée sur votre devis.' : ' Estimate confirmed on your quote.'));
 }
 function travelSummary(){
   if (!travelApplies() || !S.city) return { fee: 0, text: '' };
@@ -3007,11 +3007,11 @@ function submitQuiz(e){
       categorie: cat.name.fr,
       formule: formuleLabel,
       options_choisies: optsOut,
-      ville_prestation: (travelApplies() && S.city) || undefined,
+      ville_prestation: (travelApplies() && S.city) ? ((S.travel && S.travel.city) || S.city) : undefined,
       frais_deplacement_estimes: travelApplies() && S.city ? (trv.fee ? trv.fee + '€' : trv.text.replace('Déplacement : ', '')) : undefined,
       montant_total_estime: montantLabel,
       delai_souhaite: (DELAY_LABELS[S.delay] && DELAY_LABELS[S.delay].fr) || S.delay || 'Non renseigné',
-      lieu_seance: [studioNote, (travelApplies() && S.city) ? 'Ville : ' + S.city : ''].filter(Boolean).join(' — ') || undefined,
+      lieu_seance: [studioNote, (travelApplies() && S.city) ? 'Ville : ' + ((S.travel && S.travel.city) || S.city) : ''].filter(Boolean).join(' — ') || undefined,
       description_projet: S.project,
       interet_communication: S.comm ? 'OUI — potentiellement intéressé' : 'Non'
     })
