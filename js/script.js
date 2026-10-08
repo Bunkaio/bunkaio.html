@@ -970,16 +970,16 @@ const CATS = [
       en:'No need to feel at ease in front of the camera — that\'s our job. The result: photos that truly look like you, delivered in 5 days.'},
     icon:'camera',
     tiers:{
-      deco:{ price:290, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
-        fr:['1h de séance — extérieur ou studio (+80€)','8 photos HD retouchées','Sélection guidée incluse','Galerie privée de téléchargement'],
-        en:['1h session — outdoor or studio (+€80)','8 retouched HD photos','Guided selection included','Private download gallery'] } },
-      sig:{ price:490, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
+      deco:{ price:250, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
+        fr:['1h de séance — extérieur ou studio (+60€)','8 photos HD retouchées','Sélection guidée incluse','Galerie privée de téléchargement'],
+        en:['1h session — outdoor or studio (+€60)','8 retouched HD photos','Guided selection included','Private download gallery'] } },
+      sig:{ price:420, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
         fr:['2h de séance','15 photos HD retouchées','Direction de pose incluse','Galerie privée de téléchargement'],
         en:['2h session','15 retouched HD photos','Posing guidance included','Private download gallery'] } },
-      prem:{ price:790, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
+      prem:{ price:650, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
         fr:['Demi-journée (4h) — jusqu\'à 2 ambiances','25 photos HD retouchées','2 tenues différentes','Direction artistique complète','Galerie privée de téléchargement'],
         en:['Half-day (4h) — up to 2 moods','25 retouched HD photos','2 different outfits','Full art direction','Private download gallery'] } },
-      edit:{ price:1390, delay:{fr:'10 jours ouvrés',en:'10 working days'}, items:{
+      edit:{ price:1090, delay:{fr:'10 jours ouvrés',en:'10 working days'}, items:{
         fr:['Journée complète — 4 lieux différents','4 tenues différentes','30 photos HD retouchées','1 film court (30 secondes)','Direction artistique & stylisme','Publication sur les supports Bunkaio'],
         en:['Full day — 4 different locations','4 different outfits','30 retouched HD photos','1 short film (30 seconds)','Art direction & styling','Featured on Bunkaio channels'] } }
     }},
@@ -990,16 +990,16 @@ const CATS = [
       en:'A natural, polished professional image that builds trust at first glance: profile photo, website, team presentation.'},
     icon:'agency',
     tiers:{
-      deco:{ price:390, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
-        fr:['1h de séance — extérieur ou studio (+80€)','8 photos HD retouchées','Sélection guidée incluse','Galerie privée de téléchargement'],
-        en:['1h session — outdoor or studio (+€80)','8 retouched HD photos','Guided selection included','Private download gallery'] } },
-      sig:{ price:690, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
+      deco:{ price:290, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
+        fr:['1h de séance — extérieur ou studio (+60€)','8 photos HD retouchées','Sélection guidée incluse','Galerie privée de téléchargement'],
+        en:['1h session — outdoor or studio (+€60)','8 retouched HD photos','Guided selection included','Private download gallery'] } },
+      sig:{ price:490, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
         fr:['2h de séance','15 photos HD retouchées','Direction de pose incluse','Galerie privée de téléchargement'],
         en:['2h session','15 retouched HD photos','Posing guidance included','Private download gallery'] } },
-      prem:{ price:1090, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
+      prem:{ price:790, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
         fr:['Demi-journée (4h) — jusqu\'à 2 ambiances','25 photos HD retouchées','2 tenues différentes','Direction artistique complète','Galerie privée de téléchargement'],
         en:['Half-day (4h) — up to 2 moods','25 retouched HD photos','2 different outfits','Full art direction','Private download gallery'] } },
-      edit:{ price:1790, delay:{fr:'10 jours ouvrés',en:'10 working days'}, items:{
+      edit:{ price:1290, delay:{fr:'10 jours ouvrés',en:'10 working days'}, items:{
         fr:['Journée complète — 4 lieux différents','4 tenues différentes','30 photos HD retouchées','1 film court (30 secondes)','Direction artistique & stylisme','Publication sur les supports Bunkaio'],
         en:['Full day — 4 different locations','4 different outfits','30 retouched HD photos','1 short film (30 seconds)','Art direction & styling','Featured on Bunkaio channels'] } }
     }},
@@ -1010,16 +1010,16 @@ const CATS = [
       en:'Visuals that sell, not just visuals that please. Every lookbook is built around your brand strategy, from shoot to publication.'},
     icon:'marque',
     tiers:{
-      deco:{ price:590, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
+      deco:{ price:450, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
         fr:['Mini-série — 8 photos HD retouchées','Un produit ou une silhouette','Direction artistique incluse'],
         en:['Mini series — 8 retouched HD photos','One product or one look','Art direction included'] } },
-      sig:{ price:1190, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
+      sig:{ price:890, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
         fr:['Lookbook — 20 photos HD retouchées','1 Reel vertical pour les réseaux','Direction artistique incluse'],
         en:['Lookbook — 20 retouched HD photos','1 vertical Reel for social media','Art direction included'] } },
-      prem:{ price:1890, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
+      prem:{ price:1390, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
         fr:['Lookbook — 30 photos HD retouchées','1 film principal','2 Reels verticaux','Direction artistique incluse'],
         en:['Lookbook — 30 retouched HD photos','1 main film','2 vertical Reels','Art direction included'] } },
-      edit:{ price:2790, delay:{fr:'10 jours ouvrés',en:'10 working days'}, items:{
+      edit:{ price:2190, delay:{fr:'10 jours ouvrés',en:'10 working days'}, items:{
         fr:['Campagne — 35 photos HD retouchées','1 film publicitaire (2 minutes)','3 Reels verticaux','Storytelling de marque','Publication sur les supports Bunkaio'],
         en:['Campaign — 35 retouched HD photos','1 commercial film (2 minutes)','3 vertical Reels','Brand storytelling','Featured on Bunkaio channels'] } }
     }},
@@ -1030,16 +1030,16 @@ const CATS = [
       en:'Crisp, bright packshots built to convert — on your site and your socials alike. Campaign-level quality, whatever the size of your catalogue.'},
     icon:'product',
     tiers:{
-      deco:{ price:390, delay:{fr:'3 jours ouvrés',en:'3 working days'}, items:{
+      deco:{ price:290, delay:{fr:'3 jours ouvrés',en:'3 working days'}, items:{
         fr:['Jusqu\'à 5 produits — 10 photos HD retouchées','Fond neutre studio','Galerie privée de téléchargement'],
         en:['Up to 5 products — 10 retouched HD photos','Neutral studio backdrop','Private download gallery'] } },
-      sig:{ price:790, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
+      sig:{ price:590, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
         fr:['Jusqu\'à 12 produits — 20 photos HD retouchées','Mise en scène incluse','Galerie privée de téléchargement'],
         en:['Up to 12 products — 20 retouched HD photos','Styled setup included','Private download gallery'] } },
-      prem:{ price:1390, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
+      prem:{ price:990, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
         fr:['Jusqu\'à 25 produits — 35 photos HD retouchées','Mise en scène incluse','1 Reel vertical produit','Galerie privée de téléchargement'],
         en:['Up to 25 products — 35 retouched HD photos','Styled setup included','1 vertical product Reel','Private download gallery'] } },
-      edit:{ price:2390, delay:{fr:'10 jours ouvrés',en:'10 working days'}, items:{
+      edit:{ price:1790, delay:{fr:'10 jours ouvrés',en:'10 working days'}, items:{
         fr:['Catalogue complet — 50 photos HD retouchées','1 film de marque (90 secondes)','2 Reels verticaux','Publication sur les supports Bunkaio'],
         en:['Full catalogue — 50 retouched HD photos','1 brand film (90 seconds)','2 vertical Reels','Featured on Bunkaio channels'] } }
     }},
@@ -1050,21 +1050,22 @@ const CATS = [
       en:'Your day only happens once. We stay discreet so you can live it fully, while we capture every moment that matters.'},
     icon:'event',
     tiers:{
-      deco:{ price:450, delay:{fr:'3 jours ouvrés',en:'3 working days'}, items:{
+      deco:{ price:390, delay:{fr:'3 jours ouvrés',en:'3 working days'}, items:{
         fr:['20 photos HD retouchées','Couverture de 2 heures — les moments essentiels','Galerie privée de téléchargement'],
         en:['20 retouched HD photos','2-hour coverage — the essential moments','Private download gallery'] } },
-      sig:{ price:790, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
+      sig:{ price:690, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
         fr:['40 photos HD retouchées','Couverture jusqu\'à 4 heures — moments clés et ambiance','Galerie privée de téléchargement'],
         en:['40 retouched HD photos','Up to 4-hour coverage — key moments and atmosphere','Private download gallery'] } },
-      prem:{ price:1590, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
+      prem:{ price:1190, delay:{fr:'7 jours ouvrés',en:'7 working days'}, items:{
         fr:['80 photos HD retouchées','Couverture complète de l\'événement','1 teaser vidéo (30 secondes)','Galerie privée de téléchargement'],
         en:['80 retouched HD photos','Full event coverage','1 video teaser (30 seconds)','Private download gallery'] } },
-      edit:{ price:2590, delay:{fr:'10 jours ouvrés',en:'10 working days'}, items:{
+      edit:{ price:1990, delay:{fr:'10 jours ouvrés',en:'10 working days'}, items:{
         fr:['100 photos HD retouchées','1 aftermovie (2 minutes)','2 Reels verticaux','Mise en lumière éditoriale de l\'événement','Publication sur les supports Bunkaio'],
         en:['100 retouched HD photos','1 aftermovie (2 minutes)','2 vertical Reels','Editorial spotlight on the event','Featured on Bunkaio channels'] } }
     }},
   { id:'lumen',
     lumen: true,
+    comingSoon: true,
     name:{fr:'Lumen — Photobooth IA (location)', en:'Lumen — AI photobooth (rental)'},
     tag:{fr:'Location de photobooth IA — mariages haut de gamme', en:'AI photobooth rental — luxury weddings'},
     pitch:{fr:'Un souvenir unique, généré par IA en quelques secondes, sans jamais sacrifier l\'élégance de votre réception. Vos invités repartent avec bien plus qu\'une photo.',
@@ -1081,7 +1082,7 @@ const CATS = [
 const SUBS = {
   /* Studio Continu : proposé uniquement aux modèles émergents et mannequins (voir SUB_PROFILES). */
   mode: {
-    price: 990,
+    price: 850,
     audience:{fr:'modèles et mannequins', en:'models'},
     name:{fr:'Studio Continu — Modèles & mannequins', en:'Studio Continu — Models'},
     items:{
@@ -1098,7 +1099,7 @@ const subAvailable = cat => !!SUBS[cat] && (!SUB_PROFILES.length || cat !== 'mod
 const POLAS = {
   /* Formule « Book grossesse » — séance photo particuliers. Tarif haut de gamme, lieu (studio ou extérieur) inclus. */
   'photo-part': {
-    id: 'grossesse', price: 590, studio: 0,
+    id: 'grossesse', price: 450, studio: 0,
     name:{fr:'Book grossesse', en:'Maternity book'},
     badge:{fr:'Spécial grossesse', en:'Maternity special'},
     label:{fr:'Book grossesse', en:'Maternity book'},
@@ -1142,7 +1143,7 @@ function formulaPhotoHTML(cat, tierId, cls){
   return framed ? `<span class="fp" style="--ph:url('${url}')">${img}</span>` : img;
 }
 /* Supplément « studio » des formules Découverte (photo particuliers et corporate). */
-const STUDIO_FEE = 80;
+const STUDIO_FEE = 60;
 const specialTotal = sp => sp.price + sp.studio;
 const isSpecialTier = () => !!(S.tier && POLAS[S.cat] && S.tier === POLAS[S.cat].id);
 
@@ -1156,24 +1157,24 @@ const OPTIONS = [
     note:{fr:'Complétez votre reportage avec des visuels supplémentaires.',
           en:'Complement your shoot with extra visuals.'},
     packs:[
-      { id:'p1',  label:{fr:'1 photo à l\'unité',            en:'1 photo (unit price)'},   price:45 },
-      { id:'p10', label:{fr:'Pack 10 photos supplémentaires', en:'Pack of 10 extra photos'}, price:390 },
-      { id:'p15', label:{fr:'Pack 15 photos supplémentaires', en:'Pack of 15 extra photos'}, price:540 },
-      { id:'p20', label:{fr:'Pack 20 photos supplémentaires', en:'Pack of 20 extra photos'}, price:680 },
+      { id:'p1',  label:{fr:'1 photo à l\'unité',            en:'1 photo (unit price)'},   price:40 },
+      { id:'p10', label:{fr:'Pack 10 photos supplémentaires', en:'Pack of 10 extra photos'}, price:340 },
+      { id:'p15', label:{fr:'Pack 15 photos supplémentaires', en:'Pack of 15 extra photos'}, price:470 },
+      { id:'p20', label:{fr:'Pack 20 photos supplémentaires', en:'Pack of 20 extra photos'}, price:600 },
     ]},
-  { id:'drone', icon:'🚁', price:'À partir de 490€', comingSoon: true,
+  { id:'drone', icon:'🚁', price:'À partir de 390€', comingSoon: true,
     name:{fr:'Prises de vue drone additionnelles', en:'Additional drone footage'},
     note:{fr:'Perspectives aériennes supplémentaires par pilote certifié A1/A3 & A2. Précisez le volume souhaité dans votre message.',
           en:'Additional aerial perspectives by A1/A3 & A2 certified pilot. Specify the volume needed in your message.'} },
-  { id:'video', icon:'🎬', price:'À partir de 290€',
+  { id:'video', icon:'🎬', price:'À partir de 250€',
     name:{fr:'Film additionnel', en:'Additional film'},
-    note:{fr:'Reel vertical 60s à partir de 290€ · Film court 60-90s à partir de 590€ · Film principal 2min à partir de 990€. Précisez le format souhaité.',
-          en:'Vertical Reel 60s from €290 · Short film 60-90s from €590 · Main film 2min from €990. Specify the format needed.'} },
-  { id:'social', icon:'📱', price:'290€',
+    note:{fr:'Reel vertical 60s à partir de 250€ · Film court 60-90s à partir de 490€ · Film principal 2min à partir de 790€. Précisez le format souhaité.',
+          en:'Vertical Reel 60s from €250 · Short film 60-90s from €490 · Main film 2min from €790. Specify the format needed.'} },
+  { id:'social', icon:'📱', price:'240€',
     name:{fr:'Pack réseaux renforcé', en:'Enhanced social media pack'},
     note:{fr:'Déclinaisons optimisées pour Instagram, TikTok et LinkedIn — 3 formats × 3 réseaux.',
           en:'Cuts optimised for Instagram, TikTok and LinkedIn — 3 formats × 3 platforms.'} },
-  { id:'express', icon:'⚡', price:'+30%',
+  { id:'express', icon:'⚡', price:'+20%',
     name:{fr:'Livraison express 72h', en:'72-hour express delivery'},
     note:{fr:'Vos livrables passent en priorité absolue et vous sont remis sous 72 heures.',
           en:'Your deliverables become our absolute priority and reach you within 72 hours.'} }
@@ -1195,7 +1196,7 @@ const SPECIAL_OPTIONS = {
 const LUMEN_TIERS = [
   { id:'dec',  name:{fr:'Découverte',  en:'Starter'},
     badge:{fr:'Pour essayer', en:'To try it'},
-    price: 590, priceUSD: 650,
+    price: 290, priceUSD: 320,
     delay:{fr:'7 jours ouvrés', en:'7 working days'},
     items:{
       fr:['Location du photobooth IA, installé et opérationnel','2 heures de prestation','100 impressions incluses','Galerie privée livrée sous 7 jours'],
@@ -1203,7 +1204,7 @@ const LUMEN_TIERS = [
   },
   { id:'ess',  name:{fr:'Essentiel',  en:'Essentials'},
     badge: null,
-    price: 890, priceUSD: 980,
+    price: 490, priceUSD: 540,
     delay:{fr:'7 jours ouvrés', en:'7 working days'},
     items:{
       fr:['Location du photobooth IA, installé et opérationnel','Jusqu\'à 4 heures de prestation','Impressions illimitées incluses','Galerie privée livrée sous 7 jours'],
@@ -1211,7 +1212,7 @@ const LUMEN_TIERS = [
   },
   { id:'sig',  name:{fr:'Signature',  en:'Signature'},
     badge:{fr:'Le plus choisi', en:'Most popular'},
-    price: 1590, priceUSD: 1750,
+    price: 790, priceUSD: 870,
     delay:{fr:'5 jours ouvrés', en:'5 working days'},
     items:{
       fr:['Location du photobooth IA, installé et opérationnel','Jusqu\'à 6 heures de prestation','Style personnalisé (fond, habillage, palette)','Impressions illimitées incluses','Galerie privée livrée sous 5 jours'],
@@ -1219,7 +1220,7 @@ const LUMEN_TIERS = [
   },
   { id:'surm', name:{fr:'Sur-mesure', en:'Bespoke'},
     badge:{fr:'Entièrement personnalisé', en:'Fully bespoke'},
-    price: 2490, priceUSD: 2700,
+    price: 1190, priceUSD: 1300,
     delay:{fr:'Sur accord', en:'On agreement'},
     items:{
       fr:['Devis personnalisé selon votre projet','Durée, style et options définis ensemble'],
@@ -1244,7 +1245,7 @@ const LUMEN_OPTIONS = [
     name:{fr:'Style personnalisé', en:'Custom style'},
     note:{fr:'Fond dédié, habillage aux couleurs de votre événement, typographie sur mesure. Inclus dans la formule Signature.',
           en:'Dedicated backdrop, branding matching your event colours, bespoke typography. Included in the Signature package.'} },
-  { id:'lumen-heure', icon:'⏱', price: 250,
+  { id:'lumen-heure', icon:'⏱', price: 120,
     name:{fr:'Heure supplémentaire', en:'Additional hour'},
     note:{fr:'Prolongez votre prestation d\'une heure. Facturable par heure additionnelle.',
           en:'Extend your service by one hour. Billed per additional hour.'} },
@@ -1955,7 +1956,19 @@ function goToCoords(){
    catégorie donnée — utilisé par le carrousel de prestations de la
    section "Le studio" (saute l'étape de choix de catégorie, déjà
    fait via le clic sur la carte). */
+/* Prestation « bientôt disponible » (Lumen) : pas de réservation en ligne, on propose d'être prévenu de l'ouverture. */
+const isComingSoon = id => { const c = CATS.find(x => x.id === id); return !!(c && c.comingSoon); };
+function goToComingSoon(catId){
+  const c = CATS.find(x => x.id === catId);
+  goView('contact');
+  setTimeout(() => {
+    const m = document.getElementById('ctMsg');
+    if (m && !m.value) m.value = t({fr:'Bonjour, je souhaite être prévenu(e) de l\'ouverture des réservations de ', en:'Hello, I would like to be notified when bookings open for '}) + (c ? t(c.name) : '') + '.';
+    const f = document.getElementById('ctForm'); if (f) f.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 450);
+}
 function goToQuizCategory(catId){
+  if (isComingSoon(catId)) { goToComingSoon(catId); return; }
   goView('quiz');
   S.cat = catId; S.tier = null; S.prof = null;
   const box = document.getElementById('profQBox');
@@ -1987,7 +2000,7 @@ function goToServiceTable(catId){
    le survol met le défilement en pause. */
 let msIndex = 0, msTimer = null, msHover = false, msHold = false;
 const MS_DELAY = 5500;
-function missionPillName(c){ return c.lumen ? t({fr:'Photobooth Lumen', en:'Lumen photobooth'}) : String(t(c.name)).split(' — ')[0].split(',')[0]; }
+function missionPillName(c){ return c.lumen ? t({fr:'Photobooth Lumen · bientôt', en:'Lumen photobooth · soon'}) : String(t(c.name)).split(' — ')[0].split(',')[0]; }
 function missionPreviewHTML(c){
   const f = catFacts(c), en = LANG === 'en';
   const to = t({fr:'à', en:'to'}), wd = t({fr:'jours ouvrés', en:'working days'});
@@ -1999,10 +2012,11 @@ function missionPreviewHTML(c){
   const url = IMG.servicePhotos && IMG.servicePhotos[c.id];
   return `<a class="ms-im" href="${servicePath(c.id)}" aria-label="${t(c.name)}" onclick="return navLink(event,'service','${c.id}')"${url ? ` style="background-image:url('${url}')"` : ''}></a>
     <div class="ms-tx">
+      ${c.comingSoon ? `<span class="soon-chip">${t({fr:'Bientôt disponible', en:'Coming soon'})}</span>` : ''}
       <h3><a href="${servicePath(c.id)}" onclick="return navLink(event,'service','${c.id}')">${t(c.name)}</a></h3>
       <div class="ms-from">${t({fr:'dès', en:'from'})} <b>${f.from.toLocaleString('fr-FR')} €</b></div>
       <ul>${pts.slice(0, 4).map(p => `<li>${p}</li>`).join('')}</ul>
-      <div class="ms-actions"><a class="ms-cta" href="${servicePath(c.id)}" onclick="event.preventDefault();goToQuizCategory('${c.id}')">${t({fr:'Estimer ce projet', en:'Estimate this project'})} →</a><a class="ms-link" href="${servicePath(c.id)}" onclick="return navLink(event,'service','${c.id}')">${t({fr:'Voir la prestation', en:'See the service'})}</a></div>
+      <div class="ms-actions"><a class="ms-cta" href="${servicePath(c.id)}" onclick="event.preventDefault();goToQuizCategory('${c.id}')">${c.comingSoon ? t({fr:'Me prévenir de l\'ouverture', en:'Notify me when it opens'}) : t({fr:'Estimer ce projet', en:'Estimate this project'})} →</a><a class="ms-link" href="${servicePath(c.id)}" onclick="return navLink(event,'service','${c.id}')">${t({fr:'Voir la prestation', en:'See the service'})}</a></div>
     </div>`;
 }
 function missionSelect(i, fromAuto){
@@ -2079,11 +2093,12 @@ function renderCats(){
         <div class="cat-name">${t(c.name)}</div>
       </div>
       <div class="cat-right">
-        <div class="cat-tag">${t(c.tag)}</div>
+        <div class="cat-tag">${c.comingSoon ? `<b class="soon-chip">${t({fr:'Bientôt disponible', en:'Coming soon'})}</b> ` : ''}${t(c.tag)}</div>
         <div class="cat-arrow"></div>
       </div>`;
     if (S.cat === c.id) d.classList.add('selected');
     d.onclick = () => {
+      if (c.comingSoon) { goToComingSoon(c.id); return; }
       S.cat = c.id; S.tier = null; S.prof = null;
       document.querySelectorAll('#catList .cat-item').forEach(x => x.classList.toggle('selected', x === d));
       document.getElementById('profQBox').style.display = 'none';
@@ -2571,7 +2586,7 @@ function renderOptions(){
           </div>
         </div>`;
     } else {
-      const priceDisplay = typeof o.price === 'number' ? '+' + pp(o.price) + '€' : (o.price === '+30%' ? o.price : (LANG==='fr'?'Sur devis':'On request'));
+      const priceDisplay = typeof o.price === 'number' ? '+' + pp(o.price) + '€' : (o.price === '+20%' ? o.price : (LANG==='fr'?'Sur devis':'On request'));
       d.innerHTML = `
         <div class="opt-icon">${o.icon}</div>
         <div class="opt-check"></div>
@@ -3236,6 +3251,7 @@ function renderServicePage(catId){
       ${quizLink(catId, t({fr:'Estimer ce projet', en:'Estimate this project'}))}
       <a class="btn btn-ghost" href="/portfolio/" onclick="return navLink(event,'portfolio')"><span>${t({fr:'Voir le portfolio', en:'See the portfolio'})}</span></a>
     </div>
+    ${isComingSoon(catId) ? `<div class="soon-banner"><b>${t({fr:'Bientôt disponible', en:'Coming soon'})}</b> ${t({fr:'Lumen ouvre prochainement à la réservation. Les tarifs ci-dessous sont ceux de lancement ; laissez-nous un message pour être prévenu(e) en premier de l\'ouverture.', en:'Lumen will soon open for bookings. The rates below are the launch rates; leave us a message to be the first to know when it opens.'})}</div>` : ''}
 
     ${copyBlock && copyBlock.lead ? `<section class="read-panel svcp-panel"><div class="svcp-lead-grid${svcFigure ? ' has-figure' : ''}"><p class="svcp-text svcp-lead">${t(copyBlock.lead)}</p>${svcFigure}</div></section>` : ''}
 
@@ -3451,7 +3467,7 @@ function renderArticlePage(slug){
    sans rechargement, tout en gardant un vrai href pour les moteurs et le clic droit. */
 const NAV_ALIASES = { faq: 'legal', conseils: 'advice' };
 /* Lien vers le devis : un vrai <a href="/devis/"> (crawlable, ancre explicite) qui présélectionne l'univers. */
-function quizLink(catId, label, cls){ return `<a class="${cls || 'cta-primary'}" href="/devis/" data-quiz="${catId || ''}">${label}</a>`; }
+function quizLink(catId, label, cls){ if (catId && isComingSoon(catId)) label = t({fr:'Me prévenir de l\'ouverture', en:'Notify me when it opens'}); return `<a class="${cls || 'cta-primary'}" href="/devis/" data-quiz="${catId || ''}">${label}</a>`; }
 document.addEventListener('click', (e) => {
   const a = e.target.closest ? e.target.closest('a[data-quiz]') : null;
   if (!a) return;
@@ -3459,7 +3475,7 @@ document.addEventListener('click', (e) => {
   e.preventDefault();
   closeMobileMenu();
   const cat = a.dataset.quiz;
-  if (cat) goToQuizCategory(cat); else goView('quiz');
+  if (cat && isComingSoon(cat)) goToComingSoon(cat); else if (cat) goToQuizCategory(cat); else goView('quiz');
 });
 document.addEventListener('click', (e) => {
   const a = e.target.closest ? e.target.closest('a[data-nav]') : null;
@@ -3558,7 +3574,7 @@ function renderServices(){
       <div class="service-head">
         <div class="service-icon">${getIcon(c.icon)}</div>
         <div class="service-name">${t(c.name)}</div>
-        <span class="service-from">${t({fr:'dès', en:'from'})} ${catFacts(c).from.toLocaleString('fr-FR')} €</span>
+        ${c.comingSoon ? `<span class="soon-chip">${t({fr:'Bientôt disponible', en:'Coming soon'})}</span>` : ''}<span class="service-from">${t({fr:'dès', en:'from'})} ${catFacts(c).from.toLocaleString('fr-FR')} €</span>
         <i class="service-chev" aria-hidden="true"></i>
       </div>
       <div class="service-tag">${t(c.tag)}</div>
@@ -3583,7 +3599,9 @@ function renderServices(){
     /* Mobile : fiches repliées (nom + prix « dès »), le détail s'ouvre au toucher ; un filtre actif ouvre la fiche. */
     if (activeServiceFilter) card.classList.add('is-open');
     card.querySelector('.service-head').addEventListener('click', () => card.classList.toggle('is-open'));
+    if (c.comingSoon) card.querySelector('.service-cta').textContent = t({fr:'Me prévenir de l\'ouverture', en:'Notify me when it opens'});
     card.querySelector('.service-cta').onclick = () => {
+      if (c.comingSoon) { goToComingSoon(c.id); return; }
       S.cat = c.id; S.tier = null; S.prof = null;
       /* profNext removed */
       document.getElementById('profQBox').style.display = 'none';
