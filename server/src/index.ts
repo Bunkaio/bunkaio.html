@@ -17,6 +17,7 @@ import { getBusinessAddress } from './config';
 import { cleanDetails, MESSAGE_KINDS, storeMessage, updateMessage } from './messages';
 import type { MessageKind } from './messages';
 import { configureBusiness } from './config';
+import { listWatchRuns, runSiteWatch } from './watch';
 import { claimAckSlot, markBalanceInvoiced, markDepositPaid, markInvoiced, markLead, runDailyAutomations } from './automations';
 import {
   buildQuoteEmail,
@@ -621,6 +622,12 @@ async function handleAdminDashboard(request: Request, env: Env, headers: Record<
       console.error('[admin] relances de factures en échec', err);
     }
     return jsonResponse({ ok: true, ranAt: new Date().toISOString() }, 200, headers);
+  }
+  if (path === '/admin/watch' && request.method === 'GET') {
+    return jsonResponse({ ok: true, runs: await listWatchRuns(env) }, 200, headers);
+  }
+  if (path === '/admin/watch/run' && request.method === 'POST') {
+    return jsonResponse({ ok: true, run: await runSiteWatch(env) }, 200, headers);
   }
   if (path === '/admin/message' && request.method === 'POST') {
     const body = (await request.json().catch(() => ({}))) as { id?: unknown; status?: unknown; remove?: unknown };
@@ -1601,6 +1608,11 @@ export default {
   async scheduled(event: ScheduledEvent, env: Env): Promise<void> {
     configureBusiness(env);
     // Cron "*/5" : envoi des récapitulatifs d'activité clients. Cron quotidien : relances de factures.
+    // Cron de veille (toutes les 12 h) : contrôle du site et des services, rapport dans l'admin.
+    if (event.cron === '30 7,19 * * *') {
+      await runSiteWatch(env).catch((err) => console.error('[veille] passage en échec', err));
+      return;
+    }
     if (event.cron === '*/5 * * * *') {
       await syncResendInbox(env).catch((err) => console.error('[inbox] relève planifiée en échec', err));
       await flushActivityNotifications(env);

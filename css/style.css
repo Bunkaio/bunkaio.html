@@ -326,8 +326,8 @@
   }
   .hero-kicker {
     font-size: 11px; font-weight: 500; letter-spacing: 0.34em;
-    text-transform: uppercase; color: var(--white);
-    text-shadow: 0 2px 10px rgba(0,0,0,0.45);
+    text-transform: uppercase; color: #0a0a0c; font-weight: 600;
+    text-shadow: none;
     margin-bottom: 30px; padding: 0 10px;
     opacity: 0; animation: riseIn 1s var(--ease) 0.2s forwards;
   }
@@ -4358,3 +4358,6 @@ a, button { -webkit-tap-highlight-color: rgba(110,90,168,0.18); }
 .fx-line { margin: 0 0 10px; font-size: 13.5px; line-height: 1.6; color: #4b3d7a; }
 .tier-line { margin: 2px 0 8px; font-size: 12.5px; line-height: 1.5; color: var(--grey); }
 .value-note { opacity: .9; }
+
+/* Version anglaise : équivalent indicatif en dollars collé à chaque prix en euros (ajouté par initUsdPrices) */
+.usd-eq { font-size: clamp(11px, 0.62em, 22px); font-weight: 500; opacity: 0.78; white-space: nowrap; letter-spacing: 0; text-transform: none; }

@@ -190,19 +190,9 @@
   .pf-del:hover { background: var(--red); color: #fff; }
   .pf-count { font-weight: 400; color: #aaa; font-size: 11px; margin-left: 6px; }
 
-  /* ── Fiche d'export ── */
-  .export-box { border: 1px solid var(--line); border-radius: 10px; background: #fff; margin-bottom: 40px; }
-  .export-box > summary { cursor: pointer; padding: 16px 20px; font-size: 15px; font-weight: 700; list-style: none; }
-  .export-box > summary::-webkit-details-marker { display: none; }
-  .export-body { padding: 0 20px 20px; font-size: 12.5px; line-height: 1.7; color: #333; }
-  .export-body h3 { font-size: 13px; margin: 18px 0 6px; }
-  .export-body table { width: 100%; border-collapse: collapse; font-size: 12px; display: block; overflow-x: auto; }
-  .export-body th, .export-body td { text-align: left; padding: 6px 12px 6px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
-  .export-body th { color: var(--grey); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
-  .export-body code, .export-body pre { background: #f4f3f0; border-radius: 4px; font-size: 11.5px; }
-  .export-body code { padding: 1px 5px; }
-  .export-body pre { padding: 10px 12px; overflow-x: auto; margin: 6px 0; white-space: pre-wrap; word-break: break-all; }
-  .export-body ul { padding-left: 18px; }
+  /* ── Règle d'export affichée à chaque emplacement ── */
+  .section-desc.export-rule { margin-top: 6px; font-size: 12px; color: #555; }
+  .section-desc.export-rule code { background: #f4f3f0; border-radius: 4px; padding: 1px 5px; font-size: 11px; word-break: break-all; }
 
   /* ── Rubriques désactivées (accordéon, grisé, replié) ── */
   .disabled-accordion {
@@ -258,62 +248,9 @@
   <h2 class="page-title">Gérer les médias</h2>
   <p class="page-sub">
     Glisse-dépose tes photos (et vidéos, tout en haut de page) directement sur chaque emplacement, ou clique dessus pour ouvrir le sélecteur de fichiers.<br>
-    Tout est uploadé en direct sur le site — aucune manipulation de code nécessaire. Les photos sont automatiquement converties en WebP (jusqu\'à 2560 px selon l\'emplacement, métadonnées EXIF retirées) avant l'envoi.<br>
+    Tout est uploadé en direct sur le site — aucune manipulation de code nécessaire. Les paramètres d'export sont indiqués à chaque emplacement.<br>
     <em>Exceptions — ces quelques fichiers sont gérés directement dans le code du site (pas via ce panel) : les vidéos de fond de l'accueil (qualité d'origine + version allégée pour connexions lentes), le logo et le favicon (images/), le portrait d'Aya (images/about/). Dis-le moi directement si tu veux les changer, je m'en occupe.</em>
   </p>
-  <details class="export-box" open>
-    <summary>📋 Fiche d'export — photos et vidéos (à lire avant d'envoyer un fichier)</summary>
-    <div class="export-body">
-      <h3>Règles générales pour les photos</h3>
-      <ul>
-        <li><strong>Format :</strong> WebP. Le panel convertit automatiquement JPEG/PNG/HEIC (qualité 78 à 82, côté long jusqu\'à 2560 px selon l\'emplacement : indiqué sous chaque emplacement) et retire les métadonnées EXIF (dont la position GPS). Exporter dès l'origine en JPEG qualité 90+ ou PNG suffit.</li>
-        <li><strong>Couleurs :</strong> exporter en <strong>sRGB</strong> (Lightroom : « Espace colorimétrique sRGB »), sinon les couleurs ternissent sur le web.</li>
-        <li><strong>Pas de texte, logo ni cadre incrusté</strong> dans la photo. Sujet <strong>centré</strong> : le site recadre selon l'écran.</li>
-        <li><strong>Poids cible :</strong> voir tableau. Les photos du portfolio de plus de 400 Ko s'affichent en orange dans le panel.</li>
-        <li><strong>Droit à l'image :</strong> pour toute personne reconnaissable, garder l'autorisation de publication.</li>
-      </ul>
-
-      <h3>Emplacements — dimensions et poids</h3>
-      <table>
-        <tr><th>Emplacement</th><th>Dimensions</th><th>Ratio</th><th>Poids cible</th><th>Où sur le site</th></tr>
-        <tr><td>Bannières (hero/…)</td><td>2560 × 1440 px</td><td>16:9 paysage</td><td>≤ 450 Ko</td><td>Haut des pages Devis, Portfolio, Services, Contact, Collaboration, Connexion, Espace client. <code>contact-1</code> sert aussi de fond à À propos et FAQ ; <code>services-1</code> de fond aux pages prestation, « Découvrir chaque prestation », conseils et articles.</td></tr>
-        <tr><td>Photos prestations (services/…)</td><td>2000 × 2500 px</td><td>portrait 4:5, sujet centré</td><td>≤ 450 Ko</td><td>Carrousel d'accueil, filtre Services, formulaire de devis <strong>et photo de la page de chaque prestation</strong> (recadrée 3:4, avec texte alternatif)</td></tr>
-        <tr><td>Fonds des prestations (discover/…)</td><td>2560 × 1440 px</td><td>16:9 paysage</td><td>≤ 450 Ko</td><td>Fond de « Découvrir chaque prestation » et de la page de chaque prestation</td></tr>
-        <tr><td>Photos de formules (formulas/…)</td><td>2000 × 2500 px</td><td>portrait 4:5</td><td>≤ 400 Ko</td><td>Illustration de chaque formule <strong>et fond d'écran du devis</strong></td></tr>
-        <tr><td>Portfolio (portfolio/&lt;catégorie&gt;/N.webp)</td><td>≈ 900 × 1200 px</td><td>portrait</td><td>≤ 300 Ko</td><td>Galerie du Portfolio, 24 photos max par catégorie</td></tr>
-        <tr><td>Illustration « Devis &amp; déroulé »</td><td>900 × 700 px</td><td>9:7</td><td>≤ 150 Ko</td><td>Services → onglet Devis &amp; déroulé</td></tr>
-        <tr><td>Illustration « Collaboration »</td><td>900 × 1100 px</td><td>portrait</td><td>≤ 150 Ko</td><td>Page Collaboration → onglet Collaboration</td></tr>
-        <tr><td>Vignettes 4K Drone</td><td>640 × 400 px</td><td>16:10</td><td>≤ 80 Ko</td><td>Rubrique en pause</td></tr>
-      </table>
-
-      <h3>Vidéos de fond</h3>
-      <ul>
-        <li><strong>.mp4 (H.264), SANS piste audio</strong>, boucle fluide de 8 à 20 s, 1920 × 1080 px (illustration devis : 9:7), 24 à 30 images/s.</li>
-        <li><strong>Qualité d'abord :</strong> 8 à 15 Mo (20 Mo maximum). Le site charge la vidéo en lecture progressive : elle démarre sans attendre le téléchargement complet, À CONDITION que le fichier soit <code>faststart</code> (option <code>-movflags +faststart</code> ci-dessous).</li>
-        <li>Commande ffmpeg conseillée (compression, suppression du son, lecture immédiate) :
-<pre>ffmpeg -i source.mov -an -vf "scale=-2:1080,fps=30" -c:v libx264 -crf 20 -preset slow -pix_fmt yuv420p -movflags +faststart sortie.mp4</pre>
-Si le fichier dépasse 20 Mo, augmenter légèrement <code>-crf</code> (22) ou raccourcir la boucle. Les vidéos de l'accueil (<code>videos/home-bg.mp4</code>, <code>videos/mission-bg.mp4</code>) se changent directement sur GitHub, avec les mêmes règles ; chacune a une version mobile (<code>home-bg-m.mp4</code>, <code>mission-bg-m.mp4</code>, largeur 1280 px, haute qualité, 3 à 5 Mo : même commande avec <code>scale=1280:-2</code> et <code>-crf 21</code>), puis incrémenter le <code>?v=</code> dans <code>config/media.js</code>.</li>
-      </ul>
-
-      <h3>Compression en ligne de commande (optionnel)</h3>
-<pre>cwebp -q 82 -resize 900 1200 photo.jpg -o 1.webp</pre>
-      <p>Ou l'outil en ligne Squoosh (squoosh.app) : WebP, qualité 80–85.</p>
-
-      <h3>Référencement (Google Images)</h3>
-      <ul>
-        <li><strong>Textes alternatifs :</strong> décrire ce qu'on voit, en une phrase, sans liste de mots-clés. Ils se renseignent dans <code>config/media.js</code> : <code>IMG.portfolioAlt</code> (une liste par catégorie, <em>dans l'ordre des numéros de fichier</em> : 1.webp = 1re entrée) et <code>IMG.serviceAlt</code> (une phrase par prestation). Supprimer une photo ne décale pas les autres textes.</li>
-        <li><strong>Noms de fichiers :</strong> les photos du portfolio doivent garder la numérotation <code>N.webp</code> (c'est ainsi que la galerie les trouve) ; les autres chemins sont fixes, ne pas les renommer.</li>
-        <li><strong>Hébergement :</strong> les images sont servies depuis l'adresse technique <code>workers.dev</code>. Le passage à <code>media.bunkaio.com</code> est prévu (meilleur pour Google Images et la marque) ; il suffira ensuite de changer <code>MEDIA_BASE</code> dans <code>config/media.js</code>.</li>
-      </ul>
-
-      <h3>Suppression et remplacement</h3>
-      <ul>
-        <li><strong>Portfolio :</strong> « × » supprime la photo (confirmation demandée) ; clic sur la photo = la remplacer par un nouveau fichier au même numéro ; « + Ajouter » prend le premier numéro libre.</li>
-        <li>Un navigateur peut garder l'ancienne image en cache jusqu'à 1 h ; recharger la page avec Ctrl+Maj+R pour la voir tout de suite.</li>
-        <li>La suppression demande la dernière version du Worker : <code>cd server</code> puis <code>npx wrangler deploy</code>. Sans cela, le panel affiche « Worker à mettre à jour ».</li>
-      </ul>
-    </div>
-  </details>
   <div id="sections"></div>
 </div>
 
@@ -339,7 +276,7 @@ const VIDEO_SECTIONS = [
       'Format vidéo : .mp4 (H.264)',
       'Cadrage : paysage 16:9, 1920 × 1080 px minimum',
       'Boucle courte et fluide, SANS piste audio (lue automatiquement en muet, en boucle) — 8 à 20 secondes idéalement',
-      'Qualité d\'abord : 8 à 15 Mo conviennent (20 Mo maximum). IMPORTANT : le fichier doit être « faststart » (commande ffmpeg avec -movflags +faststart dans la fiche d\'export), sinon il ne démarre qu\'une fois entièrement téléchargé',
+      'Qualité d\'abord : 8 à 15 Mo conviennent (20 Mo maximum). IMPORTANT : le fichier doit être « faststart » (commande ffmpeg indiquée en haut de cette rubrique), sinon il ne démarre qu\'une fois entièrement téléchargé',
     ],
   },
   {
@@ -462,7 +399,7 @@ const SECTIONS = [
   {
     id: 'devis-illus',
     title: '🛠 Services — illustration "Devis & déroulé"',
-    desc: '900 × 700 px, paysage 9:7. Visible dans l\'onglet Devis & déroulé, colonne de droite.',
+    desc: '900 × 700 px, paysage 9:7 (≤ 150 Ko). Visible dans l\'onglet Devis & déroulé, colonne de droite.',
     slots: [{ path: 'devis/illustration.webp', label: 'Illustration' }],
   },
 
@@ -488,7 +425,7 @@ const SECTIONS = [
   {
     id: 'partners-collab',
     title: '🤝 Collaboration — illustration (onglet « Collaboration »)',
-    desc: '900 × 1100 px, portrait. Visible dans l\'onglet Collaboration, en haut de la colonne de gauche.',
+    desc: '900 × 1100 px, portrait (≤ 150 Ko). Visible dans l\'onglet Collaboration, en haut de la colonne de gauche.',
     slots: [{ path: 'partners/collaboration.webp', label: 'Illustration' }],
   },
 
@@ -534,7 +471,7 @@ const DISABLED_SECTIONS = [
   {
     id: 'drone-thumbs',
     title: '🚁 4K Drone — vignettes projets',
-    desc: '640 × 400 px, paysage 16:10 — miniature cliquable par projet. Pas urgent tant que la rubrique est en pause.',
+    desc: '640 × 400 px, paysage 16:10 (≤ 80 Ko) — miniature cliquable par projet. Pas urgent tant que la rubrique est en pause.',
     slots: [
       { path: 'drone/immo-1.webp', label: 'Immobilier — projet 1' },
       { path: 'drone/immo-2.webp', label: 'Immobilier — projet 2' },
@@ -964,6 +901,9 @@ function refreshAllPortfolios() {
 }
 
 // ── Build UI — helpers ───────────────────────────────────────────────────────
+// Règles d'export communes, affichées à chaque emplacement de dépôt (aucune fiche séparée).
+const PHOTO_EXPORT_RULE = 'Export : JPEG qualité 90+ ou PNG, couleurs sRGB, sans texte, logo ni cadre incrusté, sujet centré. Conversion automatique en WebP et retrait des métadonnées (dont la position GPS). Personne reconnaissable : garder son autorisation de publication.';
+const VIDEO_EXPORT_RULE = 'Export : .mp4 H.264 sans piste audio, 24 à 30 images/s, « faststart » obligatoire pour une lecture immédiate. Commande conseillée : <code>ffmpeg -i source.mov -an -vf "scale=-2:1080,fps=30" -c:v libx264 -crf 20 -preset slow -pix_fmt yuv420p -movflags +faststart sortie.mp4</code> (au-delà de 20 Mo : <code>-crf 22</code> ou boucle plus courte).';
 function buildSlotSection(section) {
   const wrap = document.createElement('div');
   wrap.className = 'section';
@@ -971,6 +911,7 @@ function buildSlotSection(section) {
     <div class="section-header">
       <div class="section-title">${section.title}</div>
       <div class="section-desc">${section.desc}</div>
+      <div class="section-desc export-rule">${PHOTO_EXPORT_RULE}</div>
     </div>
   `;
   const grid = document.createElement('div');
@@ -987,6 +928,7 @@ function buildVideoSection(title, desc, videos) {
     <div class="section-header">
       <div class="section-title">${title}</div>
       <div class="section-desc">${desc}</div>
+      <div class="section-desc export-rule">${VIDEO_EXPORT_RULE}</div>
     </div>
   `;
   const grid = document.createElement('div');
@@ -1003,6 +945,7 @@ function buildPfSection(title, desc, cats) {
     <div class="section-header">
       <div class="section-title">${title}</div>
       <div class="section-desc">${desc}</div>
+      <div class="section-desc export-rule">${PHOTO_EXPORT_RULE} Texte alternatif : décrire la photo en une phrase (dans config/media.js, dans l'ordre des numéros de fichier).</div>
     </div>
   `;
   const inner = document.createElement('div');

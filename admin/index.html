@@ -605,6 +605,16 @@
         <iframe class="media" id="mediaFrame" title="Gestion des médias" loading="lazy"></iframe>
       </section>
 
+      <!-- ═══ Veille du site ═══ -->
+      <section class="section" id="sec-veille">
+        <div class="toolbar">
+          <button class="btn" id="watchRunBtn" onclick="runWatchNow()">Lancer un contrôle maintenant</button>
+          <span class="muted small">Contrôle automatique toutes les 12 h (9 h 30 et 21 h 30 en heure d'été, 8 h 30 et 20 h 30 en hiver) : pages, fichiers du site, paiements, emails, base de données. Une anomalie vous est notifiée.</span>
+        </div>
+        <div class="card" style="margin-bottom:18px"><h3>Rapport de maintenance du jour <span class="badge line" id="opsDate"></span></h3><div id="opsReport" class="muted small">Chargement…</div></div>
+        <div class="card"><h3>Contrôles automatiques <span class="badge" id="watchBadge"></span></h3><div id="watchRuns" class="muted small">Chargement…</div></div>
+      </section>
+
       <!-- ═══ Statistiques ═══ -->
       <section class="section" id="sec-stats">
         <div class="toolbar">
@@ -697,6 +707,7 @@ const ICON = {
   messages: '<path d="M4 4h16v12H5.2L4 17.2z"/><path d="M8 9h8M8 12h5"/>',
   media: '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/>',
   stats: '<path d="M18 20V10M12 20V4M6 20v-6"/>',
+  veille: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/>',
 };
 const SECTIONS = [
   ['overview', 'Tableau de bord', 'Vue d\'ensemble de l\'activité'],
@@ -711,6 +722,7 @@ const SECTIONS = [
   ['activity', 'Activité des espaces', 'Ce que les clients et partenaires modifient dans leur espace'],
   ['media', 'Médias', 'Photos et vidéos du site'],
   ['stats', 'Statistiques', 'Fréquentation et conversion du site'],
+  ['veille', 'Veille du site', 'Contrôle automatique toutes les 12 h et rapport quotidien de maintenance'],
 ];
 
 /* Tableaux : en-têtes recopiés dans chaque cellule (data-label) pour l'affichage en cartes sur mobile. */
@@ -829,10 +841,62 @@ function go(id, noPush) {
   if (!noPush) history.replaceState(null, '', '#' + id);
   if (id === 'inbox' && Date.now() - inboxSyncedAt > 60000) inboxSync(false);
   if (id === 'media' && !$('mediaFrame').src) $('mediaFrame').src = 'media.html?embed=1';
+  if (id === 'veille') loadWatch();
   renderTabbar();
   window.scrollTo({ top: 0 });
 }
 window.addEventListener('hashchange', () => { if (TOKEN) go(location.hash.slice(1), true); });
+/* ── Veille du site : contrôles du Worker (toutes les 12 h) + rapport de maintenance quotidien (ops/veille.json) ── */
+let WATCH = null;
+async function loadWatch() {
+  try {
+    const { res, data } = await api('/admin/watch');
+    WATCH = res.ok && data.ok ? data.runs : null;
+  } catch (e) { WATCH = null; }
+  renderWatch();
+  try {
+    const r = await fetch('../ops/veille.json?t=' + Date.now(), { cache: 'no-store' });
+    renderOps(r.ok ? await r.json() : null);
+  } catch (e) { renderOps(null); }
+}
+async function runWatchNow() {
+  const b = $('watchRunBtn'); b.disabled = true; b.textContent = 'Contrôle en cours…';
+  try { const { res, data } = await api('/admin/watch/run', { method: 'POST' }); if (res.ok && data.ok) toast(data.run.ok ? 'Tout fonctionne' : data.run.failed + ' anomalie(s) détectée(s)'); }
+  catch (e) { toast('Contrôle impossible : Worker à mettre à jour ?'); }
+  b.disabled = false; b.textContent = 'Lancer un contrôle maintenant';
+  loadWatch();
+}
+function renderWatch() {
+  const box = $('watchRuns'); if (!box) return;
+  if (!WATCH) { box.innerHTML = 'Rapport indisponible. Si c\'est la première fois, redéployez le Worker (<code>npx wrangler deploy</code>).'; $('watchBadge').textContent = ''; return; }
+  if (!WATCH.length) { box.innerHTML = 'Aucun contrôle pour l\'instant. Le premier aura lieu au prochain créneau, ou lancez-le maintenant.'; return; }
+  const last = WATCH[0];
+  const b = $('watchBadge'); b.className = 'badge ' + (last.ok ? 'ok' : 'danger'); b.textContent = last.ok ? 'Tout fonctionne' : last.failed + ' anomalie(s)';
+  const byDay = {};
+  WATCH.forEach(r => (byDay[r.at.slice(0, 10)] = byDay[r.at.slice(0, 10)] || []).push(r));
+  box.innerHTML = Object.entries(byDay).slice(0, 14).map(([day, runs]) => `<div style="padding:10px 0;border-bottom:1px solid var(--line)">
+    <b>${new Date(day + 'T12:00:00').toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}</b>
+    ${runs.map(r => `<div style="margin-top:6px"><span class="badge ${r.ok ? 'ok' : 'danger'}">${new Date(r.at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })} · ${r.ok ? 'OK' : r.failed + ' anomalie(s)'}</span> <span class="muted small">${r.total} contrôles</span>
+      ${r.ok ? '' : `<ul style="margin:6px 0 0 18px">${r.checks.filter(c => !c.ok).map(c => `<li>${esc(c.name)} : ${esc(c.detail)}</li>`).join('')}</ul>`}</div>`).join('')}
+  </div>`).join('');
+  set_veille_count(last.ok ? 0 : last.failed);
+}
+function set_veille_count(n) { const el = $('cnt-veille'); if (el) { el.hidden = !n; el.textContent = n; } }
+function renderOps(ops) {
+  const box = $('opsReport'); if (!box) return;
+  if (!ops || !ops.reports || !ops.reports.length) { box.innerHTML = 'Aucun rapport de maintenance publié pour l\'instant.'; $('opsDate').textContent = ''; return; }
+  const list = ops.reports.slice(0, 7);
+  $('opsDate').textContent = 'mis à jour ' + new Date(ops.updatedAt || list[0].date).toLocaleString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+  box.classList.remove('muted');
+  box.innerHTML = list.map((r, i) => `<details ${i === 0 ? 'open' : ''} style="padding:8px 0;border-bottom:1px solid var(--line)">
+    <summary style="cursor:pointer"><b>${new Date(r.date + 'T12:00:00').toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}</b> <span class="badge ${r.status === 'ok' ? 'ok' : r.status === 'corrige' ? 'warn' : 'danger'}">${r.status === 'ok' ? 'Tout fonctionne' : r.status === 'corrige' ? 'Anomalie corrigée' : 'Action requise'}</span></summary>
+    <p style="margin:8px 0">${esc(r.summary || '')}</p>
+    ${(r.checks || []).length ? `<div class="small"><b>Contrôles</b><ul style="margin:4px 0 0 18px">${r.checks.map(c => `<li>${c.ok ? '✓' : '✗'} ${esc(c.name)}${c.detail ? ' : ' + esc(c.detail) : ''}</li>`).join('')}</ul></div>` : ''}
+    ${(r.fixes || []).length ? `<div class="small" style="margin-top:6px"><b>Corrections faites</b><ul style="margin:4px 0 0 18px">${r.fixes.map(f => `<li>${esc(f)}</li>`).join('')}</ul></div>` : ''}
+    ${(r.actions || []).length ? `<div class="small" style="margin-top:6px"><b>À faire de votre côté</b><ul style="margin:4px 0 0 18px">${r.actions.map(f => `<li>${esc(f)}</li>`).join('')}</ul></div>` : ''}
+  </details>`).join('');
+}
+
 function updateCounts() {
   setTimeout(renderTabbar, 0);
   const set = (id, n) => { const el = $('cnt-' + id); if (!el) return; el.hidden = !n; el.textContent = n; };

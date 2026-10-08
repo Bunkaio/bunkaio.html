@@ -2404,7 +2404,9 @@ function tierAccordionize(){
     if (!head) return;
     card.classList.add('tier-acc');
     const sum = document.createElement('div'); sum.className = 'tier-sum';
-    if (photo) { const th = photo.cloneNode(); th.className = 'formula-photo tier-thumb'; th.removeAttribute('loading'); sum.appendChild(th); }
+    if (photo) { const th = photo.cloneNode(); th.className = 'formula-photo tier-thumb'; th.removeAttribute('loading');
+      /* La copie ne doit jamais supprimer son parent (la ligne nom + prix) si l'image est introuvable : seule la vignette disparaît. */
+      th.setAttribute('onerror', "var f=this.dataset.fb;if(f){this.dataset.fb='';this.src=f}else{this.remove()}"); sum.appendChild(th); }
     const mid = document.createElement('div'); mid.className = 'tier-mid';
     if (badge) mid.appendChild(badge);
     mid.appendChild(head);
@@ -2441,9 +2443,7 @@ function renderTiersBase(){
       const priceStr = isSurm
         ? (LANG === 'fr' ? 'Sur mesure' : 'Bespoke')
         : pp(lt.price).toLocaleString('fr-FR') + '€';
-      const chfLine = (LANG === 'en' && lt.priceUSD)
-        ? `<div style="font-size:12px;color:var(--grey);margin-top:4px">$${lt.priceUSD.toLocaleString('en-US')}</div>`
-        : '';
+      const chfLine = ''; /* le prix en dollars est ajouté partout par initUsdPrices() */
       const payLine = isSurm
         ? (LANG === 'fr' ? 'Devis personnalisé — réponse sous 48h ouvrées' : 'Personalised quote — reply within 48 working hours')
         : (LANG === 'fr'
@@ -2599,7 +2599,7 @@ function renderRecapBase(){
     const lt = LUMEN_TIERS.find(x => x.id === S.tier);
     if (!lt) return;
     const isSurm = lt.id === 'surm';
-    const chfLine = (LANG === 'en' && lt.priceUSD) ? ` / $${lt.priceUSD.toLocaleString('en-US')}` : '';
+    const chfLine = '';
     const threeX = isSurm ? '' : Math.round(pp(lt.price) / 3).toLocaleString('fr-FR');
     const payLine = isSurm
       ? (LANG === 'fr'
@@ -4596,19 +4596,29 @@ function initWhiteScrollHint(){
   if (!hint || !mission || !white || !window.IntersectionObserver) return;
   /* Parcours : section « Le studio » (vidéo) → indicateur BLANC ; arrivée sur le fond blanc → il passe en NOIR,
      puis disparaît quand le texte commence à s'écrire. Se réinitialise quand on quitte la zone. */
-  let state = 'idle', missionOn = false, whiteOn = false, timer = null;
+  /* La section « Le studio » est très haute (effet collant) : on raisonne en position dans l'écran, pas en ratio visible. */
+  let state = 'idle', missionOn = false, whiteOn = false, timer = null, ticking = false;
   const reset = () => { clearTimeout(timer); state = 'idle'; hint.classList.remove('show'); hint.classList.remove('is-dark'); };
   const evaluate = () => {
     if (state === 'idle' && missionOn && !whiteOn) { state = 'white'; hint.classList.remove('is-dark'); hint.classList.add('show'); }
     else if (state === 'white' && whiteOn) {
       state = 'dark'; hint.classList.add('is-dark');
-      timer = setTimeout(() => { hint.classList.remove('show'); state = 'done'; }, 900);
+      timer = setTimeout(() => { hint.classList.remove('show'); state = 'done'; }, 1400);
     }
-    else if (state === 'white' && !missionOn && !whiteOn) reset();
-    else if (state === 'done' && !missionOn && !whiteOn) reset();
+    else if ((state === 'white' || state === 'done') && !missionOn && !whiteOn) reset();
   };
-  new IntersectionObserver((es) => { es.forEach(e => { missionOn = e.isIntersecting && e.intersectionRatio >= 0.4; if (!e.isIntersecting) missionOn = false; }); evaluate(); }, { threshold: [0, 0.4] }).observe(mission);
-  new IntersectionObserver((es) => { es.forEach(e => { whiteOn = e.isIntersecting && e.intersectionRatio >= 0.5; if (!e.isIntersecting) whiteOn = false; }); evaluate(); }, { threshold: [0, 0.5] }).observe(white);
+  const measure = () => {
+    ticking = false;
+    if (document.body.dataset.view && document.body.dataset.view !== 'home') return;
+    const vh = window.innerHeight || 1;
+    const m = mission.getBoundingClientRect(), w = white.getBoundingClientRect();
+    missionOn = m.top <= vh * 0.35 && m.bottom >= vh * 0.6;
+    whiteOn = w.top < vh * 0.55 && w.bottom > 0;
+    evaluate();
+  };
+  window.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(measure); } }, { passive: true });
+  window.addEventListener('resize', measure, { passive: true });
+  measure();
 }
 
 function updateNavLogin(){
@@ -4996,6 +5006,56 @@ function partnerQuizNotice(){
   return `<div class="pt-quiz-notice">${t({fr:'Tarif partenaire -' + PARTNER_DISCOUNT + '% appliqué à cette sélection.', en:'Partner rate -' + PARTNER_DISCOUNT + '% applied to this selection.'})}</div>`;
 }
 function eur(n){ return n.toLocaleString(LANG === 'fr' ? 'fr-FR' : 'en-GB') + ' €'; }
+
+/* ════════════════════════════════════════════════════════════════
+   💵  PRIX EN DOLLARS (version anglaise uniquement)
+   Chaque prix affiché en euros reçoit son équivalent indicatif en dollars, juste à côté
+   (« 250 € ≈ $280 »). La facturation reste en euros. Taux fixe, à ajuster ici.
+   ════════════════════════════════════════════════════════════════ */
+const EUR_USD_RATE = 1.10;
+const USD_PRICE_RE = /(€\s?\d{1,3}(?:[\s\u00a0\u202f,.]\d{3})*(?:[.,]\d{1,2})?(?!\d)|\d{1,3}(?:[\s\u00a0\u202f,.]\d{3})*(?:[.,]\d{1,2})?\s?€)/g;
+function usdFromEurText(txt){
+  const digits = txt.replace(/[€\s\u00a0\u202f]/g, '');
+  /* « 1,090 » ou « 1.090 » = milliers ; « 0,60 » ou « 0.60 » = décimales */
+  const n = /[.,]\d{1,2}$/.test(digits) ? parseFloat(digits.replace(/[.,](?=\d{3}(\D|$))/g, '').replace(',', '.')) : parseFloat(digits.replace(/[.,]/g, ''));
+  if (!isFinite(n) || n <= 0) return '';
+  const v = n * EUR_USD_RATE;
+  const usd = n < 10 ? v.toFixed(2) : (v < 100 ? Math.round(v) : Math.round(v / 5) * 5).toLocaleString('en-US');
+  return '≈ $' + usd;
+}
+function usdSweep(root){
+  root = root || document.body;
+  if (LANG !== 'en') { root.querySelectorAll('.usd-eq').forEach(el => el.remove()); return; }
+  const skip = el => !el || el.closest('script,style,textarea,input,select,option,.usd-eq,[data-no-usd]');
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: n => (USD_PRICE_RE.test(n.nodeValue) && (USD_PRICE_RE.lastIndex = 0, !skip(n.parentElement))) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT });
+  const nodes = []; let n; while ((n = walker.nextNode())) nodes.push(n);
+  nodes.forEach(node => {
+    const txt = node.nodeValue; USD_PRICE_RE.lastIndex = 0;
+    const frag = document.createDocumentFragment(); let last = 0, m, changed = false;
+    while ((m = USD_PRICE_RE.exec(txt))) {
+      const end = m.index + m[0].length;
+      /* déjà converti : le texte suivant est notre propre mention */
+      const after = txt.slice(end);
+      const next = end === txt.length ? node.nextSibling : null;
+      if (next && next.nodeType === 1 && next.classList.contains('usd-eq')) continue;
+      const usd = usdFromEurText(m[0]); if (!usd) continue;
+      /* « €/km », « €/h » : on garde l'unité collée au prix */
+      const unit = (after.match(/^\s?\/\s?[a-z]+/i) || [''])[0];
+      frag.appendChild(document.createTextNode(txt.slice(last, end + unit.length)));
+      const sp = document.createElement('span'); sp.className = 'usd-eq'; sp.textContent = ' ' + usd + (unit ? unit.replace(/\s/g, '') : '');
+      frag.appendChild(sp); last = end + unit.length; changed = true;
+    }
+    if (!changed) return;
+    frag.appendChild(document.createTextNode(txt.slice(last)));
+    node.parentNode.replaceChild(frag, node);
+  });
+}
+function initUsdPrices(){
+  let pending = false;
+  const run = () => { pending = false; obs.disconnect(); usdSweep(document.body); obs.observe(document.body, { childList: true, subtree: true, characterData: true }); };
+  const obs = new MutationObserver(() => { if (!pending) { pending = true; requestAnimationFrame(run); } });
+  run();
+}
 
 function renderAccPromos(){
   const el = document.getElementById('accPromosContent');
@@ -6551,6 +6611,7 @@ renderFooterServices();
 initHomeClaimVideo();
 initTestiAutoplay();
 initWhiteScrollHint();
+initUsdPrices();
 updatePlaceholders();
 updateLang();
 applyImages();

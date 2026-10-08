@@ -28,6 +28,10 @@ Le code est la source de vérité. Ce fichier ne sert qu'à reprendre vite.
 ## Positionnement
 Premium accessible : direction artistique, accompagnement, interlocuteur unique, espace client (moodboard, suivi, devis, factures, séance, galerie privée), 8+ ans d'expérience, 200+ projets, délais annoncés, droits clairs. CTA : « Construire mon projet », « Demander un devis », « Recevoir une proposition », « Parler de mon événement ».
 
+## Veille et prix en dollars
+- Veille automatique : `server/src/watch.ts` (cron `30 7,19 * * *`, 12 h), historique KV `watch:run:*` (30 j), admin rubrique « Veille du site » (`/admin/watch`, `/admin/watch/run`). Rapport quotidien de maintenance : `ops/veille.json` (liste `reports`, plus récent en premier ; statut `ok`, `corrige` ou `action`), affiché dans la même rubrique.
+- Version anglaise : `initUsdPrices()` ajoute « ≈ $ » après chaque prix en euros (taux `EUR_USD_RATE` dans `js/script.js`). Ne pas réécrire de prix en dollars à la main.
+
 ## Tests
 Banc local Miniflare avec faux Stripe/Resend et Playwright (scripts hors dépôt). Un test de régression doit couvrir : parcours devis, formulaires en échec, espace client, admin, crawl de toutes les pages.
 

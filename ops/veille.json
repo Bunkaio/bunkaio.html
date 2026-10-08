@@ -1,0 +1,25 @@
+{
+  "updatedAt": "2026-10-08T19:00:00Z",
+  "reports": [
+    {
+      "date": "2026-10-08",
+      "status": "corrige",
+      "summary": "Mise en service de la veille. Contrôle complet du site : 72 pages explorées (français et anglais) sans erreur, parcours devis → acompte → espace client → solde testé de bout en bout, API du Worker testée. Une anomalie trouvée et corrigée : dans le devis, si la photo d'une formule ne se chargeait pas, toute la ligne de la formule (nom et prix) disparaissait.",
+      "checks": [
+        { "name": "Pages du site (72, FR + EN)", "ok": true, "detail": "aucune erreur JavaScript, aucun lien cassé" },
+        { "name": "Parcours devis et paiement (banc de test)", "ok": true, "detail": "43 étapes OK" },
+        { "name": "API du Worker (banc de test)", "ok": true, "detail": "35 étapes OK" },
+        { "name": "Prix en dollars (version anglaise)", "ok": true, "detail": "accueil, devis, pages prestations, Lumen" },
+        { "name": "Dimensions d'export des images", "ok": true, "detail": "inchangées" }
+      ],
+      "fixes": [
+        "Devis : la ligne d'une formule ne disparaît plus si sa photo est introuvable (seule la vignette est masquée).",
+        "Accueil : indicateur « Scroll » de nouveau visible après le carrousel (il ne s'affichait jamais à cause de la hauteur de la section).",
+        "Page particuliers : délai de livraison exact (5 à 10 jours ouvrés selon la formule)."
+      ],
+      "actions": [
+        "Redéployer le Worker pour activer le contrôle automatique toutes les 12 h : git pull origin main, puis cd server, npm install, npx wrangler deploy."
+      ]
+    }
+  ]
+}
