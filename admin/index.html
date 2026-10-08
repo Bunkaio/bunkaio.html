@@ -1837,7 +1837,7 @@ const ORIGIN_LABELS_ADMIN = { instagram: 'Instagram', recommandation: 'Recommand
 function quoteFromContact(email) {
   const c = contactByEmail(email) || { email, name: '', phone: '', lang: 'fr', lead: null, accounts: [] };
   const a = primaryAcc(c); const f = (a && a.facturation) || {};
-  /* Formule Lancement : modèle personal branding (la catégorie seule désignerait le modèle corporate). */
+  /* Formule Lancement : modèle Personal Branding (la catégorie seule désignerait le modèle corporate). */
   const tplKey = c.lead ? (/^Lancement\b/i.test(c.lead.formule || '') ? 'brand' : BunkaioDevis.guessTemplate(c.lead.category)) : 'part';
   const t = TPL[tplKey];
   const profil = f.profil || (a && a.type === 'partner' ? 'professionnel' : t.profil);

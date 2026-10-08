@@ -3,7 +3,7 @@
     "name": "BUNKAIO",
     "alternateName": "Studio BUNKAIO",
     "logo": "https://bunkaio.com/images/logo-bunkaio-512.png",
-    "description": "BUNKAIO, studio d'image pour professionnels, entrepreneurs et mannequins, basé à Montpellier et mobile en Occitanie (Béziers, Montpellier, Toulouse) : personal branding, portrait, mode, produit, corporate et événementiel, avec des images haut de gamme en HD.",
+    "description": "BUNKAIO, studio d'image pour professionnels, entrepreneurs et mannequins, basé à Montpellier et mobile en Occitanie (Béziers, Montpellier, Toulouse) : Personal Branding, portrait, mode, produit, corporate et événementiel, avec des images haut de gamme en HD.",
     "telephone": "+33758573161",
     "email": "contact@bunkaio.com",
     "priceRange": "100-2490 EUR",
@@ -24,13 +24,13 @@
         "path": "/services/seance-photo-particuliers/"
       },
       {
-        "name": "Corporate & personal branding",
+        "name": "Corporate & Personal Branding",
         "description": "Portraits professionnels pour dirigeants, équipes et entreprises, dans leurs locaux, en extérieur ou en studio.",
         "path": "/services/portrait-professionnel-corporate/"
       },
       {
-        "name": "Personal branding — entrepreneurs et indépendants",
-        "description": "Formule Lancement : shooting de personal branding au studio ou dans l'environnement professionnel du client, 12 photos HD retouchées.",
+        "name": "Personal Branding — entrepreneurs et indépendants",
+        "description": "Formule Lancement : shooting de Personal Branding au studio ou dans l'environnement professionnel du client, 12 photos HD retouchées.",
         "path": "/services/personal-branding-entrepreneurs/"
       },
       {
@@ -77,7 +77,7 @@
     "knowsAbout": [
       "Photographie de portrait",
       "Photographie de mode",
-      "Personal branding",
+      "Personal Branding",
       "Photographie de produit",
       "Photographie corporate",
       "Photographie événementielle"

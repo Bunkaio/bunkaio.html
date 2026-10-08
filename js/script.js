@@ -218,7 +218,7 @@ let LANG = 'fr';
 const I18N = {
   fr: {
     'estimate':'Devis','services':'Services','portfolio':'Portfolio','drone':'4K Drone','contact':'Contact','partners':'Collaboration','nav-legal':'FAQ',
-    'hero-kicker':'<span class="hk-a">Studio d\'image</span> <span class="hk-b">pour <span class=\"hk-w\"><em>professionnels</em>,</span> <span class=\"hk-w\"><em>entrepreneurs</em></span> et <span class=\"hk-w\"><em>mannequins</em></span></span>','cred-lead':'BUNKAIO est un studio d\'image mobile, basé à Montpellier, qui crée des images premium pour les personnes, les marques et les entreprises : <a href="/services/personal-branding-entrepreneurs/" data-nav="service:branding">personal branding pour entrepreneurs</a>, portraits professionnels et corporate, mode et mannequins, photo de produit, événementiel et séances pour les particuliers, à Béziers, Montpellier et Toulouse. Retrouvez chaque <a href="/services/" data-nav="services">prestation et ses tarifs</a>.','quiz-h1':'Devis photo en ligne','hero-word1':'Imaginez','hero-word2':'votre','hero-word3':'projet','start':'Construire mon projet',
+    'hero-kicker':'<span class="hk-a">Studio d\'image</span> <span class="hk-b">pour <span class=\"hk-w\"><em>professionnels</em>,</span> <span class=\"hk-w\"><em>entrepreneurs</em></span> et <span class=\"hk-w\"><em>mannequins</em></span></span>','cred-lead':'BUNKAIO est un studio d\'image mobile, basé à Montpellier, qui crée des images premium pour les personnes, les marques et les entreprises : <a href="/services/personal-branding-entrepreneurs/" data-nav="service:branding">Personal Branding pour entrepreneurs</a>, portraits professionnels et corporate, mode et mannequins, photo de produit, événementiel et séances pour les particuliers, à Béziers, Montpellier et Toulouse. Retrouvez chaque <a href="/services/" data-nav="services">prestation et ses tarifs</a>.','quiz-h1':'Devis photo en ligne','hero-word1':'Imaginez','hero-word2':'votre','hero-word3':'projet','start':'Construire mon projet',
     'step-cat':'01 — Catégorie','q-cat':'Quel est votre domaine\u00a0?','q-cat-sub':'Sélectionnez l\'univers de votre projet.',
     'step-prof':'02 — Profil','q-prof':'Quel profil êtes-vous\u00a0?','q-prof-sub':'Identifiez-vous pour que nous comprenions précisément votre besoin.',
     'step-tier':'03 — Prestation','q-tier':'Quel niveau de prestation\u00a0?',
@@ -306,7 +306,7 @@ const I18N = {
     'about-zone-text':'BUNKAIO est basé à Montpellier et se déplace : pas d\'adresse de studio, mais une intervention à Béziers, Montpellier et Toulouse. ' + TRAVEL_TXT.fr.full + ' Besoin d\'idées de lieux de séance ? Voir <a href="/conseils/lieux-seance-photo-montpellier-beziers-toulouse/" data-nav="article:lieux-seance-photo-montpellier-beziers-toulouse">où faire une séance photo à Montpellier, Béziers ou Toulouse</a>.',
     'about-stat1':'ans d\'expérience','about-stat2':'projets réalisés','about-stat3':'diplômée de l\'ETPA · BTS Photographie',
     'about-h-spec':'Spécialités',
-    'about-spec1':'Portrait & lifestyle','about-spec2':'Mode, agences et mannequins','about-spec3':'Photo de produit & commercial','about-spec4':'Corporate & personal branding','about-spec5':'Événementiel & mariage (Lumen)',
+    'about-spec1':'Portrait & lifestyle','about-spec2':'Mode, agences et mannequins','about-spec3':'Photo de produit & commercial','about-spec4':'Corporate & Personal Branding','about-spec5':'Événementiel & mariage (Lumen)',
     'about-h-method':'Comment ça se passe',
     'about-step1':'Devis personnalisé sous 48 h','about-step2':'Shooting à la date convenue','about-step3':'Retouche et post-production','about-step4':'Livraison en HD dans une galerie privée, depuis votre espace client',
     'about-cta-portfolio':'Voir le portfolio','about-cta-contact':'Contacter BUNKAIO',
@@ -575,7 +575,7 @@ const I18N = {
   },
   en: {
     'estimate':'Quote','services':'Services','portfolio':'Portfolio','drone':'4K Drone','contact':'Contact','partners':'Collaboration','nav-legal':'FAQ',
-    'hero-kicker':'<span class="hk-a">Image studio</span> <span class="hk-b">for <span class=\"hk-w\"><em>professionals</em>,</span> <span class=\"hk-w\"><em>entrepreneurs</em></span> and <span class=\"hk-w\"><em>models</em></span></span>','cred-lead':'BUNKAIO is a mobile image studio based in Montpellier, creating premium images for people, brands and companies: <a href="/services/personal-branding-entrepreneurs/" data-nav="service:branding">personal branding for entrepreneurs</a>, professional and corporate portraits, fashion and models, product photography, events and sessions for individuals, in Béziers, Montpellier and Toulouse. Browse each <a href="/services/" data-nav="services">service and its rates</a>.','quiz-h1':'Online photo quote','hero-word1':'Imagine','hero-word2':'your','hero-word3':'project','start':'Build my project',
+    'hero-kicker':'<span class="hk-a">Image studio</span> <span class="hk-b">for <span class=\"hk-w\"><em>professionals</em>,</span> <span class=\"hk-w\"><em>entrepreneurs</em></span> and <span class=\"hk-w\"><em>models</em></span></span>','cred-lead':'BUNKAIO is a mobile image studio based in Montpellier, creating premium images for people, brands and companies: <a href="/services/personal-branding-entrepreneurs/" data-nav="service:branding">Personal Branding for entrepreneurs</a>, professional and corporate portraits, fashion and models, product photography, events and sessions for individuals, in Béziers, Montpellier and Toulouse. Browse each <a href="/services/" data-nav="services">service and its rates</a>.','quiz-h1':'Online photo quote','hero-word1':'Imagine','hero-word2':'your','hero-word3':'project','start':'Build my project',
     'step-cat':'01 — Category','q-cat':'What is your field?','q-cat-sub':'Select the universe your project belongs to.',
     'step-prof':'02 — Profile','q-prof':'Which profile are you?','q-prof-sub':'Tell us who you are so we can understand exactly what you need.',
     'step-tier':'03 — Service level','q-tier':'Which level of service?',
@@ -663,7 +663,7 @@ const I18N = {
     'about-zone-text':'BUNKAIO is based in Montpellier and travels to you: no studio address, but shoots in Béziers, Montpellier and Toulouse. ' + TRAVEL_TXT.en.full,
     'about-stat1':'years of experience','about-stat2':'projects completed','about-stat3':'ETPA graduate · BTS Photography',
     'about-h-spec':'Specialities',
-    'about-spec1':'Portrait & lifestyle','about-spec2':'Fashion, agencies and models','about-spec3':'Product & commercial photography','about-spec4':'Corporate & personal branding','about-spec5':'Events & weddings (Lumen)',
+    'about-spec1':'Portrait & lifestyle','about-spec2':'Fashion, agencies and models','about-spec3':'Product & commercial photography','about-spec4':'Corporate & Personal Branding','about-spec5':'Events & weddings (Lumen)',
     'about-h-method':'How it works',
     'about-step1':'Personalised quote within 48 hours','about-step2':'Shoot on the agreed date','about-step3':'Retouching and post-production','about-step4':'HD delivery in a private gallery, from your client area',
     'about-cta-portfolio':'See the portfolio','about-cta-contact':'Contact BUNKAIO',
@@ -1151,7 +1151,7 @@ const CATS = [
         en:['Full day — 4 different locations','4 different outfits','30 retouched HD photos','1 short film (30 seconds)','Art direction & styling','Featured on Bunkaio channels'] } }
     }},
   { id:'corporate',
-    name:{fr:'Corporate & personal branding', en:'Corporate & personal branding'},
+    name:{fr:'Corporate & Personal Branding', en:'Corporate & Personal Branding'},
     tag:{fr:'Entrepreneurs · indépendants · dirigeants · équipes', en:'Entrepreneurs · freelancers · executives · teams'},
     pitch:{fr:'Une image professionnelle qui inspire confiance dès le premier regard. Le shooting peut se faire directement dans votre environnement de travail : vos locaux deviennent votre décor.',
       en:'A professional image that builds trust at first glance. The shoot can take place right where you work: your premises become your set.'},
@@ -1536,7 +1536,7 @@ const PROFILE_DESCRIPTIONS = {
 const TIERS = [
   { id:'deco', name:{fr:'Découverte', en:'Discovery'},        badge:{fr:'L\'essentiel, bien fait', en:'The essentials, done right'},
     line:{fr:'Une porte d\'entrée soignée : même exigence, format resserré.', en:'A polished way in: the same standards, a tighter format.'} },
-  /* Lancement : palier propre à la gamme Corporate & personal branding (porte d'entrée entrepreneurs). Les autres gammes n'ont pas
+  /* Lancement : palier propre à la gamme Corporate & Personal Branding (porte d'entrée entrepreneurs). Les autres gammes n'ont pas
      de clé `lanc` dans leurs tiers : catTiers() ne leur affiche donc que leurs quatre formules. */
   { id:'lanc', name:{fr:'Lancement', en:'Launch'},          badge:{fr:'Entrepreneurs & indépendants', en:'Entrepreneurs & freelancers'},
     line:{fr:'La première vraie production d\'image de votre activité.', en:'The first real image production for your business.'} },
@@ -2135,7 +2135,7 @@ function goToTiers(){
   quizStep(3);
 }
 
-/* Brief court de la gamme Corporate & personal branding (étape 5) : tout est facultatif, pour qualifier sans freiner l'envoi.
+/* Brief court de la gamme Corporate & Personal Branding (étape 5) : tout est facultatif, pour qualifier sans freiner l'envoi.
    Les réponses sont ajoutées à la description du projet (fiche lead Stripe, email de demande, admin) : aucun champ serveur nouveau. */
 const BRIEF_USES = [
   { id:'site', fr:'Site internet', en:'Website' }, { id:'linkedin', fr:'LinkedIn', en:'LinkedIn' },
@@ -2820,7 +2820,7 @@ function renderOptions(){
       : '<div class="opt-section-label" style="margin-top:0;margin-bottom:16px">Session location</div>';
     const extLabel = LANG === 'fr' ? 'Extérieur' : 'Outdoor';
     const stuLabel = LANG === 'fr' ? 'Studio (+' + STUDIO_FEE + '€ — utilisation du matériel studio)' : 'Studio (+€' + STUDIO_FEE + ' — studio equipment fee)';
-    /* Corporate & personal branding : le shooting dans l'environnement professionnel du client (in situ) est proposé en premier. */
+    /* Corporate & Personal Branding : le shooting dans l'environnement professionnel du client (in situ) est proposé en premier. */
     const situ = S.cat === 'corporate' ? `
         <div class="photo-pack" id="loc-situ" data-loc="situ" onclick="selectLocation('situ')" style="flex:1;min-width:130px">
           <span>🏢 ${t({fr:'Dans vos locaux (in situ)', en:'At your premises (on site)'})}</span><span class="photo-pack-price">${LANG==='fr'?'Inclus':'Included'}</span>
@@ -3265,7 +3265,7 @@ const DISCOVER_COPY = {
   },
   branding: {
     for:{fr:'Entrepreneurs, indépendants et créateurs qui lancent ou professionnalisent leur activité.', en:'Entrepreneurs, freelancers and creators launching or professionalising their business.'},
-    why:{fr:'Un shooting de personal branding, au studio ou directement dans votre environnement professionnel : une banque d\'images qui montre qui vous êtes, ce que vous faites et comment vous travaillez.', en:'A personal branding shoot, in the studio or right where you work: an image bank that shows who you are, what you do and how you work.'}
+    why:{fr:'Un shooting de Personal Branding, au studio ou directement dans votre environnement professionnel : une banque d\'images qui montre qui vous êtes, ce que vous faites et comment vous travaillez.', en:'A Personal Branding shoot, in the studio or right where you work: an image bank that shows who you are, what you do and how you work.'}
   },
   mode: {
     for:{fr:'Mannequins, modèles émergents, créateurs de contenu, marques et agences.', en:'Models, emerging models, content creators, brands and agencies.'},
@@ -3334,9 +3334,9 @@ function renderDiscoverPage(){
   const en = LANG === 'en';
   const money = n => n.toLocaleString(en ? 'en-GB' : 'fr-FR') + ' €';
   /* Orientation par marché : entrepreneurs (porte d'entrée Lancement), marques et mode, entreprises et événements, particuliers.
-     La ligne « personal branding » est la formule Lancement de la gamme corporate (même source de prix et de délai). */
+     La ligne « Personal Branding » est la formule Lancement de la gamme corporate (même source de prix et de délai). */
   const corpCat = CATS.find(c => c.id === 'corporate');
-  const brandRow = corpCat && corpCat.tiers.lanc ? [{ id:'branding', name:{fr:'Personal branding — entrepreneurs', en:'Personal branding — entrepreneurs'}, tiers:{ lanc: corpCat.tiers.lanc } }] : [];
+  const brandRow = corpCat && corpCat.tiers.lanc ? [{ id:'branding', name:{fr:'Personal Branding — entrepreneurs', en:'Personal Branding — entrepreneurs'}, tiers:{ lanc: corpCat.tiers.lanc } }] : [];
   const MARKET = { branding:{fr:'Entrepreneurs & indépendants', en:'Entrepreneurs & freelancers'}, mode:{fr:'Marques, mode & mannequins', en:'Brands, fashion & models'}, commercial:{fr:'Marques, mode & mannequins', en:'Brands, fashion & models'}, corporate:{fr:'Entreprises & événements', en:'Companies & events'}, event:{fr:'Entreprises & événements', en:'Companies & events'}, 'photo-part':{fr:'Particuliers', en:'Individuals'} };
   const ORDER = ['branding', 'mode', 'commercial', 'corporate', 'event', 'photo-part'];
   const cats = [...brandRow, ...CATS.filter(c => seoRouteFor('service', c.id))].sort((a, b) => (ORDER.indexOf(a.id) + 1 || 99) - (ORDER.indexOf(b.id) + 1 || 99));
@@ -3660,7 +3660,7 @@ function renderServicePage(catId){
       <h2>${t({fr:'Autres prestations', en:'Other services'})}</h2>
       <div class="svcp-others-row">
         ${others.map(o => `<a class="svcp-chip" href="${servicePath(o.id)}" onclick="return navLink(event,'service','${o.id}')">${t(o.name)}</a>`).join('')}
-        <a class="svcp-chip" href="${servicePath('branding')}" data-nav="service:branding">${t({fr:'Personal branding — entrepreneurs', en:'Personal branding — entrepreneurs'})}</a>
+        <a class="svcp-chip" href="${servicePath('branding')}" data-nav="service:branding">${t({fr:'Personal Branding — entrepreneurs', en:'Personal Branding — entrepreneurs'})}</a>
         <a class="svcp-chip" href="/services/" onclick="return navLink(event,'services')">${t({fr:'Tout le catalogue', en:'Full catalogue'})}</a>
       </div>
     </section>
@@ -3743,14 +3743,14 @@ function renderBrandingPage(){
       a: `<p>${t({fr:'Lancement est pensé pour une personne. Pour plusieurs associés ou une équipe, voyez la page ', en:'Launch is designed for one person. For several partners or a team, see the '})}<a href="/services/portrait-professionnel-corporate/" data-nav="service:corporate">${t({fr:'portraits corporate', en:'corporate portraits'})}</a>${t({fr:' ou précisez le nombre de personnes dans votre demande.', en:' page or state the number of people in your request.'})}</p>` }
   ];
 
-  /* Chiffres clés (tirés de la formule), équation du personal branding, et accordéon des 7 points. */
+  /* Chiffres clés (tirés de la formule), équation du Personal Branding, et accordéon des 7 points. */
   const keys = [
     ['clock', '1h30', {fr:'de shooting', en:'shoot'}],
     ['gallery', '12', {fr:'photos retouchées', en:'retouched photos'}],
     ['pin', t({fr:'In situ', en:'On site'}), {fr:'dans vos locaux', en:'at your premises'}],
     ['calendar', t({fr:'7 jours', en:'7 days'}), {fr:'ouvrés de livraison', en:'working days to delivery'}]
   ];
-  const eq = [['user', {fr:'Portrait', en:'Portrait'}], ['pin', {fr:'Environnement', en:'Setting'}], ['camera', {fr:'Activité', en:'Activity'}], ['palette', {fr:'Personnalité', en:'Personality'}], ['spark', {fr:'Personal branding', en:'Personal branding'}]];
+  const eq = [['user', {fr:'Portrait', en:'Portrait'}], ['pin', {fr:'Environnement', en:'Setting'}], ['camera', {fr:'Activité', en:'Activity'}], ['palette', {fr:'Personnalité', en:'Personality'}], ['spark', {fr:'Personal Branding', en:'Personal Branding'}]];
   const acc = [
     { icon:'warn', title:{fr:'Le problème', en:'The problem'}, teaser:{fr:'Une activité professionnelle, des photos qui ne le sont pas', en:'A professional business, photos that aren\'t'},
       body:`<p>${t({fr:'Vous avez un logo, un site, un compte Instagram, un profil LinkedIn et une offre claire. Mais vos photos sont des selfies, des images prises au téléphone, un portrait d\'il y a cinq ans ou des visuels qui ne se ressemblent pas entre eux.', en:'You have a logo, a website, an Instagram account, a LinkedIn profile and a clear offer. But your photos are selfies, phone shots, a portrait from five years ago or visuals that don\'t match each other.'})}</p><p>${t({fr:'Or votre visage est souvent le premier contact avec votre entreprise : beaucoup de clients vous découvrent en ligne avant de vous rencontrer. Des images incohérentes ou datées affaiblissent la confiance, quelle que soit la qualité de votre travail.', en:'Yet your face is often the first contact with your business: many clients discover you online before they meet you. Inconsistent or dated images weaken trust, however good your work is.'})}</p>` },
@@ -3762,8 +3762,8 @@ function renderBrandingPage(){
       body:`<p>${t({fr:'Pour toutes les personnes qui entreprennent et ont besoin d\'une image professionnelle pour développer leur activité. Le statut juridique ne compte pas : ce qui compte, c\'est ce que vos clients voient de vous.', en:'For everyone who runs a business and needs a professional image to grow it. Legal status doesn\'t matter: what matters is what your clients see of you.'})}</p>${chips(forWho)}` },
     { icon:'spark', title:{fr:'Pourquoi BUNKAIO', en:'Why BUNKAIO'}, teaser:{fr:'Direction artistique, studio mobile, droits clairs', en:'Art direction, mobile studio, clear rights'},
       body:`<ul class="value-grid">${why.map(w => `<li><b>${t(w[0])}</b><span>${t(w[1])}</span></li>`).join('')}</ul>` },
-    { icon:'scale', title:{fr:'Portrait classique ou personal branding ?', en:'Classic portrait or personal branding?'}, teaser:{fr:'Une image, ou une identité visuelle', en:'One image, or a visual identity'},
-      body:`<div class="pb-compare"><div><h3>${t({fr:'Portrait classique', en:'Classic portrait'})}</h3><p><strong>${t({fr:'Une image professionnelle.', en:'One professional image.'})}</strong></p><ul class="svcp-list"><li>${t({fr:'Un fond neutre, une pose', en:'A plain backdrop, one pose'})}</li><li>${t({fr:'Utile pour un profil ou un annuaire', en:'Useful for a profile or a directory'})}</li><li>${t({fr:'Montre votre visage', en:'Shows your face'})}</li></ul></div><div class="pb-compare-us"><h3>${t({fr:'Personal branding BUNKAIO', en:'BUNKAIO personal branding'})}</h3><p><strong>${t({fr:'Une identité visuelle exploitable dans plusieurs contextes.', en:'A visual identity usable in many contexts.'})}</strong></p><ul class="svcp-list"><li>${t({fr:'Brief, préparation et direction de pose', en:'Brief, preparation and posing direction'})}</li><li>${t({fr:'2 tenues, 2 ambiances ou mises en situation, dans votre lieu si c\'est pertinent', en:'2 outfits, 2 moods or set-ups, at your place if it makes sense'})}</li><li>${t({fr:'12 images cohérentes pour le site, les réseaux, la presse et la vente', en:'12 consistent images for your website, social media, press and sales'})}</li><li>${t({fr:'Montre qui vous êtes, ce que vous faites et pourquoi on peut vous faire confiance', en:'Shows who you are, what you do and why people can trust you'})}</li></ul></div></div>` },
+    { icon:'scale', title:{fr:'Portrait classique ou Personal Branding ?', en:'Classic portrait or Personal Branding?'}, teaser:{fr:'Une image, ou une identité visuelle', en:'One image, or a visual identity'},
+      body:`<div class="pb-compare"><div><h3>${t({fr:'Portrait classique', en:'Classic portrait'})}</h3><p><strong>${t({fr:'Une image professionnelle.', en:'One professional image.'})}</strong></p><ul class="svcp-list"><li>${t({fr:'Un fond neutre, une pose', en:'A plain backdrop, one pose'})}</li><li>${t({fr:'Utile pour un profil ou un annuaire', en:'Useful for a profile or a directory'})}</li><li>${t({fr:'Montre votre visage', en:'Shows your face'})}</li></ul></div><div class="pb-compare-us"><h3>${t({fr:'Personal Branding BUNKAIO', en:'BUNKAIO Personal Branding'})}</h3><p><strong>${t({fr:'Une identité visuelle exploitable dans plusieurs contextes.', en:'A visual identity usable in many contexts.'})}</strong></p><ul class="svcp-list"><li>${t({fr:'Brief, préparation et direction de pose', en:'Brief, preparation and posing direction'})}</li><li>${t({fr:'2 tenues, 2 ambiances ou mises en situation, dans votre lieu si c\'est pertinent', en:'2 outfits, 2 moods or set-ups, at your place if it makes sense'})}</li><li>${t({fr:'12 images cohérentes pour le site, les réseaux, la presse et la vente', en:'12 consistent images for your website, social media, press and sales'})}</li><li>${t({fr:'Montre qui vous êtes, ce que vous faites et pourquoi on peut vous faire confiance', en:'Shows who you are, what you do and why people can trust you'})}</li></ul></div></div>` },
     { icon:'list', title:{fr:'Et ensuite : votre image grandit avec vous', en:'Next: your image grows with you'}, teaser:{fr:'Signature, Premium, Éditorial', en:'Signature, Premium, Editorial'},
       body:`<p>${t({fr:'Lancement est la porte d\'entrée de la gamme ', en:'Launch is the entry point to the '})}<a href="/services/portrait-professionnel-corporate/" data-nav="service:corporate">${t(c.name)}</a>${t({fr:'. Quand vos besoins augmentent, chaque formule va plus loin :', en:' range. As your needs grow, each package goes further:'})}</p><ul class="value-grid">${ladder}</ul>` }
   ];
@@ -3774,7 +3774,7 @@ function renderBrandingPage(){
       <a href="/" onclick="return navLink(event,'home')">${t({fr:'Accueil', en:'Home'})}</a><span aria-hidden="true">›</span>
       <a href="/services/" onclick="return navLink(event,'services')">Services</a><span aria-hidden="true">›</span>
       <a href="/services/portrait-professionnel-corporate/" data-nav="service:corporate">${t(c.name)}</a><span aria-hidden="true">›</span>
-      <span>${t({fr:'Personal branding', en:'Personal branding'})}</span>
+      <span>${t({fr:'Personal Branding', en:'Personal Branding'})}</span>
     </div>
     <h1 data-pageh1 class="page-title">${h1}</h1>
     <p class="page-sub">${t({fr:'Votre activité mérite une image à sa hauteur. Formule Lancement : ', en:'Your business deserves an image to match. Launch package: '})}<strong>${price(L.price)}</strong>. ${t({fr:'Shooting en studio ou directement dans votre environnement professionnel.', en:'Shoot in the studio or right where you work.'})}</p>
@@ -3792,7 +3792,7 @@ function renderBrandingPage(){
       <h2>${t({fr:'Votre activité devient votre décor', en:'Your business becomes your set'})}</h2>
       <p class="svcp-text svcp-lead"><strong>${t({fr:'Votre entreprise est votre décor. Votre expertise est votre image.', en:'Your business is your set. Your expertise is your image.'})}</strong></p>
       <p class="svcp-text">${t({fr:'Votre image ne devrait pas être séparée de votre activité. BUNKAIO est un studio mobile : le shooting peut se faire au studio ou dans un lieu adapté, mais aussi directement là où vous travaillez. Bureau, cabinet, salon, boutique, restaurant, atelier, showroom, agence, coworking : le lieu où vous exercez devient le décor de vos images.', en:'Your image shouldn\'t be separated from your business. BUNKAIO is a mobile studio: the shoot can take place in the studio or a suitable location, but also right where you work. Office, practice, salon, shop, restaurant, workshop, showroom, agency, coworking space: the place where you work becomes the set of your images.'})}</p>
-      <div class="pb-eq" aria-label="${t({fr:'Portrait, plus environnement, plus activité, plus personnalité, égale personal branding', en:'Portrait, plus setting, plus activity, plus personality, equals personal branding'})}">
+      <div class="pb-eq" aria-label="${t({fr:'Portrait, plus environnement, plus activité, plus personnalité, égale Personal Branding', en:'Portrait, plus setting, plus activity, plus personality, equals Personal Branding'})}">
         ${eq.map((x, i) => `${i ? `<i aria-hidden="true">${i === eq.length - 1 ? '=' : '+'}</i>` : ''}<span class="${i === eq.length - 1 ? 'pb-eq-res' : ''}">${artIllus(x[0], false)}${t(x[1])}</span>`).join('')}
       </div>
       <p class="svcp-text">${t({fr:'Les images ne montrent plus seulement votre visage, mais ce que vous faites, comment vous travaillez, vos outils, vos produits, votre équipe et votre univers. Elles sont plus crédibles qu\'un portrait sur fond neutre, parce qu\'elles sont vraies.', en:'The images no longer show just your face, but what you do, how you work, your tools, your products, your team and your world. They are more credible than a portrait on a plain backdrop, because they are real.'})}</p>
@@ -6910,10 +6910,10 @@ function renderFooterServices(){
     b.onclick = (e) => navLink(e, 'service', c.id);
     li.appendChild(b);
     el.appendChild(li);
-    /* La landing personal branding (formule Lancement) suit sa gamme corporate. */
+    /* La landing Personal Branding (formule Lancement) suit sa gamme corporate. */
     if (c.id === 'corporate') {
       const li2 = document.createElement('li'), b2 = document.createElement('a');
-      b2.href = servicePath('branding'); b2.textContent = t({fr:'Personal branding — entrepreneurs', en:'Personal branding — entrepreneurs'});
+      b2.href = servicePath('branding'); b2.textContent = t({fr:'Personal Branding — entrepreneurs', en:'Personal Branding — entrepreneurs'});
       b2.onclick = (e) => navLink(e, 'service', 'branding');
       li2.appendChild(b2); el.appendChild(li2);
     }

@@ -40,10 +40,10 @@
         "Planning : le client communique la liste et les créneaux de passage ; tout retard important peut réduire le nombre de portraits réalisés sans modifier le prix.",
         "Départ d'un collaborateur : le client cesse d'utiliser son portrait dans un délai raisonnable à sa demande, conformément au droit à l'image."
       ] },
-    /* Formule Lancement (personal branding) : une personne, ses propres supports ; droits alignés sur ce que le site annonce
+    /* Formule Lancement (Personal Branding) : une personne, ses propres supports ; droits alignés sur ce que le site annonce
        (« droits d'utilisation commerciale sans limite de durée »). Clauses à faire valider comme les autres modèles. */
-    brand: { label: 'Personal branding — Lancement (entrepreneurs)', profil: 'professionnel', category: /personal branding|lancement/i,
-      prestation: 'Shooting personal branding — formule Lancement', contenuHint: "1h30 de shooting (studio ou dans les locaux du client), 2 tenues, 2 ambiances ou mises en situation, 12 photos HD retouchées, brief préparatoire, conseils tenues et attitudes, direction de pose, sélection guidée, galerie privée, formats web et réseaux",
+    brand: { label: 'Personal Branding — Lancement (entrepreneurs)', profil: 'professionnel', category: /Personal Branding|lancement/i,
+      prestation: 'Shooting Personal Branding — formule Lancement', contenuHint: "1h30 de shooting (studio ou dans les locaux du client), 2 tenues, 2 ambiances ou mises en situation, 12 photos HD retouchées, brief préparatoire, conseils tenues et attitudes, direction de pose, sélection guidée, galerie privée, formats web et réseaux",
       delai: 'jours ouvrés à compter de la date du shooting',
       destination: "Communication professionnelle du client et de son activité : site web, réseaux sociaux, fiche Google, newsletters, presse, dossiers commerciaux, présentations, supports imprimés et publicité du client. Sont exclus, sauf accord écrit : revente ou cession des visuels à des tiers.",
       duree: 'Sans limite de durée',

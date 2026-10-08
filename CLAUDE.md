@@ -18,7 +18,7 @@ Le code est la source de vérité. Ce fichier ne sert qu'à reprendre vite.
 - Ne pas lancer `pkill -f "http.server"` depuis le shell de l'agent.
 
 ## Grille tarifaire (source : `CATS`, `LUMEN_TIERS`, `SUBS`, `POLAS` dans `js/script.js`)
-- Particuliers 250 / 420 / 650 / 1 090 · Book grossesse 450 · Corporate & personal branding 250 / 320 (Lancement) / 450 / 690 / 1 090.
+- Particuliers 250 / 420 / 650 / 1 090 · Book grossesse 450 · Corporate & Personal Branding 250 / 320 (Lancement) / 450 / 690 / 1 090.
 - Mode 490 / 990 / 1 690 / 2 490 · Polas 100 · Studio Continu 790 €/mois (6 mois).
 - Commercial 390 / 750 / 1 390 / 2 390 · Événementiel 420 / 750 / 1 290 / 2 190.
 - Lumen : prototype, aucun prix publié, pas de page de formules ; tout lien Lumen mène à /contact/#lumen (message pré-rempli). Modèle de devis et emplacements média inactifs.
