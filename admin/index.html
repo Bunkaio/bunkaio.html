@@ -987,7 +987,7 @@ function segFn(seg) {
 }
 function matchQ(c, q) {
   if (!q) return true;
-  const hay = [c.name, c.email, c.phone, c.lead && c.lead.category, c.lead && c.lead.description, ...c.accounts.map(a => [a.nom, a.facturation && a.facturation.ville, a.facturation && a.facturation.siret].join(' ')), ...c.invoices.map(i => i.number + ' ' + i.description), ...(c.messages || []).map(m => Object.values(m.details || {}).join(' ')), ...(c.tags || []).map(tagName)].join(' ').toLowerCase();
+  const hay = [c.name, c.email, c.phone, c.lead && c.lead.category, c.lead && c.lead.description, c.lead && c.lead.ville, ...c.accounts.map(a => [a.nom, a.facturation && a.facturation.ville, a.facturation && a.facturation.siret].join(' ')), ...c.invoices.map(i => i.number + ' ' + i.description), ...(c.messages || []).map(m => Object.values(m.details || {}).join(' ')), ...(c.tags || []).map(tagName)].join(' ').toLowerCase();
   return q.toLowerCase().split(/\s+/).every(w => hay.includes(w));
 }
 function filteredContacts() {
@@ -1779,8 +1779,8 @@ function quoteFromContact(email) {
     email: c.email, lang: c.lang === 'en' ? 'en' : 'fr', template: tplKey,
     client: { nom: (a && a.nom) || c.name, profil, contact: f.contact || '', forme: f.forme || '', adresse: [f.rue, [f.codePostal, f.ville].filter(Boolean).join(' '), f.pays].filter(Boolean).join(', ') || (a && a.adresse) || '', telephone: (a && a.telephone) || c.phone || '', siret: f.siret || '', tvaIntra: f.tvaIntra || '' },
     prestation: t.prestation + (c.lead && c.lead.formule ? ' — Formule ' + c.lead.formule : ''),
-    contenu: c.lead ? [c.lead.description, c.lead.options && c.lead.options !== 'aucune' ? 'Options : ' + c.lead.options : ''].filter(Boolean).join('\n') : '',
-    seance: a && a.seance ? { date: a.seance.date, heure: a.seance.heure, lieu: a.seance.lieu } : {},
+    contenu: c.lead ? [c.lead.description, c.lead.options && c.lead.options !== 'aucune' ? 'Options : ' + c.lead.options : '', c.lead.ville ? 'Ville de la prestation : ' + c.lead.ville + (c.lead.deplacement ? ' (déplacement : ' + c.lead.deplacement + ')' : '') : ''].filter(Boolean).join('\n') : '',
+    seance: a && a.seance ? { date: a.seance.date, heure: a.seance.heure, lieu: a.seance.lieu || (c.lead && c.lead.ville) || '' } : (c.lead && c.lead.ville ? { lieu: c.lead.ville } : {}),
     delai: t.abonnement ? t.delai : '', totalHT: '', abonnement: !!t.abonnement,
     droits: { destination: t.destination, duree: t.duree, territoire: 'Monde entier (diffusion en ligne)', exclusivite: 'Non exclusive' },
     report: BunkaioDevis.REPORT_STD, conditions: t.real.slice(), validUntil: addDays(30),
@@ -2086,7 +2086,7 @@ function drSummary(c) {
     <div class="card"><h3>Coordonnées</h3>${coordsHtml(c, a)}</div>
   </div>
   ${L ? `<div class="card" style="margin-top:18px"><h3>Réponses au devis <span class="badge ${(TEMP[L.temperature] || TEMP.froid)[1]}">${L.score} · ${(TEMP[L.temperature] || TEMP.froid)[0]}</span></h3><dl class="kv">
-    ${[['Catégorie', L.category], ['Profil', L.profile], ['Formule', L.formule], ['Budget estimé', L.budget], ['Délai souhaité', L.delai], ['Options', L.options], ['Projet', L.description], ['Accompagnement com\'', L.communication], ['Reçu le', fdate(L.date)]].map(([k, v]) => `<dt>${k}</dt><dd>${esc(v || '—')}</dd>`).join('')}</dl></div>` : ''}
+    ${[['Catégorie', L.category], ['Profil', L.profile], ['Formule', L.formule], ['Budget estimé', L.budget], ['Délai souhaité', L.delai], ['Ville de la prestation', L.ville], ['Déplacement estimé', L.deplacement], ['Options', L.options], ['Projet', L.description], ['Accompagnement com\'', L.communication], ['Reçu le', fdate(L.date)]].map(([k, v]) => `<dt>${k}</dt><dd>${esc(v || '—')}</dd>`).join('')}</dl></div>` : ''}
   ${(c.quotes || []).length ? `<div class="lab" style="margin:22px 0 10px">Devis (${c.quotes.length})</div><div class="card"><div class="list">${c.quotes.map(qLi).join('')}</div></div>` : ''}
   ${msgs.length ? `<div class="lab" style="margin:22px 0 10px">Messages reçus via les formulaires (${msgs.length})</div>${msgs.map(m => msgCard(m, true)).join('')}` : ''}`;
 }

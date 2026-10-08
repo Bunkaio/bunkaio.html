@@ -56,7 +56,17 @@ function truncateForMetadata(value: string, maxLength = 490): string {
  */
 function buildMetadata(payload: QuizLeadPayload): Record<string, string> {
   const { score, temperature } = computeLeadScore(payload);
+  const ville = (payload.villePrestation || '').trim().slice(0, 120);
+  const travel: Record<string, string> = ville
+    ? {
+        ville_prestation: ville,
+        frais_deplacement: typeof payload.fraisDeplacementEur === 'number' ? String(Math.round(payload.fraisDeplacementEur)) : '',
+        deplacement_type: (payload.deplacementType || '').slice(0, 20),
+      }
+    : {};
+  for (const k of Object.keys(travel)) if (!travel[k]) delete travel[k];
   return {
+    ...travel,
     source: 'quiz_bunkaio',
     type_projet: payload.category,
     profil: payload.profile,

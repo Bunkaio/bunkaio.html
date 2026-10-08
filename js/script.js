@@ -2970,6 +2970,9 @@ function submitQuiz(e){
     budgetMontantEur: budgetMontantEur,
     delaiSouhaite: (DELAY_LABELS[S.delay] && DELAY_LABELS[S.delay].fr) || S.delay || undefined,
     optionsChoisies: optsOut,
+    villePrestation: (travelApplies() && S.city) ? ((S.travel && S.travel.city) || S.city) : undefined,
+    fraisDeplacementEur: (travelApplies() && S.city && S.travel && typeof S.travel.fee === 'number') ? S.travel.fee : undefined,
+    deplacementType: (travelApplies() && S.city) ? ((S.travel && S.travel.kind) || 'unknown') : undefined,
     interetCommunication: S.comm
   });
 

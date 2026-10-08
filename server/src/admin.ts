@@ -163,6 +163,8 @@ export async function buildDashboard(env: Env, stripe: Stripe): Promise<Record<s
         budget: m.budget_estime ?? '',
         delai: m.delai_souhaite ?? '',
         options: m.options_choisies ?? '',
+        ville: m.ville_prestation ?? '',
+        deplacement: m.frais_deplacement ? m.frais_deplacement + ' €' : (m.deplacement_type === 'free' ? 'offert' : (m.ville_prestation ? 'à chiffrer sur devis' : '')),
         description: m.description_projet ?? '',
         communication: m.interet_communication ?? '',
         date: m.derniere_soumission_quiz ?? '',

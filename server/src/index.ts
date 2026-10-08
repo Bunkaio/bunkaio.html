@@ -128,6 +128,9 @@ function isValidQuizLeadPayload(body: unknown): body is QuizLeadPayload {
     (b.phone === undefined || typeof b.phone === 'string') &&
     (b.delaiSouhaite === undefined || typeof b.delaiSouhaite === 'string') &&
     (b.optionsChoisies === undefined || typeof b.optionsChoisies === 'string') &&
+    (b.villePrestation === undefined || typeof b.villePrestation === 'string') &&
+    (b.fraisDeplacementEur === undefined || (typeof b.fraisDeplacementEur === 'number' && Number.isFinite(b.fraisDeplacementEur))) &&
+    (b.deplacementType === undefined || typeof b.deplacementType === 'string') &&
     (b.interetCommunication === undefined || typeof b.interetCommunication === 'boolean') &&
     (b.lang === undefined || typeof b.lang === 'string')
   );

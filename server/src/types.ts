@@ -41,6 +41,11 @@ export interface QuizLeadPayload {
   budgetMontantEur?: number;
   delaiSouhaite?: string;
   optionsChoisies?: string;
+  /** Ville de la prestation saisie dans le devis en ligne et frais de déplacement estimés (calculateur du site). */
+  villePrestation?: string;
+  fraisDeplacementEur?: number;
+  /** 'free' | 'flat' | 'km' | 'quote' | 'unknown' */
+  deplacementType?: string;
   interetCommunication?: boolean;
   /** Langue du site au moment de la demande : détermine la langue des emails envoyés au client ('fr' par défaut). */
   lang?: string;
