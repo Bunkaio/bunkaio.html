@@ -25,6 +25,9 @@ Le code est la source de vérité. Ce fichier ne sert qu'à reprendre vite.
 - Déplacement : offert ≤ 30 km de Montpellier ou Béziers, Toulouse et agglomération 50 €, ailleurs 0,60 €/km aller-retour au-delà de 30 km.
 - Programme partenaires : −20 % permanent (décision de la propriétaire).
 
+## Priorités commerciales (décision de la propriétaire)
+1. Mode et marques (Mode, Commercial et produits, Studio Continu). 2. Corporate et événementiel. Particuliers et Book grossesse : en vente, sans promotion ni publicité. Lumen : prototype. Plan de référence : artefact « Plan de lancement V3 ».
+
 ## Positionnement
 Premium accessible : direction artistique, accompagnement, interlocuteur unique, espace client (moodboard, suivi, devis, factures, séance, galerie privée), 8+ ans d'expérience, 200+ projets, délais annoncés, droits clairs. CTA : « Construire mon projet », « Demander un devis », « Recevoir une proposition », « Parler de mon événement ».
 
