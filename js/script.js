@@ -1,6 +1,26 @@
 /* ═══════════════ FORMSPREE → contact@bunkaio.com ═══════════════ */
 const FORMSPREE_URL = 'https://formspree.io/f/mnjybndv';
 
+/* ═══════════════ FRAIS DE DÉPLACEMENT — source unique ═══════════════
+   Offerts jusqu'à TRAVEL_FREE_KM autour de Montpellier ou de Béziers ; au-delà, TRAVEL_PER_KM € par km
+   (aller-retour) sur la distance dépassant ce rayon, arrondi aux 5 € près. Exemples = estimations
+   (distance routière depuis le pôle le plus proche). Modifier ici pour changer tous les textes du site. */
+const TRAVEL_FREE_KM = 30;
+const TRAVEL_PER_KM = '0,60';
+const TRAVEL_TXT = {
+  fr: {
+    list: 'Déplacements offerts jusqu\'à ' + TRAVEL_FREE_KM + ' km autour de Montpellier et de Béziers',
+    note: 'Déplacements offerts jusqu\'à ' + TRAVEL_FREE_KM + ' km autour de Montpellier et de Béziers ; au-delà, ' + TRAVEL_PER_KM + ' € par km (aller-retour) sur la distance excédentaire.',
+    full: 'Les déplacements sont offerts dans un rayon de ' + TRAVEL_FREE_KM + ' km autour de Montpellier et de Béziers. Au-delà, ils sont facturés ' + TRAVEL_PER_KM + ' € par km, aller-retour, sur la distance qui dépasse ces ' + TRAVEL_FREE_KM + ' km, arrondie aux 5 € près (estimations : Nîmes ≈ 30 €, Carcassonne ≈ 70 €, Perpignan ≈ 80 €, Toulouse ≈ 200 €). Le montant exact figure sur votre devis, avant toute signature.'
+  },
+  en: {
+    list: 'Free travel within ' + TRAVEL_FREE_KM + ' km of Montpellier and Béziers',
+    note: 'Free travel within ' + TRAVEL_FREE_KM + ' km of Montpellier and Béziers; beyond that, €' + TRAVEL_PER_KM.replace(',', '.') + ' per km (round trip) on the extra distance.',
+    full: 'Travel is free within ' + TRAVEL_FREE_KM + ' km of Montpellier and Béziers. Beyond that it is charged at €' + TRAVEL_PER_KM.replace(',', '.') + ' per km, round trip, on the distance exceeding those ' + TRAVEL_FREE_KM + ' km, rounded to the nearest €5 (estimates: Nîmes ≈ €30, Carcassonne ≈ €70, Perpignan ≈ €80, Toulouse ≈ €200). The exact amount is shown on your quote, before you sign anything.'
+  }
+};
+
+
 /* ═══════════════ STRIPE LEAD CAPTURE (Cloudflare Worker — voir /server) ═══════════════
    À remplacer par l'URL réelle après déploiement du Worker (voir server/README.md).
    Tant que cette URL n'est pas configurée, sendQuizLeadToStripe() échoue silencieusement
@@ -140,7 +160,7 @@ const I18N = {
     'about-p1':'Aya Nascimento est photographe portraitiste professionnelle, diplômée de l\'ETPA (BTS Photographie, 2018). Elle est la photographe de BUNKAIO.',
     'about-p2':'Spécialisée en photographie de mode, de produit, corporate et événementielle, elle accompagne les particuliers, les marques et les entreprises avec des images premium en haute définition, retouchées avec soin.',
     'about-h-zone':'Un studio mobile en Occitanie',
-    'about-zone-text':'BUNKAIO est basé à Montpellier et se déplace : pas d\'adresse de studio, mais une intervention à Béziers, Montpellier et Toulouse. Les déplacements sont offerts à Montpellier et à Béziers ; ils sont facturés à Toulouse et dans toute autre ville de France. Besoin d\'idées de lieux de séance ? Voir <a href="/conseils/lieux-seance-photo-montpellier-beziers-toulouse/" data-nav="article:lieux-seance-photo-montpellier-beziers-toulouse">où faire une séance photo à Montpellier, Béziers ou Toulouse</a>.',
+    'about-zone-text':'BUNKAIO est basé à Montpellier et se déplace : pas d\'adresse de studio, mais une intervention à Béziers, Montpellier et Toulouse. ' + TRAVEL_TXT.fr.full + ' Besoin d\'idées de lieux de séance ? Voir <a href="/conseils/lieux-seance-photo-montpellier-beziers-toulouse/" data-nav="article:lieux-seance-photo-montpellier-beziers-toulouse">où faire une séance photo à Montpellier, Béziers ou Toulouse</a>.',
     'about-stat1':'ans d\'expérience','about-stat2':'projets réalisés','about-stat3':'diplômée de l\'ETPA · BTS Photographie',
     'about-h-spec':'Spécialités',
     'about-spec1':'Portrait & lifestyle','about-spec2':'Mode, agences et mannequins','about-spec3':'Photo de produit & commercial','about-spec4':'Corporate & entreprises','about-spec5':'Événementiel & mariage (Lumen)',
@@ -494,7 +514,7 @@ const I18N = {
     'about-p1':'Aya Nascimento is a professional portrait photographer, a graduate of ETPA (BTS Photography, 2018). She is the photographer of BUNKAIO.',
     'about-p2':'Specialised in fashion, product, corporate and event photography, she works with individuals, brands and companies, delivering premium high-definition images, carefully retouched.',
     'about-h-zone':'A mobile studio in Occitanie',
-    'about-zone-text':'BUNKAIO is based in Montpellier and travels to you: no studio address, but shoots in Béziers, Montpellier and Toulouse. Travel is free in Montpellier and Béziers; it is charged in Toulouse and in any other city in France.',
+    'about-zone-text':'BUNKAIO is based in Montpellier and travels to you: no studio address, but shoots in Béziers, Montpellier and Toulouse. ' + TRAVEL_TXT.en.full,
     'about-stat1':'years of experience','about-stat2':'projects completed','about-stat3':'ETPA graduate · BTS Photography',
     'about-h-spec':'Specialities',
     'about-spec1':'Portrait & lifestyle','about-spec2':'Fashion, agencies and models','about-spec3':'Product & commercial photography','about-spec4':'Corporate & businesses','about-spec5':'Events & weddings (Lumen)',
@@ -2383,6 +2403,7 @@ function renderRecapBase(){
         <span>${pp(sub.price).toLocaleString('fr-FR')}€/${LANG === 'fr' ? 'mois' : 'mo'}</span>
       </div>
       <div class="recap-payment">${payLine}</div>
+      <div class="travel-note">🚗 ${TRAVEL_TXT[LANG].note}</div>
       <ul class="recap-items">
         ${t(sub.items).map(i => `<li>${i}</li>`).join('')}
       </ul>
@@ -2404,6 +2425,7 @@ function renderRecapBase(){
         <span>${total.toLocaleString('fr-FR')}€</span>
       </div>
       <div class="recap-payment">${payLine}</div>
+      <div class="travel-note">🚗 ${TRAVEL_TXT[LANG].note}</div>
       <ul class="recap-items">
         ${t(polas.items).map(i => `<li>${i}</li>`).join('')}
         <li>${studioLabel}</li>
@@ -2432,6 +2454,7 @@ function renderRecapBase(){
         <span>${pricePrefix}${(isSurm ? lt.price : pp(lt.price)).toLocaleString('fr-FR')}€${chfLine}</span>
       </div>
       <div class="recap-payment">${payLine}</div>
+      <div class="travel-note">🚗 ${TRAVEL_TXT[LANG].note}</div>
       <ul class="recap-items">
         ${t(lt.items).map(i => `<li>${i}</li>`).join('')}
       </ul>
@@ -2453,6 +2476,7 @@ function renderRecapBase(){
       <span>${pp(td.price).toLocaleString('fr-FR')}€${studioSupplement}</span>
     </div>
     <div class="recap-payment">${payLine}</div>
+      <div class="travel-note">🚗 ${TRAVEL_TXT[LANG].note}</div>
     <ul class="recap-items">
       ${t(td.items).map(i => `<li>${i}</li>`).join('')}
     </ul>
@@ -3067,7 +3091,7 @@ function renderDiscoverPage(){
       <h2>${t({fr:'Comment ça se passe', en:'How it works'})}</h2>
       <ol class="disc-steps">${stepItems}</ol>
       <ul class="disc-why">
-        <li>${t({fr:'Déplacements offerts à Montpellier et Béziers', en:'Free travel in Montpellier and Béziers'})}</li>
+        <li>${t({fr:TRAVEL_TXT.fr.list, en:TRAVEL_TXT.en.list})}</li>
         <li>${t({fr:'Droits d\'utilisation commerciale cédés sans limite de durée', en:'Commercial usage rights with no time limit'})}</li>
         <li>${t({fr:'Livraison HD en ' + allMin + ' à ' + allMax + ' jours ouvrés', en:'HD delivery in ' + allMin + ' to ' + allMax + ' working days'})}</li>
         <li>${t({fr:'Acompte de 30 %, paiement en 3 fois sans frais possible', en:'30% deposit, 3 interest-free instalments available'})}</li>
@@ -3092,7 +3116,7 @@ function renderDiscoverPage(){
     { title: t({fr:'Quels sont les délais et les tarifs ?', en:'What are the timelines and rates?'}),
       body: '<p>' + t({fr:'Livraison entre ' + allMin + ' et ' + allMax + ' jours ouvrés après le shooting, selon la prestation. Tarifs de départ : ', en:'Delivery between ' + allMin + ' and ' + allMax + ' working days after the shoot, depending on the service. Starting rates: '}) + cats.map(c => `${t(c.name)} ${t({fr:'dès', en:'from'})} ${money(facts[c.id].from)}`).join(' · ') + '. <a href="/services/" data-nav="services">' + t({fr:'Voir les formules', en:'See the packages'}) + '</a>.</p>' },
     { title: t({fr:'Où intervenez-vous ?', en:'Where do you work?'}),
-      body: '<p>' + t({fr:'BUNKAIO est basé à Montpellier et intervient à Montpellier, Béziers et Toulouse. Les déplacements sont offerts à Montpellier et à Béziers ; ils sont facturés à Toulouse et dans toute autre ville de France.', en:'BUNKAIO is based in Montpellier and works in Montpellier, Béziers and Toulouse. Travel is free in Montpellier and Béziers; it is charged in Toulouse and in any other city in France.'}) + '</p>' }
+      body: '<p>' + t({fr:'BUNKAIO est basé à Montpellier et intervient à Montpellier, Béziers et Toulouse, et dans toute l\'Occitanie. ' + TRAVEL_TXT.fr.full, en:'BUNKAIO is based in Montpellier and works in Montpellier, Béziers and Toulouse, and across Occitanie. ' + TRAVEL_TXT.en.full}) + '</p>' }
   ], { exclusive: true });
   initReassureLoop();
   if (_discoverFocus) {
@@ -3258,6 +3282,7 @@ function renderServicePage(catId){
     <section class="read-panel svcp-panel">
       <h2>${t({fr:'Formules et tarifs', en:'Packages and rates'})}</h2>
       <p class="vat-note">${I18N[LANG]['vat-note']}</p>
+      <p class="vat-note travel-note">🚗 ${TRAVEL_TXT[LANG].note}</p>
       <div class="fx-list">
         ${tiers.map((tt, ti) => fxItem(catId, { hint: chooseHints[ti] || '', id: tt.id, name: t(tt.name), badge: tt.badge ? t(tt.badge) : '', price: priceLine(tt), delay: t(tt.delay), items: (en ? tt.items.en : tt.items.fr), open: !!tt.badge && /(choisi|popular)/i.test(t(tt.badge)) })).join('')}
         ${POLAS[catId] ? fxItem(catId, { id: POLAS[catId].id, name: t(POLAS[catId].name), badge: t(POLAS[catId].label), price: price(specialTotal(POLAS[catId])), delay: t(POLAS[catId].delay) + ' · ' + t(POLAS[catId].studioNote), items: t(POLAS[catId].items), special: true, hint: specialHint, extra: POLAS[catId].id === 'polas' ? `<a class="svcp-link" href="/conseils/polas-mannequin-digitals-agence/" onclick="return navLink(event,'article','polas-mannequin-digitals-agence')">${t({fr:'Comprendre les Polas →', en:'What are Polas? →'})}</a>` : '' }) : ''}
@@ -6106,7 +6131,7 @@ function renderFaqAccordion(){
     { title:'Comment accéder à mon espace client, et à quoi sert-il ?', body:`<p>Une fois votre devis confirmé, vous recevez par email votre <strong>code d'accès personnel</strong> : cliquez sur « Connexion » en haut du site. Vous restez connecté sur votre appareil jusqu'à votre déconnexion.</p><p>Vous y suivez l'avancement de votre projet, retrouvez vos <strong>commandes, devis, paiements et factures</strong>, téléchargez vos livrables, gérez vos abonnements et vos informations. Pas encore de code ? Demandez-le depuis la page de connexion : il vous est envoyé sous 24h.</p>` },
     { title:'Qu\'est-ce qu\'un moodboard, et est-il obligatoire ?', body:`<p>Non, il est facultatif mais très utile : un <strong>moodboard par commande</strong> pour nous partager votre vision — direction artistique, ambiance, palette de couleurs, inspirations (Pinterest, liens), et les prestataires impliqués. Vous le complétez depuis votre espace client et vous échangez avec l'équipe grâce aux commentaires.</p>` },
     { title:'Mes informations et mes images sont-elles en sécurité ?', body:`<p>Votre espace est protégé par votre email et un <strong>code d'accès personnel</strong>, conservé sous forme chiffrée. Vos données ne servent qu'à la réalisation de votre projet, et vos visuels vous sont livrés dans une galerie privée. Le détail est dans l'onglet « Politique de confidentialité ».</p>` },
-    { title:'Où intervenez-vous ?', body:`<p>BUNKAIO est basé à <strong>Montpellier</strong> et intervient en déplacement à <strong>Montpellier, Béziers et Toulouse</strong>, et plus largement en Occitanie. Il n'y a pas de studio fixe : le lieu se choisit avec vous (<a href="/conseils/lieux-seance-photo-montpellier-beziers-toulouse/" data-nav="article:lieux-seance-photo-montpellier-beziers-toulouse">idées de lieux</a>). Les déplacements sont offerts à Montpellier et à Béziers ; ils sont facturés à Toulouse et dans toute autre ville de France (devis selon la distance).</p>` },
+    { title:'Où intervenez-vous ?', body:`<p>BUNKAIO est basé à <strong>Montpellier</strong> et intervient en déplacement à <strong>Montpellier, Béziers et Toulouse</strong>, et plus largement en Occitanie. Il n'y a pas de studio fixe : le lieu se choisit avec vous (<a href="/conseils/lieux-seance-photo-montpellier-beziers-toulouse/" data-nav="article:lieux-seance-photo-montpellier-beziers-toulouse">idées de lieux</a>). ${TRAVEL_TXT.fr.full}</p>` },
     { title:'Comment devenir partenaire, et que propose l\'espace partenaire ?', body:`<p>Candidatez depuis la page <strong>Partenariat et collaboration</strong> : réponse personnalisée sous 5 jours ouvrés. Une fois admis, votre espace partenaire vous donne <strong>-20 % permanent</strong> sur le catalogue, des promotions, des <strong>missions collaboratives rémunérées</strong> que vous acceptez ou déclinez en un clic, et l'accès au réseau de professionnels. Vous choisissez d'être référencé·e ou non dans l'annuaire.</p>` },
     { title:'Qu\'est-ce que Lumen by Bunkaio ?', body:`<p>Lumen est le photobooth IA de Bunkaio, conçu pour les mariages haut de gamme et les événements, et proposé en location pour la durée de votre événement : il offre aux invités une expérience mémorable et aux mariés des souvenirs durables. Quatre formules — Découverte (2 h), Essentiel, Signature et Sur-mesure — selon la durée et la personnalisation souhaitées.</p>` },
   ] : [
@@ -6121,7 +6146,7 @@ function renderFaqAccordion(){
     { title:'How do I access my client area, and what is it for?', body:`<p>Once your quote is confirmed, you receive your <strong>personal access code</strong> by email: click "Sign in" at the top of the site. You stay signed in on your device until you sign out.</p><p>There you follow your project's progress, find your <strong>orders, quotes, payments and invoices</strong>, download your deliverables, and manage your subscriptions and details. No code yet? Request it from the sign-in page: it is sent within 24h.</p>` },
     { title:'What is a moodboard, and is it compulsory?', body:`<p>No, it is optional but very useful: <strong>one moodboard per order</strong> to share your vision — art direction, mood, colour palette, inspiration (Pinterest, links) and the providers involved. You complete it from your client area and chat with the team through comments.</p>` },
     { title:'Are my details and images safe?', body:`<p>Your space is protected by your email and a <strong>personal access code</strong>, stored in encrypted form. Your data is only used to carry out your project, and your visuals are delivered in a private gallery. Details are in the "Privacy policy" tab.</p>` },
-    { title:'Where do you work?', body:`<p>BUNKAIO is based in <strong>Montpellier</strong> and travels to <strong>Montpellier, Béziers and Toulouse</strong>, and more broadly across Occitanie. Travel is free in Montpellier and Béziers; it is charged in Toulouse and in any other city in France (quoted by distance).</p>` },
+    { title:'Where do you work?', body:`<p>BUNKAIO is based in <strong>Montpellier</strong> and travels to <strong>Montpellier, Béziers and Toulouse</strong>, and more broadly across Occitanie. ${TRAVEL_TXT.en.full}</p>` },
     { title:'How do I become a partner, and what does the partner area offer?', body:`<p>Apply from the <strong>Partnership & collaboration</strong> page: a personal reply within 5 working days. Once admitted, your partner area gives you a <strong>permanent 20% discount</strong> on the catalogue, promotions, <strong>paid collaborative missions</strong> you accept or decline in one click, and access to the professional network. You choose whether to be listed in the directory.</p>` },
     { title:'What is Lumen by Bunkaio?', body:`<p>Lumen is Bunkaio's AI photobooth, designed for luxury weddings and events and available for rental for the duration of your event: it gives guests a memorable experience and couples lasting memories. Four packages — Starter (2 h), Essentials, Signature and Bespoke — depending on duration and customisation.</p>` },
   ];
@@ -6178,7 +6203,7 @@ function renderCgvAccordion(){
   const sections = LANG === 'fr' ? [
     { title:'1. Objet et champ d\'application', body:`<p>Les présentes conditions générales de vente (CGV) s'appliquent à toutes les prestations de photographie et de vidéo proposées par <strong>BUNKAIO</strong>, Entreprise Individuelle (Aya Nascimento), SIRET 951 547 587 00034, France, à des clients particuliers (consommateurs) comme à des clients professionnels.</p><p>Chaque prestation fait l'objet d'un devis personnalisé. En cas de différence entre les CGV et le devis signé, <strong>le devis signé prévaut</strong>. Toute commande implique l'acceptation des CGV.</p><p><em>Version du 6 octobre 2026.</em></p>` },
     { title:'2. Devis et commande', body:`<p>Le devis est gratuit et valable pendant la durée indiquée sur le document. Il précise la prestation, la date et le lieu prévus, le délai de livraison, le prix, les droits cédés et les conditions particulières.</p><p>La commande est ferme à la <strong>signature électronique</strong> du devis par le client (nom, date, heure, adresse IP et empreinte du devis enregistrés comme preuve). Un exemplaire signé est envoyé par email.</p>` },
-    { title:'3. Prix', body:`<p>Les prix sont indiqués en euros. BUNKAIO bénéficie de la franchise en base de TVA : <strong>TVA non applicable, art. 293 B du CGI</strong> : les prix affichés sont des prix nets, sans TVA à ajouter, et correspondent au montant réellement facturé. Le prix applicable est celui du devis signé. Les frais de déplacement éventuels y sont précisés.</p>` },
+    { title:'3. Prix', body:`<p>Les prix sont indiqués en euros. BUNKAIO bénéficie de la franchise en base de TVA : <strong>TVA non applicable, art. 293 B du CGI</strong> : les prix affichés sont des prix nets, sans TVA à ajouter, et correspondent au montant réellement facturé. Le prix applicable est celui du devis signé. Les frais de déplacement éventuels (au-delà de ${TRAVEL_FREE_KM} km autour de Montpellier ou de Béziers, ${TRAVEL_PER_KM} € par km aller-retour) y sont précisés.</p>` },
     { title:'4. Paiement', body:`<p>Sauf mention contraire au devis : un <strong>acompte de 30 %</strong> est payable à la signature (il réserve la date et le créneau) ; le <strong>solde de 70 %</strong> est facturé lorsque les photos sont prêtes, et son règlement donne accès à l'album.</p><p>Moyens de paiement : carte bancaire, ou paiement en 3 fois sans frais avec Klarna selon éligibilité. Les paiements sont traités de façon sécurisée par Stripe ; BUNKAIO ne conserve aucune donnée de carte.</p><p>Abonnement « Studio Continu » : facturation mensuelle par carte bancaire, sans acompte ni solde, dans les conditions précisées au devis.</p><p><strong>Clients professionnels :</strong> tout retard de paiement entraîne de plein droit des pénalités au taux de trois fois le taux d'intérêt légal et une indemnité forfaitaire de recouvrement de 40 € (art. L441-10 du Code de commerce).</p>` },
     { title:'5. Report et annulation', body:`<p>L'acompte réserve la date et le créneau. Une fois le devis validé, il <strong>reste acquis à BUNKAIO et n'est pas remboursé en cas d'annulation par le client</strong>.</p><p>Le client peut reporter la prestation <strong>une fois, sans frais, s'il prévient au moins 7 jours avant</strong> ; au-delà, ou en cas de second report, un nouvel acompte peut être demandé.</p><p>En cas d'empêchement de BUNKAIO ou de force majeure (maladie, météo pour une séance en extérieur), la prestation est reportée sans frais à une date convenue ensemble.</p>` },
     { title:'6. Réalisation et livraison', body:`<p>BUNKAIO réalise la prestation avec soin et dispose de la liberté artistique dans le cadre convenu. Le client veille à être présent, à l'heure et à fournir les informations nécessaires.</p><p>Les visuels sont livrés dans un <strong>album privé Adobe Lightroom</strong> (création d'un compte Adobe Lightroom par le client), dans le délai indiqué au devis. Un aller-retour de corrections est inclus ; les demandes supplémentaires sont facturées selon un tarif convenu à l'avance.</p><p>BUNKAIO sélectionne et retouche les visuels livrés ; les fichiers non retenus et les fichiers sources (RAW) ne sont pas cédés. Les fichiers livrés sont conservés <strong>12 mois</strong> après la livraison : le client est invité à les exporter et à les sauvegarder.</p>` },
@@ -6191,7 +6216,7 @@ function renderCgvAccordion(){
   ] : [
     { title:'1. Purpose and scope', body:`<p>These general terms of sale apply to all photography and video services provided by <strong>BUNKAIO</strong>, a French sole proprietorship (Aya Nascimento), SIRET 951 547 587 00034, France, to private clients (consumers) as well as business clients.</p><p>Each service is covered by a personalised quote. If these terms differ from the signed quote, <strong>the signed quote prevails</strong>. Placing an order implies acceptance of these terms.</p><p><em>Version of 6 October 2026.</em></p>` },
     { title:'2. Quote and order', body:`<p>The quote is free and valid for the period stated on the document. It specifies the service, the planned date and place, the delivery time, the price, the rights granted and any special conditions.</p><p>The order becomes binding when the client <strong>signs the quote electronically</strong> (name, date, time, IP address and quote fingerprint are recorded as proof). A signed copy is sent by email.</p>` },
-    { title:'3. Prices', body:`<p>Prices are in euros. BUNKAIO benefits from the French VAT exemption for small businesses: <strong>VAT not applicable, art. 293 B of the French Tax Code (CGI)</strong>; the prices shown are net prices, with no VAT to add, and match the amount actually invoiced. The price that applies is the one on the signed quote. Any travel costs are specified in it.</p>` },
+    { title:'3. Prices', body:`<p>Prices are in euros. BUNKAIO benefits from the French VAT exemption for small businesses: <strong>VAT not applicable, art. 293 B of the French Tax Code (CGI)</strong>; the prices shown are net prices, with no VAT to add, and match the amount actually invoiced. The price that applies is the one on the signed quote. Any travel costs (beyond ${TRAVEL_FREE_KM} km around Montpellier or Béziers, €0.60 per km round trip) are specified in it.</p>` },
     { title:'4. Payment', body:`<p>Unless the quote says otherwise: a <strong>30% deposit</strong> is payable on signature (it reserves the date and time slot); the <strong>70% balance</strong> is invoiced once the photos are ready, and paying it gives access to the album.</p><p>Payment methods: bank card, or interest-free payment in 3 instalments with Klarna, subject to eligibility. Payments are processed securely by Stripe; BUNKAIO does not store any card data.</p><p>"Studio Continu" subscription: monthly billing by bank card, with no deposit or balance, under the conditions set out in the quote.</p><p><strong>Business clients:</strong> any late payment automatically incurs penalties at three times the legal interest rate and a flat recovery fee of €40 (art. L441-10 of the French Commercial Code).</p>` },
     { title:'5. Rescheduling and cancellation', body:`<p>The deposit reserves the date and time slot. Once the quote is accepted, it is <strong>retained by BUNKAIO and not refunded if the client cancels</strong>.</p><p>The client may reschedule <strong>once, free of charge, with at least 7 days' notice</strong>; beyond that, or for a second rescheduling, a new deposit may be requested.</p><p>If BUNKAIO is unable to attend, or in case of force majeure (illness, weather for an outdoor session), the service is rescheduled free of charge to a date agreed together.</p>` },
     { title:'6. Performance and delivery', body:`<p>BUNKAIO performs the service with care and has artistic freedom within the agreed framework. The client makes sure to be present, on time, and to provide the necessary information.</p><p>Visuals are delivered in a <strong>private Adobe Lightroom album</strong> (the client creates an Adobe Lightroom account), within the time stated in the quote. One round of corrections is included; additional requests are billed at a rate agreed in advance.</p><p>BUNKAIO selects and retouches the delivered visuals; unselected files and source (RAW) files are not transferred. Delivered files are kept for <strong>12 months</strong> after delivery: the client is invited to export and back them up.</p>` },

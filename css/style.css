@@ -4064,6 +4064,8 @@ a.hero-start { text-decoration: none; display: inline-flex; align-items: center;
 
 /* Mention « prix nets » (franchise en base de TVA) */
 .vat-note { font-size: 12.5px; line-height: 1.6; color: #4b3d7a; margin: 0 0 16px; }
+.travel-note { font-size: 12.5px; line-height: 1.6; color: #4b3d7a; margin: 0 0 12px; }
+.recap-payment + .travel-note { margin: 8px 0 0; opacity: .85; }
 .price-calc-vat { font-size: 12px; opacity: 0.8; margin-top: 8px; line-height: 1.5; }
 
 /* Le studio : sélecteur de prestations + carte d'aperçu */
