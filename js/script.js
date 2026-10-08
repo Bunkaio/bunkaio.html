@@ -3210,6 +3210,7 @@ const SERVICE_COPY = {
     ]
   },
   'corporate': {
+    sub:{fr:'Dirigeants · équipes · entreprises — des portraits cohérents entre eux pour votre site, vos présentations et vos recrutements, réalisés dans vos locaux, en extérieur ou en studio.', en:'Executives · teams · companies — consistent portraits for your website, presentations and recruitment, shot at your premises, outdoors or in the studio.'},
     lead:{fr:'BUNKAIO réalise les portraits professionnels des dirigeants et des équipes à Béziers, Montpellier et Toulouse : site web, présentation d\'équipe, rapport d\'activité, presse, recrutement. Le shooting se fait en extérieur, en studio ou directement dans vos locaux, avec une direction de pose pour des images naturelles et cohérentes entre elles. Pour une équipe, précisez le nombre de personnes dans votre demande ; pour bien vous préparer, voir <a href="/conseils/portrait-professionnel-photo-profil-linkedin/" data-nav="article:portrait-professionnel-photo-profil-linkedin">comment réussir son portrait professionnel</a>.',
           en:'BUNKAIO shoots professional portraits of executives and teams in Béziers, Montpellier and Toulouse: website, team presentation, annual report, press, recruitment. The shoot takes place outdoors, in the studio or right at your premises, with posing guidance for natural, consistent images. For a team, state the number of people in your request; to prepare, see <a href="/conseils/portrait-professionnel-photo-profil-linkedin/" data-nav="article:portrait-professionnel-photo-profil-linkedin">how to get a great professional portrait</a>.'},
     choose:[
@@ -3305,7 +3306,7 @@ function catFacts(c){
    Photos : IMG.discoverPhotos[catégorie] (admin média : discover/<catégorie>.webp), sinon photo de la catégorie, sinon fond de la page. */
 /* Photos de repli d'un fond de prestation, dans l'ordre (la page Personal Branding reprend celles du Corporate). */
 function bgFallbacks(id){
-  const L = id === 'branding' ? [IMG.discoverPhotos && IMG.discoverPhotos.corporate, IMG.servicePhotos && IMG.servicePhotos.corporate] : [IMG.servicePhotos && IMG.servicePhotos[id]];
+  const L = id === 'branding' ? [IMG.brandingInSitu && IMG.brandingInSitu[0], IMG.discoverPhotos && IMG.discoverPhotos.corporate, IMG.servicePhotos && IMG.servicePhotos.corporate] : [IMG.servicePhotos && IMG.servicePhotos[id]];
   return L.filter(Boolean);
 }
 function chainFallback(img, slide, id){ const fbs = bgFallbacks(id); img.onerror = () => { const n = fbs.shift(); if (n) img.src = n; else slide.remove(); }; }
@@ -3529,7 +3530,9 @@ function renderServicePage(catId){
   const price = n => n.toLocaleString(en ? 'en-GB' : 'fr-FR') + ' €';
   const tiers = c.lumen
     ? LUMEN_TIERS.map(lt => ({ id: lt.id, name: lt.name, badge: lt.badge, line: lt.line, quote: lt.id === 'surm', price: lt.price, delay: lt.delay, items: lt.items }))
-    : catTiers(c).map(tr => ({ id: tr.id, name: tr.name, badge: tr.badge, line: tierLine(c, tr), price: c.tiers[tr.id].price, delay: c.tiers[tr.id].delay, items: c.tiers[tr.id].items }));
+    : catTiers(c).filter(tr => !(catId === 'corporate' && tr.id === 'lanc')).map(tr => ({ id: tr.id, name: tr.name, badge: tr.badge, line: tierLine(c, tr), price: c.tiers[tr.id].price, delay: c.tiers[tr.id].delay, items: c.tiers[tr.id].items }));
+  /* Page corporate : entreprises, dirigeants, équipes. La formule Lancement (entrepreneurs) a sa propre page, présentée par un encart. */
+  const allTierIds = c.lumen ? tiers.map(x => x.id) : catTiers(c).map(tr => tr.id);
   const others = CATS.filter(x => x.id !== catId && seoRouteFor('service', x.id));
   const h1 = en && route.h1En ? route.h1En : route.h1;
   const sub = SUBS[catId];
@@ -3591,7 +3594,7 @@ function renderServicePage(catId){
   const svcAlt = (IMG.serviceAlt && t(IMG.serviceAlt[catId])) || (SERVICE_ALT_DEFAULT[catId] ? t(SERVICE_ALT_DEFAULT[catId]) : '');
   const svcFigure = svcPhoto ? `<figure class="svcp-figure"><img src="${svcPhoto}" alt="${escHtml(svcAlt)}" width="900" height="1200" loading="lazy" decoding="async" onerror="this.closest('figure').classList.add('is-broken')"></figure>` : '';
   /* « Quelle formule choisir ? » est intégré à chaque ligne de l'accordéon (conseil « Idéal si… »). */
-  const chooseHints = (copyBlock && copyBlock.choose && copyBlock.choose.length === tiers.length) ? copyBlock.choose.map(h => t(h)) : [];
+  const chooseHints = (copyBlock && copyBlock.choose && copyBlock.choose.length === allTierIds.length) ? tiers.map(tt => t(copyBlock.choose[allTierIds.indexOf(tt.id)])) : [];
   const specialHint = POLAS[catId] ? (POLAS[catId].id === 'grossesse'
     ? t({fr:'vous attendez un heureux événement ? Une séance douce de 1h30, en studio ou en extérieur, pour garder des images soignées de cette période (idéalement entre la 28e et la 36e semaine).', en:'expecting a baby? A gentle 1.5-hour session, in the studio or outdoors, to keep beautiful images of this time (ideally between weeks 28 and 36).'})
     : t({fr:'vous devez présenter votre profil à une agence ? 10 photos brutes, sans retouche ni mise en scène, pour juger la morphologie et le potentiel, livrées en HD sous 24 h (studio inclus).', en:'need to present your profile to an agency? 10 raw photos with no retouching or styling, to assess build and potential, delivered in HD within 24 h (studio included).'})) : '';
@@ -3608,11 +3611,12 @@ function renderServicePage(catId){
       <span>${t(c.name)}</span>
     </div>
     <h1 data-pageh1 class="page-title">${h1}</h1>
-    <p class="page-sub">${t(c.tag)}${c.pitch ? ' — ' + t(c.pitch) : ''}</p>
+    <p class="page-sub">${copyBlock && copyBlock.sub ? t(copyBlock.sub) : t(c.tag) + (c.pitch ? ' — ' + t(c.pitch) : '')}</p>
     <div class="svcp-cta-row">
       ${quizLink(catId, ctaLabel(catId))}
       <a class="btn btn-ghost" href="/portfolio/" onclick="return navLink(event,'portfolio')"><span>${t({fr:'Voir le portfolio', en:'See the portfolio'})}</span></a>
     </div>
+    ${keyTilesHTML(catId, tiers)}
     ${isComingSoon(catId) ? `<div class="soon-banner"><b>${t({fr:'Bientôt disponible', en:'Coming soon'})}</b> ${t({fr:'Lumen ouvre prochainement à la réservation. Les tarifs ci-dessous sont les tarifs officiels ; laissez-nous un message pour être prévenu(e) de l\'ouverture.', en:'Lumen will soon open for bookings. The rates below are the official rates; leave us a message to be notified when it opens.'})}</div>` : ''}
 
     ${copyBlock && copyBlock.lead ? `<section class="read-panel svcp-panel"><div class="svcp-lead-grid${svcFigure ? ' has-figure' : ''}"><p class="svcp-text svcp-lead">${t(copyBlock.lead)}</p>${svcFigure}</div></section>` : ''}
@@ -3676,7 +3680,42 @@ function renderServicePage(catId){
     <div class="svcp-back-row"><a class="svcp-back" href="/services/" onclick="return navLink(event,'services')"><span aria-hidden="true">←</span> ${t({fr:'Retour au catalogue', en:'Back to the catalogue'})}</a></div>`;
   renderAccordionInto('servicePageFaq', faq.map(f => ({ title: f.q, body: f.a })), { exclusive: true, closed: true });
   renderClientSpotlights();
+  liveOnView(el, '#pbKeys');
   serviceBgSync(catId);
+}
+
+/* Chiffres clés en tête de chaque page de prestation (même présentation que la page Personal Branding) :
+   prix d'entrée, photos livrées et délais calculés depuis les formules affichées, plus un repère propre à la prestation. */
+const KEY_TILE = {
+  'photo-part': ['sun', {fr:'Extérieur', en:'Outdoor'}, {fr:'ou studio, solo, couple, groupe', en:'or studio, solo, couple, group'}],
+  corporate:    ['user', {fr:'Équipes', en:'Teams'}, {fr:'et dirigeants, chez vous', en:'and executives, on site'}],
+  mode:         ['camera', {fr:'Reels', en:'Reels'}, {fr:'et films dès Signature', en:'and films from Signature'}],
+  commercial:   ['box', {fr:'Packshot', en:'Packshot'}, {fr:'ou mise en scène', en:'or styled set-up'}],
+  event:        ['clock', {fr:'2 h', en:'2 h'}, {fr:'à l\'événement complet', en:'to the full event'}]
+};
+function keyTilesHTML(catId, tiers){
+  const k = KEY_TILE[catId]; if (!k || !tiers.length || tiers.some(x => typeof x.price !== 'number')) return '';
+  const en = LANG === 'en', fmt = n => n.toLocaleString(en ? 'en-GB' : 'fr-FR');
+  const items = tiers.map(x => (en ? x.items.en : x.items.fr));
+  const photos = items.map(it => { const m = it.join(' ').match(/(\d+)\s+(?:retouched\s+)?(?:HD\s+)?(?:photos|photographs|retouched)/i); return m ? +m[1] : 0; }).filter(Boolean);
+  const days = tiers.map(x => parseInt(en ? x.delay.en : x.delay.fr, 10)).filter(Boolean);
+  const range = a => Math.min(...a) === Math.max(...a) ? String(Math.min(...a)) : Math.min(...a) + (en ? '–' : ' à ') + Math.max(...a);
+  const tiles = [
+    ['tag', t({fr:'dès ', en:'from '}) + fmt(Math.min(...tiers.map(x => x.price))) + ' €', {fr:'prix nets', en:'net prices'}],
+    photos.length ? ['gallery', range(photos), {fr:'photos retouchées', en:'retouched photos'}] : null,
+    [k[0], t(k[1]), k[2]],
+    days.length ? ['calendar', range(days) + (en ? ' days' : ' j'), {fr:'ouvrés de livraison', en:'working days to delivery'}] : null
+  ].filter(Boolean);
+  return `<ul class="pb-keys" id="pbKeys">${tiles.map(x => `<li><span class="pb-ico">${artIllus(x[0], false)}</span><b>${x[1]}</b><small>${t(x[2])}</small></li>`).join('')}</ul>`;
+}
+/* Apparition en cascade quand le bloc entre à l'écran (chiffres clés, équation, accordéons). */
+function liveOnView(root, sel, cls){
+  root.querySelectorAll(sel).forEach(box => {
+    const c2 = cls || 'pb-live';
+    if (!window.IntersectionObserver || REDUCED_MOTION) { box.classList.add(c2); return; }
+    const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { box.classList.add(c2); io.disconnect(); } }), { threshold: 0.2 });
+    io.observe(box);
+  });
 }
 
 /* ═══════════════ PERSONAL BRANDING — ENTREPRENEURS & INDÉPENDANTS ═══════════════

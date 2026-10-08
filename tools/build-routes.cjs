@@ -344,7 +344,7 @@ function pinAssets(html) {
       /* Landing personal branding : une seule offre, la formule Lancement de la gamme corporate. */
       if (c === 'branding') { const corp = CATS.find((x) => x.id === 'corporate'); return { name: 'Personal branding — entrepreneurs et indépendants', parent: { name: corp.name.fr, path: '/services/portrait-professionnel-corporate/' }, tiers: [{ name: 'Lancement', price: corp.tiers.lanc.price }] }; }
       const cat = CATS.find((x) => x.id === c);
-      const tiers = cat.lumen ? LUMEN_TIERS.map((t) => ({ name: t.name.fr, price: t.price, quote: t.id === 'surm' })) : catTiers(cat).map((t) => ({ name: t.name.fr, price: cat.tiers[t.id].price }));
+      const tiers = cat.lumen ? LUMEN_TIERS.map((t) => ({ name: t.name.fr, price: t.price, quote: t.id === 'surm' })) : catTiers(cat).filter((t) => !(c === 'corporate' && t.id === 'lanc')).map((t) => ({ name: t.name.fr, price: cat.tiers[t.id].price }));
       return { name: cat.name.fr, tiers };
     }, r.cat);
   }
