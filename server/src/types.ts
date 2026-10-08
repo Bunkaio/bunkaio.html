@@ -42,6 +42,9 @@ export interface QuizLeadPayload {
   delaiSouhaite?: string;
   optionsChoisies?: string;
   /** Ville de la prestation saisie dans le devis en ligne et frais de déplacement estimés (calculateur du site). */
+  /** Réponse à « Comment nous avez-vous connus ? » (liste fermée) et paramètres UTM du lien d'arrivée. */
+  origine?: string;
+  campagne?: string;
   villePrestation?: string;
   fraisDeplacementEur?: number;
   /** 'free' | 'flat' | 'km' | 'quote' | 'unknown' */

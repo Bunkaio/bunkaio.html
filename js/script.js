@@ -1,6 +1,18 @@
 /* ═══════════════ FORMSPREE → contact@bunkaio.com ═══════════════ */
 const FORMSPREE_URL = 'https://formspree.io/f/mnjybndv';
 
+/* Origine d'une demande : liste fermée (champ « Comment nous avez-vous connus ? ») + paramètres UTM du lien d'arrivée,
+   mémorisés pour la session afin de savoir quel message de la campagne (ex. utm_content=segment-a) a amené la demande. */
+const ORIGIN_LABELS = { instagram: 'Instagram', recommandation: 'Recommandé par une personne', partenaire: 'Recommandé par une marque, un lieu ou une agence', google: 'Recherche Google', collab: 'Un projet ou une publication de BUNKAIO', autre: 'Autre' };
+(function captureCampaign(){
+  try {
+    const q = new URLSearchParams(location.search);
+    const parts = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content'].map(k => (q.get(k) || '').replace(/[^\w.\-]/g, '').slice(0, 40));
+    if (parts.some(Boolean)) sessionStorage.setItem('bk_campaign', parts.join('/'));
+  } catch (e) {}
+})();
+function campaignTag(){ try { return (sessionStorage.getItem('bk_campaign') || '').replace(/^\/+|\/+$/g, '') || ''; } catch (e) { return ''; } }
+
 /* ═══════════════ FRAIS DE DÉPLACEMENT — source unique ═══════════════
    Offerts jusqu'à TRAVEL_FREE_KM autour de Montpellier ou de Béziers ; au-delà, TRAVEL_PER_KM € par km
    (aller-retour) sur la distance dépassant ce rayon, arrondi aux 5 € près. Exemples = estimations
@@ -214,6 +226,7 @@ const I18N = {
     'options':'Options supplémentaires',
     'step-coords':'05 — Coordonnées','q-coords':'Vos coordonnées','q-coords-sub':'Nous étudions chaque demande personnellement. Réponse assurée sous 48h.',
     'name-label':'Nom / Société *','email-label':'Email *','phone-label':'Téléphone','phone-label-opt':'Téléphone — optionnel','project-label':'Votre projet *','message-label':'Message *',
+    'origin-label':'Comment nous avez-vous connus ? — facultatif','origin-opt-select':'Sélectionnez…','origin-opt-instagram':'Instagram','origin-opt-reco':'Recommandé par une personne (client, ami, collaborateur)','origin-opt-partner':'Recommandé par une marque, un lieu ou une agence','origin-opt-google':'Recherche Google','origin-opt-collab':'Un projet ou une publication de BUNKAIO','origin-opt-other':'Autre',
     'city-label':'Ville de la prestation *','city-ph':'Ex. : Béziers, Nîmes, Toulouse…','city-hint':'Le montant du déplacement est estimé automatiquement et ajouté à votre devis.','delay-label':'Délai souhaité *','delay-opt-select':'Sélectionnez…','delay-opt-urgent':'Urgent (moins de 2 semaines)','delay-opt-1m':'Dans le mois','delay-opt-2-3m':'2 à 3 mois','delay-opt-flex':'Flexible / pas de contrainte',
     'back':'← Retour','continue':'Suivant →','next':'Suivant →','submit':'Confirmez ma demande de devis',
     'quiz-back':'Retour','quiz-home':'Accueil',
@@ -568,6 +581,7 @@ const I18N = {
     'options':'Additional options',
     'step-coords':'05 — Your details','q-coords':'Your details','q-coords-sub':'Every request is reviewed personally. We reply within 48 hours.',
     'name-label':'Name / Company *','email-label':'Email *','phone-label':'Phone','phone-label-opt':'Phone — optional','project-label':'Your project *','message-label':'Message *',
+    'origin-label':'How did you hear about us? — optional','origin-opt-select':'Select…','origin-opt-instagram':'Instagram','origin-opt-reco':'Recommended by a person (client, friend, collaborator)','origin-opt-partner':'Recommended by a brand, a venue or an agency','origin-opt-google':'Google search','origin-opt-collab':'A BUNKAIO project or post','origin-opt-other':'Other',
     'city-label':'Session city *','city-ph':'E.g. Béziers, Nîmes, Toulouse…','city-hint':'Travel is estimated automatically and added to your quote.','delay-label':'Desired timeline *','delay-opt-select':'Select…','delay-opt-urgent':'Urgent (under 2 weeks)','delay-opt-1m':'Within a month','delay-opt-2-3m':'2 to 3 months','delay-opt-flex':'Flexible / no constraint',
     'back':'← Back','continue':'Next →','next':'Next →','submit':'Confirm my quote request',
     'quiz-back':'Back','quiz-home':'Home',
@@ -3016,6 +3030,8 @@ function submitQuiz(e){
     budgetMontantEur: budgetMontantEur,
     delaiSouhaite: (DELAY_LABELS[S.delay] && DELAY_LABELS[S.delay].fr) || S.delay || undefined,
     optionsChoisies: optsOut,
+    origine: (document.getElementById('qOrigin') || {}).value || undefined,
+    campagne: campaignTag() || undefined,
     villePrestation: (travelApplies() && S.city) ? ((S.travel && S.travel.city) || S.city) : undefined,
     fraisDeplacementEur: (travelApplies() && S.city && S.travel && typeof S.travel.fee === 'number') ? S.travel.fee : undefined,
     deplacementType: (travelApplies() && S.city) ? ((S.travel && S.travel.kind) || 'unknown') : undefined,
@@ -3035,6 +3051,8 @@ function submitQuiz(e){
       options_choisies: optsOut,
       ville_prestation: (travelApplies() && S.city) ? ((S.travel && S.travel.city) || S.city) : undefined,
       frais_deplacement_estimes: travelApplies() && S.city ? (trv.fee ? trv.fee + '€' : trv.text.replace('Déplacement : ', '')) : undefined,
+      comment_connu: ORIGIN_LABELS[(document.getElementById('qOrigin') || {}).value] || 'Non renseigné',
+      campagne_utm: campaignTag() || undefined,
       montant_total_estime: montantLabel,
       delai_souhaite: (DELAY_LABELS[S.delay] && DELAY_LABELS[S.delay].fr) || S.delay || 'Non renseigné',
       lieu_seance: [studioNote, (travelApplies() && S.city) ? 'Ville : ' + ((S.travel && S.travel.city) || S.city) : ''].filter(Boolean).join(' — ') || undefined,

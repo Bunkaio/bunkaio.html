@@ -71,8 +71,15 @@ function buildMetadata(payload: QuizLeadPayload): Record<string, string> {
       }
     : {};
   for (const k of Object.keys(travel)) if (!travel[k]) delete travel[k];
+  const ORIGINES = ['instagram', 'recommandation', 'partenaire', 'google', 'collab', 'autre'];
+  const origine = ORIGINES.includes(payload.origine || '') ? (payload.origine as string) : '';
+  const campagne = (payload.campagne || '').replace(/[^\w.\-/]/g, '').slice(0, 130);
+  const attribution: Record<string, string> = {};
+  if (origine) attribution.origine = origine;
+  if (campagne) attribution.campagne = campagne;
   return {
     ...travel,
+    ...attribution,
     source: 'quiz_bunkaio',
     type_projet: payload.category,
     profil: payload.profile,

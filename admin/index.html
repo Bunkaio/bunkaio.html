@@ -1769,6 +1769,7 @@ function renderQuotes() {
 
 /* Éditeur de devis (dans le panneau latéral) */
 let QE = null; // devis en cours d'édition
+const ORIGIN_LABELS_ADMIN = { instagram: 'Instagram', recommandation: 'Recommandé par une personne', partenaire: 'Recommandé par une marque, un lieu ou une agence', google: 'Recherche Google', collab: 'Un projet ou une publication de BUNKAIO', autre: 'Autre' };
 function quoteFromContact(email) {
   const c = contactByEmail(email) || { email, name: '', phone: '', lang: 'fr', lead: null, accounts: [] };
   const a = primaryAcc(c); const f = (a && a.facturation) || {};
@@ -2086,7 +2087,7 @@ function drSummary(c) {
     <div class="card"><h3>Coordonnées</h3>${coordsHtml(c, a)}</div>
   </div>
   ${L ? `<div class="card" style="margin-top:18px"><h3>Réponses au devis <span class="badge ${(TEMP[L.temperature] || TEMP.froid)[1]}">${L.score} · ${(TEMP[L.temperature] || TEMP.froid)[0]}</span></h3><dl class="kv">
-    ${[['Catégorie', L.category], ['Profil', L.profile], ['Formule', L.formule], ['Budget estimé', L.budget], ['Délai souhaité', L.delai], ['Ville de la prestation', L.ville], ['Déplacement estimé', L.deplacement], ['Options', L.options], ['Projet', L.description], ['Accompagnement com\'', L.communication], ['Reçu le', fdate(L.date)]].map(([k, v]) => `<dt>${k}</dt><dd>${esc(v || '—')}</dd>`).join('')}</dl></div>` : ''}
+    ${[['Catégorie', L.category], ['Profil', L.profile], ['Formule', L.formule], ['Budget estimé', L.budget], ['Délai souhaité', L.delai], ['Comment nous a connus', ORIGIN_LABELS_ADMIN[L.origine] || '—'], ['Campagne (lien utm)', L.campagne], ['Ville de la prestation', L.ville], ['Déplacement estimé', L.deplacement], ['Options', L.options], ['Projet', L.description], ['Accompagnement com\'', L.communication], ['Reçu le', fdate(L.date)]].map(([k, v]) => `<dt>${k}</dt><dd>${esc(v || '—')}</dd>`).join('')}</dl></div>` : ''}
   ${(c.quotes || []).length ? `<div class="lab" style="margin:22px 0 10px">Devis (${c.quotes.length})</div><div class="card"><div class="list">${c.quotes.map(qLi).join('')}</div></div>` : ''}
   ${msgs.length ? `<div class="lab" style="margin:22px 0 10px">Messages reçus via les formulaires (${msgs.length})</div>${msgs.map(m => msgCard(m, true)).join('')}` : ''}`;
 }
