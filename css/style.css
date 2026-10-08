@@ -4412,3 +4412,23 @@ a, button { -webkit-tap-highlight-color: rgba(110,90,168,0.18); }
   .quiz-wrap .qstep.active .prof-card:hover .prof-icon,
   .quiz-wrap .qstep.active .prof-card.selected .prof-icon { color: var(--white); filter: none; }
 }
+
+/* ─── Carrousel des prestations (accueil), mobile : grande photo en haut sur toute la largeur, titre et prix posés sur la photo,
+   2 points forts, bouton + lien sur une ligne. Avant : image étroite (38 %) et texte coincé en colonne. Hauteur totale inférieure à l'ancienne. ─── */
+@media (max-width: 700px) {
+  .ms-prev { grid-template-columns: 1fr; grid-template-rows: auto auto; position: relative; }
+  .ms-im { position: relative; min-height: 0; height: clamp(150px, 22svh, 190px); background-position: center 30%; }
+  .ms-im::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(8,6,14,0) 25%, rgba(8,6,14,0.88) 100%); pointer-events: none; }
+  .ms-tx { position: relative; z-index: 2; margin-top: -68px; padding: 0 16px 14px; gap: 6px; }
+  .ms-tx .soon-chip { align-self: flex-start; }
+  .ms-tx h3 { font-size: 20px; text-shadow: 0 1px 10px rgba(0,0,0,0.5); }
+  .ms-from { font-size: 13px; }
+  .ms-from b { font-size: 24px; }
+  .ms-tx ul { font-size: 12.5px; gap: 3px; margin-top: 4px; }
+  .ms-tx li:nth-child(n+3) { display: none; }
+  .ms-actions { flex-wrap: nowrap; align-items: center; gap: 12px; margin-top: 6px; }
+  .ms-cta { flex: 1 1 auto; justify-content: center; box-sizing: border-box; padding: 11px 12px; font-size: 13px; text-align: center; }
+  /* « Voir la prestation » : la photo et le titre mènent déjà à la page, le bouton garde toute la largeur. */
+  .ms-link { display: none; }
+  .ms-cta { white-space: nowrap; }
+}
