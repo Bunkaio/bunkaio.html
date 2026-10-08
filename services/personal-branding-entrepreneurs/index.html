@@ -31,7 +31,7 @@
 <link rel="icon" type="image/png" sizes="64x64" href="/images/favicon-64.png">
 <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
 <link rel="preload" href="fonts/dm-sans-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/style.min.css?v=0e94cab2">
+<link rel="stylesheet" href="css/style.min.css?v=1e0ff47f">
 
 <script type="application/ld+json">
 {
@@ -499,6 +499,15 @@
   </section>
 
   <div class="home-claim-trigger" id="homeClaimSection"></div>
+  <!-- Interlude : le logo occupe l'espace blanc entre la vidéo « Le studio » et la réassurance, puis s'efface quand le texte arrive -->
+  <div class="logo-interlude" id="logoInterlude" aria-hidden="true">
+    <div class="li-inner">
+      <span class="li-glow"></span>
+      <span class="li-mark"></span>
+      <span class="li-line"></span>
+      <span class="li-tag" data-lang="li-tag">Studio d'image mobile</span>
+    </div>
+  </div>
 
   <!-- Réassurance — bandeau compact -->
   <div class="reassure-section rv">
@@ -1231,34 +1240,25 @@
       <a class="btn btn-ghost" href="/devis/" data-quiz="corporate" data-tier="lanc" data-track="lancement">Vérifier les disponibilités</a>
     </div>
 
-    <section class="read-panel svcp-panel">
-      <h2>Une activité professionnelle, des photos qui ne le sont pas</h2>
-      <p class="svcp-text">Vous avez un logo, un site, un compte Instagram, un profil LinkedIn et une offre claire. Mais vos photos sont des selfies, des images prises au téléphone, un portrait d'il y a cinq ans ou des visuels qui ne se ressemblent pas entre eux.</p>
-      <p class="svcp-text">Or votre visage est souvent le premier contact avec votre entreprise : beaucoup de clients vous découvrent en ligne avant de vous rencontrer. Des images incohérentes ou datées affaiblissent la confiance, quelle que soit la qualité de votre travail.</p>
-    </section>
+    <ul class="pb-keys" id="pbKeys">
+      <li><span class="pb-ico"><svg class="art-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 15.5 14"></polyline></svg></span><b>1h30</b><small>de shooting</small></li><li><span class="pb-ico"><svg class="art-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2.5"></rect><circle cx="9" cy="10" r="1.8"></circle><path d="M3 17l5-4.5 4 3.5 3-2.5 6 4.5"></path></svg></span><b>12</b><small>photos retouchées</small></li><li><span class="pb-ico"><svg class="art-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"></path><circle cx="12" cy="9.5" r="2.6"></circle></svg></span><b>In situ</b><small>dans vos locaux</small></li><li><span class="pb-ico"><svg class="art-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"></rect><line x1="8" y1="3" x2="8" y2="7"></line><line x1="16" y1="3" x2="16" y2="7"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></span><b>7 jours</b><small>ouvrés de livraison</small></li>
+    </ul>
 
-    <section class="read-panel svcp-panel rv" style="--rv-d: 0s;">
-      <h2>Une banque d'images pensée pour votre activité</h2>
-      <p class="svcp-text">BUNKAIO ne vient pas simplement photographier un entrepreneur : BUNKAIO construit son image professionnelle. Vous ne repartez pas avec une photo LinkedIn, mais avec une série cohérente, prête à servir partout :</p>
-      <ul class="disc-chips"><li>Site internet</li><li>Page « À propos »</li><li>LinkedIn</li><li>Instagram</li><li>Facebook</li><li>Fiche Google Business Profile</li><li>Newsletters</li><li>Presse</li><li>Dossiers commerciaux</li><li>Présentations</li><li>Publicité</li><li>Lancement d'activité</li></ul>
-    </section>
-
-    <section class="read-panel svcp-panel rv" style="--rv-d: 0.07s;">
+    <section class="read-panel svcp-panel pb-decor">
+      <p class="pb-kicker">Le studio vient à vous</p>
       <h2>Votre activité devient votre décor</h2>
       <p class="svcp-text svcp-lead"><strong>Votre entreprise est votre décor. Votre expertise est votre image.</strong></p>
       <p class="svcp-text">Votre image ne devrait pas être séparée de votre activité. BUNKAIO est un studio mobile : le shooting peut se faire au studio ou dans un lieu adapté, mais aussi directement là où vous travaillez. Bureau, cabinet, salon, boutique, restaurant, atelier, showroom, agence, coworking : le lieu où vous exercez devient le décor de vos images.</p>
-      <p class="svcp-text">Les images ne montrent plus seulement votre visage, mais qui vous êtes, ce que vous faites, comment vous travaillez, vos outils, vos produits, votre équipe et votre univers. Elles sont plus crédibles qu'un portrait sur fond neutre, parce qu'elles sont vraies.</p>
-      <ul class="value-grid">
-        <li><b>Portrait + environnement</b><span>Vous, dans le lieu qui raconte votre métier.</span></li>
-        <li><b>Activité + savoir-faire</b><span>Le geste, l'outil, le produit, le rendez-vous.</span></li>
-        <li><b>Personnalité = personal branding</b><span>Une identité visuelle exploitable, pas une photo isolée.</span></li>
-      </ul>
+      <div class="pb-eq" aria-label="Portrait, plus environnement, plus activité, plus personnalité, égale personal branding">
+        <span class=""><svg class="art-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-4 4-6.5 8-6.5s8 2.5 8 6.5"></path></svg>Portrait</span><i aria-hidden="true">+</i><span class=""><svg class="art-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"></path><circle cx="12" cy="9.5" r="2.6"></circle></svg>Environnement</span><i aria-hidden="true">+</i><span class=""><svg class="art-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3.5l1.5-2.5h6L16.5 8H20a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"></path><circle cx="12" cy="13.5" r="3.6"></circle></svg>Activité</span><i aria-hidden="true">+</i><span class=""><svg class="art-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18c1.4 0 2-1 1.6-2.1-.5-1.2.2-2.4 1.6-2.4H17a4 4 0 0 0 4-4C21 6.9 17 3 12 3z"></path><circle cx="7.5" cy="11" r="1.1"></circle><circle cx="10" cy="7" r="1.1"></circle><circle cx="14.5" cy="7" r="1.1"></circle></svg>Personnalité</span><i aria-hidden="true">=</i><span class="pb-eq-res"><svg class="art-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"></path><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"></path></svg>Personal branding</span>
+      </div>
+      <p class="svcp-text">Les images ne montrent plus seulement votre visage, mais ce que vous faites, comment vous travaillez, vos outils, vos produits, votre équipe et votre univers. Elles sont plus crédibles qu'un portrait sur fond neutre, parce qu'elles sont vraies.</p>
       <p class="svcp-note"><strong>Exemples de mises en situation</strong> (cas d'usage illustratifs) :</p>
       <ul class="disc-chips"><li>Une consultante dans son bureau, entre deux rendez-vous</li><li>Un artisan à l'établi, les mains dans la matière</li><li>Une thérapeute dans son cabinet, là où ses patients la rencontrent</li><li>Une professionnelle de la beauté dans son salon</li><li>Un restaurateur dans sa salle ou en cuisine</li><li>Un créateur dans son studio, au milieu de ses pièces</li></ul>
       <div class="svcp-cta-row"><a class="cta-primary" href="/devis/" data-quiz="corporate" data-tier="lanc" data-track="lancement">Préparer mon shooting</a></div>
     </section>
 
-    <section class="read-panel svcp-panel rv" id="formule-lancement" style="--rv-d: 0.14s;">
+    <section class="read-panel svcp-panel rv" id="formule-lancement" style="--rv-d: 0s;">
       <h2>Ce que vous recevez</h2>
       <p class="svcp-text svcp-why">Lancement est la formule BUNKAIO pensée pour les entrepreneurs qui lancent, repositionnent ou professionnalisent leur activité : pas une séance simplifiée, une première vraie production d'image.</p>
       <p class="vat-note">Prix nets : TVA non applicable (art. 293 B du CGI). Le prix affiché est le prix payé, sans calcul supplémentaire.</p>
@@ -1282,51 +1282,71 @@
   </div></div>
     </section>
 
-    <section class="read-panel svcp-panel rv" style="--rv-d: 0.21000000000000002s;">
-      <h2>Le shooting in situ, étape par étape</h2>
-      <ol class="disc-steps"><li class="disc-step"><b>01 · Brief</b><span>Nous définissons votre activité, vos clients et l'usage des images.</span></li><li class="disc-step"><b>02 · Préparation</b><span>Tenues, lieux, intentions et ambiance, préparés ensemble avant la séance.</span></li><li class="disc-step"><b>03 · Déplacement</b><span>BUNKAIO vient sur votre lieu d'activité lorsque le shooting in situ est pertinent.</span></li><li class="disc-step"><b>04 · Shooting</b><span>Direction de pose et mises en situation réelles : vous, votre travail, votre lieu.</span></li><li class="disc-step"><b>05 · Sélection</b><span>Une sélection guidée des meilleures images.</span></li><li class="disc-step"><b>06 · Retouche</b><span>Un traitement professionnel, naturel et cohérent sur toute la série.</span></li><li class="disc-step"><b>07 · Livraison</b><span>Votre galerie privée, sous 7 jours ouvrés, avec des formats prêts pour le web et les réseaux.</span></li></ol>
+    <section class="read-panel svcp-panel rv" style="--rv-d: 0.07s;">
+      <h2>Tout comprendre en 7 points</h2>
+      <p class="svcp-text">Ouvrez le point qui vous intéresse.</p>
+      <ul class="cs-acc disc-acc pb-acc" id="pbAcc">
+        <li class="cs-acc-item open">
+          <button type="button" class="cs-acc-head" aria-expanded="true">
+            <b class="disc-num">01</b>
+            <span class="pb-ico"><svg class="art-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4l9.5 16.5h-19z"></path><line x1="12" y1="10" x2="12" y2="14.5"></line><circle cx="12" cy="17.4" r=".6"></circle></svg></span>
+            <span class="disc-name">Le problème<small class="pb-teaser">Une activité professionnelle, des photos qui ne le sont pas</small></span>
+            <i class="cs-acc-chev" aria-hidden="true"></i>
+          </button>
+          <div class="cs-acc-panel"><div class="disc-panel"><p>Vous avez un logo, un site, un compte Instagram, un profil LinkedIn et une offre claire. Mais vos photos sont des selfies, des images prises au téléphone, un portrait d'il y a cinq ans ou des visuels qui ne se ressemblent pas entre eux.</p><p>Or votre visage est souvent le premier contact avec votre entreprise : beaucoup de clients vous découvrent en ligne avant de vous rencontrer. Des images incohérentes ou datées affaiblissent la confiance, quelle que soit la qualité de votre travail.</p></div></div>
+        </li><li class="cs-acc-item">
+          <button type="button" class="cs-acc-head" aria-expanded="false">
+            <b class="disc-num">02</b>
+            <span class="pb-ico"><svg class="art-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2.5"></rect><circle cx="9" cy="10" r="1.8"></circle><path d="M3 17l5-4.5 4 3.5 3-2.5 6 4.5"></path></svg></span>
+            <span class="disc-name">Une banque d'images, pas une photo<small class="pb-teaser">12 usages pour une seule séance</small></span>
+            <i class="cs-acc-chev" aria-hidden="true"></i>
+          </button>
+          <div class="cs-acc-panel"><div class="disc-panel"><p>BUNKAIO ne vient pas simplement photographier un entrepreneur : BUNKAIO construit son image professionnelle. Vous repartez avec une série cohérente, prête à servir partout :</p><ul class="disc-chips"><li>Site internet</li><li>Page « À propos »</li><li>LinkedIn</li><li>Instagram</li><li>Facebook</li><li>Fiche Google Business Profile</li><li>Newsletters</li><li>Presse</li><li>Dossiers commerciaux</li><li>Présentations</li><li>Publicité</li><li>Lancement d'activité</li></ul></div></div>
+        </li><li class="cs-acc-item">
+          <button type="button" class="cs-acc-head" aria-expanded="false">
+            <b class="disc-num">03</b>
+            <span class="pb-ico"><svg class="art-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"></path><circle cx="12" cy="9.5" r="2.6"></circle></svg></span>
+            <span class="disc-name">Le shooting in situ, étape par étape<small class="pb-teaser">Du brief à la galerie privée, en 7 étapes</small></span>
+            <i class="cs-acc-chev" aria-hidden="true"></i>
+          </button>
+          <div class="cs-acc-panel"><div class="disc-panel"><ol class="disc-steps pb-steps" data-loop-bound="1"><li class="disc-step"><b>01 · Brief</b><span>Nous définissons votre activité, vos clients et l'usage des images.</span></li><li class="disc-step"><b>02 · Préparation</b><span>Tenues, lieux, intentions et ambiance, préparés ensemble avant la séance.</span></li><li class="disc-step"><b>03 · Déplacement</b><span>BUNKAIO vient sur votre lieu d'activité lorsque le shooting in situ est pertinent.</span></li><li class="disc-step"><b>04 · Shooting</b><span>Direction de pose et mises en situation réelles : vous, votre travail, votre lieu.</span></li><li class="disc-step"><b>05 · Sélection</b><span>Une sélection guidée des meilleures images.</span></li><li class="disc-step"><b>06 · Retouche</b><span>Un traitement professionnel, naturel et cohérent sur toute la série.</span></li><li class="disc-step"><b>07 · Livraison</b><span>Votre galerie privée, sous 7 jours ouvrés, avec des formats prêts pour le web et les réseaux.</span></li></ol></div></div>
+        </li><li class="cs-acc-item">
+          <button type="button" class="cs-acc-head" aria-expanded="false">
+            <b class="disc-num">04</b>
+            <span class="pb-ico"><svg class="art-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-4 4-6.5 8-6.5s8 2.5 8 6.5"></path></svg></span>
+            <span class="disc-name">Pour qui ?<small class="pb-teaser">Toutes les personnes qui entreprennent</small></span>
+            <i class="cs-acc-chev" aria-hidden="true"></i>
+          </button>
+          <div class="cs-acc-panel"><div class="disc-panel"><p>Pour toutes les personnes qui entreprennent et ont besoin d'une image professionnelle pour développer leur activité. Le statut juridique ne compte pas : ce qui compte, c'est ce que vos clients voient de vous.</p><ul class="disc-chips"><li>Consultants</li><li>Coachs</li><li>Freelances</li><li>Artisans</li><li>Commerçants</li><li>Professionnels de la beauté</li><li>Thérapeutes</li><li>Professionnels du bien-être</li><li>Créateurs</li><li>Formateurs</li><li>Agents immobiliers</li><li>Prestataires de services</li><li>Entrepreneurs locaux</li></ul></div></div>
+        </li><li class="cs-acc-item">
+          <button type="button" class="cs-acc-head" aria-expanded="false">
+            <b class="disc-num">05</b>
+            <span class="pb-ico"><svg class="art-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"></path><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"></path></svg></span>
+            <span class="disc-name">Pourquoi BUNKAIO<small class="pb-teaser">Direction artistique, studio mobile, droits clairs</small></span>
+            <i class="cs-acc-chev" aria-hidden="true"></i>
+          </button>
+          <div class="cs-acc-panel"><div class="disc-panel"><ul class="value-grid"><li><b>Direction artistique</b><span>Chaque image est pensée pour ce qu'elle doit dire de vous, pas seulement réussie techniquement.</span></li><li><b>Préparation et accompagnement</b><span>Brief, conseils tenues et attitudes, direction de pose : vous n'avez pas besoin d'être à l'aise devant l'objectif.</span></li><li><b>Un studio mobile</b><span>Un matériel professionnel (boîtier hybride Sony Alpha 7 III, optiques G Master) qui se déplace et s'adapte à chaque lieu.</span></li><li><b>Une esthétique éditoriale</b><span>Des images soignées et cohérentes entre elles, qui forment une vraie identité visuelle.</span></li><li><b>Une expérience client suivie</b><span>Moodboard, suivi, devis, factures et galerie privée dans votre espace client, avec un interlocuteur unique.</span></li><li><b>Des droits clairs</b><span>Droits d'utilisation commerciale sans limite de durée, précisés sur votre devis.</span></li></ul></div></div>
+        </li><li class="cs-acc-item">
+          <button type="button" class="cs-acc-head" aria-expanded="false">
+            <b class="disc-num">06</b>
+            <span class="pb-ico"><svg class="art-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="4" x2="12" y2="20"></line><line x1="7" y1="20" x2="17" y2="20"></line><path d="M5 7h14"></path><path d="M5 7l-3 7a3 3 0 0 0 6 0z"></path><path d="M19 7l-3 7a3 3 0 0 0 6 0z"></path></svg></span>
+            <span class="disc-name">Portrait classique ou personal branding ?<small class="pb-teaser">Une image, ou une identité visuelle</small></span>
+            <i class="cs-acc-chev" aria-hidden="true"></i>
+          </button>
+          <div class="cs-acc-panel"><div class="disc-panel"><div class="pb-compare"><div><h3>Portrait classique</h3><p><strong>Une image professionnelle.</strong></p><ul class="svcp-list"><li>Un fond neutre, une pose</li><li>Utile pour un profil ou un annuaire</li><li>Montre votre visage</li></ul></div><div class="pb-compare-us"><h3>Personal branding BUNKAIO</h3><p><strong>Une identité visuelle exploitable dans plusieurs contextes.</strong></p><ul class="svcp-list"><li>Brief, préparation et direction de pose</li><li>2 tenues, 2 ambiances ou mises en situation, dans votre lieu si c'est pertinent</li><li>12 images cohérentes pour le site, les réseaux, la presse et la vente</li><li>Montre qui vous êtes, ce que vous faites et pourquoi on peut vous faire confiance</li></ul></div></div></div></div>
+        </li><li class="cs-acc-item">
+          <button type="button" class="cs-acc-head" aria-expanded="false">
+            <b class="disc-num">07</b>
+            <span class="pb-ico"><svg class="art-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"></rect><polyline points="8.5 8.5 10 10 12.5 7"></polyline><line x1="8.5" y1="14" x2="15.5" y2="14"></line><line x1="8.5" y1="17.5" x2="13" y2="17.5"></line></svg></span>
+            <span class="disc-name">Et ensuite : votre image grandit avec vous<small class="pb-teaser">Signature, Premium, Éditorial</small></span>
+            <i class="cs-acc-chev" aria-hidden="true"></i>
+          </button>
+          <div class="cs-acc-panel"><div class="disc-panel"><p>Lancement est la porte d'entrée de la gamme <a href="/services/portrait-professionnel-corporate/" data-nav="service:corporate">Corporate &amp; personal branding</a>. Quand vos besoins augmentent, chaque formule va plus loin :</p><ul class="value-grid"><li><b>Lancement · 320 €</b><span>Pour les entrepreneurs qui lancent, repositionnent ou professionnalisent leur activité.</span></li><li><b>Signature · 450 €</b><span>Pour constituer une véritable bibliothèque d'images professionnelles.</span></li><li><b>Premium · 690 €</b><span>Une production d'image plus complète : portrait, activité, équipe, lieux.</span></li><li><b>Éditorial Bunkaio · 1 090 €</b><span>Une production éditoriale complète, avec un univers visuel poussé.</span></li></ul></div></div>
+        </li>
+      </ul>
     </section>
 
-    <section class="read-panel svcp-panel rv" style="--rv-d: 0.28s;">
-      <h2>Pour qui ?</h2>
-      <p class="svcp-text">Pour toutes les personnes qui entreprennent et ont besoin d'une image professionnelle pour développer leur activité. Le statut juridique ne compte pas : ce qui compte, c'est ce que vos clients voient de vous.</p>
-      <ul class="disc-chips"><li>Consultants</li><li>Coachs</li><li>Freelances</li><li>Artisans</li><li>Commerçants</li><li>Professionnels de la beauté</li><li>Thérapeutes</li><li>Professionnels du bien-être</li><li>Créateurs</li><li>Formateurs</li><li>Agents immobiliers</li><li>Prestataires de services</li><li>Entrepreneurs locaux</li></ul>
-    </section>
-
-    <section class="read-panel svcp-panel value-panel rv" style="--rv-d: 0.35000000000000003s;">
-      <h2>Pourquoi BUNKAIO</h2>
-      <ul class="value-grid"><li><b>Direction artistique</b><span>Chaque image est pensée pour ce qu'elle doit dire de vous, pas seulement réussie techniquement.</span></li><li><b>Préparation et accompagnement</b><span>Brief, conseils tenues et attitudes, direction de pose : vous n'avez pas besoin d'être à l'aise devant l'objectif.</span></li><li><b>Un studio mobile</b><span>Un matériel professionnel (boîtier hybride Sony Alpha 7 III, optiques G Master) qui se déplace et s'adapte à chaque lieu.</span></li><li><b>Une esthétique éditoriale</b><span>Des images soignées et cohérentes entre elles, qui forment une vraie identité visuelle.</span></li><li><b>Une expérience client suivie</b><span>Moodboard, suivi, devis, factures et galerie privée dans votre espace client, avec un interlocuteur unique.</span></li><li><b>Des droits clairs</b><span>Droits d'utilisation commerciale sans limite de durée, précisés sur votre devis.</span></li></ul>
-    </section>
-
-    <section class="read-panel svcp-panel svcp-two rv" style="--rv-d: 0.35000000000000003s;">
-      <div>
-        <h2>Portrait classique</h2>
-        <p class="svcp-text"><strong>Une image professionnelle.</strong></p>
-        <ul class="svcp-list">
-          <li>Un fond neutre, une pose</li>
-          <li>Utile pour un profil ou un annuaire</li>
-          <li>Montre votre visage</li>
-        </ul>
-      </div>
-      <div>
-        <h2>Personal branding BUNKAIO</h2>
-        <p class="svcp-text"><strong>Une identité visuelle exploitable dans plusieurs contextes.</strong></p>
-        <ul class="svcp-list">
-          <li>Brief, préparation et direction de pose</li>
-          <li>2 tenues, 2 ambiances ou mises en situation, dans votre lieu si c'est pertinent</li>
-          <li>12 images cohérentes pour le site, les réseaux, la presse et la vente</li>
-          <li>Montre qui vous êtes, ce que vous faites et pourquoi on peut vous faire confiance</li>
-        </ul>
-      </div>
-    </section>
-
-    <section class="read-panel svcp-panel rv" style="--rv-d: 0.35000000000000003s;">
-      <h2>Et ensuite : votre image grandit avec votre activité</h2>
-      <p class="svcp-text">Lancement est la porte d'entrée de la gamme <a href="/services/portrait-professionnel-corporate/" data-nav="service:corporate">Corporate &amp; personal branding</a>. Quand vos besoins augmentent, chaque formule va plus loin :</p>
-      <ul class="value-grid"><li><b>Lancement · 320 €</b><span>Pour les entrepreneurs qui lancent, repositionnent ou professionnalisent leur activité.</span></li><li><b>Signature · 450 €</b><span>Pour constituer une véritable bibliothèque d'images professionnelles.</span></li><li><b>Premium · 690 €</b><span>Une production d'image plus complète : portrait, activité, équipe, lieux.</span></li><li><b>Éditorial Bunkaio · 1 090 €</b><span>Une production éditoriale complète, avec un univers visuel poussé.</span></li></ul>
-    </section>
-
-    <section class="read-panel svcp-panel rv" style="--rv-d: 0.35000000000000003s;">
+    <section class="read-panel svcp-panel rv" style="--rv-d: 0.14s;">
       <h2>Questions fréquentes</h2>
       <div id="servicePageFaq" data-exclusive="1">
     <div class="accordion-item rv" style="--rv-d: 0s;">
@@ -1386,12 +1406,12 @@
       <p class="svcp-note">Shooting à Montpellier, Béziers et dans l'Hérault, à Toulouse et partout en Occitanie. Une question précise ? <a href="/contact/" data-nav="contact">Contactez-nous</a>.</p>
     </section>
 
-    <section class="read-panel svcp-panel article-cta rv" style="--rv-d: 0.35000000000000003s;">
+    <section class="read-panel svcp-panel article-cta rv" style="--rv-d: 0.21000000000000002s;">
       <h2>Vous avez lancé votre activité. Il est temps de lancer votre image.</h2>
       <p class="svcp-text">Dites-nous ce que vous faites et où vous travaillez : vous recevez une proposition personnalisée sous 48 h, sans engagement.</p>
       <div class="svcp-cta-row" style="margin:0"><a class="cta-primary" href="/devis/" data-quiz="corporate" data-tier="lanc" data-track="lancement">Vérifier les disponibilités</a></div>
     </section>
-    <section class="read-panel svcp-panel svcp-others rv" style="--rv-d: 0.35000000000000003s;">
+    <section class="read-panel svcp-panel svcp-others rv" style="--rv-d: 0.28s;">
       <h2>Autres prestations</h2>
       <div class="svcp-others-row">
         <a class="svcp-chip rv" href="/services/seance-photo-particuliers/" onclick="return navLink(event,'service','photo-part')" style="--rv-d: 0s;">Séance photo — particuliers</a><a class="svcp-chip rv" href="/services/portrait-professionnel-corporate/" onclick="return navLink(event,'service','corporate')" style="--rv-d: 0.07s;">Corporate &amp; personal branding</a><a class="svcp-chip rv" href="/services/photographe-mode-mannequins/" onclick="return navLink(event,'service','mode')" style="--rv-d: 0.14s;">Mode, agence et mannequins</a><a class="svcp-chip rv" href="/services/photo-produits-packshots/" onclick="return navLink(event,'service','commercial')" style="--rv-d: 0.21000000000000002s;">Commercial &amp; produits</a><a class="svcp-chip rv" href="/services/photographe-evenementiel/" onclick="return navLink(event,'service','event')" style="--rv-d: 0.28s;">Événementiel</a>
@@ -2033,6 +2053,6 @@
 <script src="config/articles.en.js?v=275d6834"></script>
 <script src="config/routes.js?v=02f573b3"></script>
 <script src="config/media.js?v=e515354a"></script>
-<script src="js/script.min.js?v=562e2370"></script>
+<script src="js/script.min.js?v=e46d31f4"></script>
 </body>
 </html>

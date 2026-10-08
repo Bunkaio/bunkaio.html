@@ -541,6 +541,7 @@ const I18N = {
     'comm-redirect-text':'Vous avez exprimé un intérêt pour des services de communication complémentaires. Agency Nascimento, partenaire de BUNKAIO, accompagne nos clients sur la création de site, le SEO, la publicité en ligne et les réseaux sociaux. Découvrez leur approche.',
     'comm-redirect-btn':'Découvrir Agency Nascimento',
     'home-claim-kicker':'Le studio',
+    'li-tag':'Studio d\'image mobile',
     'home-claim-text':'BUNKAIO accompagne les personnes qui entreprennent dans la construction de leur image professionnelle.',
     'ft-services':'Services','ft-studio':'Le studio',
     'footer-claim2':'Studio d\'image mobile · Béziers · Montpellier · Toulouse',
@@ -897,6 +898,7 @@ const I18N = {
     'comm-redirect-text':'You expressed an interest in complementary communication services. Agency Nascimento, a BUNKAIO partner, supports our clients with website creation, SEO, online advertising and social media. Discover their approach.',
     'comm-redirect-btn':'Discover Agency Nascimento',
     'home-claim-kicker':'The studio',
+    'li-tag':'Mobile image studio',
     'home-claim-text':'BUNKAIO helps people who run a business build their professional image.',
     'ft-services':'Services','ft-studio':'The studio',
     'footer-claim2':'Mobile image studio · Béziers · Montpellier · Toulouse',
@@ -3741,6 +3743,31 @@ function renderBrandingPage(){
       a: `<p>${t({fr:'Lancement est pensé pour une personne. Pour plusieurs associés ou une équipe, voyez la page ', en:'Launch is designed for one person. For several partners or a team, see the '})}<a href="/services/portrait-professionnel-corporate/" data-nav="service:corporate">${t({fr:'portraits corporate', en:'corporate portraits'})}</a>${t({fr:' ou précisez le nombre de personnes dans votre demande.', en:' page or state the number of people in your request.'})}</p>` }
   ];
 
+  /* Chiffres clés (tirés de la formule), équation du personal branding, et accordéon des 7 points. */
+  const keys = [
+    ['clock', '1h30', {fr:'de shooting', en:'shoot'}],
+    ['gallery', '12', {fr:'photos retouchées', en:'retouched photos'}],
+    ['pin', t({fr:'In situ', en:'On site'}), {fr:'dans vos locaux', en:'at your premises'}],
+    ['calendar', t({fr:'7 jours', en:'7 days'}), {fr:'ouvrés de livraison', en:'working days to delivery'}]
+  ];
+  const eq = [['user', {fr:'Portrait', en:'Portrait'}], ['pin', {fr:'Environnement', en:'Setting'}], ['camera', {fr:'Activité', en:'Activity'}], ['palette', {fr:'Personnalité', en:'Personality'}], ['spark', {fr:'Personal branding', en:'Personal branding'}]];
+  const acc = [
+    { icon:'warn', title:{fr:'Le problème', en:'The problem'}, teaser:{fr:'Une activité professionnelle, des photos qui ne le sont pas', en:'A professional business, photos that aren\'t'},
+      body:`<p>${t({fr:'Vous avez un logo, un site, un compte Instagram, un profil LinkedIn et une offre claire. Mais vos photos sont des selfies, des images prises au téléphone, un portrait d\'il y a cinq ans ou des visuels qui ne se ressemblent pas entre eux.', en:'You have a logo, a website, an Instagram account, a LinkedIn profile and a clear offer. But your photos are selfies, phone shots, a portrait from five years ago or visuals that don\'t match each other.'})}</p><p>${t({fr:'Or votre visage est souvent le premier contact avec votre entreprise : beaucoup de clients vous découvrent en ligne avant de vous rencontrer. Des images incohérentes ou datées affaiblissent la confiance, quelle que soit la qualité de votre travail.', en:'Yet your face is often the first contact with your business: many clients discover you online before they meet you. Inconsistent or dated images weaken trust, however good your work is.'})}</p>` },
+    { icon:'gallery', title:{fr:'Une banque d\'images, pas une photo', en:'An image bank, not one photo'}, teaser:{fr:'12 usages pour une seule séance', en:'12 uses from a single session'},
+      body:`<p>${t({fr:'BUNKAIO ne vient pas simplement photographier un entrepreneur : BUNKAIO construit son image professionnelle. Vous repartez avec une série cohérente, prête à servir partout :', en:'BUNKAIO doesn\'t just photograph an entrepreneur: BUNKAIO builds their professional image. You leave with a consistent series, ready to use everywhere:'})}</p>${chips(uses)}` },
+    { icon:'pin', title:{fr:'Le shooting in situ, étape par étape', en:'The on-site shoot, step by step'}, teaser:{fr:'Du brief à la galerie privée, en 7 étapes', en:'From brief to private gallery, in 7 steps'},
+      body:`<ol class="disc-steps pb-steps">${journey.map((st, i) => `<li class="disc-step"><b>${String(i + 1).padStart(2, '0')} · ${t(st[0])}</b><span>${t(st[1])}</span></li>`).join('')}</ol>` },
+    { icon:'user', title:{fr:'Pour qui ?', en:'Who is it for?'}, teaser:{fr:'Toutes les personnes qui entreprennent', en:'Everyone who runs a business'},
+      body:`<p>${t({fr:'Pour toutes les personnes qui entreprennent et ont besoin d\'une image professionnelle pour développer leur activité. Le statut juridique ne compte pas : ce qui compte, c\'est ce que vos clients voient de vous.', en:'For everyone who runs a business and needs a professional image to grow it. Legal status doesn\'t matter: what matters is what your clients see of you.'})}</p>${chips(forWho)}` },
+    { icon:'spark', title:{fr:'Pourquoi BUNKAIO', en:'Why BUNKAIO'}, teaser:{fr:'Direction artistique, studio mobile, droits clairs', en:'Art direction, mobile studio, clear rights'},
+      body:`<ul class="value-grid">${why.map(w => `<li><b>${t(w[0])}</b><span>${t(w[1])}</span></li>`).join('')}</ul>` },
+    { icon:'scale', title:{fr:'Portrait classique ou personal branding ?', en:'Classic portrait or personal branding?'}, teaser:{fr:'Une image, ou une identité visuelle', en:'One image, or a visual identity'},
+      body:`<div class="pb-compare"><div><h3>${t({fr:'Portrait classique', en:'Classic portrait'})}</h3><p><strong>${t({fr:'Une image professionnelle.', en:'One professional image.'})}</strong></p><ul class="svcp-list"><li>${t({fr:'Un fond neutre, une pose', en:'A plain backdrop, one pose'})}</li><li>${t({fr:'Utile pour un profil ou un annuaire', en:'Useful for a profile or a directory'})}</li><li>${t({fr:'Montre votre visage', en:'Shows your face'})}</li></ul></div><div class="pb-compare-us"><h3>${t({fr:'Personal branding BUNKAIO', en:'BUNKAIO personal branding'})}</h3><p><strong>${t({fr:'Une identité visuelle exploitable dans plusieurs contextes.', en:'A visual identity usable in many contexts.'})}</strong></p><ul class="svcp-list"><li>${t({fr:'Brief, préparation et direction de pose', en:'Brief, preparation and posing direction'})}</li><li>${t({fr:'2 tenues, 2 ambiances ou mises en situation, dans votre lieu si c\'est pertinent', en:'2 outfits, 2 moods or set-ups, at your place if it makes sense'})}</li><li>${t({fr:'12 images cohérentes pour le site, les réseaux, la presse et la vente', en:'12 consistent images for your website, social media, press and sales'})}</li><li>${t({fr:'Montre qui vous êtes, ce que vous faites et pourquoi on peut vous faire confiance', en:'Shows who you are, what you do and why people can trust you'})}</li></ul></div></div>` },
+    { icon:'list', title:{fr:'Et ensuite : votre image grandit avec vous', en:'Next: your image grows with you'}, teaser:{fr:'Signature, Premium, Éditorial', en:'Signature, Premium, Editorial'},
+      body:`<p>${t({fr:'Lancement est la porte d\'entrée de la gamme ', en:'Launch is the entry point to the '})}<a href="/services/portrait-professionnel-corporate/" data-nav="service:corporate">${t(c.name)}</a>${t({fr:'. Quand vos besoins augmentent, chaque formule va plus loin :', en:' range. As your needs grow, each package goes further:'})}</p><ul class="value-grid">${ladder}</ul>` }
+  ];
+
   el.innerHTML = `
     <a class="svcp-back" href="/services/" onclick="return navLink(event,'services')"><span aria-hidden="true">←</span> ${t({fr:'Retour au catalogue', en:'Back to the catalogue'})}</a>
     <div class="breadcrumb" role="navigation" aria-label="${t({fr:'Fil d\'Ariane', en:'Breadcrumb'})}">
@@ -3756,28 +3783,19 @@ function renderBrandingPage(){
       ${dispo(t({fr:'Vérifier les disponibilités', en:'Check availability'}), 'btn btn-ghost')}
     </div>
 
-    <section class="read-panel svcp-panel">
-      <h2>${t({fr:'Une activité professionnelle, des photos qui ne le sont pas', en:'A professional business, photos that aren\'t'})}</h2>
-      <p class="svcp-text">${t({fr:'Vous avez un logo, un site, un compte Instagram, un profil LinkedIn et une offre claire. Mais vos photos sont des selfies, des images prises au téléphone, un portrait d\'il y a cinq ans ou des visuels qui ne se ressemblent pas entre eux.', en:'You have a logo, a website, an Instagram account, a LinkedIn profile and a clear offer. But your photos are selfies, phone shots, a portrait from five years ago or visuals that don\'t match each other.'})}</p>
-      <p class="svcp-text">${t({fr:'Or votre visage est souvent le premier contact avec votre entreprise : beaucoup de clients vous découvrent en ligne avant de vous rencontrer. Des images incohérentes ou datées affaiblissent la confiance, quelle que soit la qualité de votre travail.', en:'Yet your face is often the first contact with your business: many clients discover you online before they meet you. Inconsistent or dated images weaken trust, however good your work is.'})}</p>
-    </section>
+    <ul class="pb-keys" id="pbKeys">
+      ${keys.map(k => `<li><span class="pb-ico">${artIllus(k[0], false)}</span><b>${k[1]}</b><small>${t(k[2])}</small></li>`).join('')}
+    </ul>
 
-    <section class="read-panel svcp-panel">
-      <h2>${t({fr:'Une banque d\'images pensée pour votre activité', en:'An image bank designed for your business'})}</h2>
-      <p class="svcp-text">${t({fr:'BUNKAIO ne vient pas simplement photographier un entrepreneur : BUNKAIO construit son image professionnelle. Vous ne repartez pas avec une photo LinkedIn, mais avec une série cohérente, prête à servir partout :', en:'BUNKAIO doesn\'t just photograph an entrepreneur: BUNKAIO builds their professional image. You don\'t leave with a LinkedIn photo, but with a consistent series, ready to use everywhere:'})}</p>
-      ${chips(uses)}
-    </section>
-
-    <section class="read-panel svcp-panel">
+    <section class="read-panel svcp-panel pb-decor">
+      <p class="pb-kicker">${t({fr:'Le studio vient à vous', en:'The studio comes to you'})}</p>
       <h2>${t({fr:'Votre activité devient votre décor', en:'Your business becomes your set'})}</h2>
       <p class="svcp-text svcp-lead"><strong>${t({fr:'Votre entreprise est votre décor. Votre expertise est votre image.', en:'Your business is your set. Your expertise is your image.'})}</strong></p>
       <p class="svcp-text">${t({fr:'Votre image ne devrait pas être séparée de votre activité. BUNKAIO est un studio mobile : le shooting peut se faire au studio ou dans un lieu adapté, mais aussi directement là où vous travaillez. Bureau, cabinet, salon, boutique, restaurant, atelier, showroom, agence, coworking : le lieu où vous exercez devient le décor de vos images.', en:'Your image shouldn\'t be separated from your business. BUNKAIO is a mobile studio: the shoot can take place in the studio or a suitable location, but also right where you work. Office, practice, salon, shop, restaurant, workshop, showroom, agency, coworking space: the place where you work becomes the set of your images.'})}</p>
-      <p class="svcp-text">${t({fr:'Les images ne montrent plus seulement votre visage, mais qui vous êtes, ce que vous faites, comment vous travaillez, vos outils, vos produits, votre équipe et votre univers. Elles sont plus crédibles qu\'un portrait sur fond neutre, parce qu\'elles sont vraies.', en:'The images no longer show just your face, but who you are, what you do, how you work, your tools, your products, your team and your world. They are more credible than a portrait on a plain backdrop, because they are real.'})}</p>
-      <ul class="value-grid">
-        <li><b>${t({fr:'Portrait + environnement', en:'Portrait + setting'})}</b><span>${t({fr:'Vous, dans le lieu qui raconte votre métier.', en:'You, in the place that tells your story.'})}</span></li>
-        <li><b>${t({fr:'Activité + savoir-faire', en:'Activity + expertise'})}</b><span>${t({fr:'Le geste, l\'outil, le produit, le rendez-vous.', en:'The gesture, the tool, the product, the meeting.'})}</span></li>
-        <li><b>${t({fr:'Personnalité = personal branding', en:'Personality = personal branding'})}</b><span>${t({fr:'Une identité visuelle exploitable, pas une photo isolée.', en:'A usable visual identity, not an isolated photo.'})}</span></li>
-      </ul>
+      <div class="pb-eq" aria-label="${t({fr:'Portrait, plus environnement, plus activité, plus personnalité, égale personal branding', en:'Portrait, plus setting, plus activity, plus personality, equals personal branding'})}">
+        ${eq.map((x, i) => `${i ? `<i aria-hidden="true">${i === eq.length - 1 ? '=' : '+'}</i>` : ''}<span class="${i === eq.length - 1 ? 'pb-eq-res' : ''}">${artIllus(x[0], false)}${t(x[1])}</span>`).join('')}
+      </div>
+      <p class="svcp-text">${t({fr:'Les images ne montrent plus seulement votre visage, mais ce que vous faites, comment vous travaillez, vos outils, vos produits, votre équipe et votre univers. Elles sont plus crédibles qu\'un portrait sur fond neutre, parce qu\'elles sont vraies.', en:'The images no longer show just your face, but what you do, how you work, your tools, your products, your team and your world. They are more credible than a portrait on a plain backdrop, because they are real.'})}</p>
       <p class="svcp-note"><strong>${t({fr:'Exemples de mises en situation', en:'Examples of real-work set-ups'})}</strong> ${t({fr:'(cas d\'usage illustratifs) :', en:'(illustrative use cases):'})}</p>
       ${chips(situations)}
       <div class="svcp-cta-row">${dispo(t({fr:'Préparer mon shooting', en:'Prepare my shoot'}))}</div>
@@ -3792,47 +3810,19 @@ function renderBrandingPage(){
     </section>
 
     <section class="read-panel svcp-panel">
-      <h2>${t({fr:'Le shooting in situ, étape par étape', en:'The on-site shoot, step by step'})}</h2>
-      <ol class="disc-steps">${journey.map((s, i) => `<li class="disc-step"><b>${String(i + 1).padStart(2, '0')} · ${t(s[0])}</b><span>${t(s[1])}</span></li>`).join('')}</ol>
-    </section>
-
-    <section class="read-panel svcp-panel">
-      <h2>${t({fr:'Pour qui ?', en:'Who is it for?'})}</h2>
-      <p class="svcp-text">${t({fr:'Pour toutes les personnes qui entreprennent et ont besoin d\'une image professionnelle pour développer leur activité. Le statut juridique ne compte pas : ce qui compte, c\'est ce que vos clients voient de vous.', en:'For everyone who runs a business and needs a professional image to grow it. Legal status doesn\'t matter: what matters is what your clients see of you.'})}</p>
-      ${chips(forWho)}
-    </section>
-
-    <section class="read-panel svcp-panel value-panel">
-      <h2>${t({fr:'Pourquoi BUNKAIO', en:'Why BUNKAIO'})}</h2>
-      <ul class="value-grid">${why.map(w => `<li><b>${t(w[0])}</b><span>${t(w[1])}</span></li>`).join('')}</ul>
-    </section>
-
-    <section class="read-panel svcp-panel svcp-two">
-      <div>
-        <h2>${t({fr:'Portrait classique', en:'Classic portrait'})}</h2>
-        <p class="svcp-text"><strong>${t({fr:'Une image professionnelle.', en:'One professional image.'})}</strong></p>
-        <ul class="svcp-list">
-          <li>${t({fr:'Un fond neutre, une pose', en:'A plain backdrop, one pose'})}</li>
-          <li>${t({fr:'Utile pour un profil ou un annuaire', en:'Useful for a profile or a directory'})}</li>
-          <li>${t({fr:'Montre votre visage', en:'Shows your face'})}</li>
-        </ul>
-      </div>
-      <div>
-        <h2>${t({fr:'Personal branding BUNKAIO', en:'BUNKAIO personal branding'})}</h2>
-        <p class="svcp-text"><strong>${t({fr:'Une identité visuelle exploitable dans plusieurs contextes.', en:'A visual identity usable in many contexts.'})}</strong></p>
-        <ul class="svcp-list">
-          <li>${t({fr:'Brief, préparation et direction de pose', en:'Brief, preparation and posing direction'})}</li>
-          <li>${t({fr:'2 tenues, 2 ambiances ou mises en situation, dans votre lieu si c\'est pertinent', en:'2 outfits, 2 moods or set-ups, at your place if it makes sense'})}</li>
-          <li>${t({fr:'12 images cohérentes pour le site, les réseaux, la presse et la vente', en:'12 consistent images for your website, social media, press and sales'})}</li>
-          <li>${t({fr:'Montre qui vous êtes, ce que vous faites et pourquoi on peut vous faire confiance', en:'Shows who you are, what you do and why people can trust you'})}</li>
-        </ul>
-      </div>
-    </section>
-
-    <section class="read-panel svcp-panel">
-      <h2>${t({fr:'Et ensuite : votre image grandit avec votre activité', en:'Next: your image grows with your business'})}</h2>
-      <p class="svcp-text">${t({fr:'Lancement est la porte d\'entrée de la gamme ', en:'Launch is the entry point to the '})}<a href="/services/portrait-professionnel-corporate/" data-nav="service:corporate">${t(c.name)}</a>${t({fr:'. Quand vos besoins augmentent, chaque formule va plus loin :', en:' range. As your needs grow, each package goes further:'})}</p>
-      <ul class="value-grid">${ladder}</ul>
+      <h2>${t({fr:'Tout comprendre en 7 points', en:'Everything in 7 points'})}</h2>
+      <p class="svcp-text">${t({fr:'Ouvrez le point qui vous intéresse.', en:'Open the point that interests you.'})}</p>
+      <ul class="cs-acc disc-acc pb-acc" id="pbAcc">
+        ${acc.map((a, k) => `<li class="cs-acc-item${k === 0 ? ' open' : ''}">
+          <button type="button" class="cs-acc-head" aria-expanded="${k === 0}">
+            <b class="disc-num">${String(k + 1).padStart(2, '0')}</b>
+            <span class="pb-ico">${artIllus(a.icon, false)}</span>
+            <span class="disc-name">${t(a.title)}<small class="pb-teaser">${t(a.teaser)}</small></span>
+            <i class="cs-acc-chev" aria-hidden="true"></i>
+          </button>
+          <div class="cs-acc-panel"><div class="disc-panel">${a.body}</div></div>
+        </li>`).join('')}
+      </ul>
     </section>
 
     <section class="read-panel svcp-panel">
@@ -3854,6 +3844,14 @@ function renderBrandingPage(){
       </div>
     </section>`;
   renderAccordionInto('servicePageFaq', faq.map(f => ({ title: f.q, body: f.a })), { exclusive: true, closed: true });
+  /* Animations : chiffres clés, équation et accordéon apparaissent en cascade quand ils entrent à l'écran ; les étapes du parcours s'allument tour à tour. */
+  el.querySelectorAll('#pbKeys, .pb-eq, #pbAcc').forEach(box => {
+    const cls = box.id === 'pbAcc' ? 'disc-live' : 'pb-live';
+    if (!window.IntersectionObserver || REDUCED_MOTION) { box.classList.add(cls); return; }
+    const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { box.classList.add(cls); io.disconnect(); } }), { threshold: 0.2 });
+    io.observe(box);
+  });
+  initReassureLoop();
   serviceBgSync('corporate');
 }
 
@@ -6375,6 +6373,42 @@ function initHomeLogoFade(){
   upd();
 }
 
+/* Interlude logo (accueil) : entre la fin de la vidéo « Le studio » et le bandeau de réassurance, l'écran restait blanc.
+   Le logo se place au centre de cet espace libre (entre la barre de navigation et le haut du bandeau), apparaît en
+   se nettoyant du flou dès que le bandeau entre à l'écran, puis s'efface en grandissant légèrement quand le texte
+   du bandeau arrive (révélation à 35 % de visibilité, voir ioLate). Calque fixe, aucun clic intercepté. */
+function initLogoInterlude(){
+  const el = document.getElementById('logoInterlude');
+  const re = document.querySelector('#view-home .reassure-section');
+  const wrap = document.getElementById('missionVideoWrap');
+  if (!el || !re) return;
+  /* La vue porte une transform : un enfant position:fixed y défilerait avec la page. Le calque est donc rattaché au body. */
+  if (el.parentElement !== document.body) document.body.appendChild(el);
+  const clamp = v => Math.max(0, Math.min(1, v));
+  let tick = false;
+  const upd = () => {
+    tick = false;
+    if (currentView !== 'home') { el.style.opacity = '0'; el.classList.remove('on'); return; }
+    const vh = window.innerHeight || 800;
+    const navH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav-h'), 10) || 70;
+    const top = re.getBoundingClientRect().top;
+    const videoOn = wrap && wrap.classList.contains('active');
+    const pin = clamp((vh - top) / (vh * 0.22));
+    const pout = clamp((vh * 0.7 - top) / (vh * 0.22));
+    const op = videoOn || top > vh ? 0 : pin * (1 - pout);
+    const room = Math.max(0, top - navH);
+    el.style.setProperty('--li-y', (navH + room / 2) + 'px');
+    el.style.setProperty('--li-w', Math.max(120, Math.min(window.innerWidth * 0.66, 420, room * 1.1)) + 'px');
+    el.style.setProperty('--li-in', pin.toFixed(3));
+    el.style.setProperty('--li-out', pout.toFixed(3));
+    el.style.opacity = op.toFixed(3);
+    el.classList.toggle('on', op > 0.02);
+  };
+  addEventListener('scroll', () => { if (!tick) { tick = true; requestAnimationFrame(upd); } }, { passive: true });
+  addEventListener('resize', upd);
+  upd();
+}
+
 /* ═══════════════ VIDÉO "LE STUDIO" — calque fixe plein écran (Accueil) ═══════════════
    Même mécanique que le hero : la vidéo vit dans un calque position:fixed
    partagé, et son opacité est pilotée par un IntersectionObserver dédié
@@ -6913,6 +6947,7 @@ renderCats();
 renderMissionServices();
 initMissionServicesAutoplay();
 initHomeLogoFade();
+initLogoInterlude();
 initScrollProgress();
 renderLogoCarousel();
 renderFooterServices();

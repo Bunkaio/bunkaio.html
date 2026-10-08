@@ -4387,11 +4387,22 @@ a, button { -webkit-tap-highlight-color: rgba(110,90,168,0.18); }
   .svc-cat-photo { position: static; width: 100%; max-width: 100%; aspect-ratio: 4 / 3; margin: 0 0 4px; }
   .svc-cat-photo img { width: 100%; height: 100%; display: block; object-fit: cover; object-position: center 30%; }
 }
+/* Catalogue mobile : en-tête de carte en grille (icône · titre · prix · chevron). Le titre prend la place restante et passe
+   à la ligne entre les mots, jamais au milieu d'un mot (« Événementie / l ») ; prix et chevron restent sur la première ligne.
+   La pastille « Bientôt disponible » occupe une 2e ligne sous le titre. */
 @media (max-width: 920px) {
-  .service-card .service-head { flex-wrap: wrap; row-gap: 6px; }
-  .service-card .service-name { flex: 1 1 0; min-width: 0; overflow-wrap: anywhere; }
-  .service-card .service-head .soon-chip { order: 3; flex: 0 0 auto; margin-left: 60px; }
-  .service-card .service-chev { margin-left: auto; flex: 0 0 auto; }
+  .service-card .service-head { display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; align-items: center; column-gap: 12px; row-gap: 8px; }
+  .service-card .service-name { min-width: 0; overflow-wrap: normal; word-break: normal; hyphens: manual; }
+  .service-card .service-from { margin-left: 0; }
+  .service-card .service-chev { margin-left: 0; }
+  .service-card .service-head .soon-chip { grid-column: 2 / -1; grid-row: 2; justify-self: start; margin-left: 0; }
+}
+@media (max-width: 420px) { .service-card .service-name { font-size: 16px; } .service-card .service-head { column-gap: 10px; } }
+@media (max-width: 370px) {
+  .service-card .service-head { grid-template-columns: auto minmax(0, 1fr) auto; }
+  .service-card .service-from { grid-column: 2; grid-row: 2; justify-self: start; }
+  .service-card .service-chev { grid-column: 3; grid-row: 1; }
+  .service-card .service-icon { width: 36px; height: 36px; }
 }
 
 /* ─── Devis, étape Profil, mobile : intitulés des profils en noir avec une lueur violette derrière (lisibles sur la photo).
@@ -4448,3 +4459,79 @@ a, button { -webkit-tap-highlight-color: rgba(110,90,168,0.18); }
 /* CTA placé dans un bloc de contenu : pas de remontée négative (réservée à la rangée sous le titre de page). */
 .svcp-panel .svcp-cta-row { margin-top: 18px; }
 @media (max-width: 760px) { .svcp-panel .svcp-cta-row { margin-top: 18px; } }
+
+/* ═══ Interlude logo de l'accueil (initLogoInterlude) : remplit l'espace blanc avant la réassurance ═══
+   Le logo HD est blanc : il sert ici de masque sur un dégradé encre / violet qui balaie la marque. */
+.logo-interlude { position: fixed; left: 0; right: 0; top: 0; height: 0; z-index: 2; pointer-events: none; opacity: 0; --li-in: 0; --li-out: 0; --li-w: 300px; --li-y: 50vh; }
+.logo-interlude .li-inner { position: absolute; left: 50%; top: var(--li-y); width: var(--li-w); transform: translate(-50%, -50%) scale(calc(0.86 + 0.14 * var(--li-in) + 0.12 * var(--li-out))); filter: blur(calc((1 - var(--li-in)) * 10px + var(--li-out) * 8px)); display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.logo-interlude .li-mark { display: block; width: 100%; aspect-ratio: 640 / 291; max-width: 100%;
+  background: linear-gradient(110deg, #0a0a0c 0%, #0a0a0c 38%, #8b74c9 48%, #d9cdf5 50%, #8b74c9 52%, #0a0a0c 62%, #0a0a0c 100%); background-size: 260% 100%; background-position: 100% 0;
+  -webkit-mask: url(/images/logo-hd.webp) center / contain no-repeat; mask: url(/images/logo-hd.webp) center / contain no-repeat; }
+.logo-interlude.on .li-mark { animation: liSheen 3.2s cubic-bezier(.45,.05,.25,1) 0.2s infinite; }
+@keyframes liSheen { 0% { background-position: 100% 0; } 55%, 100% { background-position: 0% 0; } }
+.logo-interlude .li-glow { position: absolute; left: 50%; top: 42%; width: 150%; aspect-ratio: 1.6; transform: translate(-50%, -50%) scale(calc(0.6 + 0.4 * var(--li-in))); background: radial-gradient(closest-side, rgba(139,116,201,0.22), rgba(139,116,201,0.08) 55%, transparent); z-index: -1; }
+.logo-interlude .li-line { display: block; height: 1px; width: 70%; background: linear-gradient(90deg, transparent, #8b74c9, transparent); transform: scaleX(var(--li-in)); }
+.logo-interlude .li-tag { font-size: 10.5px; font-weight: 600; letter-spacing: calc(0.24em + 0.18em * var(--li-in)); text-transform: uppercase; color: #5f5970; white-space: nowrap; opacity: var(--li-in); }
+@media (prefers-reduced-motion: reduce) { .logo-interlude .li-inner { filter: none; transform: translate(-50%, -50%); } .logo-interlude.on .li-mark { animation: none; background-position: 0 0; background: #0a0a0c; } }
+
+/* ═══ Landing personal branding : chiffres clés, équation, accordéon à pictogrammes ═══ */
+.pb-keys { list-style: none; margin: 4px 0 26px; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.pb-keys li { display: flex; flex-direction: column; gap: 4px; padding: 16px 16px 14px; border-radius: 14px; background: rgba(255,255,255,0.86); border: 1px solid rgba(110,90,168,0.18); box-shadow: 0 8px 22px rgba(110,90,168,0.10); opacity: 0; transform: translateY(16px); }
+.pb-keys b { font-size: clamp(22px, 3vw, 30px); font-weight: 800; letter-spacing: -0.03em; line-height: 1.05; color: var(--black); }
+.pb-keys small { font-size: 11.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #5f5970; font-weight: 600; }
+.pb-keys.pb-live li { animation: advIn 0.7s var(--ease-luxe, cubic-bezier(.2,.7,.2,1)) forwards; }
+.pb-keys.pb-live li:nth-child(2) { animation-delay: 0.1s; } .pb-keys.pb-live li:nth-child(3) { animation-delay: 0.2s; } .pb-keys.pb-live li:nth-child(4) { animation-delay: 0.3s; }
+.pb-ico { display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; flex: 0 0 auto; border-radius: 10px; background: #efeaf8; color: #4b3d7a; }
+.pb-ico svg { width: 19px; height: 19px; }
+/* Pictogrammes qui « se dessinent » : à l'apparition des chiffres clés et à l'ouverture d'un point de l'accordéon. */
+.pb-ico svg * { stroke-dasharray: 80; stroke-dashoffset: 0; }
+.pb-keys.pb-live .pb-ico svg *, .pb-acc .cs-acc-item.open .pb-ico svg * { animation: pbDraw 1.1s ease-out both; }
+@keyframes pbDraw { from { stroke-dashoffset: 80; } to { stroke-dashoffset: 0; } }
+.pb-acc .cs-acc-item.open .pb-ico { background: #6e5aa8; color: #fff; transform: rotate(-4deg) scale(1.06); }
+.pb-acc .pb-ico { transition: background 0.4s ease, color 0.4s ease, transform 0.5s var(--ease-luxe, ease); }
+.pb-teaser { display: block; margin-top: 2px; font-size: 12px; font-weight: 500; color: #6b6578; }
+.pb-acc .disc-panel { padding-left: 18px; }
+.pb-acc .disc-panel p { font-size: 13.5px; line-height: 1.7; color: #3a3544; }
+.disc-acc.disc-live .cs-acc-item:nth-child(7) { animation-delay: 0.53s; }
+.pb-steps { grid-template-columns: repeat(4, 1fr); }
+.pb-kicker { margin: 0 0 6px; font-size: 11px; font-weight: 700; letter-spacing: 0.24em; text-transform: uppercase; color: #6e5aa8; }
+.pb-decor { position: relative; overflow: hidden; }
+.pb-decor::after { content: ''; position: absolute; right: -80px; top: -80px; width: 260px; height: 260px; border-radius: 50%; background: radial-gradient(closest-side, rgba(139,116,201,0.16), transparent); pointer-events: none; animation: pbFloat 9s ease-in-out infinite alternate; }
+@keyframes pbFloat { to { transform: translate(-40px, 30px) scale(1.15); } }
+/* Équation : Portrait + Environnement + Activité + Personnalité = Personal branding, chaque terme arrive à son tour. */
+.pb-eq { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin: 18px 0 20px; }
+.pb-eq span { display: inline-flex; align-items: center; gap: 7px; padding: 8px 13px 8px 10px; border-radius: 999px; border: 1px solid rgba(110,90,168,0.28); background: #fff; font-size: 13px; font-weight: 700; color: var(--black); opacity: 0; transform: translateY(10px) scale(0.94); }
+.pb-eq span svg { width: 17px; height: 17px; color: #6e5aa8; }
+.pb-eq i { font-style: normal; font-weight: 800; color: #6e5aa8; opacity: 0; }
+.pb-eq .pb-eq-res { background: #0a0a0c; color: #fff; border-color: #0a0a0c; }
+.pb-eq .pb-eq-res svg { color: #cbbdf2; }
+.pb-eq.pb-live span, .pb-eq.pb-live i { animation: pbPop 0.55s var(--ease-luxe, cubic-bezier(.2,.7,.2,1)) forwards; }
+.pb-eq.pb-live > :nth-child(2) { animation-delay: 0.15s; } .pb-eq.pb-live > :nth-child(3) { animation-delay: 0.25s; } .pb-eq.pb-live > :nth-child(4) { animation-delay: 0.4s; }
+.pb-eq.pb-live > :nth-child(5) { animation-delay: 0.5s; } .pb-eq.pb-live > :nth-child(6) { animation-delay: 0.65s; } .pb-eq.pb-live > :nth-child(7) { animation-delay: 0.75s; }
+.pb-eq.pb-live > :nth-child(8) { animation-delay: 0.9s; } .pb-eq.pb-live > :nth-child(9) { animation-delay: 1.05s; }
+@keyframes pbPop { to { opacity: 1; transform: none; } }
+.pb-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.pb-compare > div { border-radius: 12px; padding: 14px 16px; background: #f6f3fb; }
+.pb-compare h3 { margin: 0 0 6px; font-size: 15px; }
+.pb-compare .pb-compare-us { background: #fff; border: 1px solid rgba(110,90,168,0.4); box-shadow: 0 8px 22px rgba(110,90,168,0.12); }
+@media (max-width: 760px) {
+  .pb-keys { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .pb-keys li { padding: 13px 13px 12px; }
+  .pb-steps { grid-template-columns: 1fr 1fr; }
+  .pb-compare { grid-template-columns: 1fr; }
+  .pb-acc .cs-acc-head { gap: 9px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pb-keys li, .pb-eq span, .pb-eq i { opacity: 1; transform: none; animation: none !important; }
+  .pb-ico svg * { animation: none !important; } .pb-decor::after { animation: none; }
+}
+.pb-acc .cs-acc-head .pb-ico { flex: 0 0 34px; }
+.pb-acc .cs-acc-head .disc-name { flex: 1 1 auto; min-width: 0; }
+.pb-ico .art-ico { color: inherit; width: 19px; height: 19px; }
+.pb-acc .cs-acc-item.open .pb-ico .art-ico { color: #fff; }
+.pb-eq span .art-ico { width: 17px; height: 17px; }
+.pb-eq .pb-eq-res .art-ico { color: #cbbdf2; }
+/* Dans l'accordéon personal branding, les paragraphes suivent le panneau (pas le retrait de 44 px des listes à coches). */
+.pb-acc .cs-acc-panel p { padding: 0; margin: 0 0 10px; opacity: 1; transform: none; overflow: visible; }
+.pb-acc .cs-acc-item.open .cs-acc-panel p { padding-bottom: 0; }
+.pb-acc .cs-acc-panel .pb-compare p { margin: 0 0 8px; }
