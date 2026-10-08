@@ -1152,6 +1152,9 @@ const CATS = [
     }},
   { id:'corporate',
     name:{fr:'Corporate & Personal Branding', en:'Corporate & Personal Branding'},
+    /* Libellé des listes de liens (pied de page, « Autres prestations », Découvrir) : la page corporate vise les entreprises
+       et les équipes ; le Personal Branding des entrepreneurs a sa propre page, listée juste à côté. */
+    navName:{fr:'Corporate — entreprises & équipes', en:'Corporate — companies & teams'},
     tag:{fr:'Entrepreneurs · indépendants · dirigeants · équipes', en:'Entrepreneurs · freelancers · executives · teams'},
     pitch:{fr:'Une image professionnelle qui inspire confiance dès le premier regard. Le shooting peut se faire directement dans votre environnement de travail : vos locaux deviennent votre décor.',
       en:'A professional image that builds trust at first glance. The shoot can take place right where you work: your premises become your set.'},
@@ -1549,6 +1552,8 @@ const TIERS = [
 ];
 /* Formules d'une gamme, dans l'ordre de l'escalier de valeur (seules celles que la gamme définit). */
 const catTiers = c => TIERS.filter(tr => c && c.tiers && c.tiers[tr.id]);
+/* Nom d'une prestation dans une liste de liens (sans doublon avec la page Personal Branding). */
+const navName = c => t(c.navName || c.name);
 /* Ligne de positionnement : celle de la gamme si elle existe, sinon la ligne générique du palier. */
 const tierLine = (c, tr) => (c && c.tiers && c.tiers[tr.id] && c.tiers[tr.id].line) || tr.line;
 
@@ -3352,7 +3357,7 @@ function renderDiscoverPage(){
     return `<li class="cs-acc-item${isOpen ? ' open' : ''}" data-cat="${c.id}">
       <button type="button" class="cs-acc-head" aria-expanded="${isOpen}">
         <b class="disc-num">${String(k + 1).padStart(2, '0')}</b>
-        <span class="disc-name">${MARKET[c.id] ? `<small class="disc-market">${t(MARKET[c.id])}</small>` : ''}${t(c.name)}</span>
+        <span class="disc-name">${MARKET[c.id] ? `<small class="disc-market">${t(MARKET[c.id])}</small>` : ''}${navName(c)}</span>
         <em class="disc-from">${t({fr:'dès', en:'from'})} ${money(f.from)}</em>
         <i class="cs-acc-chev" aria-hidden="true"></i>
       </button>
@@ -3414,7 +3419,7 @@ function renderDiscoverPage(){
 
   renderAccordionInto('discoverFaq', [
     { title: t({fr:'Comment choisir ma prestation ?', en:'How do I choose my service?'}),
-      body: '<ul class="svcp-list">' + cats.map(c => `<li><strong>${t(c.name)}</strong> — ${t((DISCOVER_COPY[c.id] || { for:{fr:'', en:''} }).for)}</li>`).join('') + '</ul><p>' + t({fr:'Un doute entre deux prestations ? Le devis en ligne vous guide en quelques questions.', en:'Unsure between two services? The online quote guides you in a few questions.'}) + '</p>' },
+      body: '<ul class="svcp-list">' + cats.map(c => `<li><strong>${navName(c)}</strong> — ${t((DISCOVER_COPY[c.id] || { for:{fr:'', en:''} }).for)}</li>`).join('') + '</ul><p>' + t({fr:'Un doute entre deux prestations ? Le devis en ligne vous guide en quelques questions.', en:'Unsure between two services? The online quote guides you in a few questions.'}) + '</p>' },
     { title: t({fr:'Quels sont les délais et les tarifs ?', en:'What are the timelines and rates?'}),
       body: '<p>' + t({fr:'Livraison entre ' + allMin + ' et ' + allMax + ' jours ouvrés après le shooting, selon la prestation. Tarifs de départ : ', en:'Delivery between ' + allMin + ' and ' + allMax + ' working days after the shoot, depending on the service. Starting rates: '}) + cats.map(c => `${t(c.name)} ${t({fr:'dès', en:'from'})} ${money(facts[c.id].from)}`).join(' · ') + '. <a href="/services/" data-nav="services">' + t({fr:'Voir les formules', en:'See the packages'}) + '</a>.</p>' },
     { title: t({fr:'Où intervenez-vous ?', en:'Where do you work?'}),
@@ -3659,7 +3664,7 @@ function renderServicePage(catId){
     <section class="read-panel svcp-panel svcp-others">
       <h2>${t({fr:'Autres prestations', en:'Other services'})}</h2>
       <div class="svcp-others-row">
-        ${others.map(o => `<a class="svcp-chip" href="${servicePath(o.id)}" onclick="return navLink(event,'service','${o.id}')">${t(o.name)}</a>`).join('')}
+        ${others.map(o => `<a class="svcp-chip" href="${servicePath(o.id)}" onclick="return navLink(event,'service','${o.id}')">${navName(o)}</a>`).join('')}
         <a class="svcp-chip" href="${servicePath('branding')}" data-nav="service:branding">${t({fr:'Personal Branding — entrepreneurs', en:'Personal Branding — entrepreneurs'})}</a>
         <a class="svcp-chip" href="/services/" onclick="return navLink(event,'services')">${t({fr:'Tout le catalogue', en:'Full catalogue'})}</a>
       </div>
@@ -3839,7 +3844,7 @@ function renderBrandingPage(){
     <section class="read-panel svcp-panel svcp-others">
       <h2>${t({fr:'Autres prestations', en:'Other services'})}</h2>
       <div class="svcp-others-row">
-        ${CATS.filter(x => seoRouteFor('service', x.id) && x.id !== 'lumen').map(o => `<a class="svcp-chip" href="${servicePath(o.id)}" onclick="return navLink(event,'service','${o.id}')">${t(o.name)}</a>`).join('')}
+        ${CATS.filter(x => seoRouteFor('service', x.id) && x.id !== 'lumen').map(o => `<a class="svcp-chip" href="${servicePath(o.id)}" onclick="return navLink(event,'service','${o.id}')">${navName(o)}</a>`).join('')}
         <a class="svcp-chip" href="/services/" onclick="return navLink(event,'services')">${t({fr:'Tout le catalogue', en:'Full catalogue'})}</a>
       </div>
     </section>`;
@@ -4382,7 +4387,7 @@ function discoverPanel(text){
   return `<section class="read-panel svcp-panel pf-links"><h2>${t({fr:'Découvrir chaque prestation', en:'Explore each service'})}</h2>
     <p class="svcp-text">${text}</p>
     <div class="discover-cta"><a class="cta-primary" href="/decouvrir-chaque-prestation/" data-nav="discover"><span>${t({fr:'Découvrir chaque prestation →', en:'Explore each service →'})}</span></a></div>
-    <div class="svcp-others-row">${CATS.filter(c => seoRouteFor('service', c.id)).map(c => `<a class="svcp-chip" href="${servicePath(c.id)}" data-nav="service:${c.id}">${t(c.name)}</a>`).join('')}</div></section>`;
+    <div class="svcp-others-row">${CATS.filter(c => seoRouteFor('service', c.id)).map(c => `<a class="svcp-chip" href="${servicePath(c.id)}" data-nav="service:${c.id}">${navName(c)}</a>` + (c.id === 'corporate' ? `<a class="svcp-chip" href="${servicePath('branding')}" data-nav="service:branding">${t({fr:'Personal Branding — entrepreneurs', en:'Personal Branding — entrepreneurs'})}</a>` : '')).join('')}</div></section>`;
 }
 function renderPortfolioLinks(){
   const el = document.getElementById('pfLinks');
@@ -6906,7 +6911,7 @@ function renderFooterServices(){
     const li = document.createElement('li');
     const b = document.createElement('a');
     b.href = servicePath(c.id);
-    b.textContent = t(c.name);
+    b.textContent = navName(c);
     b.onclick = (e) => navLink(e, 'service', c.id);
     li.appendChild(b);
     el.appendChild(li);
