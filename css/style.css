@@ -4405,16 +4405,16 @@ a, button { -webkit-tap-highlight-color: rgba(110,90,168,0.18); }
   .service-card .service-icon { width: 36px; height: 36px; }
 }
 
-/* ─── Devis, étape Profil, mobile : intitulés des profils en noir avec une lueur violette derrière (lisibles sur la photo).
+/* ─── Devis, étape Profil, mobile : intitulés des profils en noir avec une lueur violet pâle de la charte (--violet / --violet-deep) derrière (lisibles sur la photo).
    Survol / sélection : fond noir, écriture et icône blanches. ─── */
 @media (max-width: 900px) {
   .quiz-wrap .qstep.active .prof-name {
     color: #0a0a0c; font-weight: 700;
-    text-shadow: 0 0 6px rgba(190,170,255,0.95), 0 0 14px rgba(160,135,255,0.85), 0 0 26px rgba(140,115,240,0.7);
+    text-shadow: 0 0 3px rgba(255,255,255,0.9), 0 0 10px rgba(241,236,250,0.95), 0 0 20px rgba(230,222,245,0.8);
   }
   .quiz-wrap .qstep.active .prof-icon {
     color: #0a0a0c;
-    filter: drop-shadow(0 0 5px rgba(190,170,255,0.95)) drop-shadow(0 0 12px rgba(150,125,250,0.8));
+    filter: drop-shadow(0 0 3px rgba(255,255,255,0.9)) drop-shadow(0 0 9px rgba(230,222,245,0.9));
   }
   .quiz-wrap .qstep.active .prof-card:hover,
   .quiz-wrap .qstep.active .prof-card.selected { background: var(--black); border: 1px solid var(--black); transform: none; }
@@ -4522,66 +4522,86 @@ a, button { -webkit-tap-highlight-color: rgba(110,90,168,0.18); }
 .pb-acc .cs-acc-item.open .cs-acc-panel p { padding-bottom: 0; }
 .pb-acc .cs-acc-panel .pb-compare p { margin: 0 0 8px; }
 
-/* ═══ Accueil : « Studio de photographie pour professionnels, entrepreneurs et mannequins » — version typographique, sans encadré ═══
-   Noir (décision de la propriétaire pour ce titre) avec une lueur claire pour rester lisible sur les photos du carrousel ;
-   le violet de la charte ne sert qu'en accent : deux filets qui se tracent de part et d'autre de « Studio de photographie », un
-   reflet unique, puis les trois publics qui arrivent l'un après l'autre avec un soulignement fin. Animations jouées une fois. */
+/* ═══ Accueil : « Studio de photographie pour professionnels, entrepreneurs et mannequins » — concept « viseur » ═══
+   Ligne 1 : mise au point (flou → net) entre deux croix de visée reprises du logo +BK.
+   Ligne 2 : un collimateur autofocus violet passe d'un public à l'autre en boucle (cycle de 6 s) ; le mot visé est noir,
+   les deux autres restent lisibles en gris. Texte noir sur halo clair pour rester lisible sur les photos du carrousel. */
 .hero-title .hero-kicker {
-  display: flex; flex-direction: column; align-items: center; gap: 10px; width: fit-content; max-width: min(92vw, 640px);
+  display: flex; flex-direction: column; align-items: center; gap: 12px; width: fit-content; max-width: min(92vw, 680px);
   margin: 0 auto 30px; padding: 0; background: none; box-shadow: none;
   letter-spacing: normal; text-transform: none; color: #0a0a0c; line-height: 1.35;
-  text-shadow: 0 0 18px rgba(255,255,255,0.55), 0 0 2px rgba(255,255,255,0.35);
   opacity: 1; animation: none;
 }
 .hero-kicker .hk-a {
-  display: flex; align-items: center; gap: 16px;
-  font-size: clamp(12px, 1.1vw, 13.5px); font-weight: 700; letter-spacing: 0.42em; text-transform: uppercase;
-  opacity: 0; filter: blur(6px); animation: hkFade 0.9s var(--ease-luxe, cubic-bezier(.2,.7,.2,1)) 0.2s forwards;
+  display: inline-flex; align-items: center; gap: 16px; white-space: nowrap;
+  font-size: clamp(12px, 1.1vw, 13.5px); font-weight: 700; letter-spacing: 0.4em; text-transform: uppercase;
 }
-.hero-kicker .hk-a::before, .hero-kicker .hk-a::after {
-  content: ''; display: block; width: clamp(28px, 4vw, 54px); height: 1px; flex: 0 0 auto;
-  background: linear-gradient(90deg, rgba(110,90,168,0), #6e5aa8); transform: scaleX(0); transform-origin: right;
-  animation: hkRule 0.9s var(--ease-luxe, cubic-bezier(.2,.7,.2,1)) 0.55s forwards;
+.hero-kicker .hk-t {
+  display: inline-block; margin-right: -0.4em;
+  opacity: 0; filter: blur(9px); transform: scale(1.06);
+  animation: hkFocus 1.1s cubic-bezier(.2,.7,.2,1) 0.25s forwards;
 }
-.hero-kicker .hk-a::after { background: linear-gradient(90deg, #6e5aa8, rgba(110,90,168,0)); transform-origin: left; margin-left: -0.42em; }
+.hero-kicker .hk-x {
+  width: 15px; height: 15px; flex: 0 0 auto; fill: none; stroke: #6e5aa8; stroke-width: 2; stroke-linecap: round;
+  opacity: 0; transform: rotate(-90deg) scale(0.4);
+  animation: hkCross 0.9s cubic-bezier(.2,.7,.2,1) 0.15s forwards;
+}
+.hero-kicker .hk-x + .hk-t + .hk-x { animation-delay: 0.3s; transform: rotate(90deg) scale(0.4); }
 .hero-kicker .hk-b {
   display: block; font-size: clamp(13px, 1.2vw, 15px); font-weight: 400; letter-spacing: 0.01em; color: #2a2533;
   opacity: 0; animation: hkFade 0.8s ease 0.75s forwards;
 }
 .hero-kicker .hk-w { white-space: nowrap; }
 .hero-kicker .hk-b em {
-  position: relative; display: inline-block; font-style: normal; font-weight: 600; color: #0a0a0c;
-  opacity: 0; transform: translateY(6px); animation: hkWord 0.6s var(--ease-luxe, ease) forwards;
+  position: relative; display: inline-block; padding: 0 2px; font-style: normal; font-weight: 600; color: #0a0a0c;
+  opacity: 0; transform: translateY(6px);
 }
-.hero-kicker .hk-b em::after {
-  content: ''; position: absolute; left: 0; right: 0; bottom: -3px; height: 1px; background: #6e5aa8;
-  transform: scaleX(0); transform-origin: left; animation: hkUnder 0.7s var(--ease-luxe, ease) forwards;
+/* Collimateur : quatre coins violets dessinés en dégradés (aucun cadre plein). */
+.hero-kicker .hk-b em::before {
+  content: ''; position: absolute; left: -6px; right: -6px; top: -3px; bottom: -3px; pointer-events: none; color: #6e5aa8;
+  --c: 7px; --s: 1.5px;
+  background:
+    linear-gradient(currentColor, currentColor) left top / var(--c) var(--s),
+    linear-gradient(currentColor, currentColor) left top / var(--s) var(--c),
+    linear-gradient(currentColor, currentColor) right top / var(--c) var(--s),
+    linear-gradient(currentColor, currentColor) right top / var(--s) var(--c),
+    linear-gradient(currentColor, currentColor) left bottom / var(--c) var(--s),
+    linear-gradient(currentColor, currentColor) left bottom / var(--s) var(--c),
+    linear-gradient(currentColor, currentColor) right bottom / var(--c) var(--s),
+    linear-gradient(currentColor, currentColor) right bottom / var(--s) var(--c);
+  background-repeat: no-repeat; opacity: 0;
 }
-.hero-kicker .hk-w:nth-of-type(1) em, .hero-kicker .hk-w:nth-of-type(1) em::after { animation-delay: 0.95s; }
-.hero-kicker .hk-w:nth-of-type(2) em, .hero-kicker .hk-w:nth-of-type(2) em::after { animation-delay: 1.15s; }
-.hero-kicker .hk-w:nth-of-type(3) em, .hero-kicker .hk-w:nth-of-type(3) em::after { animation-delay: 1.35s; }
-.hero-kicker .hk-w:nth-of-type(1) em::after { animation-delay: 1.3s; }
-.hero-kicker .hk-w:nth-of-type(2) em::after { animation-delay: 1.5s; }
-.hero-kicker .hk-w:nth-of-type(3) em::after { animation-delay: 1.7s; }
+.hero-kicker .hk-w:nth-of-type(1) em { animation: hkWord 0.6s cubic-bezier(.2,.7,.2,1) 0.95s forwards, hkF1 6s ease-in-out 2.1s infinite both; }
+.hero-kicker .hk-w:nth-of-type(2) em { animation: hkWord 0.6s cubic-bezier(.2,.7,.2,1) 1.1s forwards, hkF2 6s ease-in-out 2.1s infinite both; }
+.hero-kicker .hk-w:nth-of-type(3) em { animation: hkWord 0.6s cubic-bezier(.2,.7,.2,1) 1.25s forwards, hkF3 6s ease-in-out 2.1s infinite both; }
+.hero-kicker .hk-w:nth-of-type(1) em::before { animation: hkAF1 6s ease-out 2.1s infinite; }
+.hero-kicker .hk-w:nth-of-type(2) em::before { animation: hkAF2 6s ease-out 2.1s infinite; }
+.hero-kicker .hk-w:nth-of-type(3) em::before { animation: hkAF3 6s ease-out 2.1s infinite; }
+@keyframes hkFocus { to { opacity: 1; filter: none; transform: none; } }
+@keyframes hkCross { to { opacity: 1; transform: none; } }
 @keyframes hkFade { to { opacity: 1; filter: none; } }
-@keyframes hkRule { to { transform: scaleX(1); } }
 @keyframes hkWord { to { opacity: 1; transform: none; } }
-@keyframes hkUnder { 0% { transform: scaleX(0); opacity: 1; } 60% { transform: scaleX(1); opacity: 1; } 100% { transform: scaleX(1); opacity: 0.45; } }
+@keyframes hkF1 { 0%, 30% { color: #0a0a0c; } 35%, 95% { color: #4b4560; } 100% { color: #0a0a0c; } }
+@keyframes hkF2 { 0%, 30% { color: #4b4560; } 35%, 63% { color: #0a0a0c; } 68%, 100% { color: #4b4560; } }
+@keyframes hkF3 { 0%, 63% { color: #4b4560; } 68%, 95% { color: #0a0a0c; } 100% { color: #4b4560; } }
+@keyframes hkAF1 { 0% { opacity: 0; transform: scale(1.3); } 4% { opacity: 1; transform: scale(0.96); } 7%, 28% { opacity: 1; transform: none; } 33%, 100% { opacity: 0; transform: none; } }
+@keyframes hkAF2 { 0%, 33% { opacity: 0; transform: scale(1.3); } 37% { opacity: 1; transform: scale(0.96); } 40%, 61% { opacity: 1; transform: none; } 66%, 100% { opacity: 0; transform: none; } }
+@keyframes hkAF3 { 0%, 66% { opacity: 0; transform: scale(1.3); } 70% { opacity: 1; transform: scale(0.96); } 73%, 94% { opacity: 1; transform: none; } 99%, 100% { opacity: 0; transform: none; } }
 @media (max-width: 600px) {
-  .hero-title .hero-kicker { gap: 8px; margin-bottom: 24px; }
-  .hero-kicker .hk-a { gap: 10px; letter-spacing: 0.24em; font-size: 12px; white-space: nowrap; }
-  .hero-kicker .hk-a::before, .hero-kicker .hk-a::after { width: 22px; }
-  .hero-kicker .hk-a::after { margin-left: -0.24em; }
+  .hero-title .hero-kicker { gap: 9px; margin-bottom: 24px; }
+  .hero-kicker .hk-a { gap: 10px; letter-spacing: 0.24em; font-size: 12px; }
+  .hero-kicker .hk-t { margin-right: -0.24em; }
+  .hero-kicker .hk-x { width: 12px; height: 12px; }
   .hero-kicker .hk-b { font-size: 13px; }
 }
 @media (max-width: 350px) {
   .hero-kicker .hk-a { letter-spacing: 0.18em; font-size: 11px; gap: 8px; }
-  .hero-kicker .hk-a::before, .hero-kicker .hk-a::after { width: 14px; }
-  .hero-kicker .hk-a::after { margin-left: -0.18em; }
+  .hero-kicker .hk-t { margin-right: -0.18em; }
+  .hero-kicker .hk-x { width: 10px; height: 10px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .hero-kicker .hk-a, .hero-kicker .hk-b, .hero-kicker .hk-b em { opacity: 1; filter: none; transform: none; animation: none; }
-  .hero-kicker .hk-a::before, .hero-kicker .hk-a::after, .hero-kicker .hk-b em::after { transform: scaleX(1); animation: none; }
+  .hero-kicker .hk-t, .hero-kicker .hk-x, .hero-kicker .hk-b, .hero-kicker .hk-b em { opacity: 1; filter: none; transform: none; animation: none !important; color: #0a0a0c; }
+  .hero-kicker .hk-b em::before { animation: none !important; opacity: 0; }
 }
 
 /* ═══ Catalogue : actions de chaque carte. Action principale (bouton plein, flèche qui avance) et lien vers la page détaillée
@@ -4669,11 +4689,11 @@ html.photo-shield img, html.photo-shield video, html.photo-shield .hero-slide, h
    Avant, sur téléphone, le slogan passait sous la barre et le bouton sortait par le bas. ═══ */
 .mission-video-content { padding-top: calc(var(--nav-h, 70px) + 14px); padding-bottom: 18px; justify-content: safe center; }
 .mission-kicker { margin-bottom: clamp(10px, 2.4svh, 26px); }
-.mission-text { font-size: clamp(21px, min(4.4vw, 5.4svh), 48px); }
+.mission-text { font-size: clamp(19px, min(3.6vw, 4.6svh), 42px); line-height: 1.32; }
 .mission-services { margin: clamp(14px, 3svh, 30px) 0 clamp(8px, 1.6svh, 10px); }
 @media (max-width: 700px) {
   .mission-video-content { padding-left: 20px; padding-right: 20px; }
-  .mission-text { font-size: clamp(20px, min(6.4vw, 4.1svh), 28px); line-height: 1.22; }
+  .mission-text { font-size: clamp(18px, min(5.2vw, 3.4svh), 22px); line-height: 1.38; letter-spacing: -0.015em; }
   /* Pastilles sur une seule ligne qui glisse au doigt ; la pastille active est ramenée au centre (missionSelect). */
   .ms-sel { position: relative; flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch;
     margin: 0 -20px 12px; padding: 2px 20px;
