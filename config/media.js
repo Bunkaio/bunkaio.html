@@ -231,6 +231,15 @@ const IMG = {
      Apparaît à gauche de la grille quand l'utilisateur filtre par catégorie.
      Une image par catégorie. Format : portrait, ~900×1200px (ratio 3:4)
      ────────────────────────────────────────────────────────────────── */
+  /* Bannières propres à des pages qui empruntaient jusqu'ici la photo d'une autre rubrique (Conseils, articles, À propos, FAQ).
+     Optionnel : déposées depuis l'admin média, elles remplacent automatiquement la photo partagée ; absentes, rien ne change. */
+  heroOwn: {
+    advice:  MEDIA_BASE + '/hero/advice-1.webp',
+    article: MEDIA_BASE + '/hero/advice-1.webp',
+    about:   MEDIA_BASE + '/hero/about-1.webp',
+    legal:   MEDIA_BASE + '/hero/legal-1.webp',
+  },
+
   /* Photos par formule : MEDIA_BASE/formulas/<catégorie>-<formule>.webp (à déposer dans l'admin média ; repli sur la photo de la catégorie). */
   formulas: MEDIA_BASE + '/formulas',
   /* Fond de la page « Découvrir chaque prestation » : une photo par prestation, qui change selon la prestation ouverte (repli : photo de la catégorie). */

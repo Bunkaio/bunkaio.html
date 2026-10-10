@@ -218,7 +218,7 @@ let LANG = 'fr';
 const I18N = {
   fr: {
     'estimate':'Devis','services':'Services','portfolio':'Portfolio','drone':'4K Drone','contact':'Contact','partners':'Collaboration','nav-legal':'FAQ',
-    'hero-kicker':'<span class="hk-a"><svg class="hk-x" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1v6M10 13v6M1 10h6M13 10h6"/></svg><span class="hk-t">Studio de photographie</span><svg class="hk-x" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1v6M10 13v6M1 10h6M13 10h6"/></svg></span> <span class="hk-b">pour <span class=\"hk-w\"><em>professionnels</em>,</span> <span class=\"hk-w\"><em>entrepreneurs</em></span> et <span class=\"hk-w\"><em>mannequins</em></span></span>','cred-lead':'BUNKAIO est un studio de photographie mobile, basé à Montpellier, qui crée des images premium pour les personnes, les marques et les entreprises : <a href="/services/personal-branding-entrepreneurs/" data-nav="service:branding">Personal Branding pour entrepreneurs</a>, portraits professionnels et corporate, mode et mannequins, photo de produit, événementiel et séances pour les particuliers, à Béziers, Montpellier et Toulouse. Retrouvez chaque <a href="/services/" data-nav="services">prestation et ses tarifs</a>.','quiz-h1':'Devis photo en ligne','hero-word1':'Imaginez','hero-word2':'votre','hero-word3':'projet','start':'Construire mon projet',
+    'hero-kicker':'<span class="hk-a"><svg class="hk-x" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1v6M10 13v6M1 10h6M13 10h6"/></svg><span class="hk-t">Studio de photographie</span><svg class="hk-x" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1v6M10 13v6M1 10h6M13 10h6"/></svg></span> <span class="hk-b">pour les <span class=\"hk-w\"><em>particuliers</em>,</span> les <span class=\"hk-w\"><em>professionnels</em>,</span> les <span class=\"hk-w\"><em>entreprises</em>,</span> les <span class=\"hk-w\"><em>modèles/mannequins</em></span> et <span class=\"hk-w\">l\'<em>événementiel</em>.</span></span>','cred-lead':'BUNKAIO est un studio de photographie mobile, basé à Montpellier, qui crée des images premium pour les personnes, les marques et les entreprises : <a href="/services/personal-branding-entrepreneurs/" data-nav="service:branding">Personal Branding pour entrepreneurs</a>, portraits professionnels et corporate, mode et mannequins, photo de produit, événementiel et séances pour les particuliers, à Béziers, Montpellier et Toulouse. Retrouvez chaque <a href="/services/" data-nav="services">prestation et ses tarifs</a>.','quiz-h1':'Devis photo en ligne','hero-word1':'Imaginez','hero-word2':'votre','hero-word3':'projet','start':'Construire mon projet',
     'step-cat':'01 — Catégorie','q-cat':'Quel est votre domaine\u00a0?','q-cat-sub':'Sélectionnez l\'univers de votre projet.',
     'step-prof':'02 — Profil','q-prof':'Quel profil êtes-vous\u00a0?','q-prof-sub':'Identifiez-vous pour que nous comprenions précisément votre besoin.',
     'step-tier':'03 — Prestation','q-tier':'Quel niveau de prestation\u00a0?',
@@ -574,7 +574,7 @@ const I18N = {
   },
   en: {
     'estimate':'Quote','services':'Services','portfolio':'Portfolio','drone':'4K Drone','contact':'Contact','partners':'Collaboration','nav-legal':'FAQ',
-    'hero-kicker':'<span class="hk-a"><svg class="hk-x" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1v6M10 13v6M1 10h6M13 10h6"/></svg><span class="hk-t">Photography studio</span><svg class="hk-x" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1v6M10 13v6M1 10h6M13 10h6"/></svg></span> <span class="hk-b">for <span class=\"hk-w\"><em>professionals</em>,</span> <span class=\"hk-w\"><em>entrepreneurs</em></span> and <span class=\"hk-w\"><em>models</em></span></span>','cred-lead':'BUNKAIO is a mobile photography studio based in Montpellier, creating premium images for people, brands and companies: <a href="/services/personal-branding-entrepreneurs/" data-nav="service:branding">Personal Branding for entrepreneurs</a>, professional and corporate portraits, fashion and models, product photography, events and sessions for individuals, in Béziers, Montpellier and Toulouse. Browse each <a href="/services/" data-nav="services">service and its rates</a>.','quiz-h1':'Online photo quote','hero-word1':'Imagine','hero-word2':'your','hero-word3':'project','start':'Build my project',
+    'hero-kicker':'<span class="hk-a"><svg class="hk-x" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1v6M10 13v6M1 10h6M13 10h6"/></svg><span class="hk-t">Photography studio</span><svg class="hk-x" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1v6M10 13v6M1 10h6M13 10h6"/></svg></span> <span class="hk-b">for <span class=\"hk-w\"><em>individuals</em>,</span> <span class=\"hk-w\"><em>professionals</em>,</span> <span class=\"hk-w\"><em>companies</em>,</span> <span class=\"hk-w\"><em>models</em></span> and <span class=\"hk-w\"><em>events</em>.</span></span>','cred-lead':'BUNKAIO is a mobile photography studio based in Montpellier, creating premium images for people, brands and companies: <a href="/services/personal-branding-entrepreneurs/" data-nav="service:branding">Personal Branding for entrepreneurs</a>, professional and corporate portraits, fashion and models, product photography, events and sessions for individuals, in Béziers, Montpellier and Toulouse. Browse each <a href="/services/" data-nav="services">service and its rates</a>.','quiz-h1':'Online photo quote','hero-word1':'Imagine','hero-word2':'your','hero-word3':'project','start':'Build my project',
     'step-cat':'01 — Category','q-cat':'What is your field?','q-cat-sub':'Select the universe your project belongs to.',
     'step-prof':'02 — Profile','q-prof':'Which profile are you?','q-prof-sub':'Tell us who you are so we can understand exactly what you need.',
     'step-tier':'03 — Service level','q-tier':'Which level of service?',
@@ -6986,6 +6986,19 @@ function setPageBg(viewKey){
   }
 }
 
+/* Bannières propres (IMG.heroOwn) : si la photo existe sur R2, elle remplace celle empruntée à une autre rubrique. */
+function applyOwnHeroes(){
+  const own = IMG.heroOwn; if (!own) return;
+  const done = {};
+  Object.keys(own).forEach(k => {
+    const u = own[k]; if (!u) return;
+    (done[u] = done[u] || probeImageExists(u)).then(ok => {
+      if (!ok) return;
+      IMG[k] = u; if (IMG.heroImages) IMG.heroImages[k] = [u];
+      if (currentView === k) initHeroCarousel(k);
+    });
+  });
+}
 function applyImages(){
   setPageBg('home');
   const devisImg = document.getElementById('img-devis-side');
@@ -7016,6 +7029,7 @@ if (location.hash === '#lumen') setTimeout(() => goToComingSoon('lumen'), 300);
 updatePlaceholders();
 updateLang();
 applyImages();
+applyOwnHeroes();
 initReassureLoop();
 document.querySelectorAll('.ph').forEach(observe);
 document.querySelectorAll('#view-home .rv:not(.reassure-section)').forEach(observe);
