@@ -40,7 +40,7 @@ Le code est la source de vérité. Ce fichier ne sert qu'à reprendre vite.
 - Tracking : `data-track="lancement"` sur les CTA (événement `cta_click`), `form_start` (nécessite le redéploiement du Worker), `quiz_submit` suffixé « · Lancement ». Plan marketing de référence : artefact « Plan de lancement V5 ».
 
 ## Cookies et consentement (oct. 2026)
-- Aucun cookie, aucun traceur tiers aujourd'hui : mesure maison sans cookie (`js/analytics.js`, Worker `/collect`, 400 jours), stockage local nécessaire (session client), `bunkaio_notrack` (opposition), `sessionStorage bk_campaign` (source utm), `bunkaio_consent` (choix, 6 mois, seulement si un choix est validé).
+- Aucun cookie, aucun traceur tiers aujourd'hui : mesure maison sans cookie (`js/analytics.js`, Worker `/collect`, 400 jours), stockage local nécessaire (session client), `bunkaio_notrack` (opposition) ; la source utm (`campaignTag()`) reste en mémoire de la page, rien n'est stocké sur l'appareil ; `bunkaio_consent` (choix, 6 mois, seulement si un choix est validé).
 - `config/consent.js` (CONSENT_CONFIG) + `js/consent.js` (BKConsent) : tant qu'aucun service n'est déclaré, pas de bandeau ; le lien « Gérer mes cookies » (pied de page) ouvre le centre de préférences. Déclarer GA4 / Google Ads / Meta Pixel (ou `vendors`) fait apparaître le bandeau (3 boutons identiques) ; les scripts ne se chargent qu'après accord de leur catégorie ; Google Consent Mode v2 (4 signaux « denied » par défaut) ; retrait = cookies effacés + rechargement.
 - Page `/politique-cookies/` (onglet de la vue `legal`, `renderCookiesAccordion`) : liste générée depuis `BKConsent.vendors()`. À tenir à jour avec la politique de confidentialité si un service est ajouté (destinataires, transferts).
 
