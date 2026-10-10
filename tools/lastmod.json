@@ -1,26 +1,26 @@
 {
   "/": {
-    "hash": "d7c0f27aea147b01755332125398ff5687f1cdf4",
+    "hash": "9c041eec68205b99bac2043ddf69c8c04b7f1e1c",
     "date": "2026-10-10"
   },
   "/services/": {
-    "hash": "151e99b07bf483d99e7f00e066ae200955a871d6",
+    "hash": "62d51561ab7db8f24fcaf9c63cb1d818c823b1f0",
     "date": "2026-10-10"
   },
   "/services/seance-photo-particuliers/": {
-    "hash": "3701b59ac41de08339af1fa825f0457b58a7b337",
+    "hash": "eaa376691e65ddfebf603f5b7fd13872b51b2528",
     "date": "2026-10-10"
   },
   "/services/photographe-mode-mannequins/": {
-    "hash": "cc417d643be06714ce01379a835110ea60910c4d",
+    "hash": "56dec2b678c2c53a98117ab2def62bc7f385465a",
     "date": "2026-10-10"
   },
   "/services/photo-produits-packshots/": {
-    "hash": "d7e7517a7185be2b89de0235549e7fd1e3303bdc",
+    "hash": "33659fe0022a5353a00b7948c8735822f3b2ce80",
     "date": "2026-10-10"
   },
   "/services/photographe-evenementiel/": {
-    "hash": "7968a6a346d7c34c101fcd731d96754a6d1b34a3",
+    "hash": "03b2770e3c08ebc499e121b18ac56b1640199786",
     "date": "2026-10-10"
   },
   "/services/photobooth-ia-mariage-lumen/": {
@@ -28,19 +28,19 @@
     "date": "2026-10-08"
   },
   "/a-propos/": {
-    "hash": "f55922e8811aa8426227785fdf9def043184525b",
+    "hash": "81504e25a6c8655d2dd13f28efa6b366c9df80cc",
     "date": "2026-10-10"
   },
   "/devis/": {
-    "hash": "ccb78e8a832fde638990c4f3e7cab21290d52130",
+    "hash": "37230a54510cb7db2ccc80b17ef64a3d832f6c4b",
     "date": "2026-10-10"
   },
   "/portfolio/": {
-    "hash": "ebd2c48e841b545a93b5e17d6a52fe6eae5f030a",
+    "hash": "6a9c7aeb4b6abaeee19801716f72ae7222f817eb",
     "date": "2026-10-10"
   },
   "/contact/": {
-    "hash": "8c0eab05c8072553c2113615d6adff5eebb79bcb",
+    "hash": "c8db9988f94a53951191ef7a8440204a19af69cf",
     "date": "2026-10-10"
   },
   "/partenaires/": {
@@ -48,95 +48,99 @@
     "date": "2026-10-02"
   },
   "/faq/": {
-    "hash": "0d72c3b0a9dec6592301e3537c9452808b944b5b",
+    "hash": "4e9edb16fe28da5f9a0faa8e0c5b11395cd654af",
     "date": "2026-10-10"
   },
   "/partager-mon-experience/": {
-    "hash": "32d71797a2b85e4531c918a9b3a9a42718cd575d",
+    "hash": "1d2007b03560a771d451bf868bc79a761f0a7269",
     "date": "2026-10-10"
   },
   "/drone/": {
-    "hash": "b1f06353a96e6e8bb156efe2dfb7e637b2c4f103",
+    "hash": "23602954f1bfda93011e181033b54af7d6a966b4",
     "date": "2026-10-10"
   },
   "/connexion/": {
-    "hash": "c00d58f0631efd893e2ae7e7e06375326fc88795",
+    "hash": "b5069511c706ca12043ce1395fa08b496b9a6292",
     "date": "2026-10-10"
   },
   "/espace-client/": {
-    "hash": "8701cf8000e495e1c953a262e189601360ea6488",
+    "hash": "1bbd1fd535eb49865bba7f6fd27aacabee61ce16",
     "date": "2026-10-10"
   },
   "/conseils/": {
-    "hash": "5a8ee5e42e0459191c700644ea0ab578586053d9",
+    "hash": "4626c9b516b38fc4f5b8828c570b3c15497784d5",
     "date": "2026-10-10"
   },
   "/conseils/preparer-seance-photo-portrait/": {
-    "hash": "2f023b441cbc1d875683340a778277957f7ed018",
+    "hash": "232658e7f652e2a0284814e58f28a3fcd7db8fe7",
     "date": "2026-10-10"
   },
   "/conseils/que-porter-seance-photo/": {
-    "hash": "dea9d205425796b1e79737f27a87f4e83ee4dbb2",
+    "hash": "b687d903606754798f62dfddfbd36f376331b02f",
     "date": "2026-10-10"
   },
   "/conseils/preparer-shooting-photo-produit/": {
-    "hash": "70d418931f1eed3f7ac8627407528523cdbbe8d2",
+    "hash": "aa4771002149ea380f5118b40fdf4f2604f2ebee",
     "date": "2026-10-10"
   },
   "/conseils/preparer-shooting-mode-lookbook/": {
-    "hash": "3d92ea017d00560790f7f5cf9b75c7834eb26fe7",
+    "hash": "0f40db774e7f8e3d4a90997f70e0edda78ea16a2",
     "date": "2026-10-10"
   },
   "/conseils/choisir-photographe-evenementiel/": {
-    "hash": "742130fac85ac4b23d99ceb12ce8cb05e75f3277",
+    "hash": "02e64627d64ec9af7b5d6b361db4096bf114efc8",
     "date": "2026-10-10"
   },
   "/conseils/photobooth-mariage-bien-choisir/": {
-    "hash": "5498fe6154f40a0c02b4a6c8aa3a2269e6da9818",
+    "hash": "2f0deb4ef68168c277c0a7eb4a6ef4b60c2c1904",
     "date": "2026-10-10"
   },
   "/conseils/combien-coute-une-seance-photo/": {
-    "hash": "3f95d66bebad7f78575e8135acf69c331efdfdba",
+    "hash": "272d75b5bad8b6fd5cce4f6bb690d127d0e303e8",
     "date": "2026-10-10"
   },
   "/confidentialite/": {
-    "hash": "a1d7a8d565d5be2e6558bd8eda7fa970e0ba4866",
+    "hash": "20047513dada1d53e4467733c72e1f97357d03d9",
     "date": "2026-10-10"
   },
   "/conseils/polas-mannequin-digitals-agence/": {
-    "hash": "fc4ca82d8637ce3372bcde8057cbc232658cbb38",
+    "hash": "f42d787503e6231f0f0ef82c31b2cfa61de9d1fc",
     "date": "2026-10-10"
   },
   "/conseils/packshot-ou-mise-en-scene-photo-produit/": {
-    "hash": "848d459f8fc5ac604e71ffed008072756a3fce1b",
+    "hash": "4fe3f26e42a84b018a0bec5971d4ba8168ea743e",
     "date": "2026-10-10"
   },
   "/conseils/lieux-seance-photo-montpellier-beziers-toulouse/": {
-    "hash": "0e1ed3a5197fa2925303b722b6d1f5ffae923751",
+    "hash": "307bea83aab9f96faedc565e42edc8f8df08f3ca",
     "date": "2026-10-10"
   },
   "/conseils/portrait-professionnel-photo-profil-linkedin/": {
-    "hash": "3233169ddb440511294e6cde51abdd4dba7494da",
+    "hash": "cfbc19990a6361c674fda002267bcf0dbaee529a",
     "date": "2026-10-10"
   },
   "/services/portrait-professionnel-corporate/": {
-    "hash": "830086027b5aa5255248f5eafef27335a0fcd0df",
+    "hash": "6a1f2570a288bacec454ba4ba06c908fa3051ff9",
     "date": "2026-10-10"
   },
   "/decouvrir-chaque-prestation/": {
-    "hash": "caab1540ccbc919e3b00392b1763a97d29c2b7ef",
+    "hash": "6dc329c113eba13de80ac242b38b99b46502cbdc",
     "date": "2026-10-10"
   },
   "/collaboration/": {
-    "hash": "14f6c300e4e9f97f2776912a9177c08b39a74cb8",
+    "hash": "51cacc9408440093a1ee75b2f5b00f4d2d4d0d3f",
     "date": "2026-10-10"
   },
   "/conditions-generales-de-vente/": {
-    "hash": "c06275293f37db49a0fbe2bcc4063ef2129c1b12",
+    "hash": "e859fe64c03f12f1c8267b28e418f30120497d01",
     "date": "2026-10-10"
   },
   "/services/personal-branding-entrepreneurs/": {
-    "hash": "cb2888de75da2986e05596296cb65b87b7fb60d1",
+    "hash": "52fbdc15372de9a460cc6733dc59b0c271a7e268",
+    "date": "2026-10-10"
+  },
+  "/politique-cookies/": {
+    "hash": "20c6ee2ed1a1f76eb521c5b4ac40df30f6497691",
     "date": "2026-10-10"
   }
 }

@@ -39,6 +39,11 @@ Le code est la source de vérité. Ce fichier ne sert qu'à reprendre vite.
 - Admin média : photo de formule `formulas/corporate-lanc.webp`, fond `discover/branding.webp` (repli : photos corporate), photos in situ `branding/in-situ-1..3.webp` (affichées seulement si présentes, `IMG.brandingInSitu`).
 - Tracking : `data-track="lancement"` sur les CTA (événement `cta_click`), `form_start` (nécessite le redéploiement du Worker), `quiz_submit` suffixé « · Lancement ». Plan marketing de référence : artefact « Plan de lancement V5 ».
 
+## Cookies et consentement (oct. 2026)
+- Aucun cookie, aucun traceur tiers aujourd'hui : mesure maison sans cookie (`js/analytics.js`, Worker `/collect`, 400 jours), stockage local nécessaire (session client), `bunkaio_notrack` (opposition), `sessionStorage bk_campaign` (source utm), `bunkaio_consent` (choix, 6 mois, seulement si un choix est validé).
+- `config/consent.js` (CONSENT_CONFIG) + `js/consent.js` (BKConsent) : tant qu'aucun service n'est déclaré, pas de bandeau ; le lien « Gérer mes cookies » (pied de page) ouvre le centre de préférences. Déclarer GA4 / Google Ads / Meta Pixel (ou `vendors`) fait apparaître le bandeau (3 boutons identiques) ; les scripts ne se chargent qu'après accord de leur catégorie ; Google Consent Mode v2 (4 signaux « denied » par défaut) ; retrait = cookies effacés + rechargement.
+- Page `/politique-cookies/` (onglet de la vue `legal`, `renderCookiesAccordion`) : liste générée depuis `BKConsent.vendors()`. À tenir à jour avec la politique de confidentialité si un service est ajouté (destinataires, transferts).
+
 ## Positionnement
 Premium accessible : direction artistique, accompagnement, interlocuteur unique, espace client (moodboard, suivi, devis, factures, séance, galerie privée), 8+ ans d'expérience, 200+ projets, délais annoncés, droits clairs. CTA : « Construire mon projet », « Demander un devis », « Recevoir une proposition », « Parler de mon événement ».
 

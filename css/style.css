@@ -4734,3 +4734,43 @@ footer .ft-loc { color: rgba(255,255,255,0.62); font-size: 12px; margin: 10px 0 
 .hero-kicker .hk-b em a { color: inherit; text-decoration: none; cursor: pointer; padding: 4px 0; -webkit-tap-highlight-color: rgba(110,90,168,0.18); }
 .hero-kicker .hk-b em a:hover, .hero-kicker .hk-b em a:focus-visible { color: #6e5aa8; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; outline: none; }
 .hero-loc { text-wrap: balance; }
+
+/* ═══ Consentement aux cookies (js/consent.js) : bandeau bas de page non bloquant + centre de préférences.
+   Les trois boutons (Tout refuser / Personnaliser / Tout accepter) ont exactement le même style : le refus est aussi simple et visible que l'acceptation. ═══ */
+.bkc-banner { position: fixed; left: 16px; right: 16px; bottom: 16px; z-index: 10000; max-width: 880px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 14px 24px; padding: 18px 22px; background: #fff; color: #0a0a0c; border: 1px solid rgba(10,10,12,0.14); border-radius: 14px; box-shadow: 0 18px 50px rgba(10,10,12,0.28); font-size: 13.5px; line-height: 1.6; }
+.bkc-banner .bkc-text { flex: 1 1 380px; min-width: 0; }
+.bkc-banner strong { display: block; font-size: 15px; margin-bottom: 4px; }
+.bkc-banner p { margin: 0; color: #3a3544; }
+.bkc-banner a, .bkc-panel a { color: #0a0a0c; text-decoration: underline; text-underline-offset: 3px; }
+.bkc-row { display: flex; flex-wrap: wrap; gap: 10px; }
+.bkc-btn { font: inherit; font-size: 13.5px; font-weight: 600; color: #0a0a0c; background: #fff; border: 1.5px solid #0a0a0c; border-radius: 10px; padding: 11px 18px; cursor: pointer; min-height: 44px; transition: background 0.2s, color 0.2s; }
+.bkc-btn:hover, .bkc-btn:focus-visible { background: #0a0a0c; color: #fff; outline: none; }
+.bkc-overlay { position: fixed; inset: 0; z-index: 10001; background: rgba(10,10,12,0.55); display: flex; align-items: center; justify-content: center; padding: 16px; -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
+.bkc-panel { position: relative; width: 100%; max-width: 640px; max-height: 90vh; overflow-y: auto; background: #fff; color: #0a0a0c; border-radius: 16px; padding: 28px 28px 24px; box-shadow: 0 24px 70px rgba(10,10,12,0.4); font-size: 13.5px; line-height: 1.65; }
+.bkc-panel h2 { margin: 0 0 8px; font-size: 22px; letter-spacing: -0.02em; }
+.bkc-panel h3 { margin: 0; font-size: 14.5px; }
+.bkc-lead { margin: 0 0 18px; color: #3a3544; }
+.bkc-cat { padding: 14px 0; border-top: 1px solid rgba(10,10,12,0.1); }
+.bkc-cat p { margin: 6px 0 0; color: #4b4560; }
+.bkc-cat-h { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.bkc-v { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 8px; }
+.bkc-v li { display: grid; gap: 1px; padding: 10px 12px; background: #f6f3fb; border-radius: 10px; }
+.bkc-v span { color: #4b4560; font-size: 12.5px; }
+.bkc-pol { margin: 14px 0 18px; }
+.bkc-sw { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; flex: 0 0 auto; }
+.bkc-sw input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.bkc-track { position: relative; width: 42px; height: 24px; border-radius: 24px; background: #b9b4c4; transition: background 0.2s; flex: 0 0 auto; }
+.bkc-track::after { content: ''; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; transition: transform 0.2s; }
+.bkc-sw input:checked + .bkc-track { background: #0a0a0c; }
+.bkc-sw input:checked + .bkc-track::after { transform: translateX(18px); }
+.bkc-sw input:disabled + .bkc-track { opacity: 0.55; }
+.bkc-sw input:focus-visible + .bkc-track { outline: 2px solid #6e5aa8; outline-offset: 2px; }
+.bkc-sw-l { font-size: 12.5px; color: #4b4560; }
+.bkc-x { position: absolute; top: 12px; right: 14px; width: 36px; height: 36px; border: 0; background: transparent; font-size: 26px; line-height: 1; cursor: pointer; color: #0a0a0c; border-radius: 50%; }
+.bkc-x:hover { background: #f1ecfa; }
+@media (max-width: 600px) { .bkc-banner { left: 10px; right: 10px; bottom: 10px; padding: 14px 16px; } .bkc-row { width: 100%; } .bkc-row .bkc-btn { flex: 1 1 100%; } .bkc-panel { padding: 24px 18px 18px; } }
+@media print { .bkc-banner, .bkc-overlay { display: none !important; } }
+.form-privacy { margin: 18px 0 0; font-size: 12px; line-height: 1.6; color: var(--grey); }
+.form-privacy a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+.quiz-form-privacy { text-align: center; margin-top: 10px; }
+footer button[data-lang="ft-cookie-prefs"] { font: inherit; }

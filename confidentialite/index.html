@@ -31,7 +31,7 @@
 <link rel="icon" type="image/png" sizes="64x64" href="/images/favicon-64.png">
 <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
 <link rel="preload" href="fonts/dm-sans-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/style.min.css?v=c333ce5e">
+<link rel="stylesheet" href="css/style.min.css?v=243212a3">
 
 <script type="application/ld+json">
 {
@@ -767,6 +767,7 @@
         <button class="btn btn-solid" id="qSubmit" onclick="submitQuiz(event)" disabled><span data-lang="submit">Recevoir ma proposition personnalisée</span></button>
       </div>
       <div class="quiz-microcopy stagger" style="animation-delay:0.64s">Sans engagement · Réponse personnalisée sous 48h</div>
+      <p class="form-privacy quiz-form-privacy" data-lang="form-privacy">Les informations saisies servent uniquement à répondre à votre demande. <a href="/confidentialite/" data-nav="legal:privacy">Politique de confidentialité</a>.</p>
     </div>
 
     <div class="qstep" id="qs-6">
@@ -1139,6 +1140,7 @@
           <label data-lang="message-label">Message *</label>
           <textarea id="ctMsg" required placeholder="Votre message…" style="min-height:140px"></textarea>
         </div>
+        <p class="form-privacy" data-lang="form-privacy">Les informations saisies servent uniquement à répondre à votre demande. <a href="/confidentialite/" data-nav="legal:privacy">Politique de confidentialité</a>.</p>
         <div class="btn-row" style="margin-top:34px">
           <button type="submit" class="btn btn-solid"><span data-lang="contact-btn">Nous contacter</span></button>
         </div>
@@ -1338,6 +1340,7 @@
               <label data-lang="apply-project-label">Présentez votre activité et vos réalisations *</label>
               <textarea id="applyProject" required placeholder="Décrivez votre activité, vos réalisations marquantes, ce que vous recherchez dans ce partenariat…" style="min-height:140px"></textarea>
             </div>
+            <p class="form-privacy" data-lang="form-privacy">Les informations saisies servent uniquement à répondre à votre demande. <a href="/confidentialite/" data-nav="legal:privacy">Politique de confidentialité</a>.</p>
             <div class="btn-row" style="margin-top:34px">
               <button type="submit" class="btn btn-solid"><span data-lang="apply-btn">Envoyer ma candidature</span></button>
             </div>
@@ -1411,6 +1414,7 @@
               <label data-lang="collab-project-label">Présentez votre projet *</label>
               <textarea id="collabProject" required placeholder="Décrivez votre proposition : contexte, ce que vous imaginez, ce que vous proposez en échange…" style="min-height:140px"></textarea>
             </div>
+            <p class="form-privacy" data-lang="form-privacy">Les informations saisies servent uniquement à répondre à votre demande. <a href="/confidentialite/" data-nav="legal:privacy">Politique de confidentialité</a>.</p>
             <div class="btn-row" style="margin-top:34px">
               <button type="submit" class="btn btn-solid"><span data-lang="collab-btn">Envoyer ma proposition</span></button>
             </div>
@@ -1435,6 +1439,7 @@
       <button class="svc-tab" id="legaltab-faq" onclick="setLegalTab('faq')" data-lang="legaltab-faq">FAQ</button>
       <button class="svc-tab active" id="legaltab-privacy" onclick="setLegalTab('privacy')" data-lang="legaltab-privacy">Politique de confidentialité</button>
       <button class="svc-tab" id="legaltab-cgv" onclick="setLegalTab('cgv')" data-lang="legaltab-cgv">Conditions générales de vente</button>
+      <button class="svc-tab" id="legaltab-cookies" onclick="setLegalTab('cookies')" data-lang="legaltab-cookies">Politique des cookies</button>
     </div>
 
     <!-- FAQ -->
@@ -1487,7 +1492,16 @@
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
       <div class="accordion-body ">
-        <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>Ce site n'utilise aucun cookie publicitaire ni traceur tiers. Nous mesurons l'audience de façon <strong>anonyme et sans cookie</strong>, avec un outil développé et hébergé par nos soins (sur notre compte Cloudflare) : pages vues, domaine de provenance, type d'appareil et clics sur les boutons principaux. Aucune adresse IP ni identifiant n'est conservé, aucune donnée n'est transmise à un service de mesure tiers, et les données sont supprimées au bout de 13 mois.</p><p>Cette mesure respecte l'option « Ne pas me suivre » de votre navigateur. Vous pouvez aussi la désactiver sur cet appareil : <button type="button" class="pt-link" onclick="toggleTracking()">Activer / désactiver la mesure</button> <span id="trackToggleState" style="font-size:12px;color:var(--grey)"></span></p></div>
+        <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>Ce site ne dépose <strong>aucun cookie</strong> et n'utilise aucun traceur publicitaire ou tiers. Nous mesurons l'audience de façon <strong>anonyme et sans cookie</strong>, avec un outil développé et hébergé par nos soins (sur notre compte Cloudflare) : pages vues, domaine de provenance, type d'appareil et clics sur les boutons principaux. Votre adresse IP et votre navigateur ne sont pas conservés : ils servent uniquement, au moment de la visite, à calculer un code qui change chaque jour et ne permet pas de vous reconnaître d'un jour à l'autre ; ce code pseudonymisé est enregistré avec l'événement. Les données sont supprimées au bout de 400 jours (environ 13 mois) et ne sont transmises à aucun service de mesure tiers.</p><p>Cette mesure respecte l'option « Ne pas me suivre » et le signal GPC de votre navigateur. Vous pouvez aussi vous y opposer sur cet appareil : <button type="button" class="pt-link" onclick="toggleTracking()">Activer / désactiver la mesure</button> <span id="trackToggleState" style="font-size:12px;color:var(--grey)"></span></p><p>Le site utilise aussi le stockage local de votre appareil, sans suivi : le maintien de votre connexion à l'espace client ou partenaire (jusqu'à votre déconnexion), la mémoire de votre opposition à la mesure, et, si vous arrivez par un lien de campagne (paramètres <em>utm_</em>), la mémoire de cette source le temps de l'onglet, pour la rattacher à une éventuelle demande de devis. Le détail figure dans la <a href="/politique-cookies/" data-nav="legal:cookies">politique des cookies</a>.</p></div>
+      </div>
+    </div>
+    <div class="accordion-item rv" style="--rv-d: 0.35000000000000003s;">
+      <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
+        <span>Destinataires, prestataires et transferts</span>
+        <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+      </button>
+      <div class="accordion-body ">
+        <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>Pour fournir le service, nous faisons appel à des prestataires techniques qui traitent des données pour notre compte : GitHub (hébergement du site), Cloudflare (hébergement des images, des vidéos, de la base de données et du service applicatif), Stripe (paiement en ligne des acomptes et factures), Resend (envoi des emails liés à vos demandes, devis et factures) et, lorsque cette option est activée, un prestataire d'envoi de SMS pour les notifications de commande. Chacun ne reçoit que les données nécessaires à sa mission.</p><p>Certains de ces prestataires sont établis aux États-Unis : vos données peuvent donc être traitées en dehors de l'Union européenne. Pour connaître les garanties applicables, écrivez-nous à <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a>.</p></div>
       </div>
     </div>
     <div class="accordion-item rv" style="--rv-d: 0.35000000000000003s;">
@@ -1505,7 +1519,7 @@
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
       <div class="accordion-body ">
-        <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>Ce site est hébergé par GitHub, Inc. Les échanges sont sécurisés (HTTPS). Aucune base de données client n'est publiquement accessible : les informations transmises via nos formulaires sont traitées de façon confidentielle par BUNKAIO.</p></div>
+        <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>Ce site est hébergé par GitHub Pages (GitHub, Inc.) ; les images, vidéos et services applicatifs (devis, comptes, mesure d'audience) sont hébergés par Cloudflare. Les échanges sont sécurisés (HTTPS). Aucune base de données client n'est publiquement accessible : les informations transmises via nos formulaires sont traitées de façon confidentielle par BUNKAIO.</p></div>
       </div>
     </div>
     <div class="accordion-item rv" style="--rv-d: 0.35000000000000003s;">
@@ -1540,6 +1554,11 @@
     <!-- Conditions générales de vente -->
     <div id="lsec-cgv" style="display:none">
       <div id="cgvAccordion"><!--snap--><!--/snap--></div>
+    </div>
+
+    <!-- Politique des cookies -->
+    <div id="lsec-cookies" style="display:none">
+      <div id="cookiesAccordion"><!--snap--><!--/snap--></div>
     </div>
   </div>
 </div>
@@ -1877,6 +1896,8 @@
           <li><a href="/faq/" onclick="return navLink(event,'legal')" data-lang="nav-legal">FAQ</a></li>
           <li><a href="/confidentialite/" onclick="return navLink(event,'legal','privacy')" data-lang="ft-privacy">Confidentialité et mentions légales</a></li>
           <li><a href="/conditions-generales-de-vente/" onclick="return navLink(event,'legal','cgv')" data-lang="ft-cgv">Conditions générales de vente</a></li>
+          <li><a href="/politique-cookies/" onclick="return navLink(event,'legal','cookies')" data-lang="ft-cookies">Politique des cookies</a></li>
+          <li><button type="button" onclick="return window.BKConsent ? BKConsent.open() : false" data-lang="ft-cookie-prefs">Gérer mes cookies</button></li>
           <li><button onclick="openLogin('client')" data-lang="access-client">Accès client</button></li>
           <li><a href="/contact/" onclick="return navLink(event,'contact')" data-lang="contact">Contact</a></li>
           <li><a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a></li>
@@ -1891,12 +1912,14 @@
   </div>
 </footer>
 
+<script src="config/consent.js?v=6abf32fc"></script>
+<script src="js/consent.js?v=555da36b"></script>
 <script src="config/analytics.js?v=eff8bde4"></script>
 <script src="js/analytics.js?v=3908fa53"></script>
 <script src="config/articles.js?v=bbfedb28"></script>
 <script src="config/articles.en.js?v=b4faf913"></script>
-<script src="config/routes.js?v=9f17ab2b"></script>
+<script src="config/routes.js?v=12864c07"></script>
 <script src="config/media.js?v=93f30fc7"></script>
-<script src="js/script.min.js?v=e47c5b7b"></script>
+<script src="js/script.min.js?v=68add1a4"></script>
 </body>
 </html>
