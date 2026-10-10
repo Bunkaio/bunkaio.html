@@ -4710,3 +4710,9 @@ html.photo-shield img, html.photo-shield video, html.photo-shield .hero-slide, h
   .ms-prev, .ms-im { min-height: 220px; }
   .ms-tx { padding: 18px 24px; gap: 8px; }
 }
+
+/* Accueil : un vide entre le bandeau de réassurance (fond blanc) et l'encadré « Votre espace client ». */
+#csSlotHome .cs-spotlight { margin-top: clamp(32px, 6vw, 72px); }
+
+/* Services : la mention « Prix nets : TVA non applicable… » est posée sur la vidéo de fond, en blanc pour rester lisible. */
+.vat-note { color: #fff; text-shadow: 0 1px 8px rgba(0,0,0,0.65), 0 0 2px rgba(0,0,0,0.5); }
