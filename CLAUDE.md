@@ -42,6 +42,7 @@ Le code est la source de vérité. Ce fichier ne sert qu'à reprendre vite.
 ## Cookies et consentement (oct. 2026)
 - Aucun cookie, aucun traceur tiers aujourd'hui : mesure maison sans cookie (`js/analytics.js`, Worker `/collect`, 400 jours), stockage local nécessaire (session client), `bunkaio_notrack` (opposition) ; la source utm (`campaignTag()`) reste en mémoire de la page, rien n'est stocké sur l'appareil ; `bunkaio_consent` (choix, 6 mois, seulement si un choix est validé).
 - `config/consent.js` (CONSENT_CONFIG) + `js/consent.js` (BKConsent) : tant qu'aucun service n'est déclaré, pas de bandeau ; le lien « Gérer mes cookies » (pied de page) ouvre le centre de préférences. Déclarer GA4 / Google Ads / Meta Pixel (ou `vendors`) fait apparaître le bandeau (3 boutons identiques) ; les scripts ne se chargent qu'après accord de leur catégorie ; Google Consent Mode v2 (4 signaux « denied » par défaut) ; retrait = cookies effacés + rechargement.
+- Confirmé par la propriétaire (oct. 2026) : aucun autre compte ou service que ceux du code (GitHub Pages, Cloudflare, Stripe/Klarna, Resend) ; pas de SMS pour l'instant ; ni Web Analytics ni Zaraz Cloudflare. Si cela change : mettre à jour la politique de confidentialité et la politique des cookies.
 - Page `/politique-cookies/` (onglet de la vue `legal`, `renderCookiesAccordion`) : liste générée depuis `BKConsent.vendors()`. À tenir à jour avec la politique de confidentialité si un service est ajouté (destinataires, transferts).
 
 ## Positionnement
