@@ -4784,3 +4784,24 @@ footer button[data-lang="ft-cookie-prefs"] { font: inherit; }
 #view-services .svc-tab:not(.active) { color: #4b3d7a; }
 #view-services .svc-tab:hover:not(.active) { color: var(--black); }
 #view-services .svc-tabs { background: rgba(255,255,255,0.88); }
+
+/* ═══ Accueil : mise en page plus aérée et plus épurée ═══
+   Davantage d'air sous la barre de navigation, entre la phrase d'accroche, le titre et les boutons ; filet vertical plus court ;
+   « Accès client » et « Accès partenaire » apparaissent l'un après l'autre (fondu, léger flou, montée) une fois le bouton principal affiché. */
+.hero { padding: clamp(170px, 25vh, 250px) 28px clamp(90px, 12vh, 130px); }
+.hero-title .hero-kicker { margin-bottom: clamp(34px, 5vh, 52px); gap: 14px; }
+.hero-loc { margin-top: 22px; }
+.hero-loc + .hero-line { margin: 40px 0 38px; height: 56px; }
+.hero-access-row { opacity: 1; animation: none; gap: 14px; margin-top: 34px; }
+.hero-access { animation: accessIn 0.9s var(--ease) backwards; }
+.hero-access-row .hero-access:nth-child(1) { animation-delay: 1.9s; }
+.hero-access-row .hero-access:nth-child(2) { animation-delay: 2.1s; }
+@keyframes accessIn { from { opacity: 0; transform: translateY(18px) scale(0.94); filter: blur(6px); } to { opacity: 1; transform: none; filter: blur(0); } }
+@media (max-width: 600px) {
+  .hero { padding: 158px 22px 80px; }
+  .hero-title .hero-kicker { margin-bottom: 34px; }
+  .hero-loc { margin-top: 18px; }
+  .hero-loc + .hero-line { margin: 30px 0 30px; height: 48px; }
+  .hero-access-row { margin-top: 28px; gap: 12px; }
+}
+@media (prefers-reduced-motion: reduce) { .hero-access { animation: none; } }
