@@ -259,7 +259,7 @@ const I18N = {
     'gear-label':'Équipement','gear-cert':'Certifié A1/A3 · A2',
     'drone-explore':'Explorez nos productions',
     'portfolio-title':'Portfolio photo','portfolio-sub':'Une sélection de projets réalisés par le studio, classés par univers.',
-    'contact-title':'Contacter votre photographe','contact-sub':'Une question, un projet, une collaboration\u00a0? Écrivez-nous — nous répondons sous 24h.',
+    'loc-line':'Basé en Occitanie, déplacement partout en France','contact-title':'Contacter votre photographe','contact-sub':'Une question, un projet, une collaboration\u00a0? Écrivez-nous — nous répondons sous 24h.',
     'company-label':'Entreprise','follow-label':'Suivez-nous','contact-btn':'Nous contacter',
     'ct-success-title':'Message envoyé','ct-success-text':'Merci pour votre message. Nous reviendrons vers vous sous 24 heures.',
     'partners-title':'Partenariat et collaboration',
@@ -615,7 +615,7 @@ const I18N = {
     'gear-label':'Equipment','gear-cert':'Certified A1/A3 · A2',
     'drone-explore':'Explore our work',
     'portfolio-title':'Photography portfolio','portfolio-sub':'A selection of projects produced by the studio, organised by universe.',
-    'contact-title':'Contact your photographer','contact-sub':'A question, a project, a collaboration? Write to us — we reply within 24 hours.',
+    'loc-line':'Based in Occitanie, travelling across France','contact-title':'Contact your photographer','contact-sub':'A question, a project, a collaboration? Write to us — we reply within 24 hours.',
     'company-label':'Company','follow-label':'Follow us','contact-btn':'Get in touch',
     'ct-success-title':'Message sent','ct-success-text':'Thank you for your message. We will get back to you within 24 hours.',
     'partners-title':'Partnership & collaboration',
@@ -3825,7 +3825,7 @@ function renderBrandingPage(){
       <span>${t({fr:'Personal Branding', en:'Personal Branding'})}</span>
     </div>
     <h1 data-pageh1 class="page-title">${h1}</h1>
-    <p class="page-sub">${t({fr:'Votre activité mérite une image à sa hauteur. Formule Lancement : ', en:'Your business deserves an image to match. Launch package: '})}<strong>${price(L.price)}</strong>. ${t({fr:'Shooting en studio ou directement dans votre environnement professionnel.', en:'Shoot in the studio or right where you work.'})}</p>
+    <p class="page-sub">${t({fr:'Votre activité mérite une image à sa hauteur. Formule Lancement : ', en:'Your business deserves an image to match. Launch package: '})}<strong>${price(L.price)}</strong>. ${t({fr:'Shooting en studio ou directement dans votre environnement professionnel.', en:'Shoot in the studio or right where you work.'})}<span class="loc-inline">${t({fr:'Basé en Occitanie, déplacement partout en France', en:'Based in Occitanie, travelling across France'})}</span></p>
     <div class="svcp-cta-row">
       <a class="cta-primary" href="#formule-lancement" data-track="lancement" onclick="document.getElementById('formule-lancement').scrollIntoView({behavior:'smooth'});return false">${t({fr:'Découvrir la formule', en:'See the package'})}</a>
       ${dispo(t({fr:'Vérifier les disponibilités', en:'Check availability'}), 'btn btn-ghost')}

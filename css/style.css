@@ -4716,3 +4716,16 @@ html.photo-shield img, html.photo-shield video, html.photo-shield .hero-slide, h
 
 /* Services : la mention « Prix nets : TVA non applicable… » est posée sur la vidéo de fond, en blanc pour rester lisible. */
 .vat-note { color: #fff; text-shadow: 0 1px 8px rgba(0,0,0,0.65), 0 0 2px rgba(0,0,0,0.5); }
+
+/* « Basé en Occitanie, déplacement partout en France » : sous le titre de l'accueil (blanc, petit) puis aux endroits où l'on choisit son photographe. */
+.hero-loc { margin: 14px 0 0; font-size: 13px; font-weight: 500; letter-spacing: 0.03em; color: #fff; text-shadow: 0 1px 10px rgba(0,0,0,0.6); opacity: 0; animation: riseIn 1s var(--ease) 1s forwards; text-align: center; padding: 0 16px; }
+.hero-loc + .hero-line { margin-top: 28px; }
+.loc-line { margin: 0 0 14px; font-size: 12.5px; font-weight: 500; letter-spacing: 0.04em; opacity: 0.8; }
+.loc-line::before { content: '⊹ '; opacity: 0.7; }
+.ct-loc { color: var(--grey); opacity: 1; margin-top: -6px; }
+footer .ft-loc { color: rgba(255,255,255,0.62); font-size: 12px; margin: 10px 0 0; max-width: 280px; line-height: 1.6; }
+@media (max-width: 600px) { .hero-loc { font-size: 12.5px; letter-spacing: 0.02em; padding: 0 12px; } }
+@media (prefers-reduced-motion: reduce) { .hero-loc { opacity: 1; animation: none; } }
+
+.loc-inline { display: block; margin-top: 8px; font-size: 12.5px; opacity: 0.85; }
+.loc-inline::before { content: '⊹ '; opacity: 0.7; }
