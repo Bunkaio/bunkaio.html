@@ -4715,7 +4715,9 @@ html.photo-shield img, html.photo-shield video, html.photo-shield .hero-slide, h
 #csSlotHome .cs-spotlight { margin-top: clamp(32px, 6vw, 72px); }
 
 /* Services : la mention « Prix nets : TVA non applicable… » est posée sur la vidéo de fond, en blanc pour rester lisible. */
-.vat-note { color: #fff; text-shadow: 0 1px 8px rgba(0,0,0,0.65), 0 0 2px rgba(0,0,0,0.5); }
+#view-services .vat-note { color: #fff; text-shadow: 0 1px 8px rgba(0,0,0,0.65), 0 0 2px rgba(0,0,0,0.5); }
+/* Pages de prestation : mentions de prix et de déplacement dans un encadré blanc, en violet profond de la charte, sans ombre. */
+#view-service .vat-note, #view-service .travel-note { color: #4b3d7a; text-shadow: none; }
 
 /* « Basé en Occitanie, déplacement partout en France » : sous le titre de l'accueil (blanc, petit) puis aux endroits où l'on choisit son photographe. */
 .hero-loc { margin: 14px 0 0; font-size: 13px; font-weight: 500; letter-spacing: 0.03em; color: #fff; text-shadow: 0 1px 10px rgba(0,0,0,0.6); opacity: 0; animation: riseIn 1s var(--ease) 1s forwards; text-align: center; padding: 0 16px; }
