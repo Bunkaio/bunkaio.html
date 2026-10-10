@@ -4774,3 +4774,13 @@ footer .ft-loc { color: rgba(255,255,255,0.62); font-size: 12px; margin: 10px 0 
 .form-privacy a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
 .quiz-form-privacy { text-align: center; margin-top: 10px; }
 footer button[data-lang="ft-cookie-prefs"] { font: inherit; }
+
+/* Services : « Découvrir chaque prestation » au survol, et onglets inactifs — le texte violet était illisible (violet foncé sur fond sombre pendant le balayage).
+   Survol sans balayage : fond violet clair de la charte (--violet) et texte violet profond (#4b3d7a), contraste > 8:1 ; onglets inactifs en violet profond. */
+.svc-cta-row .btn-ghost::before { display: none; }
+.svc-cta-row .btn-ghost { transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease; }
+.svc-cta-row .btn-ghost:hover, .svc-cta-row .btn-ghost:focus-visible { background: var(--violet); border-color: #6e5aa8; color: #4b3d7a; }
+.svc-cta-row .btn-ghost:hover span, .svc-cta-row .btn-ghost:focus-visible span { color: #4b3d7a; }
+#view-services .svc-tab:not(.active) { color: #4b3d7a; }
+#view-services .svc-tab:hover:not(.active) { color: var(--black); }
+#view-services .svc-tabs { background: rgba(255,255,255,0.88); }
