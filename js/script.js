@@ -6907,11 +6907,14 @@ function buildMissionCst(){
     ${P.map((p, i) => `<div class="mc-pt mc-${p.s} mm-${M[i].s}" style="--x:${p.x}%;--y:${p.y}%;--mx:${M[i].x}%;--my:${M[i].y}%;--i:${i}"><i></i><div class="mc-tx"><b>${t(p.t)}</b><small>${t(p.d)}</small></div></div>`).join('')}</div>`;
 }
 /* p : 0 → 1 selon le défilement. Chaque point s'allume à son tour, le trait vers le point suivant se trace ensuite. */
-function setMissionCst(p){
+function setMissionCst(p, fadeOut, cut){
   const box = document.getElementById('missionCst');
   if (!box) return;
   const n = MISSION_CST.length, step = 1 / (n + 0.6);
-  box.style.opacity = String(Math.min(1, p * 6));
+  const f = fadeOut === undefined ? 1 : fadeOut;
+  box.style.opacity = String(Math.min(1, p * 6) * f);
+  box.style.setProperty('--mc-cut', (cut === undefined ? 99999 : Math.round(cut)) + 'px');
+  box.style.setProperty('--mc-out', (1 - f).toFixed(3));
   box.style.setProperty('--mc-p', p.toFixed(3));
   box.querySelectorAll('.mc-pt').forEach((el, i) => el.classList.toggle('on', p >= step * (i + 0.3)));
   box.querySelectorAll('.mc-lines').forEach(svg => svg.querySelectorAll('.mc-e').forEach((el, i) => {
@@ -6977,8 +6980,11 @@ function initHomeClaimVideo(){
     wrap.style.setProperty('--mt-bg-op', String(0.5 + 0.35 * (1 - op)));
     /* Espace vide après le texte : la constellation « L'exigence BUNKAIO » se construit au fil du défilement et
        est complète quand la section suivante (réassurance) entre à l'écran (bas du déclencheur ≈ bas de l'écran). */
-    const cp = Math.max(0, Math.min(1, (1.72 - b) / 0.62));
-    setMissionCst(cp);
+    const cp = Math.max(0, Math.min(1, (1.78 - b) / 0.55));
+    /* Sortie : la constellation se dissout par le bas, juste au-dessus du bord de la section blanche qui monte, puis s'efface
+       entièrement avant de la toucher (b = position du haut de la section blanche, en hauteurs d'écran). */
+    const fadeOut = Math.max(0, Math.min(1, (b - 0.72) / 0.42));
+    setMissionCst(cp, fadeOut, trigger.getBoundingClientRect().bottom);
     if (overlay && cp > 0) overlay.style.opacity = String(Math.max(0.3 + 0.7 * op, 0.55 + 0.45 * cp));
   };
   addEventListener('scroll', () => { if (!tick) { tick = true; requestAnimationFrame(fadeContent); } }, { passive: true });

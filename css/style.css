@@ -5373,3 +5373,8 @@ footer .footer-cta-row .hero-start { animation: none; opacity: 1; transform: non
   .mc-glyph { width: 26px; height: 26px; }
 }
 @media (max-width: 760px) { .mc-e { stroke: rgba(255,255,255,0.32); } }
+/* Sortie de la constellation : fondu par le bas qui reste toujours au-dessus du bord de la section blanche (--mc-cut = haut de
+   cette section en px), léger flou et recul pendant l'effacement. */
+.mission-cst { -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 calc(var(--mc-cut, 99999px) - 190px), transparent calc(var(--mc-cut, 99999px) - 40px)); mask-image: linear-gradient(to bottom, #000 0, #000 calc(var(--mc-cut, 99999px) - 190px), transparent calc(var(--mc-cut, 99999px) - 40px)); }
+.mc-stage { filter: blur(calc(var(--mc-out, 0) * 6px)); scale: calc(1 - var(--mc-out, 0) * 0.06); transform-origin: center; }
+@media (prefers-reduced-motion: reduce) { .mc-stage { filter: none; scale: 1; } }
