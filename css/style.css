@@ -5261,3 +5261,29 @@ footer .footer-cta-row .cst-deco { left: 50%; width: 92px; opacity: 0.6; }
 @keyframes cdNode { 0%, 100% { opacity: 0.75; transform: scale(1); } 50% { opacity: 1; transform: scale(1.25); } }
 @media (prefers-reduced-motion: reduce) { .cst-deco .cd-ln { stroke-dashoffset: 0; opacity: 0.45; } .cst-deco * { animation: none !important; } }
 @media (max-width: 760px) { .pf-cta-band .cst-deco { top: 8px; bottom: auto; right: 8px; width: 84px; opacity: 0.45; } }
+
+/* Lisibilité du symbole ⊹ : les quatre bras (violet pâle) dominent nettement ; losange et liens fins passent au second plan. */
+.hero-kicker .hk-lines polyline:not(.f):not(.pl) { stroke: #d6c9f7; stroke-width: 2.2; filter: drop-shadow(0 0 3px rgba(214,201,247,0.75)) drop-shadow(0 0 8px rgba(214,201,247,0.35)); }
+.hero-kicker .hk-lines polyline.f { stroke: rgba(255,255,255,0.1); }
+.hero-kicker .hk-lines line.ln { stroke: rgba(255,255,255,0.26); stroke-width: 0.5; }
+.hero-kicker .hk-lines circle:not(.sm) { r: 1.3; }
+.cst-deco .cd-arm { stroke: #d6c9f7; stroke-width: 2.6; filter: drop-shadow(0 0 3px rgba(214,201,247,0.75)); }
+.cst-deco .cd-dia { stroke: rgba(255,255,255,0.1); }
+.cst-deco .cd-ln { stroke: rgba(255,255,255,0.28); stroke-width: 0.5; }
+@media (max-width: 760px) { .hero-kicker .hk-lines polyline:not(.f):not(.pl) { stroke-width: 2; } }
+
+/* ⊹ bien lisible : quatre bras de même longueur autour du centre (ordinateur : zone plus compacte et plus haute). */
+.hero-kicker .hk-b { width: min(94vw, 600px); aspect-ratio: 640 / 350; }
+.hero-kicker .hk-w:nth-of-type(1) { --x: 29.7%; --y: 48.6%; }
+.hero-kicker .hk-w:nth-of-type(2) { --x: 50%;   --y: 11.4%; }
+.hero-kicker .hk-w:nth-of-type(3) { --x: 50%;   --y: 48.6%; }
+.hero-kicker .hk-w:nth-of-type(4) { --x: 70.3%; --y: 48.6%; }
+.hero-kicker .hk-w:nth-of-type(5) { --x: 50%;   --y: 85.7%; }
+@media (max-width: 760px) {
+  .hero-kicker .hk-b { width: min(94vw, 420px); aspect-ratio: 330 / 270; }
+  .hero-kicker .hk-w:nth-of-type(1) { --x: 24.2%; --y: 50%; }
+  .hero-kicker .hk-w:nth-of-type(2) { --x: 50%;   --y: 18.5%; }
+  .hero-kicker .hk-w:nth-of-type(3) { --x: 50%;   --y: 50%; }
+  .hero-kicker .hk-w:nth-of-type(4) { --x: 75.8%; --y: 50%; }
+  .hero-kicker .hk-w:nth-of-type(5) { --x: 50%;   --y: 81.5%; }
+}
