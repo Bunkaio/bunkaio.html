@@ -4952,3 +4952,33 @@ img:not([src*="logo"]):not([src$=".svg"]):not(.no-grain) { filter: url(#bk-grain
 #imageAccordion .accordion-content ol { list-style: decimal; }
 #imageAccordion .accordion-content li::marker { color: var(--accent, #6e5aa8); font-weight: 700; }
 #imageAccordion .accordion-content p { margin-bottom: 12px; }
+
+/* Espace client / partenaire : « Mes séances » */
+.ses-card { display: grid; grid-template-columns: 190px 1fr; overflow: hidden; border-radius: 10px; background: rgba(255,255,255,0.94); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); box-shadow: 0 16px 48px rgba(0,0,0,0.3); color: var(--black); }
+.ses-date { background: var(--black); color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 2px; padding: 28px 16px; }
+.ses-wd { font-size: 11px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: #d9cdf5; }
+.ses-day { font-size: 64px; line-height: 1; font-weight: 700; letter-spacing: -0.04em; margin: 4px 0; }
+.ses-mo { font-size: 13px; letter-spacing: 0.08em; text-transform: capitalize; color: rgba(255,255,255,0.75); }
+.ses-pill { margin-top: 14px; font-size: 11.5px; font-weight: 700; padding: 6px 12px; border-radius: 99px; background: rgba(217,205,245,0.18); color: #d9cdf5; }
+.ses-body { padding: 28px 32px; min-width: 0; }
+.ses-kicker { font-size: 11px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: #4b3d7a; }
+.ses-title { font-size: 22px; line-height: 1.25; letter-spacing: -0.02em; margin: 6px 0 20px; font-weight: 700; }
+.ses-grid { margin: 0; display: grid; gap: 0; }
+.ses-row { display: grid; grid-template-columns: 170px 1fr; gap: 16px; padding: 13px 0; border-top: 1px solid rgba(20,10,40,0.09); }
+.ses-row dt { font-size: 10.5px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--grey); padding-top: 3px; }
+.ses-row dd { margin: 0; font-size: 15px; line-height: 1.6; text-transform: none; }
+.ses-link { margin-left: 8px; font-size: 13px; color: #4b3d7a; font-weight: 600; text-decoration: none; white-space: nowrap; }
+.ses-link:hover { text-decoration: underline; }
+.ses-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 18px; padding-top: 18px; border-top: 1px solid rgba(20,10,40,0.09); }
+.ses-help { margin-left: auto; font-size: 13.5px; color: var(--grey); }
+.ses-help a { color: var(--black); font-weight: 600; text-decoration: none; }
+.ses-card.past .ses-date { background: #3a3544; }
+@media (max-width: 720px) {
+  .ses-card { grid-template-columns: 1fr; }
+  .ses-date { flex-direction: row; flex-wrap: wrap; justify-content: flex-start; gap: 10px 14px; padding: 18px 22px; text-align: left; }
+  .ses-day { font-size: 40px; margin: 0; }
+  .ses-pill { margin: 0 0 0 auto; }
+  .ses-body { padding: 22px; }
+  .ses-row { grid-template-columns: 1fr; gap: 2px; }
+  .ses-help { margin-left: 0; width: 100%; }
+}

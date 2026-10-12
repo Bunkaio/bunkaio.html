@@ -1,6 +1,7 @@
 import { billingErrors, cleanBilling, composeAddress } from './billing';
 import type {
   AccountRecord,
+  AccountSeance,
   AdminAccountRecord,
   AccountType,
   AdminAccountSummary,
@@ -111,6 +112,16 @@ export async function listAccounts(env: Env): Promise<AdminAccountSummary[]> {
  * optionnel : omis à la mise à jour, le hash existant est conservé — fourni,
  * il remplace le code d'accès (création ou changement de code).
  */
+/** Séance : champs connus uniquement, longueurs bornées (affichée telle quelle dans l'espace client). */
+function cleanSeance(s: NonNullable<AdminAccountUpsertPayload['seance']>): AccountSeance {
+  const str = (v: unknown, n: number): string | undefined => { const t = typeof v === 'string' ? v.trim().slice(0, n) : ''; return t || undefined; };
+  return {
+    date: s.date, heure: str(s.heure, 30), lieu: str(s.lieu, 300), prestation: str(s.prestation, 200), livraison: str(s.livraison, 10),
+    statut: s.statut === 'annulee' ? 'annulee' : 'prevue',
+    duree: str(s.duree, 40), aPrevoir: str(s.aPrevoir, 1200), acces: str(s.acces, 1200),
+  };
+}
+
 export async function upsertAccountFromAdmin(env: Env, payload: AdminAccountUpsertPayload): Promise<AccountRecord> {
   const existing = await getAccount(env, payload.type, payload.email);
   if (!payload.code && !existing) {
@@ -129,7 +140,7 @@ export async function upsertAccountFromAdmin(env: Env, payload: AdminAccountUpse
     lang: payload.lang ?? existing?.lang,
     facturation: payload.facturation ? cleanBilling(payload.type, payload.facturation) : existing?.facturation,
     photosAcces: payload.photosAcces ?? existing?.photosAcces,
-    seance: payload.seance === null ? undefined : payload.seance ?? existing?.seance,
+    seance: payload.seance === null ? undefined : payload.seance ? cleanSeance(payload.seance) : existing?.seance,
     commandes: payload.commandes ?? existing?.commandes,
     paiements: payload.paiements ?? existing?.paiements,
     factures: payload.factures ?? existing?.factures,

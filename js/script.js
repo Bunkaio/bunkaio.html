@@ -423,7 +423,7 @@ const I18N = {
     'register-success-text':'Votre demande de création de compte a bien été transmise. Vous recevrez votre code d\'accès personnel par email sous 24 heures.',
     'logout':'Déconnexion',
     'acc-client-badge':'Espace client','acc-partner-badge':'Espace partenaire',
-    'acc-orders':'Mes commandes','acc-devis':'Mes devis','acc-subs':'Mes abonnements','acc-payments':'Mes paiements','acc-factures':'Mes factures','acc-portfolio':'Mon portfolio','acc-infos':'Mes informations',
+    'acc-orders':'Mes commandes','acc-devis':'Mes devis','acc-seances':'Mes séances','acc-subs':'Mes abonnements','acc-payments':'Mes paiements','acc-factures':'Mes factures','acc-portfolio':'Mon portfolio','acc-infos':'Mes informations',
     'acc-subs-empty-title':'Aucun abonnement actif',
     'acc-subs-empty-text':'Découvrez Studio Continu : nos formules d\'abonnement mensuel pour un suivi photo et vidéo continu, avec un tarif préférentiel sur toutes les options.',
     'acc-subs-discover-btn':'Découvrir Studio Continu',
@@ -780,7 +780,7 @@ const I18N = {
     'register-success-text':'Your account request has been sent successfully. You will receive your personal access code by email within 24 hours.',
     'logout':'Sign out',
     'acc-client-badge':'Client area','acc-partner-badge':'Partner area',
-    'acc-orders':'My orders','acc-devis':'My quotes','acc-subs':'My subscriptions','acc-payments':'My payments','acc-factures':'My invoices','acc-portfolio':'My portfolio','acc-infos':'My information',
+    'acc-orders':'My orders','acc-devis':'My quotes','acc-seances':'My sessions','acc-subs':'My subscriptions','acc-payments':'My payments','acc-factures':'My invoices','acc-portfolio':'My portfolio','acc-infos':'My information',
     'acc-subs-empty-title':'No active subscription',
     'acc-subs-empty-text':'Discover Studio Continu: our monthly subscription packages for ongoing photo and video coverage, with a preferential rate on every add-on.',
     'acc-subs-discover-btn':'Discover Studio Continu',
@@ -5014,7 +5014,7 @@ function updateNavLogin(){
 
 function setAccountTab(tab){
   if (tab !== 'infos' && enforceAccInfoGate()) return;
-  ['orders','partenariat','promotions','reseau','collabs','devis','subs','moodboards','payments','factures','portfolio','infos'].forEach(x => {
+  ['orders','partenariat','promotions','reseau','collabs','seances','devis','subs','moodboards','payments','factures','portfolio','infos'].forEach(x => {
     document.getElementById('atab-' + x).classList.toggle('active', x === tab);
     document.getElementById('asec-' + x).classList.toggle('active', x === tab);
   });
@@ -5034,26 +5034,10 @@ function statusClass(statut){
    reste masqué plutôt que d'afficher un état incorrect. */
 const ACCOUNT_STEPS = ['acc-step-devis', 'acc-step-shoot', 'acc-step-post', 'acc-step-livre'];
 /* Carte « Ma séance » : date, heure, lieu et livraison estimée des photos, saisis dans l'admin. */
+/* Ancien bandeau « Ma séance » : remplacé par l'onglet « Mes séances » (évite le doublon). */
 function renderAccSeance(){
-  const el = document.getElementById('accSeance');
-  if (!el) return;
-  const s = USER && USER.seance;
-  if (!s || !s.date) { el.style.display = 'none'; el.innerHTML = ''; return; }
-  const loc = LANG === 'fr' ? 'fr-FR' : 'en-GB';
-  const fmt = d => { try { return new Date(d + 'T12:00:00').toLocaleDateString(loc, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }); } catch (e) { return d; } };
-  const today = new Date(); const iso = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
-  const cancelled = s.statut === 'annulee', past = !cancelled && s.date < iso;
-  const title = cancelled ? t({fr:'Séance annulée', en:'Session cancelled'}) : past ? t({fr:'Ma dernière séance', en:'My last session'}) : t({fr:'Ma prochaine séance', en:'My next session'});
-  const rows = [
-    [t({fr:'Date', en:'Date'}), fmt(s.date) + (s.heure ? (LANG === 'fr' ? ' à ' : ' at ') + s.heure : '')],
-    s.lieu ? [t({fr:'Lieu', en:'Location'}), s.lieu] : null,
-    s.prestation ? [t({fr:'Prestation', en:'Service'}), s.prestation] : null,
-    (s.livraison && !USER.photosAcces && !cancelled) ? [t({fr:'Livraison estimée des photos', en:'Estimated photo delivery'}), fmt(s.livraison)] : null
-  ].filter(Boolean);
-  const esc2 = v => String(v).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-  el.className = 'acc-seance' + (cancelled ? ' cancelled' : '');
-  el.innerHTML = `<div class="acc-seance-title">${title}</div><dl class="acc-seance-grid">${rows.map(r => `<div><dt>${r[0]}</dt><dd>${esc2(r[1])}</dd></div>`).join('')}</dl>`;
-  el.style.display = '';
+  const old = document.getElementById('accSeance'); if (old) { old.style.display = 'none'; old.innerHTML = ''; }
+  return;
 }
 function renderAccountStepper(){
   const el = document.getElementById('accStepper');
@@ -5074,14 +5058,70 @@ function renderAccountStepper(){
    référence juste l'une de ces clés + statut/usage — le contenu du
    plan (nom, prix, inclus) est toujours lu depuis SUBS, jamais dupliqué
    dans le compte, pour rester automatiquement à jour si l'offre change. */
+/* ═══════════════ ESPACE CLIENT / PARTENAIRE — MES SÉANCES ═══════════════
+   Données : USER.seance (saisie dans l'admin, fiche du client → Séance). Sans date (ou séance annulée) : onglet masqué, rien n'est affiché. */
+function accHM(v){ const m = /^(\d{1,2})\s*(?:h|:)\s*(\d{0,2})/i.exec(String(v || '')); return m ? [Math.min(23, +m[1]), Math.min(59, +(m[2] || 0))] : null; }
+function accDurMin(v){ const s = String(v || ''); let m = /(\d+)\s*h\s*(\d*)/i.exec(s); if (m) return (+m[1]) * 60 + (+(m[2] || 0)); m = /(\d+)\s*min/i.exec(s); return m ? +m[1] : 120; }
+function downloadSeanceIcs(){
+  const s = USER && USER.seance; if (!s || !s.date) return;
+  const p2 = n => String(n).padStart(2, '0'), d0 = s.date.replace(/-/g, '');
+  const hm = accHM(s.heure);
+  let start, end;
+  if (hm) {
+    start = d0 + 'T' + p2(hm[0]) + p2(hm[1]) + '00';
+    const t0 = new Date(+s.date.slice(0, 4), +s.date.slice(5, 7) - 1, +s.date.slice(8, 10), hm[0], hm[1] + accDurMin(s.duree));
+    end = t0.getFullYear() + p2(t0.getMonth() + 1) + p2(t0.getDate()) + 'T' + p2(t0.getHours()) + p2(t0.getMinutes()) + '00';
+  } else { start = d0; const n = new Date(+s.date.slice(0, 4), +s.date.slice(5, 7) - 1, +s.date.slice(8, 10) + 1); end = n.getFullYear() + p2(n.getMonth() + 1) + p2(n.getDate()); }
+  const tx = v => String(v || '').replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/[,;]/g, m => '\\' + m);
+  const desc = [s.aPrevoir ? 'À prévoir : ' + s.aPrevoir : '', s.acces ? 'Accès : ' + s.acces : '', 'Contact : 07 58 57 31 61'].filter(Boolean).join('\n');
+  const ics = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//BUNKAIO//Seance//FR', 'BEGIN:VEVENT', 'UID:seance-' + s.date + '@bunkaio.com', 'DTSTAMP:' + new Date().toISOString().replace(/[-:]|\.\d+/g, ''),
+    (hm ? 'DTSTART:' : 'DTSTART;VALUE=DATE:') + start, (hm ? 'DTEND:' : 'DTEND;VALUE=DATE:') + end, 'SUMMARY:' + tx('Séance BUNKAIO' + (s.prestation ? ' — ' + s.prestation : '')),
+    s.lieu ? 'LOCATION:' + tx(s.lieu) : '', 'DESCRIPTION:' + tx(desc), 'END:VEVENT', 'END:VCALENDAR'].filter(Boolean).join('\r\n');
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([ics], { type: 'text/calendar;charset=utf-8' })); a.download = 'seance-bunkaio-' + s.date + '.ics'; document.body.appendChild(a); a.click(); a.remove();
+}
+function renderAccSeances(){
+  const tab = document.getElementById('atab-seances'), el = document.getElementById('accSeancesContent');
+  if (!tab || !el || !USER) return;
+  const s = USER.seance;
+  if (!s || !s.date || s.statut === 'annulee') { tab.style.display = 'none'; el.innerHTML = ''; return; }
+  tab.style.display = '';
+  const loc = LANG === 'fr' ? 'fr-FR' : 'en-GB';
+  const d = new Date(s.date + 'T12:00:00');
+  const now = new Date(); const t0 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const days = Math.round((new Date(s.date + 'T00:00:00') - t0) / 86400000);
+  const past = days < 0;
+  const pill = past ? t({fr:'Séance réalisée', en:'Session completed'}) : days === 0 ? t({fr:'C\'est aujourd\'hui', en:'It\'s today'}) : days === 1 ? t({fr:'C\'est demain', en:'It\'s tomorrow'}) : t({fr:'Dans ' + days + ' jours', en:'In ' + days + ' days'});
+  const row = (k, v) => v ? `<div class="ses-row"><dt>${k}</dt><dd>${v}</dd></div>` : '';
+  const nl = v => escHtml(v).replace(/\n/g, '<br>');
+  const maps = s.lieu ? 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(s.lieu) : '';
+  const delivery = (s.livraison && !USER.photosAcces) ? new Date(s.livraison + 'T12:00:00').toLocaleDateString(loc, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) : '';
+  el.innerHTML = `<div class="ses-card${past ? ' past' : ''}">
+    <div class="ses-date"><span class="ses-wd">${d.toLocaleDateString(loc, { weekday: 'long' })}</span><span class="ses-day">${d.getDate()}</span><span class="ses-mo">${d.toLocaleDateString(loc, { month: 'long', year: 'numeric' })}</span><span class="ses-pill">${pill}</span></div>
+    <div class="ses-body">
+      <div class="ses-kicker">${past ? t({fr:'Ma dernière séance', en:'My last session'}) : t({fr:'Ma prochaine séance', en:'My next session'})}</div>
+      <h3 class="ses-title">${escHtml(s.prestation || t({fr:'Séance photo BUNKAIO', en:'BUNKAIO photo session'}))}</h3>
+      <dl class="ses-grid">
+        ${row(t({fr:'Heure', en:'Time'}), s.heure ? escHtml(s.heure) + (s.duree ? ' · ' + t({fr:'durée ', en:'duration '}) + escHtml(s.duree) : '') : '')}
+        ${row(t({fr:'Lieu', en:'Location'}), s.lieu ? escHtml(s.lieu) + ` <a class="ses-link" href="${maps}" target="_blank" rel="noopener">${t({fr:'Itinéraire ↗', en:'Directions ↗'})}</a>` : '')}
+        ${past ? '' : row(t({fr:'À prévoir', en:'To bring'}), s.aPrevoir ? nl(s.aPrevoir) : '')}
+        ${past ? '' : row(t({fr:'Accès et infos pratiques', en:'Access and practical info'}), s.acces ? nl(s.acces) : '')}
+        ${row(t({fr:'Livraison estimée des photos', en:'Estimated photo delivery'}), delivery)}
+      </dl>
+      <div class="ses-foot">
+        ${past ? '' : `<button type="button" class="btn btn-ghost" onclick="downloadSeanceIcs()"><span>${t({fr:'Ajouter à mon agenda', en:'Add to my calendar'})}</span></button><button type="button" class="btn btn-ghost" onclick="setAccountTab('moodboards')"><span>${t({fr:'Préparer mon moodboard', en:'Prepare my moodboard'})}</span></button>`}
+        <span class="ses-help">${t({fr:'Une question ? ', en:'A question? '})}<a href="tel:+33758573161">07 58 57 31 61</a></span>
+      </div>
+    </div>
+  </div>`;
+}
 /* ═══════════════ ESPACE CLIENT / PARTENAIRE — MES DEVIS ET AUTORISATIONS D'IMAGE ═══════════════
-   Données : USER.devis (Worker, accountQuotes). L'onglet n'apparaît que s'il existe au moins un devis envoyé ou signé. */
+   Données : USER.devis (Worker, accountQuotes). Onglet toujours visible ; message d'attente tant qu'aucun devis n'a été envoyé. */
 function renderAccDevis(){
   const tab = document.getElementById('atab-devis'), el = document.getElementById('accDevisContent');
   if (!tab || !el || !USER) return;
   const list = USER.devis || [];
-  tab.style.display = list.length ? '' : 'none';
-  if (!list.length) { el.innerHTML = ''; return; }
+  tab.style.display = '';
+  if (!list.length) { tab.textContent = I18N[LANG]['acc-devis']; el.innerHTML = `<div class="acc-info-card"><div class="acc-subs-empty-title">${t({fr:'Aucun devis pour le moment', en:'No quote yet'})}</div><p class="acc-subs-empty-text" style="margin:0">${t({fr:'Vos devis apparaîtront ici dès qu\'ils vous seront envoyés : vous pourrez les signer en ligne, retrouver votre exemplaire signé et gérer vos autorisations d\'image.', en:'Your quotes will appear here as soon as they are sent to you: you can sign them online, find your signed copy and manage your image authorisations.'})}</p></div>`; return; }
   const pending = list.filter(q => q.status === 'envoye').length;
   tab.textContent = I18N[LANG]['acc-devis'] + (pending ? ' (' + pending + ')' : '');
   const useName = { site: t({fr:'Site internet et portfolio', en:'Website and portfolio'}), social: t({fr:'Réseaux sociaux', en:'Social media'}), print: t({fr:'Supports commerciaux et de communication', en:'Commercial and communication materials'}), ads: t({fr:'Publicité numérique', en:'Digital advertising'}) };
@@ -6245,6 +6285,7 @@ function renderAccount(){
   if (isPartner) { renderAccPartner(); renderAccPromos(); renderAccReseau(); renderAccCollabs(); }
   renderAccountStepper();
   renderAccSeance();
+  renderAccSeances();
   renderAccDevis();
   renderAccSubs();
   mbView = 'list'; mbActiveId = null;
@@ -6379,7 +6420,7 @@ function toggleAccInfoEdit(edit){
    « Mes informations » est accessible (en mode édition). */
 function enforceAccInfoGate(){
   if (!USER || accInfoComplete()) return false;
-  ['orders','partenariat','promotions','reseau','collabs','devis','subs','moodboards','payments','factures','portfolio','infos'].forEach(x => {
+  ['orders','partenariat','promotions','reseau','collabs','seances','devis','subs','moodboards','payments','factures','portfolio','infos'].forEach(x => {
     const tb = document.getElementById('atab-' + x), sc = document.getElementById('asec-' + x);
     if (tb) tb.classList.toggle('active', x === 'infos');
     if (sc) sc.classList.toggle('active', x === 'infos');

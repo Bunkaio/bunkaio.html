@@ -283,7 +283,9 @@ export interface AccountBilling {
   forme?: string;
 }
 
-export interface AccountSeance { /** Date de livraison estimée des photos (AAAA-MM-JJ), saisie admin. */ livraison?: string; date: string; heure?: string; lieu?: string; prestation?: string; statut?: 'prevue' | 'annulee' }
+export interface AccountSeance { /** Date de livraison estimée des photos (AAAA-MM-JJ), saisie admin. */ livraison?: string; date: string; heure?: string; lieu?: string; prestation?: string; statut?: 'prevue' | 'annulee';
+  /** Infos affichées dans « Mes séances » (saisies par l'admin) : durée (ex. « 1h30 »), ce qu'il faut prévoir (tenues, accessoires), accès et infos pratiques. */
+  duree?: string; aPrevoir?: string; acces?: string }
 
 export interface AccountRecord {
   type: AccountType;

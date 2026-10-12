@@ -2430,6 +2430,9 @@ function drSession(c) {
     <div class="frow"><div class="fg"><label>Date</label><input type="date" id="sDate" value="${esc(s.date)}"></div><div class="fg"><label>Heure</label><input id="sHeure" value="${esc(s.heure)}" placeholder="14h30"></div></div>
     <div class="fg"><label>Lieu</label><input id="sLieu" value="${esc(s.lieu)}" placeholder="Adresse exacte du rendez-vous"></div>
     <div class="fg"><label>Prestation</label><input id="sPresta" value="${esc(s.prestation || (c.lead ? c.lead.category + (c.lead.formule ? ' — ' + c.lead.formule : '') : ''))}"></div>
+    <div class="fg"><label>Durée</label><input id="sDuree" value="${esc(s.duree)}" placeholder="Ex. 1h30"></div>
+    <div class="fg"><label>À prévoir (affiché au client)</label><textarea id="sAPrevoir" style="font-family:inherit;font-size:13.5px;min-height:70px" placeholder="Ex. 2 tenues, accessoires, maquillage léger…">${esc(s.aPrevoir)}</textarea></div>
+    <div class="fg"><label>Accès et infos pratiques (affiché au client)</label><textarea id="sAcces" style="font-family:inherit;font-size:13.5px;min-height:70px" placeholder="Ex. Parking gratuit devant, sonnez à « BUNKAIO », 2e étage…">${esc(s.acces)}</textarea><div class="hint">Le client retrouve la séance, ces infos et un lien d'itinéraire dans « Mes séances ». Sans date, rien n'est affiché.</div></div>
     <div class="fg"><label>Date de livraison estimée</label><input type="date" id="sLivraison" value="${esc(s.livraison)}"><div class="hint">Citée dans le mail du lendemain. Alerte à cette date si le solde n'est pas créé.</div></div>
     <div class="frow"><div class="fg"><label>Envoyer un email à l'enregistrement</label><select id="sMail"><option value="">Aucun</option><option value="confirmation">Confirmation de séance</option><option value="report">Report (la date ci-dessus est la nouvelle)</option><option value="cancel">Annulation</option></select></div>
     <div class="fg"><label>Motif (facultatif)</label><input id="sMotif"></div></div>
@@ -2501,7 +2504,7 @@ async function saveAccount(extra) {
   }
   if (tab === 'session') {
     const s = a.seance || {}; const d = fv('sDate');
-    payload.seance = d ? { date: d, heure: fv('sHeure') || undefined, lieu: fv('sLieu') || undefined, prestation: fv('sPresta') || undefined, livraison: fv('sLivraison') || undefined, statut: s.statut === 'annulee' && s.date === d ? 'annulee' : 'prevue' } : null;
+    payload.seance = d ? { date: d, heure: fv('sHeure') || undefined, lieu: fv('sLieu') || undefined, prestation: fv('sPresta') || undefined, livraison: fv('sLivraison') || undefined, duree: fv('sDuree') || undefined, aPrevoir: fv('sAPrevoir') || undefined, acces: fv('sAcces') || undefined, statut: s.statut === 'annulee' && s.date === d ? 'annulee' : 'prevue' } : null;
     if (fv('sMail')) { if (!d) { msg.innerHTML = '<div class="msg err">Renseignez la date pour envoyer un email de séance.</div>'; return; } payload.sendSeanceMail = fv('sMail'); }
     if (fv('sMotif')) payload.motif = fv('sMotif');
     if (fv('sMail') && !confirm('Envoyer l\'email « ' + $('sMail').selectedOptions[0].textContent + ' » au client ?')) return;
