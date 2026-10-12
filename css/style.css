@@ -4908,3 +4908,8 @@ footer button[data-lang="ft-cookie-prefs"] { font: inherit; }
   #view-services .services-layout.has-photo .service-card .service-name { font-size: 24px; }
   #view-services .services-layout.has-photo .service-card .service-tiers li, #view-services .services-layout.has-photo .service-card .service-tier { padding-top: 17px; padding-bottom: 17px; font-size: 15.5px; }
 }
+
+/* Accueil : « Basé en Occitanie, déplacement partout en France sur devis » en noir gras, avec un relief clair (contour blanc fin + halo) qui le détache aussi bien d'un fond sombre que clair. */
+.hero-loc { color: #0a0a0c; font-weight: 700; font-size: clamp(14px, 1.15vw, 16.5px); letter-spacing: 0.01em;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.95), 0 -1px 0 rgba(255,255,255,0.85), 1px 0 0 rgba(255,255,255,0.85), -1px 0 0 rgba(255,255,255,0.85), 0 0 10px rgba(255,255,255,0.9), 0 0 22px rgba(255,255,255,0.7); }
+@media (max-width: 600px) { .hero-loc { font-size: 14px; } }
