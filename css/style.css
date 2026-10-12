@@ -5134,3 +5134,6 @@ html.pfi-lock, html.pfi-lock body { overflow: hidden !important; }
 .pf-hero-cta { margin: 22px 0 34px; display: flex; }
 .pf-hero-cta .cta-primary { display: inline-flex; align-items: center; justify-content: center; }
 @media (max-width: 760px) { .pf-hero-cta { margin: 18px 0 24px; } .pf-hero-cta .cta-primary { width: 100%; } }
+
+/* Portfolio : respiration entre la grille de photos et le bloc « Découvrir chaque prestation » (ordinateur ; le mobile a déjà la sienne). */
+#view-portfolio .pf-grid { margin-bottom: 64px; }
