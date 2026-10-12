@@ -36,7 +36,7 @@ const TRAVEL_TXT = {
 /* Calculateur du devis en ligne : la ville saisie est localisée (API publique geo.api.gouv.fr, repli sur une
    liste locale) puis comparée aux deux pôles. Distance routière estimée = distance à vol d'oiseau × 1,25. */
 const TRAVEL_POLES = [{ lat: 43.6108, lon: 3.8767 }, { lat: 43.3442, lon: 3.2158 }, { lat: 43.6047, lon: 1.4442 }];   /* pôles de départ des déplacements : Montpellier, ouest de l'Hérault, Toulouse */
-const TRAVEL_ROAD = 1.25, TRAVEL_RATE = 0.6, TRAVEL_MAX_KM = 350;
+const TRAVEL_ROAD = 1.25, TRAVEL_RATE = 0.6;   /* distance routière ≈ vol d'oiseau × 1,25 ; 0,60 € par km aller-retour au-delà de TRAVEL_FREE_KM, sans plafond de distance */
 const TRAVEL_FALLBACK = {
   'montpellier':[43.6108,3.8767],'beziers':[43.3442,3.2158],'sete':[43.4075,3.6967],'agde':[43.3108,3.4758],'narbonne':[43.1839,3.0036],
   'nimes':[43.8367,4.3601],'lunel':[43.6750,4.1350],'pezenas':[43.4611,3.4244],'carcassonne':[43.2130,2.3491],'perpignan':[42.6887,2.8948],
@@ -53,7 +53,6 @@ function travelKm(a, b, c, d){
 function travelFromCoords(lat, lon, label){
   const km = Math.round(Math.min(...TRAVEL_POLES.map(p => travelKm(lat, lon, p.lat, p.lon))) * TRAVEL_ROAD);
   if (km <= TRAVEL_FREE_KM) return { kind: 'free', fee: 0, km, city: label };
-  if (km > TRAVEL_MAX_KM) return { kind: 'quote', fee: null, km, city: label };
   return { kind: 'km', fee: Math.round((km - TRAVEL_FREE_KM) * 2 * TRAVEL_RATE / 5) * 5, km, city: label };
 }
 /* Le déplacement ne s'applique ni à l'abonnement, ni au format Polas (studio), ni à une séance en studio. */
