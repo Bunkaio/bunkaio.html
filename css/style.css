@@ -4839,3 +4839,24 @@ footer button[data-lang="ft-cookie-prefs"] { font: inherit; }
 @media (max-width: 600px) { .hero-kicker .hk-a { font-size: clamp(12px, 3.9vw, 17px); letter-spacing: -0.015em; gap: 9px; } }
 @media (max-width: 350px) { .hero-kicker .hk-a { font-size: 11.5px; gap: 7px; } }
 @media (max-width: 760px) { .hero-kicker .hk-b { max-width: min(100%, 300px); } }
+
+/* ═══ Accueil : nouveau traitement de l'accroche (remplace la lueur violette) ═══
+   Texte blanc, comme « Imaginez votre projet », posé sur un voile sombre très doux qui s'estompe sur les bords : il assure la lecture sur les
+   photos et vidéos claires comme sombres, sans encadré. Le violet de la charte ne reste qu'en accent clair (croix de visée, coins du collimateur,
+   puces, survol). Public visé : blanc plein ; autres publics : blanc atténué. */
+.hero-title .hero-kicker { color: #fff; text-shadow: 0 1px 4px rgba(0,0,0,0.35), 0 2px 18px rgba(0,0,0,0.55); }
+.hero-title .hero-kicker::before,
+.hero-title .hero-kicker::before {
+  left: -22%; right: -22%; top: -80%; bottom: -80%; border-radius: 0; filter: blur(24px);
+  background: radial-gradient(ellipse closest-side, rgba(8,6,14,0.42) 0%, rgba(8,6,14,0.34) 58%, rgba(8,6,14,0.12) 84%, rgba(8,6,14,0) 100%);
+}
+@media (max-width: 760px) { .hero-title .hero-kicker::before { left: -14%; right: -14%; top: -55%; bottom: -55%; } }
+.hero-kicker .hk-a { color: #fff; }
+.hero-kicker .hk-x { stroke: #d6c9f7; }
+.hero-kicker .hk-b { color: #fff; }
+.hero-kicker .hk-b em { color: rgba(255,255,255,0.68); }
+.hero-kicker .hk-b em::before { color: #d6c9f7; }
+.hero-kicker .hk-s { color: #d6c9f7; opacity: 0.9; }
+.hero-kicker .hk-b em a:hover, .hero-kicker .hk-b em a:focus-visible { color: #d6c9f7; }
+@keyframes hkFx { 0% { color: rgba(255,255,255,0.68); } 3%, 18% { color: #fff; } 22%, 100% { color: rgba(255,255,255,0.68); } }
+@media (prefers-reduced-motion: reduce) { .hero-kicker .hk-b em { color: #fff; } }
