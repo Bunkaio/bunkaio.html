@@ -5203,3 +5203,13 @@ html.pfi-lock, html.pfi-lock body { overflow: hidden !important; }
   .hero-kicker .hk-w:nth-of-type(3) em, .hero-kicker .hk-w:nth-of-type(5) em { top: 12px; max-width: 120px; }
   .hero-kicker .hk-w:nth-of-type(2) em { bottom: 12px; }
 }
+
+/* Constellation en croix : losange fin entre les points, petits points « joints » sur les traits qui scintillent, étoiles plus présentes. */
+.hero-kicker .hk-lines polyline.f { stroke: rgba(255,255,255,0.22); }
+.hero-kicker .hk-lines circle { fill: #fff; opacity: 0; animation: hkJoint 5.5s ease-in-out infinite; }
+.hero-kicker .hk-lines circle:nth-of-type(2n) { animation-duration: 7s; animation-delay: -2s; }
+.hero-kicker .hk-lines circle:nth-of-type(3n) { animation-duration: 6.2s; animation-delay: -4s; }
+.hero-kicker .hk-lines circle:nth-of-type(5n) { animation-delay: -1s; }
+@keyframes hkJoint { 0%, 100% { opacity: 0.12; } 50% { opacity: 0.85; } }
+@keyframes hkTw { 0%, 100% { opacity: 0.15; } 50% { opacity: 0.95; } }
+@media (prefers-reduced-motion: reduce) { .hero-kicker .hk-lines circle { animation: none; opacity: 0.5; } }
