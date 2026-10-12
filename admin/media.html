@@ -179,6 +179,10 @@
   .pf-img-card.dragging { opacity: .35; }
   .pf-img-card.drop-before { box-shadow: -5px 0 0 var(--blue); }
   .pf-img-card.drop-after { box-shadow: 5px 0 0 var(--blue); }
+  .pf-img-card { position: relative; }
+  .pf-img-card[data-pos]::before { content: attr(data-pos); position: absolute; top: 6px; left: 6px; z-index: 2; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 11px; background: rgba(10,10,12,.78); color: #fff; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+  .pf-img-card.pf-off { outline: 2px solid var(--red); outline-offset: -2px; }
+  .pf-img-card.pf-off[data-pos]::before { background: var(--red); }
   .pf-cat.busy { pointer-events: none; opacity: .6; }
   .pf-note { font-size: 11.5px; color: #888; min-height: 16px; margin: -4px 0 8px; }
   .pf-note.err { color: var(--red); }
@@ -911,7 +915,11 @@ function makePfCategory(cat) {
 
   const usedNums = () => new Set([...grid.querySelectorAll('.pf-img-card[data-key]')].map((c) => pfNum(c.dataset.key)).filter(Boolean));
   const updateCount = () => {
-    const n = grid.querySelectorAll('.pf-img-card[data-key]').length;
+    const all = grid.querySelectorAll('.pf-img-card[data-key]');
+    /* Pastille = rang d'affichage sur le site (le site lit les fichiers 1 à PF_MAX, dans l'ordre des numéros) ; rouge = numéro hors plage, non affiché. */
+    let rank = 0;
+    all.forEach((c) => { const num = pfNum(c.dataset.key); const off = !(num >= 1 && num <= PF_MAX); c.classList.toggle('pf-off', off); c.title = off ? 'Non affichée sur le site : seuls les fichiers 1 à ' + PF_MAX + ' sont lus' : ''; c.dataset.pos = off ? '!' : String(++rank); });
+    const n = all.length;
     titleEl.querySelector('.pf-count').textContent = '— ' + n + ' / ' + PF_MAX + ' photos';
     addBtn.style.display = n >= PF_MAX ? 'none' : '';
   };
@@ -988,7 +996,7 @@ function makePfCategory(cat) {
       if (t && t !== moved) { const r = t.getBoundingClientRect(); grid.insertBefore(moved, e.clientX < r.left + r.width / 2 ? t : t.nextSibling); }
       else if (e.target.closest('.pf-add-btn')) grid.insertBefore(moved, addBtn);
       else { clearMarks(); return; }
-      clearMarks(); persistOrder();
+      clearMarks(); updateCount(); persistOrder();
     } else if (hasFiles(e)) {
       e.preventDefault(); clearMarks();
       const imgs = [...e.dataTransfer.files].filter((f) => f.type.startsWith('image/'));
