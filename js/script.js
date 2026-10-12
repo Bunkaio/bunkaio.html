@@ -267,7 +267,7 @@ const I18N = {
     'cred4-title':'Un matériel professionnel','cred4-text':'Drone DJI Mavic 3 Pro — capteur 4/3 Hasselblad, vidéo 4K HDR. Boîtier hybride Sony Alpha 7 III et optiques G Master pour la photo et la vidéo au sol.',
     'gear-label':'Équipement','gear-cert':'Certifié A1/A3 · A2',
     'drone-explore':'Explorez nos productions',
-    'portfolio-title':'PORTFOLIO ⊹','portfolio-sub':'Une sélection de projets réalisés par le studio, classés par univers.',
+    'portfolio-title':'PORTFOLIO','portfolio-sub':'Une sélection de projets réalisés par le studio, classés par univers.',
     'loc-line':'Basé en Occitanie, déplacement partout en France sur devis','contact-title':'Contacter votre photographe','contact-sub':'Une question, un projet, une collaboration\u00a0? Écrivez-nous — nous répondons sous 24h.',
     'company-label':'Entreprise','follow-label':'Suivez-nous','contact-btn':'Nous contacter',
     'ct-success-title':'Message envoyé','ct-success-text':'Merci pour votre message. Nous reviendrons vers vous sous 24 heures.',
@@ -624,7 +624,7 @@ const I18N = {
     'cred4-title':'Professional-grade equipment','cred4-text':'DJI Mavic 3 Pro drone — 4/3 Hasselblad sensor, 4K HDR video. Sony Alpha 7 III mirrorless body and G Master lenses for ground photography and video.',
     'gear-label':'Equipment','gear-cert':'Certified A1/A3 · A2',
     'drone-explore':'Explore our work',
-    'portfolio-title':'PORTFOLIO ⊹','portfolio-sub':'A selection of projects produced by the studio, organised by universe.',
+    'portfolio-title':'PORTFOLIO','portfolio-sub':'A selection of projects produced by the studio, organised by universe.',
     'loc-line':'Based in Occitanie, travelling across France on quote','contact-title':'Contact your photographer','contact-sub':'A question, a project, a collaboration? Write to us — we reply within 24 hours.',
     'company-label':'Company','follow-label':'Follow us','contact-btn':'Get in touch',
     'ct-success-title':'Message sent','ct-success-text':'Thank you for your message. We will get back to you within 24 hours.',
@@ -1058,6 +1058,7 @@ function refreshDynamic(){
   if (currentView === 'service') renderServicePage(currentSub);
   if (currentView === 'article') renderArticlePage(currentSub);
   if (currentView === 'city') renderCityPage(currentSub);
+  if (typeof initCstDecor === 'function') setTimeout(() => initCstDecor(), 0);
   if (currentView === 'advice') renderAdvicePage();
   if (currentView === 'discover') renderDiscoverPage();
   renderAdviceTeaser();
@@ -2083,6 +2084,7 @@ function goView(v, subTab, opts){
        .reassure-section utilise un seuil de déclenchement plus tardif
        pour que l'animation soit visible plutôt que déjà terminée. */
     localizeLinks(document.getElementById('view-' + v));
+    initCstDecor(document.getElementById('view-' + v));
     autoReveal(document.getElementById('view-' + v));
     document.querySelectorAll('#view-' + v + ' .rv:not(.in):not(.reassure-section)').forEach(observe);
     document.querySelectorAll('#view-' + v + ' .reassure-section:not(.in)').forEach(observeLate);
@@ -7494,17 +7496,19 @@ function cstDecoSvg(){
   [...L, C].forEach((p, k) => { o += `<circle class="cd-n" style="--k:${k}" cx="${p[0]}" cy="${p[1]}" r="2.8"/>`; });
   return o + '</svg>';
 }
-function initCstDecor(){
-  const io = window.IntersectionObserver ? new IntersectionObserver(es => es.forEach(e => e.target.classList.toggle('is-on', e.isIntersecting)), { threshold: 0.15 }) : null;
-  document.querySelectorAll('.pf-cta-band, .partner-cta, footer .footer-cta-row').forEach(box => {
+let _cstIO = null;
+function initCstDecor(root){
+  if (!_cstIO && window.IntersectionObserver) _cstIO = new IntersectionObserver(es => es.forEach(e => e.target.classList.toggle('is-on', e.isIntersecting)), { threshold: 0.15 });
+  /* Bandeaux sombres (traits blancs) et panneaux clairs d'appel à l'action (variante violette). */
+  (root || document).querySelectorAll('.pf-cta-band, .partner-cta, footer .footer-cta-row, .article-cta').forEach(box => {
     if (box.querySelector(':scope > .cst-deco')) return;
     box.classList.add('has-cst');
     box.insertAdjacentHTML('afterbegin', cstDecoSvg());
     const svg = box.querySelector(':scope > .cst-deco');
-    if (io && !REDUCED_MOTION) io.observe(svg); else svg.classList.add('is-on');
+    if (box.classList.contains('article-cta')) svg.classList.add('cst-light');
+    if (_cstIO && !REDUCED_MOTION) _cstIO.observe(svg); else svg.classList.add('is-on');
   });
 }
-
 /* ═══════════════ PAGE BG ═══════════════ */
 function setPageBg(viewKey){
   /* Use CSS variable on html::before — works on iOS too */

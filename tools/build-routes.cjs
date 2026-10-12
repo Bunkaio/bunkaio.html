@@ -468,12 +468,13 @@ function pinAssets(html) {
   fs.writeFileSync(path.join(ROOT, 'sitemap.xml'), '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n' + urls + '\n</urlset>\n');
 
   // 4. 404.html
+  const GLYPH = ((fs.readFileSync(path.join(ROOT, 'css/style.css'), 'utf8').match(/--bk-glyph: (url\("[^"]+"\))/) || [])[1]) || 'none';
   fs.writeFileSync(path.join(ROOT, '404.html'), `<!DOCTYPE html>
 <html lang="fr"><head><meta charset="UTF-8"><base href="/"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BUNKAIO ⊹ | Page introuvable · Page not found</title><meta name="robots" content="noindex, nofollow">
 <style>body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0a0a0c;color:#fff;font-family:'DM Sans',system-ui,sans-serif;text-align:center;padding:24px}
-h1{font-size:clamp(28px,6vw,44px);margin:0 0 12px}p{color:rgba(255,255,255,.7);margin:0 0 24px}a{color:#fff;margin:0 10px;font-size:14px}</style></head>
-<body><main><h1>Page introuvable <small>· Page not found</small></h1><p>Cette page n'existe pas ou a été déplacée.<br>This page does not exist or has been moved.</p>
+h1{font-size:clamp(28px,6vw,44px);margin:0 0 12px}.g{display:block;width:54px;height:54px;margin:0 auto 18px;background:${GLYPH} center/contain no-repeat}p{color:rgba(255,255,255,.7);margin:0 0 24px}a{color:#fff;margin:0 10px;font-size:14px}</style></head>
+<body><main><span class="g" aria-hidden="true"></span><h1>Page introuvable <small>· Page not found</small></h1><p>Cette page n'existe pas ou a été déplacée.<br>This page does not exist or has been moved.</p>
 <a href="/">Accueil · Home</a><a href="/services/">Prestations · Services</a><a href="/portfolio/">Portfolio</a><a href="/devis/">Devis · Quote</a><a href="/contact/">Contact</a></main></body></html>\n`);
   console.log('sitemap.xml et 404.html écrits');
 })();
