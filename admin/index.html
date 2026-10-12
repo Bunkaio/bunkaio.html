@@ -820,8 +820,8 @@ function showApp() {
 }
 
 /* ── Données ── */
-async function loadDashboard() {
-  loading(true);
+async function loadDashboard(silent) {
+  if (!silent) loading(true);
   try {
     const { res, data } = await api('/admin/dashboard');
     if (!res.ok || !data.ok) throw new Error(data.error || 'erreur ' + res.status);
@@ -831,7 +831,7 @@ async function loadDashboard() {
     renderAll();
     if (data.errors && data.errors.length) toast('Données partielles : ' + data.errors.join(', '));
     return true;
-  } finally { loading(false); }
+  } finally { if (!silent) loading(false); }
 }
 async function loadStats(days) {
   STAT_DAYS = days;
@@ -886,6 +886,11 @@ function go(id, noPush) {
   window.scrollTo({ top: 0 });
 }
 window.addEventListener('hashchange', () => { if (TOKEN) go(location.hash.slice(1), true); });
+/* Application restée ouverte (iPhone / écran d'accueil) : au retour au premier plan, les données sont rechargées si elles ont plus de 2 minutes. */
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState !== 'visible' || !TOKEN || !DB.generatedAt) return;
+  if (Date.now() - new Date(DB.generatedAt).getTime() > 120000) { loadDashboard(true).catch(() => {}); if (state.section === 'inbox') inboxSync(false); }
+});
 /* ── Veille du site : contrôles du Worker (toutes les 12 h) + rapport de maintenance quotidien (ops/veille.json) ── */
 let WATCH = null;
 async function loadWatch() {
@@ -1377,7 +1382,7 @@ async function inboxSync(manual) {
     if (!res.ok || !data.ok) {
       const code = String(data.error || res.status);
       if (manual) $('inboxSetup').insertAdjacentHTML('afterbegin', `<div class="msg warn" style="margin-bottom:12px">Relève impossible (${esc(code)}). ${/401|403/.test(code) ? 'La clé API Resend n\'a probablement pas l\'accès complet : créez-en une avec « Full access » et enregistrez-la avec <code>npx wrangler secret put RESEND_API_KEY</code>.' : /404/.test(code) ? 'La réception n\'est pas encore activée sur le domaine dans Resend.' : 'Réessayez dans un instant.'}</div>`);
-    } else if (data.added) { toast(data.added + ' nouvel email' + (data.added > 1 ? 's' : '')); await loadDashboard(); } else if (manual) toast('Aucun nouvel email');
+    } else if (data.added) { toast(data.added + ' nouvel email' + (data.added > 1 ? 's' : '')); await loadDashboard(); } else { /* aucun nouvel email relevé : la liste peut pourtant être périmée (relevé fait depuis un autre appareil, application restée ouverte) */ await loadDashboard(true).catch(() => {}); if (manual) toast('Boîte à jour'); }
   } catch (e) {} finally { if (btn) { btn.disabled = false; btn.textContent = '↻ Relever le courrier'; } }
 }
 function setInboxReading(on) { inboxState.reading = on; $('inboxWrap').classList.toggle('reading', on); if (on && matchMedia('(max-width:1000px)').matches) window.scrollTo({ top: 0 }); }
