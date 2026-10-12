@@ -637,6 +637,15 @@
       </section>
 
       <!-- ═══ Statistiques ═══ -->
+      <!-- ═══ Campagne & Ads ═══ -->
+      <section class="section" id="sec-campaign">
+        <div class="toolbar">
+          <div class="seg" id="campDays"><button data-d="7">7 j</button><button data-d="30" class="on">30 j</button><button data-d="90">90 j</button><button data-d="365">12 mois</button></div>
+          <span class="muted small">Chiffres du site : mesure maison, anonyme. Instagram et Google Ads ne livrent pas leurs chiffres sans API : vous les saisissez ici en 30 secondes par publication ou par dépense.</span>
+        </div>
+        <div id="campOut"><div class="card"><div class="empty">Chargement…</div></div></div>
+      </section>
+
       <section class="section" id="sec-stats">
         <div class="toolbar">
           <div class="seg" id="statDays"><button data-d="7">7 j</button><button data-d="30" class="on">30 j</button><button data-d="90">90 j</button><button data-d="365">12 mois</button></div>
@@ -729,6 +738,7 @@ const ICON = {
   messages: '<path d="M4 4h16v12H5.2L4 17.2z"/><path d="M8 9h8M8 12h5"/>',
   media: '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/>',
   stats: '<path d="M18 20V10M12 20V4M6 20v-6"/>',
+  campaign: '<path d="M3 11v2a1 1 0 0 0 1 1h3l5 4V6L7 10H4a1 1 0 0 0-1 1z"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12"/>',
   veille: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/>',
 };
 const SECTIONS = [
@@ -745,6 +755,7 @@ const SECTIONS = [
   ['activity', 'Activité des espaces', 'Ce que les clients et partenaires modifient dans leur espace'],
   ['media', 'Médias', 'Photos et vidéos du site'],
   ['stats', 'Statistiques', 'Fréquentation et conversion du site'],
+  ['campaign', 'Campagne & Ads', 'Liens suivis, publications Instagram, dépenses publicitaires et résultats de la campagne'],
   ['veille', 'Veille du site', 'Contrôle automatique toutes les 12 h et rapport quotidien de maintenance'],
 ];
 
@@ -866,6 +877,7 @@ function go(id, noPush) {
   if (id === 'inbox' && Date.now() - inboxSyncedAt > 60000) inboxSync(false);
   if (id === 'media' && !$('mediaFrame').src) $('mediaFrame').src = 'media.html?embed=1';
   if (id === 'veille') loadWatch();
+  if (id === 'campaign') loadCampaign();
   renderTabbar();
   window.scrollTo({ top: 0 });
 }
@@ -2227,6 +2239,195 @@ function exportImageRegister() {
   const head = ['Qui', 'Devis', 'Client', 'Nom', 'Email', 'Lien (mineur)', 'Date', 'Version clauses', 'Échéance (5 ans)', 'Statut', ...Object.values(USE_NAMES)];
   const csv = '\ufeff' + [head, ...rows].map(r => r.map(csvCell).join(';')).join('\n');
   const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' })); a.download = 'bunkaio-registre-droits-image-' + today() + '.csv'; a.click();
+}
+
+/* ── Campagne & Ads ── */
+const CAMP = { days: 30, traffic: null, data: { posts: [], spend: [] }, loaded: false, edit: null };
+const CAMP_LINKS = [
+  ['Google Ads', 'Campagnes, budgets, mots clés, conversions', 'https://ads.google.com/'],
+  ['Planificateur de mots clés', 'Volumes de recherche et coûts par clic estimés', 'https://ads.google.com/aw/keywordplanner/home'],
+  ['Statistiques Instagram', 'Portée, enregistrements, visites du profil (Meta Business Suite)', 'https://business.facebook.com/latest/insights'],
+  ['Instagram — profil', 'Voir le compte @bunkaio', 'https://www.instagram.com/bunkaio/'],
+  ['Meta Ads Manager', 'Publicités Instagram / Facebook', 'https://adsmanager.facebook.com/'],
+  ['Search Console', 'Recherches Google qui mènent au site', 'https://search.google.com/search-console?resource_id=' + encodeURIComponent('https://bunkaio.com/')],
+  ['Fiche Google Business', 'Avis, appels, itinéraires', 'https://business.google.com/'],
+];
+const CAMP_PAGES = [['/', 'Accueil'], ['/services/personal-branding-entrepreneurs/', 'Formule Lancement (entrepreneurs)'], ['/devis/', 'Devis en ligne'], ['/services/', 'Services'], ['/services/portrait-professionnel-corporate/', 'Portrait professionnel'], ['/services/photographe-mode-mannequins/', 'Mode & mannequins'], ['/services/photo-produits-packshots/', 'Produits & packshots'], ['/contact/', 'Contact']];
+const CAMP_SRC = ['instagram', 'google', 'facebook', 'tiktok', 'linkedin', 'pinterest', 'newsletter', 'autre'];
+const CAMP_MED = [['bio', 'Lien en bio'], ['story', 'Story'], ['post', 'Publication'], ['reel', 'Reel'], ['carrousel', 'Carrousel'], ['cpc', 'Publicité payante'], ['email', 'Email'], ['qr', 'QR code / flyer']];
+const campSlug = v => String(v || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^\w.\-]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40);
+const campNorm = t => { const p = String(t || '').split('/'); while (p.length < 4) p.push(''); return p.slice(0, 4).join('/'); };
+async function loadCampaign() {
+  try {
+    const { res, data } = await api('/admin/ads-report?days=' + CAMP.days);
+    if (!res.ok || !data.ok) { $('campOut').innerHTML = '<div class="msg err">Données indisponibles (' + esc(data.error || res.status) + ').</div>'; return; }
+    CAMP.traffic = data.traffic; CAMP.data = data.data; CAMP.loaded = true; renderCampaign();
+  } catch (e) { if (e && e.message !== 'unauthorized') $('campOut').innerHTML = '<div class="msg err">Connexion impossible.</div>'; }
+}
+document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('#campDays button'); if (!b) return; CAMP.days = +b.dataset.d; document.querySelectorAll('#campDays button').forEach(x => x.classList.toggle('on', x === b)); loadCampaign(); });
+/* Leads, devis et CA par étiquette de campagne : la fiche lead du CRM porte le tag du lien d'arrivée (source/support/campagne/contenu). */
+function campCrm() {
+  const since = new Date(Date.now() - (CAMP.days - 1) * 86400000).toISOString().slice(0, 10);
+  const out = {};
+  (DB.contacts || []).forEach(c => {
+    const L = c.lead; if (!L || !L.campagne) return;
+    if ((L.date || '').slice(0, 10) < since) return;
+    const k = campNorm(L.campagne); const r = out[k] = out[k] || { leads: 0, envoyes: 0, signes: 0, ca: 0 };
+    r.leads++;
+    (DB.quotes || []).filter(q => q.email === c.email).forEach(q => { if (['envoye', 'signe'].includes(q.status)) r.envoyes++; if (q.status === 'signe') { r.signes++; r.ca += q.totalHT || 0; } });
+  });
+  return out;
+}
+function campRows() {
+  const crm = campCrm(), map = {};
+  ((CAMP.traffic && CAMP.traffic.rows) || []).forEach(r => { map[campNorm(r.utm)] = { ...r, utm: campNorm(r.utm) }; });
+  Object.keys(crm).forEach(k => { map[k] = map[k] || { utm: k, pv: 0, uv: 0, cta: 0, form: 0, submit: 0, contact: 0 }; });
+  return Object.values(map).map(r => { const c = crm[r.utm] || { leads: 0, envoyes: 0, signes: 0, ca: 0 }; const p = r.utm.split('/'); return { ...r, src: p[0], med: p[1], camp: p[2], cnt: p[3], ...c }; }).sort((a, b) => (b.uv - a.uv) || (b.leads - a.leads));
+}
+function campSpendInPeriod() {
+  const since = new Date(Date.now() - (CAMP.days - 1) * 86400000).toISOString().slice(0, 10);
+  return (CAMP.data.spend || []).filter(s => s.date >= since);
+}
+function renderCampaign() {
+  const out = $('campOut'); if (!out) return;
+  const tr = CAMP.traffic || { supported: false, configured: false, rows: [] };
+  const rows = campRows();
+  const spend = campSpendInPeriod(); const spendTot = spend.reduce((t, s) => t + s.montant, 0);
+  const sum = k => rows.reduce((t, r) => t + (r[k] || 0), 0);
+  const leads = sum('leads'), signes = sum('signes'), ca = sum('ca'), uv = sum('uv');
+  const cpl = leads && spendTot ? spendTot / leads : null, roas = spendTot ? ca / spendTot : null;
+  const kpi = (cls, l, n, s) => `<div class="kpi ${cls}"><div class="l">${l}</div><div class="n">${n}</div><div class="s">${s}</div></div>`;
+  /* Entonnoir « Lancement » : événements déjà mesurés sur le site (CTA data-track=lancement, form_start, quiz_submit « · Lancement »). */
+  const ev = (typeof STATS !== 'undefined' && STATS && !STATS.error && STATS.events) || [];
+  const lanCta = ev.filter(e => e.name === 'cta_click' && /^lancement@/.test(e.prop || '')).reduce((t, e) => t + e.n, 0);
+  const lanForm = ev.filter(e => e.name === 'form_start').reduce((t, e) => t + e.n, 0);
+  const lanSub = ev.filter(e => e.name === 'quiz_submit' && / · Lancement$/.test(e.prop || '')).reduce((t, e) => t + e.n, 0);
+  const status = [
+    [tr.supported, 'Suivi des liens campagne (UTM)', tr.supported ? 'Actif : chaque visite arrivée par un lien suivi est rattachée à sa campagne.' : (tr.configured ? 'À activer : appliquez la migration une fois, puis les nouvelles visites seront rattachées.' : 'Base de mesure non configurée.')],
+    [true, 'Conversions Google Ads / Instagram', 'Mesurées en interne (aucun pixel chargé, aucun cookie). Pour les remonter dans Google Ads, il faudrait déclarer GA4 / Google Ads dans config/consent.js, ce qui active le bandeau cookies.'],
+    [rows.length > 0 || spend.length > 0, 'Premières données', rows.length ? rows.length + ' campagne(s) / contenu(s) mesuré(s)' : 'Créez un lien suivi ci-dessous et utilisez-le dans la bio, les stories ou vos annonces.'],
+  ];
+  out.innerHTML = `
+  <div class="kpis">
+    ${kpi('dark', 'Visiteurs via campagnes', uv, CAMP.days + ' derniers jours')}
+    ${kpi('', 'Demandes (leads)', leads, 'issues d\'un lien suivi')}
+    ${kpi('', 'Devis signés / CA', signes + ' · ' + eur(ca), 'attribués à une campagne')}
+    ${kpi('', 'Dépenses pub', eur(spendTot), spend.length + ' ligne(s) saisie(s)')}
+    ${kpi('', 'Coût par lead / ROAS', (cpl == null ? '—' : eur(Math.round(cpl))) + ' · ' + (roas == null ? '—' : roas.toFixed(1) + '×'), 'toutes campagnes confondues')}
+  </div>
+
+  <div class="grid g2" style="margin-top:18px">
+    <div class="card"><h3>Accès directs</h3><div style="display:grid;gap:8px">${CAMP_LINKS.map(([t, d, u]) => `<a class="li click" href="${esc(u)}" target="_blank" rel="noopener" style="text-decoration:none;color:inherit"><div class="tx"><b>${esc(t)}</b><div class="d">${esc(d)}</div></div><div class="act"><span class="badge lav">Ouvrir ↗</span></div></a>`).join('')}</div></div>
+    <div class="card"><h3>Plan de campagne</h3>
+      <div class="small" style="line-height:1.7">
+        <b>Cibles :</b> entrepreneurs et indépendants (porte d'entrée : formule <b>Lancement 320 €</b>, puis Signature, Premium, Éditorial) et marques (Mode, Commercial et produits).<br>
+        <b>Page d'atterrissage :</b> <code>/services/personal-branding-entrepreneurs/</code><br>
+        <b>Argument central :</b> shooting in situ, mobilité (déplacement offert dans le rayon défini, sinon 0,60 €/km A/R plafonné à 350 €).<br>
+        <b>Références :</b> « Plan de lancement V5 », « Actions BUNKAIO », « Mes chiffres BUNKAIO ».
+      </div>
+      <div class="lab" style="margin-top:14px">Entonnoir « Lancement » (${STAT_DAYS} j, tous canaux)</div>
+      <div class="kpis" style="margin-top:6px"><div class="kpi"><div class="l">Clics CTA Lancement</div><div class="n">${lanCta}</div></div><div class="kpi"><div class="l">Formulaires démarrés</div><div class="n">${lanForm}</div></div><div class="kpi"><div class="l">Demandes Lancement</div><div class="n">${lanSub}</div></div></div>
+      <div class="small muted" style="margin-top:6px">Source : mesure maison (Statistiques). La période suit celle de la rubrique Statistiques.</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:18px"><h3>Créer un lien suivi (UTM)</h3>
+    <div class="small muted" style="margin-bottom:10px">À coller dans la bio, une story (sticker lien), un lien d'annonce ou un QR code. Chaque visite et chaque demande est rattachée au contenu qui l'a amenée.</div>
+    <div class="form">
+      <div class="frow"><div class="fg"><label>Page de destination</label><select id="utmPage" oninput="campUtm()">${CAMP_PAGES.map(([p, l]) => `<option value="${p}">${l}</option>`).join('')}</select></div><div class="fg"><label>Source</label><select id="utmSrc" oninput="campUtm()">${CAMP_SRC.map(s => `<option>${s}</option>`).join('')}</select></div></div>
+      <div class="frow"><div class="fg"><label>Support</label><select id="utmMed" oninput="campUtm()">${CAMP_MED.map(([m, l]) => `<option value="${m}">${l}</option>`).join('')}</select></div><div class="fg"><label>Campagne</label><input id="utmCamp" value="lancement" oninput="campUtm()"></div></div>
+      <div class="fg"><label>Contenu (identifiant du post, reel, annonce…)</label><input id="utmCnt" placeholder="ex. reel-avant-apres-0910" oninput="campUtm()"><div class="hint">Utilisez le même identifiant dans « Publications Instagram » pour relier les chiffres du post aux visites du site.</div></div>
+      <div class="fg"><label>Lien à copier</label><textarea id="utmOut" readonly style="min-height:64px" onclick="this.select()"></textarea></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn sm" onclick="campCopyUtm()">Copier le lien</button><button class="btn ghost sm" onclick="campPostFromUtm()">+ Ajouter à mes publications</button></div>
+    </div>
+    <div class="msg info" style="margin-top:12px"><b>Google Ads :</b> dans le compte, ajoutez ce « Suffixe d'URL final » au niveau du compte (Paramètres → Paramètres du compte → Suivi) pour suivre toutes les annonces sans modifier chaque lien : <code style="word-break:break-all">utm_source=google&amp;utm_medium=cpc&amp;utm_campaign={campaignid}&amp;utm_content={adgroupid}</code></div>
+  </div>
+
+  <div class="card" style="margin-top:18px"><h3>Résultats par campagne et par contenu</h3>
+    ${rows.length ? `<div class="tbl-wrap"><table><thead><tr><th>Source</th><th>Support</th><th>Campagne</th><th>Contenu</th><th class="num">Visiteurs</th><th class="num">Clics CTA</th><th class="num">Form. démarrés</th><th class="num">Demandes</th><th class="num">Leads CRM</th><th class="num">Devis signés</th><th class="num">CA signé</th><th class="num">Visite → lead</th></tr></thead><tbody>${rows.map(r => `<tr><td><b>${esc(r.src || '—')}</b></td><td>${esc(r.med || '—')}</td><td>${esc(r.camp || '—')}</td><td class="small">${esc(r.cnt || '—')}</td><td class="num">${r.uv}</td><td class="num">${r.cta}</td><td class="num">${r.form}</td><td class="num">${r.submit}</td><td class="num"><b>${r.leads}</b></td><td class="num">${r.signes}</td><td class="num">${r.ca ? eur(r.ca) : '—'}</td><td class="num">${r.uv ? Math.round(r.leads / r.uv * 100) + ' %' : '—'}</td></tr>`).join('')}</tbody></table></div>` : '<div class="empty">Aucune donnée de campagne sur la période. Créez un lien suivi ci-dessus et utilisez-le : les résultats apparaissent ici dès la première visite.</div>'}
+  </div>
+
+  <div class="card" style="margin-top:18px"><h3>Publications Instagram</h3>
+    <div class="small muted" style="margin-bottom:10px">Saisissez les chiffres d'Instagram (Statistiques de la publication) : le tableau les relie aux visites, demandes et devis du site grâce à l'identifiant de contenu.</div>
+    ${campPostForm()}
+    ${campPostsTable(rows)}
+  </div>
+
+  <div class="card" style="margin-top:18px"><h3>Dépenses publicitaires</h3>
+    <div class="small muted" style="margin-bottom:10px">Montant dépensé par jour ou par semaine (relevé Google Ads / Meta Ads). Sert au coût par lead, au coût par devis signé et au ROAS.</div>
+    ${campSpendForm()}
+    ${campSpendTable(spend, leads, signes, ca)}
+  </div>
+
+  <div class="card" style="margin-top:18px"><h3>État du suivi</h3><div class="tl">${status.map(([ok, t, d]) => `<div class="it ${ok ? 'done' : ''}"><b>${ok ? '✓ ' : '○ '}${esc(t)}</b><div class="d">${esc(d)}</div></div>`).join('')}</div>
+    ${tr.supported || !tr.configured ? '' : '<div class="msg warn" style="margin-top:10px">Commande à lancer une fois : <code style="word-break:break-all">cd server &amp;&amp; npx wrangler d1 execute bunkaio-analytics --remote --file=migrations/0002_campaign.sql</code> (puis redéployez le Worker si ce n\'est pas fait).</div>'}
+  </div>`;
+  campUtm();
+}
+function campUtm() {
+  if (!$('utmOut')) return;
+  const q = [['utm_source', campSlug($('utmSrc').value)], ['utm_medium', campSlug($('utmMed').value)], ['utm_campaign', campSlug($('utmCamp').value)], ['utm_content', campSlug($('utmCnt').value)]].filter(x => x[1]);
+  $('utmOut').value = 'https://bunkaio.com' + $('utmPage').value + (q.length ? '?' + q.map(x => x[0] + '=' + x[1]).join('&') : '');
+}
+function campCopyUtm() { const v = $('utmOut').value; navigator.clipboard.writeText(v).then(() => toast('Lien copié'), () => { $('utmOut').select(); toast('Sélectionné : copiez avec Ctrl + C'); }); }
+function campPostFromUtm() {
+  const cnt = campSlug($('utmCnt').value); if (!cnt) { toast('Renseignez d\'abord un identifiant de contenu'); return; }
+  CAMP.edit = { id: '', date: today(), type: ({ reel: 'reel', story: 'story', carrousel: 'carrousel' })[$('utmMed').value] || 'post', titre: '', contenu: cnt, portee: 0, impressions: 0, enregistrements: 0, partages: 0, visitesProfil: 0, clicsLien: 0 };
+  renderCampaign(); const f = $('cpTitre'); if (f) f.scrollIntoView({ block: 'center' });
+}
+function campPostForm() {
+  const p = CAMP.edit; const v = k => p ? esc(p[k] ?? '') : '';
+  const num = (id, label, k) => `<div class="fg"><label>${label}</label><input type="number" min="0" id="${id}" value="${p && p[k] ? esc(p[k]) : ''}"></div>`;
+  if (!p) return '<button class="btn sm" onclick="CAMP.edit={id:\'\',date:today(),type:\'post\',titre:\'\',contenu:\'\'};renderCampaign()">+ Ajouter une publication</button>';
+  return `<div class="form" style="border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:12px">
+    <div class="frow"><div class="fg"><label>Date de publication</label><input type="date" id="cpDate" value="${v('date')}"></div><div class="fg"><label>Type</label><select id="cpType">${['post', 'reel', 'carrousel', 'story'].map(t => `<option ${p.type === t ? 'selected' : ''}>${t}</option>`).join('')}</select></div></div>
+    <div class="frow"><div class="fg"><label>Titre ou sujet</label><input id="cpTitre" value="${v('titre')}" placeholder="ex. Avant / après portrait"></div><div class="fg"><label>Identifiant de contenu (utm_content)</label><input id="cpCnt" value="${v('contenu')}" placeholder="ex. reel-avant-apres-0910"></div></div>
+    <div class="frow">${num('cpPortee', 'Portée (comptes touchés)', 'portee')}${num('cpImpr', 'Impressions', 'impressions')}${num('cpSave', 'Enregistrements', 'enregistrements')}</div>
+    <div class="frow">${num('cpShare', 'Partages', 'partages')}${num('cpProf', 'Visites du profil', 'visitesProfil')}${num('cpClic', 'Clics sur le lien', 'clicsLien')}</div>
+    <div style="display:flex;gap:8px"><button class="btn sm" onclick="campSavePost()">Enregistrer</button><button class="btn ghost sm" onclick="CAMP.edit=null;renderCampaign()">Annuler</button></div></div>`;
+}
+async function campSaveData(patch) {
+  const { res, data } = await api('/admin/ads-data', { method: 'POST', body: JSON.stringify(patch) });
+  if (!res.ok || !data.ok) { toast('Enregistrement impossible'); return false; }
+  CAMP.data = data.data; return true;
+}
+async function campSavePost() {
+  const g = id => ($(id) ? $(id).value : '');
+  const p = { id: CAMP.edit.id, date: g('cpDate'), type: g('cpType'), titre: g('cpTitre').trim(), contenu: campSlug(g('cpCnt')), portee: +g('cpPortee') || 0, impressions: +g('cpImpr') || 0, enregistrements: +g('cpSave') || 0, partages: +g('cpShare') || 0, visitesProfil: +g('cpProf') || 0, clicsLien: +g('cpClic') || 0 };
+  if (!p.date) { toast('Indiquez la date'); return; }
+  const list = (CAMP.data.posts || []).filter(x => x.id !== p.id || !p.id).concat([p]);
+  if (await campSaveData({ posts: list })) { CAMP.edit = null; toast('Publication enregistrée'); renderCampaign(); }
+}
+async function campDelPost(id) { if (!confirm('Supprimer cette publication ?')) return; if (await campSaveData({ posts: (CAMP.data.posts || []).filter(x => x.id !== id) })) renderCampaign(); }
+function campEditPost(id) { CAMP.edit = { ...(CAMP.data.posts || []).find(x => x.id === id) }; renderCampaign(); }
+function campPostsTable(rows) {
+  const posts = (CAMP.data.posts || []).slice().sort((a, b) => b.date.localeCompare(a.date));
+  if (!posts.length) return '<div class="empty" style="margin-top:8px">Aucune publication suivie.</div>';
+  const pct = (a, b) => b ? (a / b * 100).toFixed(1).replace('.0', '') + ' %' : '—';
+  return `<div class="tbl-wrap"><table><thead><tr><th>Date</th><th>Publication</th><th class="num">Portée</th><th class="num">Enreg. + partages</th><th class="num">Clics lien (Insta)</th><th class="num">Visiteurs site</th><th class="num">Leads</th><th class="num">CA signé</th><th class="num">Taux d'engagement</th><th></th></tr></thead><tbody>${posts.map(p => {
+    const m = rows.filter(r => r.cnt && r.cnt === p.contenu && (!r.src || r.src === 'instagram' || r.src === 'facebook'));
+    const uv = m.reduce((t, r) => t + r.uv, 0), l = m.reduce((t, r) => t + r.leads, 0), ca = m.reduce((t, r) => t + r.ca, 0);
+    return `<tr><td class="small">${fdate(p.date)}</td><td><b>${esc(p.titre || p.contenu || '—')}</b><div class="small muted">${esc(p.type)}${p.contenu ? ' · ' + esc(p.contenu) : ''}</div></td><td class="num">${p.portee || '—'}</td><td class="num">${(p.enregistrements + p.partages) || '—'}</td><td class="num">${p.clicsLien || '—'}</td><td class="num">${p.contenu ? uv : '—'}</td><td class="num">${p.contenu ? l : '—'}</td><td class="num">${ca ? eur(ca) : '—'}</td><td class="num">${pct(p.enregistrements + p.partages, p.portee)}</td><td style="white-space:nowrap"><button class="btn ghost sm" onclick="campEditPost('${esc(p.id)}')">Modifier</button> <button class="btn ghost sm" onclick="campDelPost('${esc(p.id)}')">✕</button></td></tr>`; }).join('')}</tbody></table></div>`;
+}
+function campSpendForm() {
+  return `<div class="form"><div class="frow"><div class="fg"><label>Date</label><input type="date" id="spDate" value="${today()}"></div><div class="fg"><label>Plateforme</label><select id="spPlat"><option value="google">Google Ads</option><option value="meta">Meta (Instagram / Facebook)</option><option value="autre">Autre</option></select></div><div class="fg"><label>Montant dépensé (€)</label><input type="number" min="0" step="0.01" id="spAmt"></div></div>
+    <div class="frow"><div class="fg"><label>Campagne</label><input id="spCamp" value="lancement"></div><div class="fg"><label>Clics (facultatif)</label><input type="number" min="0" id="spClic"></div><div class="fg"><label>Impressions (facultatif)</label><input type="number" min="0" id="spImpr"></div></div>
+    <div><button class="btn sm" onclick="campAddSpend()">+ Ajouter la dépense</button></div></div>`;
+}
+async function campAddSpend() {
+  const s = { date: $('spDate').value, plateforme: $('spPlat').value, campagne: $('spCamp').value.trim(), montant: +$('spAmt').value || 0, clics: +$('spClic').value || 0, impressions: +$('spImpr').value || 0 };
+  if (!s.date || !(s.montant > 0)) { toast('Date et montant requis'); return; }
+  if (await campSaveData({ spend: (CAMP.data.spend || []).concat([s]) })) { toast('Dépense ajoutée'); renderCampaign(); }
+}
+async function campDelSpend(id) { if (!confirm('Supprimer cette dépense ?')) return; if (await campSaveData({ spend: (CAMP.data.spend || []).filter(x => x.id !== id) })) renderCampaign(); }
+function campSpendTable(spend, leads, signes, ca) {
+  const tot = spend.reduce((t, s) => t + s.montant, 0);
+  const by = {}; spend.forEach(s => { by[s.plateforme] = (by[s.plateforme] || 0) + s.montant; });
+  const plat = { google: 'Google Ads', meta: 'Meta', autre: 'Autre' };
+  const clics = spend.reduce((t, s) => t + (s.clics || 0), 0);
+  const head = tot ? `<div class="small" style="margin:12px 0">${Object.entries(by).map(([k, v]) => `<b>${plat[k] || k}</b> ${eur(v)}`).join(' · ')} — <b>Coût par lead</b> ${leads ? eur(Math.round(tot / leads)) : '—'} · <b>Coût par devis signé</b> ${signes ? eur(Math.round(tot / signes)) : '—'} · <b>ROAS</b> ${tot ? (ca / tot).toFixed(1) + '×' : '—'}${clics ? ' · <b>Coût par clic</b> ' + eur(Math.round(tot / clics * 100) / 100) : ''}</div>` : '';
+  const list = spend.slice().sort((a, b) => b.date.localeCompare(a.date));
+  return head + (list.length ? `<div class="tbl-wrap"><table><thead><tr><th>Date</th><th>Plateforme</th><th>Campagne</th><th class="num">Montant</th><th class="num">Clics</th><th></th></tr></thead><tbody>${list.map(s => `<tr><td class="small">${fdate(s.date)}</td><td>${plat[s.plateforme] || esc(s.plateforme)}</td><td>${esc(s.campagne || '—')}</td><td class="num"><b>${eur(s.montant)}</b></td><td class="num">${s.clics || '—'}</td><td><button class="btn ghost sm" onclick="campDelSpend('${esc(s.id)}')">✕</button></td></tr>`).join('')}</tbody></table></div>` : '<div class="empty">Aucune dépense sur la période.</div>');
 }
 
 /* ── Messages ── */

@@ -17,7 +17,7 @@ const EVENT_NAMES = new Set([
 const DEVICES = new Set(['mobile', 'tablet', 'desktop']);
 const BOT_RE = /bot|crawl|spider|slurp|headless|lighthouse|pagespeed|preview|facebookexternalhit|monitor|uptime/i;
 
-interface CollectBody { e?: unknown; p?: unknown; r?: unknown; d?: unknown; l?: unknown; v?: unknown }
+interface CollectBody { e?: unknown; p?: unknown; r?: unknown; d?: unknown; l?: unknown; v?: unknown; u?: unknown }
 
 function clean(value: unknown, max: number): string {
   return typeof value === 'string' ? value.replace(/[\u0000-\u001f\u007f]/g, '').slice(0, max) : '';
@@ -49,13 +49,22 @@ export async function handleCollect(request: Request, env: Env, headers: Record<
   const lang = clean(body.l, 2) === 'en' ? 'en' : 'fr';
   const ref = /^[a-z0-9.-]{1,80}$/i.test(clean(body.r, 80)) ? clean(body.r, 80).toLowerCase() : '';
   const prop = clean(body.v, 64);
+  /* Campagne du lien d'arrivée (utm_source/medium/campaign/content joints par « / ») : étiquette marketing anonyme, jamais une donnée personnelle. */
+  const utmRaw = clean(body.u, 130);
+  const utm = /^[\w.\-]{0,40}(\/[\w.\-]{0,40}){3}$/.test(utmRaw) ? utmRaw : '';
 
   const now = Date.now();
   const day = new Date(now).toISOString().slice(0, 10);
   const vid = await dailyVisitorId(env, day, request.headers.get('CF-Connecting-IP') ?? '', ua);
   try {
-    await env.ANALYTICS_DB.prepare('INSERT INTO events (ts, day, name, path, prop, ref, device, lang, vid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)')
-      .bind(now, day, name, path, prop || null, ref || null, device, lang, vid).run();
+    try {
+      await env.ANALYTICS_DB.prepare('INSERT INTO events (ts, day, name, path, prop, ref, device, lang, vid, utm) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+        .bind(now, day, name, path, prop || null, ref || null, device, lang, vid, utm || null).run();
+    } catch {
+      /* Migration 0002 pas encore appliquée (colonne utm absente) : on enregistre l'événement sans la campagne. */
+      await env.ANALYTICS_DB.prepare('INSERT INTO events (ts, day, name, path, prop, ref, device, lang, vid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)')
+        .bind(now, day, name, path, prop || null, ref || null, device, lang, vid).run();
+    }
   } catch (err) {
     console.error('[analytics] écriture impossible', err);
   }

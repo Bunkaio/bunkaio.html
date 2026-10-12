@@ -28,6 +28,8 @@
   const refHost = () => {
     try { const h = new URL(document.referrer).hostname; return h && h !== location.hostname ? h.replace(/^www\./, '') : ''; } catch (e) { return ''; }
   };
+  /* Campagne du lien d'arrivée (utm), gardée en mémoire de la page par script.js : jointe aux événements, sans rien écrire sur l'appareil. */
+  const camp = () => { try { return typeof _campaignMem === 'string' ? _campaignMem : ''; } catch (e) { return ''; } };
   let firstPageview = true;
 
   /* Matomo (optionnel, sans cookie) */
@@ -39,7 +41,7 @@
 
   window.track = function(name, prop){
     if (disabled()) return;
-    const body = JSON.stringify({ e: name, p: location.pathname, r: name === 'pageview' && firstPageview ? refHost() : undefined, d: device(), l: document.documentElement.lang || 'fr', v: prop });
+    const body = JSON.stringify({ e: name, p: location.pathname, r: name === 'pageview' && firstPageview ? refHost() : undefined, d: device(), l: document.documentElement.lang || 'fr', v: prop, u: camp() || undefined });
     if (name === 'pageview') firstPageview = false;
     try { navigator.sendBeacon(CFG.endpoint, new Blob([body], { type: 'text/plain' })); }
     catch (e) { try { fetch(CFG.endpoint, { method: 'POST', body, keepalive: true, mode: 'no-cors' }); } catch (e2) {} }

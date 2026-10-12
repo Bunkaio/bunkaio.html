@@ -12,6 +12,7 @@ import { buildManualMail, getMailLog, isUnsubscribed, listCampaigns, MANUAL_TEMP
 import type { ManualTemplate, MailingParams, RecipientCtx } from './mailing';
 import { unsubscribeToken } from './email';
 import { appendConsent, cleanQuoteInput, computeConsent, createQuote, freezeLegal, getConsentLog, getFrozenLegal, getQuote, IMAGE_USES, isExpired, listQuotes, missingQuoteFields, prepareSend, publicQuote, putFrozenLegal, putQuote, quoteHash, tokenMatches } from './quotes';
+import { campaignTraffic, getCampaignData, putCampaignData } from './campaign';
 import { accountQuotes, adminConsentAction, bytesToBase64, ensureSignedPdf, getSignedPdf, groupUrl, handleSubjectPublic, handleWithdrawPublic, newToken, parseImageUse, useLabel } from './consent';
 import type { Quote } from './quotes';
 import { getBusinessAddress } from './config';
@@ -817,6 +818,14 @@ async function handleAdminDashboard(request: Request, env: Env, headers: Record<
   }
   if (path === '/admin/quote' && request.method === 'POST') {
     return handleAdminQuote(request, env, headers);
+  }
+  if (path === '/admin/ads-report' && request.method === 'GET') {
+    const days = Math.min(365, Math.max(1, parseInt(new URL(request.url).searchParams.get('days') ?? '30', 10) || 30));
+    return jsonResponse({ ok: true, days, traffic: await campaignTraffic(env, days), data: await getCampaignData(env) }, 200, headers);
+  }
+  if (path === '/admin/ads-data' && request.method === 'POST') {
+    const body = (await request.json().catch(() => ({}))) as Record<string, unknown>;
+    return jsonResponse({ ok: true, data: await putCampaignData(env, body) }, 200, headers);
   }
   if (path === '/admin/quote-doc' && request.method === 'GET') {
     const id = new URL(request.url).searchParams.get('id') ?? '';
