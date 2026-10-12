@@ -4242,9 +4242,14 @@ function renderArticlePage(slug){
   const a = artL(a0);
   const related = (a.related || []).map(sl => ARTICLES.find(x => x.slug === sl)).filter(Boolean);
   const cat = a.cat ? CATS.find(c => c.id === a.cat) : null;
-  const heroSrc = IMG.servicePhotos && IMG.servicePhotos[a.cat];
+  /* Photo de l'article : articles/<slug>.webp (admin média, rubrique « Conseils — photo de chaque article »), repli sur la photo
+     de la prestation de l'article tant qu'aucune photo propre n'est déposée. */
+  const catSrc = IMG.servicePhotos && IMG.servicePhotos[a.cat];
+  const ownSrc = IMG.articlePhotos ? IMG.articlePhotos + '/' + a.slug + '.webp' : '';
+  const heroSrc = ownSrc || catSrc;
   const heroAlt = (IMG.serviceAlt && t(IMG.serviceAlt[a.cat])) || (ART_ALT[a.cat] ? t(ART_ALT[a.cat]) : '');
-  const heroFig = heroSrc ? `<figure class="art-hero"><img src="${heroSrc}" alt="${escHtml(heroAlt)}" width="1200" height="520" loading="lazy" decoding="async" onerror="this.closest('figure').classList.add('is-broken')"></figure>` : '';
+  const heroErr = ownSrc && catSrc ? `if(!this.dataset.fb){this.dataset.fb=1;this.src='${catSrc}'}else{this.closest('figure').classList.add('is-broken')}` : `this.closest('figure').classList.add('is-broken')`;
+  const heroFig = heroSrc ? `<figure class="art-hero"><img src="${heroSrc}" alt="${escHtml(heroAlt)}" width="1200" height="520" loading="lazy" decoding="async" onerror="${heroErr}"></figure>` : '';
   el.innerHTML = `
     <div class="breadcrumb" role="navigation" aria-label="${t({fr:'Fil d\'Ariane', en:'Breadcrumb'})}">
       <a href="/" data-nav="home">${t({fr:'Accueil', en:'Home'})}</a><span aria-hidden="true">›</span>
@@ -7601,7 +7606,7 @@ function cstDrawField(ctx, pts, W, H, c, frame, still){
    Le canevas couvre l'écran visible (suivi du défilement) ; pause hors de ces vues, onglet caché ou animations réduites (image fixe). */
 const CstField = (() => {
   let raf = 0, wrap = null, cv = null, ctx = null, pts = [], W = 0, H = 0, view = null, frame = 0;
-  const VIEWS = ['login', 'account', 'portfolio', 'services', 'advice', 'article'];
+  const VIEWS = ['login', 'account', 'portfolio', 'services', 'advice', 'article', 'contact', 'about'];
   function palette(){
     if (currentView === 'account') {
       const partner = view && view.dataset.acct === 'partner';
@@ -7609,7 +7614,7 @@ const CstField = (() => {
     }
     /* Portfolio : par-dessus la vidéo / les photos de fond, à faible opacité (les photos restent la vedette). */
     /* Conseils et articles : violet pâle, lisible sur la bannière photo comme sur les fonds clairs. */
-    if (currentView === 'advice' || currentView === 'article') return { line: '165,143,230', dot: '165,143,230', cross: '214,201,247', a: 0.6 };
+    if (currentView === 'advice' || currentView === 'article' || currentView === 'contact' || currentView === 'about') return { line: '165,143,230', dot: '165,143,230', cross: '214,201,247', a: 0.6 };
     if (currentView === 'portfolio' || currentView === 'services') return { line: '255,255,255', dot: '255,255,255', cross: '214,201,247', a: 0.4 };
     return { line: '110,90,168', dot: '110,90,168', cross: '110,90,168', a: 0.8 };
   }

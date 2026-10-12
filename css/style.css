@@ -5390,3 +5390,6 @@ footer > .cst-foot canvas { transform: none; }
 .has-field { position: relative; isolation: isolate; }
 .has-field > .cst-box { position: absolute; inset: 0; z-index: -1; border-radius: inherit; overflow: hidden; }
 #view-advice, #view-article { position: relative; }
+/* Contact et À propos : fond constellation (CstField). */
+#view-contact, #view-about { position: relative; }
+#view-contact > .ct-page { position: relative; z-index: 1; }

@@ -266,6 +266,7 @@
   <div id="sections"></div>
 </div>
 
+<script src="../config/articles.js"></script>
 <script>
 const WORKER_BASE = 'https://bunkaio-quiz-stripe.bunkaio.workers.dev';
 const MEDIA_BASE  = WORKER_BASE + '/media';
@@ -373,6 +374,13 @@ const SECTIONS = [
     desc: 'Format libre, de préférence portrait 4:5 (≤ 350 Ko). Dépose ici la photo : elle remplace aussitôt la photo actuelle sur la page À propos (grande photo) et dans la petite pastille « Article rédigé par Aya » sous chaque article Conseils. Supprime-la pour revenir à la photo par défaut du site.',
     slots: [{ path: 'about/aya.webp', label: 'Portrait d\'Aya' }],
   },
+  // ── Conseils : une photo par article (repli sur la photo de la prestation tant qu'aucune n'est déposée) ──
+  ...(typeof ARTICLES !== 'undefined' ? [{
+    id: 'articles-photos',
+    title: '📰 Conseils — photo de chaque article',
+    desc: 'Photo affichée en haut de chaque article de conseils (bandeau large, recadré environ 1200 × 520) : exporter en paysage, au moins 1600 px de large (≤ 350 Ko), sujet au centre. Sans photo déposée ici, l\'article reprend la photo de sa prestation (rubrique « Prestations »).',
+    slots: ARTICLES.map(a => ({ path: 'articles/' + a.slug + '.webp', label: a.h1 })),
+  }] : []),
   // ── Accueil ────────────────────────────────────────────────────────────────
   // Pas de section ici : le fond de la page d'accueil est une vidéo
   // (videos/home-bg.mp4 + videos/mission-bg.mp4), gérée depuis GitHub,

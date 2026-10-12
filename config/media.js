@@ -246,6 +246,8 @@ const IMG = {
 
   /* Photos par formule : MEDIA_BASE/formulas/<catégorie>-<formule>.webp (à déposer dans l'admin média ; repli sur la photo de la catégorie). */
   formulas: MEDIA_BASE + '/formulas',
+  /* Photo propre à chaque article de conseils : MEDIA_BASE/articles/<slug>.webp (admin média) ; repli sur la photo de la prestation. */
+  articlePhotos: MEDIA_BASE + '/articles',
   /* Fond de la page « Découvrir chaque prestation » : une photo par prestation, qui change selon la prestation ouverte (repli : photo de la catégorie). */
   discoverPhotos: {
     'photo-part': MEDIA_BASE + '/discover/photo-part.webp',
