@@ -4891,3 +4891,20 @@ footer button[data-lang="ft-cookie-prefs"] { font: inherit; }
 /* Contact : « Basé en Occitanie, déplacement partout en France sur devis » est posé sur la photo de la bannière, donc en blanc avec une ombre légère (il était gris, illisible). */
 .ct-loc { color: #fff; opacity: 1; font-weight: 500; text-shadow: 0 1px 3px rgba(0,0,0,0.45), 0 2px 14px rgba(0,0,0,0.55); }
 .ct-loc::before { color: #d6c9f7; opacity: 1; }
+
+/* ═══ Prestations & tarifs, ordinateur : mise en page plus large et plus aérée ═══
+   - Catalogue : conteneur élargi (1360 px) et cartes plus larges (≈ 310 px au lieu de 268) pour des textes moins serrés.
+   - Vue filtrée par catégorie : la photo (collée à l'écran) et une carte large se partagent toute la largeur, au lieu d'une carte étroite
+     de 260 px et d'un grand vide à droite. Les formules s'y lisent en grandes lignes, avec boutons côte à côte. */
+@media (min-width: 1100px) {
+  #view-services .services-page { max-width: 1360px; padding-left: 48px; padding-right: 48px; }
+  #view-services .services-grid:not(.is-single) { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 26px; }
+  #view-services .service-card { padding: 28px 26px; }
+  #view-services .service-card .service-tiers li, #view-services .service-card .service-tier { padding-top: 14px; padding-bottom: 14px; }
+  #view-services .services-layout.has-photo { grid-template-columns: minmax(340px, 5fr) 7fr; gap: 44px; }
+  #view-services .services-layout.has-photo .svc-cat-photo { top: 150px; aspect-ratio: 4 / 5; border-radius: 14px; box-shadow: 0 24px 60px rgba(10,10,12,0.28); }
+  #view-services .services-layout.has-photo .services-grid { grid-template-columns: minmax(0, 1fr); }
+  #view-services .services-layout.has-photo .service-card { padding: 38px 40px 36px; max-width: 640px; }
+  #view-services .services-layout.has-photo .service-card .service-name { font-size: 24px; }
+  #view-services .services-layout.has-photo .service-card .service-tiers li, #view-services .services-layout.has-photo .service-card .service-tier { padding-top: 17px; padding-bottom: 17px; font-size: 15.5px; }
+}
