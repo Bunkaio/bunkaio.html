@@ -5067,7 +5067,8 @@ html, body { touch-action: pan-x pan-y; }
   #pfTabs .pf-cat-tab:hover { color: #fff; }
   #pfTabs .pf-cat-tab.active { background: #fff; color: #0a0a0c; border-color: #fff; }
   /* Photos : quatre par ligne (planche contact, toute la catégorie d'un coup d'œil), vignettes 4/5 serrées. */
-  .pf-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; }
-  .pf-grid .ph { border-radius: 6px; aspect-ratio: 4 / 5; }
+  .pf-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px 8px; margin: 22px 0 56px; }
+  .pf-grid .ph { border-radius: 8px; aspect-ratio: 4 / 5; box-shadow: 0 6px 16px rgba(10,10,12,0.22); }
+  #pfLinks { margin-top: 8px; }
   .pf-cta-band { padding: 26px 20px; gap: 16px; }
 }
