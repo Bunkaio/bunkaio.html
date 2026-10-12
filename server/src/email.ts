@@ -928,16 +928,22 @@ export function buildQuoteSignedEmail(params: { customerName: string; number: st
     ${params.groupUrl ? `<p style="font-size:14px;line-height:1.6;margin:16px 0 0;">${t('D\'autres personnes seront photographiées ? Chacune donne son propre accord via ce lien personnel à leur transmettre :', 'Will other people be photographed? Each person gives their own consent through this link, to pass on to them:')} <a href="${params.groupUrl}" style="color:#6e5aa8;word-break:break-all;">${params.groupUrl}</a></p>` : ''}
     <p style="font-size:12.5px;line-height:1.6;color:#76717f;margin:16px 0 0;">${t('Vos données (identité, coordonnées, photographies, preuve de votre signature) sont traitées par BUNKAIO pour exécuter votre devis et conserver la preuve de votre accord, pendant 5 ans après la fin de notre relation (factures : 10 ans). Droits d\'accès, de rectification, d\'effacement et d\'opposition : contact@bunkaio.com. Détails : bunkaio.com/confidentialite/.', 'Your data (identity, contact details, photographs, proof of your signature) is processed by BUNKAIO to perform your quote and keep proof of your agreement, for 5 years after the end of our relationship (invoices: 10 years). Rights of access, rectification, erasure and objection: contact@bunkaio.com. Details: bunkaio.com/confidentialite/.')}${params.pdfAttached ? ' ' + t('Votre exemplaire signé est joint à cet email (PDF).', 'Your signed copy is attached to this email (PDF).') : ''}</p>` : '';
   const legalText = params.consents && params.consents.length ? `${t('Vos autorisations d\'image', 'Your image permissions')} :\n${(params.consents ?? []).map((c) => `- ${c.label} : ${c.yes ? t('autorisé', 'allowed') : t('refusé', 'refused')}`).join('\n')}\n${t('Modifier ou retirer : ', 'Change or withdraw: ')}${withdrawUrl}\n${params.groupUrl ? `${t('Lien à transmettre aux autres personnes photographiées : ', 'Link for other people being photographed: ')}${params.groupUrl}\n` : ''}\n` : '';
+  const spaceName = (params.space ?? 'client') === 'partner' ? t('espace partenaire', 'partner area') : t('espace client', 'client area');
+  const findNote = params.abonnement
+    ? t(`Retrouvez à tout moment votre devis signé, son PDF et vos autorisations d'image dans votre ${spaceName}, rubrique <strong>« Mes devis »</strong>.`, `You can find your signed quote, its PDF and your image permissions at any time in your ${spaceName}, under <strong>"My quotes"</strong>.`)
+    : t(`Retrouvez à tout moment votre devis signé, son PDF et vos autorisations d'image dans votre ${spaceName}, rubrique <strong>« Mes devis »</strong>, et votre facture d'acompte dans <strong>« Mes factures »</strong>.`, `You can find your signed quote, its PDF and your image permissions at any time in your ${spaceName}, under <strong>"My quotes"</strong>, and your deposit invoice under <strong>"My invoices"</strong>.`);
+  const findHtml = `<p style="font-size:14px;line-height:1.65;margin:20px 0 0;padding:14px 16px;background:#f6f1fc;border-radius:10px;color:#3a3544;">${findNote}</p>`;
   const html = emailShell(`
     <h1 style="font-size:20px;margin:0 0 16px;">${t('Devis signé', 'Quote signed')}</h1>
     <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">${greeting}</p>
     <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">${intro}</p>
     <a href="${params.url}" style="${btnStyle}">${t('Voir mon devis signé', 'View my signed quote')}</a>
     ${params.depositUrl ? `<p style="font-size:15px;line-height:1.6;margin:22px 0 0;">${next} <a href="${params.depositUrl}" style="color:#6e5aa8;">${t('Régler l\'acompte', 'Pay the deposit')}</a></p>` : `<p style="font-size:15px;line-height:1.6;margin:22px 0 0;">${next}</p>`}
+    ${findHtml}
     ${legalBlock}
     ${spaceBlock(lang, params.space, 'deposit')}
   `, lang);
-  const text = `${greeting}\n\n${intro}\n\n${t('Voir mon devis signé', 'View my signed quote')} : ${params.url}\n\n${next}${params.depositUrl ? '\n' + params.depositUrl : ''}\n\n${legalText}${spaceText(lang, params.space, 'deposit')}`;
+  const text = `${greeting}\n\n${intro}\n\n${t('Voir mon devis signé', 'View my signed quote')} : ${params.url}\n\n${next}${params.depositUrl ? '\n' + params.depositUrl : ''}\n\n${findNote.replace(/<[^>]+>/g, '')}\n\n${legalText}${spaceText(lang, params.space, 'deposit')}`;
   return finalize(lang, { tpl: `devis_signe`, subject: t(`Bunkaio — Devis n° ${params.number} signé`, `Bunkaio — Quote no. ${params.number} signed`), html, text });
 }
 
