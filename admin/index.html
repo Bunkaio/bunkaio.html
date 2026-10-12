@@ -2091,10 +2091,14 @@ async function createTestQuote() {
   try {
     const { res, data } = await api('/admin/quote', { method: 'POST', body: JSON.stringify({ action: 'create-test', quote: sample, legal: BunkaioDevis.legalPack(sample, DB.business || {}) }) });
     if (!res.ok || !data.ok) { toast('Erreur : ' + (data.error || res.status)); return; }
-    await loadDashboard(); openQuote(data.quote.id); drawer.tab = 'track'; renderQuoteDrawer();
-    QE._url = data.url;
+    /* On ouvre le devis tel que renvoyé par le Worker (sans attendre le rechargement du tableau de bord), puis on rafraîchit en arrière-plan. */
+    const nq = { ...data.quote }; delete nq.token;
+    DB.testQuotes = (DB.testQuotes || []).filter(x => x.id !== nq.id).concat([nq]);
+    openQuote(nq.id); drawer.tab = 'track'; renderQuoteDrawer();
+    loadDashboard().catch(() => {});
+    QE._url = data.url; QE.test = true;
     $('drMsg').innerHTML = `<div class="msg ${data.emailSent ? 'ok' : 'warn'}">${data.emailSent ? 'Devis de test envoyé à ' + esc(email) + '.' : 'Email non envoyé : utilisez le lien.'} Lien : <code style="word-break:break-all">${esc(data.url)}</code><br>Aucune facture Stripe ne sera créée. Supprimez-le quand vous avez fini.</div>`;
-  } catch (e) {}
+  } catch (e) { if (e && e.message !== 'unauthorized') toast('Devis de test impossible : ' + (e.message || e)); console.error(e); }
 }
 /* Signature saisie par BUNKAIO (papier, Yousign, email…) : un seul formulaire, aucune réponse pré-choisie. Le client qui signe en ligne n'y passe jamais. */
 function markSigned() {
