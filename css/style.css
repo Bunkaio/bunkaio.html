@@ -5169,3 +5169,8 @@ html.pfi-lock, html.pfi-lock body { overflow: hidden !important; }
   .hero-kicker .hk-b::before, .hero-kicker .hk-b::after { animation: none; opacity: 0.4; }
   .hero-kicker .hk-w::before, .hero-kicker .hk-lines { animation: none; opacity: 1; }
 }
+
+/* Vidéo de fond de la page Collaboration : léger agrandissement centré pour rogner d'éventuelles bandes noires incluses dans le fichier vidéo
+   (le cadrage « cover » remplit déjà toute la page ; les bandes viennent de l'export). À retirer si la vidéo est exportée sans bandes. */
+.hero-video-wrap[data-view="partners"] { overflow: hidden; background: transparent; }
+.hero-video-wrap[data-view="partners"] video { -webkit-transform: translateZ(0) scale(1.14); transform: translateZ(0) scale(1.14); transform-origin: center center; }
