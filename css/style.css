@@ -5024,15 +5024,18 @@ html, body { touch-action: pan-x pan-y; }
 .hero-kicker .hk-w:nth-of-type(2) em, .hero-kicker .hk-w:nth-of-type(4) em { top: auto; bottom: 14px; }
 .hero-kicker .hk-w em::before { left: 0; right: 0; top: 0; bottom: 0; }
 @media (max-width: 760px) {
-  .hero-kicker .hk-b { display: block; width: min(88vw, 330px); aspect-ratio: 330 / 275; font-size: 10.5px; letter-spacing: 0.13em; gap: 0; margin-top: 4px; }
+  /* Téléphone : même disposition que sur ordinateur (zigzag horizontal, libellés au-dessus / en dessous), à l'échelle de l'écran ;
+     les libellés longs passent sur deux lignes pour rester dans l'écran. */
+  .hero-kicker .hk-b { display: block; width: min(94vw, 420px); aspect-ratio: 330 / 220; font-size: 9px; letter-spacing: 0.08em; line-height: 1.35; gap: 0; margin-top: 2px; }
   .hero-kicker .hk-lines.d { display: none; } .hero-kicker .hk-lines.m { display: block; }
-  .hero-kicker .hk-w:nth-of-type(1) { --x: 18%; --y: 10%; }
-  .hero-kicker .hk-w:nth-of-type(2) { --x: 74%; --y: 30%; }
-  .hero-kicker .hk-w:nth-of-type(3) { --x: 26%; --y: 54%; }
-  .hero-kicker .hk-w:nth-of-type(4) { --x: 76%; --y: 72%; }
-  .hero-kicker .hk-w:nth-of-type(5) { --x: 30%; --y: 92%; }
-  .hero-kicker .hk-w em, .hero-kicker .hk-w:nth-of-type(2) em, .hero-kicker .hk-w:nth-of-type(4) em { translate: 0 -50%; top: 0; bottom: auto; left: 16px; right: auto; text-align: left; }
-  .hero-kicker .hk-w:nth-of-type(2) em, .hero-kicker .hk-w:nth-of-type(4) em { left: auto; right: 16px; text-align: right; }
+  .hero-kicker .hk-w:nth-of-type(1) { --x: 14%; --y: 62%; }
+  .hero-kicker .hk-w:nth-of-type(2) { --x: 31%; --y: 28%; }
+  .hero-kicker .hk-w:nth-of-type(3) { --x: 50%; --y: 64%; }
+  .hero-kicker .hk-w:nth-of-type(4) { --x: 69%; --y: 26%; }
+  .hero-kicker .hk-w:nth-of-type(5) { --x: 86%; --y: 60%; }
+  .hero-kicker .hk-w em { white-space: normal; width: max-content; max-width: 92px; padding: 3px 5px; font-size: 9px; }
+  .hero-kicker .hk-w:nth-of-type(1) em, .hero-kicker .hk-w:nth-of-type(3) em, .hero-kicker .hk-w:nth-of-type(5) em { top: 12px; }
+  .hero-kicker .hk-w:nth-of-type(2) em, .hero-kicker .hk-w:nth-of-type(4) em { bottom: 12px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .hero-kicker .hk-lines polyline { animation: none; stroke-dashoffset: 0; }
