@@ -5090,7 +5090,7 @@ function renderAccDevis(){
   const day = iso => { try { return new Date(iso).toLocaleDateString(LANG === 'en' ? 'en-GB' : 'fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }); } catch (e) { return ''; } };
   el.innerHTML = `<div class="acc-info-card"><p class="acc-subs-empty-text" style="margin:0">${t({fr:'Retrouvez ici vos devis, à signer en ligne ou déjà signés, et vos autorisations d\'utilisation de vos images : vous pouvez les modifier ou les retirer à tout moment.', en:'Find your quotes here, to sign online or already signed, along with your image authorisations: you can change or withdraw them at any time.'})}</p></div>` +
     list.map((q, i) => {
-      const head = `<div class="acc-subs-empty-title">${t({fr:'Devis n° ', en:'Quote no. '})}${escHtml(q.number)} — ${escHtml(q.prestation)}</div>`;
+      const head = `<div class="acc-subs-empty-title">${t({fr:'Devis n° ', en:'Quote no. '})}${escHtml(q.number)} — ${escHtml(q.prestation)}${q.test ? ' <span class="status-pill st-cancel">TEST</span>' : ''}</div>`;
       if (q.status === 'envoye') return `<div class="acc-info-card">${head}<p class="acc-subs-empty-text">${t({fr:'À signer avant le ', en:'To be signed before '})}${day(q.validUntil + 'T12:00:00')}.</p><div class="btn-row"><a class="btn btn-solid cta-primary" href="${escHtml(q.url)}"><span>${t({fr:'Lire et signer le devis', en:'Read and sign the quote'})}</span></a></div></div>`;
       const im = q.image;
       const rows = im ? Object.keys(useName).map(k => `<tr><td>${useName[k]}</td><td><span class="status-pill ${im.uses[k] === 'oui' ? 'st-done' : im.uses[k] === 'retire' ? 'st-cancel' : ''}">${valLabel[im.uses[k]] || '—'}</span></td></tr>`).join('') : '';

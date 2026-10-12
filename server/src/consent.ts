@@ -250,20 +250,21 @@ export interface AccountQuote {
   number: string;
   prestation: string;
   status: 'envoye' | 'signe';
+  test?: boolean;
   validUntil: string;
   signedAt?: string;
   url: string;
   image?: { status: string; uses: Record<string, 'oui' | 'non' | 'retire'>; version?: string; persons?: string; minors?: boolean; withdrawalRequestedAt?: string; subjects: { total: number; signed: number }; groupUrl?: string };
 }
 
-/** Devis envoyés (à signer) et signés de ce client, avec l'état de ses autorisations d'image. Les devis de test sont exclus. */
+/** Devis envoyés (à signer) et signés de ce client, avec l'état de ses autorisations d'image. Les devis de test sont inclus (repérés « TEST ») : seul le titulaire de l'adresse les voit, ce qui permet de vérifier l'onglet. */
 export async function accountQuotes(env: Env, email: string): Promise<AccountQuote[]> {
   const mail = email.toLowerCase();
   const out: AccountQuote[] = [];
   for (const q of await listQuotes(env)) {
-    if (q.test || q.email.toLowerCase() !== mail || (q.status !== 'envoye' && q.status !== 'signe')) continue;
+    if (q.email.toLowerCase() !== mail || (q.status !== 'envoye' && q.status !== 'signe')) continue;
     const url = `https://bunkaio.com/signature/?d=${q.id}&k=${q.token}`;
-    const item: AccountQuote = { number: q.number, prestation: q.prestation, status: q.status, validUntil: q.validUntil, signedAt: q.signedAt, url };
+    const item: AccountQuote = { number: q.number, prestation: q.prestation, status: q.status, ...(q.test ? { test: true } : {}), validUntil: q.validUntil, signedAt: q.signedAt, url };
     const sg = q.signature;
     if (q.status === 'signe' && sg?.imageUse) {
       const c = q.consent ?? computeConsent(q);
