@@ -4860,3 +4860,22 @@ footer button[data-lang="ft-cookie-prefs"] { font: inherit; }
 .hero-kicker .hk-b em a:hover, .hero-kicker .hk-b em a:focus-visible { color: #d6c9f7; }
 @keyframes hkFx { 0% { color: rgba(255,255,255,0.68); } 3%, 18% { color: #fff; } 22%, 100% { color: rgba(255,255,255,0.68); } }
 @media (prefers-reduced-motion: reduce) { .hero-kicker .hk-b em { color: #fff; } }
+
+/* ═══ Devis, étape « Vos coordonnées » : lisibilité sur toutes les photos de fond ═══
+   Avant : sur mobile, libellés gris minuscules posés directement sur la photo ; sur ordinateur, panneau trop transparent. L'étape est désormais portée par
+   un panneau blanc dépoli presque opaque, avec des textes foncés (noir, gris encre, violet profond) au contraste élevé. Aucun changement de contenu ni de logique. */
+#qs-5.qstep.active {
+  background: rgba(255,255,255,0.94); -webkit-backdrop-filter: blur(14px) saturate(1.1); backdrop-filter: blur(14px) saturate(1.1);
+  border: 1px solid rgba(10,10,12,0.22); border-radius: 14px; box-shadow: 0 18px 50px rgba(10,10,12,0.22);
+  padding: 26px 18px 30px; color: #0a0a0c; text-shadow: none;
+}
+@media (min-width: 901px) { #qs-5.qstep.active { padding: 44px 52px 52px; border-color: rgba(10,10,12,0.3); } }
+#qs-5 .qstep-meta { color: #4b3d7a; text-shadow: none; }
+#qs-5 .qstep-title { color: #0a0a0c; text-shadow: none; }
+#qs-5 .qstep-sub { color: #3a3544; text-shadow: none; }
+#qs-5 .fgroup label, #qs-5 .brief-label { color: #3a3544; font-weight: 600; text-shadow: none; }
+#qs-5 input, #qs-5 select, #qs-5 textarea { color: #0a0a0c; border-color: rgba(10,10,12,0.28); text-shadow: none; }
+#qs-5 input::placeholder, #qs-5 textarea::placeholder { color: #6b6577; opacity: 1; }
+#qs-5 .travel-hint, #qs-5 .travel-est, #qs-5 .quiz-reassurance-text, #qs-5 .quiz-reassurance-pay, #qs-5 .quiz-microcopy, #qs-5 .form-privacy { color: #3a3544; text-shadow: none; }
+#qs-5 .quiz-reassurance-pay strong { color: #0a0a0c; }
+#qs-5 .form-privacy a, #qs-5 .quiz-microcopy a { color: #4b3d7a; }
