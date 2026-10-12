@@ -5174,3 +5174,32 @@ html.pfi-lock, html.pfi-lock body { overflow: hidden !important; }
    (le cadrage « cover » remplit déjà toute la page ; les bandes viennent de l'export). À retirer si la vidéo est exportée sans bandes. */
 .hero-video-wrap[data-view="partners"] { overflow: hidden; background: transparent; }
 .hero-video-wrap[data-view="partners"] video { -webkit-transform: translateZ(0) scale(1.14); transform: translateZ(0) scale(1.14); transform-origin: center center; }
+
+/* ═══ Constellation en croix « ⊹ » ═══
+   Quatre bras (gauche, haut, droite, bas) autour d'un point central, avec le vide au centre comme dans le symbole : Particuliers à gauche,
+   Professionnels en haut, Entreprises au centre, Modèles/mannequins à droite, Événementiel en bas (le cycle de 10 s tourne dans cet ordre). */
+.hero-kicker .hk-b { aspect-ratio: 820 / 260; }
+.hero-kicker .hk-w:nth-of-type(1) { --x: 15.9%; --y: 50%; }
+.hero-kicker .hk-w:nth-of-type(2) { --x: 50%;   --y: 17%; }
+.hero-kicker .hk-w:nth-of-type(3) { --x: 50%;   --y: 50%; }
+.hero-kicker .hk-w:nth-of-type(4) { --x: 84.1%; --y: 50%; }
+.hero-kicker .hk-w:nth-of-type(5) { --x: 50%;   --y: 83%; }
+/* Libellés : gauche → à gauche du point, droite → à droite, haut → au-dessus, centre et bas → en dessous */
+.hero-kicker .hk-w em { white-space: normal; width: max-content; max-width: 130px; }
+.hero-kicker .hk-w:nth-of-type(1) em { left: auto; right: 16px; top: 50%; bottom: auto; translate: 0 -50%; text-align: right; }
+.hero-kicker .hk-w:nth-of-type(4) em { left: 16px; right: auto; top: 50%; bottom: auto; translate: 0 -50%; text-align: left; }
+.hero-kicker .hk-w:nth-of-type(2) em { top: auto; bottom: 14px; left: 0; translate: -50% 0; text-align: center; }
+.hero-kicker .hk-w:nth-of-type(3) em, .hero-kicker .hk-w:nth-of-type(5) em { top: 14px; bottom: auto; left: 0; translate: -50% 0; text-align: center; }
+.hero-kicker .hk-w:nth-of-type(5) em { max-width: 150px; }
+@media (max-width: 760px) {
+  .hero-kicker .hk-b { aspect-ratio: 330 / 270; }
+  .hero-kicker .hk-w:nth-of-type(1) { --x: 17.6%; --y: 50%; }
+  .hero-kicker .hk-w:nth-of-type(2) { --x: 50%;   --y: 14.8%; }
+  .hero-kicker .hk-w:nth-of-type(3) { --x: 50%;   --y: 50%; }
+  .hero-kicker .hk-w:nth-of-type(4) { --x: 82.4%; --y: 50%; }
+  .hero-kicker .hk-w:nth-of-type(5) { --x: 50%;   --y: 85.2%; }
+  /* Sur petit écran, tous les libellés se placent sous leur point (les bras horizontaux restent libres au-dessus) sauf Professionnels, au-dessus. */
+  .hero-kicker .hk-w:nth-of-type(1) em, .hero-kicker .hk-w:nth-of-type(4) em { left: 0; right: auto; top: 12px; translate: -50% 0; text-align: center; max-width: 92px; }
+  .hero-kicker .hk-w:nth-of-type(3) em, .hero-kicker .hk-w:nth-of-type(5) em { top: 12px; max-width: 120px; }
+  .hero-kicker .hk-w:nth-of-type(2) em { bottom: 12px; }
+}
