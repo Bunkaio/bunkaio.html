@@ -1041,14 +1041,13 @@ function toggleMobileMenu(){
 
 function openMobileMenu(){
   document.body.classList.add('menu-open');
-  /* Rappel ⊹ du menu : l'animation (tracé des bras, liens) repart à chaque ouverture. */
-  const deco = document.querySelector('#mobileMenu > .cst-deco');
-  if (deco && !REDUCED_MOTION) { deco.classList.remove('is-on'); void deco.getBoundingClientRect(); deco.classList.add('is-on'); }
+  if (typeof MenuField !== 'undefined' && MenuField) MenuField.run();
   document.getElementById('navBurger').setAttribute('aria-expanded', 'true');
 }
 
 function closeMobileMenu(){
   document.body.classList.remove('menu-open');
+  if (typeof MenuField !== 'undefined' && MenuField) MenuField.run();
   const burger = document.getElementById('navBurger');
   if (burger) burger.setAttribute('aria-expanded', 'false');
 }
@@ -7559,13 +7558,12 @@ let _cstIO = null;
 function initCstDecor(root){
   if (!_cstIO && window.IntersectionObserver) _cstIO = new IntersectionObserver(es => es.forEach(e => e.target.classList.toggle('is-on', e.isIntersecting)), { threshold: 0.15 });
   /* Bandeaux sombres (traits blancs) et panneaux clairs d'appel à l'action (variante violette). */
-  (root || document).querySelectorAll('.pf-cta-band, .partner-cta, footer .footer-cta-row, .article-cta, #mobileMenu, #view-quiz .quiz-wrap').forEach(box => {
+  (root || document).querySelectorAll('.pf-cta-band, .partner-cta, footer .footer-cta-row, .article-cta, #view-quiz .quiz-wrap').forEach(box => {
     if (box.querySelector(':scope > .cst-deco')) return;
     box.classList.add('has-cst');
     box.insertAdjacentHTML('afterbegin', cstDecoSvg());
     const svg = box.querySelector(':scope > .cst-deco');
-    if (box.classList.contains('article-cta') || box.id === 'mobileMenu' || box.classList.contains('quiz-wrap')) svg.classList.add('cst-light');
-    if (box.id === 'mobileMenu') { if (REDUCED_MOTION) svg.classList.add('is-on'); return; }
+    if (box.classList.contains('article-cta') || box.classList.contains('quiz-wrap')) svg.classList.add('cst-light');
     if (_cstIO && !REDUCED_MOTION) _cstIO.observe(svg); else svg.classList.add('is-on');
   });
 }
@@ -7602,14 +7600,14 @@ function cstDrawField(ctx, pts, W, H, c, frame, still){
    Le canevas couvre l'écran visible (suivi du défilement) ; pause hors de ces vues, onglet caché ou animations réduites (image fixe). */
 const CstField = (() => {
   let raf = 0, wrap = null, cv = null, ctx = null, pts = [], W = 0, H = 0, view = null, frame = 0;
-  const VIEWS = ['login', 'account', 'portfolio'];
+  const VIEWS = ['login', 'account', 'portfolio', 'services'];
   function palette(){
     if (currentView === 'account') {
       const partner = view && view.dataset.acct === 'partner';
       return { line: '255,255,255', dot: '255,255,255', cross: partner ? '217,196,154' : '214,201,247', a: 1 };
     }
     /* Portfolio : par-dessus la vidéo / les photos de fond, à faible opacité (les photos restent la vedette). */
-    if (currentView === 'portfolio') return { line: '255,255,255', dot: '255,255,255', cross: '214,201,247', a: 0.4 };
+    if (currentView === 'portfolio' || currentView === 'services') return { line: '255,255,255', dot: '255,255,255', cross: '214,201,247', a: 0.4 };
     return { line: '110,90,168', dot: '110,90,168', cross: '110,90,168', a: 0.8 };
   }
   function size(){
@@ -7669,6 +7667,36 @@ const FooterField = (() => {
   document.addEventListener('visibilitychange', run);
   let rz = 0; window.addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => { size(); run(); }, 200); });
   if (window.ResizeObserver) new ResizeObserver(() => { if (Math.abs(foot.clientHeight - H) > 20) { size(); run(); } }).observe(foot);
+  return { run };
+})();
+
+/* Menu mobile : fond constellation dynamique à faible opacité (violet, sur le fond clair du menu), animé seulement menu ouvert. */
+const MenuField = (() => {
+  const menu = document.getElementById('mobileMenu');
+  if (!menu) return null;
+  const wrap = document.createElement('div'); wrap.className = 'cst-field cst-menu'; wrap.setAttribute('aria-hidden', 'true'); wrap.innerHTML = '<canvas></canvas>';
+  menu.prepend(wrap);
+  const cv = wrap.querySelector('canvas'), ctx = cv.getContext('2d');
+  const c = { line: '110,90,168', dot: '110,90,168', cross: '110,90,168', a: 0.55 };
+  let pts = [], W = 0, H = 0, raf = 0, frame = 0;
+  function size(){
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    W = window.innerWidth; H = window.innerHeight;
+    cv.style.height = H + 'px';
+    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const n = Math.max(22, Math.min(60, Math.round(W * H / 16000)));
+    pts = Array.from({ length: n }, (_, i) => ({ x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - 0.5) * 0.24, vy: (Math.random() - 0.5) * 0.24, r: 0.7 + Math.random() * 1.2, ph: Math.random() * 6.28, cross: i % 8 === 0 }));
+  }
+  function loop(){ frame++; cstDrawField(ctx, pts, W, H, c, frame, false); raf = requestAnimationFrame(loop); }
+  function run(){
+    cancelAnimationFrame(raf); raf = 0;
+    if (!document.body.classList.contains('menu-open') || document.hidden) return;
+    if (W !== window.innerWidth || H !== window.innerHeight) size();
+    if (REDUCED_MOTION) { cstDrawField(ctx, pts, W, H, c, frame, true); return; }
+    loop();
+  }
+  size();
+  document.addEventListener('visibilitychange', run);
   return { run };
 })();
 

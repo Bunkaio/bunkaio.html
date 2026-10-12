@@ -5317,9 +5317,6 @@ footer .footer-cta-row .hero-start { animation: none; opacity: 1; transform: non
 .btn-ghost, .btn-solid { isolation: isolate; }
 .btn-ghost::before, .btn-solid::before { z-index: -1; }
 
-/* Rappel ⊹ — menu mobile : grande constellation violette très discrète derrière les liens. */
-#mobileMenu.has-cst { position: fixed; }
-#mobileMenu > .cst-deco { left: 50%; top: 50%; translate: -50% -50%; width: min(78vw, 340px); opacity: 0.22; }
 /* Rappel ⊹ — formulaire de devis : petite constellation dans le coin haut droit, et glyphe animé devant « 01 — Catégorie », « 02 — … ». */
 #view-quiz .quiz-wrap > .cst-deco { left: auto; right: 0; top: 104px; translate: none; width: 104px; opacity: 0.5; }
 @media (max-width: 760px) { #view-quiz .quiz-wrap > .cst-deco { top: 96px; right: 4px; width: 78px; opacity: 0.38; } }
@@ -5382,3 +5379,10 @@ footer .footer-cta-row .hero-start { animation: none; opacity: 1; transform: non
 footer { isolation: isolate; }
 footer > .cst-foot { z-index: -1; }
 footer > .cst-foot canvas { transform: none; }
+
+/* Menu mobile : fond constellation dynamique derrière les liens. Services : même fond que le Portfolio. */
+#mobileMenu { isolation: isolate; }
+#mobileMenu > .cst-menu { position: absolute; inset: 0; z-index: -1; }
+#view-services { position: relative; }
+/* Menu mobile : fond uni lavande (la page floutée derrière ne transparaît plus) pour que la constellation soit le seul décor. */
+.mobile-menu { background: radial-gradient(ellipse 120% 70% at 50% 0%, #f3eefc 0%, #e9e1f8 55%, #ddd3f2 100%); -webkit-backdrop-filter: none; backdrop-filter: none; }
