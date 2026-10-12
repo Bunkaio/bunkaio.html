@@ -26,6 +26,8 @@ Le code est la source de vérité. Ce fichier ne sert qu'à reprendre vite.
 - Déplacement : offert ≤ 30 km autour de Montpellier, de Toulouse et « dans l'ouest de l'Hérault » (décision du 12 oct. 2026 : Toulouse n'a plus de forfait ; la ville de Béziers n'est écrite que dans la ligne « Basé à Montpellier — mobile sur toute la France sur devis et gratuitement sur Béziers, Montpellier et Toulouse », à la demande de la propriétaire ; le calcul garde 3 pôles, voir `TRAVEL_POLES`), ailleurs 0,60 €/km aller-retour au-delà de 30 km.
 - Programme partenaires : −20 % permanent (décision de la propriétaire).
 
+- Studio (décision du 12 oct. 2026) : jamais inclus, option à 60 € (`STUDIO_FEE`, `studioApplies`) sur particuliers, Book grossesse, corporate/Lancement, mode, Polas et commercial ; pas de sélecteur pour l'événementiel ni l'abonnement.
+
 ## Stratégie (décision de la propriétaire, 8 oct. 2026) : une seule
 - Cibles : **entrepreneurs et indépendants** (porte d'entrée : formule Lancement 320 €, puis Signature, Premium, Éditorial) et **marques** (Mode, Commercial et produits). Plan de référence : artefact « Plan de lancement V5 » (même adresse que l'ancien V3) ; suivi : « Actions BUNKAIO » ; calculs : « Mes chiffres BUNKAIO ».
 - Hors stratégie (aucune communication, aucune publicité) mais en vente sur le site sans modification : particuliers, Book grossesse, événementiel, portraits d'équipe, Lumen (prototype), Polas et Studio Continu.

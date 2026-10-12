@@ -1160,12 +1160,12 @@ const CATS = [
         en:['1h session — at your premises, outdoors or in the studio (+€60)','8 retouched HD photos','Guided selection included','Private download gallery'] } },
       lanc:{ price:320, delay:{fr:'7 jours ouvrés',en:'7 working days'},
         line:{fr:'Pour les entrepreneurs qui lancent, repositionnent ou professionnalisent leur activité.', en:'For entrepreneurs launching, repositioning or professionalising their business.'}, items:{
-        fr:['1h30 de shooting, au studio ou dans votre environnement professionnel','2 tenues et 2 ambiances ou mises en situation','12 photos HD retouchées','Brief préparatoire personnalisé','Conseils tenues, attitudes et intentions','Direction de pose et accompagnement pendant la séance','Sélection guidée et galerie privée','Formats adaptés au web et aux réseaux sociaux','Droits d\'utilisation commerciale sans limite de durée'],
-        en:['1.5-hour shoot, in the studio or in your professional setting','2 outfits and 2 moods or real-work set-ups','12 retouched HD photos','Personalised preparation brief','Advice on outfits, attitude and intention','Posing direction and guidance throughout the session','Guided selection and private gallery','Formats suited to web and social media','Commercial usage rights with no time limit'] } },
+        fr:['1h30 de shooting, dans votre environnement professionnel ou en studio (option +60 €)','2 tenues et 2 ambiances ou mises en situation','12 photos HD retouchées','Brief préparatoire personnalisé','Conseils tenues, attitudes et intentions','Direction de pose et accompagnement pendant la séance','Sélection guidée et galerie privée','Formats adaptés au web et aux réseaux sociaux','Droits d\'utilisation commerciale sans limite de durée'],
+        en:['1.5-hour shoot, in your professional setting or in the studio (option +€60)','2 outfits and 2 moods or real-work set-ups','12 retouched HD photos','Personalised preparation brief','Advice on outfits, attitude and intention','Posing direction and guidance throughout the session','Guided selection and private gallery','Formats suited to web and social media','Commercial usage rights with no time limit'] } },
       sig:{ price:450, delay:{fr:'7 jours ouvrés',en:'7 working days'},
         line:{fr:'Pour constituer une véritable bibliothèque d\'images professionnelles.', en:'To build a genuine library of professional images.'}, items:{
-        fr:['2h de séance — dans vos locaux, en extérieur ou en studio','Jusqu\'à 3 tenues et 3 ambiances ou mises en situation','15 photos HD retouchées','Brief préparatoire et direction de pose','Galerie privée de téléchargement'],
-        en:['2h session — at your premises, outdoors or in the studio','Up to 3 outfits and 3 moods or real-work set-ups','15 retouched HD photos','Preparation brief and posing direction','Private download gallery'] } },
+        fr:['2h de séance — dans vos locaux, en extérieur ou en studio (+60€)','Jusqu\'à 3 tenues et 3 ambiances ou mises en situation','15 photos HD retouchées','Brief préparatoire et direction de pose','Galerie privée de téléchargement'],
+        en:['2h session — at your premises, outdoors or in the studio (+€60)','Up to 3 outfits and 3 moods or real-work set-ups','15 retouched HD photos','Preparation brief and posing direction','Private download gallery'] } },
       prem:{ price:690, delay:{fr:'7 jours ouvrés',en:'7 working days'},
         line:{fr:'Une production d\'image plus complète : portrait, activité, équipe, lieux.', en:'A fuller image production: portrait, activity, team, premises.'}, items:{
         fr:['Demi-journée (4h) — jusqu\'à 4 ambiances ou mises en situation','25 photos HD retouchées','Jusqu\'à 4 tenues','Direction artistique complète','Galerie privée de téléchargement'],
@@ -1203,8 +1203,8 @@ const CATS = [
     icon:'product',
     tiers:{
       deco:{ price:390, delay:{fr:'3 jours ouvrés',en:'3 working days'}, items:{
-        fr:['Jusqu\'à 5 produits — 10 photos HD retouchées','Fond neutre studio','Galerie privée de téléchargement'],
-        en:['Up to 5 products — 10 retouched HD photos','Neutral studio backdrop','Private download gallery'] } },
+        fr:['Jusqu\'à 5 produits — 10 photos HD retouchées','Fond neutre (studio en option, +60 €)','Galerie privée de téléchargement'],
+        en:['Up to 5 products — 10 retouched HD photos','Neutral backdrop (studio optional, +€60)','Private download gallery'] } },
       sig:{ price:750, delay:{fr:'5 jours ouvrés',en:'5 working days'}, items:{
         fr:['Jusqu\'à 12 produits — 20 photos HD retouchées','Mise en scène incluse','Galerie privée de téléchargement'],
         en:['Up to 12 products — 20 retouched HD photos','Styled setup included','Private download gallery'] } },
@@ -1265,39 +1265,39 @@ const SUBS = {
 const SUB_PROFILES = ['modele', 'mannequin'];
 const subAvailable = cat => !!SUBS[cat] && (!SUB_PROFILES.length || cat !== 'mode' || SUB_PROFILES.includes(S.prof));
 
-/* Formule spécialisée "Polas" — uniquement Mode & créateurs. Tarif tout compris : studio obligatoire et inclus.
+/* Formule spécialisée "Polas" — uniquement Mode & créateurs. Studio en option (+60 €), non inclus dans le tarif.
    Polas (digitals) = photos brutes et sans retouche, destinées exclusivement aux agences pour évaluer
    la morphologie, la posture et le potentiel brut du mannequin — aucune mise en scène. */
 const POLAS = {
-  /* Formule « Book grossesse » — séance photo particuliers. Tarif haut de gamme, lieu (studio ou extérieur) inclus. */
+  /* Formule « Book grossesse » — séance photo particuliers. Tarif haut de gamme ; le studio est une option (+60 €). */
   'photo-part': {
     id: 'grossesse', price: 450, studio: 0,
     name:{fr:'Book grossesse', en:'Maternity book'},
     badge:{fr:'Spécial grossesse', en:'Maternity special'},
     label:{fr:'Book grossesse', en:'Maternity book'},
     delay:{fr:'7 jours ouvrés', en:'7 working days'},
-    studioNote:{fr:'Studio ou extérieur au choix, inclus', en:'Studio or outdoor, included'},
-    short:{fr:'Solo ou en couple · studio ou extérieur inclus', en:'Solo or as a couple · studio or outdoor included'},
+    studioNote:{fr:'Studio en option (+60 €)', en:'Studio optional (+€60)'},
+    short:{fr:'Solo ou en couple · studio en option (+60 €)', en:'Solo or as a couple · studio optional (+€60)'},
     sub:{fr:'quatre formules, de la découverte à l\'expérience éditoriale complète, ainsi qu\'un book grossesse sur mesure.', en:'four packages, from the starter offer to the complete editorial experience, plus a tailor-made maternity book.'},
-    optNote:{fr:'<strong>Bon à savoir :</strong> le book grossesse est une expérience clé en main — studio ou extérieur au choix, sans option additionnelle. Précisez vos envies (lieu, tenues, présence du conjoint) dans le champ « commentaire » : nous organisons le reste avec vous. La séance se programme idéalement entre la 28<sup>e</sup> et la 36<sup>e</sup> semaine.', en:'<strong>Good to know:</strong> the maternity book is a turnkey experience — studio or outdoor, with no additional options. Tell us what you have in mind (location, outfits, partner joining) in the comment field and we will plan the rest with you. The ideal window is between weeks 28 and 36.'},
+    optNote:{fr:'<strong>Bon à savoir :</strong> le book grossesse se fait en extérieur ou, en option, en studio (+60 €). Précisez vos envies (lieu, tenues, présence du conjoint) dans le champ « commentaire » : nous organisons le reste avec vous. La séance se programme idéalement entre la 28<sup>e</sup> et la 36<sup>e</sup> semaine.', en:'<strong>Good to know:</strong> the maternity book is a turnkey experience — studio or outdoor, with no additional options. Tell us what you have in mind (location, outfits, partner joining) in the comment field and we will plan the rest with you. The ideal window is between weeks 28 and 36.'},
     items:{
-      fr:['Séance de 1h30, en studio ou en extérieur au choix','10 photos HD retouchées, retouche naturelle','Possibilité d\'ajouter des photos sur devis','Jusqu\'à 2 tenues (les vôtres, nous vous conseillons en amont)','Direction de pose douce et bienveillante, adaptée à chaque étape','Possibilité de venir en couple (conjoint·e, enfant)','Galerie privée de téléchargement'],
-      en:['1.5-hour session, studio or outdoor of your choice','10 retouched HD photos, natural retouching','Option to add more photos on quote','Up to 2 outfits (your own, with styling advice beforehand)','Gentle, reassuring posing guidance for every stage','Partner or child welcome to join','Private download gallery'] }
+      fr:['Séance de 1h30, en extérieur ou en studio (option +60 €)','10 photos HD retouchées, retouche naturelle','Possibilité d\'ajouter des photos sur devis','Jusqu\'à 2 tenues (les vôtres, nous vous conseillons en amont)','Direction de pose douce et bienveillante, adaptée à chaque étape','Possibilité de venir en couple (conjoint·e, enfant)','Galerie privée de téléchargement'],
+      en:['1.5-hour session, outdoors or in the studio (option +€60)','10 retouched HD photos, natural retouching','Option to add more photos on quote','Up to 2 outfits (your own, with styling advice beforehand)','Gentle, reassuring posing guidance for every stage','Partner or child welcome to join','Private download gallery'] }
   },
   mode: {
     id: 'polas', studio: 0,
     badge:{fr:'Spécial mannequins', en:'For models'},
     label:{fr:'Pour les agences', en:'For agencies'},
-    studioNote:{fr:'Studio inclus', en:'Studio included'},
-    short:{fr:'Digitals bruts · studio inclus', en:'Raw digitals · studio included'},
+    studioNote:{fr:'Studio en option (+60 €)', en:'Studio optional (+€60)'},
+    short:{fr:'Digitals bruts · studio en option (+60 €)', en:'Raw digitals · studio optional (+€60)'},
     sub:{fr:'un format Polas pour mannequins, ainsi que quatre formules, de la découverte à l\'expérience éditoriale complète.', en:'a Polas format for models, plus four packages, from the starter offer to the complete editorial experience.'},
-    optNote:{fr:'<strong>Bon à savoir :</strong> le format Polas est une expérience clé en main — studio inclus, sans option additionnelle.', en:'<strong>Good to know:</strong> the Polas format is a turnkey experience — studio included, no additional options.'},
+    optNote:{fr:'<strong>Bon à savoir :</strong> le format Polas se fait en studio en option (+60 €) : le studio n\'est pas inclus dans le tarif.', en:'<strong>Good to know:</strong> the Polas format uses the studio as an option (+€60): the studio is not included in the price.'},
     price: 100,
     name:{fr:'Polas', en:'Polas'},
     delay:{fr:'Livraison HD sous 24h', en:'HD delivery within 24h'},
     items:{
-      fr:['Séance studio de 30 min sur fond blanc, lumière neutre','10 photos brutes, sans retouche ni mise en scène','Visage, profils, trois-quarts et plans corps entier','Fichiers HD prêts à transmettre à votre agence'],
-      en:['30-minute studio session on a plain white background, neutral lighting','10 raw shots, no retouching or styling','Face, profiles, three-quarter and full-body shots','HD files ready to send to your agency'] }
+      fr:['Séance de 30 min sur fond blanc, lumière neutre (studio en option, +60 €)','10 photos brutes, sans retouche ni mise en scène','Visage, profils, trois-quarts et plans corps entier','Fichiers HD prêts à transmettre à votre agence'],
+      en:['30-minute session on a plain white background, neutral lighting (studio optional, +€60)','10 raw shots, no retouching or styling','Face, profiles, three-quarter and full-body shots','HD files ready to send to your agency'] }
   }
 };
 
@@ -1316,6 +1316,8 @@ function formulaPhotoHTML(cat, tierId, cls){
 }
 /* Supplément « studio » des formules Découverte (photo particuliers et corporate). */
 const STUDIO_FEE = 60;
+/* Le studio n'est jamais inclus : option à STUDIO_FEE € sur ces gammes (hors événementiel et abonnement, sans notion de studio). */
+function studioApplies(cat){ return ['photo-part','corporate','mode','commercial'].includes(cat); }
 const specialTotal = sp => sp.price + sp.studio;
 const isSpecialTier = () => !!(S.tier && POLAS[S.cat] && S.tier === POLAS[S.cat].id);
 
@@ -2677,7 +2679,7 @@ function renderRecapBase(){
       <div class="recap-label">${selLabel}</div>
       <div class="recap-title">
         <span>${t(cat.name)} — ${t(polas.name)}</span>
-        <span>${total.toLocaleString('fr-FR')}€</span>
+        <span>${total.toLocaleString('fr-FR')}€${S.studio ? ' + ' + STUDIO_FEE + '€ studio' : ''}</span>
       </div>
       <div class="recap-payment">${payLine}</div>
       <div class="travel-note">🚗 ${TRAVEL_TXT[LANG].note}</div>
@@ -2720,7 +2722,7 @@ function renderRecapBase(){
   const tier = TIERS.find(x => x.id === S.tier);
   const td = cat.tiers[S.tier];
   const delivLabel = LANG === 'fr' ? 'Livraison' : 'Delivery';
-  const studioSupplement = ((S.cat === 'photo-part' || S.cat === 'corporate') && S.studio) ? ' + ' + STUDIO_FEE + '€ studio' : '';
+  const studioSupplement = (studioApplies(S.cat) && S.studio) ? ' + ' + STUDIO_FEE + '€ studio' : '';
   const threeX = Math.round(pp(td.price) / 3).toLocaleString('fr-FR');
   const payLine = LANG === 'fr'
     ? `💳 Soit 3 × ${threeX}€ sans frais avec Klarna — ou carte bancaire, acompte 30 % + solde.`
@@ -2770,8 +2772,8 @@ function renderOptions(){
   }
 
   if (isSpecialTier()) {
-    if (POLAS[S.cat].studio) S.studio = true;
     label.style.display = 'none';
+    el.appendChild(buildStudioSelector());
     const note = document.createElement('div');
     note.className = 'sub-options-note stagger';
     note.style.animationDelay = '0.4s';
@@ -2811,32 +2813,8 @@ function renderOptions(){
     return;
   }
 
-  /* ─── Studio ou extérieur (séance photo et corporate) ─── */
-  if (S.cat === 'photo-part' || S.cat === 'corporate') {
-    const studioDiv = document.createElement('div');
-    studioDiv.className = 'stagger';
-    studioDiv.style.cssText = 'animation-delay:0.38s; margin-bottom:28px';
-    const studioLabel = LANG === 'fr'
-      ? '<div class="opt-section-label" style="margin-top:0;margin-bottom:16px">Lieu de la séance</div>'
-      : '<div class="opt-section-label" style="margin-top:0;margin-bottom:16px">Session location</div>';
-    const extLabel = LANG === 'fr' ? 'Extérieur' : 'Outdoor';
-    const stuLabel = LANG === 'fr' ? 'Studio (+' + STUDIO_FEE + '€ — utilisation du matériel studio)' : 'Studio (+€' + STUDIO_FEE + ' — studio equipment fee)';
-    /* Corporate & Personal Branding : le shooting dans l'environnement professionnel du client (in situ) est proposé en premier. */
-    const situ = S.cat === 'corporate' ? `
-        <div class="photo-pack" id="loc-situ" data-loc="situ" onclick="selectLocation('situ')" style="flex:1;min-width:130px">
-          <span>🏢 ${t({fr:'Dans vos locaux (in situ)', en:'At your premises (on site)'})}</span><span class="photo-pack-price">${LANG==='fr'?'Inclus':'Included'}</span>
-        </div>` : '';
-    studioDiv.innerHTML = studioLabel + `
-      <div style="display:flex;gap:12px;flex-wrap:wrap">${situ}
-        <div class="photo-pack" id="loc-ext" data-loc="ext" onclick="selectLocation('ext')" style="flex:1;min-width:130px">
-          <span>📍 ${extLabel}</span><span class="photo-pack-price">${LANG==='fr'?'Inclus':'Included'}</span>
-        </div>
-        <div class="photo-pack" id="loc-stu" data-loc="stu" onclick="selectLocation('stu')" style="flex:1;min-width:130px">
-          <span>🎞 ${stuLabel}</span><span class="photo-pack-price">+${STUDIO_FEE}€</span>
-        </div>
-      </div>`;
-    el.insertBefore(studioDiv, el.firstChild);
-  }
+  /* ─── Lieu : le studio est toujours une option payante ─── */
+  if (studioApplies(S.cat)) el.insertBefore(buildStudioSelector(), el.firstChild);
 
   OPTIONS.forEach((o, i) => {
     const d = document.createElement('div');
@@ -2918,6 +2896,32 @@ function renderOptions(){
   renderCommBox();
 }
 
+function buildStudioSelector(){
+  const studioDiv = document.createElement('div');
+  studioDiv.className = 'stagger';
+  studioDiv.style.cssText = 'animation-delay:0.38s; margin-bottom:28px';
+  const studioLabel = LANG === 'fr'
+    ? '<div class="opt-section-label" style="margin-top:0;margin-bottom:16px">Lieu de la séance</div>'
+    : '<div class="opt-section-label" style="margin-top:0;margin-bottom:16px">Session location</div>';
+  const extLabel = (S.cat === 'photo-part' || S.cat === 'corporate') ? (LANG === 'fr' ? 'Extérieur' : 'Outdoor') : (LANG === 'fr' ? 'Sur le lieu choisi (hors studio)' : 'On location (no studio)');
+  const stuLabel = LANG === 'fr' ? 'Studio (+' + STUDIO_FEE + '€ — option, jamais inclus)' : 'Studio (+€' + STUDIO_FEE + ' — option, never included)';
+  /* Corporate & Personal Branding : le shooting dans l'environnement professionnel du client (in situ) est proposé en premier. */
+  const situ = S.cat === 'corporate' ? `
+      <div class="photo-pack" id="loc-situ" data-loc="situ" onclick="selectLocation('situ')" style="flex:1;min-width:130px">
+        <span>🏢 ${t({fr:'Dans vos locaux (in situ)', en:'At your premises (on site)'})}</span><span class="photo-pack-price">${LANG==='fr'?'Inclus':'Included'}</span>
+      </div>` : '';
+  studioDiv.innerHTML = studioLabel + `
+    <div style="display:flex;gap:12px;flex-wrap:wrap">${situ}
+      <div class="photo-pack" id="loc-ext" data-loc="ext" onclick="selectLocation('ext')" style="flex:1;min-width:130px">
+        <span>📍 ${extLabel}</span><span class="photo-pack-price">${LANG==='fr'?'Inclus':'Included'}</span>
+      </div>
+      <div class="photo-pack" id="loc-stu" data-loc="stu" onclick="selectLocation('stu')" style="flex:1;min-width:130px">
+        <span>🎞 ${stuLabel}</span><span class="photo-pack-price">+${STUDIO_FEE}€</span>
+      </div>
+    </div>`;
+  return studioDiv;
+}
+
 function selectLocation(loc){
   S.studio = (loc === 'stu');
   S.loc = loc;
@@ -2959,7 +2963,7 @@ function checkQuizForm(){
 
 function computeTotal(){
   if (S.tier === 'sub') return { amount: pp(SUBS[S.cat].price), surDevis: false };
-  if (isSpecialTier()) return { amount: pp(specialTotal(POLAS[S.cat])), surDevis: false };
+  if (isSpecialTier()) return { amount: pp(specialTotal(POLAS[S.cat]) + (S.studio ? STUDIO_FEE : 0)), surDevis: false };
   if (S.cat === 'lumen') {
     const lt = LUMEN_TIERS.find(x => x.id === S.tier);
     if (!lt) return { amount: 0, surDevis: true };
@@ -2977,7 +2981,7 @@ function computeTotal(){
   let total = cat.tiers[S.tier].price;
   let express = false;
   let hasSurDevis = false;
-  if ((S.cat === 'photo-part' || S.cat === 'corporate') && S.studio) total += STUDIO_FEE;
+  if (studioApplies(S.cat) && S.studio) total += STUDIO_FEE;
   S.opts.forEach(id => {
     const allOpts = [...OPTIONS, ...((SPECIAL_OPTIONS[S.cat+'_'+S.tier])||[])];
     const o = allOpts.find(x => x.id === id);
@@ -3093,7 +3097,7 @@ function submitQuiz(e){
   } else if (isSpecialTier()) {
     const polas = POLAS[S.cat];
     const res = computeTotal();
-    formuleLabel = polas.name.fr + ' (' + res.amount + '€, ' + (polas.studio ? 'dont ' + polas.studio + '€ studio inclus' : polas.studioNote.fr.toLowerCase()) + ')';
+    formuleLabel = polas.name.fr + ' (' + res.amount + '€, ' + (S.studio ? 'dont ' + STUDIO_FEE + '€ studio en option' : 'sans studio') + ')';
     montantLabel = res.amount + '€';
     budgetMontantEur = res.amount;
   } else if (S.cat === 'lumen') {
@@ -3119,7 +3123,7 @@ function submitQuiz(e){
   const optNames = (S.tier !== 'sub' && S.opts.length)
     ? S.opts.map(id => { const o = allOpts.find(x => x.id === id); return o ? o.name.fr : id; }).filter(Boolean).join(' · ')
     : (S.tier === 'sub' ? '— (abonné : tarif partenaire -20% sur options)' : 'Aucune');
-  const studioNote = isSpecialTier() ? POLAS[S.cat].studioNote.fr : (S.cat === 'photo-part' || S.cat === 'corporate') ? (S.studio ? 'Studio (+' + STUDIO_FEE + '€)' : S.loc === 'situ' ? 'Dans les locaux du client (in situ)' : S.loc === 'ext' ? 'Extérieur' : 'Lieu à définir') : '';
+  const studioNote = studioApplies(S.cat) ? (S.studio ? 'Studio (+' + STUDIO_FEE + '€)' : S.loc === 'situ' ? 'Dans les locaux du client (in situ)' : S.loc === 'ext' ? 'Extérieur' : 'Lieu à définir') : '';
   const trv = travelSummary();
   if (trv.fee) { budgetMontantEur += trv.fee; montantLabel += ' + déplacement ' + trv.fee + '€'; }
   const optsOut = [optNames === 'Aucune' ? '' : optNames, trv.text].filter(Boolean).join(' · ') || 'Aucune';
@@ -3211,7 +3215,7 @@ const SERVICE_COPY = {
           en:'BUNKAIO shoots professional portraits of executives and teams in Montpellier and Toulouse: website, team presentation, annual report, press, recruitment. The shoot takes place outdoors, in the studio or right at your premises, with posing guidance for natural, consistent images. For a team, state the number of people in your request; to prepare, see <a href="/conseils/portrait-professionnel-photo-profil-linkedin/" data-nav="article:portrait-professionnel-photo-profil-linkedin">how to get a great professional portrait</a>.'},
     choose:[
       {fr:'pour une photo de profil ou de signature de mail : 1 h de séance et 8 photos retouchées.', en:'for a profile or email-signature photo: a 1-hour session and 8 retouched photos.'},
-      {fr:'vous lancez ou professionnalisez votre activité : 1h30 dans votre environnement de travail ou au studio, 2 tenues, 2 mises en situation et 12 photos pour votre site, LinkedIn et vos réseaux.', en:'you are launching or professionalising your business: 1.5 hours at your workplace or in the studio, 2 outfits, 2 set-ups and 12 photos for your website, LinkedIn and social media.'},
+      {fr:'vous lancez ou professionnalisez votre activité : 1h30 dans votre environnement de travail ou en studio (option +60 €), 2 tenues, 2 mises en situation et 12 photos pour votre site, LinkedIn et vos réseaux.', en:'you are launching or professionalising your business: 1.5 hours at your workplace or in the studio, 2 outfits, 2 set-ups and 12 photos for your website, LinkedIn and social media.'},
       {fr:'pour une bibliothèque d\'images polyvalente (profil, site, presse) : 2 h, jusqu\'à 3 tenues et 3 mises en situation, 15 photos retouchées.', en:'for a versatile image library (profile, website, press): 2 hours, up to 3 outfits and 3 set-ups, 15 retouched photos.'},
       {fr:'pour montrer la personne, l\'activité, l\'équipe et les lieux : une demi-journée, jusqu\'à 4 mises en situation et 25 photos.', en:'to show the person, the business, the team and the premises: a half-day, up to 4 set-ups and 25 photos.'},
       {fr:'pour une production éditoriale : une journée, 4 lieux, 4 tenues, 30 photos et un film court de 30 secondes.', en:'for an editorial production: a full day, 4 locations, 4 outfits, 30 photos and a 30-second short film.'}
@@ -3562,9 +3566,9 @@ function renderServicePage(catId){
       a: '<ul class="svcp-list">' + tiers.map(tt => `<li><strong>${t(tt.name)}</strong> — ${t(tt.delay)}</li>`).join('') + '</ul><p>' + t({fr:'Les délais démarrent à la date du shooting, hors demandes de retouches complémentaires.', en:'Timelines start on the shoot date, excluding additional retouching requests.'}) + '</p>' },
     ...featureFaq,
     ...(catId === 'photo-part' ? [{ q: t({fr:'Proposez-vous un book grossesse ?', en:'Do you offer a maternity book?'}),
-      a: `<p>${t({fr:'Oui : le book grossesse est une formule dédiée, à ' + price(POLAS[catId].price) + '. Séance de 1h30 en studio ou en extérieur (au choix, sans supplément), 10 photos HD retouchées avec une retouche naturelle, une direction de pose douce et bienveillante, et la possibilité de venir en couple. Le moment idéal : entre la 28e et la 36e semaine de grossesse.', en:'Yes: the maternity book is a dedicated package at ' + price(POLAS[catId].price) + '. A 1.5-hour session in the studio or outdoors (your choice, no extra cost), 10 retouched HD photos with natural retouching, gentle posing guidance, and the option to join as a couple. The ideal moment: between weeks 28 and 36 of pregnancy.'})}</p>` }] : []),
+      a: `<p>${t({fr:'Oui : le book grossesse est une formule dédiée, à ' + price(POLAS[catId].price) + '. Séance de 1h30 en extérieur ou en studio (option à 60 €), 10 photos HD retouchées avec une retouche naturelle, une direction de pose douce et bienveillante, et la possibilité de venir en couple. Le moment idéal : entre la 28e et la 36e semaine de grossesse.', en:'Yes: the maternity book is a dedicated package at ' + price(POLAS[catId].price) + '. A 1.5-hour session outdoors or in the studio (studio is a €60 option), 10 retouched HD photos with natural retouching, gentle posing guidance, and the option to join as a couple. The ideal moment: between weeks 28 and 36 of pregnancy.'})}</p>` }] : []),
     ...(POLAS[catId] && POLAS[catId].id === 'polas' ? [{ q: t({fr:'Qu\'est-ce que la formule Polas ?', en:'What is the Polas package?'}),
-      a: `<p>${t({fr:'Des photos brutes, sans retouche, destinées aux agences de mannequins : séance en studio de 30 minutes sur fond blanc, 10 photos brutes (visage, profils, trois-quarts et plans en pied), fichiers HD livrés sous 24 h. Tarif : ', en:'Raw, unretouched photos made for model agencies: 30-minute studio session on a white background, 10 raw photos (face, profiles, three-quarter and full-body shots), HD files delivered within 24 hours. Rate: '})}${price(POLAS[catId].price)}${t({fr:', studio inclus.', en:', studio included.'})}</p><p><a href="/conseils/polas-mannequin-digitals-agence/" data-nav="article:polas-mannequin-digitals-agence">${t({fr:'Polas et digitals de mannequin : à quoi servent-elles ?', en:'Polas and model digitals: what are they for?'})}</a></p>` }] : []),
+      a: `<p>${t({fr:'Des photos brutes, sans retouche, destinées aux agences de mannequins : séance de 30 minutes sur fond blanc, 10 photos brutes (visage, profils, trois-quarts et plans en pied), fichiers HD livrés sous 24 h. Tarif : ', en:'Raw, unretouched photos made for model agencies: 30-minute studio session on a white background, 10 raw photos (face, profiles, three-quarter and full-body shots), HD files delivered within 24 hours. Rate: '})}${price(POLAS[catId].price)}${t({fr:', studio en option (+60 €).', en:', studio optional (+€60).'})}</p><p><a href="/conseils/polas-mannequin-digitals-agence/" data-nav="article:polas-mannequin-digitals-agence">${t({fr:'Polas et digitals de mannequin : à quoi servent-elles ?', en:'Polas and model digitals: what are they for?'})}</a></p>` }] : []),
     ...(catId === 'photo-part' ? [{ q: t({fr:'Peut-on faire une séance en couple ou en groupe ?', en:'Can we book a couple or group session?'}),
       a: `<p>${t({fr:'Oui : la séance se fait en solo, en couple ou en groupe, en extérieur ou en studio. Choisissez la formule selon la durée et le nombre de photos souhaités ; pour vous aider à préparer vos tenues, lisez ', en:'Yes: sessions are available solo, as a couple or in a group, outdoors or in the studio. Pick the package according to the session length and number of photos you want; to prepare your outfits, read '})}<a href="/conseils/que-porter-seance-photo/" data-nav="article:que-porter-seance-photo">${t({fr:'Que porter pour une séance photo ?', en:'What to wear for a photo session?'})}</a>.</p>` }] : []),
     ...(catId === 'photo-part' ? [{ q: t({fr:'Réalisez-vous des portraits professionnels ?', en:'Do you shoot professional portraits?'}),
@@ -3593,7 +3597,7 @@ function renderServicePage(catId){
   const chooseHints = (copyBlock && copyBlock.choose && copyBlock.choose.length === allTierIds.length) ? tiers.map(tt => t(copyBlock.choose[allTierIds.indexOf(tt.id)])) : [];
   const specialHint = POLAS[catId] ? (POLAS[catId].id === 'grossesse'
     ? t({fr:'vous attendez un heureux événement ? Une séance douce de 1h30, en studio ou en extérieur, pour garder des images soignées de cette période (idéalement entre la 28e et la 36e semaine).', en:'expecting a baby? A gentle 1.5-hour session, in the studio or outdoors, to keep beautiful images of this time (ideally between weeks 28 and 36).'})
-    : t({fr:'vous devez présenter votre profil à une agence ? 10 photos brutes, sans retouche ni mise en scène, pour juger la morphologie et le potentiel, livrées en HD sous 24 h (studio inclus).', en:'need to present your profile to an agency? 10 raw photos with no retouching or styling, to assess build and potential, delivered in HD within 24 h (studio included).'})) : '';
+    : t({fr:'vous devez présenter votre profil à une agence ? 10 photos brutes, sans retouche ni mise en scène, pour juger la morphologie et le potentiel, livrées en HD sous 24 h (studio en option, +60 €).', en:'need to present your profile to an agency? 10 raw photos with no retouching or styling, to assess build and potential, delivered in HD within 24 h (studio optional, +€60).'})) : '';
   const chooseHtml = '';
   const practical = t({
     fr: 'Nous intervenons à <strong>Montpellier et Toulouse</strong>. Les droits d\'utilisation commerciale des visuels vous sont cédés sans limite de durée. Toutes les réponses sont dans la <a href="/faq/" data-nav="faq">FAQ</a>, et pour une question précise, <a href="/contact/" data-nav="contact">contactez-nous</a>.',
