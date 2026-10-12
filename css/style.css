@@ -4807,3 +4807,27 @@ footer button[data-lang="ft-cookie-prefs"] { font: inherit; }
   .hero-access-row { margin-top: 28px; gap: 12px; }
 }
 @media (prefers-reduced-motion: reduce) { .hero-access { animation: none; } }
+
+/* Accueil : liste des publics en capitales, séparés par des puces (PARTICULIERS • PROFESSIONNELS • …), même collimateur animé. */
+.hero-kicker .hk-b { font-size: clamp(11.5px, 1vw, 13px); font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; line-height: 2; max-width: 34em; text-wrap: balance; }
+.hero-kicker .hk-b em { font-weight: 600; }
+.hero-kicker .hk-s { font-style: normal; color: #6e5aa8; margin: 0 0.35em; opacity: 0.85; }
+@media (max-width: 600px) { .hero-kicker .hk-b { font-size: 11px; letter-spacing: 0.1em; line-height: 2.1; } .hero-kicker .hk-s { margin: 0 0.2em; } }
+.hero-title .hero-kicker { max-width: min(94vw, 900px); }
+.hero-kicker .hk-b { max-width: none; white-space: nowrap; }
+@media (max-width: 760px) {
+  /* Petit écran : la liste passe à la ligne sans puces orphelines (les publics restent séparés par un espace). */
+  .hero-kicker .hk-b { display: flex; flex-wrap: wrap; justify-content: center; gap: 0 18px; white-space: normal; max-width: 100%; gap: 0 14px; }
+  .hero-kicker .hk-s { display: none; }
+}
+
+@media (min-width: 761px) { .hero-title .hero-kicker::before { left: -24%; right: -24%; } }
+@media (min-width: 761px) {
+  /* Ligne des publics plus large que l'ancien halo : halo en gélule à fond uniforme, pour que les extrémités restent lisibles. */
+  .hero-title .hero-kicker::before { left: -6%; right: -6%; top: -40%; bottom: -40%; border-radius: 999px; background: rgba(226,214,250,0.86); filter: blur(14px); }
+}
+@media (min-width: 761px) {
+  /* Halo adouci : cœur uniforme sous le texte puis fondu progressif (pas de contour de gélule). */
+  .hero-title .hero-kicker::before { left: -22%; right: -22%; top: -70%; bottom: -70%; border-radius: 0; filter: blur(16px);
+    background: radial-gradient(ellipse closest-side, rgba(230,219,251,0.92) 0%, rgba(230,219,251,0.88) 68%, rgba(220,205,248,0.35) 88%, rgba(220,205,248,0) 100%); }
+}
