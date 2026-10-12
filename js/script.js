@@ -6977,7 +6977,7 @@ function initHomeClaimVideo(){
     if (!triggerVisible) return;
     const vh = window.innerHeight || 800;
     const b = trigger.getBoundingClientRect().bottom / vh;
-    const op = Math.max(0, Math.min(1, (b - 3.0) / 0.4));   /* déclencheur de 420vh : le texte reste ~0,8 écran comme avant */
+    const op = Math.max(0, Math.min(1, (b - 3.6) / 0.35));   /* déclencheur de 360vh : carrousel visible ~0,65 écran, puis fondu sur ~0,35 écran */
     if (content) { content.style.opacity = String(op); content.style.pointerEvents = op < 0.25 ? 'none' : ''; }
     if (overlay) overlay.style.opacity = String(0.3 + 0.7 * op);
     /* Texte effacé : la photo de la prestation choisie reste fixe et devient plus visible, par-dessus la vidéo. */
@@ -6985,7 +6985,7 @@ function initHomeClaimVideo(){
     wrap.style.setProperty('--mt-bg-op', String(0.5 + 0.35 * (1 - op)));
     /* Espace vide après le texte : la constellation « L'exigence BUNKAIO » se construit au fil du défilement et
        est complète quand la section suivante (réassurance) entre à l'écran (bas du déclencheur ≈ bas de l'écran). */
-    const cp = Math.max(0, Math.min(1, (2.95 - b) / 1.6));   /* construction étalée sur ~1,6 écran de défilement, puis pause avant la sortie */
+    const cp = Math.max(0, Math.min(1, (3.55 - b) / 1.95));   /* construction dès l'effacement du carrousel, étalée sur ~2 écrans, courte pause avant la sortie */
     /* Sortie : la constellation se dissout par le bas, juste au-dessus du bord de la section blanche qui monte, puis s'efface
        entièrement avant de la toucher (b = position du haut de la section blanche, en hauteurs d'écran). */
     const fadeOut = Math.max(0, Math.min(1, (b - 0.72) / 0.42));

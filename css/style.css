@@ -3056,7 +3056,7 @@
      l'animation flou -> net se terminer. Plus de hauteur = plus de
      distance à parcourir = plus de temps réel où la section reste à
      l'écran, quelle que soit la vitesse de scroll. */
-  .home-claim-trigger { min-height: 420vh; pointer-events: none !important; scroll-snap-align: start; }
+  .home-claim-trigger { min-height: 360vh; pointer-events: none !important; }
 
   /* ─── PRESTATIONS — carrousel horizontal natif (scroll-snap) ───
      En flux normal de page (pas de position:fixed, pas de déclencheur
@@ -5396,3 +5396,19 @@ footer > .cst-foot canvas { transform: none; }
 #view-quiz > .cst-field { z-index: 2; }
 /* Les fonds constellation ne captent jamais les clics (même posés par-dessus un formulaire). */
 .cst-field, .cst-field canvas, .cst-deco, .mission-cst { pointer-events: none !important; }
+
+/* Défilement de l'accueil plus fluide : fondus amortis (le calcul suit le défilement, la transition lisse les à-coups). */
+.mission-video-content, .mission-video-overlay { transition: opacity 0.35s ease-out; }
+.mission-cst { transition: opacity 0.35s ease-out; }
+.mc-e { transition: stroke-dashoffset 0.3s linear; }
+
+/* Devis : panneau dépoli (verre lavande translucide + flou) au lieu du blanc presque opaque. */
+.quiz-wrap .qstep.active, #qs-5.qstep.active {
+  background: linear-gradient(160deg, rgba(255,255,255,0.62), rgba(236,228,250,0.48));
+  -webkit-backdrop-filter: blur(22px) saturate(1.4); backdrop-filter: blur(22px) saturate(1.4);
+  border: 1px solid rgba(255,255,255,0.7); border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(40,28,70,0.16), inset 0 1px 0 rgba(255,255,255,0.8);
+}
+@media (max-width: 900px) {
+  .quiz-wrap .qstep.active, #qs-5.qstep.active { background: linear-gradient(160deg, rgba(255,255,255,0.7), rgba(236,228,250,0.58)); }
+}
