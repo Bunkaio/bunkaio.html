@@ -149,9 +149,101 @@
     '.dv-sign .ok{border:1px solid #2f7d4f;background:#e7f4ec}' +
     '@media print{.dv{border:0;padding:0;max-width:none}.dv h2{break-after:avoid}.dv-sign{break-inside:avoid}}';
 
-  /** Rendu HTML d'un devis enregistré (q) — biz : { address } du prestataire. */
-  function render(q, biz) {
+
+  /* ───────────── Droit à l'image : clauses versionnées (à faire valider par un avocat ou un DPO avant usage commercial) ─────────────
+     La version est figée avec le texte à l'envoi du devis : modifier ces clauses ne change jamais un devis déjà envoyé ou signé. */
+  var LEGAL_VERSION = 'DI-1.0';
+  var USES = [
+    { id: 'site', label: 'Site internet et portfolio', text: 'Site internet bunkaio.com et portfolio en ligne : pages de présentation, galeries, articles.' },
+    { id: 'social', label: 'Réseaux sociaux', text: 'Comptes de BUNKAIO sur les réseaux sociaux (Instagram, Facebook, TikTok, LinkedIn, Pinterest) : publications, stories, vidéos courtes.' },
+    { id: 'print', label: 'Supports commerciaux et de communication', text: 'Supports de BUNKAIO : brochures, affiches, présentations aux prospects et partenaires, dossiers commerciaux, publications professionnelles.' },
+    { id: 'ads', label: 'Publicité numérique', text: 'Campagnes publicitaires numériques de BUNKAIO (annonces sponsorisées en ligne).' }
+  ];
+  var IMAGE_DURATION = '5 ans à compter de la livraison des photographies';
+
+  /** person : le client est photographié ; company : entreprise, salariés ; event : plusieurs personnes ; product : peu ou pas de personnes. */
+  function imageMode(q) {
+    var t = q.template || '';
+    return t === 'corp' ? 'company' : t === 'evt' ? 'event' : t === 'prod' ? 'product' : 'person';
+  }
+
+  function whoParagraph(q) {
+    var m = imageMode(q);
+    var base = '<p><strong>Qui donne l\'autorisation.</strong> ';
+    if (m === 'company') return base + 'Le client signe pour son entreprise : sa signature n\'engage pas personnellement les salariés ou collaborateurs photographiés. Chaque personne photographiée donne elle-même son autorisation pour l\'utilisation promotionnelle par BUNKAIO, par un lien individuel ou par un lien collectif que le client lui transmet. Le client s\'engage à informer ses collaborateurs de la séance, de l\'usage prévu de leur portrait et de ce lien. Les choix ci-dessous concernent le signataire et les visuels de l\'entreprise (locaux, produits, équipe de direction qu\'il représente) ; ils ne valent jamais autorisation pour un tiers.</p>';
+    if (m === 'event') return base + 'Plusieurs personnes peuvent apparaître : le client, qui commande la prestation, n\'est pas nécessairement la personne photographiée. Il s\'engage à informer les participants de la présence d\'un photographe et de l\'usage des images (mention sur l\'invitation ou affichage à l\'entrée). Les choix ci-dessous sont ceux du signataire ; BUNKAIO n\'utilise pas pour sa promotion une image sur laquelle une personne est clairement identifiable et mise en avant sans son accord individuel, recueilli par un lien individuel ou collectif transmis par le client.</p>';
+    if (m === 'product') return base + 'La prestation porte sur des produits. Si une personne identifiable apparaît sur les photographies (mannequin, équipe, client), BUNKAIO ne l\'utilise pour sa promotion qu\'avec son accord individuel ; les choix ci-dessous concernent les visuels de la prestation et le signataire.</p>';
+    return base + 'Le signataire est la personne photographiée et donne lui-même ces autorisations. Si d\'autres personnes seront photographiées (conjoint, enfants, proches, collaborateurs, modèles), il l\'indique au moment de la signature : chacune est invitée à faire son propre choix par un lien individuel ; à défaut, aucune photographie où elle est reconnaissable n\'est utilisée par BUNKAIO pour sa promotion.</p>';
+  }
+
+  function imageSection(q) {
+    var li = USES.map(function (u) { return '<li><strong>' + esc(u.label) + '</strong> : ' + esc(u.text) + '</li>'; }).join('');
+    return '<h2>8. Droit à l\'image et utilisation promotionnelle des visuels</h2>' +
+      '<p class="mu">Clauses version ' + LEGAL_VERSION + '. Le droit à l\'image (autorisation de la personne photographiée) est distinct du droit d\'auteur du photographe, traité à l\'article 3 : les choix de cet article 8 ne modifient pas la cession de l\'article 3, et inversement.</p>' +
+      '<p><strong>8.1 Ce qui n\'est pas soumis à votre choix.</strong> La prise de vue, la retouche, le stockage temporaire des fichiers, leur remise au client (album privé) et les échanges nécessaires à la prestation sont indispensables à l\'exécution du contrat. Ils ne demandent aucune autorisation supplémentaire et ne dépendent pas des choix ci-dessous.</p>' +
+      '<p><strong>8.2 Utilisation promotionnelle par BUNKAIO (facultative).</strong> BUNKAIO ne peut utiliser pour sa propre promotion les photographies sur lesquelles une personne est identifiable que si cette personne l\'a expressément autorisé, usage par usage. Chaque choix est indépendant des autres. Refuser n\'a aucun effet sur la prestation, sur le prix ni sur la qualité du service. Aucune case n\'est cochée par défaut : à la signature, le client répond Oui ou Non à chaque usage.</p><ul>' + li + '</ul>' +
+      '<p><strong>Durée :</strong> ' + IMAGE_DURATION + ', ou jusqu\'au retrait de l\'autorisation si celui-ci intervient avant. <strong>Territoire :</strong> monde entier pour la diffusion en ligne, par nature mondiale ; France pour les supports imprimés. <strong>Restrictions :</strong> pas de cession des photographies à des tiers, pas de montage, de légende ou de contexte portant atteinte à la dignité, à la vie privée ou à la réputation de la personne (article 9 du Code civil), pas d\'usage étranger aux catégories ci-dessus. Toute nouvelle finalité ou tout nouveau support non prévu ici nécessite une nouvelle autorisation, expresse et préalable.</p>' +
+      whoParagraph(q) +
+      '<p><strong>8.3 Mineurs.</strong> Pour une personne mineure, l\'autorisation est donnée par un titulaire de l\'autorité parentale ou un tuteur, jamais par un participant ou par le client s\'il n\'a pas cette qualité. Aucune utilisation promotionnelle de l\'image d\'un mineur n\'a lieu sans cette autorisation écrite, recueillie par un lien individuel.</p>' +
+      '<p><strong>8.4 Retrait.</strong> L\'autorisation promotionnelle peut être retirée à tout moment, sans motif et sans frais, par email à contact@bunkaio.com ou sur bunkaio.com/retrait-autorisation/. Le retrait ne remet pas en cause les utilisations antérieures conformes à l\'autorisation. À réception, BUNKAIO cesse toute nouvelle utilisation, retire les publications en ligne dans un délai de 30 jours et n\'imprime ni ne diffuse de nouveau support ; les supports déjà imprimés ou diffusés ne peuvent pas être rappelés. Le retrait n\'affecte ni la prestation, ni les droits d\'utilisation des photographies cédés au client à l\'article 3.</p>';
+  }
+
+  function dataSection() {
+    return '<h2>9. Données personnelles et preuve de la signature</h2>' +
+      '<p><strong>Responsable du traitement :</strong> BUNKAIO (contact@bunkaio.com). <strong>Données :</strong> identité, coordonnées, éléments de facturation, photographies, choix d\'autorisation, date, heure, adresse IP et navigateur de la signature, version des clauses.</p>' +
+      '<ul><li><strong>Exécution du contrat</strong> (devis, séance, retouche, livraison, facturation) : durée du contrat, puis 5 ans (prescription civile) ; factures : 10 ans (obligation comptable).</li>' +
+      '<li><strong>Preuve de votre accord</strong> (signature, choix, version des clauses, adresse IP, navigateur, empreinte du document) : intérêt légitime de BUNKAIO à pouvoir démontrer ce qui a été accepté ; conservée 5 ans après la fin de la relation.</li>' +
+      '<li><strong>Utilisation promotionnelle des images</strong> : votre consentement, retirable à tout moment (article 8.4) sans conséquence sur la prestation ; durée de l\'autorisation ou retrait.</li>' +
+      '<li><strong>Photographies livrées :</strong> conservées 12 mois après la livraison dans l\'album privé.</li></ul>' +
+      '<p><strong>Destinataires :</strong> BUNKAIO et ses prestataires techniques (hébergement, paiement, envoi d\'emails, album privé Adobe Lightroom), qui n\'agissent que sur instruction. Certains sont établis aux États-Unis : les transferts sont encadrés par les garanties de ces prestataires. Aucune revente de données. <strong>Vos droits :</strong> accès, rectification, effacement, limitation, opposition, portabilité, retrait du consentement, en écrivant à contact@bunkaio.com ; réclamation possible auprès de la CNIL (cnil.fr). Détails : bunkaio.com/confidentialite/.</p>';
+  }
+
+  function subjectNotice(q) {
+    return '<p>BUNKAIO (contact@bunkaio.com) réalise une prestation photographique (devis n° ' + esc(q.number || '') + ') dans laquelle vous allez apparaître. <strong>Vos choix ci-dessous sont facultatifs</strong> : ils concernent uniquement l\'utilisation de vos images par BUNKAIO pour sa propre promotion, et n\'ont aucun effet sur la prestation. La remise des photographies au client reste, elle, nécessaire à l\'exécution du contrat.</p>' +
+      '<p>Chaque usage est indépendant ; rien n\'est coché par défaut. Durée : ' + IMAGE_DURATION + ', ou jusqu\'au retrait. Territoire : monde entier en ligne ; France pour l\'imprimé. Pas de cession à des tiers, pas d\'usage portant atteinte à votre dignité ou à votre réputation. Une nouvelle utilisation non prévue nécessitera une nouvelle autorisation de votre part.</p>' +
+      '<p><strong>Mineur :</strong> le choix est fait par un titulaire de l\'autorité parentale ou un tuteur.</p>' +
+      '<p><strong>Retrait :</strong> à tout moment, sans motif, sur bunkaio.com/retrait-autorisation/ ou à contact@bunkaio.com. BUNKAIO cesse alors toute nouvelle utilisation et retire les publications en ligne sous 30 jours ; les supports déjà imprimés ou diffusés ne peuvent pas être rappelés, et les utilisations antérieures restent valables.</p>' +
+      '<p><strong>Vos données</strong> (nom, email, choix, date, adresse IP, navigateur, version des clauses ' + LEGAL_VERSION + ') sont conservées par BUNKAIO comme preuve de votre accord pendant 5 ans après la fin de la relation (intérêt légitime ; l\'utilisation promotionnelle repose sur votre consentement). Droits d\'accès, de rectification, d\'effacement, d\'opposition et de portabilité : contact@bunkaio.com ; réclamation possible auprès de la CNIL. Détails : bunkaio.com/confidentialite/.</p>';
+  }
+
+  /** Paquet figé à l'envoi : version, HTML complet du devis (sans bloc de signature), description des usages, notice des personnes photographiées. */
+  function legalPack(q, biz) {
+    return { version: LEGAL_VERSION, html: render(q, biz, { legal: true, noSign: true }).replace(/ onerror="[^"]*"/g, ''), uses: USES.map(function (u) { return { id: u.id, label: u.label, text: u.text }; }), notice: subjectNotice(q) };
+  }
+
+  var CHOICE_LABEL = { oui: 'Autorisé', non: 'Refusé' };
+  var PERSONS_LABEL = { self: 'le signataire uniquement', self_others: 'le signataire et d\'autres personnes', others: 'uniquement d\'autres personnes (le signataire n\'est pas photographié)' };
+
+  /** Autorisations réellement enregistrées (données, pas du texte de clause) : s'affiche sous le devis figé. */
+  function consentBlock(q) {
+    var sg = q.signature;
+    if (!sg || !sg.imageUse) return '';
+    var rows = USES.map(function (u) { return '<tr><th>' + esc(u.label) + '</th><td><strong>' + CHOICE_LABEL[sg.imageUse[u.id]] + '</strong></td></tr>'; }).join('');
+    return '<h2>Autorisations d\'image enregistrées à la signature</h2><table>' + rows +
+      (sg.persons ? '<tr><th>Personnes photographiées</th><td>' + esc(PERSONS_LABEL[sg.persons] || '') + (sg.minors ? ' — dont au moins un mineur (autorisation du représentant légal)' : '') + '</td></tr>' : '') +
+      '<tr><th>Version des clauses</th><td>' + esc(sg.legalVersion || '') + '</td></tr></table>' +
+      '<p class="mu">Choix indépendants, sans effet sur la prestation ni sur le prix, modifiables ou révocables à tout moment (contact@bunkaio.com ou bunkaio.com/retrait-autorisation/).</p>';
+  }
+
+  function signBlock(q) {
+    var h = ['<h2>Bon pour accord</h2><div class="dv-sign">'];
+    if (q.signature) {
+      var sg = q.signature;
+      h.push('<div class="ok"><strong>Le client</strong><br>' + (q.signedVia === 'en_ligne'
+        ? 'Signé électroniquement par <strong>' + esc(sg.name) + '</strong><br>le ' + new Date(sg.at).toLocaleString('fr-FR') + '<br><span class="mu">Mention « Bon pour accord » acceptée · empreinte ' + esc((sg.hash || '').slice(0, 16)) + '</span>'
+        : 'Devis signé le ' + fdate(sg.at) + (q.signedVia === 'yousign' ? ' via Yousign' : '')) + '</div>');
+    } else {
+      h.push('<div><strong>Le client</strong><br><span class="mu">Nom, date, signature précédés de « Bon pour accord »</span></div>');
+    }
+    h.push('<div><strong>BUNKAIO — Aya Nascimento</strong><br><span class="mu">Émis le ' + fdate(q.createdAt) + '</span></div></div>');
+    return h.join('');
+  }
+
+  /** Rendu HTML d'un devis enregistré (q) — biz : { address } du prestataire. opts.legal : clauses d'image (devis envoyés après le système DI-1.0) ; opts.noSign : sans bloc de signature. */
+  function render(q, biz, opts) {
     biz = biz || {};
+    opts = opts || {};
+    var lg = !!(opts.legal || q.legal);
     var c = q.client || {};
     var pro = c.profil === 'professionnel';
     var dep = Math.round((q.totalHT || 0) * (q.acomptePct || 30)) / 100;
@@ -194,8 +286,9 @@
       '<li><strong>Durée :</strong> ' + esc(d.duree) + '.</li>' +
       '<li><strong>Mention du nom de l\'auteur :</strong> crédit « Photo : BUNKAIO » demandé lors de toute publication, dans la mesure du possible.</li></ul>' +
       '<p class="key">La cession des droits d\'utilisation est subordonnée au paiement intégral du prix.</p>' +
-      '<p>Tout usage non prévu ci-dessus nécessite un accord écrit préalable et peut donner lieu à un avenant. Utilisation des visuels par BUNKAIO pour son portfolio et sa communication : ' +
-      (q.signature ? (q.signature.portfolio ? '<strong>autorisée par le client</strong>' : '<strong>refusée par le client</strong>') : 'au choix du client lors de la signature') + '.</p>');
+      '<p>Tout usage non prévu ci-dessus nécessite un accord écrit préalable et peut donner lieu à un avenant. ' + (lg
+        ? 'Le paiement du prix n\'emporte pas cession de l\'ensemble des droits d\'auteur : seuls les droits énumérés ci-dessus sont cédés, dans les limites de la destination, de l\'étendue, du territoire et de la durée indiqués. Recadrages et déclinaisons de format sont autorisés ; toute modification dénaturant l\'œuvre ne l\'est pas. L\'utilisation des visuels par BUNKAIO pour sa propre promotion relève du droit à l\'image (article 8) et non de la présente cession.'
+        : 'Utilisation des visuels par BUNKAIO pour son portfolio et sa communication : ' + (q.signature ? (q.signature.portfolio ? '<strong>autorisée par le client</strong>' : '<strong>refusée par le client</strong>') : 'au choix du client lors de la signature') + '.') + '</p>');
 
     h.push('<h2>4. Report et annulation</h2><p>' + nl(q.report || REPORT_STD) + '</p>');
     h.push('<h2>5. Conditions de réalisation</h2><ul>' + (q.conditions || []).concat(COMMON_REAL).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>');
@@ -207,21 +300,14 @@
     }
     h.push('<h2>7. Médiation, données personnelles, litiges</h2>' +
       (!pro ? '<p>En cas de litige non résolu, le client consommateur peut recourir gratuitement au médiateur de la consommation : ' + (q.mediateur ? esc(q.mediateur) : '<em>coordonnées communiquées sur demande</em>') + '.</p>' : '') +
-      '<p>Les données personnelles sont traitées pour l\'exécution du contrat (voir la politique de confidentialité sur bunkaio.com). Droit applicable : droit français.' + (q.tribunal ? ' Tribunal compétent : ' + esc(q.tribunal) + '.' : '') + '</p>');
+      '<p>' + (lg ? 'Les données personnelles et la preuve de la signature sont décrites à l\'article 9. ' : 'Les données personnelles sont traitées pour l\'exécution du contrat (voir la politique de confidentialité sur bunkaio.com). ') + 'Droit applicable : droit français.' + (q.tribunal ? ' Tribunal compétent : ' + esc(q.tribunal) + '.' : '') + '</p>');
+    if (lg) { h.push(imageSection(q)); h.push(dataSection()); }
 
-    h.push('<h2>Bon pour accord</h2><div class="dv-sign">');
-    if (q.signature) {
-      var sg = q.signature;
-      h.push('<div class="ok"><strong>Le client</strong><br>' + (q.signedVia === 'en_ligne'
-        ? 'Signé électroniquement par <strong>' + esc(sg.name) + '</strong><br>le ' + new Date(sg.at).toLocaleString('fr-FR') + '<br><span class="mu">Mention « Bon pour accord » acceptée · empreinte ' + esc((sg.hash || '').slice(0, 16)) + '</span>'
-        : 'Devis signé le ' + fdate(sg.at) + (q.signedVia === 'yousign' ? ' via Yousign' : '')) + '</div>');
-    } else {
-      h.push('<div><strong>Le client</strong><br><span class="mu">Nom, date, signature précédés de « Bon pour accord »</span></div>');
-    }
-    h.push('<div><strong>BUNKAIO — Aya Nascimento</strong><br><span class="mu">Émis le ' + fdate(q.createdAt) + '</span></div></div>');
+    if (!opts.noSign) h.push(signBlock(q));
+    if (!opts.noSign && lg) h.push(consentBlock(q));
     h.push('</div>');
     return h.join('');
   }
 
-  root.BunkaioDevis = { TEMPLATES: TEMPLATES, COMMON_REAL: COMMON_REAL, REPORT_STD: REPORT_STD, FORMES: FORMES, CSS: CSS, render: render, guessTemplate: guessTemplate };
+  root.BunkaioDevis = { LEGAL_VERSION: LEGAL_VERSION, USES: USES, legalPack: legalPack, signBlock: signBlock, consentBlock: consentBlock, subjectNotice: subjectNotice, TEMPLATES: TEMPLATES, COMMON_REAL: COMMON_REAL, REPORT_STD: REPORT_STD, FORMES: FORMES, CSS: CSS, render: render, guessTemplate: guessTemplate };
 })(typeof window !== 'undefined' ? window : globalThis);

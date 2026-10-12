@@ -58,28 +58,41 @@ const main = document.getElementById('main');
 document.getElementById('dvcss').textContent = BunkaioDevis.CSS;
 const esc = v => String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const eur = n => (Number(n) || 0).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
-let Q = null, BIZ = {};
+let Q = null, BIZ = {}, LEGAL = null;
 
 function show(q, banner) {
   Q = q;
   const signed = q.status === 'signe';
-  const doc = BunkaioDevis.render(q, BIZ);
+  const doc = LEGAL && q.legal ? '<div class="dv">' + LEGAL.html.replace(/^<div class="dv">/, '').replace(/<\/div>\s*$/, '') + BunkaioDevis.signBlock(q) + BunkaioDevis.consentBlock(q) + '</div>' : BunkaioDevis.render(q, BIZ);
+  const lg = !!(LEGAL && q.legal);
   const dep = Math.round(q.totalHT * (q.acomptePct || 30)) / 100;
   let html = banner || '';
-  html += '<div class="actions"><button class="btn ghost" onclick="window.print()">Imprimer / enregistrer en PDF</button>' + (signed && q.depositUrl ? '<a class="btn" href="' + esc(q.depositUrl) + '" target="_blank" rel="noopener">Régler l\'acompte de ' + eur(q.depositInvoice ? q.depositInvoice.amount : dep) + '</a>' : '') + '</div>';
+  html += '<div class="actions"><button class="btn ghost" onclick="window.print()">Imprimer / enregistrer en PDF</button>' + (signed && lg ? '<a class="btn ghost" href="' + WORKER + '/quote/pdf?d=' + encodeURIComponent(D) + '&k=' + encodeURIComponent(K) + '" target="_blank" rel="noopener">Télécharger le PDF signé</a>' : '') + (signed && q.depositUrl ? '<a class="btn" href="' + esc(q.depositUrl) + '" target="_blank" rel="noopener">Régler l\'acompte de ' + eur(q.depositInvoice ? q.depositInvoice.amount : dep) + '</a>' : '') + '</div>';
   html += doc;
   if (q.status === 'envoye') {
     const part = (q.client || {}).profil !== 'professionnel';
     html += '<section class="sign" id="signBox"><h2>Signer le devis</h2><p class="sum">' + esc(q.prestation) + ' · ' + eur(q.totalHT) + (q.abonnement ? ' / mois' : ' · acompte de ' + eur(dep) + ' à la signature') + '</p>' +
       '<label class="row"><input type="checkbox" id="accept"><span><b>Bon pour accord.</b> J\'ai lu le devis n° ' + esc(q.number) + ' et ses conditions (cession de droits, report et annulation, conditions de réalisation) et je les accepte.</span></label>' +
-      '<div class="row" style="cursor:default"><span style="flex:1"><b>Utilisation des visuels par BUNKAIO</b> pour son portfolio et sa communication<small>Votre choix n\'a aucune incidence sur la prestation ni sur le prix.</small><span class="radios"><label><input type="radio" name="pf" value="1"> J\'autorise</label><label><input type="radio" name="pf" value="0"> Je refuse</label></span></span></div>' +
+      (lg ? consentForm() : '<div class="row" style="cursor:default"><span style="flex:1"><b>Utilisation des visuels par BUNKAIO</b> pour son portfolio et sa communication<small>Votre choix n\'a aucune incidence sur la prestation ni sur le prix.</small><span class="radios"><label><input type="radio" name="pf" value="1"> J\'autorise</label><label><input type="radio" name="pf" value="0"> Je refuse</label></span></span></div>') +
       (part ? '<label class="row"><input type="checkbox" id="waiver"><span>Je demande que la prestation commence avant la fin de mon délai de rétractation de 14 jours <small>À cocher si la séance a lieu dans les 14 jours suivant la signature. Si je me rétracte après le début de la prestation, je paie la part déjà réalisée.</small></span></label>' : '') +
       '<div class="field"><label for="signName">Nom et prénom du signataire</label><input id="signName" autocomplete="name" value="' + esc((q.client || {}).contact || (part ? (q.client || {}).nom : '')) + '"></div>' +
       '<div class="err" id="signErr"></div>' +
       '<button class="btn" id="signBtn" onclick="sign()" style="width:100%">Signer le devis' + (q.abonnement ? '' : ' et recevoir la facture d\'acompte') + '</button>' +
-      '<p class="legal">Signature électronique : votre nom, la date et l\'heure, votre adresse IP et l\'empreinte du devis sont enregistrés comme preuve de votre accord. Un exemplaire signé vous est envoyé par email.</p></section>';
+      '<p class="legal">Signature électronique : votre nom, la date et l\'heure, votre adresse IP et l\'empreinte du devis sont enregistrés comme preuve de votre accord. Un exemplaire signé vous est envoyé par email.' + (lg ? ' Vos données de preuve sont conservées 5 ans après la fin de la relation ; vos choix d\'image sont modifiables à tout moment sur bunkaio.com/retrait-autorisation/. Détails : <a href="/confidentialite/">politique de confidentialité</a>.' : '') + '</p></section>';
   }
   main.innerHTML = html;
+}
+
+function radio(name, label, hint) {
+  return '<div class="row" style="cursor:default"><span style="flex:1"><b>' + esc(label) + '</b><small>' + esc(hint) + '</small><span class="radios"><label><input type="radio" name="' + name + '" value="oui"> Oui, j\'autorise</label><label><input type="radio" name="' + name + '" value="non"> Non, je refuse</label></span></span></div>';
+}
+function consentForm() {
+  const uses = (LEGAL && LEGAL.uses) || [];
+  return '<div style="margin-top:18px"><h3 style="font-size:16px;margin-bottom:4px">Utilisation de vos images par BUNKAIO (facultatif)</h3><p class="legal" style="margin:0 0 6px">Chaque choix est indépendant, aucune case n\'est pré-cochée, et votre réponse n\'a aucune incidence sur la prestation ni sur le prix. Vous pouvez changer d\'avis à tout moment.</p>' +
+    uses.map(u => radio('use_' + u.id, u.label, u.text)).join('') +
+    '<div class="row" style="cursor:default"><span style="flex:1"><b>Qui sera photographié ?</b><small>Les autres personnes devront donner leur propre autorisation (lien individuel envoyé après la signature).</small><span class="radios" style="flex-direction:column;gap:8px">' +
+    '<label><input type="radio" name="persons" value="self"> Moi uniquement</label><label><input type="radio" name="persons" value="self_others"> Moi et d\'autres personnes (équipe, famille, modèles…)</label><label><input type="radio" name="persons" value="others"> D\'autres personnes uniquement</label></span></span></div>' +
+    '<label class="row"><input type="checkbox" id="minors"><span>Au moins un mineur sera photographié<small>L\'autorisation sera alors donnée par son représentant légal.</small></span></label></div>';
 }
 
 async function load() {
@@ -89,6 +102,7 @@ async function load() {
     const data = await res.json();
     if (!res.ok || !data.ok) { main.innerHTML = '<div class="banner err"><b>Devis introuvable</b>Ce lien n\'est plus valide. Écrivez-nous à contact@bunkaio.com ou au 07 58 57 31 61.</div>'; return; }
     BIZ = data.business || {};
+    LEGAL = data.legal || null;
     const q = data.quote;
     const banners = {
       signe: '<div class="banner ok"><b>Devis signé ✓</b>Signé le ' + new Date(q.signedAt).toLocaleString('fr-FR') + '. Vous pouvez l\'imprimer ou l\'enregistrer en PDF.' + (q.depositUrl ? ' Votre facture d\'acompte vous a aussi été envoyée par email.' : '') + '</div>',
@@ -106,25 +120,35 @@ async function load() {
 async function sign() {
   const err = document.getElementById('signErr');
   const accept = document.getElementById('accept').checked;
+  const lg = !!(LEGAL && Q && Q.legal);
   const pf = document.querySelector('input[name=pf]:checked');
+  const imageUse = {};
+  if (lg) {
+    for (const u of ((LEGAL && LEGAL.uses) || [])) { const r = document.querySelector('input[name=use_' + u.id + ']:checked'); if (r) imageUse[u.id] = r.value; }
+  }
+  const persons = (document.querySelector('input[name=persons]:checked') || {}).value;
   const name = document.getElementById('signName').value.trim();
   const waiver = document.getElementById('waiver');
   if (!accept) { err.textContent = 'Cochez « Bon pour accord » pour signer.'; return; }
-  if (!pf) { err.textContent = 'Indiquez si vous autorisez l\'utilisation des visuels pour le portfolio.'; return; }
+  if (lg) {
+    if (((LEGAL.uses) || []).some(u => !imageUse[u.id])) { err.textContent = 'Répondez Oui ou Non à chacune des quatre questions sur l\'utilisation de vos images (facultatif pour la prestation, mais nous avons besoin de votre choix).'; return; }
+    if (!persons) { err.textContent = 'Indiquez qui sera photographié.'; return; }
+  } else if (!pf) { err.textContent = 'Indiquez si vous autorisez l\'utilisation des visuels pour le portfolio.'; return; }
   if (name.length < 3) { err.textContent = 'Saisissez votre nom et prénom.'; return; }
   err.textContent = '';
   const btn = document.getElementById('signBtn'); btn.disabled = true; btn.textContent = 'Signature en cours…';
   try {
-    const res = await fetch(WORKER + '/quote/sign', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ d: D, k: K, name, accept: true, portfolio: pf.value === '1', retractationWaiver: !!(waiver && waiver.checked) }) });
+    const res = await fetch(WORKER + '/quote/sign', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ d: D, k: K, name, accept: true, ...(lg ? { imageUse, persons, minors: !!document.getElementById('minors').checked } : { portfolio: pf.value === '1' }), retractationWaiver: !!(waiver && waiver.checked) }) });
     const data = await res.json();
     if (!res.ok || !data.ok) {
       const msg = { expire: 'Ce devis a expiré.', annule: 'Ce devis a été annulé.', content_changed: 'Ce devis a été modifié : rechargez la page.', invalid_signature: 'Signature incomplète.' }[data.error] || 'La signature n\'a pas pu être enregistrée. Réessayez ou écrivez-nous.';
-      err.textContent = msg; btn.disabled = false; btn.textContent = 'Signer le devis'; return;
+      err.textContent = msg; btn.disabled = false; btn.textContent = lg ? 'Signer et accepter le devis' : 'Signer le devis'; return;
     }
     const q = data.quote;
-    show(q, '<div class="banner ok"><b>Merci, votre devis est signé ✓</b>' + (q.abonnement ? 'Nous revenons vers vous pour mettre en place votre abonnement.' : data.depositError ? 'Votre facture d\'acompte vous sera envoyée très prochainement.' : 'Votre facture d\'acompte vient de vous être envoyée par email : son règlement confirme la réservation de votre date.') + ' Un exemplaire signé vous est également envoyé.</div>');
+    const grp = q.groupUrl ? '<br><br><b style="display:inline">Autres personnes photographiées :</b> transmettez-leur ce lien pour qu\'elles donnent (ou refusent) leur propre autorisation : <a href="' + esc(q.groupUrl) + '">' + esc(q.groupUrl) + '</a>' : '';
+    show(q, '<div class="banner ok"><b>Merci, votre devis est signé ✓</b>' + (q.abonnement ? 'Nous revenons vers vous pour mettre en place votre abonnement.' : data.depositError ? 'Votre facture d\'acompte vous sera envoyée très prochainement.' : 'Votre facture d\'acompte vient de vous être envoyée par email : son règlement confirme la réservation de votre date.') + ' Un exemplaire signé vous est également envoyé.' + grp + '</div>');
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  } catch (e) { err.textContent = 'Connexion impossible. Réessayez.'; btn.disabled = false; btn.textContent = 'Signer le devis'; }
+  } catch (e) { err.textContent = 'Connexion impossible. Réessayez.'; btn.disabled = false; btn.textContent = lg ? 'Signer et accepter le devis' : 'Signer le devis'; }
 }
 load();
 </script>

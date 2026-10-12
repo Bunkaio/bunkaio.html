@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Retrait d'une autorisation d'image — BUNKAIO</title>
+<link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32.png">
+<style>
+  @font-face { font-family: 'DM Sans'; font-style: normal; font-display: swap; font-weight: 100 1000; src: url('/fonts/dm-sans-latin-opsz-normal.woff2') format('woff2'); }
+  :root { --ink: #0a0a0c; --grey: #76717f; --line: rgba(20,10,40,.09); --bg: #f7f5fb; --violet: #f1ecfa; --lav: #d9cdf5; --accent: #6e5aa8; --ok: #2f7d4f; --ok-bg: #e7f4ec; --danger: #b3261e; --danger-bg: #fdecea; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', system-ui, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.55; -webkit-font-smoothing: antialiased; }
+  header { background: var(--ink); color: #fff; padding: 18px 20px; display: flex; align-items: center; gap: 14px; }
+  header img { width: 84px; }
+  header span { font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--lav); font-weight: 700; }
+  main { max-width: 860px; margin: 0 auto; padding: 28px 16px 80px; }
+  .banner { border-radius: 12px; padding: 16px 18px; margin-bottom: 20px; font-size: 14.5px; }
+  .banner.ok { background: var(--ok-bg); color: var(--ok); }
+  .banner.err { background: var(--danger-bg); color: var(--danger); }
+  .banner.info { background: var(--violet); }
+  .banner b { display: block; font-size: 16px; margin-bottom: 4px; }
+  .actions { display: flex; gap: 10px; flex-wrap: wrap; margin: 0 0 20px; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 0; border-radius: 6px; padding: 13px 20px; font: inherit; font-weight: 700; font-size: 15px; cursor: pointer; background: var(--ink); color: #fff; text-decoration: none; box-shadow: 0 0 24px rgba(110,90,168,.22); }
+  .btn.ghost { background: #fff; color: var(--ink); border: 1px solid var(--line); box-shadow: none; }
+  .btn:disabled { opacity: .45; cursor: not-allowed; }
+  .sign { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: clamp(20px, 4vw, 34px); margin-top: 22px; }
+  .sign h2 { font-size: 20px; letter-spacing: -.02em; margin-bottom: 6px; }
+  .sign .sum { color: var(--grey); font-size: 14px; margin-bottom: 18px; }
+  .row { display: flex; gap: 12px; align-items: flex-start; padding: 12px 0; border-top: 1px solid var(--line); font-size: 14px; cursor: pointer; }
+  .row input[type=checkbox], .row input[type=radio] { width: 18px; height: 18px; margin-top: 2px; accent-color: var(--ink); flex: 0 0 auto; }
+  .row small { display: block; color: var(--grey); font-size: 12.5px; margin-top: 2px; }
+  .radios { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 8px; }
+  .radios label { display: flex; gap: 8px; align-items: center; cursor: pointer; }
+  .field { margin: 16px 0 6px; }
+  .field label { display: block; font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--grey); margin-bottom: 6px; }
+  .field input { width: 100%; border: 1px solid var(--line); border-radius: 8px; padding: 13px 14px; font: inherit; font-size: 16px; outline: none; }
+  .field input:focus { border-color: var(--accent); }
+  .err { color: var(--danger); font-size: 13.5px; min-height: 20px; margin: 8px 0; }
+  .legal { color: var(--grey); font-size: 12px; margin-top: 14px; }
+  .loading { text-align: center; color: var(--grey); padding: 60px 0; }
+  @media print { header, .actions, .sign, .banner { display: none !important; } body { background: #fff; } main { padding: 0; max-width: none; } }
+</style>
+</head>
+<body>
+<header><img src="/images/logo-email.png" alt="BUNKAIO"><span>Retrait d'autorisation</span></header>
+<main id="main"><div class="sign"><h2>Retirer une autorisation d'utilisation de mon image</h2>
+<p class="sum">Vous pouvez retirer à tout moment, sans motif, une autorisation donnée à BUNKAIO. Le retrait n'a aucun effet sur la prestation ni sur les photographies livrées au client. BUNKAIO cesse toute nouvelle utilisation et retire les publications en ligne sous 30 jours ; les supports déjà imprimés ou diffusés ne peuvent pas être rappelés.</p>
+<div id="form">
+<div class="field"><label for="nm">Nom et prénom</label><input id="nm" autocomplete="name"></div>
+<div class="field"><label for="em">Email utilisé lors de l'autorisation</label><input id="em" type="email" autocomplete="email"></div>
+<div class="field"><label for="no">Numéro de devis (facultatif)</label><input id="no" placeholder="ex. D-2026-014"></div>
+<p style="font-size:14px;margin:14px 0 4px"><b>Usages à retirer</b></p>
+<label class="row"><input type="checkbox" class="u" value="site"><span>Site internet et portfolio</span></label>
+<label class="row"><input type="checkbox" class="u" value="social"><span>Réseaux sociaux</span></label>
+<label class="row"><input type="checkbox" class="u" value="print"><span>Supports commerciaux et de communication</span></label>
+<label class="row"><input type="checkbox" class="u" value="ads"><span>Campagnes publicitaires numériques</span></label>
+<label class="row"><input type="checkbox" id="all"><span><b>Tous les usages</b></span></label>
+<div class="field"><label for="ms">Précisions (facultatif)</label><input id="ms" maxlength="1500"></div>
+<div class="err" id="err"></div><button class="btn" id="btn" style="width:100%" onclick="send()">Envoyer ma demande de retrait</button>
+<p class="legal">Votre demande est vérifiée par BUNKAIO, qui vous confirme son traitement par email. Vous pouvez aussi écrire à contact@bunkaio.com. Détails : <a href="/confidentialite/">politique de confidentialité</a>.</p></div></div></main>
+<script>
+'use strict';
+const WORKER = 'https://bunkaio-quiz-stripe.bunkaio.workers.dev';
+const esc = v => String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+document.getElementById('all').onchange = e => document.querySelectorAll('.u').forEach(c => { c.checked = e.target.checked; });
+async function send() {
+  const err = document.getElementById('err');
+  const usages = [...document.querySelectorAll('.u:checked')].map(c => c.value);
+  const name = document.getElementById('nm').value.trim(), email = document.getElementById('em').value.trim();
+  if (name.length < 2) { err.textContent = 'Saisissez votre nom et prénom.'; return; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { err.textContent = 'Adresse email invalide.'; return; }
+  if (!usages.length) { err.textContent = 'Choisissez au moins un usage à retirer.'; return; }
+  err.textContent = '';
+  const btn = document.getElementById('btn'); btn.disabled = true; btn.textContent = 'Envoi…';
+  try {
+    const res = await fetch(WORKER + '/consent/withdraw', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, email, number: document.getElementById('no').value.trim(), usages, message: document.getElementById('ms').value.trim() }) });
+    const j = await res.json();
+    if (!res.ok || !j.ok) { err.textContent = 'Envoi impossible. Écrivez à contact@bunkaio.com.'; btn.disabled = false; btn.textContent = 'Envoyer ma demande de retrait'; return; }
+    document.getElementById('form').innerHTML = '<div class="banner ok"><b>Demande reçue ✓</b>BUNKAIO la traite sous 30 jours et vous confirme le retrait par email.</div>';
+  } catch (e) { err.textContent = 'Connexion impossible. Réessayez.'; btn.disabled = false; btn.textContent = 'Envoyer ma demande de retrait'; }
+}
+</script>
+</body>
+</html>

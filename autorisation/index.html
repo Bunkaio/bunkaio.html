@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Autorisation d'utilisation de votre image — BUNKAIO</title>
+<link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32.png">
+<style>
+  @font-face { font-family: 'DM Sans'; font-style: normal; font-display: swap; font-weight: 100 1000; src: url('/fonts/dm-sans-latin-opsz-normal.woff2') format('woff2'); }
+  :root { --ink: #0a0a0c; --grey: #76717f; --line: rgba(20,10,40,.09); --bg: #f7f5fb; --violet: #f1ecfa; --lav: #d9cdf5; --accent: #6e5aa8; --ok: #2f7d4f; --ok-bg: #e7f4ec; --danger: #b3261e; --danger-bg: #fdecea; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', system-ui, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.55; -webkit-font-smoothing: antialiased; }
+  header { background: var(--ink); color: #fff; padding: 18px 20px; display: flex; align-items: center; gap: 14px; }
+  header img { width: 84px; }
+  header span { font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--lav); font-weight: 700; }
+  main { max-width: 860px; margin: 0 auto; padding: 28px 16px 80px; }
+  .banner { border-radius: 12px; padding: 16px 18px; margin-bottom: 20px; font-size: 14.5px; }
+  .banner.ok { background: var(--ok-bg); color: var(--ok); }
+  .banner.err { background: var(--danger-bg); color: var(--danger); }
+  .banner.info { background: var(--violet); }
+  .banner b { display: block; font-size: 16px; margin-bottom: 4px; }
+  .actions { display: flex; gap: 10px; flex-wrap: wrap; margin: 0 0 20px; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 0; border-radius: 6px; padding: 13px 20px; font: inherit; font-weight: 700; font-size: 15px; cursor: pointer; background: var(--ink); color: #fff; text-decoration: none; box-shadow: 0 0 24px rgba(110,90,168,.22); }
+  .btn.ghost { background: #fff; color: var(--ink); border: 1px solid var(--line); box-shadow: none; }
+  .btn:disabled { opacity: .45; cursor: not-allowed; }
+  .sign { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: clamp(20px, 4vw, 34px); margin-top: 22px; }
+  .sign h2 { font-size: 20px; letter-spacing: -.02em; margin-bottom: 6px; }
+  .sign .sum { color: var(--grey); font-size: 14px; margin-bottom: 18px; }
+  .row { display: flex; gap: 12px; align-items: flex-start; padding: 12px 0; border-top: 1px solid var(--line); font-size: 14px; cursor: pointer; }
+  .row input[type=checkbox], .row input[type=radio] { width: 18px; height: 18px; margin-top: 2px; accent-color: var(--ink); flex: 0 0 auto; }
+  .row small { display: block; color: var(--grey); font-size: 12.5px; margin-top: 2px; }
+  .radios { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 8px; }
+  .radios label { display: flex; gap: 8px; align-items: center; cursor: pointer; }
+  .field { margin: 16px 0 6px; }
+  .field label { display: block; font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--grey); margin-bottom: 6px; }
+  .field input { width: 100%; border: 1px solid var(--line); border-radius: 8px; padding: 13px 14px; font: inherit; font-size: 16px; outline: none; }
+  .field input:focus { border-color: var(--accent); }
+  .err { color: var(--danger); font-size: 13.5px; min-height: 20px; margin: 8px 0; }
+  .legal { color: var(--grey); font-size: 12px; margin-top: 14px; }
+  .loading { text-align: center; color: var(--grey); padding: 60px 0; }
+  @media print { header, .actions, .sign, .banner { display: none !important; } body { background: #fff; } main { padding: 0; max-width: none; } }
+</style>
+</head>
+<body>
+<header><img src="/images/logo-email.png" alt="BUNKAIO"><span>Autorisation d'image</span></header>
+<main id="main"><div class="loading">Chargement…</div></main>
+<script>
+'use strict';
+const WORKER = 'https://bunkaio-quiz-stripe.bunkaio.workers.dev';
+const esc = v => String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+const P = new URLSearchParams(location.search);
+const Qid = P.get('q') || '', S = P.get('s') || '', Kk = P.get('k') || '', G = P.get('g') || '';
+const main = document.getElementById('main');
+let DATA = null;
+const NAMES = { oui: 'Autorisé', non: 'Refusé' };
+function radio(name, u) {
+  return '<div class="row" style="cursor:default"><span style="flex:1"><b>' + esc(u.label) + '</b><small>' + esc(u.text) + '</small><span class="radios"><label><input type="radio" name="' + name + '" value="oui"> Oui, j\'autorise</label><label><input type="radio" name="' + name + '" value="non"> Non, je refuse</label></span></span></div>';
+}
+function render() {
+  const d = DATA, sj = d.subject;
+  if (sj && sj.status === 'signe') {
+    main.innerHTML = '<div class="banner ok"><b>Votre choix est enregistré ✓</b>Merci. Vous pouvez le modifier ou le retirer à tout moment sur <a href="/retrait-autorisation/">bunkaio.com/retrait-autorisation/</a>.</div><div class="sign"><h2>Votre choix</h2>' +
+      d.legal.uses.map(u => '<div class="row" style="cursor:default"><span><b>' + esc(u.label) + '</b> : ' + NAMES[(sj.imageUse || {})[u.id]] + '</span></div>').join('') + '</div>';
+    return;
+  }
+  main.innerHTML = '<div class="banner info"><b>Autorisation d\'utilisation de votre image</b>Séance photographique BUNKAIO — devis n° ' + esc(d.quote.number) + '</div>' +
+    '<div class="sign"><div class="legal" style="margin:0 0 14px;color:inherit;font-size:14px">' + d.legal.notice + '</div>' +
+    '<div class="field"><label for="nm">Nom et prénom de la personne photographiée</label><input id="nm" autocomplete="name" value="' + esc(sj ? sj.name : '') + '"></div>' +
+    '<div class="field"><label for="em">Email (pour recevoir la confirmation et pouvoir retirer votre accord)</label><input id="em" type="email" autocomplete="email"></div>' +
+    '<label class="row"><input type="checkbox" id="minor"' + (sj && sj.minor ? ' checked' : '') + '><span>La personne photographiée est mineure<small>Un titulaire de l\'autorité parentale ou un tuteur remplit alors ce formulaire.</small></span></label>' +
+    '<div id="guard" style="display:none"><div class="field"><label for="gn">Nom et prénom du représentant légal</label><input id="gn"></div><div class="field"><label for="gr">Lien avec le mineur (père, mère, tuteur…)</label><input id="gr"></div></div>' +
+    '<h3 style="font-size:16px;margin:18px 0 4px">Vos choix (facultatifs, indépendants, rien n\'est pré-coché)</h3>' +
+    d.legal.uses.map(u => radio('use_' + u.id, u)).join('') +
+    '<label class="row"><input type="checkbox" id="ok"><span>Je confirme avoir lu les informations ci-dessus (clauses ' + esc(d.legal.version) + ') et donner mes choix librement.</span></label>' +
+    '<div class="err" id="err"></div><button class="btn" id="btn" style="width:100%" onclick="submitForm()">Enregistrer mes choix</button>' +
+    '<p class="legal">Sont enregistrés : votre nom, vos choix, la date et l\'heure, votre adresse IP, votre navigateur et la version des clauses, comme preuve, pendant 5 ans après la fin de la relation. Détails : <a href="/confidentialite/">politique de confidentialité</a>.</p></div>';
+  const mi = document.getElementById('minor');
+  const sync = () => { document.getElementById('guard').style.display = mi.checked ? 'block' : 'none'; };
+  mi.onchange = sync; sync();
+}
+async function submitForm() {
+  const err = document.getElementById('err'), d = DATA;
+  const imageUse = {};
+  for (const u of d.legal.uses) { const r = document.querySelector('input[name=use_' + u.id + ']:checked'); if (r) imageUse[u.id] = r.value; }
+  const name = document.getElementById('nm').value.trim(), email = document.getElementById('em').value.trim();
+  const minor = document.getElementById('minor').checked;
+  const gn = document.getElementById('gn').value.trim(), gr = document.getElementById('gr').value.trim();
+  if (name.length < 3) { err.textContent = 'Saisissez le nom et le prénom.'; return; }
+  if (d.legal.uses.some(u => !imageUse[u.id])) { err.textContent = 'Répondez Oui ou Non à chaque question.'; return; }
+  if (minor && (gn.length < 3 || !gr)) { err.textContent = 'Indiquez le nom du représentant légal et son lien avec le mineur.'; return; }
+  if (!document.getElementById('ok').checked) { err.textContent = 'Cochez la confirmation pour enregistrer.'; return; }
+  err.textContent = '';
+  const btn = document.getElementById('btn'); btn.disabled = true; btn.textContent = 'Enregistrement…';
+  try {
+    const res = await fetch(WORKER + '/subject/sign', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ q: Qid, s: S, k: Kk, g: G, name, email, minor, guardianName: gn, guardianRelation: gr, imageUse, accept: true }) });
+    const j = await res.json();
+    if (!res.ok || !j.ok) { err.textContent = { already_signed: 'Ce choix est déjà enregistré.', invalid_email: 'Adresse email invalide.', guardian_required: 'Représentant légal requis pour un mineur.' }[j.error] || 'Enregistrement impossible. Réessayez ou écrivez à contact@bunkaio.com.'; btn.disabled = false; btn.textContent = 'Enregistrer mes choix'; return; }
+    main.innerHTML = '<div class="banner ok"><b>Merci, votre choix est enregistré ✓</b>' + (email ? 'Une confirmation vous est envoyée par email. ' : '') + 'Vous pouvez le modifier ou le retirer à tout moment sur <a href="/retrait-autorisation/">bunkaio.com/retrait-autorisation/</a>.</div>';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } catch (e) { err.textContent = 'Connexion impossible. Réessayez.'; btn.disabled = false; btn.textContent = 'Enregistrer mes choix'; }
+}
+(async function () {
+  if (!Qid || (!(S && Kk) && !G)) { main.innerHTML = '<div class="banner err"><b>Lien incomplet</b>Utilisez le lien reçu, ou écrivez-nous à contact@bunkaio.com.</div>'; return; }
+  try {
+    const res = await fetch(WORKER + '/subject?q=' + encodeURIComponent(Qid) + '&s=' + encodeURIComponent(S) + '&k=' + encodeURIComponent(Kk) + '&g=' + encodeURIComponent(G));
+    const j = await res.json();
+    if (!res.ok || !j.ok) { main.innerHTML = '<div class="banner err"><b>Lien invalide ou expiré</b>Écrivez-nous à contact@bunkaio.com.</div>'; return; }
+    DATA = j; render();
+  } catch (e) { main.innerHTML = '<div class="banner err"><b>Connexion impossible</b>Rechargez la page.</div>'; }
+})();
+
+</script>
+</body>
+</html>

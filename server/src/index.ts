@@ -11,7 +11,8 @@ import { getInboxMessage, getSpamRules, previewReply, replyTo, rescanSpam, setLa
 import { buildManualMail, getMailLog, isUnsubscribed, listCampaigns, MANUAL_TEMPLATES, saveCampaign, sendMailing, setUnsubscribed } from './mailing';
 import type { ManualTemplate, MailingParams, RecipientCtx } from './mailing';
 import { unsubscribeToken } from './email';
-import { cleanQuoteInput, createQuote, getQuote, isExpired, listQuotes, missingQuoteFields, prepareSend, publicQuote, putQuote, quoteHash, tokenMatches } from './quotes';
+import { appendConsent, cleanQuoteInput, computeConsent, createQuote, freezeLegal, getConsentLog, getFrozenLegal, getQuote, IMAGE_USES, isExpired, listQuotes, missingQuoteFields, prepareSend, publicQuote, putFrozenLegal, putQuote, quoteHash, tokenMatches } from './quotes';
+import { adminConsentAction, bytesToBase64, ensureSignedPdf, getSignedPdf, groupUrl, handleSubjectPublic, handleWithdrawPublic, newToken, parseImageUse, useLabel } from './consent';
 import type { Quote } from './quotes';
 import { getBusinessAddress } from './config';
 import { cleanDetails, MESSAGE_KINDS, storeMessage, updateMessage } from './messages';
@@ -815,6 +816,24 @@ async function handleAdminDashboard(request: Request, env: Env, headers: Record<
   if (path === '/admin/quote' && request.method === 'POST') {
     return handleAdminQuote(request, env, headers);
   }
+  if (path === '/admin/quote-doc' && request.method === 'GET') {
+    const id = new URL(request.url).searchParams.get('id') ?? '';
+    const legal = await getFrozenLegal(env, id);
+    return jsonResponse({ ok: !!legal, legal }, legal ? 200 : 404, headers);
+  }
+  if (path === '/admin/consents' && request.method === 'GET') {
+    const id = new URL(request.url).searchParams.get('id') ?? '';
+    const q = await getQuote(env, id);
+    if (!q) return jsonResponse({ ok: false, error: 'not_found' }, 404, headers);
+    return jsonResponse({ ok: true, log: await getConsentLog(env, id), groupUrl: q.groupToken ? groupUrl(q) : undefined, hasPdf: !!(await getSignedPdf(env, id)) }, 200, headers);
+  }
+  if (path === '/admin/quote-pdf' && request.method === 'GET') {
+    const id = new URL(request.url).searchParams.get('id') ?? '';
+    const q = await getQuote(env, id);
+    const pdf = q ? (await ensureSignedPdf(env, q))?.bytes : null;
+    if (!q || !pdf) return jsonResponse({ ok: false, error: 'not_found' }, 404, headers);
+    return new Response(pdf, { status: 200, headers: { ...headers, 'Content-Type': 'application/pdf', 'Content-Disposition': `inline; filename="devis-${q.number}-signe.pdf"` } });
+  }
   return jsonResponse({ ok: false, error: 'not_found' }, 404, headers);
 }
 
@@ -857,6 +876,13 @@ async function handleAdminQuote(request: Request, env: Env, headers: Record<stri
       if (q.status !== 'brouillon') return jsonResponse({ ok: false, error: 'not_draft' }, 409, headers);
       const missing = missingQuoteFields(q);
       if (missing.length) return jsonResponse({ ok: false, error: 'incomplete', fields: missing }, 400, headers);
+      if (body.legal) {
+        const fl = await freezeLegal(body.legal);
+        if (!fl) return jsonResponse({ ok: false, error: 'invalid_legal' }, 400, headers);
+        await putFrozenLegal(env, q.id, fl);
+        q.legal = { version: fl.version, snapshotHash: fl.hash, frozenAt: fl.at };
+        q.groupToken = q.groupToken || newToken(12);
+      }
       await prepareSend(q);
       await putQuote(env, q);
       await env.ACCOUNTS_KV.put(`qsent:${q.email}`, q.id, { expirationTtl: 120 * 86400 });
@@ -874,13 +900,21 @@ async function handleAdminQuote(request: Request, env: Env, headers: Record<stri
   }
   if (action === 'mark-signed') {
     if (q.status !== 'envoye' && q.status !== 'brouillon') return jsonResponse({ ok: false, error: 'not_signable' }, 409, headers);
-    if (!q.contentHash) q.contentHash = await quoteHash(q);
+    if (!q.legal && body.legal) {
+      const fl = await freezeLegal(body.legal);
+      if (fl) { await putFrozenLegal(env, q.id, fl); q.legal = { version: fl.version, snapshotHash: fl.hash, frozenAt: fl.at }; q.groupToken = q.groupToken || newToken(12); }
+    }
+    if (!q.contentHash || (q.status === 'brouillon' && q.legal)) q.contentHash = await quoteHash(q);
     const at = new Date().toISOString();
     q.status = 'signe';
     q.signedAt = at;
     q.signedVia = body.via === 'yousign' ? 'yousign' : 'manuel';
-    q.signature = { name: q.client.contact || q.client.nom, at, ip: '', ua: '', portfolio: body.portfolio === true, retractationWaiver: body.retractationWaiver === true, hash: q.contentHash };
+    const manualUse = parseImageUse(body.imageUse);
+    q.signature = { name: q.client.contact || q.client.nom, at, ip: '', ua: '', portfolio: manualUse ? manualUse.site === 'oui' : body.portfolio === true, retractationWaiver: body.retractationWaiver === true, hash: q.contentHash, ...(manualUse ? { imageUse: manualUse, legalVersion: q.legal?.version, snapshotHash: q.legal?.snapshotHash } : {}) };
+    q.consent = computeConsent(q);
     await putQuote(env, q);
+    if (manualUse) await appendConsent(env, q.id, IMAGE_USES.map((u) => ({ type: 'choix' as const, who: 'client', usage: u, choice: manualUse[u], note: 'Saisie manuelle par BUNKAIO (' + q.signedVia + ')' })));
+    try { await ensureSignedPdf(env, q); } catch (err) { console.error('[devis] pdf non créé', err); }
     if (body.createDeposit === true && !q.abonnement) {
       try { await depositForQuote(env, q); await putQuote(env, q); }
       catch (err) { console.error('[devis] acompte non créé', err); return reply(q, 200, { depositError: true }); }
@@ -900,7 +934,7 @@ async function handleAdminQuote(request: Request, env: Env, headers: Record<stri
     return reply(q);
   }
   if (action === 'duplicate') {
-    const { id: _i, number: _n, token: _t, status: _s, createdAt: _c, updatedAt: _u, sentAt: _se, viewedAt: _v, signedAt: _si, closedAt: _cl, contentHash: _h, signature: _sg, signedVia: _sv, depositInvoice: _d, reminderSentAt: _r, ...content } = q;
+    const { id: _i, number: _n, token: _t, status: _s, createdAt: _c, updatedAt: _u, sentAt: _se, viewedAt: _v, signedAt: _si, closedAt: _cl, contentHash: _h, signature: _sg, signedVia: _sv, depositInvoice: _d, reminderSentAt: _r, legal: _lg, consent: _cn, subjects: _sj, groupToken: _gt, ...content } = q;
     const copy = await createQuote(env, { ...content, validUntil: new Date(Date.now() + 30 * 864e5).toISOString().slice(0, 10) });
     return reply(copy);
   }
@@ -909,6 +943,8 @@ async function handleAdminQuote(request: Request, env: Env, headers: Record<stri
     await env.ACCOUNTS_KV.delete('quote:' + q.id);
     return jsonResponse({ ok: true }, 200, headers);
   }
+  const consentReply = await adminConsentAction(env, q, body, headers);
+  if (consentReply) return consentReply;
   return jsonResponse({ ok: false, error: 'unknown_action' }, 400, headers);
 }
 
@@ -920,7 +956,15 @@ async function handlePublicQuote(request: Request, env: Env, headers: Record<str
     if (!q || !tokenMatches(q, url.searchParams.get('k'))) return jsonResponse({ ok: false, error: 'not_found' }, 404, headers);
     if (isExpired(q)) { q.status = 'expire'; await putQuote(env, q); }
     if (!q.viewedAt && q.status === 'envoye') { q.viewedAt = new Date().toISOString(); await putQuote(env, q); }
-    return jsonResponse({ ok: true, quote: publicQuote(q), business: { address: getBusinessAddress() } }, 200, headers);
+    const legal = q.legal ? await getFrozenLegal(env, q.id) : null;
+    return jsonResponse({ ok: true, quote: publicQuote(q), legal: legal ? { version: legal.version, html: legal.html, uses: legal.uses } : null, business: { address: getBusinessAddress() } }, 200, headers);
+  }
+  if (path === '/quote/pdf' && request.method === 'GET') {
+    const q = await getQuote(env, url.searchParams.get('d') ?? '');
+    if (!q || !tokenMatches(q, url.searchParams.get('k')) || q.status !== 'signe') return jsonResponse({ ok: false, error: 'not_found' }, 404, headers);
+    const pdf = (await ensureSignedPdf(env, q))?.bytes;
+    if (!pdf) return jsonResponse({ ok: false, error: 'not_found' }, 404, headers);
+    return new Response(pdf, { status: 200, headers: { ...headers, 'Content-Type': 'application/pdf', 'Content-Disposition': `inline; filename="devis-${q.number}-signe.pdf"` } });
   }
   if (path === '/quote/sign' && request.method === 'POST') {
     const body = (await request.json().catch(() => ({}))) as Record<string, unknown>;
@@ -933,12 +977,21 @@ async function handlePublicQuote(request: Request, env: Env, headers: Record<str
     if (body.accept !== true || name.length < 3) return jsonResponse({ ok: false, error: 'invalid_signature' }, 400, headers);
     const hash = await quoteHash(q);
     if (hash !== q.contentHash) return jsonResponse({ ok: false, error: 'content_changed' }, 409, headers);
+    /* Devis avec clauses d'image figées : un choix explicite (oui / non) est exigé pour chaque usage, jamais pré-coché. */
+    const imageUse = q.legal ? parseImageUse(body.imageUse) : null;
+    const persons = body.persons === 'self' || body.persons === 'self_others' || body.persons === 'others' ? body.persons : undefined;
+    if (q.legal && (!imageUse || !persons)) return jsonResponse({ ok: false, error: 'consent_incomplete' }, 400, headers);
     const at = new Date().toISOString();
+    const ip = request.headers.get('CF-Connecting-IP') ?? '';
     q.status = 'signe';
     q.signedAt = at;
     q.signedVia = 'en_ligne';
-    q.signature = { name, at, ip: request.headers.get('CF-Connecting-IP') ?? '', ua: (request.headers.get('User-Agent') ?? '').slice(0, 300), portfolio: body.portfolio === true, retractationWaiver: body.retractationWaiver === true, hash };
+    q.signature = { name, at, ip, ua: (request.headers.get('User-Agent') ?? '').slice(0, 300), portfolio: imageUse ? imageUse.site === 'oui' : body.portfolio === true, retractationWaiver: body.retractationWaiver === true, hash, ...(imageUse ? { imageUse, persons, minors: body.minors === true, legalVersion: q.legal!.version, snapshotHash: q.legal!.snapshotHash } : {}) };
+    q.consent = computeConsent(q);
     await putQuote(env, q);
+    if (imageUse) await appendConsent(env, q.id, IMAGE_USES.map((u) => ({ type: 'choix' as const, who: 'client', usage: u, choice: imageUse[u], ip })));
+    let pdfBase64: string | undefined;
+    try { const pdf = await ensureSignedPdf(env, q); if (pdf) pdfBase64 = bytesToBase64(pdf.bytes); } catch (err) { console.error('[devis] pdf non créé', err); }
 
     let depositError = false;
     if (!q.abonnement) {
@@ -946,8 +999,8 @@ async function handlePublicQuote(request: Request, env: Env, headers: Record<str
       catch (err) { console.error('[devis] acompte non créé après signature', err); depositError = true; }
     }
     try {
-      const m = buildQuoteSignedEmail({ customerName: q.client.contact || q.client.nom, number: q.number, url: SIGN_URL(q), depositAmount: q.depositInvoice?.amount, depositUrl: q.depositInvoice?.url, abonnement: q.abonnement, lang: q.lang, space: await detectSpace(env, q.email) });
-      await sendEmail(env, q.email, m.subject, m.html, m.text);
+      const m = buildQuoteSignedEmail({ customerName: q.client.contact || q.client.nom, number: q.number, url: SIGN_URL(q), depositAmount: q.depositInvoice?.amount, depositUrl: q.depositInvoice?.url, abonnement: q.abonnement, lang: q.lang, space: await detectSpace(env, q.email), ...(imageUse ? { consents: IMAGE_USES.map((u) => ({ label: useLabel(u), yes: imageUse[u] === 'oui' })), legalVersion: q.legal!.version, groupUrl: persons !== 'self' || body.minors === true ? groupUrl(q) : undefined, pdfAttached: !!pdfBase64 } : {}) });
+      await sendEmail(env, q.email, m.subject, m.html, m.text, undefined, pdfBase64 ? { attachments: [{ filename: `devis-${q.number}-signe.pdf`, content: pdfBase64 }] } : undefined);
     } catch (err) { console.error('[devis] confirmation non envoyée', err); }
     await notifyAdmin(env, { title: `Devis n° ${q.number} signé`, body: `${q.client.nom} · ${q.totalHT.toFixed(2)} €`, url: '/admin/#quotes' });
     try {
@@ -957,7 +1010,7 @@ async function handlePublicQuote(request: Request, env: Env, headers: Record<str
           `Devis n° ${q.number} signé en ligne par ${name} le ${new Date(at).toLocaleString('fr-FR', { timeZone: 'Europe/Paris' })}.`,
           `Client : ${q.client.nom} <${q.email}> — ${q.prestation}`,
           q.abonnement ? 'Abonnement : à mettre en place (pas de facture d\'acompte automatique).' : depositError ? '⚠ La facture d\'acompte n\'a pas pu être créée : créez-la depuis le tableau de bord (Devis → Créer l\'acompte).' : `Facture d'acompte de ${(q.depositInvoice?.amount ?? 0).toFixed(2)} € envoyée automatiquement.`,
-          `Portfolio : ${q.signature.portfolio ? 'autorisé' : 'refusé'}${q.client.profil === 'particulier' ? ` · Exécution avant fin de rétractation : ${q.signature.retractationWaiver ? 'demandée' : 'non demandée'}` : ''}`,
+          imageUse ? `Droit à l'image (clauses ${q.legal!.version}) : ${IMAGE_USES.map((u) => `${useLabel(u)} ${imageUse[u] === 'oui' ? 'OUI' : 'non'}`).join(' · ')}${persons !== 'self' || body.minors === true ? ' — autres personnes photographiées' + (body.minors === true ? ' (dont mineur)' : '') + ' : autorisations individuelles à suivre dans l\'admin' : ''}` : `Portfolio : ${q.signature.portfolio ? 'autorisé' : 'refusé'}${q.client.profil === 'particulier' ? ` · Exécution avant fin de rétractation : ${q.signature.retractationWaiver ? 'demandée' : 'non demandée'}` : ''}`,
         ],
       });
       await sendEmail(env, env.ADMIN_NOTIFICATION_EMAIL, a.subject, a.html, a.text);
@@ -1547,8 +1600,14 @@ export default {
       const msg = valid ? `Vous êtes désinscrit(e) : <b>${email.replace(/[<>&"]/g, '')}</b> ne recevra plus nos emails d'information. Vous continuerez à recevoir les messages liés à vos projets en cours (devis, factures, séances).` : 'Ce lien de désinscription n\'est pas valide. Écrivez-nous à contact@bunkaio.com.';
       return new Response(`<!doctype html><html lang="fr"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Désinscription — BUNKAIO</title><body style="margin:0;background:#0a0a0c;color:#fff;font-family:system-ui,sans-serif;display:grid;place-items:center;min-height:100vh;padding:24px"><div style="max-width:440px;text-align:center"><h1 style="font-size:22px">BUNKAIO</h1><p style="line-height:1.6;color:rgba(255,255,255,.75)">${msg}</p><p><a href="https://bunkaio.com" style="color:#d9cdf5">bunkaio.com</a></p></div></body></html>`, { status: valid ? 200 : 400, headers: { 'Content-Type': 'text/html; charset=utf-8', 'Referrer-Policy': 'no-referrer' } });
     }
-    if (url.pathname === '/quote' || url.pathname === '/quote/sign') {
+    if (url.pathname === '/quote' || url.pathname === '/quote/sign' || url.pathname === '/quote/pdf') {
       return handlePublicQuote(request, env, headers, url.pathname);
+    }
+    if (url.pathname === '/subject' || url.pathname === '/subject/sign') {
+      return handleSubjectPublic(request, env, headers, url.pathname);
+    }
+    if (url.pathname === '/consent/withdraw' && request.method === 'POST') {
+      return handleWithdrawPublic(request, env, headers);
     }
     if (url.pathname.startsWith('/admin/')) {
       return handleAdminDashboard(request, env, headers, url.pathname);

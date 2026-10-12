@@ -475,7 +475,7 @@
           <div class="tl">
             <div class="it done"><b>1. Création</b><div class="d">Depuis la fiche d'un lead ou « Nouveau devis » : coordonnées et réponses au quiz pré-remplies, modèle adapté à la prestation.</div></div>
             <div class="it done"><b>2. Envoi</b><div class="d">Le client reçoit un email avec un lien personnel vers son devis. Le contenu est figé (empreinte numérique).</div></div>
-            <div class="it done"><b>3. Signature en ligne</b><div class="d">« Bon pour accord », choix portfolio, demande d'exécution anticipée (particuliers), nom saisi ; date, heure et IP enregistrées.</div></div>
+            <div class="it done"><b>3. Signature en ligne</b><div class="d">« Bon pour accord », 4 choix d'utilisation de l'image (Oui/Non, non pré-cochés), demande d'exécution anticipée (particuliers), nom saisi ; date, heure et IP enregistrées.</div></div>
             <div class="it done"><b>4. Acompte automatique</b><div class="d">La facture d'acompte (30 %) part dès la signature, puis le circuit habituel continue (paiement, espace, séance…).</div></div>
             <div class="it"><b>Relance et expiration</b><div class="d">Relance unique 5 jours après l'envoi si non signé ; le devis expire à sa date de validité. Signature via Yousign possible : « Marquer signé ».</div></div>
           </div>
@@ -1809,7 +1809,7 @@ const Q_STATUS = { brouillon: ['Brouillon', 'line'], envoye: ['Envoyé', 'warn']
 const TPL = BunkaioDevis.TEMPLATES;
 function qLi(q) {
   const st = Q_STATUS[q.status] || [q.status, 'line'];
-  return `<div class="li click" onclick="openQuote('${esc(q.id)}')"><div class="ic ${q.status === 'signe' ? 'ok' : q.status === 'envoye' ? 'warn' : ''}">📝</div><div class="tx"><b>N° ${esc(q.number)} · ${esc(q.prestation || 'Sans titre')}</b><div class="d">${esc(q.client && q.client.nom)} · ${q.status === 'signe' ? 'signé ' + fdate(q.signedAt) : q.status === 'envoye' ? 'envoyé ' + fdate(q.sentAt) + (q.viewedAt ? ' · consulté' : '') : 'créé ' + fdate(q.createdAt)}</div></div><div class="act" style="text-align:right"><b>${eur(q.totalHT)}</b><div><span class="badge ${st[1]}">${st[0]}</span></div></div></div>`;
+  return `<div class="li click" onclick="openQuote('${esc(q.id)}')"><div class="ic ${q.status === 'signe' ? 'ok' : q.status === 'envoye' ? 'warn' : ''}">📝</div><div class="tx"><b>N° ${esc(q.number)} · ${esc(q.prestation || 'Sans titre')}</b><div class="d">${esc(q.client && q.client.nom)} · ${q.status === 'signe' ? 'signé ' + fdate(q.signedAt) : q.status === 'envoye' ? 'envoyé ' + fdate(q.sentAt) + (q.viewedAt ? ' · consulté' : '') : 'créé ' + fdate(q.createdAt)}</div></div><div class="act" style="text-align:right"><b>${eur(q.totalHT)}</b><div><span class="badge ${st[1]}">${st[0]}</span> ${imgBadge(q)}</div></div></div>`;
 }
 function renderQuotes() {
   const all = DB.quotes || [];
@@ -1827,7 +1827,7 @@ function renderQuotes() {
   $('qChips').innerHTML = F.map(([id, l, f]) => `<button class="chip ${state.qFilter === id ? 'on' : ''}" onclick="state.qFilter='${id}';renderQuotes()">${l}<span class="c">${all.filter(f).length}</span></button>`).join('');
   const list = all.filter(F.find(x => x[0] === state.qFilter)[2]);
   $('qTable').innerHTML = list.length ? `<div class="tbl-wrap"><table><thead><tr><th>N°</th><th>Client</th><th>Prestation</th><th class="num">Montant</th><th>Statut</th><th>Suivi</th><th>Validité</th></tr></thead><tbody>${list.map(q => { const st = Q_STATUS[q.status] || [q.status, 'line'];
-    return `<tr class="click" onclick="openQuote('${esc(q.id)}')"><td><b>${esc(q.number)}</b></td><td class="who"><b>${esc(q.client && q.client.nom)}</b><span>${esc(q.email)}</span></td><td class="small">${esc(q.prestation)}</td><td class="num"><b>${eur(q.totalHT)}</b>${q.abonnement ? '<div class="small muted">/ mois</div>' : ''}</td><td><span class="badge ${st[1]}">${st[0]}</span></td>
+    return `<tr class="click" onclick="openQuote('${esc(q.id)}')"><td><b>${esc(q.number)}</b></td><td class="who"><b>${esc(q.client && q.client.nom)}</b><span>${esc(q.email)}</span></td><td class="small">${esc(q.prestation)}</td><td class="num"><b>${eur(q.totalHT)}</b>${q.abonnement ? '<div class="small muted">/ mois</div>' : ''}</td><td><span class="badge ${st[1]}">${st[0]}</span> ${imgBadge(q)}</td>
     <td class="small">${q.status === 'signe' ? 'Signé ' + fdate(q.signedAt) + (q.signedVia === 'yousign' ? ' (Yousign)' : q.signedVia === 'manuel' ? ' (manuel)' : ' en ligne') + (q.depositInvoice ? ' · acompte envoyé' : q.abonnement ? '' : ' · <b style="color:var(--danger)">acompte à créer</b>') : q.status === 'envoye' ? 'Envoyé ' + fdate(q.sentAt) + (q.viewedAt ? ' · consulté ' + ago(q.viewedAt) : ' · pas encore ouvert') + (q.reminderSentAt ? ' · relancé' : '') : 'Créé ' + fdate(q.createdAt)}</td><td class="small">${fdate(q.validUntil)}</td></tr>`; }).join('')}</tbody></table></div>` : '<div class="card"><div class="empty">Aucun devis. Créez-en un depuis la fiche d\'un lead ou avec « Nouveau devis ».</div></div>';
 }
 
@@ -1894,7 +1894,8 @@ function renderQuoteDrawer() {
     <div class="dr-tabs">${(editable ? [['edit', 'Rédaction'], ['preview', 'Aperçu']] : [['preview', 'Devis'], ['track', 'Suivi']]).map(([id, l]) => `<button class="${drawer.tab === id ? 'on' : ''}" onclick="setQTab('${id}')">${l}</button>`).join('')}</div>`;
   if (drawer.tab === 'edit') $('drBody').innerHTML = quoteForm(q);
   else if (drawer.tab === 'track') $('drBody').innerHTML = quoteTrack(q);
-  else $('drBody').innerHTML = (editable ? '<div class="msg info" style="margin-bottom:14px">Aperçu : c\'est exactement ce que le client verra et signera.</div>' : '') + BunkaioDevis.render(q, DB.business || {});
+  else if (!editable && q.legal) { $('drBody').innerHTML = '<div class="small muted">Chargement du document figé…</div>'; frozenDoc(q); }
+  else $('drBody').innerHTML = (editable ? '<div class="msg info" style="margin-bottom:14px">Aperçu : c\'est exactement ce que le client verra et signera (clauses ' + BunkaioDevis.LEGAL_VERSION + ').</div>' : '') + BunkaioDevis.render(q, DB.business || {}, editable ? { legal: true } : {});
   const btns = [];
   if (editable) {
     btns.push(`<button class="btn ghost" onclick="saveQuote()">Enregistrer le brouillon</button>`, `<button class="btn" onclick="sendQuote()">Envoyer au client ✉</button>`);
@@ -1909,6 +1910,72 @@ function renderQuoteDrawer() {
     if (contactByEmail(q.email)) btns.push(`<button class="btn ghost" onclick="openDrawer('${esc(q.email)}')">Fiche client</button>`);
   }
   $('drFoot').innerHTML = btns.join('') + '<div id="drMsg"></div>';
+}
+/* Document figé : texte exact envoyé au client (jamais recomposé depuis les clauses actuelles) */
+async function frozenHtml(q) {
+  if (!q.legal) return BunkaioDevis.render(q, DB.business || {});
+  if (!q._frozen) { const { res, data } = await api('/admin/quote-doc?id=' + encodeURIComponent(q.id)); if (!res.ok || !data.legal) return '<div class="msg err">Document figé introuvable.</div>'; q._frozen = data.legal.html; }
+  return '<div class="dv">' + q._frozen.replace(/^<div class="dv">/, '').replace(/<\/div>\s*$/, '') + BunkaioDevis.signBlock(q) + BunkaioDevis.consentBlock(q) + '</div>';
+}
+async function frozenDoc(q) { const h = await frozenHtml(q); if (QE === q && drawer.tab === 'preview') $('drBody').innerHTML = h; }
+const IMG_ST = { en_attente: ['En attente', 'line'], accepte: ['Accepté', 'ok'], refuse: ['Refusé', 'line'], partiel: ['Partiel', 'warn'], retrait_demande: ['Retrait demandé', 'danger'], retire: ['Retiré', 'danger'] };
+const imgBadge = q => q.status === 'signe' && q.consent ? `<span class="badge ${(IMG_ST[q.consent.status] || ['', 'line'])[1]}">Image : ${(IMG_ST[q.consent.status] || [q.consent.status])[0]}</span>` : '';
+const USE_NAMES = { site: 'Site et portfolio', social: 'Réseaux sociaux', print: 'Supports commerciaux', ads: 'Publicités numériques' };
+const yn = (use, k, w) => { const v = use && use[k]; const off = (w || []).includes(k); return v === 'oui' ? (off ? '<span class="badge danger">Oui → retiré</span>' : '<span class="badge ok">Oui</span>') : v === 'non' ? '<span class="badge line">Non</span>' : '—'; };
+function consentCard(q) {
+  if (q.status !== 'signe') return q.legal ? `<div class="card" style="margin-top:18px"><h3>Droit à l'image</h3><div class="small muted">Clauses ${esc(q.legal.version)} figées à l'envoi. Les choix seront enregistrés à la signature.</div></div>` : '';
+  const sg = q.signature || {}, c = q.consent || {};
+  if (!sg.imageUse) return `<div class="card" style="margin-top:18px"><h3>Droit à l'image</h3><div class="small muted">Devis antérieur au système d'autorisations détaillées — portfolio : ${sg.portfolio ? 'autorisé' : 'refusé'}.</div></div>`;
+  const wd = c.withdrawnUses || [];
+  const subs = q.subjects || [];
+  return `<div class="card" style="margin-top:18px"><h3>Droit à l'image — ${imgBadge(q)}</h3>
+    <dl class="kv"><dt>Version des clauses</dt><dd>${esc(sg.legalVersion || q.legal && q.legal.version || '')}</dd><dt>Consentement donné</dt><dd>${fdt(sg.at)}</dd>${c.withdrawalRequestedAt ? `<dt>Retrait demandé</dt><dd><b style="color:var(--danger)">${fdt(c.withdrawalRequestedAt)}</b> — à traiter sous 30 jours</dd>` : ''}${c.withdrawnAt ? `<dt>Retrait enregistré</dt><dd>${fdt(c.withdrawnAt)}</dd>` : ''}<dt>Personnes photographiées</dt><dd>${esc({ self: 'Le signataire uniquement', self_others: 'Signataire et autres personnes', others: 'Autres personnes uniquement' }[sg.persons] || '—')}${sg.minors ? ' · mineur(s)' : ''}</dd>
+    ${Object.keys(USE_NAMES).map(k => `<dt>${USE_NAMES[k]}</dt><dd>${yn(sg.imageUse, k, wd)}</dd>`).join('')}</dl>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"><button class="btn ghost sm" onclick="downloadPdf()">PDF signé</button><button class="btn ghost sm" onclick="recordWithdrawal('client')">Enregistrer un retrait…</button><button class="btn ghost sm" onclick="groupLink()">Lien d'autorisation des autres personnes</button><button class="btn ghost sm" onclick="showConsentLog()">Journal des choix</button></div>
+    <div id="consentOut" class="small" style="margin-top:10px"></div></div>
+    <div class="card" style="margin-top:18px"><h3>Autres personnes photographiées (${subs.length})</h3>
+    ${subs.length ? `<div class="tbl-wrap"><table><thead><tr><th>Nom</th><th>Statut</th>${Object.keys(USE_NAMES).map(k => `<th>${USE_NAMES[k]}</th>`).join('')}<th></th></tr></thead><tbody>${subs.map(s => `<tr><td><b>${esc(s.name)}</b>${s.minor ? ' <span class="badge warn">Mineur</span>' : ''}<div class="small muted">${esc(s.email || '')}${s.guardianName ? ' · représentant : ' + esc(s.guardianName) : ''}</div></td><td>${s.status === 'signe' ? (s.withdrawalRequestedAt ? '<span class="badge danger">Retrait demandé</span>' : '<span class="badge ok">Signé ' + fdate(s.signedAt) + '</span>') : '<span class="badge line">En attente</span>'}</td>${Object.keys(USE_NAMES).map(k => `<td>${yn(s.imageUse, k, s.withdrawnUses)}</td>`).join('')}<td style="white-space:nowrap">${s.status === 'signe' ? `<button class="btn ghost sm" onclick="recordWithdrawal('${esc(s.id)}')">Retrait…</button>` : `<button class="btn ghost sm" onclick="subjectAct('subject-link','${esc(s.id)}')">Lien</button>${s.email ? ` <button class="btn ghost sm" onclick="subjectAct('subject-invite','${esc(s.id)}')">Envoyer</button>` : ''} <button class="btn ghost sm" onclick="subjectAct('subject-remove','${esc(s.id)}')">✕</button>`}</td></tr>`).join('')}</tbody></table></div>` : '<div class="small muted">Aucune personne ajoutée. Les personnes qui remplissent le lien commun apparaissent ici automatiquement.</div>'}
+    <button class="btn ghost sm" style="margin-top:10px" onclick="addSubject()">+ Ajouter une personne</button></div>`;
+}
+async function consentAct(body, okMsg) {
+  const { res, data } = await api('/admin/quote', { method: 'POST', body: JSON.stringify({ id: QE.id, ...body }) });
+  if (!res.ok || !data.ok) { toast('Erreur : ' + (data.error || res.status)); return null; }
+  const keep = QE._frozen; QE = data.quote; QE._frozen = keep; await loadDashboard(); renderQuoteDrawer(); if (okMsg) toast(okMsg); return data;
+}
+async function downloadPdf() {
+  try {
+    const res = await fetch(WORKER + '/admin/quote-pdf?id=' + encodeURIComponent(QE.id), { headers: { Authorization: 'Bearer ' + TOKEN } });
+    if (!res.ok) { toast('PDF indisponible'); return; }
+    window.open(URL.createObjectURL(await res.blob()), '_blank');
+  } catch (e) { toast('PDF indisponible'); }
+}
+async function showConsentLog() {
+  const { res, data } = await api('/admin/consents?id=' + encodeURIComponent(QE.id));
+  const out = $('consentOut'); if (!out) return;
+  if (!res.ok || !data.ok) { out.innerHTML = '<div class="msg err">Journal indisponible.</div>'; return; }
+  out.innerHTML = (data.log || []).length ? '<div class="tl">' + data.log.map(e => `<div class="it done"><b>${esc(e.type)} · ${esc(e.who)}${e.usage ? ' · ' + esc(e.usage) : ''}${e.choice ? ' : ' + esc(e.choice) : ''}</b><div class="d">${fdt(e.at)}${e.note ? ' — ' + esc(e.note) : ''}</div></div>`).join('') + '</div>' : 'Journal vide.';
+}
+async function groupLink() { const d = await consentAct({ action: 'group-link' }); if (d && d.url) { try { await navigator.clipboard.writeText(d.url); } catch (e) {} const out = $('consentOut'); if (out) out.innerHTML = 'Lien commun (copié) : <code style="word-break:break-all">' + esc(d.url) + '</code><div class="muted">Chaque personne y saisit son nom, son choix et, pour un mineur, celui de son représentant légal.</div>'; } }
+async function addSubject() {
+  const name = prompt('Nom et prénom de la personne photographiée :'); if (!name) return;
+  const email = prompt('Email (facultatif, pour lui envoyer son lien et la confirmation) :') || '';
+  const minor = confirm('Cette personne est-elle mineure ?\n\nOK = oui (autorisation du représentant légal) · Annuler = non');
+  const d = await consentAct({ action: 'subject-add', name, email, minor }, 'Personne ajoutée');
+  if (d && d.url) { try { await navigator.clipboard.writeText(d.url); toast('Personne ajoutée — lien copié'); } catch (e) {} }
+}
+async function subjectAct(action, sid) {
+  if (action === 'subject-remove' && !confirm('Retirer cette personne de la liste ?')) return;
+  const d = await consentAct({ action, sid }, action === 'subject-invite' ? 'Invitation envoyée' : action === 'subject-remove' ? 'Personne retirée' : '');
+  if (d && d.url) { try { await navigator.clipboard.writeText(d.url); toast('Lien copié'); } catch (e) { prompt('Lien :', d.url); } }
+}
+async function recordWithdrawal(who) {
+  const names = Object.keys(USE_NAMES);
+  const all = confirm('Enregistrer le retrait de TOUS les usages (site, réseaux, supports, publicités) ?\n\nOK = tous · Annuler = choisir les usages un par un');
+  const usages = all ? names : names.filter(k => confirm('Retirer : ' + USE_NAMES[k] + ' ?\n\nOK = oui · Annuler = non'));
+  if (!usages.length) return;
+  const note = prompt('Note interne (date de la demande, canal, vérification d\'identité…) :') || '';
+  const notify = confirm('Envoyer un email de confirmation du retrait à la personne ?');
+  await consentAct({ action: 'withdraw', who, usages, note, notify }, 'Retrait enregistré — pensez à retirer les publications en ligne sous 30 jours');
 }
 function quoteForm(q) {
   const c = q.client; const opt = (v, cur, l) => `<option value="${v}" ${cur === v ? 'selected' : ''}>${l}</option>`;
@@ -1946,7 +2013,8 @@ function quoteTrack(q) {
   const ev = [['Créé', q.createdAt, true], ['Envoyé au client', q.sentAt, !!q.sentAt], ['Consulté', q.viewedAt, !!q.viewedAt], ['Relance envoyée', q.reminderSentAt, !!q.reminderSentAt], ['Signé' + (q.signedVia === 'en_ligne' ? ' en ligne' : q.signedVia === 'yousign' ? ' via Yousign' : q.signedVia ? ' (manuel)' : ''), q.signedAt, !!q.signedAt], [q.status === 'annule' ? 'Annulé' : q.status === 'refuse' ? 'Refusé' : 'Clôturé', q.closedAt, !!q.closedAt]].filter(e => e[1]);
   const sg = q.signature;
   return `<div class="grid g2"><div class="card"><h3>Historique</h3><div class="tl">${ev.map(e => `<div class="it ${e[2] ? 'done' : ''}"><b>${e[0]}</b><div class="d">${fdt(e[1])}</div></div>`).join('')}</div></div>
-    <div class="card"><h3>Preuve de signature</h3>${sg ? `<dl class="kv"><dt>Signataire</dt><dd>${esc(sg.name)}</dd><dt>Date</dt><dd>${fdt(sg.at)}</dd>${sg.ip ? `<dt>Adresse IP</dt><dd>${esc(sg.ip)}</dd>` : ''}${sg.ua ? `<dt>Navigateur</dt><dd class="small">${esc(sg.ua)}</dd>` : ''}<dt>Portfolio</dt><dd>${sg.portfolio ? 'Autorisé' : 'Refusé'}</dd>${q.client.profil === 'particulier' ? `<dt>Exécution anticipée</dt><dd>${sg.retractationWaiver ? 'Demandée' : 'Non demandée'}</dd>` : ''}<dt>Empreinte</dt><dd class="small" style="word-break:break-all">${esc(sg.hash)}</dd></dl>` : '<div class="small muted">Pas encore signé.</div>'}</div></div>
+    <div class="card"><h3>Preuve de signature</h3>${sg ? `<dl class="kv"><dt>Signataire</dt><dd>${esc(sg.name)}</dd><dt>Date</dt><dd>${fdt(sg.at)}</dd>${sg.ip ? `<dt>Adresse IP</dt><dd>${esc(sg.ip)}</dd>` : ''}${sg.ua ? `<dt>Navigateur</dt><dd class="small">${esc(sg.ua)}</dd>` : ''}${sg.imageUse ? '' : `<dt>Portfolio</dt><dd>${sg.portfolio ? 'Autorisé' : 'Refusé'}</dd>`}${sg.snapshotHash ? `<dt>Empreinte des clauses</dt><dd class="small" style="word-break:break-all">${esc(sg.snapshotHash)}</dd>` : ''}${q.client.profil === 'particulier' ? `<dt>Exécution anticipée</dt><dd>${sg.retractationWaiver ? 'Demandée' : 'Non demandée'}</dd>` : ''}<dt>Empreinte</dt><dd class="small" style="word-break:break-all">${esc(sg.hash)}</dd></dl>` : '<div class="small muted">Pas encore signé.</div>'}</div></div>
+    ${consentCard(q)}
     ${q.status === 'envoye' ? `<div class="msg info" style="margin-top:18px">Lien de signature du client : <code style="word-break:break-all">${esc(signLink(q))}</code></div>` : ''}`;
 }
 function signLink(q) { return q._url || '(lien disponible après « Renvoyer l\'email » ou dans l\'email du client)'; }
@@ -1970,7 +2038,7 @@ async function quoteAction(action, skipConfirm) {
   const labels = { resend: 'Renvoyer l\'email du devis au client ?', cancel: 'Annuler ce devis ? Le lien de signature ne fonctionnera plus.', refuse: 'Marquer ce devis comme refusé ?', delete: 'Supprimer définitivement ce devis ?', 'create-deposit': 'Créer et envoyer la facture d\'acompte (30 %) au client ?', duplicate: 'Créer un nouveau brouillon à partir de ce devis ?' };
   if (!skipConfirm && labels[action] && !confirm(labels[action])) return;
   try {
-    const { res, data } = await api('/admin/quote', { method: 'POST', body: JSON.stringify({ action, id: QE.id }) });
+    const { res, data } = await api('/admin/quote', { method: 'POST', body: JSON.stringify({ action, id: QE.id, ...(action === 'send' ? { legal: BunkaioDevis.legalPack(QE, DB.business || {}) } : {}) }) });
     if (!res.ok || !data.ok) {
       const msg = data.error === 'incomplete' ? 'Champs manquants : ' + (data.fields || []).join(', ') : 'Erreur : ' + (data.error || res.status);
       $('drMsg').innerHTML = `<div class="msg err">${esc(msg)}</div>`; return;
@@ -1985,20 +2053,26 @@ async function quoteAction(action, skipConfirm) {
 }
 async function markSigned() {
   const via = confirm('Signé via Yousign ?\n\nOK = Yousign · Annuler = autre (papier, email…)') ? 'yousign' : 'manuel';
-  const portfolio = confirm('Le client autorise-t-il l\'utilisation des visuels pour le portfolio ?\n\nOK = oui · Annuler = non');
+  const imageUse = {};
+  if (!QE.legal || QE.status === 'brouillon') {
+    if (!confirm('Saisie manuelle des autorisations d\'image du client (4 questions, aucune réponse par défaut).\n\nPour chaque usage : OK = le client AUTORISE · Annuler = le client REFUSE.\n\nContinuer ?')) return;
+  }
+  for (const u of BunkaioDevis.USES) imageUse[u.id] = confirm('Le client autorise-t-il : ' + u.label + ' ?\n\nOK = oui · Annuler = non') ? 'oui' : 'non';
+  const portfolio = imageUse.site === 'oui';
   const createDeposit = !QE.abonnement && confirm('Créer et envoyer maintenant la facture d\'acompte (30 %) ?');
   if (QE.status === 'brouillon') { const q = await saveQuote(true); if (!q) return; }
   try {
-    const { res, data } = await api('/admin/quote', { method: 'POST', body: JSON.stringify({ action: 'mark-signed', id: QE.id, via, portfolio, createDeposit }) });
+    const { res, data } = await api('/admin/quote', { method: 'POST', body: JSON.stringify({ action: 'mark-signed', id: QE.id, via, portfolio, imageUse, createDeposit, ...(QE.legal ? {} : { legal: BunkaioDevis.legalPack(QE, DB.business || {}) }) }) });
     if (!res.ok || !data.ok) { $('drMsg').innerHTML = `<div class="msg err">Erreur : ${esc(data.error || res.status)}</div>`; return; }
     QE = data.quote; toast('Devis marqué signé' + (data.depositError ? ' · ⚠ acompte non créé' : createDeposit ? ' · acompte envoyé' : ''));
     drawer.tab = 'track'; await loadDashboard(); renderQuoteDrawer();
   } catch (e) {}
 }
 function copyLink() { const l = QE._url; if (!l) { toast('Utilisez « Renvoyer l\'email » pour afficher le lien'); return; } navigator.clipboard.writeText(l).then(() => toast('Lien copié'), () => toast(l)); }
-function printQuote() {
+async function printQuote() {
   const w = window.open('', '_blank'); if (!w) { toast('Autorisez les fenêtres pop-up pour imprimer'); return; }
-  w.document.write(`<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><title>Devis ${esc(QE.number)} — BUNKAIO</title><base href="${location.origin}/"><style>@font-face{font-family:'DM Sans';src:url('/fonts/dm-sans-latin-opsz-normal.woff2') format('woff2');font-weight:100 1000}body{margin:0;padding:24px;background:#fff}${BunkaioDevis.CSS}</style></head><body>${BunkaioDevis.render(QE, DB.business || {})}<script>window.onload=function(){setTimeout(function(){window.print()},300)}<\/script></body></html>`);
+  const docHtml = await frozenHtml(QE);
+  w.document.write(`<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><title>Devis ${esc(QE.number)} — BUNKAIO</title><base href="${location.origin}/"><style>@font-face{font-family:'DM Sans';src:url('/fonts/dm-sans-latin-opsz-normal.woff2') format('woff2');font-weight:100 1000}body{margin:0;padding:24px;background:#fff}${BunkaioDevis.CSS}</style></head><body>${docHtml}<script>window.onload=function(){setTimeout(function(){window.print()},300)}<\/script></body></html>`);
   w.document.close();
 }
 

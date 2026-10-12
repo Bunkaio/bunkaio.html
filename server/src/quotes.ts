@@ -19,6 +19,54 @@ export interface QuoteClient {
   tvaIntra?: string;
 }
 
+/** Usages promotionnels de l'image par BUNKAIO : chacun fait l'objet d'un choix distinct, jamais pré-coché. */
+export const IMAGE_USES = ['site', 'social', 'print', 'ads'] as const;
+export type ImageUseId = (typeof IMAGE_USES)[number];
+export type UseChoice = 'oui' | 'non';
+export type ImageUse = Record<ImageUseId, UseChoice>;
+export type ImageStatus = 'en_attente' | 'accepte' | 'refuse' | 'partiel' | 'retrait_demande' | 'retire';
+
+/** Clauses d'image figées à l'envoi (version + empreinte) ; le texte intégral est dans KV `quotelegal:<id>`. */
+export interface QuoteLegal {
+  version: string;
+  snapshotHash: string;
+  frozenAt: string;
+}
+
+/** Personne photographiée autre que le signataire (salarié, invité, enfant, modèle…). */
+export interface Subject {
+  id: string;
+  token: string;
+  name: string;
+  email?: string;
+  role?: string;
+  minor: boolean;
+  guardianName?: string;
+  guardianRelation?: string;
+  status: 'invite' | 'signe';
+  imageUse?: ImageUse;
+  createdAt: string;
+  invitedAt?: string;
+  signedAt?: string;
+  ip?: string;
+  ua?: string;
+  legalVersion?: string;
+  snapshotHash?: string;
+  hash?: string;
+  withdrawnUses?: ImageUseId[];
+  withdrawalRequestedAt?: string;
+}
+
+/** État courant du droit à l'image du signataire (calculé à partir de la signature et du journal). */
+export interface QuoteConsent {
+  status: ImageStatus;
+  uses?: ImageUse;
+  consentAt?: string;
+  withdrawalRequestedAt?: string;
+  withdrawnAt?: string;
+  withdrawnUses?: ImageUseId[];
+}
+
 export interface QuoteSignature {
   name: string;
   at: string;
@@ -27,6 +75,13 @@ export interface QuoteSignature {
   portfolio: boolean;
   retractationWaiver: boolean;
   hash: string;
+  /** Choix détaillés (devis envoyés avec clauses d'image). */
+  imageUse?: ImageUse;
+  persons?: 'self' | 'self_others' | 'others';
+  minors?: boolean;
+  legalVersion?: string;
+  snapshotHash?: string;
+  pdfHash?: string;
 }
 
 export interface Quote {
@@ -61,6 +116,10 @@ export interface Quote {
   contentHash?: string;
   signature?: QuoteSignature;
   signedVia?: 'en_ligne' | 'yousign' | 'manuel';
+  legal?: QuoteLegal;
+  consent?: QuoteConsent;
+  subjects?: Subject[];
+  groupToken?: string;
   depositInvoice?: { id: string; url: string; amount: number };
   reminderSentAt?: string;
 }
@@ -169,7 +228,8 @@ export async function createQuote(env: Env, data: Partial<Quote>): Promise<Quote
 /** Empreinte du contenu contractuel (hors statut, dates techniques, signature). */
 export async function quoteHash(q: Quote): Promise<string> {
   const { email, client, prestation, contenu, notes, seance, delai, totalHT, acomptePct, abonnement, droits, report, conditions, validUntil, mediateur, tribunal, number } = q;
-  const canonical = JSON.stringify({ number, email, client, prestation, contenu, notes, seance, delai, totalHT, acomptePct, abonnement, droits, report, conditions, validUntil, mediateur, tribunal });
+  const legalHash = q.legal ? q.legal.snapshotHash : undefined;
+  const canonical = JSON.stringify(legalHash ? { number, email, client, prestation, contenu, notes, seance, delai, totalHT, acomptePct, abonnement, droits, report, conditions, validUntil, mediateur, tribunal, legalHash } : { number, email, client, prestation, contenu, notes, seance, delai, totalHT, acomptePct, abonnement, droits, report, conditions, validUntil, mediateur, tribunal });
   const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(canonical));
   return [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2, '0')).join('');
 }
@@ -183,9 +243,11 @@ export async function prepareSend(q: Quote): Promise<Quote> {
 }
 
 /** Vue publique pour la page de signature : sans le jeton ni les champs internes. */
-export function publicQuote(q: Quote): Omit<Quote, 'token' | 'depositInvoice' | 'reminderSentAt'> & { depositUrl?: string } {
-  const { token: _t, depositInvoice, reminderSentAt: _r, ...rest } = q;
-  return { ...rest, ...(depositInvoice ? { depositUrl: depositInvoice.url } : {}) };
+export function publicQuote(q: Quote): Omit<Quote, 'token' | 'depositInvoice' | 'reminderSentAt' | 'subjects' | 'groupToken'> & { depositUrl?: string; groupUrl?: string } {
+  const { token: _t, depositInvoice, reminderSentAt: _r, subjects: _s, groupToken, ...rest } = q;
+  /* L'adresse IP et le navigateur du signataire ne sont pas renvoyés au navigateur : ils restent dans le dossier de preuve. */
+  const signature = rest.signature ? { ...rest.signature, ip: '', ua: '' } : undefined;
+  return { ...rest, ...(signature ? { signature } : {}), ...(depositInvoice ? { depositUrl: depositInvoice.url } : {}), ...(groupToken && q.status === 'signe' ? { groupUrl: `https://bunkaio.com/autorisation/?q=${q.id}&g=${groupToken}` } : {}) };
 }
 
 export function tokenMatches(q: Quote, token: unknown): boolean {
@@ -197,4 +259,97 @@ export function tokenMatches(q: Quote, token: unknown): boolean {
 
 export function isExpired(q: Quote): boolean {
   return q.status === 'envoye' && q.validUntil < new Date().toISOString().slice(0, 10);
+}
+
+/* ───────────── Clauses figées, journal des consentements, preuve ───────────── */
+
+export interface FrozenLegal {
+  version: string;
+  html: string;
+  /** Description des usages et notice remise aux personnes photographiées (figées avec la version). */
+  uses: { id: ImageUseId; label: string; text: string }[];
+  notice: string;
+  hash: string;
+  at: string;
+}
+
+export const sha256Hex = async (text: string): Promise<string> =>
+  [...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text)))].map((b) => b.toString(16).padStart(2, '0')).join('');
+
+export async function putFrozenLegal(env: Env, quoteId: string, f: FrozenLegal): Promise<void> {
+  await env.ACCOUNTS_KV.put('quotelegal:' + quoteId, JSON.stringify(f));
+}
+export async function getFrozenLegal(env: Env, quoteId: string): Promise<FrozenLegal | null> {
+  const raw = await env.ACCOUNTS_KV.get('quotelegal:' + quoteId);
+  return raw ? (JSON.parse(raw) as FrozenLegal) : null;
+}
+
+/** Valide et fige les clauses transmises à l'envoi (texte unique, jamais réécrit ensuite). */
+export async function freezeLegal(input: unknown): Promise<FrozenLegal | null> {
+  if (!input || typeof input !== 'object') return null;
+  const o = input as Record<string, unknown>;
+  const version = typeof o.version === 'string' ? o.version : '';
+  const html = typeof o.html === 'string' ? o.html : '';
+  const notice = typeof o.notice === 'string' ? o.notice : '';
+  if (!/^DI-\d{1,3}\.\d{1,3}$/.test(version) || html.length < 500 || html.length > 400_000 || notice.length > 40_000) return null;
+  if (/<script|javascript:|\son[a-z]+\s*=/i.test(html + notice)) return null;
+  const rawUses = Array.isArray(o.uses) ? (o.uses as Record<string, unknown>[]) : [];
+  const uses = IMAGE_USES.map((id) => {
+    const u = rawUses.find((x) => x && x.id === id);
+    return { id, label: String(u?.label ?? '').slice(0, 300), text: String(u?.text ?? '').slice(0, 1500) };
+  });
+  if (uses.some((u) => !u.label)) return null;
+  const at = new Date().toISOString();
+  return { version, html, uses, notice, hash: await sha256Hex(JSON.stringify({ version, html, uses, notice })), at };
+}
+
+export type ConsentEventType = 'choix' | 'retrait_demande' | 'retrait' | 'invitation' | 'note';
+export interface ConsentEvent {
+  at: string;
+  type: ConsentEventType;
+  /** 'client' ou 'subject:<id>' ou 'admin'. */
+  who: string;
+  usage?: ImageUseId | 'all';
+  choice?: UseChoice;
+  note?: string;
+  ip?: string;
+}
+
+const LOGKEY = 'consentlog:';
+export async function getConsentLog(env: Env, quoteId: string): Promise<ConsentEvent[]> {
+  const raw = await env.ACCOUNTS_KV.get(LOGKEY + quoteId);
+  return raw ? (JSON.parse(raw) as ConsentEvent[]) : [];
+}
+/** Journal en ajout seul : on ne modifie ni ne supprime jamais une ligne existante. */
+export async function appendConsent(env: Env, quoteId: string, events: Omit<ConsentEvent, 'at'>[]): Promise<void> {
+  const log = await getConsentLog(env, quoteId);
+  const at = new Date().toISOString();
+  for (const e of events) log.push({ at, ...e });
+  await env.ACCOUNTS_KV.put(LOGKEY + quoteId, JSON.stringify(log));
+}
+
+/** Choix en vigueur du signataire : dernier choix, moins les usages retirés. */
+export function computeConsent(q: Quote): QuoteConsent {
+  const sg = q.signature;
+  if (!sg || !sg.imageUse) {
+    /* Anciens devis : un seul choix « portfolio ». */
+    if (sg && q.status === 'signe') {
+      const uses: ImageUse = { site: sg.portfolio ? 'oui' : 'non', social: 'non', print: 'non', ads: 'non' };
+      return { status: sg.portfolio ? 'partiel' : 'refuse', uses, consentAt: sg.at };
+    }
+    return { status: 'en_attente' };
+  }
+  const prev = q.consent ?? { status: 'en_attente' as ImageStatus };
+  const withdrawn = prev.withdrawnUses ?? [];
+  const uses = { ...sg.imageUse } as ImageUse;
+  for (const u of withdrawn) uses[u] = 'non';
+  const yes = IMAGE_USES.filter((u) => sg.imageUse![u] === 'oui');
+  const stillYes = yes.filter((u) => !withdrawn.includes(u));
+  let status: ImageStatus;
+  if (yes.length && !stillYes.length) status = 'retire';
+  else if (prev.withdrawalRequestedAt && !prev.withdrawnAt) status = 'retrait_demande';
+  else if (!yes.length) status = 'refuse';
+  else if (yes.length === IMAGE_USES.length && !withdrawn.length) status = 'accepte';
+  else status = 'partiel';
+  return { ...prev, status, uses, consentAt: sg.at };
 }

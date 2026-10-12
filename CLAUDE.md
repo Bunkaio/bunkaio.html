@@ -61,3 +61,11 @@ Banc local Miniflare avec faux Stripe/Resend et Playwright (scripts hors dépôt
 
 ## À faire côté propriétaire
 Redéployer le Worker, tester un devis réel en mode test Stripe, désactiver SEPA et ajouter l'événement `charge.dispute.created` dans Stripe, Search Console, fiche Google Business.
+
+## Droit à l'image, consentement et preuve (oct. 2026, clauses DI-1.0)
+- À l'envoi, l'admin fige un paquet de clauses (`BunkaioDevis.legalPack`, version `LEGAL_VERSION`) stocké dans KV `quotelegal:<id>` et inclus dans l'empreinte du devis : un devis signé ne se recompose jamais depuis le texte actuel. Toute évolution des clauses = nouvelle version (DI-1.1…), jamais de modification d'une version envoyée. Devis sans `q.legal` : ancien comportement (case portfolio).
+- Signature (`/signature/`) : 4 choix Oui/Non non pré-cochés (site, réseaux, supports, publicité numérique), personnes photographiées, mineurs ; bouton « Signer et accepter le devis ». Preuve : identité, email, date/heure, version, choix, IP, navigateur, empreintes ; journal append-only `consentlog:<id>` ; PDF figé `quotepdf:<id>` (pdf-lib, généré une fois, joint à l'email).
+- Autres personnes : `/autorisation/` (lien individuel ou commun, représentant légal pour les mineurs) ; retrait : `/retrait-autorisation/` (demande publique, validée dans l'admin → statuts accepté / refusé / partiel / retrait demandé / retiré). Pages en noindex + robots Disallow.
+- Conservation : preuve 5 ans après la fin de la relation, factures 10 ans. Vue publique du devis sans IP/UA/personnes.
+- À faire valider par un juriste/DPO : durée 5 ans, base légale (consentement + intérêt légitime pour la preuve), valeur de la signature simple, clause mineurs, transferts hors UE, mentions de la politique de confidentialité. Ne jamais affirmer une conformité à 100 %.
+- Test local : `wrangler dev --local` (variables ADMIN_TOKEN, RESEND_API_KEY…) + script de scénarios (hors dépôt).

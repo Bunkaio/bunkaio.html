@@ -844,7 +844,7 @@ export function buildQuoteEmail(params: { customerName: string; number: string; 
 }
 
 /** Confirmation de signature, avec le lien vers l'exemplaire signé. */
-export function buildQuoteSignedEmail(params: { customerName: string; number: string; url: string; depositAmount?: number; depositUrl?: string; abonnement?: boolean; space?: Space; lang?: Lang }): { subject: string; html: string; text: string } {
+export function buildQuoteSignedEmail(params: { customerName: string; number: string; url: string; depositAmount?: number; depositUrl?: string; abonnement?: boolean; space?: Space; lang?: Lang; consents?: { label: string; yes: boolean }[]; legalVersion?: string; groupUrl?: string; pdfAttached?: boolean }): { subject: string; html: string; text: string } {
   const lang = params.lang ?? 'fr';
   const greeting = greet(lang, params.customerName);
   const t = (fr: string, en: string): string => tr(lang, fr, en);
@@ -854,15 +854,28 @@ export function buildQuoteSignedEmail(params: { customerName: string; number: st
     : params.depositUrl
       ? t(`Votre facture d'acompte de ${eur(lang, params.depositAmount ?? 0)} vous est envoyée dans un email séparé : son règlement confirme la réservation de votre date.`, `Your deposit invoice of ${eur(lang, params.depositAmount ?? 0)} is sent in a separate email: paying it confirms your booking.`)
       : t("Votre facture d'acompte vous est envoyée très prochainement.", 'Your deposit invoice will be sent to you shortly.');
+  const yes = (params.consents ?? []).filter((c) => c.yes).length;
+  const consentList = (params.consents ?? []).map((c) => `<li>${escapeHtml(c.label)} : <strong>${c.yes ? t('autorisé', 'allowed') : t('refusé', 'refused')}</strong></li>`).join('');
+  const withdrawUrl = 'https://bunkaio.com/retrait-autorisation/';
+  const legalBlock = params.consents && params.consents.length ? `
+    <div style="margin:22px 0 0;padding:16px 18px;background:#f7f5fb;border-radius:10px;font-size:14px;line-height:1.6;">
+      <strong>${t('Vos autorisations d\'image', 'Your image permissions')}</strong>${params.legalVersion ? ` <span style="color:#76717f;">(${t('clauses', 'clauses')} ${params.legalVersion})</span>` : ''}
+      <ul style="margin:8px 0 8px;padding-left:18px;">${consentList}</ul>
+      <span style="color:#3a3544;">${yes ? t('Ces autorisations facultatives n\'ont aucun effet sur votre prestation. Vous pouvez les modifier ou les retirer à tout moment, sans motif : ', 'These optional permissions have no effect on your service. You can change or withdraw them at any time, without giving a reason: ') : t('Vous n\'avez autorisé aucune utilisation promotionnelle : cela n\'a aucun effet sur votre prestation. Vous pouvez changer d\'avis à tout moment : ', 'You have not allowed any promotional use: this has no effect on your service. You can change your mind at any time: ')}<a href="${withdrawUrl}" style="color:#6e5aa8;">${t('gérer mes autorisations', 'manage my permissions')}</a>.</span>
+    </div>
+    ${params.groupUrl ? `<p style="font-size:14px;line-height:1.6;margin:16px 0 0;">${t('D\'autres personnes seront photographiées ? Chacune donne son propre accord via ce lien personnel à leur transmettre :', 'Will other people be photographed? Each person gives their own consent through this link, to pass on to them:')} <a href="${params.groupUrl}" style="color:#6e5aa8;word-break:break-all;">${params.groupUrl}</a></p>` : ''}
+    <p style="font-size:12.5px;line-height:1.6;color:#76717f;margin:16px 0 0;">${t('Vos données (identité, coordonnées, photographies, preuve de votre signature) sont traitées par BUNKAIO pour exécuter votre devis et conserver la preuve de votre accord, pendant 5 ans après la fin de notre relation (factures : 10 ans). Droits d\'accès, de rectification, d\'effacement et d\'opposition : contact@bunkaio.com. Détails : bunkaio.com/confidentialite/.', 'Your data (identity, contact details, photographs, proof of your signature) is processed by BUNKAIO to perform your quote and keep proof of your agreement, for 5 years after the end of our relationship (invoices: 10 years). Rights of access, rectification, erasure and objection: contact@bunkaio.com. Details: bunkaio.com/confidentialite/.')}${params.pdfAttached ? ' ' + t('Votre exemplaire signé est joint à cet email (PDF).', 'Your signed copy is attached to this email (PDF).') : ''}</p>` : '';
+  const legalText = params.consents && params.consents.length ? `${t('Vos autorisations d\'image', 'Your image permissions')} :\n${(params.consents ?? []).map((c) => `- ${c.label} : ${c.yes ? t('autorisé', 'allowed') : t('refusé', 'refused')}`).join('\n')}\n${t('Modifier ou retirer : ', 'Change or withdraw: ')}${withdrawUrl}\n${params.groupUrl ? `${t('Lien à transmettre aux autres personnes photographiées : ', 'Link for other people being photographed: ')}${params.groupUrl}\n` : ''}\n` : '';
   const html = emailShell(`
     <h1 style="font-size:20px;margin:0 0 16px;">${t('Devis signé', 'Quote signed')}</h1>
     <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">${greeting}</p>
     <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">${intro}</p>
     <a href="${params.url}" style="${btnStyle}">${t('Voir mon devis signé', 'View my signed quote')}</a>
     ${params.depositUrl ? `<p style="font-size:15px;line-height:1.6;margin:22px 0 0;">${next} <a href="${params.depositUrl}" style="color:#6e5aa8;">${t('Régler l\'acompte', 'Pay the deposit')}</a></p>` : `<p style="font-size:15px;line-height:1.6;margin:22px 0 0;">${next}</p>`}
+    ${legalBlock}
     ${spaceBlock(lang, params.space, 'deposit')}
   `, lang);
-  const text = `${greeting}\n\n${intro}\n\n${t('Voir mon devis signé', 'View my signed quote')} : ${params.url}\n\n${next}${params.depositUrl ? '\n' + params.depositUrl : ''}\n\n${spaceText(lang, params.space, 'deposit')}`;
+  const text = `${greeting}\n\n${intro}\n\n${t('Voir mon devis signé', 'View my signed quote')} : ${params.url}\n\n${next}${params.depositUrl ? '\n' + params.depositUrl : ''}\n\n${legalText}${spaceText(lang, params.space, 'deposit')}`;
   return finalize(lang, { tpl: `devis_signe`, subject: t(`Bunkaio — Devis n° ${params.number} signé`, `Bunkaio — Quote no. ${params.number} signed`), html, text });
 }
 
@@ -967,7 +980,7 @@ export function buildClientActivityEmail(params: { type: AccountType; email: str
 }
 
 /** Envoie un email transactionnel via l'API Resend (https://resend.com). */
-export async function sendEmail(env: Env, to: string, subject: string, html: string, text: string, tplOverride?: string, extra?: { headers?: Record<string, string>; replyTo?: string }): Promise<void> {
+export async function sendEmail(env: Env, to: string, subject: string, html: string, text: string, tplOverride?: string, extra?: { headers?: Record<string, string>; replyTo?: string; attachments?: { filename: string; content: string }[] }): Promise<void> {
   // Le modèle est repéré par un commentaire HTML invisible posé par les constructeurs (voir finalize).
   const tpl = tplOverride ?? html.match(/<!--bk-tpl:([a-z_]+)-->/)?.[1] ?? '';
   let error = '';
@@ -975,7 +988,7 @@ export async function sendEmail(env: Env, to: string, subject: string, html: str
     const res = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${env.RESEND_API_KEY}` },
-      body: JSON.stringify({ from: env.EMAIL_FROM, to, subject, html, text, ...(extra?.headers && Object.keys(extra.headers).length ? { headers: extra.headers } : {}), ...(extra?.replyTo ? { reply_to: extra.replyTo } : {}) }),
+      body: JSON.stringify({ from: env.EMAIL_FROM, to, subject, html, text, ...(extra?.headers && Object.keys(extra.headers).length ? { headers: extra.headers } : {}), ...(extra?.replyTo ? { reply_to: extra.replyTo } : {}), ...(extra?.attachments?.length ? { attachments: extra.attachments } : {}) }),
     });
     if (!res.ok) {
       const detail = await res.text();
@@ -1001,4 +1014,68 @@ export async function logMail(env: Env, to: string, tpl: string, subject: string
   log.push(entry);
   if (log.length > MAILLOG_MAX) log = log.slice(-MAILLOG_MAX);
   await env.ACCOUNTS_KV.put(key, JSON.stringify(log), { metadata: { last: entry.d, t: tpl, n: log.length, ok }, expirationTtl: 3 * 365 * 24 * 3600 });
+}
+
+/** Invitation envoyée à une personne photographiée pour qu'elle choisisse elle-même ses autorisations. */
+export function buildSubjectInviteEmail(params: { name: string; number: string; url: string; lang?: Lang }): { subject: string; html: string; text: string } {
+  const lang = params.lang ?? 'fr';
+  const t = (fr: string, en: string): string => tr(lang, fr, en);
+  const greeting = greet(lang, params.name);
+  const intro = t(`Vous allez être photographié(e) par BUNKAIO dans le cadre du devis n° ${params.number}. Avant la séance, vous pouvez choisir vous-même, usage par usage, si BUNKAIO peut utiliser vos photos pour sa promotion. C'est facultatif et sans effet sur la prestation.`, `You are going to be photographed by BUNKAIO as part of quote no. ${params.number}. Before the session you can choose yourself, use by use, whether BUNKAIO may use your photos for its own promotion. It is optional and has no effect on the service.`);
+  const html = emailShell(`
+    <h1 style="font-size:20px;margin:0 0 16px;">${t('Votre autorisation d\'image', 'Your image permission')}</h1>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">${greeting}</p>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">${intro}</p>
+    <a href="${params.url}" style="${btnStyle}">${t('Choisir mes autorisations', 'Choose my permissions')}</a>
+    <p style="font-size:12.5px;line-height:1.6;color:#76717f;margin:20px 0 0;">${t('Pour un mineur, ce choix doit être fait par un titulaire de l\'autorité parentale.', 'For a minor, this choice must be made by a holder of parental authority.')}</p>
+  `, lang);
+  const text = `${greeting}\n\n${intro}\n\n${t('Choisir mes autorisations', 'Choose my permissions')} : ${params.url}\n\n${t('Pour un mineur, ce choix doit être fait par un titulaire de l\'autorité parentale.', 'For a minor, this choice must be made by a holder of parental authority.')}`;
+  return finalize(lang, { tpl: 'autorisation_invitation', subject: t(`BUNKAIO — Votre autorisation d'image (devis n° ${params.number})`, `BUNKAIO — Your image permission (quote no. ${params.number})`), html, text });
+}
+
+/** Confirmation remise à la personne photographiée une fois ses choix enregistrés. */
+export function buildSubjectConsentEmail(params: { name: string; number: string; consents: { label: string; yes: boolean }[]; legalVersion: string; lang?: Lang }): { subject: string; html: string; text: string } {
+  const lang = params.lang ?? 'fr';
+  const t = (fr: string, en: string): string => tr(lang, fr, en);
+  const greeting = greet(lang, params.name);
+  const list = params.consents.map((c) => `<li>${escapeHtml(c.label)} : <strong>${c.yes ? t('autorisé', 'allowed') : t('refusé', 'refused')}</strong></li>`).join('');
+  const url = 'https://bunkaio.com/retrait-autorisation/';
+  const html = emailShell(`
+    <h1 style="font-size:20px;margin:0 0 16px;">${t('Vos choix sont enregistrés', 'Your choices are recorded')}</h1>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 12px;">${greeting}</p>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 12px;">${t(`Voici les autorisations que vous avez enregistrées pour le devis n° ${params.number} (clauses ${params.legalVersion}) :`, `Here are the permissions you recorded for quote no. ${params.number} (clauses ${params.legalVersion}):`)}</p>
+    <ul style="font-size:15px;line-height:1.6;margin:0 0 16px;padding-left:18px;">${list}</ul>
+    <p style="font-size:14px;line-height:1.6;margin:0;">${t('Vous pouvez modifier ou retirer une autorisation à tout moment, sans motif : ', 'You can change or withdraw a permission at any time, without giving a reason: ')}<a href="${url}" style="color:#6e5aa8;">${t('gérer mes autorisations', 'manage my permissions')}</a>.</p>
+    <p style="font-size:12.5px;line-height:1.6;color:#76717f;margin:16px 0 0;">${t('Vos données (nom, email, choix, date, adresse IP) sont conservées par BUNKAIO comme preuve de votre accord pendant 5 ans après la fin de la relation. Droits : contact@bunkaio.com — bunkaio.com/confidentialite/.', 'Your data (name, email, choices, date, IP address) is kept by BUNKAIO as proof of your agreement for 5 years after the end of the relationship. Rights: contact@bunkaio.com — bunkaio.com/confidentialite/.')}</p>
+  `, lang);
+  const text = `${greeting}\n\n${t('Autorisations enregistrées', 'Recorded permissions')} (${params.legalVersion}) :\n${params.consents.map((c) => `- ${c.label} : ${c.yes ? t('autorisé', 'allowed') : t('refusé', 'refused')}`).join('\n')}\n\n${t('Modifier ou retirer : ', 'Change or withdraw: ')}${url}`;
+  return finalize(lang, { tpl: 'autorisation_confirmation', subject: t(`BUNKAIO — Vos autorisations d'image (devis n° ${params.number})`, `BUNKAIO — Your image permissions (quote no. ${params.number})`), html, text });
+}
+
+/** Accusé de réception d'une demande de retrait d'autorisation. */
+export function buildWithdrawalAckEmail(params: { name: string; lang?: Lang }): { subject: string; html: string; text: string } {
+  const lang = params.lang ?? 'fr';
+  const t = (fr: string, en: string): string => tr(lang, fr, en);
+  const greeting = greet(lang, params.name);
+  const body = t("Nous avons bien reçu votre demande de retrait d'autorisation. BUNKAIO cesse toute nouvelle utilisation promotionnelle de vos images concernées et retire les publications en ligne dans un délai de 30 jours. Les supports déjà imprimés ou diffusés ne peuvent pas être rappelés. Nous vous confirmons le traitement par email.", 'We have received your request to withdraw a permission. BUNKAIO stops any new promotional use of the images concerned and removes online publications within 30 days. Materials already printed or distributed cannot be recalled. We will confirm by email once it is done.');
+  const html = emailShell(`
+    <h1 style="font-size:20px;margin:0 0 16px;">${t('Demande de retrait reçue', 'Withdrawal request received')}</h1>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 12px;">${greeting}</p>
+    <p style="font-size:15px;line-height:1.6;margin:0;">${body}</p>
+  `, lang);
+  return finalize(lang, { tpl: 'autorisation_retrait', subject: t('BUNKAIO — Votre demande de retrait', 'BUNKAIO — Your withdrawal request'), html, text: `${greeting}\n\n${body}` });
+}
+
+/** Confirmation du traitement d'un retrait (envoyée depuis l'admin). */
+export function buildWithdrawalDoneEmail(params: { name: string; usages: string[]; lang?: Lang }): { subject: string; html: string; text: string } {
+  const lang = params.lang ?? 'fr';
+  const t = (fr: string, en: string): string => tr(lang, fr, en);
+  const greeting = greet(lang, params.name);
+  const body = t(`Votre retrait est enregistré pour : ${params.usages.join(', ')}. BUNKAIO n'effectue plus de nouvelle utilisation de vos images pour ces usages et retire les publications en ligne dans un délai de 30 jours.`, `Your withdrawal is recorded for: ${params.usages.join(', ')}. BUNKAIO no longer makes new uses of your images for these purposes and removes online publications within 30 days.`);
+  const html = emailShell(`
+    <h1 style="font-size:20px;margin:0 0 16px;">${t('Retrait enregistré', 'Withdrawal recorded')}</h1>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 12px;">${greeting}</p>
+    <p style="font-size:15px;line-height:1.6;margin:0;">${escapeHtml(body)}</p>
+  `, lang);
+  return finalize(lang, { tpl: 'autorisation_retrait_ok', subject: t('BUNKAIO — Retrait enregistré', 'BUNKAIO — Withdrawal recorded'), html, text: `${greeting}\n\n${body}` });
 }
