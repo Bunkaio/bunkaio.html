@@ -330,6 +330,13 @@ const FORMULA_SECTIONS = FORMULA_CATS.map(c => ({
 }));
 
 const SECTIONS = [
+  // ── Portrait d'Aya (modifiable à tout moment) ──────────────────────────────
+  {
+    id: 'about-portrait',
+    title: '👤 Portrait d\'Aya — page À propos et signature des articles',
+    desc: 'Format libre, de préférence portrait 4:5 (≤ 350 Ko). Dépose ici la photo : elle remplace aussitôt la photo actuelle sur la page À propos (grande photo) et dans la petite pastille « Article rédigé par Aya » sous chaque article Conseils. Supprime-la pour revenir à la photo par défaut du site.',
+    slots: [{ path: 'about/aya.webp', label: 'Portrait d\'Aya' }],
+  },
   // ── Accueil ────────────────────────────────────────────────────────────────
   // Pas de section ici : le fond de la page d'accueil est une vidéo
   // (videos/home-bg.mp4 + videos/mission-bg.mp4), gérée depuis GitHub,

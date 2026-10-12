@@ -4918,3 +4918,15 @@ footer button[data-lang="ft-cookie-prefs"] { font: inherit; }
 .about-photo { aspect-ratio: 4 / 5; object-position: 36% 40%; }
 .author-box img { object-position: 36% 35%; }
 .author-box img { object-view-box: inset(10% 40% 8% 24%); object-position: 50% 50%; }
+
+/* ═══ Grain argentique léger sur toutes les photos ═══
+   Photos <img> : filtre SVG (#bk-grain, défini en haut de index.html) = bruit fin mélangé en lumière douce, à ~45 %. Logos et pictogrammes exclus.
+   Photos posées en fond (aperçu « Le studio », vignettes) : voile de bruit tuilé. Désactivé à l'impression et pour « réduire les animations » n'a pas d'effet (statique). */
+img:not([src*="logo"]):not([src$=".svg"]):not(.no-grain) { filter: url(#bk-grain); }
+.ms-im, .mt-bg, .cat-photo { position: relative; }
+.ms-im::after, .mt-bg::after, .cat-photo::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none; mix-blend-mode: soft-light; opacity: 0.28; border-radius: inherit;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='2' seed='7'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  background-size: 220px 220px;
+}
+@media print { img { filter: none !important; } }

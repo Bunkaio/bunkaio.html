@@ -299,7 +299,7 @@ const I18N = {
     'about-p1':'Aya Nascimento est photographe portraitiste professionnelle, diplômée de l\'ETPA (BTS Photographie, 2018). Elle est la photographe de BUNKAIO.',
     'about-p2':'Spécialisée en photographie de mode, de produit, corporate et événementielle, elle accompagne les particuliers, les marques et les entreprises avec des images premium en haute définition, retouchées avec soin.',
     'about-h-zone':'Un studio mobile en Occitanie',
-    'about-zone-text':'BUNKAIO est basé à Montpellier et se déplace : pas d\'adresse de studio, mais une intervention à Montpellier et Toulouse. ' + TRAVEL_TXT.fr.full + ' Besoin d\'idées de lieux de séance ? Voir <a href="/conseils/lieux-seance-photo-montpellier-toulouse/" data-nav="article:lieux-seance-photo-montpellier-toulouse">où faire une séance photo à Montpellier ou Toulouse</a>.',
+    'about-zone-text':'BUNKAIO est basé à Montpellier et se déplace partout en France : le shooting a lieu chez vous, en extérieur ou, en option, en studio (+60 €). ' + TRAVEL_TXT.fr.full + ' Besoin d\'idées de lieux de séance ? Voir <a href="/conseils/lieux-seance-photo-montpellier-toulouse/" data-nav="article:lieux-seance-photo-montpellier-toulouse">où faire une séance photo à Montpellier ou Toulouse</a>.',
     'about-stat1':'ans d\'expérience','about-stat2':'projets réalisés','about-stat3':'diplômée de l\'ETPA · BTS Photographie',
     'about-h-spec':'Spécialités',
     'about-spec1':'Portrait & lifestyle','about-spec2':'Mode, agences et mannequins','about-spec3':'Photo de produit & commercial','about-spec4':'Corporate & Personal Branding','about-spec5':'Événementiel & mariage (Lumen)',
@@ -655,7 +655,7 @@ const I18N = {
     'about-p1':'Aya Nascimento is a professional portrait photographer, a graduate of ETPA (BTS Photography, 2018). She is the photographer of BUNKAIO.',
     'about-p2':'Specialised in fashion, product, corporate and event photography, she works with individuals, brands and companies, delivering premium high-definition images, carefully retouched.',
     'about-h-zone':'A mobile studio in Occitanie',
-    'about-zone-text':'BUNKAIO is based in Montpellier and travels to you: no studio address, but shoots in Montpellier and Toulouse. ' + TRAVEL_TXT.en.full,
+    'about-zone-text':'BUNKAIO is based in Montpellier and travels anywhere in France: the shoot takes place at your place, outdoors or, as an option, in the studio (+€60). ' + TRAVEL_TXT.en.full,
     'about-stat1':'years of experience','about-stat2':'projects completed','about-stat3':'ETPA graduate · BTS Photography',
     'about-h-spec':'Specialities',
     'about-spec1':'Portrait & lifestyle','about-spec2':'Fashion, agencies and models','about-spec3':'Product & commercial photography','about-spec4':'Corporate & Personal Branding','about-spec5':'Events & weddings (Lumen)',
@@ -1265,7 +1265,7 @@ const SUBS = {
 const SUB_PROFILES = ['modele', 'mannequin'];
 const subAvailable = cat => !!SUBS[cat] && (!SUB_PROFILES.length || cat !== 'mode' || SUB_PROFILES.includes(S.prof));
 
-/* Formule spécialisée "Polas" — uniquement Mode & créateurs. Studio en option (+60 €), non inclus dans le tarif.
+/* Formule spécialisée "Polas" — uniquement Mode & créateurs. Polas : 160 €, studio inclus.
    Polas (digitals) = photos brutes et sans retouche, destinées exclusivement aux agences pour évaluer
    la morphologie, la posture et le potentiel brut du mannequin — aucune mise en scène. */
 const POLAS = {
@@ -1288,16 +1288,16 @@ const POLAS = {
     id: 'polas', studio: 0,
     badge:{fr:'Spécial mannequins', en:'For models'},
     label:{fr:'Pour les agences', en:'For agencies'},
-    studioNote:{fr:'Studio en option (+60 €)', en:'Studio optional (+€60)'},
-    short:{fr:'Digitals bruts · studio en option (+60 €)', en:'Raw digitals · studio optional (+€60)'},
+    studioNote:{fr:'Studio inclus', en:'Studio included'},
+    short:{fr:'Digitals bruts · studio inclus', en:'Raw digitals · studio included'},
     sub:{fr:'un format Polas pour mannequins, ainsi que quatre formules, de la découverte à l\'expérience éditoriale complète.', en:'a Polas format for models, plus four packages, from the starter offer to the complete editorial experience.'},
-    optNote:{fr:'<strong>Bon à savoir :</strong> le format Polas se fait en studio en option (+60 €) : le studio n\'est pas inclus dans le tarif.', en:'<strong>Good to know:</strong> the Polas format uses the studio as an option (+€60): the studio is not included in the price.'},
-    price: 100,
+    optNote:{fr:'<strong>Bon à savoir :</strong> le format Polas est une expérience clé en main à 160 € — studio inclus, sans option additionnelle.', en:'<strong>Good to know:</strong> the Polas format is a turnkey €160 experience — studio included, no additional options.'},
+    price: 160,
     name:{fr:'Polas', en:'Polas'},
     delay:{fr:'Livraison HD sous 24h', en:'HD delivery within 24h'},
     items:{
-      fr:['Séance de 30 min sur fond blanc, lumière neutre (studio en option, +60 €)','10 photos brutes, sans retouche ni mise en scène','Visage, profils, trois-quarts et plans corps entier','Fichiers HD prêts à transmettre à votre agence'],
-      en:['30-minute session on a plain white background, neutral lighting (studio optional, +€60)','10 raw shots, no retouching or styling','Face, profiles, three-quarter and full-body shots','HD files ready to send to your agency'] }
+      fr:['Séance studio de 30 min sur fond blanc, lumière neutre','10 photos brutes, sans retouche ni mise en scène','Visage, profils, trois-quarts et plans corps entier','Fichiers HD prêts à transmettre à votre agence'],
+      en:['30-minute studio session on a plain white background, neutral lighting','10 raw shots, no retouching or styling','Face, profiles, three-quarter and full-body shots','HD files ready to send to your agency'] }
   }
 };
 
@@ -1316,7 +1316,7 @@ function formulaPhotoHTML(cat, tierId, cls){
 }
 /* Supplément « studio » des formules Découverte (photo particuliers et corporate). */
 const STUDIO_FEE = 60;
-/* Le studio n'est jamais inclus : option à STUDIO_FEE € sur ces gammes (hors événementiel et abonnement, sans notion de studio). */
+/* Le studio n'est jamais inclus : option à STUDIO_FEE € sur ces gammes (exception : Polas, 160 € studio inclus ; ni événementiel ni abonnement). */
 function studioApplies(cat){ return ['photo-part','corporate','mode','commercial'].includes(cat); }
 const specialTotal = sp => sp.price + sp.studio;
 const isSpecialTier = () => !!(S.tier && POLAS[S.cat] && S.tier === POLAS[S.cat].id);
@@ -2022,11 +2022,12 @@ function goView(v, subTab, opts){
     }
     if (v === 'service') renderServicePage(subTab);
     if (v === 'article') renderArticlePage(subTab);
+    if (v === 'article') applyAyaPortrait();
     if (v === 'advice') renderAdvicePage();
     if (v === 'discover') renderDiscoverPage();
     if (v === 'legal') { renderFaqAccordion(); renderPrivacyAccordion(); renderCgvAccordion(); renderCookiesAccordion(); setLegalTab(subTab === 'privacy' || subTab === 'cgv' || subTab === 'cookies' ? subTab : 'faq', true); }
     if (v === 'about') initAboutStats();
-    if (v === 'about') { const ph = document.getElementById('img-about'); if (ph && IMG.aboutPhoto && !ph.getAttribute('src')) { ph.src = IMG.aboutPhoto; ph.hidden = false; } }
+    if (v === 'about') applyAyaPortrait();
     /* Anime au scroll tous les éléments .rv de la vue active — cohérent
        sur l'ensemble du site, plus besoin de le câbler page par page.
        .reassure-section utilise un seuil de déclenchement plus tardif
@@ -2773,7 +2774,7 @@ function renderOptions(){
 
   if (isSpecialTier()) {
     label.style.display = 'none';
-    el.appendChild(buildStudioSelector());
+    if (POLAS[S.cat].id === 'grossesse') el.appendChild(buildStudioSelector());
     const note = document.createElement('div');
     note.className = 'sub-options-note stagger';
     note.style.animationDelay = '0.4s';
@@ -3097,7 +3098,7 @@ function submitQuiz(e){
   } else if (isSpecialTier()) {
     const polas = POLAS[S.cat];
     const res = computeTotal();
-    formuleLabel = polas.name.fr + ' (' + res.amount + '€, ' + (S.studio ? 'dont ' + STUDIO_FEE + '€ studio en option' : 'sans studio') + ')';
+    formuleLabel = polas.name.fr + ' (' + res.amount + '€, ' + (S.cat === 'mode' ? 'studio inclus' : S.studio ? 'dont ' + STUDIO_FEE + '€ studio en option' : 'sans studio') + ')';
     montantLabel = res.amount + '€';
     budgetMontantEur = res.amount;
   } else if (S.cat === 'lumen') {
@@ -3123,7 +3124,7 @@ function submitQuiz(e){
   const optNames = (S.tier !== 'sub' && S.opts.length)
     ? S.opts.map(id => { const o = allOpts.find(x => x.id === id); return o ? o.name.fr : id; }).filter(Boolean).join(' · ')
     : (S.tier === 'sub' ? '— (abonné : tarif partenaire -20% sur options)' : 'Aucune');
-  const studioNote = studioApplies(S.cat) ? (S.studio ? 'Studio (+' + STUDIO_FEE + '€)' : S.loc === 'situ' ? 'Dans les locaux du client (in situ)' : S.loc === 'ext' ? 'Extérieur' : 'Lieu à définir') : '';
+  const studioNote = isSpecialTier() && S.cat === 'mode' ? 'Studio inclus (Polas)' : studioApplies(S.cat) ? (S.studio ? 'Studio (+' + STUDIO_FEE + '€)' : S.loc === 'situ' ? 'Dans les locaux du client (in situ)' : S.loc === 'ext' ? 'Extérieur' : 'Lieu à définir') : '';
   const trv = travelSummary();
   if (trv.fee) { budgetMontantEur += trv.fee; montantLabel += ' + déplacement ' + trv.fee + '€'; }
   const optsOut = [optNames === 'Aucune' ? '' : optNames, trv.text].filter(Boolean).join(' · ') || 'Aucune';
@@ -3429,7 +3430,7 @@ function renderDiscoverPage(){
     { title: t({fr:'Quels sont les délais et les tarifs ?', en:'What are the timelines and rates?'}),
       body: '<p>' + t({fr:'Livraison entre ' + allMin + ' et ' + allMax + ' jours ouvrés après le shooting, selon la prestation. Tarifs de départ : ', en:'Delivery between ' + allMin + ' and ' + allMax + ' working days after the shoot, depending on the service. Starting rates: '}) + cats.map(c => `${t(c.name)} ${t({fr:'dès', en:'from'})} ${money(facts[c.id].from)}`).join(' · ') + '. <a href="/services/" data-nav="services">' + t({fr:'Voir les formules', en:'See the packages'}) + '</a>.</p>' },
     { title: t({fr:'Où intervenez-vous ?', en:'Where do you work?'}),
-      body: '<p>' + t({fr:'BUNKAIO est basé à Montpellier et intervient à Montpellier et Toulouse, et dans toute l\'Occitanie. ' + TRAVEL_TXT.fr.full, en:'BUNKAIO is based in Montpellier and works in Montpellier and Toulouse, and across Occitanie. ' + TRAVEL_TXT.en.full}) + '</p>' }
+      body: '<p>' + t({fr:'BUNKAIO est basé à Montpellier et se déplace partout en France. ' + TRAVEL_TXT.fr.full, en:'BUNKAIO is based in Montpellier and travels anywhere in France. ' + TRAVEL_TXT.en.full}) + '</p>' }
   ], { exclusive: true });
   initReassureLoop();
   if (_discoverFocus) {
@@ -3568,7 +3569,7 @@ function renderServicePage(catId){
     ...(catId === 'photo-part' ? [{ q: t({fr:'Proposez-vous un book grossesse ?', en:'Do you offer a maternity book?'}),
       a: `<p>${t({fr:'Oui : le book grossesse est une formule dédiée, à ' + price(POLAS[catId].price) + '. Séance de 1h30 en extérieur ou en studio (option à 60 €), 10 photos HD retouchées avec une retouche naturelle, une direction de pose douce et bienveillante, et la possibilité de venir en couple. Le moment idéal : entre la 28e et la 36e semaine de grossesse.', en:'Yes: the maternity book is a dedicated package at ' + price(POLAS[catId].price) + '. A 1.5-hour session outdoors or in the studio (studio is a €60 option), 10 retouched HD photos with natural retouching, gentle posing guidance, and the option to join as a couple. The ideal moment: between weeks 28 and 36 of pregnancy.'})}</p>` }] : []),
     ...(POLAS[catId] && POLAS[catId].id === 'polas' ? [{ q: t({fr:'Qu\'est-ce que la formule Polas ?', en:'What is the Polas package?'}),
-      a: `<p>${t({fr:'Des photos brutes, sans retouche, destinées aux agences de mannequins : séance de 30 minutes sur fond blanc, 10 photos brutes (visage, profils, trois-quarts et plans en pied), fichiers HD livrés sous 24 h. Tarif : ', en:'Raw, unretouched photos made for model agencies: 30-minute studio session on a white background, 10 raw photos (face, profiles, three-quarter and full-body shots), HD files delivered within 24 hours. Rate: '})}${price(POLAS[catId].price)}${t({fr:', studio en option (+60 €).', en:', studio optional (+€60).'})}</p><p><a href="/conseils/polas-mannequin-digitals-agence/" data-nav="article:polas-mannequin-digitals-agence">${t({fr:'Polas et digitals de mannequin : à quoi servent-elles ?', en:'Polas and model digitals: what are they for?'})}</a></p>` }] : []),
+      a: `<p>${t({fr:'Des photos brutes, sans retouche, destinées aux agences de mannequins : séance en studio de 30 minutes sur fond blanc, 10 photos brutes (visage, profils, trois-quarts et plans en pied), fichiers HD livrés sous 24 h. Tarif : ', en:'Raw, unretouched photos made for model agencies: 30-minute studio session on a white background, 10 raw photos (face, profiles, three-quarter and full-body shots), HD files delivered within 24 hours. Rate: '})}${price(POLAS[catId].price)}${t({fr:', studio inclus.', en:', studio included.'})}</p><p><a href="/conseils/polas-mannequin-digitals-agence/" data-nav="article:polas-mannequin-digitals-agence">${t({fr:'Polas et digitals de mannequin : à quoi servent-elles ?', en:'Polas and model digitals: what are they for?'})}</a></p>` }] : []),
     ...(catId === 'photo-part' ? [{ q: t({fr:'Peut-on faire une séance en couple ou en groupe ?', en:'Can we book a couple or group session?'}),
       a: `<p>${t({fr:'Oui : la séance se fait en solo, en couple ou en groupe, en extérieur ou en studio. Choisissez la formule selon la durée et le nombre de photos souhaités ; pour vous aider à préparer vos tenues, lisez ', en:'Yes: sessions are available solo, as a couple or in a group, outdoors or in the studio. Pick the package according to the session length and number of photos you want; to prepare your outfits, read '})}<a href="/conseils/que-porter-seance-photo/" data-nav="article:que-porter-seance-photo">${t({fr:'Que porter pour une séance photo ?', en:'What to wear for a photo session?'})}</a>.</p>` }] : []),
     ...(catId === 'photo-part' ? [{ q: t({fr:'Réalisez-vous des portraits professionnels ?', en:'Do you shoot professional portraits?'}),
@@ -3597,7 +3598,7 @@ function renderServicePage(catId){
   const chooseHints = (copyBlock && copyBlock.choose && copyBlock.choose.length === allTierIds.length) ? tiers.map(tt => t(copyBlock.choose[allTierIds.indexOf(tt.id)])) : [];
   const specialHint = POLAS[catId] ? (POLAS[catId].id === 'grossesse'
     ? t({fr:'vous attendez un heureux événement ? Une séance douce de 1h30, en studio ou en extérieur, pour garder des images soignées de cette période (idéalement entre la 28e et la 36e semaine).', en:'expecting a baby? A gentle 1.5-hour session, in the studio or outdoors, to keep beautiful images of this time (ideally between weeks 28 and 36).'})
-    : t({fr:'vous devez présenter votre profil à une agence ? 10 photos brutes, sans retouche ni mise en scène, pour juger la morphologie et le potentiel, livrées en HD sous 24 h (studio en option, +60 €).', en:'need to present your profile to an agency? 10 raw photos with no retouching or styling, to assess build and potential, delivered in HD within 24 h (studio optional, +€60).'})) : '';
+    : t({fr:'vous devez présenter votre profil à une agence ? 10 photos brutes, sans retouche ni mise en scène, pour juger la morphologie et le potentiel, livrées en HD sous 24 h (studio inclus).', en:'need to present your profile to an agency? 10 raw photos with no retouching or styling, to assess build and potential, delivered in HD within 24 h (studio included).'})) : '';
   const chooseHtml = '';
   const practical = t({
     fr: 'Nous intervenons à <strong>Montpellier et Toulouse</strong>. Les droits d\'utilisation commerciale des visuels vous sont cédés sans limite de durée. Toutes les réponses sont dans la <a href="/faq/" data-nav="faq">FAQ</a>, et pour une question précise, <a href="/contact/" data-nav="contact">contactez-nous</a>.',
@@ -3877,7 +3878,7 @@ function renderBrandingPage(){
     <section class="read-panel svcp-panel">
       <h2>${t({fr:'Questions fréquentes', en:'Frequently asked questions'})}</h2>
       <div id="servicePageFaq"></div>
-      <p class="svcp-note">${t({fr:'Shooting à Montpellier, dans l\'Hérault, à Toulouse et partout en Occitanie. Une question précise ? ', en:'Shoots in Montpellier, across the Hérault, in Toulouse and throughout Occitanie. A specific question? '})}<a href="/contact/" data-nav="contact">${t({fr:'Contactez-nous', en:'Get in touch'})}</a>.</p>
+      <p class="svcp-note">${t({fr:'Shooting à Montpellier, dans l\'Hérault et à Toulouse (déplacement offert), et partout en France sur devis. Une question précise ? ', en:'Shoots in Montpellier, across the Hérault and in Toulouse (free travel), and anywhere in France on quote. A specific question? '})}<a href="/contact/" data-nav="contact">${t({fr:'Contactez-nous', en:'Get in touch'})}</a>.</p>
     </section>
 
     <section class="read-panel svcp-panel article-cta">
@@ -4378,6 +4379,18 @@ let pfLoaded = false;
 const _pfGalleryCache = {};
 /* Test d'existence par requête HEAD (aucun octet d'image téléchargé) ; repli sur
    le chargement de l'image si le navigateur refuse la requête. */
+/* Portrait d'Aya : si une photo est déposée dans l'admin média (about/aya.webp), elle remplace la photo par défaut (page À propos et pastille des articles). */
+let _ayaUrl = '', _ayaChecked = false;
+function applyAyaPortrait(){
+  const put = () => document.querySelectorAll('img[src*="aya-nascimento-photographe"], img[data-aya]').forEach(i => {
+    i.dataset.aya = '1'; if (i.getAttribute('src') !== _ayaUrl) i.src = _ayaUrl; i.removeAttribute('srcset');
+    i.style.objectViewBox = 'none'; i.style.objectPosition = i.classList.contains('about-photo') ? '50% 28%' : '50% 30%';
+  });
+  if (_ayaChecked) { if (_ayaUrl) put(); return; }
+  _ayaChecked = true;
+  if (!IMG.aboutPhoto) return;
+  probeImageExists(IMG.aboutPhoto).then(ok => { if (ok) { _ayaUrl = IMG.aboutPhoto + '?v=' + Math.floor(Date.now() / 600000); put(); } });
+}
 function probeImageExists(src){
   return fetch(src, { method: 'HEAD' })
     .then(r => r.ok)
@@ -6771,7 +6784,7 @@ function renderFaqAccordion(){
     { title:'Comment accéder à mon espace client, et à quoi sert-il ?', body:`<p>Une fois votre devis confirmé, vous recevez par email votre <strong>code d'accès personnel</strong> : cliquez sur « Connexion » en haut du site. Vous restez connecté sur votre appareil jusqu'à votre déconnexion.</p><p>Vous y suivez l'avancement de votre projet, retrouvez vos <strong>commandes, devis, paiements et factures</strong>, téléchargez vos livrables, gérez vos abonnements et vos informations. Pas encore de code ? Demandez-le depuis la page de connexion : il vous est envoyé sous 24h.</p>` },
     { title:'Qu\'est-ce qu\'un moodboard, et est-il obligatoire ?', body:`<p>Non, il est facultatif mais très utile : un <strong>moodboard par commande</strong> pour nous partager votre vision — direction artistique, ambiance, palette de couleurs, inspirations (Pinterest, liens), et les prestataires impliqués. Vous le complétez depuis votre espace client et vous échangez avec l'équipe grâce aux commentaires.</p>` },
     { title:'Mes informations et mes images sont-elles en sécurité ?', body:`<p>Votre espace est protégé par votre email et un <strong>code d'accès personnel</strong>, conservé sous forme chiffrée. Vos données ne servent qu'à la réalisation de votre projet, et vos visuels vous sont livrés dans une galerie privée. Le détail est dans l'onglet « Politique de confidentialité ».</p>` },
-    { title:'Où intervenez-vous ?', body:`<p>BUNKAIO est basé à <strong>Montpellier</strong> et intervient en déplacement à <strong>Montpellier et Toulouse</strong>, et plus largement en Occitanie. Il n'y a pas de studio fixe : le lieu se choisit avec vous (<a href="/conseils/lieux-seance-photo-montpellier-toulouse/" data-nav="article:lieux-seance-photo-montpellier-toulouse">idées de lieux</a>). ${TRAVEL_TXT.fr.full}</p>` },
+    { title:'Où intervenez-vous ?', body:`<p>BUNKAIO est basé à <strong>Montpellier</strong> et se déplace <strong>partout en France</strong>, gratuitement autour de <strong>Montpellier et de Toulouse</strong>. Le lieu se choisit avec vous : vos locaux, l'extérieur ou, en option, le studio à 60 € (<a href="/conseils/lieux-seance-photo-montpellier-toulouse/" data-nav="article:lieux-seance-photo-montpellier-toulouse">idées de lieux</a>). ${TRAVEL_TXT.fr.full}</p>` },
     { title:'Comment devenir partenaire, et que propose l\'espace partenaire ?', body:`<p>Candidatez depuis la page <strong>Partenariat et collaboration</strong> : réponse personnalisée sous 5 jours ouvrés. Une fois admis, votre espace partenaire vous donne <strong>-20 % permanent</strong> sur le catalogue, des promotions, des <strong>missions collaboratives rémunérées</strong> que vous acceptez ou déclinez en un clic, et l'accès au réseau de professionnels. Vous choisissez d'être référencé·e ou non dans l'annuaire.</p>` },
     { title:'Qu\'est-ce que Lumen by Bunkaio ?', body:`<p>Lumen est l\'expérience photo IA de Bunkaio, conçue pour les mariages haut de gamme et les événements : le photobooth est installé et opérationnel pendant votre événement (proposé en location pour sa durée), pour offrir aux invités une expérience mémorable et vous laisser des souvenirs durables. Trois formules — Découverte, Signature et Premium sur mesure — selon la durée et la personnalisation souhaitées.</p>` },
   ] : [
@@ -6786,7 +6799,7 @@ function renderFaqAccordion(){
     { title:'How do I access my client area, and what is it for?', body:`<p>Once your quote is confirmed, you receive your <strong>personal access code</strong> by email: click "Sign in" at the top of the site. You stay signed in on your device until you sign out.</p><p>There you follow your project's progress, find your <strong>orders, quotes, payments and invoices</strong>, download your deliverables, and manage your subscriptions and details. No code yet? Request it from the sign-in page: it is sent within 24h.</p>` },
     { title:'What is a moodboard, and is it compulsory?', body:`<p>No, it is optional but very useful: <strong>one moodboard per order</strong> to share your vision — art direction, mood, colour palette, inspiration (Pinterest, links) and the providers involved. You complete it from your client area and chat with the team through comments.</p>` },
     { title:'Are my details and images safe?', body:`<p>Your space is protected by your email and a <strong>personal access code</strong>, stored in encrypted form. Your data is only used to carry out your project, and your visuals are delivered in a private gallery. Details are in the "Privacy policy" tab.</p>` },
-    { title:'Where do you work?', body:`<p>BUNKAIO is based in <strong>Montpellier</strong> and travels to <strong>Montpellier and Toulouse</strong>, and more broadly across Occitanie. ${TRAVEL_TXT.en.full}</p>` },
+    { title:'Where do you work?', body:`<p>BUNKAIO is based in <strong>Montpellier</strong> and travels <strong>anywhere in France</strong>, free around <strong>Montpellier and Toulouse</strong>. ${TRAVEL_TXT.en.full}</p>` },
     { title:'How do I become a partner, and what does the partner area offer?', body:`<p>Apply from the <strong>Partnership & collaboration</strong> page: a personal reply within 5 working days. Once admitted, your partner area gives you a <strong>permanent 20% discount</strong> on the catalogue, promotions, <strong>paid collaborative missions</strong> you accept or decline in one click, and access to the professional network. You choose whether to be listed in the directory.</p>` },
     { title:'What is Lumen by Bunkaio?', body:`<p>Lumen is Bunkaio's AI photo experience, designed for luxury weddings and events: the photobooth is set up and running throughout your event (offered as a rental for its duration), giving guests a memorable experience and leaving you lasting memories. Three packages — Discovery, Signature and a bespoke Premium — depending on duration and customisation.</p>` },
   ];
@@ -7063,6 +7076,7 @@ updatePlaceholders();
 updateLang();
 applyImages();
 applyOwnHeroes();
+applyAyaPortrait();
 initReassureLoop();
 document.querySelectorAll('.ph').forEach(observe);
 document.querySelectorAll('#view-home .rv:not(.reassure-section)').forEach(observe);

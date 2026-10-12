@@ -20,13 +20,13 @@ Le code est la source de vérité. Ce fichier ne sert qu'à reprendre vite.
 
 ## Grille tarifaire (source : `CATS`, `LUMEN_TIERS`, `SUBS`, `POLAS` dans `js/script.js`)
 - Particuliers 250 / 420 / 650 / 1 090 · Book grossesse 450 · Corporate & Personal Branding 250 / 320 (Lancement) / 450 / 690 / 1 090.
-- Mode 490 / 990 / 1 690 / 2 490 · Polas 100 · Studio Continu 790 €/mois (6 mois).
+- Mode 490 / 990 / 1 690 / 2 490 · Polas 160 (studio inclus) · Studio Continu 790 €/mois (6 mois).
 - Commercial 390 / 750 / 1 390 / 2 390 · Événementiel 420 / 750 / 1 290 / 2 190.
 - Lumen : prototype, aucun prix publié, pas de page de formules ; tout lien Lumen mène à /contact/#lumen (message pré-rempli). Modèle de devis et emplacements média inactifs.
 - Déplacement : offert ≤ 30 km autour de Montpellier, de Toulouse et « dans l'ouest de l'Hérault » (décision du 12 oct. 2026 : Toulouse n'a plus de forfait ; la ville de Béziers n'est écrite que dans la ligne « Basé à Montpellier — mobile sur toute la France sur devis et gratuitement sur Béziers, Montpellier et Toulouse », à la demande de la propriétaire ; le calcul garde 3 pôles, voir `TRAVEL_POLES`), ailleurs 0,60 €/km aller-retour au-delà de 30 km.
 - Programme partenaires : −20 % permanent (décision de la propriétaire).
 
-- Studio (décision du 12 oct. 2026) : jamais inclus, option à 60 € (`STUDIO_FEE`, `studioApplies`) sur particuliers, Book grossesse, corporate/Lancement, mode, Polas et commercial ; pas de sélecteur pour l'événementiel ni l'abonnement.
+- Studio (décision du 12 oct. 2026) : jamais inclus, option à 60 € (`STUDIO_FEE`, `studioApplies`) sur particuliers, Book grossesse, corporate/Lancement, mode et commercial ; exception Polas : 160 €, studio inclus ; pas de sélecteur pour l'événementiel ni l'abonnement.
 
 ## Stratégie (décision de la propriétaire, 8 oct. 2026) : une seule
 - Cibles : **entrepreneurs et indépendants** (porte d'entrée : formule Lancement 320 €, puis Signature, Premium, Éditorial) et **marques** (Mode, Commercial et produits). Plan de référence : artefact « Plan de lancement V5 » (même adresse que l'ancien V3) ; suivi : « Actions BUNKAIO » ; calculs : « Mes chiffres BUNKAIO ».
