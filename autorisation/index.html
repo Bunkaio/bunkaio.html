@@ -39,6 +39,7 @@
   .field input { width: 100%; border: 1px solid var(--line); border-radius: 8px; padding: 13px 14px; font: inherit; font-size: 16px; outline: none; }
   .field input:focus { border-color: var(--accent); }
   .err { color: var(--danger); font-size: 13.5px; min-height: 20px; margin: 8px 0; }
+  .row.missing { background: var(--danger-bg); border-radius: 8px; box-shadow: 0 0 0 2px var(--danger); }
   .legal { color: var(--grey); font-size: 12px; margin-top: 14px; }
   .loading { text-align: center; color: var(--grey); padding: 60px 0; }
   @media print { header, .actions, .sign, .banner { display: none !important; } body { background: #fff; } main { padding: 0; max-width: none; } }
@@ -73,7 +74,7 @@ function render() {
     '<div class="field"><label for="em">Email (pour recevoir la confirmation et pouvoir retirer votre accord)</label><input id="em" type="email" autocomplete="email"></div>' +
     '<label class="row"><input type="checkbox" id="minor"' + (sj && sj.minor ? ' checked' : '') + '><span>La personne photographiée est mineure<small>Un titulaire de l\'autorité parentale ou un tuteur remplit alors ce formulaire.</small></span></label>' +
     '<div id="guard" style="display:none"><div class="field"><label for="gn">Nom et prénom du représentant légal</label><input id="gn"></div><div class="field"><label for="gr">Lien avec le mineur (père, mère, tuteur…)</label><input id="gr"></div></div>' +
-    '<h3 style="font-size:16px;margin:18px 0 4px">Vos choix (une réponse par usage, rien n\'est pré-coché)</h3>' +
+    '<h3 style="font-size:16px;margin:18px 0 4px">Vos choix <span style="color:var(--danger)">· 4 réponses obligatoires</span></h3><p class="legal" style="margin:0 0 6px">Répondez Oui ou Non à chaque usage pour enregistrer. Votre réponse est entièrement libre et rien n\'est pré-coché.</p>' +
     d.legal.uses.map(u => radio('use_' + u.id, u)).join('') +
     '<label class="row"><input type="checkbox" id="ok"><span>Je confirme avoir lu les informations ci-dessus (clauses ' + esc(d.legal.version) + ') et donner mes choix librement.</span></label>' +
     '<div class="err" id="err"></div><button class="btn" id="btn" style="width:100%" onclick="submitForm()">Enregistrer mes choix</button>' +
@@ -90,7 +91,9 @@ async function submitForm() {
   const minor = document.getElementById('minor').checked;
   const gn = document.getElementById('gn').value.trim(), gr = document.getElementById('gr').value.trim();
   if (name.length < 3) { err.textContent = 'Saisissez le nom et le prénom.'; return; }
-  if (d.legal.uses.some(u => !imageUse[u.id])) { err.textContent = 'Répondez Oui ou Non à chaque question.'; return; }
+  document.querySelectorAll('.row.missing').forEach(r => r.classList.remove('missing'));
+  const miss = d.legal.uses.filter(u => !imageUse[u.id]).map(u => document.querySelector('input[name=use_' + u.id + ']').closest('.row'));
+  if (miss.length) { miss.forEach(r => r.classList.add('missing')); err.textContent = 'Il reste ' + miss.length + ' réponse' + (miss.length > 1 ? 's' : '') + ' à donner : les quatre usages sont obligatoires. Votre choix reste libre.'; miss[0].scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
   if (minor && (gn.length < 3 || !gr)) { err.textContent = 'Indiquez le nom du représentant légal et son lien avec le mineur.'; return; }
   if (!document.getElementById('ok').checked) { err.textContent = 'Cochez la confirmation pour enregistrer.'; return; }
   err.textContent = '';

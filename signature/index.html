@@ -46,6 +46,8 @@
   .padwrap .ph { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--grey); font-size: 13px; pointer-events: none; }
   .padwrap .clr { position: absolute; top: 6px; right: 8px; font-size: 12px; background: none; border: 0; color: var(--accent); cursor: pointer; text-decoration: underline; }
   .sigimg { max-width: 100%; height: 70px; object-fit: contain; display: block; margin-top: 8px; }
+  .row.missing { background: var(--danger-bg); border-radius: 8px; box-shadow: 0 0 0 2px var(--danger); }
+  .req { color: var(--danger); font-weight: 700; }
   .legal { color: var(--grey); font-size: 12px; margin-top: 14px; }
   .loading { text-align: center; color: var(--grey); padding: 60px 0; }
   @media print { header, .actions, .sign, .banner { display: none !important; } body { background: #fff; } main { padding: 0; max-width: none; } }
@@ -118,7 +120,7 @@ function radio(name, label, hint) {
 }
 function consentForm() {
   const uses = (LEGAL && LEGAL.uses) || [];
-  return '<div style="margin-top:18px"><h3 style="font-size:16px;margin-bottom:4px">Utilisation de vos images par BUNKAIO</h3><p class="legal" style="margin:0 0 6px">Répondez Oui ou Non à chaque usage. Aucune case n\'est pré-cochée, chaque choix est indépendant, et refuser n\'a aucune incidence sur la prestation ni sur le prix. Vous pouvez changer d\'avis à tout moment.</p>' +
+  return '<div style="margin-top:18px"><h3 style="font-size:16px;margin-bottom:4px">Utilisation de vos images par BUNKAIO <span class="req">· 4 réponses obligatoires</span></h3><p class="legal" style="margin:0 0 6px">Pour signer, répondez Oui ou Non à chacun des quatre usages ci-dessous, ainsi qu\'à la question « Qui sera photographié ? ». Votre réponse est entièrement libre : aucune case n\'est pré-cochée, et refuser n\'a aucune incidence sur la prestation ni sur le prix. Vous pourrez changer d\'avis à tout moment.</p>' +
     uses.map(u => radio('use_' + u.id, u.label, u.text)).join('') +
     '<div class="row" style="cursor:default"><span style="flex:1"><b>Qui sera photographié ?</b><small>Les autres personnes devront donner leur propre autorisation (lien individuel envoyé après la signature).</small><span class="radios" style="flex-direction:column;gap:8px">' +
     '<label><input type="radio" name="persons" value="self"> Moi uniquement</label><label><input type="radio" name="persons" value="self_others"> Moi et d\'autres personnes (équipe, famille, modèles…)</label><label><input type="radio" name="persons" value="others"> D\'autres personnes uniquement</label></span></span></div>' +
@@ -164,8 +166,10 @@ async function sign() {
   const waiver = document.getElementById('waiver');
   if (!accept) { err.textContent = 'Cochez « Bon pour accord » pour signer.'; return; }
   if (lg) {
-    if (((LEGAL.uses) || []).some(u => !imageUse[u.id])) { err.textContent = 'Répondez Oui ou Non à chacun des quatre usages de vos images (refuser n\'a aucune incidence sur la prestation).'; return; }
-    if (!persons) { err.textContent = 'Indiquez qui sera photographié.'; return; }
+    document.querySelectorAll('#signBox .row.missing').forEach(r => r.classList.remove('missing'));
+    const miss = ((LEGAL.uses) || []).filter(u => !imageUse[u.id]).map(u => document.querySelector('input[name=use_' + u.id + ']').closest('.row'));
+    if (!persons) miss.push(document.querySelector('input[name=persons]').closest('.row'));
+    if (miss.length) { miss.forEach(r => r.classList.add('missing')); err.textContent = (miss.length > 1 ? 'Il reste ' + miss.length + ' réponses à donner' : 'Il reste 1 réponse à donner') + ' pour signer : les quatre usages de vos images et « Qui sera photographié ? » sont obligatoires. Votre choix reste libre : refuser n\'a aucune incidence sur la prestation.'; miss[0].scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
   } else if (!pf) { err.textContent = 'Indiquez si vous autorisez l\'utilisation des visuels pour le portfolio.'; return; }
   if (normM(mention) !== 'bon pour accord') { err.textContent = 'Écrivez « Bon pour accord » dans le cadre « Le client ».'; return; }
   if (name.length < 3) { err.textContent = 'Saisissez votre nom et prénom.'; return; }
