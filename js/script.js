@@ -4158,6 +4158,7 @@ function renderAdviceTeaser(){
     </section>`;
   bindTypewriters();
   initAdviceLive();
+  if (window.TeaserField) window.TeaserField.attach(el.querySelector('.advice-teaser'));
 }
 function renderAdvicePage(){
   const el = document.getElementById('advicePageContent');
@@ -7600,13 +7601,15 @@ function cstDrawField(ctx, pts, W, H, c, frame, still){
    Le canevas couvre l'écran visible (suivi du défilement) ; pause hors de ces vues, onglet caché ou animations réduites (image fixe). */
 const CstField = (() => {
   let raf = 0, wrap = null, cv = null, ctx = null, pts = [], W = 0, H = 0, view = null, frame = 0;
-  const VIEWS = ['login', 'account', 'portfolio', 'services'];
+  const VIEWS = ['login', 'account', 'portfolio', 'services', 'advice', 'article'];
   function palette(){
     if (currentView === 'account') {
       const partner = view && view.dataset.acct === 'partner';
       return { line: '255,255,255', dot: '255,255,255', cross: partner ? '217,196,154' : '214,201,247', a: 1 };
     }
     /* Portfolio : par-dessus la vidéo / les photos de fond, à faible opacité (les photos restent la vedette). */
+    /* Conseils et articles : violet pâle, lisible sur la bannière photo comme sur les fonds clairs. */
+    if (currentView === 'advice' || currentView === 'article') return { line: '165,143,230', dot: '165,143,230', cross: '214,201,247', a: 0.6 };
     if (currentView === 'portfolio' || currentView === 'services') return { line: '255,255,255', dot: '255,255,255', cross: '214,201,247', a: 0.4 };
     return { line: '110,90,168', dot: '110,90,168', cross: '110,90,168', a: 0.8 };
   }
@@ -7699,6 +7702,41 @@ const MenuField = (() => {
   document.addEventListener('visibilitychange', run);
   return { run };
 })();
+
+/* Fond constellation dans un bloc (ex. panneau « Conseils photo » de l'accueil) : canevas à la taille du bloc, placé derrière son
+   contenu, animé seulement quand le bloc est à l'écran. attach() permet de le replacer après un nouveau rendu du bloc. */
+function makeBoxField(c){
+  const wrap = document.createElement('div'); wrap.className = 'cst-field cst-box'; wrap.setAttribute('aria-hidden', 'true'); wrap.innerHTML = '<canvas></canvas>';
+  const cv = wrap.querySelector('canvas'), ctx = cv.getContext('2d');
+  let pts = [], W = 0, H = 0, raf = 0, frame = 0, visible = false, box = null, io = null;
+  function size(){
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    W = box.clientWidth; H = box.clientHeight;
+    cv.style.height = H + 'px';
+    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const n = Math.max(16, Math.min(60, Math.round(W * H / 18000)));
+    pts = Array.from({ length: n }, (_, i) => ({ x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - 0.5) * 0.22, vy: (Math.random() - 0.5) * 0.22, r: 0.7 + Math.random() * 1.1, ph: Math.random() * 6.28, cross: i % 8 === 0 }));
+  }
+  function loop(){ frame++; cstDrawField(ctx, pts, W, H, c, frame, false); raf = requestAnimationFrame(loop); }
+  function run(){
+    cancelAnimationFrame(raf); raf = 0;
+    if (!box || !visible || document.hidden || !document.body.contains(box)) return;
+    if (Math.abs(box.clientHeight - H) > 20 || Math.abs(box.clientWidth - W) > 20) size();
+    if (REDUCED_MOTION) { cstDrawField(ctx, pts, W, H, c, frame, true); return; }
+    loop();
+  }
+  function attach(b){
+    if (!b) return;
+    box = b; b.classList.add('has-field'); b.prepend(wrap); size();
+    if (io) io.disconnect();
+    if (window.IntersectionObserver) { io = new IntersectionObserver(es => { visible = es.some(e => e.isIntersecting); run(); }, { rootMargin: '80px 0px' }); io.observe(b); }
+    else { visible = true; run(); }
+  }
+  document.addEventListener('visibilitychange', run);
+  return { attach };
+}
+window.TeaserField = makeBoxField({ line: '110,90,168', dot: '110,90,168', cross: '165,143,230', a: 0.7 });
+window.TeaserField.attach(document.querySelector('#adviceTeaser .advice-teaser'));
 
 /* ═══════════════ PAGE BG ═══════════════ */
 function setPageBg(viewKey){

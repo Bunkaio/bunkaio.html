@@ -5386,3 +5386,7 @@ footer > .cst-foot canvas { transform: none; }
 #view-services { position: relative; }
 /* Menu mobile : fond uni lavande (la page floutée derrière ne transparaît plus) pour que la constellation soit le seul décor. */
 .mobile-menu { background: radial-gradient(ellipse 120% 70% at 50% 0%, #f3eefc 0%, #e9e1f8 55%, #ddd3f2 100%); -webkit-backdrop-filter: none; backdrop-filter: none; }
+/* Fond constellation dans un bloc (panneau « Conseils photo » de l'accueil). */
+.has-field { position: relative; isolation: isolate; }
+.has-field > .cst-box { position: absolute; inset: 0; z-index: -1; border-radius: inherit; overflow: hidden; }
+#view-advice, #view-article { position: relative; }
