@@ -23,7 +23,7 @@ Le code est la source de vérité. Ce fichier ne sert qu'à reprendre vite.
 - Mode 490 / 990 / 1 690 / 2 490 · Polas 100 · Studio Continu 790 €/mois (6 mois).
 - Commercial 390 / 750 / 1 390 / 2 390 · Événementiel 420 / 750 / 1 290 / 2 190.
 - Lumen : prototype, aucun prix publié, pas de page de formules ; tout lien Lumen mène à /contact/#lumen (message pré-rempli). Modèle de devis et emplacements média inactifs.
-- Déplacement : offert ≤ 30 km de Montpellier ou « dans l'ouest de l'Hérault » (décision du 12 oct. 2026 : la ville de Béziers n'est plus écrite nulle part sur le site ; le calcul du devis garde bien ses deux pôles, voir `TRAVEL_POLES`), Toulouse et agglomération 50 €, ailleurs 0,60 €/km aller-retour au-delà de 30 km.
+- Déplacement : offert ≤ 30 km autour de Montpellier, de Toulouse et « dans l'ouest de l'Hérault » (décision du 12 oct. 2026 : Toulouse n'a plus de forfait ; la ville de Béziers n'est écrite que dans la ligne « Basé à Montpellier — mobile sur toute la France sur devis et gratuitement sur Béziers, Montpellier et Toulouse », à la demande de la propriétaire ; le calcul garde 3 pôles, voir `TRAVEL_POLES`), ailleurs 0,60 €/km aller-retour au-delà de 30 km.
 - Programme partenaires : −20 % permanent (décision de la propriétaire).
 
 ## Stratégie (décision de la propriétaire, 8 oct. 2026) : une seule

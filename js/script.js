@@ -15,29 +15,27 @@ let _campaignMem = ''; /* en mémoire de la page seulement : rien n'est écrit s
 function campaignTag(){ return (_campaignMem || '').replace(/^\/+|\/+$/g, '') || ''; }
 
 /* ═══════════════ FRAIS DE DÉPLACEMENT — source unique ═══════════════
-   Offerts jusqu'à TRAVEL_FREE_KM autour de Montpellier ou dans l'ouest de l'Hérault ; au-delà, TRAVEL_PER_KM € par km
+   Offerts jusqu'à TRAVEL_FREE_KM autour de Montpellier, de Toulouse ou dans l'ouest de l'Hérault ; au-delà, TRAVEL_PER_KM € par km
    (aller-retour) sur la distance dépassant ce rayon, arrondi aux 5 € près. Exemples = estimations
    (distance routière depuis le pôle le plus proche). Modifier ici pour changer tous les textes du site. */
 const TRAVEL_FREE_KM = 30;
 const TRAVEL_PER_KM = '0,60';
-const TRAVEL_TOULOUSE_FEE = 50;
 const TRAVEL_TXT = {
   fr: {
-    list: 'Déplacements offerts jusqu\'à ' + TRAVEL_FREE_KM + ' km autour de Montpellier et dans l\'ouest de l\'Hérault, forfait de ' + TRAVEL_TOULOUSE_FEE + ' € à Toulouse',
-    note: 'Déplacements offerts jusqu\'à ' + TRAVEL_FREE_KM + ' km autour de Montpellier et dans l\'ouest de l\'Hérault ; forfait de ' + TRAVEL_TOULOUSE_FEE + ' € à Toulouse et son agglomération ; ailleurs, ' + TRAVEL_PER_KM + ' € par km (aller-retour) au-delà de ' + TRAVEL_FREE_KM + ' km. Calculé automatiquement dans votre devis en ligne.',
-    full: 'Les déplacements sont offerts dans un rayon de ' + TRAVEL_FREE_KM + ' km autour de Montpellier et dans l\'ouest de l\'Hérault. Toulouse et son agglomération : forfait de ' + TRAVEL_TOULOUSE_FEE + ' €. Ailleurs, ils sont facturés ' + TRAVEL_PER_KM + ' € par km, aller-retour, sur la distance qui dépasse ces ' + TRAVEL_FREE_KM + ' km, arrondie aux 5 € près (estimations : Nîmes ≈ 35 €, Carcassonne ≈ 70 €, Perpignan ≈ 80 €). Le devis en ligne calcule le montant à partir de la ville de la prestation ; il est confirmé sur votre devis, avant toute signature.'
+    list: 'Déplacements offerts jusqu\'à ' + TRAVEL_FREE_KM + ' km autour de Montpellier, de Toulouse et dans l\'ouest de l\'Hérault',
+    note: 'Déplacements offerts jusqu\'à ' + TRAVEL_FREE_KM + ' km autour de Montpellier, de Toulouse et dans l\'ouest de l\'Hérault ; ailleurs, ' + TRAVEL_PER_KM + ' € par km (aller-retour) au-delà de ' + TRAVEL_FREE_KM + ' km. Calculé automatiquement dans votre devis en ligne.',
+    full: 'Les déplacements sont offerts dans un rayon de ' + TRAVEL_FREE_KM + ' km autour de Montpellier, de Toulouse et dans l\'ouest de l\'Hérault. Ailleurs, ils sont facturés ' + TRAVEL_PER_KM + ' € par km, aller-retour, sur la distance qui dépasse ces ' + TRAVEL_FREE_KM + ' km, arrondie aux 5 € près (estimations : Nîmes ≈ 35 €, Carcassonne ≈ 70 €, Perpignan ≈ 80 €). Le devis en ligne calcule le montant à partir de la ville de la prestation ; il est confirmé sur votre devis, avant toute signature.'
   },
   en: {
-    list: 'Free travel within ' + TRAVEL_FREE_KM + ' km of Montpellier and in western Hérault, flat €' + TRAVEL_TOULOUSE_FEE + ' in Toulouse',
-    note: 'Free travel within ' + TRAVEL_FREE_KM + ' km of Montpellier and in western Hérault; flat €' + TRAVEL_TOULOUSE_FEE + ' in Toulouse and its suburbs; elsewhere, €' + TRAVEL_PER_KM.replace(',', '.') + ' per km (round trip) beyond ' + TRAVEL_FREE_KM + ' km. Calculated automatically in your online quote.',
-    full: 'Travel is free within ' + TRAVEL_FREE_KM + ' km of Montpellier and in western Hérault. Toulouse and its suburbs: flat fee of €' + TRAVEL_TOULOUSE_FEE + '. Elsewhere it is charged at €' + TRAVEL_PER_KM.replace(',', '.') + ' per km, round trip, on the distance exceeding those ' + TRAVEL_FREE_KM + ' km, rounded to the nearest €5 (estimates: Nîmes ≈ €35, Carcassonne ≈ €70, Perpignan ≈ €80). The online quote calculates the amount from the session city; it is confirmed on your quote, before you sign anything.'
+    list: 'Free travel within ' + TRAVEL_FREE_KM + ' km of Montpellier, of Toulouse and in western Hérault',
+    note: 'Free travel within ' + TRAVEL_FREE_KM + ' km of Montpellier, of Toulouse and in western Hérault; elsewhere, €' + TRAVEL_PER_KM.replace(',', '.') + ' per km (round trip) beyond ' + TRAVEL_FREE_KM + ' km. Calculated automatically in your online quote.',
+    full: 'Travel is free within ' + TRAVEL_FREE_KM + ' km of Montpellier, of Toulouse and in western Hérault. Elsewhere it is charged at €' + TRAVEL_PER_KM.replace(',', '.') + ' per km, round trip, on the distance exceeding those ' + TRAVEL_FREE_KM + ' km, rounded to the nearest €5 (estimates: Nîmes ≈ €35, Carcassonne ≈ €70, Perpignan ≈ €80). The online quote calculates the amount from the session city; it is confirmed on your quote, before you sign anything.'
   }
 };
 
 /* Calculateur du devis en ligne : la ville saisie est localisée (API publique geo.api.gouv.fr, repli sur une
    liste locale) puis comparée aux deux pôles. Distance routière estimée = distance à vol d'oiseau × 1,25. */
-const TRAVEL_POLES = [{ lat: 43.6108, lon: 3.8767 }, { lat: 43.3442, lon: 3.2158 }];   /* pôles de départ des déplacements */
-const TRAVEL_TOULOUSE = { lat: 43.6047, lon: 1.4442, radiusKm: 15 };
+const TRAVEL_POLES = [{ lat: 43.6108, lon: 3.8767 }, { lat: 43.3442, lon: 3.2158 }, { lat: 43.6047, lon: 1.4442 }];   /* pôles de départ des déplacements : Montpellier, ouest de l'Hérault, Toulouse */
 const TRAVEL_ROAD = 1.25, TRAVEL_RATE = 0.6, TRAVEL_MAX_KM = 350;
 const TRAVEL_FALLBACK = {
   'montpellier':[43.6108,3.8767],'beziers':[43.3442,3.2158],'sete':[43.4075,3.6967],'agde':[43.3108,3.4758],'narbonne':[43.1839,3.0036],
@@ -53,7 +51,6 @@ function travelKm(a, b, c, d){
   return 2 * 6371 * Math.asin(Math.sqrt(h));
 }
 function travelFromCoords(lat, lon, label){
-  if (travelKm(lat, lon, TRAVEL_TOULOUSE.lat, TRAVEL_TOULOUSE.lon) <= TRAVEL_TOULOUSE.radiusKm) return { kind: 'flat', fee: TRAVEL_TOULOUSE_FEE, km: null, city: label };
   const km = Math.round(Math.min(...TRAVEL_POLES.map(p => travelKm(lat, lon, p.lat, p.lon))) * TRAVEL_ROAD);
   if (km <= TRAVEL_FREE_KM) return { kind: 'free', fee: 0, km, city: label };
   if (km > TRAVEL_MAX_KM) return { kind: 'quote', fee: null, km, city: label };
@@ -65,7 +62,6 @@ function travelFee(){ return travelApplies() && S.travel && typeof S.travel.fee 
 function travelMessage(tr){
   const fr = LANG === 'fr', c = tr.city;
   if (tr.kind === 'free') return fr ? `${c} : déplacement offert.` : `${c}: travel is free.`;
-  if (tr.kind === 'flat') return fr ? `${c} : forfait déplacement de ${tr.fee} €, ajouté à votre estimation.` : `${c}: flat travel fee of €${tr.fee}, added to your estimate.`;
   if (tr.kind === 'km') return fr ? `${c} · ≈ ${tr.km} km : déplacement estimé à ${tr.fee} €, ajouté à votre estimation.` : `${c} · ≈ ${tr.km} km: travel estimated at €${tr.fee}, added to your estimate.`;
   if (tr.kind === 'quote') return fr ? `${c} : trop éloignée pour une estimation automatique, le déplacement sera chiffré sur votre devis.` : `${c}: too far for an automatic estimate, travel will be priced on your quote.`;
   return fr ? 'Ville non reconnue : vérifiez l\'orthographe, sinon le déplacement sera précisé sur votre devis.' : 'City not recognised: check the spelling, otherwise travel will be specified on your quote.';
@@ -83,7 +79,6 @@ function travelSummary(){
   const tr = S.travel;
   if (!tr) return { fee: 0, text: 'Déplacement : ' + S.city + ' (à chiffrer sur devis)' };
   if (tr.kind === 'free') return { fee: 0, text: 'Déplacement : ' + tr.city + ' (offert)' };
-  if (tr.kind === 'flat') return { fee: tr.fee, text: 'Déplacement : ' + tr.city + ' (forfait Toulouse +' + tr.fee + '€)' };
   if (tr.kind === 'km') return { fee: tr.fee, text: 'Déplacement : ' + tr.city + ' (≈ ' + tr.km + ' km, +' + tr.fee + '€)' };
   return { fee: 0, text: 'Déplacement : ' + (tr.city || S.city) + ' (à chiffrer sur devis)' };
 }
@@ -281,7 +276,7 @@ const I18N = {
     'reassure3-text':'Vos visuels vous appartiennent. Conditions d\'usage définies noir sur blanc avant chaque prestation — aucune mauvaise surprise.',
     'reassure4-title':'Un interlocuteur unique',
     'reassure4-text':'De la première prise de contact à la livraison finale, vous échangez avec la même personne. Pas de standard, pas de sous-traitance.',
-    'cred-mini1':'Basé à Montpellier — mobile à Montpellier, Toulouse',
+    'cred-mini1':'Basé à Montpellier — mobile sur toute la France sur devis et gratuitement sur Béziers, Montpellier et Toulouse',
     'cred-mini2':'Photographe professionnelle diplômée de l\'ETPA — BTS Photographie 2018',
     'cred-mini3':'Matériel professionnel haut de gamme',
     'cred-mini4':'8+ ans d\'expérience · 200+ projets réalisés',
@@ -637,7 +632,7 @@ const I18N = {
     'reassure3-text':'Your visuals belong to you. Usage terms defined in writing before every project — no surprises.',
     'reassure4-title':'A single point of contact',
     'reassure4-text':'From first contact to final delivery, you deal with the same person. No call centre, no subcontracting.',
-    'cred-mini1':'Based in Montpellier — mobile in Montpellier, Toulouse',
+    'cred-mini1':'Based in Montpellier — mobile across France on quote, and free in Béziers, Montpellier and Toulouse',
     'cred-mini2':'Professional photographer, ETPA graduate — BTS Photography 2018',
     'cred-mini3':'Professional-grade equipment',
     'cred-mini4':'8+ years of experience · 200+ projects completed',
@@ -3051,7 +3046,7 @@ function animatePriceCalc(){
   const trv = travelSummary();
   noteEl.style.display = (surDevis || trv.text) ? 'block' : 'none';
   noteEl.textContent = '';
-  if (trv.text) noteEl.textContent = (LANG === 'fr' ? trv.text : trv.text.replace('Déplacement :', 'Travel:').replace('offert', 'free').replace('forfait Toulouse', 'Toulouse flat fee').replace('à chiffrer sur devis', 'to be priced on your quote')) + '. ';
+  if (trv.text) noteEl.textContent = (LANG === 'fr' ? trv.text : trv.text.replace('Déplacement :', 'Travel:').replace('offert', 'free').replace('à chiffrer sur devis', 'to be priced on your quote')) + '. ';
   if (surDevis) {
     noteEl.textContent += LANG === 'fr'
       ? 'Certaines options sélectionnées sont proposées sur devis. Le montant indiqué ci-dessus correspond à votre formule de base. Le prix final sera ajusté selon ces options lors de l\'établissement du devis.'

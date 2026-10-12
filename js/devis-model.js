@@ -51,7 +51,7 @@
         "Lieu : lorsque le shooting a lieu dans les locaux du client ou dans un lieu qu'il choisit, le client garantit l'accès et l'autorisation de photographier sur place (propriétaire, bailleur, autres occupants).",
         "Personnes et marques visibles : le client informe les personnes présentes (salariés, clients) et obtient leur accord s'ils apparaissent ; il est responsable des marques et œuvres visibles dans son lieu.",
         "Préparation : le brief (activité, usages, tenues, ambiances) est échangé avant la séance, par exemple via le moodboard de l'espace client.",
-        "Déplacement : offert dans un rayon de 30 km autour de Montpellier et dans l\'ouest de l\'Hérault ; au-delà, chiffré sur le présent devis selon la grille publiée sur bunkaio.com."
+        "Déplacement : offert dans un rayon de 30 km autour de Montpellier, de Toulouse et dans l\'ouest de l\'Hérault ; au-delà, chiffré sur le présent devis selon la grille publiée sur bunkaio.com."
       ] },
     mode: { label: 'Mode, agence et mannequins', profil: 'professionnel', category: /mode|mannequin/i,
       prestation: 'Shooting mode', contenuHint: 'Studio / extérieur, nombre de tenues, nombre de visuels retouchés, direction artistique, options (Polas : livraison HD sous 24 h)',
