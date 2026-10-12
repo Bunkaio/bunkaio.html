@@ -69,3 +69,4 @@ Redéployer le Worker, tester un devis réel en mode test Stripe, désactiver SE
 - Conservation : preuve 5 ans après la fin de la relation, factures 10 ans. Vue publique du devis sans IP/UA/personnes.
 - À faire valider par un juriste/DPO : durée 5 ans, base légale (consentement + intérêt légitime pour la preuve), valeur de la signature simple, clause mineurs, transferts hors UE, mentions de la politique de confidentialité. Ne jamais affirmer une conformité à 100 %.
 - Test local : `wrangler dev --local` (variables ADMIN_TOKEN, RESEND_API_KEY…) + script de scénarios (hors dépôt).
+- Admin : rubrique « Droits à l'image » (registre par devis signé, filtres de statut, retraits à traiter sous 30 jours, personnes/mineurs à relancer, export CSV du registre) ; alertes du tableau de bord ; veille sur /autorisation/, /retrait-autorisation/ et /signature/. FAQ : onglet « Droits à l'image » (`renderImageAccordion`, route `/droits-a-l-image/`) à tenir aligné avec les clauses.

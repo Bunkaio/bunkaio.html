@@ -462,6 +462,26 @@
         <p class="muted small" style="margin-top:12px" id="visitorsNote"></p>
       </section>
 
+      <!-- ═══ Droits à l'image ═══ -->
+      <section class="section" id="sec-image">
+        <div class="kpis" id="imKpis"></div>
+        <div class="toolbar">
+          <div class="chips" id="imChips"></div>
+          <span class="grow"></span>
+          <button class="btn ghost sm" onclick="exportImageRegister()">Exporter le registre (CSV)</button>
+        </div>
+        <div id="imTable"></div>
+        <div class="card" style="margin-top:18px"><h3>Comment ça marche</h3>
+          <div class="tl">
+            <div class="it done"><b>À l'envoi du devis</b><div class="d">Les clauses (version <span id="imVer"></span>) sont figées avec le devis : le texte signé ne change jamais, même si les clauses évoluent ensuite.</div></div>
+            <div class="it done"><b>À la signature</b><div class="d">Le client répond Oui ou Non aux 4 usages (non pré-cochés). Preuve : identité, date, version, choix, IP, navigateur, empreintes + PDF figé envoyé par email.</div></div>
+            <div class="it done"><b>Autres personnes</b><div class="d">Lien commun ou individuel (dans la fiche du devis, onglet Suivi). Mineur : représentant légal obligatoire.</div></div>
+            <div class="it done"><b>Retrait</b><div class="d">La demande publique passe le statut en « retrait demandé » : vous la vérifiez, retirez les publications sous 30 jours, puis l'enregistrez dans la fiche du devis (email de confirmation facultatif).</div></div>
+            <div class="it"><b>Conservation</b><div class="d">Preuve : 5 ans après la fin de la relation. Autorisation : 5 ans à compter de la livraison, ou jusqu'au retrait. Seuls les usages « Oui » non retirés peuvent être publiés.</div></div>
+          </div>
+        </div>
+      </section>
+
       <!-- ═══ Devis ═══ -->
       <section class="section" id="sec-quotes">
         <div class="kpis" id="qKpis"></div>
@@ -698,6 +718,7 @@ const ICON = {
   overview: '<path d="M3 13h8V3H3zM13 21h8v-8h-8zM3 21h8v-6H3zM13 3v8h8V3z"/>',
   contacts: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',
   quotes: '<path d="M9 3h6l5 5v13H4V3h5"/><path d="M9 13l2 2 4-4"/>',
+  image: '<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2.2"/><path d="M4 18c1.5-3 4-4 5-4s3.5 1 5 4M15 9h4M15 12h3"/>',
   invoices: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/>',
   sessions: '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
   activity: '<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>',
@@ -713,6 +734,7 @@ const SECTIONS = [
   ['overview', 'Tableau de bord', 'Vue d\'ensemble de l\'activité'],
   ['contacts', 'Base de données', 'Leads, clients, espaces et partenaires réunis par email'],
   ['quotes', 'Devis', 'Création, envoi, signature en ligne et suivi des devis'],
+  ['image', 'Droits à l\'image', 'Registre des autorisations d\'image, retraits à traiter et personnes à relancer'],
   ['invoices', 'Factures', 'Acomptes, soldes et encaissements Stripe'],
   ['agenda', 'Agenda', 'Séances, livraisons, échéances de factures et fins de validité des devis'],
   ['sessions', 'Séances & automatisations', 'Planning, livraisons et emails automatiques'],
@@ -905,12 +927,13 @@ function updateCounts() {
   set('invoices', DB.invoices.filter(i => i.overdue).length);
   set('messages', (DB.messages || []).filter(m => m.status === 'nouveau').length);
   set('inbox', (DB.inbox || []).filter(m => !m.read && !m.archived && !m.spam).length);
+  set('image', imageTodoCount());
   set('quotes', (DB.quotes || []).filter(q => q.status === 'signe' && !q.depositInvoice && !q.abonnement).length);
 }
 
 function renderAll() {
   renderKpis(); renderPipeStrip(); renderAlerts(); renderNextSessions(); renderRecentActivity(); renderRecentInvoices();
-  renderSegChips(); renderContacts(); renderInvoices(); renderSessions(); renderActivity(); renderMessages(); renderQuotes(); renderMailing(); renderInbox(); renderAgenda(); renderPushCard(); renderSmsCard(); renderVisitorsNote(); updateCounts();
+  renderSegChips(); renderContacts(); renderInvoices(); renderSessions(); renderActivity(); renderMessages(); renderQuotes(); renderImageRights(); renderMailing(); renderInbox(); renderAgenda(); renderPushCard(); renderSmsCard(); renderVisitorsNote(); updateCounts();
   if (state.section) $('pageSub').textContent = SECTIONS.find(x => x[0] === state.section)[2] + ' · données de ' + fdt(DB.generatedAt);
 }
 
@@ -948,6 +971,7 @@ function computeAlerts() {
     if (q.status === 'signe' && q.abonnement && q.signedAt > addDays(-14)) out.push({ lvl: 'warn', ic: '🔁', t: `Abonnement à mettre en place — ${q.client.nom}`, d: `Devis n° ${esc(q.number)} signé le ${fdate(q.signedAt)}.`, email: q.email, quote: q.id });
     if (q.status === 'envoye' && q.validUntil <= addDays(3)) out.push({ lvl: 'info', ic: '⌛', t: `Devis bientôt expiré — ${q.client.nom}`, d: `N° ${esc(q.number)} valable jusqu'au ${fdate(q.validUntil)}${q.viewedAt ? ' · consulté' : ' · jamais ouvert'}.`, email: q.email, quote: q.id });
   });
+  imageAlerts().forEach(a => out.push(a));
   const unreadIn = (DB.inbox || []).filter(m => !m.read && !m.archived && !m.spam);
   if (unreadIn.length) out.push({ lvl: 'info', ic: '📥', t: `${unreadIn.length} email${unreadIn.length > 1 ? 's' : ''} non lu${unreadIn.length > 1 ? 's' : ''}`, d: esc(unreadIn.slice(0, 3).map(m => (m.fromName || m.fromEmail) + ' : ' + m.subject).join(' · ')), go: 'inbox' });
   (DB.messages || []).filter(m => m.status === 'nouveau').forEach(m => out.push({ lvl: 'info', ic: '✉️', t: `${MSG_KIND[m.kind] || 'Message'} — ${m.name || m.email}`, d: `Reçu ${ago(m.date)}. ${esc((m.details.message || m.details.projet || m.details.temoignage || m.details.activite || '').slice(0, 90))}`, email: m.email, go: 'messages' }));
@@ -2074,6 +2098,66 @@ async function printQuote() {
   const docHtml = await frozenHtml(QE);
   w.document.write(`<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><title>Devis ${esc(QE.number)} — BUNKAIO</title><base href="${location.origin}/"><style>@font-face{font-family:'DM Sans';src:url('/fonts/dm-sans-latin-opsz-normal.woff2') format('woff2');font-weight:100 1000}body{margin:0;padding:24px;background:#fff}${BunkaioDevis.CSS}</style></head><body>${docHtml}<script>window.onload=function(){setTimeout(function(){window.print()},300)}<\/script></body></html>`);
   w.document.close();
+}
+
+/* ── Droits à l'image : registre, retraits à traiter, personnes à relancer ── */
+const DAY = 86400000;
+const daysSince = iso => Math.floor((Date.now() - new Date(iso).getTime()) / DAY);
+function imageItems() {
+  const out = [];
+  (DB.quotes || []).filter(q => q.status === 'signe').forEach(q => {
+    const c = q.consent || {}, sg = q.signature || {};
+    if (c.withdrawalRequestedAt && c.status === 'retrait_demande') out.push({ q, kind: 'retrait', who: q.client.contact || q.client.nom, at: c.withdrawalRequestedAt });
+    (q.subjects || []).forEach(s => { if (s.withdrawalRequestedAt) out.push({ q, kind: 'retrait', who: s.name, at: s.withdrawalRequestedAt }); });
+    const pending = (q.subjects || []).filter(s => s.status !== 'signe');
+    if (sg.imageUse && sg.persons && sg.persons !== 'self') {
+      if (!(q.subjects || []).length) out.push({ q, kind: 'collecte', who: q.client.nom, at: sg.at, n: 0 });
+      else if (pending.length) out.push({ q, kind: 'collecte', who: q.client.nom, at: sg.at, n: pending.length });
+    }
+    if (sg.minors && !(q.subjects || []).some(s => s.minor && s.status === 'signe')) out.push({ q, kind: 'mineur', who: q.client.nom, at: sg.at });
+  });
+  return out;
+}
+function imageTodoCount() { return imageItems().filter(i => i.kind === 'retrait').length; }
+function imageAlerts() {
+  return imageItems().map(i => {
+    const late = i.kind === 'retrait' && daysSince(i.at) >= 25;
+    if (i.kind === 'retrait') return { lvl: daysSince(i.at) >= 30 ? 'danger' : 'warn', ic: '🛑', t: `Retrait d'autorisation d'image — ${i.who}`, d: `Demandé ${ago(i.at)} (devis n° ${esc(i.q.number)}) : retirer les publications et enregistrer le retrait avant ${fdate(new Date(new Date(i.at).getTime() + 30 * DAY).toISOString())}${late ? ' — délai de 30 jours presque écoulé' : ''}.`, email: i.q.email, quote: i.q.id };
+    if (i.kind === 'mineur') return { lvl: 'warn', ic: '🧒', t: `Mineur sans autorisation du représentant — ${i.q.client.nom}`, d: `Devis n° ${esc(i.q.number)} : un mineur est photographié, aucune autorisation de représentant légal signée. N'utilisez pas ses images.`, email: i.q.email, quote: i.q.id };
+    return { lvl: 'info', ic: '👥', t: `Autorisations à collecter — ${i.q.client.nom}`, d: `Devis n° ${esc(i.q.number)} : ${i.n ? i.n + ' personne(s) en attente' : 'aucune autre personne enregistrée'}. Sans autorisation individuelle, ne pas utiliser leurs images.`, email: i.q.email, quote: i.q.id };
+  });
+}
+const IM_FILTERS = [['all', 'Tous', () => true], ['retrait', 'Retrait à traiter', q => !!imageItems().find(i => i.q.id === q.id && i.kind === 'retrait')], ['accepte', 'Accepté', q => (q.consent || {}).status === 'accepte'], ['partiel', 'Partiel', q => (q.consent || {}).status === 'partiel'], ['refuse', 'Refusé', q => (q.consent || {}).status === 'refuse'], ['retire', 'Retiré', q => (q.consent || {}).status === 'retire'], ['collecte', 'Personnes à relancer', q => !!imageItems().find(i => i.q.id === q.id && (i.kind === 'collecte' || i.kind === 'mineur'))], ['ancien', 'Anciens devis', q => !(q.signature || {}).imageUse]];
+function renderImageRights() {
+  if (!$('imTable')) return;
+  $('imVer').textContent = BunkaioDevis.LEGAL_VERSION;
+  const all = (DB.quotes || []).filter(q => q.status === 'signe');
+  const items = imageItems();
+  const n = st => all.filter(q => (q.consent || {}).status === st).length;
+  $('imKpis').innerHTML = [
+    [items.filter(i => i.kind === 'retrait').length ? 'dark' : '', 'Retraits à traiter', items.filter(i => i.kind === 'retrait').length, 'Délai légal : 30 jours'],
+    ['', 'Personnes à relancer', items.filter(i => i.kind === 'collecte' || i.kind === 'mineur').length, 'Autorisations individuelles manquantes'],
+    ['', 'Accepté / partiel', n('accepte') + ' / ' + n('partiel'), 'Sur ' + all.length + ' devis signés'],
+    ['', 'Refusé / retiré', n('refuse') + ' / ' + n('retire'), 'Images à ne pas publier'],
+  ].map(([cls, l, v, sub]) => `<div class="kpi ${cls}"><div class="l">${l}</div><div class="n">${v}</div><div class="s">${sub}</div></div>`).join('');
+  state.imFilter = state.imFilter || 'all';
+  $('imChips').innerHTML = IM_FILTERS.map(([id, l, f]) => `<button class="chip ${state.imFilter === id ? 'on' : ''}" onclick="state.imFilter='${id}';renderImageRights()">${l}<span class="c">${all.filter(f).length}</span></button>`).join('');
+  const list = all.filter(IM_FILTERS.find(x => x[0] === state.imFilter)[2]).sort((a, b) => (b.signedAt || '').localeCompare(a.signedAt || ''));
+  const cell = (u, k, wd) => yn(u, k, wd);
+  $('imTable').innerHTML = list.length ? `<div class="tbl-wrap"><table><thead><tr><th>Devis</th><th>Client</th><th>Statut</th>${Object.keys(USE_NAMES).map(k => `<th>${USE_NAMES[k]}</th>`).join('')}<th>Personnes</th><th>Version</th><th>Signé</th></tr></thead><tbody>${list.map(q => { const sg = q.signature || {}, c = q.consent || {}, subs = q.subjects || []; const sSigned = subs.filter(s => s.status === 'signe').length;
+    return `<tr class="click" onclick="openQuote('${esc(q.id)}');setTimeout(()=>setQTab('track'),0)"><td><b>${esc(q.number)}</b></td><td class="who"><b>${esc(q.client.nom)}</b><span>${esc(q.email)}</span></td><td>${sg.imageUse ? imgBadge(q) : '<span class="badge line">Ancien devis</span>'}</td>${Object.keys(USE_NAMES).map(k => `<td>${sg.imageUse ? cell(sg.imageUse, k, c.withdrawnUses) : (k === 'site' ? (sg.portfolio ? '<span class="badge ok">Oui</span>' : '<span class="badge line">Non</span>') : '—')}</td>`).join('')}<td class="small">${sg.persons ? ({ self: 'Signataire', self_others: 'Signataire + autres', others: 'Autres' }[sg.persons]) : '—'}${sg.minors ? ' · mineur' : ''}${subs.length ? `<div class="muted">${sSigned}/${subs.length} signé(s)</div>` : ''}</td><td class="small">${esc(sg.legalVersion || '—')}</td><td class="small">${fdate(q.signedAt)}</td></tr>`; }).join('')}</tbody></table></div>` : '<div class="card"><div class="empty">Aucun devis dans ce filtre.</div></div>';
+}
+function exportImageRegister() {
+  const rows = [];
+  (DB.quotes || []).filter(q => q.status === 'signe').forEach(q => {
+    const sg = q.signature || {}, c = q.consent || {};
+    const val = (u, k, wd) => !u ? '' : (wd || []).includes(k) ? 'retiré' : u[k] || '';
+    rows.push(['Signataire', q.number, q.client.nom, sg.name || '', q.email, '', fdt(sg.at || q.signedAt), sg.legalVersion || '', (IMG_ST[c.status] || [''])[0], ...Object.keys(USE_NAMES).map(k => val(sg.imageUse, k, c.withdrawnUses))]);
+    (q.subjects || []).forEach(s => rows.push([s.minor ? 'Mineur (représentant : ' + (s.guardianName || '') + ')' : 'Personne photographiée', q.number, q.client.nom, s.name, s.email || '', s.minor ? s.guardianRelation || '' : '', s.signedAt ? fdt(s.signedAt) : 'en attente', s.legalVersion || '', s.status === 'signe' ? (s.withdrawalRequestedAt ? 'Retrait demandé' : 'Signé') : 'En attente', ...Object.keys(USE_NAMES).map(k => val(s.imageUse, k, s.withdrawnUses))]));
+  });
+  const head = ['Qui', 'Devis', 'Client', 'Nom', 'Email', 'Lien (mineur)', 'Date', 'Version clauses', 'Statut', ...Object.values(USE_NAMES)];
+  const csv = '\ufeff' + [head, ...rows].map(r => r.map(csvCell).join(';')).join('\n');
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' })); a.download = 'bunkaio-registre-droits-image-' + today() + '.csv'; a.click();
 }
 
 /* ── Messages ── */

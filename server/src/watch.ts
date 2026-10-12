@@ -57,6 +57,10 @@ export async function runSiteWatch(env: Env): Promise<WatchRun> {
     const assets = [...html.matchAll(/(?:src|href)="\/?((?:js|css|config)\/[^"?]+\.(?:js|css)\?v=[^"]+)"/g)].map((m) => m[1] ?? '').filter(Boolean);
     for (const a of [...new Set(assets)].slice(0, 8)) checks.push(await checkUrl('Fichier ' + a.split('?')[0], `${SITE}/${a}`));
   }
+  /* Pages publiques du droit à l'image (hors sitemap : noindex) : indispensables à la signature, aux autorisations individuelles et au retrait. */
+  checks.push(await checkUrl('Page /autorisation/', `${SITE}/autorisation/`, 'Autorisation d'));
+  checks.push(await checkUrl('Page /retrait-autorisation/', `${SITE}/retrait-autorisation/`, 'Retirer une autorisation'));
+  checks.push(await checkUrl('Page /signature/', `${SITE}/signature/`, 'Chargement de votre devis'));
 
   /* 2. Sitemap + pages publiques */
   const sm = await timedFetch(SITE + '/sitemap.xml');
