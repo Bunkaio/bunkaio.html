@@ -4292,10 +4292,10 @@ a, button { -webkit-tap-highlight-color: rgba(110,90,168,0.18); }
 .travel-est.warn { color: #9a6b12; }
 .travel-hint { margin-top: 4px; font-size: 12.5px; color: #6e6785; }
 
-/* ═══ Devis en ligne, bureau : un encadré translucide persistant sur TOUTES les étapes ═══
+/* ═══ Devis en ligne (bureau ET mobile) : un encadré translucide persistant sur TOUTES les étapes ═══
    Sans lui, titres et textes (blancs ou gris) se posent directement sur la photo de fond et deviennent
    illisibles selon l'image. Même traitement que .recap-box / .payment-flex-strip, avec les textes passés en foncé. */
-@media (min-width: 901px) {
+@media all {
   .quiz-wrap { max-width: 860px; }
   .quiz-wrap .qstep.active {
     background: rgba(255,255,255,0.74);
@@ -4319,6 +4319,10 @@ a, button { -webkit-tap-highlight-color: rgba(110,90,168,0.18); }
   .quiz-wrap .qstep.active .recap-box,
   .quiz-wrap .qstep.active .payment-flex-strip { background: rgba(255,255,255,0.55); }
   .quiz-wrap .qstep.active .devis-kicker { color: #4b3d7a; }
+}
+/* Mobile : même encadré, plus serré et plus opaque pour rester lisible sur toutes les photos. */
+@media (max-width: 900px) {
+  .quiz-wrap .qstep.active { background: rgba(255,255,255,0.86); padding: 24px 18px 28px; border-radius: 12px; }
 }
 /* Champ « Ville de la prestation » : on masque la flèche native de la liste de suggestions (incohérente avec les autres champs). */
 #qCity::-webkit-calendar-picker-indicator { display: none !important; opacity: 0; }
