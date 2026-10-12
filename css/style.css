@@ -4887,3 +4887,7 @@ footer button[data-lang="ft-cookie-prefs"] { font: inherit; }
   #view-legal .svc-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; width: 100%; padding: 6px; }
   #view-legal .svc-tab { flex: none; display: flex; align-items: center; justify-content: center; min-height: 54px; padding: 10px 8px; font-size: 10.5px; letter-spacing: 0.08em; line-height: 1.35; white-space: normal; text-align: center; border-radius: 6px; }
 }
+
+/* Contact : « Basé en Occitanie, déplacement partout en France sur devis » est posé sur la photo de la bannière, donc en blanc avec une ombre légère (il était gris, illisible). */
+.ct-loc { color: #fff; opacity: 1; font-weight: 500; text-shadow: 0 1px 3px rgba(0,0,0,0.45), 0 2px 14px rgba(0,0,0,0.55); }
+.ct-loc::before { color: #d6c9f7; opacity: 1; }
