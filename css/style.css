@@ -5227,3 +5227,6 @@ html.pfi-lock, html.pfi-lock body { overflow: hidden !important; }
   .hero-kicker .hk-lines line.ln { animation: none; stroke-dashoffset: 0; opacity: 0.5; }
   .hero-kicker .hk-lines polyline.pl { display: none; }
 }
+
+/* Bras de la croix ⊹ : violet pâle de la charte BUNKAIO (même teinte que les croix de visée). */
+.hero-kicker .hk-lines polyline:not(.f):not(.pl) { stroke: rgba(214,201,247,0.9); stroke-width: 1.2; filter: drop-shadow(0 0 2px rgba(214,201,247,0.45)); }
