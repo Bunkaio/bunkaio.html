@@ -5311,3 +5311,8 @@ footer .footer-cta-row .hero-start { animation: none; opacity: 1; transform: non
 .cst-field { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
 .cst-field canvas { position: absolute; left: 0; top: 0; width: 100%; display: block; will-change: transform; }
 .login-page, .account-page { position: relative; z-index: 1; }
+
+/* Boutons « fantôme » : le fond noir qui glisse au survol passe SOUS le texte, même quand le libellé n'est pas dans un <span>
+   (ex. « Vérifier les disponibilités » sur les pages prestation) — sinon le texte blanc disparaissait derrière le fond noir. */
+.btn-ghost, .btn-solid { isolation: isolate; }
+.btn-ghost::before, .btn-solid::before { z-index: -1; }
