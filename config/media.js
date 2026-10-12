@@ -103,7 +103,7 @@ const IMG = {
   discover:  MEDIA_BASE + '/hero/services-1.webp',   // Fond de la page « Découvrir chaque prestation »
   article:   MEDIA_BASE + '/hero/services-1.webp',   // Fond des articles
   /* Textes alternatifs du portfolio (SEO images) : un tableau par catégorie, INDEXÉ PAR NUMÉRO DE FICHIER (1.webp = 1re entrée, 2.webp = 2e, etc.). Supprimer une photo ne décale donc pas les textes des autres.
-     Décrivez ce qu'on voit, sans bourrer de mots-clés. Ex. : 'photo-part': ['Portrait en lumière naturelle d'une femme sur un pont à Béziers', ...]
+     Décrivez ce qu'on voit, sans bourrer de mots-clés. Ex. : 'photo-part': ['Portrait en lumière naturelle d'une femme sur un pont à Montpellier', ...]
      Si une entrée manque, un texte générique est utilisé. */
   portfolioAlt: {},
   /* Texte alternatif de la photo de chaque page prestation (clé = id de la catégorie : 'photo-part', 'mode', 'commercial', 'event', 'lumen').

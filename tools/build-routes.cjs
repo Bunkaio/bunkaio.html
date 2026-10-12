@@ -109,7 +109,7 @@ function ogCard(kicker, title) {
 h1{font-size:${title.length > 60 ? 58 : title.length > 40 ? 68 : 80}px;line-height:1.08;letter-spacing:-.03em;font-weight:700;max-width:1000px}
 .bar{display:flex;justify-content:space-between;align-items:flex-end;border-top:1px solid rgba(255,255,255,.25);padding-top:26px;font-size:24px;color:rgba(255,255,255,.85)}.bar b{font-weight:700;letter-spacing:.08em}
 </style></head><body><div class="top"><div class="word">BUNKAIO</div><div class="kick">${safe(kicker)}</div></div><h1>${safe(title)}</h1>
-<div class="bar"><span>Photographe professionnel · Béziers · Montpellier · Toulouse</span><b>bunkaio.com</b></div></body></html>`;
+<div class="bar"><span>Photographe professionnel · Montpellier · Toulouse</span><b>bunkaio.com</b></div></body></html>`;
 }
 function esc(v) { return v.replace(/&/g, '&amp;').replace(/"/g, '&quot;'); }
 function setMeta(html, re, replacement) { return re.test(html) ? html.replace(re, replacement) : html; }
@@ -395,7 +395,9 @@ function pinAssets(html) {
   /* Anciennes URL renommées : page de redirection (GitHub Pages ne gère pas les 301). Hors sitemap. */
   for (const rd of [{ from: '/partenaires/', to: '/collaboration/', label: 'Collaboration' },
                    /* Lumen (prototype) : plus de page de formules, renvoi vers le formulaire de contact pré-rempli. */
-                   { from: '/services/photobooth-ia-mariage-lumen/', to: '/contact/#lumen', label: 'Contact' }]) {
+                   { from: '/services/photobooth-ia-mariage-lumen/', to: '/contact/#lumen', label: 'Contact' },
+                   /* Article renommé (la ville retirée de l'adresse). */
+                   { from: '/conseils/lieux-seance-photo-montpellier-beziers-toulouse/', to: '/conseils/lieux-seance-photo-montpellier-toulouse/', label: 'Conseils photo' }]) {
     const f = path.join(ROOT, rd.from, 'index.html');
     fs.mkdirSync(path.dirname(f), { recursive: true });
     fs.writeFileSync(f, `<!DOCTYPE html>

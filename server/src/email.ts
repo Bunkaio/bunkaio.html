@@ -30,7 +30,7 @@ function signatureHtml(lang: Lang): string {
             <a href="tel:+33758573161" style="${link}">07 58 57 31 61</a> · <a href="mailto:contact@bunkaio.com" style="${link}">contact@bunkaio.com</a><br>
             <a href="${SITE}" style="${link}">bunkaio.com</a> · <a href="https://instagram.com/bunkaio" style="${link}">Instagram @bunkaio</a>
           </p>
-          <p style="margin:0 0 16px;font-size:12px;line-height:1.7;${mute}font-family:${FONT};">${tr(lang, 'Montpellier · Béziers · Toulouse — du lundi au samedi, 9h–18h', 'Montpellier · Béziers · Toulouse — Monday to Saturday, 9am–6pm')}</p>
+          <p style="margin:0 0 16px;font-size:12px;line-height:1.7;${mute}font-family:${FONT};">${tr(lang, 'Montpellier · Toulouse — du lundi au samedi, 9h–18h', 'Montpellier · Toulouse — Monday to Saturday, 9am–6pm')}</p>
           <p style="margin:0;font-size:11px;line-height:1.6;color:rgba(255,255,255,0.4);font-family:${FONT};">${tr(lang, 'BUNKAIO — Entreprise Individuelle · SIRET 951 547 587 00034', 'BUNKAIO — Sole proprietorship · SIRET 951 547 587 00034')}${getBusinessAddress() ? `<br>${escapeHtml(getBusinessAddress())}` : ''}<br>${tr(lang, VAT_FR, VAT_EN)}</p>
         </td></tr>`;
 }
@@ -38,7 +38,7 @@ function signatureText(lang: Lang): string {
   return `Aya Nascimento
 ${tr(lang, 'Photographe professionnelle · Fondatrice de BUNKAIO', 'Professional photographer · Founder of BUNKAIO')}
 07 58 57 31 61 · contact@bunkaio.com · bunkaio.com · Instagram @bunkaio
-${tr(lang, 'Montpellier · Béziers · Toulouse — du lundi au samedi, 9h–18h', 'Montpellier · Béziers · Toulouse — Monday to Saturday, 9am–6pm')}
+${tr(lang, 'Montpellier · Toulouse — du lundi au samedi, 9h–18h', 'Montpellier · Toulouse — Monday to Saturday, 9am–6pm')}
 BUNKAIO — ${tr(lang, 'Entreprise Individuelle', 'Sole proprietorship')} · SIRET 951 547 587 00034${getBusinessAddress() ? `\n${getBusinessAddress()}` : ''}
 ${tr(lang, VAT_FR, VAT_EN)}`;
 }

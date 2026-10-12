@@ -1939,7 +1939,7 @@ function quoteForm(q) {
     <div class="lab" style="margin-top:10px">Conditions</div>
     <div class="fg"><label>Report et annulation</label><textarea id="qeReport" style="font-family:inherit;font-size:13.5px">${esc(q.report || '')}</textarea></div>
     <div class="fg"><label>Conditions de réalisation propres à la prestation (une par ligne)</label><textarea id="qeCond" style="font-family:inherit;font-size:13.5px;min-height:140px">${esc((q.conditions || []).join('\n'))}</textarea><div class="hint">Les clauses communes (choix des visuels, respect de l'œuvre, conservation, responsabilité) sont ajoutées automatiquement.</div></div>
-    <div class="frow"><div class="fg"><label>Médiateur de la consommation</label><input id="qeMed" value="${esc(q.mediateur || '')}" placeholder="Nom et coordonnées"><div class="hint">Obligatoire pour les particuliers. Mémorisé pour les prochains devis.</div></div><div class="fg"><label>Tribunal compétent</label><input id="qeTrib" value="${esc(q.tribunal || '')}" placeholder="Ex. Tribunal judiciaire de Béziers"></div></div>
+    <div class="frow"><div class="fg"><label>Médiateur de la consommation</label><input id="qeMed" value="${esc(q.mediateur || '')}" placeholder="Nom et coordonnées"><div class="hint">Obligatoire pour les particuliers. Mémorisé pour les prochains devis.</div></div><div class="fg"><label>Tribunal compétent</label><input id="qeTrib" value="${esc(q.tribunal || '')}" placeholder="Ex. Tribunal judiciaire de Montpellier"></div></div>
   </div>`;
 }
 function quoteTrack(q) {

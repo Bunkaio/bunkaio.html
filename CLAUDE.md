@@ -15,6 +15,7 @@ Le code est la source de vérité. Ce fichier ne sert qu'à reprendre vite.
 - Pas de redesign. Pas de promotion de lancement, pas de prix barré. Prix nets (franchise de TVA).
 - Pas de fausse preuve sociale ni de service inventé. Les 10 marques réelles (Musardise Bijoux… Studio Doutor) défilent sur la page Collaboration : ne pas écrire « collaboration » (lu comme non rémunéré, décision de la propriétaire). Accueil : les 8 témoignages d'exemple sont remis à la demande de la propriétaire, qui les remplacera à la main ; la propriétaire gère elle-même ce contenu : ne pas y ajouter de mention ni changer le titre.
 - Lien d'avis Google unique : `config/media.js` (`GOOGLE_REVIEW_URL`) et `server/wrangler.toml` doivent rester identiques.
+- Ne jamais écrire la ville de Béziers sur le site (décision de la propriétaire, 12 oct. 2026) ; l'article « lieux de séance » a pour adresse `/conseils/lieux-seance-photo-montpellier-toulouse/` (l'ancienne redirige).
 - Ne pas lancer `pkill -f "http.server"` depuis le shell de l'agent.
 
 ## Grille tarifaire (source : `CATS`, `LUMEN_TIERS`, `SUBS`, `POLAS` dans `js/script.js`)
@@ -22,7 +23,7 @@ Le code est la source de vérité. Ce fichier ne sert qu'à reprendre vite.
 - Mode 490 / 990 / 1 690 / 2 490 · Polas 100 · Studio Continu 790 €/mois (6 mois).
 - Commercial 390 / 750 / 1 390 / 2 390 · Événementiel 420 / 750 / 1 290 / 2 190.
 - Lumen : prototype, aucun prix publié, pas de page de formules ; tout lien Lumen mène à /contact/#lumen (message pré-rempli). Modèle de devis et emplacements média inactifs.
-- Déplacement : offert ≤ 30 km de Montpellier ou Béziers, Toulouse et agglomération 50 €, ailleurs 0,60 €/km aller-retour au-delà de 30 km.
+- Déplacement : offert ≤ 30 km de Montpellier ou « dans l'ouest de l'Hérault » (décision du 12 oct. 2026 : la ville de Béziers n'est plus écrite nulle part sur le site ; le calcul du devis garde bien ses deux pôles, voir `TRAVEL_POLES`), Toulouse et agglomération 50 €, ailleurs 0,60 €/km aller-retour au-delà de 30 km.
 - Programme partenaires : −20 % permanent (décision de la propriétaire).
 
 ## Stratégie (décision de la propriétaire, 8 oct. 2026) : une seule
