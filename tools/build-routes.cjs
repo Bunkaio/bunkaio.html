@@ -34,7 +34,7 @@ const SNAPS_BY_VIEW = {
   quiz: ['catList', 'csSlotQuiz'],
   portfolio: ['pfTabs', 'pfLinks'],
   services: ['servicesFilters', 'servicesGrid', 'svcLinks', 'processSteps', 'csSlotServices'],
-  legal: ['faqAccordion', 'privacyAccordion', 'cgvAccordion', 'cookiesAccordion'],
+  legal: ['faqAccordion', 'privacyAccordion', 'cgvAccordion', 'cookiesAccordion', 'imageAccordion'],
   partners: ['partnersPitch', 'partnersAccordion', 'applyBenefitsAccordion'],
   service: ['servicePageContent'],
   advice: ['advicePageContent'],
@@ -267,9 +267,9 @@ function buildPage(template, route, snaps, meta) {
   for (const id of ALL_SNAP_IDS) html = setSnap(html, id, '');
   let ids = [...(SNAPS_BY_VIEW[route.view] || []), ...SNAPS_ALL];
   if (route.view === 'legal') {
-    const cur = route.sub === 'privacy' || route.sub === 'cgv' || route.sub === 'cookies' ? route.sub : 'faq';
-    ids = ids.filter((id) => id === cur + 'Accordion' || !/^(faq|privacy|cgv|cookies)Accordion$/.test(id));
-    for (const k of ['faq', 'privacy', 'cgv', 'cookies']) {
+    const cur = route.sub === 'privacy' || route.sub === 'cgv' || route.sub === 'cookies' || route.sub === 'image' ? route.sub : 'faq';
+    ids = ids.filter((id) => id === cur + 'Accordion' || !/^(faq|privacy|cgv|cookies|image)Accordion$/.test(id));
+    for (const k of ['faq', 'privacy', 'cgv', 'cookies', 'image']) {
       html = html.replace(new RegExp('<div id="lsec-' + k + '"[^>]*>'), '<div id="lsec-' + k + '"' + (k === cur ? '' : ' style="display:none"') + '>');
       html = html.replace(new RegExp('class="svc-tab( active)?" id="legaltab-' + k + '"'), 'class="svc-tab' + (k === cur ? ' active' : '') + '" id="legaltab-' + k + '"');
     }
@@ -327,7 +327,7 @@ function pinAssets(html) {
   await page.waitForTimeout(300);
   await grab(['servicesFilters', 'servicesGrid', 'svcLinks', 'processSteps']);
   await page.evaluate(() => goView('legal', null, { initial: true }));
-  await grab(['faqAccordion', 'privacyAccordion', 'cgvAccordion', 'cookiesAccordion']);
+  await grab(['faqAccordion', 'privacyAccordion', 'cgvAccordion', 'cookiesAccordion', 'imageAccordion']);
   await page.evaluate(() => goView('portfolio', null, { initial: true }));
   await page.waitForTimeout(400);
   await grab(['pfTabs', 'pfLinks']);

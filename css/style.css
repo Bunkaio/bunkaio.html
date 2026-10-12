@@ -3222,7 +3222,7 @@
      contenu qui suit (formulaires, FAQ, coordonnées, onglets…) est posé sur
      un panneau blanc dépoli pour rester lisible quelle que soit l'image. */
   .read-panel,
-  #lsec-faq, #lsec-privacy, #lsec-cgv, #lsec-cookies,
+  #lsec-faq, #lsec-privacy, #lsec-cgv, #lsec-cookies, #lsec-image,
   #view-contact #ctForm,
   #psec-apply, #psec-collab,
   #partnersAccordion,
@@ -3238,7 +3238,7 @@
   }
   .read-panel .fgroup:last-child { margin-bottom: 0; }
   #view-contact .ct-info-panel { padding-bottom: clamp(4px, 1vw, 12px); }
-  #lsec-faq .accordion-item:first-child, #lsec-privacy .accordion-item:first-child, #lsec-cgv .accordion-item:first-child, #lsec-cookies .accordion-item:first-child,
+  #lsec-faq .accordion-item:first-child, #lsec-privacy .accordion-item:first-child, #lsec-cgv .accordion-item:first-child, #lsec-cookies .accordion-item:first-child, #lsec-image .accordion-item:first-child,
   #partnersAccordion .accordion-item:first-child { border-top: none; }
   #pfTabs { margin-bottom: 36px; padding: 18px clamp(20px, 3vw, 36px) 0; }
   #psec-apply .collab-sub-full, #psec-collab .collab-sub-full { margin-bottom: 36px; }
@@ -4945,3 +4945,10 @@ img:not([src*="logo"]):not([src$=".svg"]):not(.no-grain) { filter: url(#bk-grain
 .hero-loc::before { top: 0; } .hero-loc::after { bottom: 0; }
 @media (max-width: 600px) { .hero-loc { font-size: 11px; letter-spacing: 0.16em; padding: 11px 0; margin-top: 18px; } }
 .hero-loc { text-shadow: 0 1px 2px rgba(0,0,0,0.6), 0 0 10px rgba(0,0,0,0.45), 0 2px 22px rgba(0,0,0,0.65); font-weight: 600; }
+
+/* Droits à l'image : listes aérées dans l'accordéon (puces et étapes numérotées lisibles) */
+#imageAccordion .accordion-content ul, #imageAccordion .accordion-content ol { margin: 12px 0 14px; padding-left: 1.3em; display: grid; gap: 8px; }
+#imageAccordion .accordion-content ul { list-style: disc; }
+#imageAccordion .accordion-content ol { list-style: decimal; }
+#imageAccordion .accordion-content li::marker { color: var(--accent, #6e5aa8); font-weight: 700; }
+#imageAccordion .accordion-content p { margin-bottom: 12px; }
