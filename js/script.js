@@ -4684,8 +4684,26 @@ function renderGoogleReview(){
   const li = document.getElementById('ftReviewLi');
   if (li) { li.hidden = !url; const a = li.querySelector('a'); if (a && url) a.href = url; }
 }
+/* Portfolio mobile : la rangée de catégories reste visible sous la barre de navigation pendant le défilement (jusqu'à la fin de la grille).
+   Décalage par `transform` : `sticky` ne fonctionne pas (html/body sont des conteneurs de défilement) et `fixed` est capturé par la vue transformée. */
+window.addEventListener('scroll', () => {
+  const r = document.getElementById('pfTabs'), grid = document.getElementById('pfGrid');
+  if (!r || !grid) return;
+  const off = r._off || 0;
+  let want = 0;
+  if (currentView === 'portfolio' && window.innerWidth <= 760) {
+    const nat = r.getBoundingClientRect().top - off;
+    const lim = (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) || 64) + 8;
+    want = Math.max(0, Math.min(lim - nat, grid.getBoundingClientRect().bottom - nat - r.offsetHeight));
+  }
+  if (Math.abs(want - off) < 0.5) return;
+  r._off = want; r.style.transform = want ? 'translateY(' + want + 'px)' : '';
+}, { passive: true });
 function selectPfTab(id){
   document.querySelectorAll('.pf-cat-tab').forEach(tab => tab.classList.toggle('active', tab.dataset.cat === id));
+  /* Mobile : la rangée de catégories défile horizontalement ; la catégorie choisie se centre dans la rangée (sans faire défiler la page). */
+  const act = document.querySelector('#pfTabs .pf-cat-tab.active'), row = document.getElementById('pfTabs');
+  if (act && row && row.scrollWidth > row.clientWidth) row.scrollTo({ left: act.offsetLeft - (row.clientWidth - act.offsetWidth) / 2, behavior: 'smooth' });
   const grid = document.getElementById('pfGrid');
   const catLabel = t(PF_CATS.find(c => c.id === id)?.label || {});
   const emptyText = LANG === 'fr'
