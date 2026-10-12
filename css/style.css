@@ -4930,3 +4930,12 @@ img:not([src*="logo"]):not([src$=".svg"]):not(.no-grain) { filter: url(#bk-grain
   background-size: 220px 220px;
 }
 @media print { img { filter: none !important; } }
+
+/* Accueil : « Basé en Occitanie, déplacement partout en France sur devis » — traitement sobre et professionnel : capitales espacées, blanc, voile sombre diffus (plus de contour ni de gras),
+   encadré de deux filets fins violet clair, comme l'accroche au-dessus. */
+.hero-loc { position: relative; display: block; max-width: min(92vw, 520px); margin: 22px auto 0; padding: 12px 0; font-size: clamp(11px, 0.85vw, 12.5px); font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; line-height: 1.9; color: #fff; text-wrap: balance;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.55), 0 2px 18px rgba(0,0,0,0.6); }
+.hero-loc::before, .hero-loc::after { content: ''; position: absolute; left: 50%; width: 56px; height: 1px; margin-left: -28px; background: linear-gradient(90deg, rgba(214,201,247,0), #d6c9f7 50%, rgba(214,201,247,0)); }
+.hero-loc::before { top: 0; } .hero-loc::after { bottom: 0; }
+@media (max-width: 600px) { .hero-loc { font-size: 11px; letter-spacing: 0.16em; padding: 11px 0; margin-top: 18px; } }
+.hero-loc { text-shadow: 0 1px 2px rgba(0,0,0,0.6), 0 0 10px rgba(0,0,0,0.45), 0 2px 22px rgba(0,0,0,0.65); font-weight: 600; }
