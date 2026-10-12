@@ -4054,7 +4054,7 @@ function renderArticlePage(slug){
       <h2>${t({fr:'Questions fréquentes', en:'Frequently asked questions'})}</h2>
       <div id="articleFaq"></div>
       <aside class="author-box" aria-label="${t({fr:'À propos de l\'auteure', en:'About the author'})}">
-        <img src="/images/about/aya-nascimento-photographe-studio.webp" alt="${LANG==='fr'?'Aya Nascimento, photographe portraitiste':'Aya Nascimento, portrait photographer'}" width="72" height="72" loading="lazy" decoding="async">
+        <img src="/images/about/aya-nascimento-photographe-en-studio.webp" alt="${LANG==='fr'?'Aya Nascimento, photographe portraitiste':'Aya Nascimento, portrait photographer'}" width="72" height="72" loading="lazy" decoding="async">
         <div>
           <p class="author-name"><a href="/a-propos/" data-nav="about" rel="author">Aya Nascimento</a></p>
           <p class="author-role">${t({fr:'Photographe portraitiste professionnelle, diplômée de l\'ETPA (BTS Photographie, 2018). Plus de 8 ans d\'expérience et plus de 200 projets réalisés.', en:'Professional portrait photographer, ETPA graduate (BTS Photography, 2018). Over 8 years of experience and 200+ projects.'})}</p>
