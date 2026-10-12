@@ -96,6 +96,8 @@ const IMG = {
   servicesVideo: MEDIA_BASE + '/services/bg-video.mp4',
   drone:     MEDIA_BASE + '/hero/drone-1.webp',      // Fond page 4K Drone
   portfolio: MEDIA_BASE + '/hero/portfolio-1.webp',  // Fond page Portfolio
+  /* Vidéo de fond du Portfolio : déposez portfolio/bg-video.mp4 depuis admin/media.html (« Vidéos de fond ») ; tant qu'aucun fichier n'existe, repli sur la photo ci-dessus. */
+  portfolioVideo: MEDIA_BASE + '/portfolio/bg-video.mp4',
   contact:   MEDIA_BASE + '/hero/contact-1.webp',    // Fond page Contact
   about:     MEDIA_BASE + '/hero/contact-1.webp',    // Fond page À propos
   service:   MEDIA_BASE + '/hero/services-1.webp',   // Fond des pages de prestation (/services/…)
