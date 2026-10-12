@@ -242,3 +242,44 @@ export async function adminConsentAction(env: Env, q: Quote, body: Record<string
   }
   return null;
 }
+
+/* ───────────── Vue « Mes devis » de l'espace client / partenaire ───────────── */
+
+export interface AccountQuote {
+  number: string;
+  prestation: string;
+  status: 'envoye' | 'signe';
+  validUntil: string;
+  signedAt?: string;
+  url: string;
+  image?: { status: string; uses: Record<string, 'oui' | 'non' | 'retire'>; version?: string; persons?: string; minors?: boolean; withdrawalRequestedAt?: string; subjects: { total: number; signed: number }; groupUrl?: string };
+}
+
+/** Devis envoyés (à signer) et signés de ce client, avec l'état de ses autorisations d'image. Les devis de test sont exclus. */
+export async function accountQuotes(env: Env, email: string): Promise<AccountQuote[]> {
+  const mail = email.toLowerCase();
+  const out: AccountQuote[] = [];
+  for (const q of await listQuotes(env)) {
+    if (q.test || q.email.toLowerCase() !== mail || (q.status !== 'envoye' && q.status !== 'signe')) continue;
+    const url = `https://bunkaio.com/signature/?d=${q.id}&k=${q.token}`;
+    const item: AccountQuote = { number: q.number, prestation: q.prestation, status: q.status, validUntil: q.validUntil, signedAt: q.signedAt, url };
+    const sg = q.signature;
+    if (q.status === 'signe' && sg?.imageUse) {
+      const c = q.consent ?? computeConsent(q);
+      const withdrawn = c.withdrawnUses ?? [];
+      const subs = q.subjects ?? [];
+      item.image = {
+        status: c.status,
+        uses: Object.fromEntries(IMAGE_USES.map((u) => [u, withdrawn.includes(u) ? 'retire' : sg.imageUse![u]])) as Record<string, 'oui' | 'non' | 'retire'>,
+        version: sg.legalVersion,
+        persons: sg.persons,
+        minors: sg.minors,
+        withdrawalRequestedAt: c.withdrawalRequestedAt,
+        subjects: { total: subs.length, signed: subs.filter((x) => x.status === 'signe').length },
+        groupUrl: q.groupToken && (sg.persons !== 'self' || sg.minors) ? groupUrl(q) : undefined,
+      };
+    }
+    out.push(item);
+  }
+  return out.sort((a, b) => (b.signedAt ?? b.validUntil).localeCompare(a.signedAt ?? a.validUntil));
+}

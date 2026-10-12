@@ -423,7 +423,7 @@ const I18N = {
     'register-success-text':'Votre demande de création de compte a bien été transmise. Vous recevrez votre code d\'accès personnel par email sous 24 heures.',
     'logout':'Déconnexion',
     'acc-client-badge':'Espace client','acc-partner-badge':'Espace partenaire',
-    'acc-orders':'Mes commandes','acc-subs':'Mes abonnements','acc-payments':'Mes paiements','acc-factures':'Mes factures','acc-portfolio':'Mon portfolio','acc-infos':'Mes informations',
+    'acc-orders':'Mes commandes','acc-devis':'Mes devis','acc-subs':'Mes abonnements','acc-payments':'Mes paiements','acc-factures':'Mes factures','acc-portfolio':'Mon portfolio','acc-infos':'Mes informations',
     'acc-subs-empty-title':'Aucun abonnement actif',
     'acc-subs-empty-text':'Découvrez Studio Continu : nos formules d\'abonnement mensuel pour un suivi photo et vidéo continu, avec un tarif préférentiel sur toutes les options.',
     'acc-subs-discover-btn':'Découvrir Studio Continu',
@@ -780,7 +780,7 @@ const I18N = {
     'register-success-text':'Your account request has been sent successfully. You will receive your personal access code by email within 24 hours.',
     'logout':'Sign out',
     'acc-client-badge':'Client area','acc-partner-badge':'Partner area',
-    'acc-orders':'My orders','acc-subs':'My subscriptions','acc-payments':'My payments','acc-factures':'My invoices','acc-portfolio':'My portfolio','acc-infos':'My information',
+    'acc-orders':'My orders','acc-devis':'My quotes','acc-subs':'My subscriptions','acc-payments':'My payments','acc-factures':'My invoices','acc-portfolio':'My portfolio','acc-infos':'My information',
     'acc-subs-empty-title':'No active subscription',
     'acc-subs-empty-text':'Discover Studio Continu: our monthly subscription packages for ongoing photo and video coverage, with a preferential rate on every add-on.',
     'acc-subs-discover-btn':'Discover Studio Continu',
@@ -5014,7 +5014,7 @@ function updateNavLogin(){
 
 function setAccountTab(tab){
   if (tab !== 'infos' && enforceAccInfoGate()) return;
-  ['orders','partenariat','promotions','reseau','collabs','subs','moodboards','payments','factures','portfolio','infos'].forEach(x => {
+  ['orders','partenariat','promotions','reseau','collabs','devis','subs','moodboards','payments','factures','portfolio','infos'].forEach(x => {
     document.getElementById('atab-' + x).classList.toggle('active', x === tab);
     document.getElementById('asec-' + x).classList.toggle('active', x === tab);
   });
@@ -5074,6 +5074,41 @@ function renderAccountStepper(){
    référence juste l'une de ces clés + statut/usage — le contenu du
    plan (nom, prix, inclus) est toujours lu depuis SUBS, jamais dupliqué
    dans le compte, pour rester automatiquement à jour si l'offre change. */
+/* ═══════════════ ESPACE CLIENT / PARTENAIRE — MES DEVIS ET AUTORISATIONS D'IMAGE ═══════════════
+   Données : USER.devis (Worker, accountQuotes). L'onglet n'apparaît que s'il existe au moins un devis envoyé ou signé. */
+function renderAccDevis(){
+  const tab = document.getElementById('atab-devis'), el = document.getElementById('accDevisContent');
+  if (!tab || !el || !USER) return;
+  const list = USER.devis || [];
+  tab.style.display = list.length ? '' : 'none';
+  if (!list.length) { el.innerHTML = ''; return; }
+  const pending = list.filter(q => q.status === 'envoye').length;
+  tab.textContent = I18N[LANG]['acc-devis'] + (pending ? ' (' + pending + ')' : '');
+  const useName = { site: t({fr:'Site internet et portfolio', en:'Website and portfolio'}), social: t({fr:'Réseaux sociaux', en:'Social media'}), print: t({fr:'Supports commerciaux et de communication', en:'Commercial and communication materials'}), ads: t({fr:'Publicité numérique', en:'Digital advertising'}) };
+  const valLabel = { oui: t({fr:'Autorisé', en:'Authorised'}), non: t({fr:'Refusé', en:'Refused'}), retire: t({fr:'Retiré', en:'Withdrawn'}) };
+  const stLabel = { en_attente: t({fr:'En attente', en:'Pending'}), accepte: t({fr:'Accepté', en:'Accepted'}), refuse: t({fr:'Refusé', en:'Refused'}), partiel: t({fr:'Partiel', en:'Partial'}), retrait_demande: t({fr:'Retrait demandé', en:'Withdrawal requested'}), retire: t({fr:'Retiré', en:'Withdrawn'}) };
+  const day = iso => { try { return new Date(iso).toLocaleDateString(LANG === 'en' ? 'en-GB' : 'fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }); } catch (e) { return ''; } };
+  el.innerHTML = `<div class="acc-info-card"><p class="acc-subs-empty-text" style="margin:0">${t({fr:'Retrouvez ici vos devis, à signer en ligne ou déjà signés, et vos autorisations d\'utilisation de vos images : vous pouvez les modifier ou les retirer à tout moment.', en:'Find your quotes here, to sign online or already signed, along with your image authorisations: you can change or withdraw them at any time.'})}</p></div>` +
+    list.map((q, i) => {
+      const head = `<div class="acc-subs-empty-title">${t({fr:'Devis n° ', en:'Quote no. '})}${escHtml(q.number)} — ${escHtml(q.prestation)}</div>`;
+      if (q.status === 'envoye') return `<div class="acc-info-card">${head}<p class="acc-subs-empty-text">${t({fr:'À signer avant le ', en:'To be signed before '})}${day(q.validUntil + 'T12:00:00')}.</p><div class="btn-row"><a class="btn btn-solid cta-primary" href="${escHtml(q.url)}"><span>${t({fr:'Lire et signer le devis', en:'Read and sign the quote'})}</span></a></div></div>`;
+      const im = q.image;
+      const rows = im ? Object.keys(useName).map(k => `<tr><td>${useName[k]}</td><td><span class="status-pill ${im.uses[k] === 'oui' ? 'st-done' : im.uses[k] === 'retire' ? 'st-cancel' : ''}">${valLabel[im.uses[k]] || '—'}</span></td></tr>`).join('') : '';
+      const withdraw = im ? `/retrait-autorisation/?e=${encodeURIComponent(USER.email)}&n=${encodeURIComponent(q.number)}` : '';
+      return `<div class="acc-info-card">${head}<p class="acc-subs-empty-text">${t({fr:'Signé le ', en:'Signed on '})}${day(q.signedAt)}.</p>` +
+        (im ? `<div class="tbl-wrap"><table><thead><tr><th>${t({fr:'Utilisation de vos images par BUNKAIO', en:'Use of your images by BUNKAIO'})}</th><th>${stLabel[im.status] || ''}</th></tr></thead><tbody>${rows}</tbody></table></div>` +
+          (im.withdrawalRequestedAt ? `<p class="acc-subs-empty-text">${t({fr:'Votre demande de retrait du ', en:'Your withdrawal request of '})}${day(im.withdrawalRequestedAt)}${t({fr:' est en cours de traitement (30 jours maximum).', en:' is being processed (30 days maximum).'})}</p>` : '') +
+          (im.groupUrl ? `<p class="acc-subs-empty-text">${t({fr:'Autres personnes photographiées : ', en:'Other people photographed: '})}${im.subjects.signed}/${im.subjects.total} ${t({fr:'ont donné leur choix. Transmettez-leur ce lien pour qu\'elles le fassent :', en:'have given their choice. Send them this link so they can do so:'})} <button type="button" class="pt-link" onclick="copyAccGroupLink(${i})">${t({fr:'Copier le lien', en:'Copy the link'})}</button></p>` : '') : '') +
+        `<div class="btn-row"><a class="btn btn-ghost" href="${escHtml(q.url)}" target="_blank" rel="noopener"><span>${t({fr:'Voir le devis signé (PDF)', en:'View the signed quote (PDF)'})}</span></a>${im ? `<a class="btn btn-ghost" href="${withdraw}"><span>${t({fr:'Modifier ou retirer une autorisation', en:'Change or withdraw an authorisation'})}</span></a>` : ''}</div></div>`;
+    }).join('');
+}
+function copyAccGroupLink(i){
+  const q = USER && USER.devis && USER.devis[i]; const u = q && q.image && q.image.groupUrl; if (!u) return;
+  const btn = document.activeElement;
+  const done = () => { if (btn && btn.tagName === 'BUTTON') { const old = btn.textContent; btn.textContent = t({fr:'Lien copié ✓', en:'Link copied ✓'}); setTimeout(() => { btn.textContent = old; }, 2000); } };
+  if (navigator.clipboard) navigator.clipboard.writeText(u).then(done, () => prompt('', u)); else prompt('', u);
+}
+
 function renderAccSubs(){
   const el = document.getElementById('accSubsContent');
   if (!el || !USER) return;
@@ -6210,6 +6245,7 @@ function renderAccount(){
   if (isPartner) { renderAccPartner(); renderAccPromos(); renderAccReseau(); renderAccCollabs(); }
   renderAccountStepper();
   renderAccSeance();
+  renderAccDevis();
   renderAccSubs();
   mbView = 'list'; mbActiveId = null;
   renderAccMoodboards();
@@ -6343,7 +6379,7 @@ function toggleAccInfoEdit(edit){
    « Mes informations » est accessible (en mode édition). */
 function enforceAccInfoGate(){
   if (!USER || accInfoComplete()) return false;
-  ['orders','partenariat','promotions','reseau','collabs','subs','moodboards','payments','factures','portfolio','infos'].forEach(x => {
+  ['orders','partenariat','promotions','reseau','collabs','devis','subs','moodboards','payments','factures','portfolio','infos'].forEach(x => {
     const tb = document.getElementById('atab-' + x), sc = document.getElementById('asec-' + x);
     if (tb) tb.classList.toggle('active', x === 'infos');
     if (sc) sc.classList.toggle('active', x === 'infos');

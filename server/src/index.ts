@@ -12,7 +12,7 @@ import { buildManualMail, getMailLog, isUnsubscribed, listCampaigns, MANUAL_TEMP
 import type { ManualTemplate, MailingParams, RecipientCtx } from './mailing';
 import { unsubscribeToken } from './email';
 import { appendConsent, cleanQuoteInput, computeConsent, createQuote, freezeLegal, getConsentLog, getFrozenLegal, getQuote, IMAGE_USES, isExpired, listQuotes, missingQuoteFields, prepareSend, publicQuote, putFrozenLegal, putQuote, quoteHash, tokenMatches } from './quotes';
-import { adminConsentAction, bytesToBase64, ensureSignedPdf, getSignedPdf, groupUrl, handleSubjectPublic, handleWithdrawPublic, newToken, parseImageUse, useLabel } from './consent';
+import { accountQuotes, adminConsentAction, bytesToBase64, ensureSignedPdf, getSignedPdf, groupUrl, handleSubjectPublic, handleWithdrawPublic, newToken, parseImageUse, useLabel } from './consent';
 import type { Quote } from './quotes';
 import { getBusinessAddress } from './config';
 import { cleanDetails, MESSAGE_KINDS, storeMessage, updateMessage } from './messages';
@@ -319,7 +319,7 @@ async function handleAuthLogin(request: Request, env: Env, headers: Record<strin
   if (!account) {
     return jsonResponse({ ok: false, error: 'invalid_credentials' }, 401, headers);
   }
-  return jsonResponse({ ok: true, account: sanitizeAccount(account) }, 200, headers);
+  return jsonResponse({ ok: true, account: { ...sanitizeAccount(account), devis: await accountQuotes(env, account.email).catch(() => []) } }, 200, headers);
 }
 
 /**
@@ -408,7 +408,7 @@ async function handleAccountUpdate(request: Request, env: Env, headers: Record<s
   if (entries.length) ctx.waitUntil(queueActivityNotification(env, withJournal, entries).catch((err) => console.error('[activity] mise en file impossible', err)));
   if (body.facturation) ctx.waitUntil(syncCustomerBilling(createStripeClient(env.STRIPE_SECRET_KEY), withJournal).catch((err) => console.error('[account-update] synchro Stripe', err)));
   console.log('[account-update] informations mises à jour', { type: body.type, email: body.email, changes: entries.length });
-  return jsonResponse({ ok: true, account: sanitizeAccount(withJournal) }, 200, headers);
+  return jsonResponse({ ok: true, account: { ...sanitizeAccount(withJournal), devis: await accountQuotes(env, withJournal.email).catch(() => []) } }, 200, headers);
 }
 
 /**

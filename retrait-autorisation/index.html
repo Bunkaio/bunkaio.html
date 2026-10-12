@@ -66,6 +66,7 @@
 const WORKER = 'https://bunkaio-quiz-stripe.bunkaio.workers.dev';
 const esc = v => String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
+{ const P = new URLSearchParams(location.search); if (P.get('e')) document.getElementById('em').value = P.get('e'); if (P.get('n')) document.getElementById('no').value = P.get('n'); }
 document.getElementById('all').onchange = e => document.querySelectorAll('.u').forEach(c => { c.checked = e.target.checked; });
 async function send() {
   const err = document.getElementById('err');
