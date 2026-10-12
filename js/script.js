@@ -1041,6 +1041,9 @@ function toggleMobileMenu(){
 
 function openMobileMenu(){
   document.body.classList.add('menu-open');
+  /* Rappel ⊹ du menu : l'animation (tracé des bras, liens) repart à chaque ouverture. */
+  const deco = document.querySelector('#mobileMenu > .cst-deco');
+  if (deco && !REDUCED_MOTION) { deco.classList.remove('is-on'); void deco.getBoundingClientRect(); deco.classList.add('is-on'); }
   document.getElementById('navBurger').setAttribute('aria-expanded', 'true');
 }
 
@@ -7501,12 +7504,13 @@ let _cstIO = null;
 function initCstDecor(root){
   if (!_cstIO && window.IntersectionObserver) _cstIO = new IntersectionObserver(es => es.forEach(e => e.target.classList.toggle('is-on', e.isIntersecting)), { threshold: 0.15 });
   /* Bandeaux sombres (traits blancs) et panneaux clairs d'appel à l'action (variante violette). */
-  (root || document).querySelectorAll('.pf-cta-band, .partner-cta, footer .footer-cta-row, .article-cta').forEach(box => {
+  (root || document).querySelectorAll('.pf-cta-band, .partner-cta, footer .footer-cta-row, .article-cta, #mobileMenu, #view-quiz .quiz-wrap').forEach(box => {
     if (box.querySelector(':scope > .cst-deco')) return;
     box.classList.add('has-cst');
     box.insertAdjacentHTML('afterbegin', cstDecoSvg());
     const svg = box.querySelector(':scope > .cst-deco');
-    if (box.classList.contains('article-cta')) svg.classList.add('cst-light');
+    if (box.classList.contains('article-cta') || box.id === 'mobileMenu' || box.classList.contains('quiz-wrap')) svg.classList.add('cst-light');
+    if (box.id === 'mobileMenu') { if (REDUCED_MOTION) svg.classList.add('is-on'); return; }
     if (_cstIO && !REDUCED_MOTION) _cstIO.observe(svg); else svg.classList.add('is-on');
   });
 }
