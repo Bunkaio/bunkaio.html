@@ -7476,6 +7476,35 @@ function renderFooterServices(){
   });
 }
 
+/* ═══════════════ RAPPEL DE LA CONSTELLATION ⊹ ═══════════════
+   Petite croix ⊹ en constellation (même langage que l'accueil : bras violet pâle avec vide central, losange fin, petits points,
+   liens fins qui se tracent puis s'effacent) posée en décor discret dans les bandeaux d'appel sombres. Animée seulement à l'écran. */
+function cstDecoSvg(){
+  const L = [[30,100],[100,30],[170,100],[100,170]], C = [100,100];
+  const arms = ['38,100 78,100', '122,100 162,100', '100,38 100,78', '100,122 100,162'];
+  const J = [[58,100],[142,100],[100,58],[100,142],[65,65],[135,65],[135,135],[65,135]];
+  const E = [[18,38],[182,38],[18,162],[182,162],[58,14],[142,186]];
+  const links = [[J[4],J[2]],[J[2],J[5]],[J[6],J[3]],[J[3],J[7]],[E[0],J[4]],[E[1],J[5]],[E[2],J[7]],[E[3],J[6]],[E[4],J[2]],[E[5],J[3]],[J[0],J[4]],[J[1],J[6]]];
+  let o = '<svg class="cst-deco" viewBox="0 0 200 200" aria-hidden="true" focusable="false">';
+  o += `<polyline class="cd-dia" pathLength="1" points="${L.map(p => p.join(',')).join(' ')} ${L[0].join(',')}"/>`;
+  arms.forEach(a => { o += `<polyline class="cd-arm" pathLength="1" points="${a}"/>`; });
+  links.forEach((l, k) => { o += `<line class="cd-ln" pathLength="1" style="--k:${k}" x1="${l[0][0]}" y1="${l[0][1]}" x2="${l[1][0]}" y2="${l[1][1]}"/>`; });
+  arms.forEach((a, k) => { o += `<polyline class="cd-pl" pathLength="1" style="--k:${k}" points="${a}"/>`; });
+  [...J, ...E].forEach((p, k) => { o += `<circle class="cd-j" style="--k:${k}" cx="${p[0]}" cy="${p[1]}" r="${k < J.length ? 1.6 : 1.1}"/>`; });
+  [...L, C].forEach((p, k) => { o += `<circle class="cd-n" style="--k:${k}" cx="${p[0]}" cy="${p[1]}" r="2.8"/>`; });
+  return o + '</svg>';
+}
+function initCstDecor(){
+  const io = window.IntersectionObserver ? new IntersectionObserver(es => es.forEach(e => e.target.classList.toggle('is-on', e.isIntersecting)), { threshold: 0.15 }) : null;
+  document.querySelectorAll('.pf-cta-band, .partner-cta, footer .footer-cta-row').forEach(box => {
+    if (box.querySelector(':scope > .cst-deco')) return;
+    box.classList.add('has-cst');
+    box.insertAdjacentHTML('afterbegin', cstDecoSvg());
+    const svg = box.querySelector(':scope > .cst-deco');
+    if (io && !REDUCED_MOTION) io.observe(svg); else svg.classList.add('is-on');
+  });
+}
+
 /* ═══════════════ PAGE BG ═══════════════ */
 function setPageBg(viewKey){
   /* Use CSS variable on html::before — works on iOS too */
@@ -7543,6 +7572,7 @@ if (_footerCtaInit) _footerCtaInit.style.display = 'none';
 syncNavHeight();
 window.addEventListener('resize', () => { syncNavHeight(); if (window.innerWidth > 1180) closeMobileMenu(); });
 initHeroScrollFx();
+initCstDecor();
 initNavScrollState();
 
 /* Route d'entrée : la page statique servie correspond déjà à la vue ; on

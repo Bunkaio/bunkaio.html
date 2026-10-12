@@ -5230,3 +5230,34 @@ html.pfi-lock, html.pfi-lock body { overflow: hidden !important; }
 
 /* Bras de la croix ⊹ : violet pâle de la charte BUNKAIO (même teinte que les croix de visée). */
 .hero-kicker .hk-lines polyline:not(.f):not(.pl) { stroke: rgba(214,201,247,0.9); stroke-width: 1.2; filter: drop-shadow(0 0 2px rgba(214,201,247,0.45)); }
+
+/* ═══ Rappel de la constellation ⊹ dans les bandeaux d'appel sombres (Portfolio, Services, 4K Drone, Collaboration, pied de page) ═══ */
+.has-cst { position: relative; overflow: hidden; }
+.has-cst > :not(.cst-deco) { position: relative; z-index: 1; }
+.cst-deco { position: absolute; z-index: 0; left: 60%; top: 50%; width: 150px; height: auto; translate: -50% -50%; pointer-events: none; opacity: 0.75; overflow: visible; }
+footer .footer-cta-row .cst-deco { left: 50%; width: 92px; opacity: 0.6; }
+/* Bandeau « Prêt à donner vie à votre projet ? » : pas d'espace libre entre le texte et le bouton, la croix se loge dans le coin bas droit. */
+.pf-cta-band .cst-deco { left: auto; right: 18px; top: auto; bottom: 4px; translate: none; width: 62px; opacity: 0.6; }
+.partner-cta .cst-deco { left: auto; right: 10px; top: 10px; translate: none; width: 80px; opacity: 0.5; }
+@media (max-width: 760px) {
+  .cst-deco { left: auto; top: 10px; right: 8px; translate: none; width: 96px; opacity: 0.4; }
+  footer .footer-cta-row .cst-deco { left: auto; right: 4px; top: 50%; translate: 0 -50%; width: 84px; opacity: 0.45; }
+  .partner-cta .cst-deco { width: 70px; }
+}
+.cst-deco polyline, .cst-deco line { fill: none; stroke-linecap: round; vector-effect: none; }
+.cst-deco .cd-dia { stroke: rgba(255,255,255,0.2); stroke-width: 0.8; }
+.cst-deco .cd-arm { stroke: rgba(214,201,247,0.9); stroke-width: 1.3; filter: drop-shadow(0 0 2px rgba(214,201,247,0.45)); }
+.cst-deco .cd-ln { stroke: rgba(255,255,255,0.45); stroke-width: 0.6; stroke-dasharray: 1; stroke-dashoffset: 1; opacity: 0; }
+.cst-deco .cd-pl { stroke: #fff; stroke-width: 1.6; stroke-dasharray: 0.08 1.08; stroke-dashoffset: 0.08; opacity: 0; filter: drop-shadow(0 0 3px rgba(214,201,247,0.9)); }
+.cst-deco .cd-j { fill: #fff; opacity: 0.35; }
+.cst-deco .cd-n { fill: #fff; filter: drop-shadow(0 0 4px rgba(255,255,255,0.7)) drop-shadow(0 0 9px rgba(214,201,247,0.45)); }
+/* Animé seulement quand le bandeau est à l'écran */
+.cst-deco.is-on .cd-dia, .cst-deco.is-on .cd-arm { stroke-dasharray: 1; stroke-dashoffset: 1; animation: hkDraw 2.2s cubic-bezier(.4,.1,.2,1) .2s forwards; }
+.cst-deco.is-on .cd-dia { animation-delay: .8s; }
+.cst-deco.is-on .cd-ln { animation: hkLink 9s cubic-bezier(.45,.05,.35,1) infinite; animation-delay: calc(1.4s + var(--k) * 0.7s); }
+.cst-deco.is-on .cd-pl { animation: hkPulse 4.8s ease-in-out infinite; animation-delay: calc(2.2s + var(--k) * 1.2s); }
+.cst-deco.is-on .cd-j { animation: hkJoint 5.5s ease-in-out infinite; animation-delay: calc(var(--k) * -0.7s); }
+.cst-deco.is-on .cd-n { animation: cdNode 4.6s ease-in-out infinite; animation-delay: calc(var(--k) * 0.6s); transform-box: fill-box; transform-origin: center; }
+@keyframes cdNode { 0%, 100% { opacity: 0.75; transform: scale(1); } 50% { opacity: 1; transform: scale(1.25); } }
+@media (prefers-reduced-motion: reduce) { .cst-deco .cd-ln { stroke-dashoffset: 0; opacity: 0.45; } .cst-deco * { animation: none !important; } }
+@media (max-width: 760px) { .pf-cta-band .cst-deco { top: 8px; bottom: auto; right: 8px; width: 84px; opacity: 0.45; } }
