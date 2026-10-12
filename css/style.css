@@ -5378,3 +5378,7 @@ footer .footer-cta-row .hero-start { animation: none; opacity: 1; transform: non
 .mission-cst { -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 calc(var(--mc-cut, 99999px) - 190px), transparent calc(var(--mc-cut, 99999px) - 40px)); mask-image: linear-gradient(to bottom, #000 0, #000 calc(var(--mc-cut, 99999px) - 190px), transparent calc(var(--mc-cut, 99999px) - 40px)); }
 .mc-stage { filter: blur(calc(var(--mc-out, 0) * 6px)); scale: calc(1 - var(--mc-out, 0) * 0.06); transform-origin: center; }
 @media (prefers-reduced-motion: reduce) { .mc-stage { filter: none; scale: 1; } }
+/* Pied de page : fond constellation derrière le contenu (même dessin que les espaces client / partenaire). */
+footer { isolation: isolate; }
+footer > .cst-foot { z-index: -1; }
+footer > .cst-foot canvas { transform: none; }

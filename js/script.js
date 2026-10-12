@@ -7569,6 +7569,33 @@ function initCstDecor(root){
     if (_cstIO && !REDUCED_MOTION) _cstIO.observe(svg); else svg.classList.add('is-on');
   });
 }
+/* Dessin commun des fonds constellation (espaces, Portfolio, pied de page) : déplacement, liens selon la distance, étoiles et ⊹. */
+function cstDrawField(ctx, pts, W, H, c, frame, still){
+  const D = W < 700 ? 105 : 135;
+  ctx.clearRect(0, 0, W, H);
+  for (const p of pts) {
+    if (!still) { p.x += p.vx; p.y += p.vy; if (p.x < -20) p.x = W + 20; if (p.x > W + 20) p.x = -20; if (p.y < -20) p.y = H + 20; if (p.y > H + 20) p.y = -20; }
+  }
+  ctx.lineWidth = 0.6;
+  for (let i = 0; i < pts.length; i++) for (let j = i + 1; j < pts.length; j++) {
+    const a = pts[i], b = pts[j], dx = a.x - b.x, dy = a.y - b.y, d = Math.hypot(dx, dy);
+    if (d < D) { ctx.strokeStyle = 'rgba(' + c.line + ',' + ((1 - d / D) * 0.3 * c.a).toFixed(3) + ')'; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); }
+  }
+  const t = frame / 60;
+  for (const p of pts) {
+    const tw = 0.45 + 0.45 * Math.sin(t * 1.3 + p.ph);
+    if (p.cross) {
+      const s = 7, g = 2.4;
+      ctx.strokeStyle = 'rgba(' + c.cross + ',' + (0.55 + 0.4 * tw) * c.a + ')'; ctx.lineWidth = 1.3; ctx.beginPath();
+      ctx.moveTo(p.x - s, p.y); ctx.lineTo(p.x - g, p.y); ctx.moveTo(p.x + g, p.y); ctx.lineTo(p.x + s, p.y);
+      ctx.moveTo(p.x, p.y - s); ctx.lineTo(p.x, p.y - g); ctx.moveTo(p.x, p.y + g); ctx.lineTo(p.x, p.y + s); ctx.stroke();
+      ctx.fillStyle = 'rgba(' + c.dot + ',' + (0.6 + 0.4 * tw) * c.a + ')'; ctx.beginPath(); ctx.arc(p.x, p.y, 1.1, 0, 6.29); ctx.fill();
+    } else {
+      ctx.fillStyle = 'rgba(' + c.dot + ',' + (0.25 + 0.6 * tw) * c.a + ')'; ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 6.29); ctx.fill();
+    }
+  }
+}
+
 /* ═══════════════ FOND CONSTELLATION DYNAMIQUE — espaces client et partenaire ═══════════════
    Champ d'étoiles qui dérivent lentement et se relient par des traits fins quand elles se rapprochent ; quelques étoiles prennent la forme
    de la signature ⊹. Couleurs de chaque espace conservées : client = blanc + violet pâle, partenaire = blanc + champagne, connexion = violet.
@@ -7599,31 +7626,7 @@ const CstField = (() => {
     const off = Math.max(0, Math.min(-top, view.offsetHeight - H));
     cv.style.transform = 'translateY(' + off + 'px)';
   }
-  function draw(still){
-    const c = palette(), D = W < 700 ? 105 : 135;
-    ctx.clearRect(0, 0, W, H);
-    for (const p of pts) {
-      if (!still) { p.x += p.vx; p.y += p.vy; if (p.x < -20) p.x = W + 20; if (p.x > W + 20) p.x = -20; if (p.y < -20) p.y = H + 20; if (p.y > H + 20) p.y = -20; }
-    }
-    ctx.lineWidth = 0.6;
-    for (let i = 0; i < pts.length; i++) for (let j = i + 1; j < pts.length; j++) {
-      const a = pts[i], b = pts[j], dx = a.x - b.x, dy = a.y - b.y, d = Math.hypot(dx, dy);
-      if (d < D) { ctx.strokeStyle = 'rgba(' + c.line + ',' + ((1 - d / D) * 0.3 * c.a).toFixed(3) + ')'; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); }
-    }
-    const t = frame / 60;
-    for (const p of pts) {
-      const tw = 0.45 + 0.45 * Math.sin(t * 1.3 + p.ph);
-      if (p.cross) {
-        const s = 7, g = 2.4;
-        ctx.strokeStyle = 'rgba(' + c.cross + ',' + (0.55 + 0.4 * tw) * c.a + ')'; ctx.lineWidth = 1.3; ctx.beginPath();
-        ctx.moveTo(p.x - s, p.y); ctx.lineTo(p.x - g, p.y); ctx.moveTo(p.x + g, p.y); ctx.lineTo(p.x + s, p.y);
-        ctx.moveTo(p.x, p.y - s); ctx.lineTo(p.x, p.y - g); ctx.moveTo(p.x, p.y + g); ctx.lineTo(p.x, p.y + s); ctx.stroke();
-        ctx.fillStyle = 'rgba(' + c.dot + ',' + (0.6 + 0.4 * tw) * c.a + ')'; ctx.beginPath(); ctx.arc(p.x, p.y, 1.1, 0, 6.29); ctx.fill();
-      } else {
-        ctx.fillStyle = 'rgba(' + c.dot + ',' + (0.25 + 0.6 * tw) * c.a + ')'; ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 6.29); ctx.fill();
-      }
-    }
-  }
+  function draw(still){ cstDrawField(ctx, pts, W, H, palette(), frame, still); }
   function loop(){ frame++; place(); draw(false); raf = requestAnimationFrame(loop); }
   function stop(){ cancelAnimationFrame(raf); raf = 0; }
   function start(){
@@ -7640,6 +7643,33 @@ const CstField = (() => {
   document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); else if (VIEWS.includes(currentView)) start(); });
   window.addEventListener('resize', () => { if (raf || (cv && VIEWS.includes(currentView))) start(); });
   return { start, stop };
+})();
+
+/* Pied de page : même fond constellation (canevas à la taille du pied de page), animé seulement quand il est à l'écran. */
+const FooterField = (() => {
+  const foot = document.querySelector('footer');
+  if (!foot) return null;
+  const wrap = document.createElement('div'); wrap.className = 'cst-field cst-foot'; wrap.setAttribute('aria-hidden', 'true'); wrap.innerHTML = '<canvas></canvas>';
+  foot.prepend(wrap);
+  const cv = wrap.querySelector('canvas'), ctx = cv.getContext('2d');
+  const c = { line: '255,255,255', dot: '255,255,255', cross: '214,201,247', a: 0.7 };
+  let pts = [], W = 0, H = 0, raf = 0, frame = 0, visible = false;
+  function size(){
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    W = foot.clientWidth; H = foot.clientHeight;
+    cv.style.height = H + 'px';
+    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const n = Math.max(22, Math.min(70, Math.round(W * H / 21000)));
+    pts = Array.from({ length: n }, (_, i) => ({ x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - 0.5) * 0.24, vy: (Math.random() - 0.5) * 0.24, r: 0.7 + Math.random() * 1.2, ph: Math.random() * 6.28, cross: i % 9 === 0 }));
+  }
+  function loop(){ frame++; cstDrawField(ctx, pts, W, H, c, frame, false); raf = requestAnimationFrame(loop); }
+  function run(){ cancelAnimationFrame(raf); raf = 0; if (!visible || document.hidden) return; if (REDUCED_MOTION) { cstDrawField(ctx, pts, W, H, c, frame, true); return; } loop(); }
+  size();
+  if (window.IntersectionObserver) new IntersectionObserver(es => { visible = es.some(e => e.isIntersecting); run(); }, { rootMargin: '100px 0px' }).observe(foot);
+  document.addEventListener('visibilitychange', run);
+  let rz = 0; window.addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => { size(); run(); }, 200); });
+  if (window.ResizeObserver) new ResizeObserver(() => { if (Math.abs(foot.clientHeight - H) > 20) { size(); run(); } }).observe(foot);
+  return { run };
 })();
 
 /* ═══════════════ PAGE BG ═══════════════ */
