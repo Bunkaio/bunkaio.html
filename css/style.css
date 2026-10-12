@@ -5138,3 +5138,6 @@ html.pfi-lock, html.pfi-lock body { overflow: hidden !important; }
 
 /* Portfolio : respiration entre la grille de photos et le bloc « Découvrir chaque prestation » (ordinateur ; le mobile a déjà la sienne). */
 #view-portfolio .pf-grid { margin-bottom: 64px; }
+
+/* Pied de page : même noir dépoli que la barre de navigation (voile sombre translucide + flou), au lieu d'un noir plein. */
+footer { background: rgba(10,10,12,0.72); backdrop-filter: blur(22px) saturate(1.5); -webkit-backdrop-filter: blur(22px) saturate(1.5); border-top: 1px solid rgba(255,255,255,0.08); box-shadow: 0 -8px 32px rgba(0,0,0,0.2); }
