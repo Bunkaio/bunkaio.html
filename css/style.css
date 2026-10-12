@@ -5324,3 +5324,52 @@ footer .footer-cta-row .hero-start { animation: none; opacity: 1; transform: non
 #view-quiz .quiz-wrap > .cst-deco { left: auto; right: 0; top: 104px; translate: none; width: 104px; opacity: 0.5; }
 @media (max-width: 760px) { #view-quiz .quiz-wrap > .cst-deco { top: 96px; right: 4px; width: 78px; opacity: 0.38; } }
 .qstep-meta::before { content: ''; display: inline-block; width: 1.15em; height: 1.15em; margin-right: 0.5em; vertical-align: -0.28em; background: var(--bk-glyph-deep) center / contain no-repeat; }
+
+/* ═══ Accueil : constellation « L'exigence BUNKAIO » (espace de défilement vidéo seule, avant la réassurance) ═══ */
+.mission-cst { position: absolute; inset: 0; z-index: 4; display: flex; align-items: center; justify-content: center; pointer-events: none; opacity: 0; transition: opacity .25s linear; }
+.mission-cst::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(8,6,14,0.55), rgba(8,6,14,0.15) 70%, transparent); }
+.mc-stage { position: relative; width: min(88vw, 860px); height: min(64vh, 540px); }
+.mc-lines { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.mc-e { stroke: rgba(255,255,255,0.5); stroke-width: 0.2; fill: none; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; filter: drop-shadow(0 0 1px rgba(214,201,247,0.8)); }
+.mc-s { stroke: rgba(214,201,247,0.35); stroke-width: 0.12; stroke-dasharray: 0.8 1.6; opacity: 0; transition: opacity .6s ease; }
+.mc-s.on { opacity: 1; }
+.mc-center { position: absolute; left: 50%; top: 50%; translate: -50% -50%; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; opacity: calc(0.35 + var(--mc-p, 0) * 0.65); }
+.mc-glyph { width: 54px; height: 54px; background: var(--bk-glyph) center / contain no-repeat; filter: drop-shadow(0 0 10px rgba(214,201,247,0.7)); }
+.mc-title { color: #fff; font-size: 12px; font-weight: 700; letter-spacing: 0.3em; text-transform: uppercase; white-space: nowrap; text-shadow: 0 1px 10px rgba(0,0,0,0.6); }
+.mc-pt { position: absolute; width: 0; height: 0; opacity: 0; transition: opacity .6s ease, translate .7s cubic-bezier(.2,.7,.2,1); translate: 0 8px; }
+.mc-pt.on { opacity: 1; translate: 0 0; }
+.mc-pt i { position: absolute; left: -4px; top: -4px; width: 8px; height: 8px; border-radius: 50%; background: #fff; box-shadow: 0 0 10px 2px rgba(255,255,255,0.6), 0 0 26px 6px rgba(214,201,247,0.4); }
+.mc-pt.on i { animation: mcPulse 3.2s ease-in-out infinite; }
+@keyframes mcPulse { 50% { box-shadow: 0 0 14px 4px rgba(255,255,255,0.8), 0 0 34px 10px rgba(214,201,247,0.5); } }
+.mc-tx { position: absolute; width: max-content; max-width: 230px; color: #fff; text-shadow: 0 1px 10px rgba(0,0,0,0.65); }
+.mc-tx b { display: block; font-size: 15px; font-weight: 700; letter-spacing: -0.01em; line-height: 1.25; }
+.mc-tx small { display: block; margin-top: 4px; font-size: 12px; line-height: 1.45; color: rgba(255,255,255,0.78); }
+.mc-r .mc-tx { left: 18px; top: 0; translate: 0 -50%; text-align: left; }
+.mc-l .mc-tx { right: 18px; top: 0; translate: 0 -50%; text-align: right; }
+.mc-b .mc-tx { left: 0; top: 16px; translate: -50% 0; text-align: center; }
+.mc-t .mc-tx { left: 0; bottom: 16px; translate: -50% 0; text-align: center; }
+@media (max-width: 760px) {
+  .mc-stage { width: 92vw; height: 66vh; }
+  .mc-tx { max-width: 36vw; }
+  .mc-tx b { font-size: 12.5px; }
+  .mc-tx small { font-size: 10.5px; }
+  .mc-r .mc-tx { left: 12px; } .mc-l .mc-tx { right: 12px; }
+  .mc-glyph { width: 42px; height: 42px; }
+  .mc-title { font-size: 10.5px; letter-spacing: 0.24em; }
+}
+@media (prefers-reduced-motion: reduce) { .mc-pt, .mc-s { transition: none; } .mc-pt.on i { animation: none; } }
+/* Positions : variables --x/--y (ordinateur) et --mx/--my (téléphone). */
+.mc-pt { left: var(--x); top: var(--y); }
+.mc-lines.mc-m { display: none; }
+@media (max-width: 760px) {
+  .mc-stage { height: 70vh; }
+  .mc-lines.mc-d { display: none; } .mc-lines.mc-m { display: block; }
+  .mc-pt { left: var(--mx); top: var(--my); }
+  .mc-tx { max-width: 64vw; }
+  .mc-pt .mc-tx { top: 0; bottom: auto; translate: 0 -50%; }
+  .mc-pt.mm-r .mc-tx { left: 14px; right: auto; text-align: left; }
+  .mc-pt.mm-l .mc-tx { right: 14px; left: auto; text-align: right; }
+  .mc-center { top: -7%; translate: -50% -50%; flex-direction: row; gap: 10px; }
+  .mc-glyph { width: 26px; height: 26px; }
+}
+@media (max-width: 760px) { .mc-e { stroke: rgba(255,255,255,0.32); } }

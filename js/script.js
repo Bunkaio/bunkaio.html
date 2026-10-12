@@ -1068,6 +1068,7 @@ function refreshDynamic(){
   renderSvcAssure();
   renderCats();
   renderMissionServices();
+  if (document.getElementById('missionCst')) buildMissionCst();
   renderFooterServices();
   if (S.cat && document.getElementById('qs-2').classList.contains('active')) renderProfiles();
   if (S.cat && document.getElementById('qs-3').classList.contains('active')) renderTiers();
@@ -6878,6 +6879,48 @@ function initHomeLogoFade(){
    "réserve" de scroll, notamment sur iOS Safari), ce calque reste
    réellement immobile à l'écran tant que le déclencheur est visible. */
 let _homeClaimVideoInit = false;
+/* ═══════════════ ACCUEIL — CONSTELLATION « L'EXIGENCE BUNKAIO » ═══════════════
+   Dans l'espace de défilement où la vidéo « Le studio » reste seule à l'écran : six engagements apparaissent un à un, reliés
+   par des traits fins, au rythme du défilement (pilotée par initHomeClaimVideo → fadeContent). Terminé quand la section
+   suivante entre à l'écran. Contenus = engagements déjà décrits sur le site (matériel, expérience, accompagnement, retouche,
+   espace client, droits) : aucune promesse nouvelle. */
+const MISSION_CST = [
+  { x: 16, y: 20, s: 'r', t: {fr:'Matériel haut de gamme', en:'High-end equipment'}, d: {fr:'Hybride Sony Alpha, optiques G Master', en:'Sony Alpha mirrorless, G Master lenses'} },
+  { x: 50, y: 7,  s: 't', t: {fr:'8 ans d\'expérience', en:'8 years of experience'}, d: {fr:'Photographe portraitiste diplômée, 200+ projets', en:'Qualified portrait photographer, 200+ projects'} },
+  { x: 84, y: 20, s: 'l', t: {fr:'Direction artistique', en:'Art direction'}, d: {fr:'Brief, préparation et direction de pose', en:'Brief, preparation and posing direction'} },
+  { x: 84, y: 76, s: 'l', t: {fr:'Retouche professionnelle', en:'Professional retouching'}, d: {fr:'Images HD cohérentes sur toute la série', en:'HD images, consistent across the series'} },
+  { x: 50, y: 92, s: 'b', t: {fr:'Espace client privé', en:'Private client area'}, d: {fr:'Suivi, devis, factures et galerie en ligne', en:'Tracking, quotes, invoices and online gallery'} },
+  { x: 16, y: 76, s: 'r', t: {fr:'Droits clairs', en:'Clear rights'}, d: {fr:'Usages précisés sur votre devis', en:'Uses set out in your quote'} }
+];
+function buildMissionCst(){
+  const wrap = document.getElementById('missionVideoWrap');
+  if (!wrap) return;
+  let box = document.getElementById('missionCst');
+  if (!box) { box = document.createElement('div'); box.id = 'missionCst'; box.className = 'mission-cst'; box.setAttribute('aria-hidden', 'true'); wrap.appendChild(box); }
+  const P = MISSION_CST, n = P.length;
+  /* Ordinateur : hexagone autour du ⊹ central. Téléphone : zigzag vertical (points alternés gauche / droite), plus lisible. */
+  const M = P.map((p, i) => ({ x: i % 2 ? 88 : 12, y: 8 + i * 16.8, s: i % 2 ? 'l' : 'r' }));
+  const lines = (Q, closed, cls) => Q.map((p, i) => (i === Q.length - 1 && !closed) ? '' : `<line class="mc-e" pathLength="1" x1="${p.x}" y1="${p.y}" x2="${Q[(i + 1) % n].x}" y2="${Q[(i + 1) % n].y}"/>`).join('');
+  const spokes = P.map(p => `<line class="mc-s" x1="50" y1="50" x2="${p.x}" y2="${p.y}"/>`).join('');
+  box.innerHTML = `<div class="mc-stage"><svg class="mc-lines mc-d" viewBox="0 0 100 100" preserveAspectRatio="none">${spokes}${lines(P, true)}</svg><svg class="mc-lines mc-m" viewBox="0 0 100 100" preserveAspectRatio="none">${lines(M, false)}</svg>
+    <div class="mc-center"><span class="mc-glyph"></span><span class="mc-title">${t({fr:'L\'exigence BUNKAIO', en:'The BUNKAIO standard'})}</span></div>
+    ${P.map((p, i) => `<div class="mc-pt mc-${p.s} mm-${M[i].s}" style="--x:${p.x}%;--y:${p.y}%;--mx:${M[i].x}%;--my:${M[i].y}%;--i:${i}"><i></i><div class="mc-tx"><b>${t(p.t)}</b><small>${t(p.d)}</small></div></div>`).join('')}</div>`;
+}
+/* p : 0 → 1 selon le défilement. Chaque point s'allume à son tour, le trait vers le point suivant se trace ensuite. */
+function setMissionCst(p){
+  const box = document.getElementById('missionCst');
+  if (!box) return;
+  const n = MISSION_CST.length, step = 1 / (n + 0.6);
+  box.style.opacity = String(Math.min(1, p * 6));
+  box.style.setProperty('--mc-p', p.toFixed(3));
+  box.querySelectorAll('.mc-pt').forEach((el, i) => el.classList.toggle('on', p >= step * (i + 0.3)));
+  box.querySelectorAll('.mc-lines').forEach(svg => svg.querySelectorAll('.mc-e').forEach((el, i) => {
+    const a = step * (i + 0.6), k = Math.max(0, Math.min(1, (p - a) / step));
+    el.style.strokeDashoffset = String(1 - k);
+  }));
+  box.querySelectorAll('.mc-s').forEach((el, i) => el.classList.toggle('on', p >= step * (i + 0.3)));
+  box.classList.toggle('done', p >= 0.999);
+}
 function initHomeClaimVideo(){
   const box = document.getElementById('homeClaimVideoBg');
   const wrap = document.getElementById('missionVideoWrap');
@@ -6885,6 +6928,7 @@ function initHomeClaimVideo(){
   if (!box || !wrap || !trigger || _homeClaimVideoInit) return;
   if (!IMG.missionVideo) return; /* pas de vidéo définie -> fond noir uni du CSS */
   _homeClaimVideoInit = true;
+  buildMissionCst();
   /* La vidéo (plusieurs Mo) n'est chargée que lorsque la section approche de l'écran : elle ne concurrence plus
      l'affichage initial de la page (LCP) et n'est pas téléchargée avec « économie de données » ou en 2G. */
   let missionVid = null;
@@ -6931,6 +6975,11 @@ function initHomeClaimVideo(){
     /* Texte effacé : la photo de la prestation choisie reste fixe et devient plus visible, par-dessus la vidéo. */
     msHold = op < 0.6;
     wrap.style.setProperty('--mt-bg-op', String(0.5 + 0.35 * (1 - op)));
+    /* Espace vide après le texte : la constellation « L'exigence BUNKAIO » se construit au fil du défilement et
+       est complète quand la section suivante (réassurance) entre à l'écran (bas du déclencheur ≈ bas de l'écran). */
+    const cp = Math.max(0, Math.min(1, (1.72 - b) / 0.62));
+    setMissionCst(cp);
+    if (overlay && cp > 0) overlay.style.opacity = String(Math.max(0.3 + 0.7 * op, 0.55 + 0.45 * cp));
   };
   addEventListener('scroll', () => { if (!tick) { tick = true; requestAnimationFrame(fadeContent); } }, { passive: true });
   addEventListener('resize', fadeContent);
