@@ -221,7 +221,8 @@ function sendQuizLeadToStripe(payload){
 /* IMG et DRONE_MEDIA sont définis dans config/media.js — chargé avant ce fichier */
 
 /* ═══════════════ LANGUE ═══════════════ */
-let LANG = 'fr';
+/* La langue vient de l'adresse : /en/… = anglais, le reste = français (chaque langue a ses propres URL, hreflang). */
+let LANG = /^\/en(\/|$)/.test(location.pathname) ? 'en' : 'fr';
 
 const I18N = {
   fr: {
@@ -972,12 +973,16 @@ function updateLang(){
   document.querySelectorAll('.lang-toggle').forEach(el => el.textContent = LANG === 'fr' ? 'EN' : 'FR');
   updatePlaceholders();
   refreshDynamic();
+  localizeLinks();
   syncNavHeight();
 }
 
 function toggleLang(){
   LANG = LANG === 'fr' ? 'en' : 'fr';
   updateLang();
+  /* L'adresse suit la langue (/en/… ↔ version française) pour que chaque langue garde son URL partageable. */
+  const r = seoRouteFor(currentView, currentSub);
+  if (r) history.replaceState({ v: currentView }, '', routePath(r, LANG) + location.hash);
 }
 
 function syncNavHeight(){
@@ -1052,6 +1057,7 @@ function refreshDynamic(){
   renderGoogleReview();
   if (currentView === 'service') renderServicePage(currentSub);
   if (currentView === 'article') renderArticlePage(currentSub);
+  if (currentView === 'city') renderCityPage(currentSub);
   if (currentView === 'advice') renderAdvicePage();
   if (currentView === 'discover') renderDiscoverPage();
   renderAdviceTeaser();
@@ -1946,6 +1952,7 @@ function seoRouteFor(v, sub){
   if (typeof SEO_ROUTES === 'undefined') return null;
   if (v === 'service') return SEO_ROUTES.find(r => r.view === 'service' && r.cat === sub) || null;
   if (v === 'article') return SEO_ROUTES.find(r => r.view === 'article' && r.slug === sub) || null;
+  if (v === 'city') return SEO_ROUTES.find(r => r.view === 'city' && r.city === sub) || null;
   const same = SEO_ROUTES.filter(r => r.view === v);
   return same.find(r => (r.sub || null) === (sub || null)) || same.find(r => !r.sub) || null;
 }
@@ -1954,8 +1961,26 @@ function servicePath(catId){ if (catId === 'lumen') return '/contact/#lumen'; co
 function seoRouteForPath(path){
   if (typeof SEO_ROUTES === 'undefined') return null;
   const p = path.replace(/index\.html$/, '');
-  return SEO_ROUTES.find(r => r.path === p) || null;
+  return SEO_ROUTES.find(r => r.path === p || (r.index && r.pathEn === p)) || null;
 }
+/* Adresse d'une page dans une langue (les pages non indexables n'ont pas de version /en/). */
+function routePath(r, lang){ return lang === 'en' && r.index && r.pathEn ? r.pathEn : r.path; }
+/* Liens internes : /services/… ↔ /en/services/… selon la langue affichée (ouverture dans un nouvel onglet, partage, robots). */
+let _routeHrefMap = null;
+function localizeHref(h){
+  const m = /^(\/[^?#]*)([?#].*)?$/.exec(h || '');
+  if (!m || typeof SEO_ROUTES === 'undefined') return h;
+  if (!_routeHrefMap) { _routeHrefMap = new Map(); SEO_ROUTES.forEach(r => { _routeHrefMap.set(r.path, r); if (r.index) _routeHrefMap.set(r.pathEn, r); }); }
+  const r = _routeHrefMap.get(m[1]);
+  return r ? routePath(r, LANG) + (m[2] || '') : h;
+}
+function localizeLinks(root){
+  (root || document).querySelectorAll('a[href^="/"]').forEach(a => { const h = a.getAttribute('href'), n = localizeHref(h); if (n !== h) a.setAttribute('href', n); });
+}
+['pointerover', 'touchstart', 'focusin'].forEach(ev => document.addEventListener(ev, (e) => {
+  const a = e.target && e.target.closest ? e.target.closest('a[href^="/"]') : null;
+  if (a) { const h = a.getAttribute('href'), n = localizeHref(h); if (n !== h) a.setAttribute('href', n); }
+}, { passive: true, capture: true }));
 function setHeadAttr(sel, attr, val){ const el = document.querySelector(sel); if (el) el.setAttribute(attr, val); }
 function applySeoMeta(v, sub){
   const r = seoRouteFor(v, sub);
@@ -1965,8 +1990,14 @@ function applySeoMeta(v, sub){
   const desc = en && r.descriptionEn ? r.descriptionEn : r.description;
   document.title = title;
   setHeadAttr('meta[name="description"]', 'content', desc);
-  setHeadAttr('link[rel="canonical"]', 'href', 'https://bunkaio.com' + r.path);
-  setHeadAttr('meta[property="og:url"]', 'content', 'https://bunkaio.com' + r.path);
+  const here = routePath(r, LANG);
+  setHeadAttr('link[rel="canonical"]', 'href', 'https://bunkaio.com' + here);
+  setHeadAttr('meta[property="og:url"]', 'content', 'https://bunkaio.com' + here);
+  setHeadAttr('meta[property="og:locale"]', 'content', en ? 'en_GB' : 'fr_FR');
+  document.querySelectorAll('link[rel="alternate"][hreflang]').forEach(el => el.remove());
+  if (r.index) [['fr', r.path], ['en', r.pathEn], ['x-default', r.path]].forEach(([hl, pa]) => {
+    const l = document.createElement('link'); l.rel = 'alternate'; l.hreflang = hl; l.href = 'https://bunkaio.com' + pa; document.head.appendChild(l);
+  });
   setHeadAttr('meta[property="og:title"]', 'content', title);
   setHeadAttr('meta[property="og:description"]', 'content', desc);
   setHeadAttr('meta[name="twitter:title"]', 'content', title);
@@ -1982,7 +2013,9 @@ function navLink(e, v, subTab){
 }
 window.addEventListener('popstate', () => {
   const r = seoRouteForPath(location.pathname);
-  goView(r ? r.view : 'home', r ? (r.cat || r.slug || r.sub || null) : null, { fromPop: true });
+  const lg = /^\/en(\/|$)/.test(location.pathname) ? 'en' : 'fr';
+  if (lg !== LANG) { LANG = lg; updateLang(); }
+  goView(r ? r.view : 'home', r ? (r.cat || r.slug || r.city || r.sub || null) : null, { fromPop: true });
 });
 
 function goView(v, subTab, opts){
@@ -1990,10 +2023,10 @@ function goView(v, subTab, opts){
   /* Lumen est un prototype : aucune page de formules, tout lien mène au formulaire de contact pré-rempli. */
   if (v === 'service' && subTab === 'lumen') { goToComingSoon('lumen'); return; }
   currentView = v;
-  currentSub = (v === 'service' || v === 'article' || v === 'legal') ? (subTab || null) : null;
+  currentSub = (v === 'service' || v === 'article' || v === 'legal' || v === 'city') ? (subTab || null) : null;
   const route = seoRouteFor(v, subTab);
-  if (route && !opts.fromPop && !opts.initial && location.pathname.replace(/index\.html$/, '') !== route.path) {
-    history.pushState({ v }, '', route.path);
+  if (route && !opts.fromPop && !opts.initial && location.pathname.replace(/index\.html$/, '') !== routePath(route, LANG)) {
+    history.pushState({ v }, '', routePath(route, LANG));
   }
   applySeoMeta(v, subTab);
   if (!opts.initial && window.track) track('pageview');
@@ -2036,6 +2069,7 @@ function goView(v, subTab, opts){
     }
     if (v === 'service') renderServicePage(subTab);
     if (v === 'article') renderArticlePage(subTab);
+    if (v === 'city') renderCityPage(subTab);
     if (v === 'article') applyAyaPortrait();
     if (v === 'advice') renderAdvicePage();
     if (v === 'discover') renderDiscoverPage();
@@ -2046,6 +2080,7 @@ function goView(v, subTab, opts){
        sur l'ensemble du site, plus besoin de le câbler page par page.
        .reassure-section utilise un seuil de déclenchement plus tardif
        pour que l'animation soit visible plutôt que déjà terminée. */
+    localizeLinks(document.getElementById('view-' + v));
     autoReveal(document.getElementById('view-' + v));
     document.querySelectorAll('#view-' + v + ' .rv:not(.in):not(.reassure-section)').forEach(observe);
     document.querySelectorAll('#view-' + v + ' .reassure-section:not(.in)').forEach(observeLate);
@@ -3926,6 +3961,160 @@ function renderBrandingPage(){
       insitu.dataset.n = String(ok.length); insitu.hidden = false;
     });
   }
+}
+
+/* ═══════════════ PAGES LOCALES — MONTPELLIER, TOULOUSE ═══════════════
+   Une page par ville de départ des déplacements offerts (/photographe-montpellier/, /photographe-toulouse/).
+   Prix = CATS, déplacements = TRAVEL_TXT / TRAVEL_FREE_KM : aucun chiffre écrit en dur. Aucune référence client, aucun avis. */
+const CITY_PAGES = {
+  montpellier: {
+    name: {fr:'Montpellier', en:'Montpellier'}, other: 'toulouse',
+    lead: {
+      fr:'BUNKAIO est un studio de photographie basé à Montpellier. Portraits, Personal Branding, photo corporate, mode, produits et événements : les séances ont lieu à Montpellier et aux alentours, dans vos locaux, en extérieur ou en studio, avec un déplacement offert jusqu\'à ' + TRAVEL_FREE_KM + ' km.',
+      en:'BUNKAIO is a photography studio based in Montpellier. Portraits, Personal Branding, corporate photography, fashion, products and events: sessions take place in Montpellier and around, at your premises, outdoors or in the studio, with free travel up to ' + TRAVEL_FREE_KM + ' km.'
+    },
+    placesTitle: {fr:'Où se déroule votre séance à Montpellier', en:'Where your session takes place in Montpellier'},
+    places: {
+      fr:'Dans vos locaux (bureau, cabinet, boutique, atelier, restaurant, coworking…), en extérieur — l\'Écusson et ses ruelles, le quartier Antigone, Port Marianne, la promenade du Peyrou, le Jardin des Plantes, le littoral vers Carnon et Palavas-les-Flots — ou en studio (option à ' + STUDIO_FEE + ' €). Nous choisissons le lieu ensemble lors du brief, selon ce que les images doivent montrer. Certains lieux (domaines, espaces publics réglementés) demandent une autorisation : nous vous guidons.',
+      en:'At your premises (office, practice, shop, workshop, restaurant, coworking space…), outdoors — the Écusson and its lanes, the Antigone district, Port Marianne, the Peyrou promenade, the Jardin des Plantes, the coast towards Carnon and Palavas-les-Flots — or in the studio (option at €' + STUDIO_FEE + '). We choose the place together during the brief, depending on what the images need to show. Some places (estates, regulated public spaces) require permission: we guide you.'
+    },
+    towns: ['Castelnau-le-Lez', 'Lattes', 'Pérols', 'Juvignac', 'Saint-Jean-de-Védas', 'Le Crès', 'Jacou', 'Grabels', 'Clapiers', 'Baillargues', 'Mauguio', 'Palavas-les-Flots', 'Villeneuve-lès-Maguelone'],
+    whoTitle: {fr:'Pour qui, à Montpellier', en:'Who it is for, in Montpellier'},
+    who: [
+      [{fr:'Entrepreneurs et indépendants', en:'Entrepreneurs and freelancers'}, {fr:'Consultants, coachs, thérapeutes, artisans, commerçants : la formule Lancement construit votre image professionnelle, dans votre lieu de travail si vous le souhaitez.', en:'Consultants, coaches, therapists, craftspeople, shop owners: the Launch package builds your professional image, at your place of work if you wish.'}],
+      [{fr:'Marques et créateurs', en:'Brands and designers'}, {fr:'Lookbooks, e-commerce, packshots et visuels de marque pour vos collections et vos produits.', en:'Lookbooks, e-commerce, packshots and brand visuals for your collections and products.'}],
+      [{fr:'Entreprises et équipes', en:'Companies and teams'}, {fr:'Portraits de dirigeants et d\'équipes, photos pour le site, LinkedIn et la presse.', en:'Portraits of executives and teams, photos for your website, LinkedIn and the press.'}],
+      [{fr:'Mannequins et particuliers', en:'Models and individuals'}, {fr:'Books mannequins, séances portrait et lifestyle, en solo, en couple ou en groupe.', en:'Model books, portrait and lifestyle sessions, solo, as a couple or in a group.'}],
+      [{fr:'Événements', en:'Events'}, {fr:'Réceptions, événements d\'entreprise et domaines : un reportage photo discret et soigné.', en:'Receptions, company events and estates: discreet, polished photo coverage.'}]
+    ],
+    faq: [
+      [{fr:'Le déplacement est-il facturé à Montpellier ?', en:'Is travel charged in Montpellier?'}, {fr:'Non : les déplacements sont offerts dans un rayon de ' + TRAVEL_FREE_KM + ' km autour de Montpellier. Au-delà, le montant est calculé automatiquement dans votre devis en ligne et confirmé avant toute signature.', en:'No: travel is free within ' + TRAVEL_FREE_KM + ' km of Montpellier. Beyond that, the amount is calculated automatically in your online quote and confirmed before you sign anything.'}],
+      [{fr:'Pouvez-vous venir dans mon entreprise ou ma boutique à Montpellier ?', en:'Can you come to my company or shop in Montpellier?'}, {fr:'Oui. BUNKAIO est un studio mobile : le matériel professionnel se déplace chez vous, que ce soit pour un portrait, une série Personal Branding, une équipe ou des produits.', en:'Yes. BUNKAIO is a mobile studio: the professional equipment comes to you, whether for a portrait, a Personal Branding series, a team or products.'}],
+      [{fr:'Où faire une séance photo en extérieur à Montpellier ?', en:'Where can I do an outdoor photo session in Montpellier?'}, {fr:'L\'Écusson, Antigone, Port Marianne, le Peyrou ou le littoral sont des choix fréquents. Le lieu dépend de l\'ambiance recherchée et de la lumière : nous le fixons ensemble au brief. ', en:'The Écusson, Antigone, Port Marianne, the Peyrou or the coast are frequent choices. The place depends on the mood you want and the light: we decide together at the brief. '}],
+      [{fr:'Combien coûte un photographe professionnel à Montpellier ?', en:'How much does a professional photographer cost in Montpellier?'}, null],
+      [{fr:'Sous quel délai reçoit-on les photos ?', en:'How soon do I receive the photos?'}, {fr:'Les photos HD retouchées sont livrées dans une galerie privée en 3 à 10 jours ouvrés selon la formule ; le délai exact figure sur votre devis.', en:'Retouched HD photos are delivered in a private gallery within 3 to 10 working days depending on the package; the exact lead time is on your quote.'}]
+    ]
+  },
+  toulouse: {
+    name: {fr:'Toulouse', en:'Toulouse'}, other: 'montpellier',
+    lead: {
+      fr:'Basé à Montpellier, BUNKAIO se déplace à Toulouse pour vos portraits, votre Personal Branding, vos photos corporate, vos shootings mode et produits et vos événements. Le déplacement est offert jusqu\'à ' + TRAVEL_FREE_KM + ' km autour de Toulouse.',
+      en:'Based in Montpellier, BUNKAIO travels to Toulouse for your portraits, Personal Branding, corporate photos, fashion and product shoots and events. Travel is free up to ' + TRAVEL_FREE_KM + ' km around Toulouse.'
+    },
+    placesTitle: {fr:'Où se déroule votre shooting à Toulouse', en:'Where your shoot takes place in Toulouse'},
+    places: {
+      fr:'Dans vos locaux (bureau, cabinet, boutique, atelier, restaurant, coworking…) ou en extérieur — le centre historique et ses façades de brique rose, la place du Capitole, les quais de la Garonne, le Pont-Neuf, le Canal du Midi, le Jardin des Plantes. L\'option studio (+' + STUDIO_FEE + ' €) est possible sur la plupart des formules : le lieu se confirme au brief. Indiquez votre ville et vos dates souhaitées dans le devis : nous organisons la séance avec vous. Certains lieux demandent une autorisation : nous vous guidons.',
+      en:'At your premises (office, practice, shop, workshop, restaurant, coworking space…) or outdoors — the historic centre and its pink-brick façades, Place du Capitole, the Garonne quays, the Pont-Neuf, the Canal du Midi, the Jardin des Plantes. The studio option (+€' + STUDIO_FEE + ') is available on most packages: the place is confirmed at the brief. State your city and preferred dates in the quote: we organise the session with you. Some places require permission: we guide you.'
+    },
+    towns: ['Blagnac', 'Colomiers', 'Tournefeuille', 'Balma', 'L\'Union', 'Ramonville-Saint-Agne', 'Labège', 'Saint-Orens-de-Gameville', 'Castanet-Tolosan', 'Cugnaux', 'Plaisance-du-Touch', 'Muret'],
+    whoTitle: {fr:'Pour qui, à Toulouse', en:'Who it is for, in Toulouse'},
+    who: [
+      [{fr:'Indépendants et dirigeants', en:'Freelancers and executives'}, {fr:'Une série d\'images cohérente pour votre site, LinkedIn et vos supports, réalisée sur votre lieu d\'activité toulousain si vous le souhaitez.', en:'A consistent series of images for your website, LinkedIn and materials, shot at your Toulouse place of work if you wish.'}],
+      [{fr:'Équipes et sociétés', en:'Teams and companies'}, {fr:'Portraits d\'équipe homogènes, dans vos bureaux ou en extérieur, pour une page « Équipe » ou un recrutement.', en:'Matching team portraits, at your offices or outdoors, for a "Team" page or recruitment.'}],
+      [{fr:'Créateurs et boutiques', en:'Designers and shops'}, {fr:'Packshots, photos de produits et visuels de collection pour votre boutique en ligne et vos réseaux.', en:'Packshots, product photos and collection visuals for your online shop and social media.'}],
+      [{fr:'Mannequins, couples et familles', en:'Models, couples and families'}, {fr:'Books, portraits et séances lifestyle dans les lieux emblématiques de la ville.', en:'Books, portraits and lifestyle sessions in the city\'s emblematic places.'}],
+      [{fr:'Événements', en:'Events'}, {fr:'Soirées d\'entreprise, réceptions et domaines : un reportage qui garde l\'ambiance et les moments clés.', en:'Company evenings, receptions and estates: coverage that keeps the atmosphere and the key moments.'}]
+    ],
+    faq: [
+      [{fr:'Le photographe est-il basé à Toulouse ?', en:'Is the photographer based in Toulouse?'}, {fr:'BUNKAIO est basé à Montpellier et se déplace à Toulouse. Les déplacements sont offerts dans un rayon de ' + TRAVEL_FREE_KM + ' km autour de Toulouse : aucun frais caché, le calcul est affiché dans votre devis.', en:'BUNKAIO is based in Montpellier and travels to Toulouse. Travel is free within ' + TRAVEL_FREE_KM + ' km of Toulouse: no hidden costs, the calculation is shown in your quote.'}],
+      [{fr:'Pouvez-vous photographier mon équipe dans mes locaux à Toulouse ?', en:'Can you photograph my team at my premises in Toulouse?'}, {fr:'Oui. Le studio mobile s\'installe dans vos bureaux ou votre atelier ; précisez le nombre de personnes et vos usages (site, LinkedIn, presse) dans votre demande.', en:'Yes. The mobile studio sets up in your offices or workshop; state the number of people and your uses (website, LinkedIn, press) in your request.'}],
+      [{fr:'Quels lieux pour un shooting en extérieur à Toulouse ?', en:'Which places for an outdoor shoot in Toulouse?'}, {fr:'Le centre historique, les quais de la Garonne, le Canal du Midi ou le Jardin des Plantes se prêtent bien aux portraits et aux séances lifestyle. Nous choisissons selon la lumière et l\'ambiance au moment du brief.', en:'The historic centre, the Garonne quays, the Canal du Midi or the Jardin des Plantes suit portraits and lifestyle sessions well. We choose according to the light and the mood at the brief.'}],
+      [{fr:'Combien coûte un photographe professionnel à Toulouse ?', en:'How much does a professional photographer cost in Toulouse?'}, null],
+      [{fr:'Et si je suis en dehors de Toulouse (Albi, Montauban, Auch…) ?', en:'What if I am outside Toulouse (Albi, Montauban, Auch…)?'}, {fr:'Le devis en ligne estime le déplacement à partir de votre ville : offert jusqu\'à ' + TRAVEL_FREE_KM + ' km, puis ' + TRAVEL_PER_KM + ' € par km (aller-retour) au-delà, plafonné à ' + TRAVEL_CAP + ' €.', en:'The online quote estimates travel from your city: free up to ' + TRAVEL_FREE_KM + ' km, then €' + TRAVEL_PER_KM.replace(',', '.') + ' per km (round trip) beyond, capped at €' + TRAVEL_CAP + '.'}]
+    ]
+  }
+};
+function renderCityPage(cityId){
+  const el = document.getElementById('cityPageContent');
+  const C = CITY_PAGES[cityId], route = seoRouteFor('city', cityId);
+  if (!el || !C || !route) { if (el) el.innerHTML = ''; return; }
+  const en = LANG === 'en', other = CITY_PAGES[C.other], otherRoute = seoRouteFor('city', C.other);
+  const money = n => en ? '€' + n.toLocaleString('en-GB') : n.toLocaleString('fr-FR') + ' €';
+  const h1 = en && route.h1En ? route.h1En : route.h1;
+  const minOf = c => Math.min(...catTiers(c).map(tr => c.tiers[tr.id].price));
+  const lines = {
+    'photo-part': {fr:'Portrait et lifestyle, solo, couple ou groupe', en:'Portrait and lifestyle, solo, couple or group'},
+    corporate: {fr:'Portraits de dirigeants, d\'équipes et d\'entreprises', en:'Portraits of executives, teams and companies'},
+    mode: {fr:'Lookbooks, books mannequins et visuels de marque', en:'Lookbooks, model books and brand visuals'},
+    commercial: {fr:'Packshots et photographie de produits', en:'Packshots and product photography'},
+    event: {fr:'Reportage photo d\'événements et de réceptions', en:'Photo coverage of events and receptions'}
+  };
+  const corp = CATS.find(x => x.id === 'corporate');
+  const svc = [];
+  ['photo-part', 'corporate', 'mode', 'commercial', 'event'].forEach(id => {
+    const c = CATS.find(x => x.id === id); if (!c) return;
+    svc.push(`<li><b><a href="${servicePath(id)}" data-nav="service:${id}">${navName(c)}</a> · ${t({fr:'dès ', en:'from '})}${money(minOf(c))}</b><span>${t(lines[id])}</span></li>`);
+    if (id === 'corporate' && corp.tiers.lanc) svc.push(`<li><b><a href="${servicePath('branding')}" data-nav="service:branding">${t({fr:'Personal Branding — entrepreneurs', en:'Personal Branding — entrepreneurs'})}</a> · ${money(corp.tiers.lanc.price)}</b><span>${t({fr:'Formule Lancement : 12 photos HD, au studio ou dans votre lieu de travail', en:'Launch package: 12 HD photos, in the studio or at your place of work'})}</span></li>`);
+  });
+  const allMin = Math.min(...['photo-part', 'corporate', 'mode', 'commercial', 'event'].map(id => { const c = CATS.find(x => x.id === id); return c ? minOf(c) : Infinity; }));
+  const vat = I18N[LANG]['vat-note'].replace(/<[^>]+>/g, '');
+  const priceAnswer = t({
+    fr:'Les formules démarrent à ' + money(allMin) + ', la formule Lancement pour entrepreneurs à ' + money(corp.tiers.lanc.price) + '. Le détail de chaque prestation est sur sa page. ' + vat,
+    en:'Packages start at ' + money(allMin) + ', the Launch package for entrepreneurs at ' + money(corp.tiers.lanc.price) + '. Each service page gives the details. ' + vat
+  });
+  const faq = C.faq.map(f => {
+    let a = f[1] ? t(f[1]) : priceAnswer;
+    if (f[1] && /\s$/.test(a)) a += `<a href="/conseils/lieux-seance-photo-montpellier-toulouse/" data-nav="article:lieux-seance-photo-montpellier-toulouse">${t({fr:'Voir nos conseils sur les lieux de séance', en:'See our advice on session locations'})}</a>.`;
+    return { title: t(f[0]), body: '<p>' + a + '</p>' };
+  });
+  el.innerHTML = `
+    <div class="breadcrumb" role="navigation" aria-label="${t({fr:'Fil d\'Ariane', en:'Breadcrumb'})}">
+      <a href="/" onclick="return navLink(event,'home')">${t({fr:'Accueil', en:'Home'})}</a><span aria-hidden="true">›</span>
+      <span>${t(C.name)}</span>
+    </div>
+    <h1 data-pageh1 class="page-title">${h1}</h1>
+    <p class="page-sub">${t(C.lead)}</p>
+    <div class="svcp-cta-row">
+      ${quizLink('', t({fr:'Demander un devis', en:'Request a quote'}), 'cta-primary')}
+      <a class="btn btn-ghost" href="/contact/" data-nav="contact">${t({fr:'Parler de mon projet', en:'Talk about my project'})}</a>
+    </div>
+    <section class="read-panel svcp-panel">
+      <h2>${t({fr:'Nos prestations à ' + t(C.name), en:'Our services in ' + t(C.name)})}</h2>
+      <ul class="value-grid">${svc.join('')}</ul>
+      <p class="vat-note">${I18N[LANG]['vat-note']}</p>
+    </section>
+    <section class="read-panel svcp-panel">
+      <h2>${t(C.placesTitle)}</h2>
+      <p class="svcp-text">${t(C.places)}</p>
+    </section>
+    <section class="read-panel svcp-panel">
+      <h2>${t({fr:'Déplacement offert autour de ' + t(C.name), en:'Free travel around ' + t(C.name)})}</h2>
+      <p class="svcp-text">${t({fr:TRAVEL_TXT.fr.full, en:TRAVEL_TXT.en.full})}</p>
+      <p class="svcp-note"><strong>${t({fr:'Communes proches (déplacement offert) :', en:'Nearby towns (free travel):'})}</strong></p>
+      <ul class="disc-chips">${C.towns.map(x => `<li>${x}</li>`).join('')}</ul>
+    </section>
+    <section class="read-panel svcp-panel">
+      <h2>${t(C.whoTitle)}</h2>
+      <ul class="value-grid">${C.who.map(w => `<li><b>${t(w[0])}</b><span>${t(w[1])}</span></li>`).join('')}</ul>
+    </section>
+    <section class="read-panel svcp-panel">
+      <h2>${t({fr:'Comment ça se passe', en:'How it works'})}</h2>
+      <ol class="disc-steps pb-steps">
+        <li class="disc-step"><b>01 · ${t({fr:'Devis en ligne', en:'Online quote'})}</b><span>${t({fr:'Vous choisissez votre univers, votre formule et vos options en 2 minutes.', en:'You pick your universe, package and options in 2 minutes.'})}</span></li>
+        <li class="disc-step"><b>02 · ${t({fr:'Proposition personnalisée', en:'Personalised proposal'})}</b><span>${t({fr:'Vous recevez une proposition sous 48 h, sans engagement.', en:'You receive a proposal within 48 hours, with no commitment.'})}</span></li>
+        <li class="disc-step"><b>03 · ${t({fr:'Séance', en:'Session'})}</b><span>${t({fr:'Brief, préparation puis direction de pose pendant la séance.', en:'Brief, preparation, then posing direction during the session.'})}</span></li>
+        <li class="disc-step"><b>04 · ${t({fr:'Galerie privée', en:'Private gallery'})}</b><span>${t({fr:'Vos photos HD retouchées, livrées dans votre espace client.', en:'Your retouched HD photos, delivered in your client area.'})}</span></li>
+      </ol>
+    </section>
+    <section class="read-panel svcp-panel">
+      <h2>${t({fr:'Questions fréquentes — ' + t(C.name), en:'Frequently asked questions — ' + t(C.name)})}</h2>
+      <div id="cityPageFaq"></div>
+    </section>
+    <section class="read-panel svcp-panel article-cta">
+      <h2>${t({fr:'Parlons de votre projet à ' + t(C.name), en:'Let\'s talk about your project in ' + t(C.name)})}</h2>
+      <p class="svcp-text">${t({fr:'Dites-nous ce que vous faites et où : vous recevez une proposition personnalisée sous 48 h.', en:'Tell us what you do and where: you receive a personalised proposal within 48 hours.'})}</p>
+      <div class="svcp-cta-row" style="margin:0">${quizLink('', t({fr:'Construire mon projet', en:'Build my project'}), 'cta-primary')}</div>
+    </section>
+    <section class="read-panel svcp-panel svcp-others">
+      <h2>${t({fr:'Aussi disponible', en:'Also available'})}</h2>
+      <div class="svcp-others-row">
+        <a class="svcp-chip" href="${otherRoute.path}" data-nav="city:${C.other}">${t({fr:'Photographe à ', en:'Photographer in '})}${t(other.name)}</a>
+        <a class="svcp-chip" href="/services/" onclick="return navLink(event,'services')">${t({fr:'Tout le catalogue', en:'Full catalogue'})}</a>
+        <a class="svcp-chip" href="/portfolio/" data-nav="portfolio">Portfolio</a>
+      </div>
+    </section>`;
+  renderAccordionInto('cityPageFaq', faq, { exclusive: true, closed: true });
+  localizeLinks(el);
 }
 
 /* ═══════════════ CONSEILS PHOTO (config/articles.js) ═══════════════ */
@@ -7145,6 +7334,14 @@ function renderFooterServices(){
       li2.appendChild(b2); el.appendChild(li2);
     }
   });
+  /* Pages locales : accès depuis chaque page du site (maillage interne). */
+  Object.keys(CITY_PAGES).forEach(id => {
+    const r = seoRouteFor('city', id); if (!r) return;
+    const li = document.createElement('li'), a = document.createElement('a');
+    a.href = routePath(r, LANG); a.textContent = t({fr:'Photographe à ', en:'Photographer in '}) + t(CITY_PAGES[id].name);
+    a.onclick = (e) => navLink(e, 'city', id);
+    li.appendChild(a); el.appendChild(li);
+  });
 }
 
 /* ═══════════════ PAGE BG ═══════════════ */
@@ -7225,7 +7422,7 @@ initNavScrollState();
   history.replaceState({ v }, '', location.pathname + location.hash);
   if (window.track) track('pageview');
   if (v === 'home') { applySeoMeta('home'); return; }
-  goView(v === 'account' ? 'login' : v, r ? (r.cat || r.slug || r.sub || null) : null, { initial: true });
+  goView(v === 'account' ? 'login' : v, r ? (r.cat || r.slug || r.city || r.sub || null) : null, { initial: true });
 })();
 
 restoreSession();

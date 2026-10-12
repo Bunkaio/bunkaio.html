@@ -40,8 +40,8 @@ const SEO_ROUTES = [
     h1:'Photographe mode, agences et mannequins', h1En:'Fashion, agency and model photographer',
     title:'Photographe mode et mannequins à Montpellier | BUNKAIO',
     description:'Photographie de mode pour marques, agences et mannequins : lookbooks et e-commerce. Montpellier, Toulouse. Dès 490 €, HD en 5 à 10 jours.',
-    titleEn:'Fashion, agency and model photographer: lookbook, e-commerce | BUNKAIO',
-    descriptionEn:'Fashion photography for brands, agencies and models: lookbooks and e-commerce visuals in Montpellier and Toulouse. Packages from €490 HD delivery in 5 to 10 working days.' },
+    titleEn:'Fashion and model photographer: lookbook, e-commerce | BUNKAIO',
+    descriptionEn:'Fashion photography for brands, agencies and models: lookbooks and e-commerce visuals in Montpellier and Toulouse. From €490, HD delivery in 5 to 10 days.' },
   { view:'service', cat:'commercial', path:'/services/photo-produits-packshots/', index:true,
     h1:'Photographie de produits et packshots', h1En:'Product photography and packshots',
     title:'Photo produit et packshots à Montpellier | BUNKAIO',
@@ -54,6 +54,19 @@ const SEO_ROUTES = [
     description:'Reportage photo d\'événements : domaines, entreprises, réceptions. Montpellier, Toulouse. Dès 420 €, photos retouchées en 3 à 10 jours.',
     titleEn:'Event photographer: estates, companies, receptions | BUNKAIO',
     descriptionEn:'Event photo coverage: estates, companies, receptions, in Montpellier and Toulouse. Packages from €420 retouched photos delivered in 3 to 10 working days.' },
+  /* Pages locales : une par ville de départ des déplacements offerts (rendu par renderCityPage dans js/script.js). */
+  { view:'city', city:'montpellier', path:'/photographe-montpellier/', pathEn:'/en/photographer-montpellier/', index:true,
+    h1:'Photographe professionnel à Montpellier', h1En:'Professional photographer in Montpellier',
+    title:'Photographe professionnel à Montpellier | BUNKAIO',
+    description:'Photographe basé à Montpellier : portrait, Personal Branding, corporate, mode, produit et événementiel. Déplacement offert jusqu\'à 30 km, dès 250 €.',
+    titleEn:'Professional photographer in Montpellier | BUNKAIO',
+    descriptionEn:'Photographer based in Montpellier: portrait, Personal Branding, corporate, fashion, product and events. Free travel within 30 km, from €250.' },
+  { view:'city', city:'toulouse', path:'/photographe-toulouse/', pathEn:'/en/photographer-toulouse/', index:true,
+    h1:'Photographe professionnel à Toulouse', h1En:'Professional photographer in Toulouse',
+    title:'Photographe professionnel à Toulouse | BUNKAIO',
+    description:'Photographe mobile à Toulouse : portrait, Personal Branding, corporate, mode, produit et événementiel. Déplacement offert jusqu\'à 30 km, dès 250 €.',
+    titleEn:'Professional photographer in Toulouse | BUNKAIO',
+    descriptionEn:'Mobile photographer in Toulouse: portrait, Personal Branding, corporate, fashion, product and events. Free travel within 30 km, from €250.' },
   { view:'discover', path:'/decouvrir-chaque-prestation/', index:true,
     h1:'Découvrir chaque prestation', h1En:'Explore each service',
     title:'Découvrir chaque prestation photo | BUNKAIO',
@@ -139,9 +152,13 @@ if (typeof ARTICLES !== 'undefined') {
     description:'Guides pratiques d\'une photographe professionnelle : préparer une séance portrait, choisir ses tenues, organiser un shooting produit, mode ou événement.',
     titleEn:'Photo advice: prepare your session, shoot or event | BUNKAIO',
     descriptionEn:'Practical guides from a professional photographer: preparing a portrait session, choosing outfits, planning a product, fashion or event shoot.' });
+  const artTitle = s => String(s).replace(/^BUNKAIO ⊹ \| (.*)$/, '$1 | BUNKAIO');
   ARTICLES.forEach(a => SEO_ROUTES.push({ view:'article', slug:a.slug, path:'/conseils/' + a.slug + '/', index:true,
-    title:a.title, description:a.description, h1:a.h1,
-    titleEn:(typeof ARTICLES_EN !== 'undefined' && ARTICLES_EN[a.slug]) ? ARTICLES_EN[a.slug].title : a.title,
+    title:artTitle(a.title), description:a.description, h1:a.h1,
+    titleEn:(typeof ARTICLES_EN !== 'undefined' && ARTICLES_EN[a.slug]) ? artTitle(ARTICLES_EN[a.slug].title) : artTitle(a.title),
     descriptionEn:(typeof ARTICLES_EN !== 'undefined' && ARTICLES_EN[a.slug]) ? ARTICLES_EN[a.slug].description : a.description,
     h1En:(typeof ARTICLES_EN !== 'undefined' && ARTICLES_EN[a.slug]) ? ARTICLES_EN[a.slug].h1 : a.h1 }));
 }
+
+/* Version anglaise : chaque page indexable a une adresse /en/… (hreflang). Les pages non indexables restent à leur adresse. */
+SEO_ROUTES.forEach(r => { if (!r.pathEn) r.pathEn = r.path === '/' ? '/en/' : '/en' + r.path; });
