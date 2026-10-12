@@ -98,6 +98,8 @@ const IMG = {
   portfolio: MEDIA_BASE + '/hero/portfolio-1.webp',  // Fond page Portfolio
   /* Vidéo de fond du Portfolio : déposez portfolio/bg-video.mp4 depuis admin/media.html (« Vidéos de fond ») ; tant qu'aucun fichier n'existe, repli sur la photo ci-dessus. */
   portfolioVideo: MEDIA_BASE + '/portfolio/bg-video.mp4',
+  /* Vidéo de fond de la page Collaboration (vue « partners ») : déposez partners/bg-video.mp4 depuis admin/media.html ; tant qu'aucun fichier n'existe, repli sur les photos. */
+  partnersVideo: MEDIA_BASE + '/partners/bg-video.mp4',
   contact:   MEDIA_BASE + '/hero/contact-1.webp',    // Fond page Contact
   about:     MEDIA_BASE + '/hero/contact-1.webp',    // Fond page À propos
   service:   MEDIA_BASE + '/hero/services-1.webp',   // Fond des pages de prestation (/services/…)
