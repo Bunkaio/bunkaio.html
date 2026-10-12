@@ -933,7 +933,7 @@ async function handleAdminQuote(request: Request, env: Env, headers: Record<stri
     q.signedAt = at;
     q.signedVia = body.via === 'yousign' ? 'yousign' : 'manuel';
     const manualUse = parseImageUse(body.imageUse);
-    q.signature = { name: q.client.contact || q.client.nom, at, ip: '', ua: '', portfolio: manualUse ? manualUse.site === 'oui' : body.portfolio === true, retractationWaiver: body.retractationWaiver === true, hash: q.contentHash, ...(manualUse ? { imageUse: manualUse, legalVersion: q.legal?.version, snapshotHash: q.legal?.snapshotHash } : {}) };
+    q.signature = { name: q.client.contact || q.client.nom, at, ip: '', ua: '', portfolio: manualUse ? manualUse.site === 'oui' : body.portfolio === true, retractationWaiver: body.retractationWaiver === true, hash: q.contentHash, ...(manualUse ? { imageUse: manualUse, legalVersion: q.legal?.version, snapshotHash: q.legal?.snapshotHash, persons: body.persons === 'self' || body.persons === 'self_others' || body.persons === 'others' ? body.persons : undefined, minors: body.minors === true } : {}) };
     q.consent = computeConsent(q);
     await putQuote(env, q);
     if (manualUse) await appendConsent(env, q.id, IMAGE_USES.map((u) => ({ type: 'choix' as const, who: 'client', usage: u, choice: manualUse[u], note: 'Saisie manuelle par BUNKAIO (' + q.signedVia + ')' })));

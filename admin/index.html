@@ -1926,10 +1926,10 @@ function renderQuoteDrawer() {
   const btns = [];
   if (editable) {
     btns.push(`<button class="btn ghost" onclick="saveQuote()">Enregistrer le brouillon</button>`, `<button class="btn" onclick="sendQuote()">Envoyer au client ✉</button>`);
-    if (q.id) btns.push(`<button class="btn ghost" onclick="markSigned()">Marquer signé…</button>`, `<button class="btn ghost" style="color:var(--danger);margin-left:auto" onclick="quoteAction('delete')">Supprimer</button>`);
+    if (q.id) btns.push(`<button class="btn ghost" onclick="markSigned()">Signature reçue hors site…</button>`, `<button class="btn ghost" style="color:var(--danger);margin-left:auto" onclick="quoteAction('delete')">Supprimer</button>`);
   } else {
     btns.push(`<button class="btn ghost" onclick="printQuote()">Imprimer / PDF</button>`);
-    if (q.status === 'envoye') btns.push(`<button class="btn ghost" onclick="quoteAction('resend')">Renvoyer l'email</button>`, `<button class="btn ghost" onclick="copyLink()">Copier le lien</button>`, `<button class="btn" onclick="markSigned()">Marquer signé…</button>`, `<button class="btn ghost" onclick="quoteAction('refuse')">Refusé</button>`, `<button class="btn ghost" style="color:var(--danger)" onclick="quoteAction('cancel')">Annuler</button>`);
+    if (q.status === 'envoye') btns.push(`<button class="btn ghost" onclick="quoteAction('resend')">Renvoyer l'email</button>`, `<button class="btn ghost" onclick="copyLink()">Copier le lien</button>`, ...(q.test ? [] : [`<button class="btn" onclick="markSigned()">Signature reçue hors site…</button>`]), `<button class="btn ghost" onclick="quoteAction('refuse')">Refusé</button>`, `<button class="btn ghost" style="color:var(--danger)" onclick="quoteAction('cancel')">Annuler</button>`);
     if (q.status === 'signe' && !q.test && !q.depositInvoice && !q.abonnement) btns.push(`<button class="btn" onclick="quoteAction('create-deposit')">Créer et envoyer l'acompte</button>`);
     if (q.depositInvoice) btns.push(`<a class="btn ghost" href="${esc(q.depositInvoice.url)}" target="_blank" rel="noopener">Facture d'acompte</a>`);
     btns.push(`<button class="btn ghost" onclick="quoteAction('duplicate')">Dupliquer</button>`);
@@ -2096,22 +2096,44 @@ async function createTestQuote() {
     $('drMsg').innerHTML = `<div class="msg ${data.emailSent ? 'ok' : 'warn'}">${data.emailSent ? 'Devis de test envoyé à ' + esc(email) + '.' : 'Email non envoyé : utilisez le lien.'} Lien : <code style="word-break:break-all">${esc(data.url)}</code><br>Aucune facture Stripe ne sera créée. Supprimez-le quand vous avez fini.</div>`;
   } catch (e) {}
 }
-async function markSigned() {
-  const via = confirm('Signé via Yousign ?\n\nOK = Yousign · Annuler = autre (papier, email…)') ? 'yousign' : 'manuel';
+/* Signature saisie par BUNKAIO (papier, Yousign, email…) : un seul formulaire, aucune réponse pré-choisie. Le client qui signe en ligne n'y passe jamais. */
+function markSigned() {
+  if (QE.test) { toast('Devis de test : signez depuis le lien reçu par email, comme un client'); return; }
+  const old = $('msModal'); if (old) old.remove();
+  const uses = BunkaioDevis.USES;
+  const sel = id => `<select id="${id}"><option value="">— Choisir —</option><option value="oui">Oui, le client autorise</option><option value="non">Non, le client refuse</option></select>`;
+  const m = document.createElement('div'); m.id = 'msModal';
+  m.style.cssText = 'position:fixed;inset:0;z-index:300;background:rgba(10,10,12,.55);display:flex;align-items:center;justify-content:center;padding:16px';
+  m.innerHTML = `<div style="background:#fff;border-radius:14px;max-width:520px;width:100%;max-height:92vh;overflow:auto;padding:22px" onclick="event.stopPropagation()">
+    <h3 style="margin:0 0 4px">Enregistrer une signature reçue hors du site</h3>
+    <div class="small muted" style="margin-bottom:14px">À utiliser uniquement si le client a signé en dehors du lien en ligne (papier, Yousign, email). Pour un client qui signe en ligne, rien à faire ici.</div>
+    <div class="form">
+      <div class="fg"><label>Mode de signature</label><select id="msVia"><option value="manuel">Papier / email / autre</option><option value="yousign">Yousign</option></select></div>
+      <div class="lab" style="margin-top:6px">Autorisations d'image du client (une réponse par usage)</div>
+      ${uses.map(u => `<div class="fg"><label>${esc(u.label)}</label>${sel('msUse_' + u.id)}</div>`).join('')}
+      <div class="fg"><label>Qui est photographié ?</label><select id="msPersons"><option value="">— Choisir —</option><option value="self">Le signataire uniquement</option><option value="self_others">Le signataire et d'autres personnes</option><option value="others">D'autres personnes uniquement</option></select></div>
+      <label style="display:flex;gap:8px;align-items:center;font-size:13px"><input type="checkbox" id="msMinors"> Au moins un mineur est photographié</label>
+      ${QE.abonnement ? '' : '<label style="display:flex;gap:8px;align-items:center;font-size:13px"><input type="checkbox" id="msDeposit" checked> Créer et envoyer maintenant la facture d\'acompte (30 %)</label>'}
+      <div id="msErr" class="small" style="color:var(--danger);min-height:18px"></div>
+      <div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn ghost" onclick="$('msModal').remove()">Annuler</button><button class="btn" id="msGo" onclick="submitMarkSigned()">Enregistrer la signature</button></div>
+    </div></div>`;
+  m.onclick = () => m.remove();
+  document.body.appendChild(m);
+}
+async function submitMarkSigned() {
   const imageUse = {};
-  if (!QE.legal || QE.status === 'brouillon') {
-    if (!confirm('Saisie manuelle des autorisations d\'image du client (4 questions, aucune réponse par défaut).\n\nPour chaque usage : OK = le client AUTORISE · Annuler = le client REFUSE.\n\nContinuer ?')) return;
-  }
-  for (const u of BunkaioDevis.USES) imageUse[u.id] = confirm('Le client autorise-t-il : ' + u.label + ' ?\n\nOK = oui · Annuler = non') ? 'oui' : 'non';
-  const portfolio = imageUse.site === 'oui';
-  const createDeposit = !QE.abonnement && confirm('Créer et envoyer maintenant la facture d\'acompte (30 %) ?');
-  if (QE.status === 'brouillon') { const q = await saveQuote(true); if (!q) return; }
+  for (const u of BunkaioDevis.USES) { const v = $('msUse_' + u.id).value; if (!v) { $('msErr').textContent = 'Choisissez une réponse pour chaque usage.'; return; } imageUse[u.id] = v; }
+  const persons = $('msPersons').value; if (!persons) { $('msErr').textContent = 'Indiquez qui est photographié.'; return; }
+  const via = $('msVia').value, minors = $('msMinors').checked, createDeposit = !!($('msDeposit') && $('msDeposit').checked);
+  $('msGo').disabled = true;
+  if (QE.status === 'brouillon') { const q = await saveQuote(true); if (!q) { $('msGo').disabled = false; return; } }
   try {
-    const { res, data } = await api('/admin/quote', { method: 'POST', body: JSON.stringify({ action: 'mark-signed', id: QE.id, via, portfolio, imageUse, createDeposit, ...(QE.legal ? {} : { legal: BunkaioDevis.legalPack(QE, DB.business || {}) }) }) });
-    if (!res.ok || !data.ok) { $('drMsg').innerHTML = `<div class="msg err">Erreur : ${esc(data.error || res.status)}</div>`; return; }
-    QE = data.quote; toast('Devis marqué signé' + (data.depositError ? ' · ⚠ acompte non créé' : createDeposit ? ' · acompte envoyé' : ''));
+    const { res, data } = await api('/admin/quote', { method: 'POST', body: JSON.stringify({ action: 'mark-signed', id: QE.id, via, portfolio: imageUse.site === 'oui', imageUse, persons, minors, createDeposit, ...(QE.legal ? {} : { legal: BunkaioDevis.legalPack(QE, DB.business || {}) }) }) });
+    if (!res.ok || !data.ok) { $('msErr').textContent = 'Erreur : ' + (data.error || res.status); $('msGo').disabled = false; return; }
+    $('msModal').remove();
+    QE = data.quote; toast('Signature enregistrée' + (data.depositError ? ' · ⚠ acompte non créé' : createDeposit ? ' · acompte envoyé' : ''));
     drawer.tab = 'track'; await loadDashboard(); renderQuoteDrawer();
-  } catch (e) {}
+  } catch (e) { $('msGo').disabled = false; }
 }
 function copyLink() { const l = QE._url; if (!l) { toast('Utilisez « Renvoyer l\'email » pour afficher le lien'); return; } navigator.clipboard.writeText(l).then(() => toast('Lien copié'), () => toast(l)); }
 async function printQuote() {
