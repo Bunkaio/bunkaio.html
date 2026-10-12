@@ -5232,9 +5232,9 @@ html.pfi-lock, html.pfi-lock body { overflow: hidden !important; }
 .hero-kicker .hk-lines polyline:not(.f):not(.pl) { stroke: rgba(214,201,247,0.9); stroke-width: 1.2; filter: drop-shadow(0 0 2px rgba(214,201,247,0.45)); }
 
 /* ═══ Rappel de la constellation ⊹ dans les bandeaux d'appel sombres (Portfolio, Services, 4K Drone, Collaboration, pied de page) ═══ */
-.has-cst { position: relative; overflow: hidden; }
-.has-cst > :not(.cst-deco) { position: relative; z-index: 1; }
-.cst-deco { position: absolute; z-index: 0; left: 60%; top: 50%; width: 150px; height: auto; translate: -50% -50%; pointer-events: none; opacity: 0.75; overflow: visible; }
+/* Décor derrière le contenu sans repositionner les enfants (isolation + z-index négatif) : ne touche ni aux boutons ni à leurs animations. */
+.has-cst { position: relative; overflow: hidden; isolation: isolate; }
+.cst-deco { position: absolute; z-index: -1; left: 60%; top: 50%; width: 150px; height: auto; translate: -50% -50%; pointer-events: none; opacity: 0.75; overflow: visible; }
 footer .footer-cta-row .cst-deco { left: 50%; width: 92px; opacity: 0.6; }
 /* Bandeau « Prêt à donner vie à votre projet ? » : pas d'espace libre entre le texte et le bouton, la croix se loge dans le coin bas droit. */
 .pf-cta-band .cst-deco { left: auto; right: 18px; top: auto; bottom: 4px; translate: none; width: 62px; opacity: 0.6; }
@@ -5302,3 +5302,6 @@ footer .footer-cta-row .cst-deco { left: 50%; width: 92px; opacity: 0.6; }
 .cst-deco.cst-light .cd-ln { stroke: rgba(110,90,168,0.4); }
 .cst-deco.cst-light .cd-pl { stroke: #6e5aa8; filter: none; }
 .cst-deco.cst-light .cd-j, .cst-deco.cst-light .cd-n { fill: #6e5aa8; filter: none; }
+
+/* Pied de page : le bouton « Construire mon projet » est toujours visible (l'apparition différée est réservée au haut de l'accueil). */
+footer .footer-cta-row .hero-start { animation: none; opacity: 1; transform: none; }
