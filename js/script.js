@@ -4648,8 +4648,8 @@ function renderPfGalleryInto(container, catId, catLabel, max, emptyText){
    Couche par-dessus la page Portfolio (la page ne change pas) : planches de 4 × 4 sur toute la hauteur, catégories en pastilles,
    glisser / flèches pour la planche suivante, visionneuse au toucher. Mêmes photos et même ordre que la grille (loadPortfolioPhotos,
    ordre des numéros de fichier). Fermeture : ×, Échap ou geste retour (une entrée d'historique est ajoutée à l'ouverture). */
-Object.assign(I18N.fr, { 'pf-imm-open':'Voir en plein écran' });
-Object.assign(I18N.en, { 'pf-imm-open':'View full screen' });
+Object.assign(I18N.fr, { 'pf-imm-open':'Voir en plein écran', 'pf-cta-quote':'Demander un devis' });
+Object.assign(I18N.en, { 'pf-imm-open':'View full screen', 'pf-cta-quote':'Request a quote' });
 const PFI = { el: null, c: 0, p: 0, v: -1, photos: {}, open: false };
 const pfiPages = () => Math.max(1, Math.ceil((PFI.photos[PF_CATS[PFI.c].id] || []).length / 16));
 function openPfImmersive(catId){
