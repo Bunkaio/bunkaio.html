@@ -4929,6 +4929,12 @@ img:not([src*="logo"]):not([src$=".svg"]):not(.no-grain) { filter: url(#bk-grain
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='2' seed='7'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
   background-size: 220px 220px;
 }
+/* Mobile et tactile : le filtre SVG est rastérisé en basse définition (flou sur écrans Retina) et coûte cher au défilement ; le grain y est quasi invisible. Photos nettes, sans filtre ni mise à l'échelle statique. */
+@media (max-width: 1180px), (hover: none) {
+  img:not([src*="logo"]):not([src$=".svg"]):not(.no-grain) { filter: none; }
+  .ph img { transform: none; }
+  .ph img, .hero-slide img, .formula-photo, .svcp-figure img { image-rendering: auto; }
+}
 @media print { img { filter: none !important; } }
 
 /* Accueil : « Basé en Occitanie, déplacement partout en France sur devis » — traitement sobre et professionnel : capitales espacées, blanc, voile sombre diffus (plus de contour ni de gras),
