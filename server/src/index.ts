@@ -59,6 +59,7 @@ import type {
   AdminAccountUpsertPayload,
   AuthLoginPayload,
   DepositInvoiceInput,
+  InvoiceQuoteRef,
   Env,
   QuizLeadPayload,
 } from './types';
@@ -841,11 +842,14 @@ async function handleAdminDashboard(request: Request, env: Env, headers: Record<
 const SIGN_URL = (q: Quote): string => `https://bunkaio.com/signature/?d=${q.id}&k=${q.token}`;
 
 /** Crée et envoie la facture d'acompte d'un devis signé (fiche Stripe créée si besoin). */
+/** Référence du devis signé inscrite dans les factures Stripe. */
+const quoteRef = (q: Quote): InvoiceQuoteRef => ({ id: q.id, number: q.number, hash: q.contentHash, signedAt: q.signedAt, legalVersion: q.legal?.version });
+
 async function depositForQuote(env: Env, q: Quote): Promise<void> {
   if (q.test) return; // devis de test : jamais de facture Stripe
   const stripe = createStripeClient(env.STRIPE_SECRET_KEY);
   await ensureCustomer(stripe, { email: q.email, name: q.client.nom, lang: q.lang, phone: q.client.telephone });
-  const result = await createDepositInvoice(stripe, { email: q.email, totalAmountEur: q.totalHT, description: `Devis n° ${q.number} — ${q.prestation}` });
+  const result = await createDepositInvoice(stripe, { email: q.email, totalAmountEur: q.totalHT, description: `Devis n° ${q.number} — ${q.prestation}`, quote: quoteRef(q) });
   await markInvoiced(env, q.email).catch(() => undefined);
   q.depositInvoice = { id: result.invoiceId, url: result.hostedInvoiceUrl, amount: result.depositAmountEur };
   const m = buildDepositInvoiceEmail({ customerName: q.client.contact || q.client.nom, description: `${q.prestation} (devis n° ${q.number})`, depositAmountEur: result.depositAmountEur, hostedInvoiceUrl: result.hostedInvoiceUrl, lang: q.lang, space: await detectSpace(env, q.email) });
@@ -1195,7 +1199,11 @@ async function handleCreateBalanceInvoice(request: Request, env: Env, headers: R
 
   try {
     const stripe = createStripeClient(env.STRIPE_SECRET_KEY);
-    const result = await createBalanceInvoice(stripe, body);
+    /* Rattache le solde au dernier devis signé (non test) de ce client, s'il y en a un. */
+    const signed = (await listQuotes(env)).filter((x) => !x.test && x.status === 'signe' && x.email.toLowerCase() === body.email.toLowerCase() && !x.balanceInvoice);
+    const target = signed.sort((a, b) => (b.signedAt ?? '').localeCompare(a.signedAt ?? ''))[0];
+    const result = await createBalanceInvoice(stripe, { email: body.email, totalAmountEur: body.totalAmountEur, description: body.description, ...(target ? { quote: quoteRef(target) } : {}) });
+    if (target) { target.balanceInvoice = { id: result.invoiceId, url: result.hostedInvoiceUrl, amount: result.balanceAmountEur }; await putQuote(env, target).catch((err) => console.error('[create-balance-invoice] devis non mis à jour', err)); }
     await markBalanceInvoiced(env, body.email).catch((err) => console.error('[create-balance-invoice] marqueur', err));
     console.log('[create-balance-invoice] facture créée', result);
 

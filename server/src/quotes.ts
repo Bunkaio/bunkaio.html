@@ -124,6 +124,8 @@ export interface Quote {
   subjects?: Subject[];
   groupToken?: string;
   depositInvoice?: { id: string; url: string; amount: number };
+  /** Facture de solde rattachée à ce devis (créée depuis l'admin, Factures → solde). */
+  balanceInvoice?: { id: string; url: string; amount: number };
   reminderSentAt?: string;
   /** Devis de test créé depuis l'admin : aucune facture Stripe, numérotation hors séquence, exclu des indicateurs. */
   test?: boolean;

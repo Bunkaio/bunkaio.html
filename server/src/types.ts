@@ -61,10 +61,14 @@ export interface UpsertResult {
 }
 
 /** Payload envoyé par admin/index.html pour générer une facture d'acompte. */
+/** Devis signé auquel la facture se rattache : écrit dans la facture Stripe (description, champ personnalisé, métadonnées) pour la traçabilité. */
+export interface InvoiceQuoteRef { id: string; number: string; hash?: string; signedAt?: string; legalVersion?: string }
+
 export interface DepositInvoiceInput {
   email: string;
   totalAmountEur: number;
   description: string;
+  quote?: InvoiceQuoteRef;
 }
 
 /** Résultat renvoyé à admin/index.html après création de la facture d'acompte. */

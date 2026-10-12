@@ -186,11 +186,22 @@ async function createFractionalInvoice(
   /* Libellé de la ligne de facture dans la langue du client (page de paiement Stripe affichée selon preferred_locales). */
   const prefix = customerLang === 'en' ? (metadataType === 'acompte_30' ? 'Deposit 30%' : 'Balance 70%') : itemDescriptionPrefix;
 
+  /* Traçabilité devis ↔ facture : identifiants du devis signé écrits sur la ligne, la facture (texte, champ du PDF, métadonnées) et lisibles dans le tableau de bord Stripe. */
+  const q = input.quote;
+  const quoteMeta: Record<string, string> = q ? {
+    devis_numero: q.number,
+    devis_id: q.id,
+    ...(q.hash ? { devis_empreinte_sha256: q.hash } : {}),
+    ...(q.signedAt ? { devis_signe_le: q.signedAt } : {}),
+    ...(q.legalVersion ? { devis_clauses: q.legalVersion } : {}),
+  } : {};
+
   await stripe.invoiceItems.create({
     customer: customer.id,
     currency: 'eur',
     amount: Math.round(amountEur * 100),
     description: `${prefix} — ${input.description}`,
+    ...(q ? { metadata: quoteMeta } : {}),
   });
 
   const invoice = await stripe.invoices.create({
@@ -207,10 +218,17 @@ async function createFractionalInvoice(
       ? 'VAT not applicable, art. 293 B of the French Tax Code. The assignment of usage rights is subject to payment in full of the price. Professional customers: in case of late payment, penalties at three times the legal interest rate and a fixed recovery fee of EUR 40 (art. L441-10 of the French Commercial Code).'
       : "TVA non applicable, art. 293 B du CGI. La cession des droits d'utilisation est subordonnée au paiement intégral du prix. Clients professionnels : en cas de retard de paiement, pénalités au taux de trois fois le taux d'intérêt légal et indemnité forfaitaire de recouvrement de 40 € (art. L441-10 du Code de commerce)."),
 
+    ...(q ? {
+      description: customerLang === 'en'
+        ? `Quote no. ${q.number}${q.signedAt ? ' signed on ' + q.signedAt.slice(0, 10) : ''}`
+        : `Devis n° ${q.number}${q.signedAt ? ' signé le ' + q.signedAt.slice(0, 10).split('-').reverse().join('/') : ''}`,
+      custom_fields: [{ name: customerLang === 'en' ? 'Quote no.' : 'Devis n°', value: q.number.slice(0, 30) }],
+    } : {}),
     metadata: {
       type: metadataType,
       description: input.description,
       montant_total_ht: String(input.totalAmountEur),
+      ...quoteMeta,
     },
   });
 

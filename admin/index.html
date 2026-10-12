@@ -2037,11 +2037,19 @@ function quoteForm(q) {
     <div class="frow"><div class="fg"><label>Médiateur de la consommation</label><input id="qeMed" value="${esc(q.mediateur || '')}" placeholder="Nom et coordonnées"><div class="hint">Obligatoire pour les particuliers. Mémorisé pour les prochains devis.</div></div><div class="fg"><label>Tribunal compétent</label><input id="qeTrib" value="${esc(q.tribunal || '')}" placeholder="Ex. Tribunal judiciaire de Montpellier"></div></div>
   </div>`;
 }
+/* Traçabilité Stripe : factures rattachées au devis (identifiants copiables, lien direct vers le tableau de bord Stripe). */
+function stripeCard(q) {
+  if (q.test) return '<div class="msg info" style="margin-top:18px">Devis de test : aucune facture Stripe n\'est créée.</div>';
+  if (q.status !== 'signe') return '';
+  const line = (label, inv) => inv ? `<dt>${label}</dt><dd>${eur(inv.amount)} · <code>${esc(inv.id)}</code> · <a href="https://dashboard.stripe.com/invoices/${esc(inv.id)}" target="_blank" rel="noopener">Voir dans Stripe ↗</a> · <a href="${esc(inv.url)}" target="_blank" rel="noopener">Page client</a></dd>` : `<dt>${label}</dt><dd class="muted">${label === 'Acompte' && !q.abonnement ? '<b style="color:var(--danger)">non créé</b>' : 'non créé'}</dd>`;
+  return `<div class="card" style="margin-top:18px"><h3>Facturation Stripe</h3><dl class="kv">${line('Acompte', q.depositInvoice)}${q.abonnement ? '' : line('Solde', q.balanceInvoice)}<dt>Repères dans Stripe</dt><dd class="small">Chaque facture porte « Devis n° ${esc(q.number)} » (texte, champ du PDF) et les métadonnées <code>devis_numero</code>, <code>devis_id</code>, <code>devis_empreinte_sha256</code>, <code>devis_clauses</code>.</dd></dl></div>`;
+}
 function quoteTrack(q) {
   const ev = [['Créé', q.createdAt, true], ['Envoyé au client', q.sentAt, !!q.sentAt], ['Consulté', q.viewedAt, !!q.viewedAt], ['Relance envoyée', q.reminderSentAt, !!q.reminderSentAt], ['Signé' + (q.signedVia === 'en_ligne' ? ' en ligne' : q.signedVia === 'yousign' ? ' via Yousign' : q.signedVia ? ' (manuel)' : ''), q.signedAt, !!q.signedAt], [q.status === 'annule' ? 'Annulé' : q.status === 'refuse' ? 'Refusé' : 'Clôturé', q.closedAt, !!q.closedAt]].filter(e => e[1]);
   const sg = q.signature;
   return `<div class="grid g2"><div class="card"><h3>Historique</h3><div class="tl">${ev.map(e => `<div class="it ${e[2] ? 'done' : ''}"><b>${e[0]}</b><div class="d">${fdt(e[1])}</div></div>`).join('')}</div></div>
     <div class="card"><h3>Preuve de signature</h3>${sg ? `<dl class="kv"><dt>Signataire</dt><dd>${esc(sg.name)}</dd><dt>Date</dt><dd>${fdt(sg.at)}</dd>${sg.ip ? `<dt>Adresse IP</dt><dd>${esc(sg.ip)}</dd>` : ''}${sg.ua ? `<dt>Navigateur</dt><dd class="small">${esc(sg.ua)}</dd>` : ''}${sg.imageUse ? '' : `<dt>Portfolio</dt><dd>${sg.portfolio ? 'Autorisé' : 'Refusé'}</dd>`}${sg.snapshotHash ? `<dt>Empreinte des clauses</dt><dd class="small" style="word-break:break-all">${esc(sg.snapshotHash)}</dd>` : ''}${q.client.profil === 'particulier' ? `<dt>Exécution anticipée</dt><dd>${sg.retractationWaiver ? 'Demandée' : 'Non demandée'}</dd>` : ''}<dt>Empreinte</dt><dd class="small" style="word-break:break-all">${esc(sg.hash)}</dd></dl>` : '<div class="small muted">Pas encore signé.</div>'}</div></div>
+    ${stripeCard(q)}
     ${consentCard(q)}
     ${q.status === 'envoye' ? `<div class="msg info" style="margin-top:18px">Lien de signature du client : <code style="word-break:break-all">${esc(signLink(q))}</code></div>` : ''}`;
 }
