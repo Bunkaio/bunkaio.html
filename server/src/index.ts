@@ -15,7 +15,7 @@ import { appendConsent, cleanQuoteInput, computeConsent, createQuote, freezeLega
 import { campaignTraffic, getCampaignData, putCampaignData } from './campaign';
 import { accountQuotes, adminConsentAction, bytesToBase64, ensureSignedPdf, getSignedPdf, groupUrl, handleSubjectPublic, handleWithdrawPublic, newToken, parseImageUse, useLabel } from './consent';
 import type { Quote } from './quotes';
-import { getBusinessAddress } from './config';
+import { getBusinessAddress, isDemo } from './config';
 import { cleanDetails, MESSAGE_KINDS, storeMessage, updateMessage } from './messages';
 import type { MessageKind } from './messages';
 import { configureBusiness } from './config';
@@ -620,6 +620,7 @@ async function handleAdminDashboard(request: Request, env: Env, headers: Record<
   if (path === '/admin/run-automations' && request.method === 'POST') {
     // Mêmes tâches que le cron quotidien ; chacune est idempotente (marqueurs), donc sans risque de doublon.
     await runDailyAutomations(env);
+    await retrySignedQuoteDeposits(env).catch((err) => console.error('[admin] relance des acomptes en échec', err));
     try {
       await sendOverdueInvoiceReminders(env);
     } catch (err) {
@@ -851,6 +852,22 @@ async function handleAdminDashboard(request: Request, env: Env, headers: Record<
 const SIGN_URL = (q: Quote): string => `https://bunkaio.com/signature/?d=${q.id}&k=${q.token}`;
 
 /** Crée et envoie la facture d'acompte d'un devis signé (fiche Stripe créée si besoin). */
+/** Filet de sécurité : un devis signé dont la facture d'acompte n'a pas pu être créée à la signature (erreur Stripe passagère) est retenté une fois par les automatisations planifiées. */
+async function retrySignedQuoteDeposits(env: Env): Promise<void> {
+  for (const q of await listQuotes(env)) {
+    if (q.status !== 'signe' || q.test || q.abonnement || q.depositInvoice || q.depositRetryAt || isDemo(q.email)) continue;
+    if (!q.signedAt || Date.now() - Date.parse(q.signedAt) < 15 * 60 * 1000) continue;
+    q.depositRetryAt = new Date().toISOString();
+    try {
+      await depositForQuote(env, q);
+      console.log('[devis] acompte créé à la relance automatique', q.number);
+    } catch (err) {
+      console.error('[devis] relance automatique de l\'acompte en échec', q.number, err);
+    }
+    await putQuote(env, q);
+  }
+}
+
 /** Référence du devis signé inscrite dans les factures Stripe. */
 const quoteRef = (q: Quote): InvoiceQuoteRef => ({ id: q.id, number: q.number, hash: q.contentHash, signedAt: q.signedAt, legalVersion: q.legal?.version });
 
@@ -1734,6 +1751,7 @@ export default {
     }
     await purgeOldAnalytics(env);
     await runDailyAutomations(env);
+    await retrySignedQuoteDeposits(env).catch((err) => console.error('[devis] relance des acomptes en échec', err));
     try {
       await sendOverdueInvoiceReminders(env);
     } catch (err) {

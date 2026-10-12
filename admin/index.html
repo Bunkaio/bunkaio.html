@@ -709,7 +709,9 @@ async function api(path, opts = {}) {
 const STAGES = [
   ['lead', 'Lead', 'Demande de devis reçue'],
   ['devis', 'Devis envoyé', 'En attente de signature'],
-  ['acompte', 'Acompte envoyé', 'En attente du paiement de l\'acompte'],
+  ['acompte_creer', 'Acompte à créer', 'Devis signé : la facture d\'acompte n\'a pas encore été créée'],
+  ['acompte', 'Acompte envoyé', 'Facture d\'acompte envoyée, en attente du paiement'],
+  ['abonnement', 'Abonnement à mettre en place', 'Devis d\'abonnement signé, sans acompte'],
   ['reserve', 'Réservé', 'Acompte payé, séance à venir'],
   ['postprod', 'Post-production', 'Séance passée, photos en cours'],
   ['solde', 'Solde envoyé', 'Photos prêtes, solde en attente'],
@@ -719,6 +721,8 @@ const STAGES = [
   ['contact', 'Contact', 'Autre contact'],
 ];
 const STAGE = Object.fromEntries(STAGES.map(s => [s[0], s]));
+/* Devis réels d'un contact : les devis de test n'influencent ni son étape, ni les segments, ni les alertes. */
+const realQ = c => (c.quotes || []).filter(q => !q.test);
 const ROLE_LABEL = { message: ['Formulaire', 'line'], lead: ['Lead quiz', ''], client: ['Client', 'ok'], espace: ['Espace client', 'dark'], partner: ['Partenaire', 'dark'] };
 const TEMP = { chaud: ['Chaud', 'danger'], tiede: ['Tiède', 'warn'], froid: ['Froid', 'line'] };
 const INV_STATUS = { paid: ['Payée', 'ok'], open: ['En attente', 'warn'], uncollectible: ['Irrécouvrable', 'danger'], void: ['Annulée', 'line'], draft: ['Brouillon', 'line'] };
@@ -1073,10 +1077,10 @@ const SEGMENTS = [
   ['incomplete', 'Espaces non validés', c => c.accounts.length && c.accounts.some(a => !a.infosCompletes)],
   ['due', 'À encaisser', c => c.totalDue > 0],
   ['message', 'Formulaires', c => c.roles.includes('message')],
-  ['noquote', 'Leads sans devis', c => !!c.lead && !(c.quotes || []).some(q => q.status !== 'annule') && c.stage === 'lead'],
-  ['qopen', 'Devis envoyé non signé', c => (c.quotes || []).some(q => q.status === 'envoye')],
-  ['qunseen', 'Devis jamais ouvert', c => (c.quotes || []).some(q => q.status === 'envoye' && !q.viewedAt)],
-  ['qnodep', 'Signé sans acompte', c => (c.quotes || []).some(q => q.status === 'signe' && !q.depositInvoice && !q.abonnement)],
+  ['noquote', 'Leads sans devis', c => !!c.lead && !realQ(c).some(q => q.status !== 'annule') && c.stage === 'lead'],
+  ['qopen', 'Devis envoyé non signé', c => realQ(c).some(q => q.status === 'envoye')],
+  ['qunseen', 'Devis jamais ouvert', c => realQ(c).some(q => q.status === 'envoye' && !q.viewedAt)],
+  ['qnodep', 'Signé sans acompte', c => realQ(c).some(q => q.status === 'signe' && !q.depositInvoice && !q.abonnement)],
   ['soon', 'Séance dans 7 jours', c => c.accounts.some(a => a.seance && a.seance.statut !== 'annulee' && a.seance.date >= today() && a.seance.date <= addDays(7))],
   ['delivered', 'Livrés', c => c.stage === 'livre'],
   ['nomail', 'Sans email depuis 30 jours', c => !c.mail || c.mail.last < addDays(-30)],
@@ -1256,6 +1260,7 @@ function renderSessions() {
     ['Accusé de réception des formulaires', 'Contact, collaboration, candidature partenaire, demande d\'espace : immédiat', '—', '—'],
     ['Confirmation de demande de devis', 'Envoi du quiz : immédiat', '—', c.filter(x => x.lead).length],
     ['Devis à signer en ligne', 'Envoi depuis « Devis » ; signature → facture d\'acompte automatique', (DB.quotes || []).filter(q => q.status === 'envoye').length, (DB.quotes || []).filter(q => q.status === 'signe').length],
+    ['Acompte non créé après signature', 'Une nouvelle tentative automatique est faite aux passages planifiés ; sinon alerte « Devis signé sans acompte »', (DB.quotes || []).filter(q => q.status === 'signe' && !q.depositInvoice && !q.abonnement).length, (DB.quotes || []).filter(q => q.depositRetryAt && q.depositInvoice).length],
     ['Relance du devis envoyé', '5 jours après l\'envoi s\'il n\'est pas signé, puis expiration', (DB.quotes || []).filter(q => q.status === 'envoye' && !q.reminderSentAt).length, (DB.quotes || []).filter(q => q.reminderSentAt).length],
     ['Relance de devis (quiz)', '7 jours après le quiz, sans devis envoyé ni facture d\'acompte', leadsWaiting.length, c.filter(x => x.markers.relanceDevis).length],
     ['Facture d\'acompte + paiement reçu', 'Création dans « Factures », puis paiement Stripe', c.filter(x => x.invoices.some(i => i.kind === 'acompte' && i.status === 'open')).length, c.filter(x => x.invoices.some(i => i.kind === 'acompte' && i.status === 'paid')).length],
@@ -1290,7 +1295,7 @@ function renderActivity() {
 const TPL_LABEL = { facture_acompte: 'Facture d\'acompte', photos_pretes_solde: 'Photos prêtes + facture de solde', paiement_recu: 'Paiement reçu', rappel_impaye: 'Rappel de facture impayée', confirmation_devis_quiz: 'Confirmation de demande de devis', acces_espace: 'Vos accès à l\'espace', album_accessible: 'Album accessible + avis + remise', merci_seance: 'Merci + date de livraison', seance_confirmation: 'Confirmation de séance', seance_reminder: 'Rappel de séance J-2', seance_report: 'Report de séance', seance_cancel: 'Annulation de séance', accuse_contact: 'Accusé · contact', accuse_collab: 'Accusé · collaboration', accuse_partner: 'Accusé · candidature partenaire', accuse_account: 'Accusé · demande d\'espace', relance_devis_quiz: 'Relance de devis (quiz)', rappel_moodboard: 'Rappel moodboard', devis_a_signer: 'Devis à signer', relance_devis_envoye: 'Relance du devis envoyé', devis_signe: 'Devis signé (confirmation)', sms_photos_pretes: 'SMS · photos disponibles', sms_acces_album: 'SMS · accès à l\'album', sms_rappel_seance: 'SMS · rappel de séance', sms_manuel: 'SMS', libre: 'Message libre', reponse: 'Réponse à un email reçu', demande_avis: 'Demande d\'avis' };
 const tplName = t => TPL_LABEL[t] || t;
 function quoteSteps(c) {
-  const qs = (c.quotes || []).filter(q => q.status !== 'annule');
+  const qs = realQ(c).filter(q => q.status !== 'annule');
   const q = qs[0];
   const depPaid = c.invoices.some(i => i.kind === 'acompte' && i.status === 'paid');
   const steps = [
@@ -1319,7 +1324,7 @@ function plannedMails(c) {
   const out = []; const now = today();
   const iso = d => (d || '').slice(0, 10);
   const add = (label, date, note) => out.push({ label, date: date < now ? now : date, note: note || '' });
-  const qs = c.quotes || []; const acc = primaryAcc(c);
+  const qs = realQ(c); const acc = primaryAcc(c);
   const sentQ = qs.find(q => q.status === 'envoye');
   const hasQuoteFlow = qs.some(q => q.status !== 'annule') || c.markers.qsent;
   if (c.lead && !hasQuoteFlow && !c.markers.acompteCree && !c.markers.acomptePaye && !c.markers.relanceDevis && c.markers.quizLe) add('Relance de devis (quiz)', iso(new Date(Date.parse(c.markers.quizLe) + 7 * 864e5).toISOString()), '7 jours après la demande');
@@ -1523,7 +1528,7 @@ function agendaEvents() {
       }
     });
     c.invoices.filter(i => i.status === 'open' && i.dueDate).forEach(i => out.push({ date: i.dueDate.slice(0, 10), kind: 'facture', t: eur(i.amountRemaining) + ' · ' + name, d: (i.kind === 'solde' ? 'Solde' : 'Acompte') + ' à payer', email: c.email }));
-    (c.quotes || []).filter(q => q.status === 'envoye' && q.validUntil).forEach(q => out.push({ date: q.validUntil, kind: 'devis', t: 'Devis n° ' + q.number + ' · ' + name, d: 'Dernier jour de validité', email: c.email, quote: q.id }));
+    realQ(c).filter(q => q.status === 'envoye' && q.validUntil).forEach(q => out.push({ date: q.validUntil, kind: 'devis', t: 'Devis n° ' + q.number + ' · ' + name, d: 'Dernier jour de validité', email: c.email, quote: q.id }));
   });
   return out.sort((a, b) => a.date.localeCompare(b.date) || (a.time || '').localeCompare(b.time || ''));
 }
@@ -1755,7 +1760,7 @@ function mailApplicable(tplId, c) {
   const marketing = (MAIL_TPLS.find(t => t[0] === tplId) || [])[3];
   if (marketing && c.unsub) return 'désinscrit';
   switch (tplId) {
-    case 'relance_devis_quiz': return c.lead && !(c.quotes || []).some(q => q.status === 'signe') && !c.invoices.some(i => i.status === 'paid') ? '' : 'pas un lead en attente';
+    case 'relance_devis_quiz': return c.lead && !realQ(c).some(q => q.status === 'signe') && !c.invoices.some(i => i.status === 'paid') ? '' : 'pas un lead en attente';
     case 'rappel_moodboard': return acc ? '' : 'pas d\'espace';
     case 'seance_reminder': case 'seance_confirmation': return acc && acc.seance && acc.seance.date && acc.seance.statut !== 'annulee' ? '' : 'pas de séance planifiée';
     case 'merci_seance': return acc ? '' : 'pas d\'espace';
@@ -2552,7 +2557,7 @@ function accSwitch(c) {
 function drSummary(c) {
   const a = primaryAcc(c); const L = c.lead; const s = a && a.seance;
   const dep = c.invoices.find(i => i.kind === 'acompte'); const bal = c.invoices.find(i => i.kind === 'solde');
-  const lastQ = (c.quotes || [])[0];
+  const lastQ = realQ(c)[0];
   const steps = [
     ['Demande de devis (quiz)', L ? fdate(L.date) : null],
     ['Devis', lastQ ? 'n° ' + lastQ.number + ' · ' + (Q_STATUS[lastQ.status] || [lastQ.status])[0].toLowerCase() : null, lastQ && lastQ.status === 'signe'],

@@ -129,6 +129,8 @@ export interface Quote {
   reminderSentAt?: string;
   /** Devis de test créé depuis l'admin : aucune facture Stripe, numérotation hors séquence, exclu des indicateurs. */
   test?: boolean;
+  /** Une seule nouvelle tentative automatique de création de la facture d'acompte après un échec à la signature. */
+  depositRetryAt?: string;
 }
 
 const PREFIX = 'quote:';

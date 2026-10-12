@@ -105,8 +105,15 @@ function computeStage(c: DashboardContact, now: string): string {
   if (balanceOpen) return 'solde';
   if (depositPaid) return acc?.seance?.date && acc.seance.date < now ? 'postprod' : 'reserve';
   if (depositOpen) return 'acompte';
-  if (c.quotes.some((q) => q.status === 'signe')) return 'acompte';
-  if (c.quotes.some((q) => q.status === 'envoye')) return 'devis';
+  /* Les devis de test (q.test) ne comptent jamais dans l'étape d'un contact. */
+  const real = c.quotes.filter((q) => !q.test);
+  const signed = real.filter((q) => q.status === 'signe');
+  if (signed.length) {
+    if (signed.some((q) => !q.abonnement && !q.depositInvoice)) return 'acompte_creer'; // signé, facture d'acompte pas encore créée
+    if (signed.some((q) => q.depositInvoice)) return 'acompte'; // facture d'acompte envoyée, en attente de paiement
+    return 'abonnement'; // abonnement signé : pas d'acompte, à mettre en place
+  }
+  if (real.some((q) => q.status === 'envoye')) return 'devis';
   if (c.lead) return 'lead';
   if (c.roles.includes('partner')) return 'partenaire';
   return 'contact';
