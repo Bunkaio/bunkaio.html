@@ -5307,7 +5307,7 @@ footer .footer-cta-row .cst-deco { left: 50%; width: 92px; opacity: 0.6; }
 footer .footer-cta-row .hero-start { animation: none; opacity: 1; transform: none; }
 
 /* Fond constellation dynamique des espaces client / partenaire et de la page de connexion (canevas, js/script.js CstField). */
-#view-login, #view-account { position: relative; }
+#view-login, #view-account, #view-portfolio { position: relative; }
 .cst-field { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
 .cst-field canvas { position: absolute; left: 0; top: 0; width: 100%; display: block; will-change: transform; }
 .login-page, .account-page { position: relative; z-index: 1; }

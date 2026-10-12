@@ -7575,12 +7575,14 @@ function initCstDecor(root){
    Le canevas couvre l'écran visible (suivi du défilement) ; pause hors de ces vues, onglet caché ou animations réduites (image fixe). */
 const CstField = (() => {
   let raf = 0, wrap = null, cv = null, ctx = null, pts = [], W = 0, H = 0, view = null, frame = 0;
-  const VIEWS = ['login', 'account'];
+  const VIEWS = ['login', 'account', 'portfolio'];
   function palette(){
     if (currentView === 'account') {
       const partner = view && view.dataset.acct === 'partner';
       return { line: '255,255,255', dot: '255,255,255', cross: partner ? '217,196,154' : '214,201,247', a: 1 };
     }
+    /* Portfolio : par-dessus la vidéo / les photos de fond, à faible opacité (les photos restent la vedette). */
+    if (currentView === 'portfolio') return { line: '255,255,255', dot: '255,255,255', cross: '214,201,247', a: 0.4 };
     return { line: '110,90,168', dot: '110,90,168', cross: '110,90,168', a: 0.8 };
   }
   function size(){
