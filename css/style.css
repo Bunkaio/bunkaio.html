@@ -346,6 +346,14 @@
   }
   /* Même révélation flou -> net que "Nous ne documentons pas des projets…" */
   @keyframes wordUp { to { opacity: 1; filter: blur(0); transform: translateY(0); } }
+  /* Flottement léger de « Imaginez votre projet » : propriété `translate` (indépendante de la révélation en `transform`),
+     démarre une fois la révélation terminée, décalé mot à mot. */
+  .hero-title .word { animation: wordUp 1s var(--ease-luxe) forwards, heroFloat 6s ease-in-out infinite; }
+  .hero-title .word:nth-child(2) { animation-delay: 0.45s, 1.6s !important; }
+  .hero-title .word:nth-child(3) { animation-delay: 0.6s, 2.2s !important; }
+  .hero-title .word:nth-child(4) { animation-delay: 0.75s, 2.8s !important; }
+  @keyframes heroFloat { 0%, 100% { translate: 0 0; } 50% { translate: 0 -6px; } }
+  @media (prefers-reduced-motion: reduce) { .hero-title .word { animation: wordUp 1s var(--ease-luxe) forwards; } }
   .hero-line {
     width: 1px; height: 60px; background: linear-gradient(to bottom, var(--black), transparent);
     margin: 46px 0;
