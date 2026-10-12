@@ -477,7 +477,7 @@
             <div class="it done"><b>À la signature</b><div class="d">Le client répond Oui ou Non aux 4 usages (non pré-cochés). Preuve : identité, date, version, choix, IP, navigateur, empreintes + PDF figé envoyé par email.</div></div>
             <div class="it done"><b>Autres personnes</b><div class="d">Lien commun ou individuel (dans la fiche du devis, onglet Suivi). Mineur : représentant légal obligatoire.</div></div>
             <div class="it done"><b>Retrait</b><div class="d">La demande publique passe le statut en « retrait demandé » : vous la vérifiez, retirez les publications sous 30 jours, puis l'enregistrez dans la fiche du devis (email de confirmation facultatif).</div></div>
-            <div class="it"><b>Conservation</b><div class="d">Preuve : 5 ans après la fin de la relation. Autorisation : 5 ans à compter de la livraison, ou jusqu'au retrait. Seuls les usages « Oui » non retirés peuvent être publiés.</div></div>
+            <div class="it"><b>Conservation</b><div class="d">Preuve : 5 ans après la fin de la relation. Autorisation : 5 ans à compter de la livraison, ou jusqu'au retrait. Seuls les usages « Oui » non retirés peuvent être publiés. Alerte 90 jours avant l'échéance (date estimée : livraison de l'espace client, sinon séance, sinon signature).</div></div>
           </div>
         </div>
       </section>
@@ -2118,16 +2118,29 @@ function imageItems() {
   });
   return out;
 }
-function imageTodoCount() { return imageItems().filter(i => i.kind === 'retrait').length; }
+/* Échéance : 5 ans après la livraison (date de livraison de l'espace client si connue, sinon date de séance, sinon signature). Estimation à confirmer à la main. */
+function imageExpiry(q) {
+  const c = (DB.contacts || []).find(x => x.email === q.email);
+  const acc = c && (accOf(c, 'client') || accOf(c, 'partner'));
+  const ref = (acc && acc.seance && acc.seance.livraison) || (q.seance && q.seance.date) || (q.signedAt || '').slice(0, 10);
+  if (!ref) return null;
+  const d = new Date(ref + 'T12:00:00'); d.setFullYear(d.getFullYear() + 5);
+  const iso = d.toISOString().slice(0, 10);
+  return { iso, days: Math.round((d.getTime() - Date.now()) / DAY), from: ref };
+}
+const EXPIRY_WARN = 90;
+function expiringQuotes() { return (DB.quotes || []).filter(q => q.status === 'signe' && (q.signature || {}).imageUse).map(q => ({ q, e: imageExpiry(q) })).filter(x => x.e && x.e.days <= EXPIRY_WARN).sort((a, b) => a.e.days - b.e.days); }
+function imageTodoCount() { return imageItems().filter(i => i.kind === 'retrait').length + expiringQuotes().length; }
 function imageAlerts() {
-  return imageItems().map(i => {
+  const exp = expiringQuotes().map(({ q, e }) => ({ lvl: e.days < 0 ? 'danger' : 'warn', ic: '⏳', t: `Échéance des droits à l'image — ${q.client.nom}`, d: e.days < 0 ? `Devis n° ${esc(q.number)} : échue le ${fdate(e.iso)}. Cesser toute utilisation des images, retirer les publications, puis supprimer ou archiver la preuve (sauf litige en cours).` : `Devis n° ${esc(q.number)} : échéance le ${fdate(e.iso)} (dans ${e.days} j). Prévoir de retirer les publications ou de demander une nouvelle autorisation.`, email: q.email, quote: q.id }));
+  return exp.concat(imageItems().map(i => {
     const late = i.kind === 'retrait' && daysSince(i.at) >= 25;
     if (i.kind === 'retrait') return { lvl: daysSince(i.at) >= 30 ? 'danger' : 'warn', ic: '🛑', t: `Retrait d'autorisation d'image — ${i.who}`, d: `Demandé ${ago(i.at)} (devis n° ${esc(i.q.number)}) : retirer les publications et enregistrer le retrait avant ${fdate(new Date(new Date(i.at).getTime() + 30 * DAY).toISOString())}${late ? ' — délai de 30 jours presque écoulé' : ''}.`, email: i.q.email, quote: i.q.id };
     if (i.kind === 'mineur') return { lvl: 'warn', ic: '🧒', t: `Mineur sans autorisation du représentant — ${i.q.client.nom}`, d: `Devis n° ${esc(i.q.number)} : un mineur est photographié, aucune autorisation de représentant légal signée. N'utilisez pas ses images.`, email: i.q.email, quote: i.q.id };
     return { lvl: 'info', ic: '👥', t: `Autorisations à collecter — ${i.q.client.nom}`, d: `Devis n° ${esc(i.q.number)} : ${i.n ? i.n + ' personne(s) en attente' : 'aucune autre personne enregistrée'}. Sans autorisation individuelle, ne pas utiliser leurs images.`, email: i.q.email, quote: i.q.id };
-  });
+  }));
 }
-const IM_FILTERS = [['all', 'Tous', () => true], ['retrait', 'Retrait à traiter', q => !!imageItems().find(i => i.q.id === q.id && i.kind === 'retrait')], ['accepte', 'Accepté', q => (q.consent || {}).status === 'accepte'], ['partiel', 'Partiel', q => (q.consent || {}).status === 'partiel'], ['refuse', 'Refusé', q => (q.consent || {}).status === 'refuse'], ['retire', 'Retiré', q => (q.consent || {}).status === 'retire'], ['collecte', 'Personnes à relancer', q => !!imageItems().find(i => i.q.id === q.id && (i.kind === 'collecte' || i.kind === 'mineur'))], ['ancien', 'Anciens devis', q => !(q.signature || {}).imageUse]];
+const IM_FILTERS = [['all', 'Tous', () => true], ['retrait', 'Retrait à traiter', q => !!imageItems().find(i => i.q.id === q.id && i.kind === 'retrait')], ['accepte', 'Accepté', q => (q.consent || {}).status === 'accepte'], ['partiel', 'Partiel', q => (q.consent || {}).status === 'partiel'], ['refuse', 'Refusé', q => (q.consent || {}).status === 'refuse'], ['retire', 'Retiré', q => (q.consent || {}).status === 'retire'], ['collecte', 'Personnes à relancer', q => !!imageItems().find(i => i.q.id === q.id && (i.kind === 'collecte' || i.kind === 'mineur'))], ['echeance', 'Échéance proche', q => expiringQuotes().some(x => x.q.id === q.id)], ['ancien', 'Anciens devis', q => !(q.signature || {}).imageUse]];
 function renderImageRights() {
   if (!$('imTable')) return;
   $('imVer').textContent = BunkaioDevis.LEGAL_VERSION;
@@ -2138,24 +2151,25 @@ function renderImageRights() {
     [items.filter(i => i.kind === 'retrait').length ? 'dark' : '', 'Retraits à traiter', items.filter(i => i.kind === 'retrait').length, 'Délai légal : 30 jours'],
     ['', 'Personnes à relancer', items.filter(i => i.kind === 'collecte' || i.kind === 'mineur').length, 'Autorisations individuelles manquantes'],
     ['', 'Accepté / partiel', n('accepte') + ' / ' + n('partiel'), 'Sur ' + all.length + ' devis signés'],
+    [expiringQuotes().length ? 'dark' : '', 'Échéances (90 j)', expiringQuotes().length, 'Droits arrivant à 5 ans ou échus'],
     ['', 'Refusé / retiré', n('refuse') + ' / ' + n('retire'), 'Images à ne pas publier'],
   ].map(([cls, l, v, sub]) => `<div class="kpi ${cls}"><div class="l">${l}</div><div class="n">${v}</div><div class="s">${sub}</div></div>`).join('');
   state.imFilter = state.imFilter || 'all';
   $('imChips').innerHTML = IM_FILTERS.map(([id, l, f]) => `<button class="chip ${state.imFilter === id ? 'on' : ''}" onclick="state.imFilter='${id}';renderImageRights()">${l}<span class="c">${all.filter(f).length}</span></button>`).join('');
   const list = all.filter(IM_FILTERS.find(x => x[0] === state.imFilter)[2]).sort((a, b) => (b.signedAt || '').localeCompare(a.signedAt || ''));
   const cell = (u, k, wd) => yn(u, k, wd);
-  $('imTable').innerHTML = list.length ? `<div class="tbl-wrap"><table><thead><tr><th>Devis</th><th>Client</th><th>Statut</th>${Object.keys(USE_NAMES).map(k => `<th>${USE_NAMES[k]}</th>`).join('')}<th>Personnes</th><th>Version</th><th>Signé</th></tr></thead><tbody>${list.map(q => { const sg = q.signature || {}, c = q.consent || {}, subs = q.subjects || []; const sSigned = subs.filter(s => s.status === 'signe').length;
-    return `<tr class="click" onclick="openQuote('${esc(q.id)}');setTimeout(()=>setQTab('track'),0)"><td><b>${esc(q.number)}</b></td><td class="who"><b>${esc(q.client.nom)}</b><span>${esc(q.email)}</span></td><td>${sg.imageUse ? imgBadge(q) : '<span class="badge line">Ancien devis</span>'}</td>${Object.keys(USE_NAMES).map(k => `<td>${sg.imageUse ? cell(sg.imageUse, k, c.withdrawnUses) : (k === 'site' ? (sg.portfolio ? '<span class="badge ok">Oui</span>' : '<span class="badge line">Non</span>') : '—')}</td>`).join('')}<td class="small">${sg.persons ? ({ self: 'Signataire', self_others: 'Signataire + autres', others: 'Autres' }[sg.persons]) : '—'}${sg.minors ? ' · mineur' : ''}${subs.length ? `<div class="muted">${sSigned}/${subs.length} signé(s)</div>` : ''}</td><td class="small">${esc(sg.legalVersion || '—')}</td><td class="small">${fdate(q.signedAt)}</td></tr>`; }).join('')}</tbody></table></div>` : '<div class="card"><div class="empty">Aucun devis dans ce filtre.</div></div>';
+  $('imTable').innerHTML = list.length ? `<div class="tbl-wrap"><table><thead><tr><th>Devis</th><th>Client</th><th>Statut</th>${Object.keys(USE_NAMES).map(k => `<th>${USE_NAMES[k]}</th>`).join('')}<th>Personnes</th><th>Version</th><th>Signé</th><th>Échéance</th></tr></thead><tbody>${list.map(q => { const sg = q.signature || {}, c = q.consent || {}, subs = q.subjects || []; const sSigned = subs.filter(s => s.status === 'signe').length;
+    return `<tr class="click" onclick="openQuote('${esc(q.id)}');setTimeout(()=>setQTab('track'),0)"><td><b>${esc(q.number)}</b></td><td class="who"><b>${esc(q.client.nom)}</b><span>${esc(q.email)}</span></td><td>${sg.imageUse ? imgBadge(q) : '<span class="badge line">Ancien devis</span>'}</td>${Object.keys(USE_NAMES).map(k => `<td>${sg.imageUse ? cell(sg.imageUse, k, c.withdrawnUses) : (k === 'site' ? (sg.portfolio ? '<span class="badge ok">Oui</span>' : '<span class="badge line">Non</span>') : '—')}</td>`).join('')}<td class="small">${sg.persons ? ({ self: 'Signataire', self_others: 'Signataire + autres', others: 'Autres' }[sg.persons]) : '—'}${sg.minors ? ' · mineur' : ''}${subs.length ? `<div class="muted">${sSigned}/${subs.length} signé(s)</div>` : ''}</td><td class="small">${esc(sg.legalVersion || '—')}</td><td class="small">${fdate(q.signedAt)}</td><td class="small">${(() => { const e = imageExpiry(q); return e ? (e.days < 0 ? '<span class="badge danger">Échue ' + fdate(e.iso) + '</span>' : e.days <= EXPIRY_WARN ? '<span class="badge warn">' + fdate(e.iso) + '</span>' : fdate(e.iso)) : '—'; })()}</td></tr>`; }).join('')}</tbody></table></div>` : '<div class="card"><div class="empty">Aucun devis dans ce filtre.</div></div>';
 }
 function exportImageRegister() {
   const rows = [];
   (DB.quotes || []).filter(q => q.status === 'signe').forEach(q => {
     const sg = q.signature || {}, c = q.consent || {};
     const val = (u, k, wd) => !u ? '' : (wd || []).includes(k) ? 'retiré' : u[k] || '';
-    rows.push(['Signataire', q.number, q.client.nom, sg.name || '', q.email, '', fdt(sg.at || q.signedAt), sg.legalVersion || '', (IMG_ST[c.status] || [''])[0], ...Object.keys(USE_NAMES).map(k => val(sg.imageUse, k, c.withdrawnUses))]);
-    (q.subjects || []).forEach(s => rows.push([s.minor ? 'Mineur (représentant : ' + (s.guardianName || '') + ')' : 'Personne photographiée', q.number, q.client.nom, s.name, s.email || '', s.minor ? s.guardianRelation || '' : '', s.signedAt ? fdt(s.signedAt) : 'en attente', s.legalVersion || '', s.status === 'signe' ? (s.withdrawalRequestedAt ? 'Retrait demandé' : 'Signé') : 'En attente', ...Object.keys(USE_NAMES).map(k => val(s.imageUse, k, s.withdrawnUses))]));
+    rows.push(['Signataire', q.number, q.client.nom, sg.name || '', q.email, '', fdt(sg.at || q.signedAt), sg.legalVersion || '', (imageExpiry(q) || {}).iso || '', (IMG_ST[c.status] || [''])[0], ...Object.keys(USE_NAMES).map(k => val(sg.imageUse, k, c.withdrawnUses))]);
+    (q.subjects || []).forEach(s => rows.push([s.minor ? 'Mineur (représentant : ' + (s.guardianName || '') + ')' : 'Personne photographiée', q.number, q.client.nom, s.name, s.email || '', s.minor ? s.guardianRelation || '' : '', s.signedAt ? fdt(s.signedAt) : 'en attente', s.legalVersion || '', (imageExpiry(q) || {}).iso || '', s.status === 'signe' ? (s.withdrawalRequestedAt ? 'Retrait demandé' : 'Signé') : 'En attente', ...Object.keys(USE_NAMES).map(k => val(s.imageUse, k, s.withdrawnUses))]));
   });
-  const head = ['Qui', 'Devis', 'Client', 'Nom', 'Email', 'Lien (mineur)', 'Date', 'Version clauses', 'Statut', ...Object.values(USE_NAMES)];
+  const head = ['Qui', 'Devis', 'Client', 'Nom', 'Email', 'Lien (mineur)', 'Date', 'Version clauses', 'Échéance (5 ans)', 'Statut', ...Object.values(USE_NAMES)];
   const csv = '\ufeff' + [head, ...rows].map(r => r.map(csvCell).join(';')).join('\n');
   const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' })); a.download = 'bunkaio-registre-droits-image-' + today() + '.csv'; a.click();
 }
