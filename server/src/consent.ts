@@ -59,7 +59,8 @@ export async function ensureSignedPdf(env: Env, q: Quote): Promise<{ bytes: Uint
   if (existing) return { bytes: new Uint8Array(existing), hash: q.signature?.pdfHash ?? '', created: false };
   if (q.status !== 'signe' || !q.signature) return null;
   const legal = await getFrozenLegal(env, q.id);
-  const bytes = await buildSignedPdf({ quote: q, legal, documentHtml: legal?.html ?? fallbackHtml(q), generatedAt: new Date().toISOString(), quoteHash: q.signature.hash || (await quoteHash(q)), log: await getConsentLog(env, q.id) });
+  const sigImg = q.signature.sigImage ? await env.ACCOUNTS_KV.get('quotesigimg:' + q.id, 'arrayBuffer') : null;
+  const bytes = await buildSignedPdf({ signatureImage: sigImg ? new Uint8Array(sigImg) : undefined, quote: q, legal, documentHtml: legal?.html ?? fallbackHtml(q), generatedAt: new Date().toISOString(), quoteHash: q.signature.hash || (await quoteHash(q)), log: await getConsentLog(env, q.id) });
   const hash = [...new Uint8Array(await crypto.subtle.digest('SHA-256', bytes))].map((x) => x.toString(16).padStart(2, '0')).join('');
   await env.ACCOUNTS_KV.put(PDFKEY + q.id, bytes);
   q.signature.pdfHash = hash;

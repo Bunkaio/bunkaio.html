@@ -62,6 +62,8 @@ export interface PdfInput {
   generatedAt: string;
   quoteHash: string;
   log: ConsentEvent[];
+  /** Signature manuscrite (PNG) saisie à la signature en ligne. */
+  signatureImage?: Uint8Array;
 }
 
 export async function buildSignedPdf(input: PdfInput): Promise<Uint8Array> {
@@ -129,6 +131,16 @@ export async function buildSignedPdf(input: PdfInput): Promise<Uint8Array> {
     ['Empreinte du devis (SHA-256)', input.quoteHash],
   ];
   for (const [k, v] of rows) line(`${k} : ${v}`, { size: 8.5, indent: 8 });
+  if (input.signatureImage) {
+    try {
+      const img = await pdf.embedPng(input.signatureImage);
+      const w = 180, hgt = Math.min(70, (img.height / img.width) * w);
+      y -= 8; ensure(hgt + 24);
+      line('Signature manuscrite du signataire (mention « Bon pour accord » saisie)', { size: 8.5, b: true });
+      y -= hgt + 4; page.drawImage(img, { x: M + 8, y, width: w, height: hgt });
+      y -= 6;
+    } catch { /* image illisible : la preuve reste complète sans elle */ }
+  }
   const events = input.log.filter((e) => e.type === 'choix').slice(0, 40);
   if (events.length) {
     y -= 6;

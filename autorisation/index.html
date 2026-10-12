@@ -73,7 +73,7 @@ function render() {
     '<div class="field"><label for="em">Email (pour recevoir la confirmation et pouvoir retirer votre accord)</label><input id="em" type="email" autocomplete="email"></div>' +
     '<label class="row"><input type="checkbox" id="minor"' + (sj && sj.minor ? ' checked' : '') + '><span>La personne photographiée est mineure<small>Un titulaire de l\'autorité parentale ou un tuteur remplit alors ce formulaire.</small></span></label>' +
     '<div id="guard" style="display:none"><div class="field"><label for="gn">Nom et prénom du représentant légal</label><input id="gn"></div><div class="field"><label for="gr">Lien avec le mineur (père, mère, tuteur…)</label><input id="gr"></div></div>' +
-    '<h3 style="font-size:16px;margin:18px 0 4px">Vos choix (facultatifs, indépendants, rien n\'est pré-coché)</h3>' +
+    '<h3 style="font-size:16px;margin:18px 0 4px">Vos choix (une réponse par usage, rien n\'est pré-coché)</h3>' +
     d.legal.uses.map(u => radio('use_' + u.id, u)).join('') +
     '<label class="row"><input type="checkbox" id="ok"><span>Je confirme avoir lu les informations ci-dessus (clauses ' + esc(d.legal.version) + ') et donner mes choix librement.</span></label>' +
     '<div class="err" id="err"></div><button class="btn" id="btn" style="width:100%" onclick="submitForm()">Enregistrer mes choix</button>' +

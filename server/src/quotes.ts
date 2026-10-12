@@ -82,6 +82,9 @@ export interface QuoteSignature {
   legalVersion?: string;
   snapshotHash?: string;
   pdfHash?: string;
+  /** Mention saisie par le signataire (« Bon pour accord ») et présence d'une signature manuscrite (image dans KV `quotesigimg:<id>`). */
+  mention?: string;
+  sigImage?: boolean;
 }
 
 export interface Quote {

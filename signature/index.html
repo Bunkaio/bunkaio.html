@@ -39,6 +39,13 @@
   .field input { width: 100%; border: 1px solid var(--line); border-radius: 8px; padding: 13px 14px; font: inherit; font-size: 16px; outline: none; }
   .field input:focus { border-color: var(--accent); }
   .err { color: var(--danger); font-size: 13.5px; min-height: 20px; margin: 8px 0; }
+  .sigbox .field { margin: 10px 0 4px; }
+  .sigbox .field label { font-size: 10.5px; }
+  .padwrap { position: relative; border: 1px solid var(--line); border-radius: 8px; background: #fff; touch-action: none; }
+  .padwrap canvas { display: block; width: 100%; height: 150px; cursor: crosshair; touch-action: none; }
+  .padwrap .ph { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--grey); font-size: 13px; pointer-events: none; }
+  .padwrap .clr { position: absolute; top: 6px; right: 8px; font-size: 12px; background: none; border: 0; color: var(--accent); cursor: pointer; text-decoration: underline; }
+  .sigimg { max-width: 100%; height: 70px; object-fit: contain; display: block; margin-top: 8px; }
   .legal { color: var(--grey); font-size: 12px; margin-top: 14px; }
   .loading { text-align: center; color: var(--grey); padding: 60px 0; }
   @media print { header, .actions, .sign, .banner { display: none !important; } body { background: #fff; } main { padding: 0; max-width: none; } }
@@ -75,12 +82,35 @@ function show(q, banner) {
       '<label class="row"><input type="checkbox" id="accept"><span><b>Bon pour accord.</b> J\'ai lu le devis n° ' + esc(q.number) + ' et ses conditions (cession de droits, report et annulation, conditions de réalisation) et je les accepte.</span></label>' +
       (lg ? consentForm() : '<div class="row" style="cursor:default"><span style="flex:1"><b>Utilisation des visuels par BUNKAIO</b> pour son portfolio et sa communication<small>Votre choix n\'a aucune incidence sur la prestation ni sur le prix.</small><span class="radios"><label><input type="radio" name="pf" value="1"> J\'autorise</label><label><input type="radio" name="pf" value="0"> Je refuse</label></span></span></div>') +
       (part ? '<label class="row"><input type="checkbox" id="waiver"><span>Je demande que la prestation commence avant la fin de mon délai de rétractation de 14 jours <small>À cocher si la séance a lieu dans les 14 jours suivant la signature. Si je me rétracte après le début de la prestation, je paie la part déjà réalisée.</small></span></label>' : '') +
-      '<div class="field"><label for="signName">Nom et prénom du signataire</label><input id="signName" autocomplete="name" value="' + esc((q.client || {}).contact || (part ? (q.client || {}).nom : '')) + '"></div>' +
       '<div class="err" id="signErr"></div>' +
       '<button class="btn" id="signBtn" onclick="sign()" style="width:100%">Signer le devis' + (q.abonnement ? '' : ' et recevoir la facture d\'acompte') + '</button>' +
       '<p class="legal">Signature électronique : votre nom, la date et l\'heure, votre adresse IP et l\'empreinte du devis sont enregistrés comme preuve de votre accord. Un exemplaire signé vous est envoyé par email.' + (lg ? ' Vos données de preuve sont conservées 5 ans après la fin de la relation ; vos choix d\'image sont modifiables à tout moment sur bunkaio.com/retrait-autorisation/. Détails : <a href="/confidentialite/">politique de confidentialité</a>.' : '') + '</p></section>';
   }
   main.innerHTML = html;
+  const box = main.querySelector('.dv-sign > div:first-child');
+  if (box && q.status === 'envoye') mountSignature(box, q);
+  else if (box && q.status === 'signe' && SIGIMG) { const im = document.createElement('img'); im.className = 'sigimg'; im.alt = 'Signature manuscrite'; im.src = SIGIMG; box.appendChild(im); }
+}
+
+/* Zone de signature dans le cadre « Le client » du devis : mention « Bon pour accord » saisie, nom, signature manuscrite (doigt ou souris). */
+let SIGIMG = '', padDirty = false;
+function mountSignature(box, q) {
+  const part = (q.client || {}).profil !== 'professionnel';
+  box.classList.add('sigbox');
+  box.style.borderStyle = 'solid';
+  box.innerHTML = '<strong>Le client</strong>' +
+    '<div class="field"><label for="signMention">Écrivez « Bon pour accord »</label><input id="signMention" autocomplete="off" autocapitalize="sentences" placeholder="Bon pour accord"></div>' +
+    '<div class="field"><label for="signName">Nom et prénom du signataire</label><input id="signName" autocomplete="name" value="' + esc((q.client || {}).contact || (part ? (q.client || {}).nom : '')) + '"></div>' +
+    '<div class="field"><label>Votre signature</label><div class="padwrap"><canvas id="sigPad" width="640" height="300"></canvas><div class="ph" id="sigPh">Signez ici avec le doigt ou la souris</div><button type="button" class="clr" id="sigClr">Effacer</button></div></div>';
+  const cv = document.getElementById('sigPad'), ctx = cv.getContext('2d');
+  ctx.lineWidth = 4; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.strokeStyle = '#0a0a0c';
+  padDirty = false; let drawing = false;
+  const pos = e => { const r = cv.getBoundingClientRect(); return { x: (e.clientX - r.left) * cv.width / r.width, y: (e.clientY - r.top) * cv.height / r.height }; };
+  cv.addEventListener('pointerdown', e => { e.preventDefault(); drawing = true; cv.setPointerCapture(e.pointerId); const p = pos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p.x + 0.1, p.y + 0.1); ctx.stroke(); padDirty = true; document.getElementById('sigPh').style.display = 'none'; });
+  cv.addEventListener('pointermove', e => { if (!drawing) return; e.preventDefault(); const p = pos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); });
+  const stop = () => { drawing = false; };
+  cv.addEventListener('pointerup', stop); cv.addEventListener('pointercancel', stop); cv.addEventListener('pointerleave', stop);
+  document.getElementById('sigClr').onclick = () => { ctx.clearRect(0, 0, cv.width, cv.height); padDirty = false; document.getElementById('sigPh').style.display = 'flex'; };
 }
 
 function radio(name, label, hint) {
@@ -88,7 +118,7 @@ function radio(name, label, hint) {
 }
 function consentForm() {
   const uses = (LEGAL && LEGAL.uses) || [];
-  return '<div style="margin-top:18px"><h3 style="font-size:16px;margin-bottom:4px">Utilisation de vos images par BUNKAIO (facultatif)</h3><p class="legal" style="margin:0 0 6px">Chaque choix est indépendant, aucune case n\'est pré-cochée, et votre réponse n\'a aucune incidence sur la prestation ni sur le prix. Vous pouvez changer d\'avis à tout moment.</p>' +
+  return '<div style="margin-top:18px"><h3 style="font-size:16px;margin-bottom:4px">Utilisation de vos images par BUNKAIO</h3><p class="legal" style="margin:0 0 6px">Répondez Oui ou Non à chaque usage. Aucune case n\'est pré-cochée, chaque choix est indépendant, et refuser n\'a aucune incidence sur la prestation ni sur le prix. Vous pouvez changer d\'avis à tout moment.</p>' +
     uses.map(u => radio('use_' + u.id, u.label, u.text)).join('') +
     '<div class="row" style="cursor:default"><span style="flex:1"><b>Qui sera photographié ?</b><small>Les autres personnes devront donner leur propre autorisation (lien individuel envoyé après la signature).</small><span class="radios" style="flex-direction:column;gap:8px">' +
     '<label><input type="radio" name="persons" value="self"> Moi uniquement</label><label><input type="radio" name="persons" value="self_others"> Moi et d\'autres personnes (équipe, famille, modèles…)</label><label><input type="radio" name="persons" value="others"> D\'autres personnes uniquement</label></span></span></div>' +
@@ -102,6 +132,7 @@ async function load() {
     const data = await res.json();
     if (!res.ok || !data.ok) { main.innerHTML = '<div class="banner err"><b>Devis introuvable</b>Ce lien n\'est plus valide. Écrivez-nous à contact@bunkaio.com ou au 07 58 57 31 61.</div>'; return; }
     BIZ = data.business || {};
+    SIGIMG = data.sigImage || '';
     LEGAL = data.legal || null;
     const q = data.quote;
     const banners = {
@@ -120,6 +151,8 @@ async function load() {
 async function sign() {
   const err = document.getElementById('signErr');
   const accept = document.getElementById('accept').checked;
+  const mention = (document.getElementById('signMention') || {}).value || '';
+  const normM = v => v.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z ]/g, ' ').replace(/\s+/g, ' ').trim();
   const lg = !!(LEGAL && Q && Q.legal);
   const pf = document.querySelector('input[name=pf]:checked');
   const imageUse = {};
@@ -131,19 +164,22 @@ async function sign() {
   const waiver = document.getElementById('waiver');
   if (!accept) { err.textContent = 'Cochez « Bon pour accord » pour signer.'; return; }
   if (lg) {
-    if (((LEGAL.uses) || []).some(u => !imageUse[u.id])) { err.textContent = 'Répondez Oui ou Non à chacune des quatre questions sur l\'utilisation de vos images (facultatif pour la prestation, mais nous avons besoin de votre choix).'; return; }
+    if (((LEGAL.uses) || []).some(u => !imageUse[u.id])) { err.textContent = 'Répondez Oui ou Non à chacun des quatre usages de vos images (refuser n\'a aucune incidence sur la prestation).'; return; }
     if (!persons) { err.textContent = 'Indiquez qui sera photographié.'; return; }
   } else if (!pf) { err.textContent = 'Indiquez si vous autorisez l\'utilisation des visuels pour le portfolio.'; return; }
+  if (normM(mention) !== 'bon pour accord') { err.textContent = 'Écrivez « Bon pour accord » dans le cadre « Le client ».'; return; }
   if (name.length < 3) { err.textContent = 'Saisissez votre nom et prénom.'; return; }
+  if (!padDirty) { err.textContent = 'Signez dans le cadre « Votre signature ».'; return; }
   err.textContent = '';
   const btn = document.getElementById('signBtn'); btn.disabled = true; btn.textContent = 'Signature en cours…';
   try {
-    const res = await fetch(WORKER + '/quote/sign', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ d: D, k: K, name, accept: true, ...(lg ? { imageUse, persons, minors: !!document.getElementById('minors').checked } : { portfolio: pf.value === '1' }), retractationWaiver: !!(waiver && waiver.checked) }) });
+    const res = await fetch(WORKER + '/quote/sign', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ d: D, k: K, name, accept: true, mention, sigImg: document.getElementById('sigPad').toDataURL('image/png'), ...(lg ? { imageUse, persons, minors: !!document.getElementById('minors').checked } : { portfolio: pf.value === '1' }), retractationWaiver: !!(waiver && waiver.checked) }) });
     const data = await res.json();
     if (!res.ok || !data.ok) {
-      const msg = { expire: 'Ce devis a expiré.', annule: 'Ce devis a été annulé.', content_changed: 'Ce devis a été modifié : rechargez la page.', invalid_signature: 'Signature incomplète.' }[data.error] || 'La signature n\'a pas pu être enregistrée. Réessayez ou écrivez-nous.';
+      const msg = { expire: 'Ce devis a expiré.', annule: 'Ce devis a été annulé.', content_changed: 'Ce devis a été modifié : rechargez la page.', invalid_signature: 'Signature incomplète.', mention_required: 'Écrivez « Bon pour accord ».', signature_required: 'Signez dans le cadre « Votre signature ».' }[data.error] || 'La signature n\'a pas pu être enregistrée. Réessayez ou écrivez-nous.';
       err.textContent = msg; btn.disabled = false; btn.textContent = lg ? 'Signer et accepter le devis' : 'Signer le devis'; return;
     }
+    SIGIMG = document.getElementById('sigPad').toDataURL('image/png');
     const q = data.quote;
     const grp = q.groupUrl ? '<br><br><b style="display:inline">Autres personnes photographiées :</b> transmettez-leur ce lien pour qu\'elles donnent (ou refusent) leur propre autorisation : <a href="' + esc(q.groupUrl) + '">' + esc(q.groupUrl) + '</a>' : '';
     show(q, '<div class="banner ok"><b>Merci, votre devis est signé ✓</b>' + (q.abonnement ? 'Nous revenons vers vous pour mettre en place votre abonnement.' : q.test ? 'Devis de test : aucune facture d\'acompte n\'est créée.' : data.depositError ? 'Votre facture d\'acompte vous sera envoyée très prochainement.' : 'Votre facture d\'acompte vient de vous être envoyée par email : son règlement confirme la réservation de votre date.') + ' Un exemplaire signé vous est également envoyé.' + grp + '</div>');

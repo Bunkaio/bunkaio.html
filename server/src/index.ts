@@ -964,7 +964,7 @@ async function handleAdminQuote(request: Request, env: Env, headers: Record<stri
   if (action === 'delete') {
     if (q.status !== 'brouillon' && q.status !== 'annule' && !q.test) return jsonResponse({ ok: false, error: 'not_deletable' }, 409, headers);
     await env.ACCOUNTS_KV.delete('quote:' + q.id);
-    if (q.test) await Promise.all(['quotelegal:', 'consentlog:', 'quotepdf:'].map((k) => env.ACCOUNTS_KV.delete(k + q.id)));
+    if (q.test) await Promise.all(['quotelegal:', 'consentlog:', 'quotepdf:', 'quotesigimg:'].map((k) => env.ACCOUNTS_KV.delete(k + q.id)));
     return jsonResponse({ ok: true }, 200, headers);
   }
   const consentReply = await adminConsentAction(env, q, body, headers);
@@ -981,7 +981,8 @@ async function handlePublicQuote(request: Request, env: Env, headers: Record<str
     if (isExpired(q)) { q.status = 'expire'; await putQuote(env, q); }
     if (!q.viewedAt && q.status === 'envoye') { q.viewedAt = new Date().toISOString(); await putQuote(env, q); }
     const legal = q.legal ? await getFrozenLegal(env, q.id) : null;
-    return jsonResponse({ ok: true, quote: publicQuote(q), legal: legal ? { version: legal.version, html: legal.html, uses: legal.uses } : null, business: { address: getBusinessAddress() } }, 200, headers);
+    const sigImg = q.status === 'signe' && q.signature?.sigImage ? await env.ACCOUNTS_KV.get('quotesigimg:' + q.id, 'arrayBuffer') : null;
+    return jsonResponse({ ok: true, quote: publicQuote(q), legal: legal ? { version: legal.version, html: legal.html, uses: legal.uses } : null, sigImage: sigImg ? 'data:image/png;base64,' + bytesToBase64(new Uint8Array(sigImg)) : undefined, business: { address: getBusinessAddress() } }, 200, headers);
   }
   if (path === '/quote/pdf' && request.method === 'GET') {
     const q = await getQuote(env, url.searchParams.get('d') ?? '');
@@ -1005,12 +1006,25 @@ async function handlePublicQuote(request: Request, env: Env, headers: Record<str
     const imageUse = q.legal ? parseImageUse(body.imageUse) : null;
     const persons = body.persons === 'self' || body.persons === 'self_others' || body.persons === 'others' ? body.persons : undefined;
     if (q.legal && (!imageUse || !persons)) return jsonResponse({ ok: false, error: 'consent_incomplete' }, 400, headers);
+    /* Mention « Bon pour accord » saisie + signature manuscrite (PNG) : exigées pour les devis avec clauses d'image. */
+    const normMention = (v: unknown): string => String(v ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z ]/g, ' ').replace(/\s+/g, ' ').trim();
+    let sigPng: Uint8Array | null = null;
+    if (q.legal) {
+      if (normMention(body.mention) !== 'bon pour accord') return jsonResponse({ ok: false, error: 'mention_required' }, 400, headers);
+      const m = /^data:image\/png;base64,([A-Za-z0-9+/=]+)$/.exec(typeof body.sigImg === 'string' ? body.sigImg : '');
+      const b64 = m?.[1] ?? '';
+      if (!m || b64.length > 120_000) return jsonResponse({ ok: false, error: 'signature_required' }, 400, headers);
+      try { sigPng = Uint8Array.from(atob(b64), (c) => c.charCodeAt(0)); } catch { sigPng = null; }
+      if (!sigPng || sigPng.length < 200 || sigPng[0] !== 0x89 || sigPng[1] !== 0x50 || sigPng[2] !== 0x4e || sigPng[3] !== 0x47) return jsonResponse({ ok: false, error: 'signature_required' }, 400, headers);
+    }
     const at = new Date().toISOString();
     const ip = request.headers.get('CF-Connecting-IP') ?? '';
+    if (sigPng) await env.ACCOUNTS_KV.put('quotesigimg:' + q.id, sigPng);
     q.status = 'signe';
     q.signedAt = at;
     q.signedVia = 'en_ligne';
     q.signature = { name, at, ip, ua: (request.headers.get('User-Agent') ?? '').slice(0, 300), portfolio: imageUse ? imageUse.site === 'oui' : body.portfolio === true, retractationWaiver: body.retractationWaiver === true, hash, ...(imageUse ? { imageUse, persons, minors: body.minors === true, legalVersion: q.legal!.version, snapshotHash: q.legal!.snapshotHash } : {}) };
+    if (sigPng) { q.signature.mention = 'Bon pour accord'; q.signature.sigImage = true; }
     q.consent = computeConsent(q);
     await putQuote(env, q);
     if (imageUse) await appendConsent(env, q.id, IMAGE_USES.map((u) => ({ type: 'choix' as const, who: 'client', usage: u, choice: imageUse[u], ip })));
