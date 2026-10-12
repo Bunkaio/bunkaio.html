@@ -23,7 +23,7 @@ function signatureHtml(lang: Lang): string {
   const link = 'color:#d9cdf5;text-decoration:none;';
   return `
         <tr><td style="background:#0a0a0c;padding:30px 32px 26px;">
-          <img src="${LOGO_URL}" alt="Bunkaio" width="104" style="display:block;margin:0 0 18px;border:0;">
+          <img src="${LOGO_URL}" alt="BUNKAIO" width="104" height="47" style="display:block;margin:0 0 18px;border:0;color:#ffffff;font-family:${FONT};font-size:18px;font-weight:700;letter-spacing:0.14em;">
           <p style="margin:0 0 2px;font-size:15px;font-weight:700;color:#ffffff;font-family:${FONT};">Aya Nascimento</p>
           <p style="margin:0 0 14px;font-size:13px;${mute}font-family:${FONT};">${tr(lang, 'Photographe professionnelle · Fondatrice de BUNKAIO', 'Professional photographer · Founder of BUNKAIO')}</p>
           <p style="margin:0 0 4px;font-size:13px;line-height:1.7;${mute}font-family:${FONT};">
@@ -63,7 +63,7 @@ body, table, td, p, h1, div, span, a { font-family: ${FONT}; }
     <tr><td align="center">
       <table role="presentation" width="100%" style="max-width:520px;background:#ffffff;border-radius:10px;overflow:hidden;">
         <tr><td style="background:#0a0a0c;padding:30px 32px;text-align:center;">
-          <img src="${LOGO_URL}" alt="Bunkaio" width="150" style="display:block;margin:0 auto;border:0;">
+          <img src="${LOGO_URL}" alt="BUNKAIO" width="150" height="68" style="display:block;margin:0 auto;border:0;color:#ffffff;font-family:${FONT};font-size:22px;font-weight:700;letter-spacing:0.14em;">
         </td></tr>
         <tr><td style="padding:36px 32px 30px;color:#0a0a0c;font-family:${FONT};">
           ${bodyHtml}

@@ -1389,8 +1389,8 @@ async function openInbox(id) {
   } catch (e) {}
 }
 function inboxDoc(m) {
-  // Corps de l'email dans un cadre isolé : aucun script, images distantes bloquées tant qu'on ne les autorise pas (pisteurs).
-  const csp = `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src data: ${inboxState.images ? 'https: http:' : ''}; style-src 'unsafe-inline'">`;
+  // Corps de l'email dans un cadre isolé : aucun script ; images distantes bloquées tant qu'on ne les autorise pas (pisteurs), sauf celles de bunkaio.com (logo des emails du site).
+  const csp = `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src data: https://bunkaio.com ${inboxState.images ? 'https: http:' : ''}; style-src 'unsafe-inline'">`;
   const base = '<base target="_blank">';
   const body = m.html ? m.html : `<pre style="white-space:pre-wrap;font-family:system-ui,sans-serif;font-size:14px;line-height:1.6">${esc(m.text)}</pre>`;
   return `<!doctype html><html><head><meta charset="utf-8">${csp}${base}<style>body{margin:0;padding:6px;font-family:system-ui,sans-serif;font-size:14px;color:#0a0a0c;word-break:break-word}img{max-width:100%;height:auto}</style></head><body>${body}</body></html>`;
