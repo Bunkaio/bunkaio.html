@@ -5059,7 +5059,7 @@ function renderAccountStepper(){
    plan (nom, prix, inclus) est toujours lu depuis SUBS, jamais dupliqué
    dans le compte, pour rester automatiquement à jour si l'offre change. */
 /* ═══════════════ ESPACE CLIENT / PARTENAIRE — MES SÉANCES ═══════════════
-   Données : USER.seance (saisie dans l'admin, fiche du client → Séance). Sans date (ou séance annulée) : onglet masqué, rien n'est affiché. */
+   Données : USER.seance (saisie dans l'admin, fiche du client → Séance). Onglet toujours visible ; sans date (ou séance annulée), message d'attente et bouton « Réserver ma séance ». */
 function accHM(v){ const m = /^(\d{1,2})\s*(?:h|:)\s*(\d{0,2})/i.exec(String(v || '')); return m ? [Math.min(23, +m[1]), Math.min(59, +(m[2] || 0))] : null; }
 function accDurMin(v){ const s = String(v || ''); let m = /(\d+)\s*h\s*(\d*)/i.exec(s); if (m) return (+m[1]) * 60 + (+(m[2] || 0)); m = /(\d+)\s*min/i.exec(s); return m ? +m[1] : 120; }
 function downloadSeanceIcs(){
@@ -5083,8 +5083,12 @@ function renderAccSeances(){
   const tab = document.getElementById('atab-seances'), el = document.getElementById('accSeancesContent');
   if (!tab || !el || !USER) return;
   const s = USER.seance;
-  if (!s || !s.date || s.statut === 'annulee') { tab.style.display = 'none'; el.innerHTML = ''; return; }
   tab.style.display = '';
+  if (!s || !s.date || s.statut === 'annulee') {
+    const cancelled = !!(s && s.date && s.statut === 'annulee');
+    el.innerHTML = `<div class="acc-info-card acc-subs-empty"><div class="acc-subs-empty-title">${cancelled ? t({fr:'Votre séance a été annulée', en:'Your session has been cancelled'}) : t({fr:'Aucune séance programmée', en:'No session scheduled'})}</div><p class="acc-subs-empty-text">${cancelled ? t({fr:'Les informations de votre prochaine séance apparaîtront ici dès qu\'une nouvelle date sera fixée.', en:'The details of your next session will appear here as soon as a new date is set.'}) : t({fr:'Les informations de votre prochaine séance (date, heure, lieu, ce qu\'il faut prévoir) apparaîtront ici dès qu\'elle sera programmée.', en:'The details of your next session (date, time, location, what to bring) will appear here as soon as it is scheduled.'})}</p><div class="btn-row" style="justify-content:center"><button class="btn btn-solid cta-primary" onclick="goView('quiz')"><span>${t({fr:'Réserver ma séance', en:'Book my session'})}</span></button></div></div>`;
+    return;
+  }
   const loc = LANG === 'fr' ? 'fr-FR' : 'en-GB';
   const d = new Date(s.date + 'T12:00:00');
   const now = new Date(); const t0 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
