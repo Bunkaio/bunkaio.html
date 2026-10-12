@@ -4653,7 +4653,7 @@ Object.assign(I18N.en, { 'pf-imm-open':'View full screen', 'pf-cta-quote':'Reque
 const PFI = { el: null, c: 0, p: 0, v: -1, photos: {}, open: false };
 const pfiPages = () => Math.max(1, Math.ceil((PFI.photos[PF_CATS[PFI.c].id] || []).length / 16));
 function openPfImmersive(catId){
-  if (PFI.open) return;
+  if (PFI.open || window.innerWidth > 760) return; /* réservé au mobile */
   const act = document.querySelector('#pfTabs .pf-cat-tab.active');
   const id = catId || (act && act.dataset.cat) || PF_CATS[0].id;
   PFI.c = Math.max(0, PF_CATS.findIndex(c => c.id === id)); PFI.p = 0; PFI.v = -1; PFI.open = true;
@@ -4747,6 +4747,7 @@ function closePfImmersive(){
   /* La grille de la page suit la dernière catégorie vue en plein écran. */
   if (currentView === 'portfolio') selectPfTab(PF_CATS[PFI.c].id);
 }
+window.addEventListener('resize', () => { if (PFI.open && window.innerWidth > 760) history.back(); });
 document.addEventListener('keydown', e => {
   if (!PFI.open) return;
   const viewing = PFI.v >= 0, n = (PFI.photos[PF_CATS[PFI.c].id] || []).length;

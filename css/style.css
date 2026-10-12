@@ -5074,10 +5074,11 @@ html, body { touch-action: pan-x pan-y; }
 }
 
 /* ═══ Portfolio plein écran (immersif) — couche par-dessus la page, planches de 4 × 4 ═══ */
-.pf-imm-open { display: inline-flex; align-items: center; gap: 9px; margin: 0 0 22px; padding: 11px 18px; border-radius: 999px; border: 1px solid rgba(10,10,12,0.18); background: rgba(255,255,255,0.92); color: #0a0a0c; font: 600 12px var(--font, 'DM Sans', sans-serif); letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; box-shadow: 0 8px 22px rgba(10,10,12,0.14); transition: transform .25s ease, box-shadow .25s ease; }
+.pf-imm-open { display: none; align-items: center; gap: 9px; margin: 0 0 22px; padding: 11px 18px; border-radius: 999px; border: 1px solid rgba(10,10,12,0.18); background: rgba(255,255,255,0.92); color: #0a0a0c; font: 600 12px var(--font, 'DM Sans', sans-serif); letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; box-shadow: 0 8px 22px rgba(10,10,12,0.14); transition: transform .25s ease, box-shadow .25s ease; }
 .pf-imm-open:hover, .pf-imm-open:focus-visible { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(10,10,12,0.2); outline: none; }
 .pf-imm-open svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-@media (max-width: 760px) { .pf-imm-open { display: flex; width: 100%; justify-content: center; margin: 4px 0 6px; } }
+/* Plein écran réservé au mobile : le bouton n'existe pas sur ordinateur. */
+@media (max-width: 760px) { .pf-imm-open { display: flex; align-items: center; width: 100%; justify-content: center; margin: 4px 0 6px; } }
 html.pfi-lock, html.pfi-lock body { overflow: hidden !important; }
 .pfi { position: fixed; inset: 0; z-index: 9000; display: flex; flex-direction: column; color: #fff; background: radial-gradient(ellipse 90% 60% at 50% 0%, #251f33 0%, #0c0a11 60%); padding: env(safe-area-inset-top, 0px) 0 env(safe-area-inset-bottom, 0px); animation: pfiIn .35s ease both; font-family: inherit; }
 @keyframes pfiIn { from { opacity: 0; } }
