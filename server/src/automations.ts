@@ -176,7 +176,7 @@ async function sendAdminDeliveryAlerts(env: Env): Promise<void> {
 async function processQuotes(env: Env): Promise<void> {
   const today = parisDate(0);
   for (const q of await listQuotes(env)) {
-    if (q.status !== 'envoye' || isDemo(q.email)) continue;
+    if (q.status !== 'envoye' || q.test || isDemo(q.email)) continue;
     if (q.validUntil < today) { q.status = 'expire'; await putQuote(env, q); continue; }
     if (q.reminderSentAt || !q.sentAt || Date.now() - Date.parse(q.sentAt) < 5 * DAY) continue;
     try {

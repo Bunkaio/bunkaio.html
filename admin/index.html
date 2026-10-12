@@ -488,6 +488,7 @@
         <div class="toolbar">
           <div class="chips" id="qChips"></div>
           <span class="grow"></span>
+          <button class="btn ghost sm" onclick="createTestQuote()" title="Crée un devis fictif et l'envoie à l'adresse de votre choix : parcours complet sans facture Stripe">Créer un devis de test</button>
           <button class="btn sm" onclick="openQuote()">+ Nouveau devis</button>
         </div>
         <div id="qTable"></div>
@@ -810,6 +811,7 @@ async function loadDashboard() {
     const { res, data } = await api('/admin/dashboard');
     if (!res.ok || !data.ok) throw new Error(data.error || 'erreur ' + res.status);
     DB = data;
+    DB.testQuotes = (DB.quotes || []).filter(q => q.test); DB.quotes = (DB.quotes || []).filter(q => !q.test);
     $('emailList').innerHTML = DB.contacts.map(c => `<option value="${esc(c.email)}">${esc(c.name)}</option>`).join('');
     renderAll();
     if (data.errors && data.errors.length) toast('Données partielles : ' + data.errors.join(', '));
@@ -1836,22 +1838,23 @@ function qLi(q) {
   return `<div class="li click" onclick="openQuote('${esc(q.id)}')"><div class="ic ${q.status === 'signe' ? 'ok' : q.status === 'envoye' ? 'warn' : ''}">📝</div><div class="tx"><b>N° ${esc(q.number)} · ${esc(q.prestation || 'Sans titre')}</b><div class="d">${esc(q.client && q.client.nom)} · ${q.status === 'signe' ? 'signé ' + fdate(q.signedAt) : q.status === 'envoye' ? 'envoyé ' + fdate(q.sentAt) + (q.viewedAt ? ' · consulté' : '') : 'créé ' + fdate(q.createdAt)}</div></div><div class="act" style="text-align:right"><b>${eur(q.totalHT)}</b><div><span class="badge ${st[1]}">${st[0]}</span> ${imgBadge(q)}</div></div></div>`;
 }
 function renderQuotes() {
-  const all = DB.quotes || [];
+  const real = DB.quotes || [];
+  const all = real.concat(DB.testQuotes || []);
   const month = today().slice(0, 7);
-  const sent = all.filter(q => ['envoye', 'signe', 'refuse', 'expire'].includes(q.status));
-  const signed = all.filter(q => q.status === 'signe');
+  const sent = real.filter(q => ['envoye', 'signe', 'refuse', 'expire'].includes(q.status));
+  const signed = real.filter(q => q.status === 'signe');
   $('qKpis').innerHTML = [
     ['dark', 'Signés ce mois', eur(signed.filter(q => (q.signedAt || '').startsWith(month)).reduce((t, q) => t + q.totalHT, 0)), signed.filter(q => (q.signedAt || '').startsWith(month)).length + ' devis'],
-    ['', 'En attente de signature', all.filter(q => q.status === 'envoye').length, eur(all.filter(q => q.status === 'envoye').reduce((t, q) => t + q.totalHT, 0)) + ' en jeu'],
+    ['', 'En attente de signature', real.filter(q => q.status === 'envoye').length, eur(real.filter(q => q.status === 'envoye').reduce((t, q) => t + q.totalHT, 0)) + ' en jeu'],
     ['', 'Taux de signature', sent.length ? Math.round(signed.length / sent.length * 100) + ' %' : '—', signed.length + ' / ' + sent.length + ' envoyés'],
-    ['', 'Brouillons', all.filter(q => q.status === 'brouillon').length, 'À finaliser et envoyer'],
+    ['', 'Brouillons', real.filter(q => q.status === 'brouillon').length, 'À finaliser et envoyer'],
   ].map(([cls, l, n, sub]) => `<div class="kpi ${cls}"><div class="l">${l}</div><div class="n">${n}</div><div class="s">${sub}</div></div>`).join('');
   state.qFilter = state.qFilter || 'all';
   const F = [['all', 'Tous', () => true], ['brouillon', 'Brouillons', q => q.status === 'brouillon'], ['envoye', 'Envoyés', q => q.status === 'envoye'], ['signe', 'Signés', q => q.status === 'signe'], ['clos', 'Expirés / annulés / refusés', q => ['expire', 'annule', 'refuse'].includes(q.status)]];
   $('qChips').innerHTML = F.map(([id, l, f]) => `<button class="chip ${state.qFilter === id ? 'on' : ''}" onclick="state.qFilter='${id}';renderQuotes()">${l}<span class="c">${all.filter(f).length}</span></button>`).join('');
   const list = all.filter(F.find(x => x[0] === state.qFilter)[2]);
   $('qTable').innerHTML = list.length ? `<div class="tbl-wrap"><table><thead><tr><th>N°</th><th>Client</th><th>Prestation</th><th class="num">Montant</th><th>Statut</th><th>Suivi</th><th>Validité</th></tr></thead><tbody>${list.map(q => { const st = Q_STATUS[q.status] || [q.status, 'line'];
-    return `<tr class="click" onclick="openQuote('${esc(q.id)}')"><td><b>${esc(q.number)}</b></td><td class="who"><b>${esc(q.client && q.client.nom)}</b><span>${esc(q.email)}</span></td><td class="small">${esc(q.prestation)}</td><td class="num"><b>${eur(q.totalHT)}</b>${q.abonnement ? '<div class="small muted">/ mois</div>' : ''}</td><td><span class="badge ${st[1]}">${st[0]}</span> ${imgBadge(q)}</td>
+    return `<tr class="click" onclick="openQuote('${esc(q.id)}')"><td><b>${esc(q.number)}</b></td><td class="who"><b>${esc(q.client && q.client.nom)}</b><span>${esc(q.email)}</span></td><td class="small">${esc(q.prestation)}</td><td class="num"><b>${eur(q.totalHT)}</b>${q.abonnement ? '<div class="small muted">/ mois</div>' : ''}</td><td><span class="badge ${st[1]}">${st[0]}</span> ${q.test ? '<span class="badge warn">TEST</span>' : ''} ${imgBadge(q)}</td>
     <td class="small">${q.status === 'signe' ? 'Signé ' + fdate(q.signedAt) + (q.signedVia === 'yousign' ? ' (Yousign)' : q.signedVia === 'manuel' ? ' (manuel)' : ' en ligne') + (q.depositInvoice ? ' · acompte envoyé' : q.abonnement ? '' : ' · <b style="color:var(--danger)">acompte à créer</b>') : q.status === 'envoye' ? 'Envoyé ' + fdate(q.sentAt) + (q.viewedAt ? ' · consulté ' + ago(q.viewedAt) : ' · pas encore ouvert') + (q.reminderSentAt ? ' · relancé' : '') : 'Créé ' + fdate(q.createdAt)}</td><td class="small">${fdate(q.validUntil)}</td></tr>`; }).join('')}</tbody></table></div>` : '<div class="card"><div class="empty">Aucun devis. Créez-en un depuis la fiche d\'un lead ou avec « Nouveau devis ».</div></div>';
 }
 
@@ -1878,7 +1881,7 @@ function quoteFromContact(email) {
   };
 }
 function openQuote(id, email) {
-  if (id) { const q = (DB.quotes || []).find(x => x.id === id); if (!q) { toast('Devis introuvable'); return; } QE = JSON.parse(JSON.stringify(q)); }
+  if (id) { const q = (DB.quotes || []).concat(DB.testQuotes || []).find(x => x.id === id); if (!q) { toast('Devis introuvable'); return; } QE = JSON.parse(JSON.stringify(q)); }
   else QE = quoteFromContact((email || '').toLowerCase());
   drawer = { mode: 'quote', tab: QE.status === 'brouillon' && !id ? 'edit' : (QE.status === 'brouillon' ? 'edit' : 'preview'), email: QE.email };
   renderQuoteDrawer();
@@ -1914,7 +1917,7 @@ function renderQuoteDrawer() {
   const q = QE; const st = Q_STATUS[q.status] || [q.status, 'line'];
   const editable = q.status === 'brouillon';
   $('drHead').innerHTML = `<div class="row1"><div style="min-width:0"><h2>${q.number ? 'Devis n° ' + esc(q.number) : 'Nouveau devis'}</h2><div class="em">${esc(q.client.nom || '')}${q.email ? ' · ' + esc(q.email) : ''}</div></div><button class="close" onclick="closeDrawer()" aria-label="Fermer">✕</button></div>
-    <div class="badges"><span class="badge lav">${st[0]}</span>${q.totalHT ? `<span class="badge">${eur(q.totalHT)}${q.abonnement ? ' / mois' : ''}</span>` : ''}${q.viewedAt ? '<span class="badge">Consulté ' + ago(q.viewedAt) + '</span>' : ''}${q.signedVia ? '<span class="badge">Signé ' + (q.signedVia === 'en_ligne' ? 'en ligne' : q.signedVia) + '</span>' : ''}</div>
+    <div class="badges"><span class="badge lav">${st[0]}</span>${q.test ? '<span class="badge warn">DEVIS DE TEST</span>' : ''}${q.totalHT ? `<span class="badge">${eur(q.totalHT)}${q.abonnement ? ' / mois' : ''}</span>` : ''}${q.viewedAt ? '<span class="badge">Consulté ' + ago(q.viewedAt) + '</span>' : ''}${q.signedVia ? '<span class="badge">Signé ' + (q.signedVia === 'en_ligne' ? 'en ligne' : q.signedVia) + '</span>' : ''}</div>
     <div class="dr-tabs">${(editable ? [['edit', 'Rédaction'], ['preview', 'Aperçu']] : [['preview', 'Devis'], ['track', 'Suivi']]).map(([id, l]) => `<button class="${drawer.tab === id ? 'on' : ''}" onclick="setQTab('${id}')">${l}</button>`).join('')}</div>`;
   if (drawer.tab === 'edit') $('drBody').innerHTML = quoteForm(q);
   else if (drawer.tab === 'track') $('drBody').innerHTML = quoteTrack(q);
@@ -1927,10 +1930,11 @@ function renderQuoteDrawer() {
   } else {
     btns.push(`<button class="btn ghost" onclick="printQuote()">Imprimer / PDF</button>`);
     if (q.status === 'envoye') btns.push(`<button class="btn ghost" onclick="quoteAction('resend')">Renvoyer l'email</button>`, `<button class="btn ghost" onclick="copyLink()">Copier le lien</button>`, `<button class="btn" onclick="markSigned()">Marquer signé…</button>`, `<button class="btn ghost" onclick="quoteAction('refuse')">Refusé</button>`, `<button class="btn ghost" style="color:var(--danger)" onclick="quoteAction('cancel')">Annuler</button>`);
-    if (q.status === 'signe' && !q.depositInvoice && !q.abonnement) btns.push(`<button class="btn" onclick="quoteAction('create-deposit')">Créer et envoyer l'acompte</button>`);
+    if (q.status === 'signe' && !q.test && !q.depositInvoice && !q.abonnement) btns.push(`<button class="btn" onclick="quoteAction('create-deposit')">Créer et envoyer l'acompte</button>`);
     if (q.depositInvoice) btns.push(`<a class="btn ghost" href="${esc(q.depositInvoice.url)}" target="_blank" rel="noopener">Facture d'acompte</a>`);
     btns.push(`<button class="btn ghost" onclick="quoteAction('duplicate')">Dupliquer</button>`);
-    if (q.status === 'annule') btns.push(`<button class="btn ghost" style="color:var(--danger)" onclick="quoteAction('delete')">Supprimer</button>`);
+    if (q.test) btns.push(`<button class="btn ghost" style="color:var(--danger)" onclick="quoteAction('delete')">Supprimer ce test</button>`);
+    if (q.status === 'annule' && !q.test) btns.push(`<button class="btn ghost" style="color:var(--danger)" onclick="quoteAction('delete')">Supprimer</button>`);
     if (contactByEmail(q.email)) btns.push(`<button class="btn ghost" onclick="openDrawer('${esc(q.email)}')">Fiche client</button>`);
   }
   $('drFoot').innerHTML = btns.join('') + '<div id="drMsg"></div>';
@@ -2073,6 +2077,23 @@ async function quoteAction(action, skipConfirm) {
     drawer.tab = QE.status === 'brouillon' ? 'edit' : (action === 'send' ? 'track' : drawer.tab === 'edit' ? 'preview' : drawer.tab);
     await loadDashboard(); renderQuoteDrawer();
     if (data.url && (action === 'send' || action === 'resend')) $('drMsg').innerHTML = `<div class="msg ${data.emailSent ? 'ok' : 'warn'}">${data.emailSent ? 'Email envoyé.' : 'Email non envoyé : transmettez le lien.'} Lien : <code style="word-break:break-all">${esc(data.url)}</code></div>`;
+  } catch (e) {}
+}
+/* Devis de test : fiche fictive envoyée à l'adresse choisie ; parcours complet (email, signature, autorisations, PDF) sans facture Stripe ni numéro officiel. */
+async function createTestQuote() {
+  const last = lsGet('bunkaio_test_email', '');
+  const email = (prompt('Adresse email qui recevra le devis de test (la vôtre) :', last) || '').trim().toLowerCase();
+  if (!email) return;
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { toast('Adresse email invalide'); return; }
+  lsSet('bunkaio_test_email', email);
+  const t = TPL.part || Object.values(TPL)[0];
+  const sample = { email, lang: 'fr', template: TPL.part ? 'part' : Object.keys(TPL)[0], client: { nom: 'Client Test', profil: 'particulier', contact: 'Client Test', adresse: '1 rue du Test, 34000 Montpellier' }, prestation: (t.prestation || 'Séance photo') + ' (TEST)', contenu: '10 photos retouchées — devis fictif pour tester la signature et les autorisations d\'image.', seance: { date: addDays(21), heure: '14h00', lieu: 'Montpellier' }, delai: '7 jours', totalHT: 100, acomptePct: 30, droits: { destination: t.destination || 'Usage web et réseaux sociaux du client', duree: t.duree || '5 ans à compter de la livraison', territoire: 'Monde entier (diffusion en ligne)', exclusivite: 'Non exclusive' }, report: BunkaioDevis.REPORT_STD, conditions: (t.real || []).slice(), validUntil: addDays(30) };
+  try {
+    const { res, data } = await api('/admin/quote', { method: 'POST', body: JSON.stringify({ action: 'create-test', quote: sample, legal: BunkaioDevis.legalPack(sample, DB.business || {}) }) });
+    if (!res.ok || !data.ok) { toast('Erreur : ' + (data.error || res.status)); return; }
+    await loadDashboard(); openQuote(data.quote.id); drawer.tab = 'track'; renderQuoteDrawer();
+    QE._url = data.url;
+    $('drMsg').innerHTML = `<div class="msg ${data.emailSent ? 'ok' : 'warn'}">${data.emailSent ? 'Devis de test envoyé à ' + esc(email) + '.' : 'Email non envoyé : utilisez le lien.'} Lien : <code style="word-break:break-all">${esc(data.url)}</code><br>Aucune facture Stripe ne sera créée. Supprimez-le quand vous avez fini.</div>`;
   } catch (e) {}
 }
 async function markSigned() {

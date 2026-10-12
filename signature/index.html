@@ -66,7 +66,7 @@ function show(q, banner) {
   const doc = LEGAL && q.legal ? '<div class="dv">' + LEGAL.html.replace(/^<div class="dv">/, '').replace(/<\/div>\s*$/, '') + BunkaioDevis.signBlock(q) + BunkaioDevis.consentBlock(q) + '</div>' : BunkaioDevis.render(q, BIZ);
   const lg = !!(LEGAL && q.legal);
   const dep = Math.round(q.totalHT * (q.acomptePct || 30)) / 100;
-  let html = banner || '';
+  let html = (q.test ? '<div class="banner info"><b>Devis de TEST</b>Aucune facture ni aucun paiement ne sera créé. Les autorisations et le PDF suivent le parcours réel.</div>' : '') + (banner || '');
   html += '<div class="actions"><button class="btn ghost" onclick="window.print()">Imprimer / enregistrer en PDF</button>' + (signed && lg ? '<a class="btn ghost" href="' + WORKER + '/quote/pdf?d=' + encodeURIComponent(D) + '&k=' + encodeURIComponent(K) + '" target="_blank" rel="noopener">Télécharger le PDF signé</a>' : '') + (signed && q.depositUrl ? '<a class="btn" href="' + esc(q.depositUrl) + '" target="_blank" rel="noopener">Régler l\'acompte de ' + eur(q.depositInvoice ? q.depositInvoice.amount : dep) + '</a>' : '') + '</div>';
   html += doc;
   if (q.status === 'envoye') {
@@ -146,7 +146,7 @@ async function sign() {
     }
     const q = data.quote;
     const grp = q.groupUrl ? '<br><br><b style="display:inline">Autres personnes photographiées :</b> transmettez-leur ce lien pour qu\'elles donnent (ou refusent) leur propre autorisation : <a href="' + esc(q.groupUrl) + '">' + esc(q.groupUrl) + '</a>' : '';
-    show(q, '<div class="banner ok"><b>Merci, votre devis est signé ✓</b>' + (q.abonnement ? 'Nous revenons vers vous pour mettre en place votre abonnement.' : data.depositError ? 'Votre facture d\'acompte vous sera envoyée très prochainement.' : 'Votre facture d\'acompte vient de vous être envoyée par email : son règlement confirme la réservation de votre date.') + ' Un exemplaire signé vous est également envoyé.' + grp + '</div>');
+    show(q, '<div class="banner ok"><b>Merci, votre devis est signé ✓</b>' + (q.abonnement ? 'Nous revenons vers vous pour mettre en place votre abonnement.' : q.test ? 'Devis de test : aucune facture d\'acompte n\'est créée.' : data.depositError ? 'Votre facture d\'acompte vous sera envoyée très prochainement.' : 'Votre facture d\'acompte vient de vous être envoyée par email : son règlement confirme la réservation de votre date.') + ' Un exemplaire signé vous est également envoyé.' + grp + '</div>');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   } catch (e) { err.textContent = 'Connexion impossible. Réessayez.'; btn.disabled = false; btn.textContent = lg ? 'Signer et accepter le devis' : 'Signer le devis'; }
 }

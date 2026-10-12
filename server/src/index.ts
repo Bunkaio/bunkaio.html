@@ -841,6 +841,7 @@ const SIGN_URL = (q: Quote): string => `https://bunkaio.com/signature/?d=${q.id}
 
 /** Crée et envoie la facture d'acompte d'un devis signé (fiche Stripe créée si besoin). */
 async function depositForQuote(env: Env, q: Quote): Promise<void> {
+  if (q.test) return; // devis de test : jamais de facture Stripe
   const stripe = createStripeClient(env.STRIPE_SECRET_KEY);
   await ensureCustomer(stripe, { email: q.email, name: q.client.nom, lang: q.lang, phone: q.client.telephone });
   const result = await createDepositInvoice(stripe, { email: q.email, totalAmountEur: q.totalHT, description: `Devis n° ${q.number} — ${q.prestation}` });
@@ -867,6 +868,28 @@ async function handleAdminQuote(request: Request, env: Env, headers: Record<stri
       return reply(merged);
     }
     return reply(await createQuote(env, data));
+  }
+  if (action === 'create-test') {
+    /* Devis de test : parcours complet (email, signature, autorisations, PDF) sans Stripe ni numéro de la séquence officielle. */
+    const data = cleanQuoteInput((body.quote ?? {}) as Record<string, unknown>);
+    const fl = await freezeLegal(body.legal);
+    if (!data || !fl) return jsonResponse({ ok: false, error: 'invalid_quote' }, 400, headers);
+    const now = new Date().toISOString();
+    const id = `q-${newToken(8)}`;
+    const q = { ...data, id, number: `TEST-${Math.floor(1000 + Math.random() * 9000)}`, token: '', status: 'brouillon', createdAt: now, updatedAt: now, test: true } as Quote;
+    await putFrozenLegal(env, q.id, fl);
+    q.legal = { version: fl.version, snapshotHash: fl.hash, frozenAt: fl.at };
+    q.groupToken = newToken(12);
+    await prepareSend(q);
+    await putQuote(env, q);
+    try {
+      const m = buildQuoteEmail({ customerName: q.client.contact || q.client.nom, number: q.number, prestation: q.prestation, totalHT: q.totalHT, validUntil: q.validUntil, url: SIGN_URL(q), abonnement: q.abonnement, lang: q.lang, space: await detectSpace(env, q.email) });
+      await sendEmail(env, q.email, '[TEST] ' + m.subject, m.html, m.text);
+      return reply(q, 200, { emailSent: true, url: SIGN_URL(q) });
+    } catch (err) {
+      console.error('[devis] email de test non envoyé', err);
+      return reply(q, 200, { emailSent: false, url: SIGN_URL(q) });
+    }
   }
   const q = typeof body.id === 'string' ? await getQuote(env, body.id) : null;
   if (!q) return jsonResponse({ ok: false, error: 'not_found' }, 404, headers);
@@ -934,13 +957,14 @@ async function handleAdminQuote(request: Request, env: Env, headers: Record<stri
     return reply(q);
   }
   if (action === 'duplicate') {
-    const { id: _i, number: _n, token: _t, status: _s, createdAt: _c, updatedAt: _u, sentAt: _se, viewedAt: _v, signedAt: _si, closedAt: _cl, contentHash: _h, signature: _sg, signedVia: _sv, depositInvoice: _d, reminderSentAt: _r, legal: _lg, consent: _cn, subjects: _sj, groupToken: _gt, ...content } = q;
+    const { id: _i, number: _n, token: _t, status: _s, createdAt: _c, updatedAt: _u, sentAt: _se, viewedAt: _v, signedAt: _si, closedAt: _cl, contentHash: _h, signature: _sg, signedVia: _sv, depositInvoice: _d, reminderSentAt: _r, legal: _lg, consent: _cn, subjects: _sj, groupToken: _gt, test: _ts, ...content } = q;
     const copy = await createQuote(env, { ...content, validUntil: new Date(Date.now() + 30 * 864e5).toISOString().slice(0, 10) });
     return reply(copy);
   }
   if (action === 'delete') {
-    if (q.status !== 'brouillon' && q.status !== 'annule') return jsonResponse({ ok: false, error: 'not_deletable' }, 409, headers);
+    if (q.status !== 'brouillon' && q.status !== 'annule' && !q.test) return jsonResponse({ ok: false, error: 'not_deletable' }, 409, headers);
     await env.ACCOUNTS_KV.delete('quote:' + q.id);
+    if (q.test) await Promise.all(['quotelegal:', 'consentlog:', 'quotepdf:'].map((k) => env.ACCOUNTS_KV.delete(k + q.id)));
     return jsonResponse({ ok: true }, 200, headers);
   }
   const consentReply = await adminConsentAction(env, q, body, headers);
@@ -1000,7 +1024,7 @@ async function handlePublicQuote(request: Request, env: Env, headers: Record<str
     }
     try {
       const m = buildQuoteSignedEmail({ customerName: q.client.contact || q.client.nom, number: q.number, url: SIGN_URL(q), depositAmount: q.depositInvoice?.amount, depositUrl: q.depositInvoice?.url, abonnement: q.abonnement, lang: q.lang, space: await detectSpace(env, q.email), ...(imageUse ? { consents: IMAGE_USES.map((u) => ({ label: useLabel(u), yes: imageUse[u] === 'oui' })), legalVersion: q.legal!.version, groupUrl: persons !== 'self' || body.minors === true ? groupUrl(q) : undefined, pdfAttached: !!pdfBase64 } : {}) });
-      await sendEmail(env, q.email, m.subject, m.html, m.text, undefined, pdfBase64 ? { attachments: [{ filename: `devis-${q.number}-signe.pdf`, content: pdfBase64 }] } : undefined);
+      await sendEmail(env, q.email, (q.test ? '[TEST] ' : '') + m.subject, m.html, m.text, undefined, pdfBase64 ? { attachments: [{ filename: `devis-${q.number}-signe.pdf`, content: pdfBase64 }] } : undefined);
     } catch (err) { console.error('[devis] confirmation non envoyée', err); }
     await notifyAdmin(env, { title: `Devis n° ${q.number} signé`, body: `${q.client.nom} · ${q.totalHT.toFixed(2)} €`, url: '/admin/#quotes' });
     try {

@@ -122,6 +122,8 @@ export interface Quote {
   groupToken?: string;
   depositInvoice?: { id: string; url: string; amount: number };
   reminderSentAt?: string;
+  /** Devis de test créé depuis l'admin : aucune facture Stripe, numérotation hors séquence, exclu des indicateurs. */
+  test?: boolean;
 }
 
 const PREFIX = 'quote:';
