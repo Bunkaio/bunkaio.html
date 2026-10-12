@@ -5423,3 +5423,18 @@ footer > .cst-foot canvas { transform: none; }
   #pfTabs .pf-cat-tab:hover, #pfTabs .pf-cat-tab.active { color: #fff; }
   #pfTabs .pf-cat-tab::after { background: #fff; }
 }
+
+/* Pied de page — « Construire mon projet » : la lueur n'est plus coupée (le bandeau ne rogne plus son contenu) et devient un halo
+   violet doux et régulier tout autour du bouton, qui s'intensifie et « respire » légèrement au survol. */
+footer .footer-cta-row.has-cst { overflow: visible; }
+footer .footer-cta-row .hero-start {
+  border: 1px solid rgba(214,201,247,0.55);
+  box-shadow: 0 0 0 1px rgba(214,201,247,0.12), 0 0 18px 2px rgba(190,170,240,0.35), 0 0 46px 6px rgba(150,120,205,0.22), inset 0 1px 0 rgba(255,255,255,0.18);
+  transition: box-shadow 0.45s ease, border-color 0.45s ease, transform 0.45s ease;
+}
+footer .footer-cta-row .hero-start:hover, footer .footer-cta-row .hero-start:focus-visible {
+  border-color: rgba(214,201,247,0.9); transform: translateY(-1px);
+  box-shadow: 0 0 0 1px rgba(214,201,247,0.28), 0 0 24px 4px rgba(200,182,245,0.55), 0 0 70px 12px rgba(150,120,205,0.32), inset 0 1px 0 rgba(255,255,255,0.25);
+}
+@media (prefers-reduced-motion: no-preference) { footer .footer-cta-row .hero-start { animation: ftGlow 4.5s ease-in-out infinite; } footer .footer-cta-row .hero-start:hover { animation: none; } }
+@keyframes ftGlow { 50% { box-shadow: 0 0 0 1px rgba(214,201,247,0.2), 0 0 22px 3px rgba(190,170,240,0.45), 0 0 56px 9px rgba(150,120,205,0.28), inset 0 1px 0 rgba(255,255,255,0.18); } }
