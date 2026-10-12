@@ -24,6 +24,7 @@ import {
   buildQuoteEmail,
   buildQuoteSignedEmail,
   buildAdminAlertEmail,
+  buildQuoteSignedAdminEmail,
   buildAcknowledgementEmail,
   buildSeanceEmail,
   buildAccessCodeEmail,
@@ -1042,14 +1043,13 @@ async function handlePublicQuote(request: Request, env: Env, headers: Record<str
     } catch (err) { console.error('[devis] confirmation non envoyée', err); }
     await notifyAdmin(env, { title: `Devis n° ${q.number} signé`, body: `${q.client.nom} · ${q.totalHT.toFixed(2)} €`, url: '/admin/#quotes' });
     try {
-      const a = buildAdminAlertEmail({
-        subject: `✍️ Devis n° ${q.number} signé — ${q.client.nom} (${q.totalHT.toFixed(2)} €)`,
-        lines: [
-          `Devis n° ${q.number} signé en ligne par ${name} le ${new Date(at).toLocaleString('fr-FR', { timeZone: 'Europe/Paris' })}.`,
-          `Client : ${q.client.nom} <${q.email}> — ${q.prestation}`,
-          q.abonnement ? 'Abonnement : à mettre en place (pas de facture d\'acompte automatique).' : depositError ? '⚠ La facture d\'acompte n\'a pas pu être créée : créez-la depuis le tableau de bord (Devis → Créer l\'acompte).' : `Facture d'acompte de ${(q.depositInvoice?.amount ?? 0).toFixed(2)} € envoyée automatiquement.`,
-          imageUse ? `Droit à l'image (clauses ${q.legal!.version}) : ${IMAGE_USES.map((u) => `${useLabel(u)} ${imageUse[u] === 'oui' ? 'OUI' : 'non'}`).join(' · ')}${persons !== 'self' || body.minors === true ? ' — autres personnes photographiées' + (body.minors === true ? ' (dont mineur)' : '') + ' : autorisations individuelles à suivre dans l\'admin' : ''}` : `Portfolio : ${q.signature.portfolio ? 'autorisé' : 'refusé'}${q.client.profil === 'particulier' ? ` · Exécution avant fin de rétractation : ${q.signature.retractationWaiver ? 'demandée' : 'non demandée'}` : ''}`,
-        ],
+      const a = buildQuoteSignedAdminEmail({
+        number: q.number, test: q.test, signerName: name, signedAtLabel: new Date(at).toLocaleString('fr-FR', { timeZone: 'Europe/Paris', dateStyle: 'long', timeStyle: 'medium' }),
+        clientName: q.client.nom, clientEmail: q.email, prestation: q.prestation, totalHT: q.totalHT, mode: 'Signature en ligne (lien personnel)',
+        deposit: q.test ? { kind: 'test' } : q.abonnement ? { kind: 'abonnement' } : depositError ? { kind: 'error' } : { kind: 'sent', amount: q.depositInvoice?.amount ?? 0 },
+        handwritten: !!q.signature?.sigImage, retractationWaiver: q.signature?.retractationWaiver, particulier: q.client.profil === 'particulier',
+        image: imageUse ? { version: q.legal!.version, uses: IMAGE_USES.map((u) => ({ label: useLabel(u), yes: imageUse[u] === 'oui' })), persons: persons === 'self' ? 'Le signataire uniquement' : persons === 'self_others' ? 'Le signataire et d\'autres personnes' : 'D\'autres personnes uniquement', minors: body.minors === true, othersToCollect: persons !== 'self' || body.minors === true } : undefined,
+        adminUrl: 'https://bunkaio.com/admin/#quotes',
       });
       await sendEmail(env, env.ADMIN_NOTIFICATION_EMAIL, a.subject, a.html, a.text);
     } catch (err) { console.error('[devis] alerte admin non envoyée', err); }

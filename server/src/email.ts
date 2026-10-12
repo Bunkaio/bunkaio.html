@@ -656,6 +656,68 @@ export function buildAdminAlertEmail(params: { subject: string; lines: string[] 
   return { subject: params.subject, html, text: params.lines.join('\n') };
 }
 
+/** Alerte interne « devis signé » : synthèse en sections (devis, acompte, droit à l'image) au lieu d'un bloc de texte. */
+export interface QuoteSignedAdminParams {
+  number: string;
+  test?: boolean;
+  signerName: string;
+  signedAtLabel: string;
+  clientName: string;
+  clientEmail: string;
+  prestation: string;
+  totalHT: number;
+  mode: string;
+  deposit: { kind: 'sent' | 'error' | 'abonnement' | 'test' | 'none'; amount?: number };
+  handwritten: boolean;
+  image?: { version: string; uses: { label: string; yes: boolean }[]; persons: string; minors: boolean; othersToCollect: boolean };
+  retractationWaiver?: boolean;
+  particulier?: boolean;
+  adminUrl: string;
+}
+export function buildQuoteSignedAdminEmail(p: QuoteSignedAdminParams): { subject: string; html: string; text: string } {
+  const eurFmt = (n: number): string => n.toFixed(2).replace('.', ',') + ' €';
+  const th = `padding:7px 0;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#76717f;width:170px;vertical-align:top;font-family:${FONT};`;
+  const td = `padding:7px 0;font-size:14px;color:#0a0a0c;vertical-align:top;font-family:${FONT};`;
+  const row = (k: string, v: string): string => `<tr><td style="${th}">${escapeHtml(k)}</td><td style="${td}">${v}</td></tr>`;
+  const section = (title: string, inner: string): string => `<tr><td style="padding:22px 28px 6px;"><div style="font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#6e5aa8;font-family:${FONT};padding-bottom:6px;border-bottom:1px solid #ece7f5;">${escapeHtml(title)}</div><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:6px;">${inner}</table></td></tr>`;
+  const pill = (yes: boolean): string => yes
+    ? `<span style="display:inline-block;background:#e7f4ec;color:#2f7d4f;font-weight:700;font-size:12px;padding:3px 10px;border-radius:99px;">✓ Autorisé</span>`
+    : `<span style="display:inline-block;background:#f1eff5;color:#5a5566;font-weight:700;font-size:12px;padding:3px 10px;border-radius:99px;">✕ Refusé</span>`;
+  const depositMsg = p.deposit.kind === 'sent' ? `Facture d'acompte de <b>${eurFmt(p.deposit.amount ?? 0)}</b> envoyée automatiquement au client.`
+    : p.deposit.kind === 'error' ? `<b style="color:#b3261e;">⚠ La facture d'acompte n'a pas pu être créée.</b> Créez-la depuis le tableau de bord (Devis → Créer l'acompte).`
+    : p.deposit.kind === 'abonnement' ? `Abonnement : <b>à mettre en place</b> (pas de facture d'acompte automatique).`
+    : p.deposit.kind === 'test' ? `Devis de test : aucune facture créée.` : 'Aucune facture d\'acompte.';
+  const imageSection = p.image ? section(`Droit à l'image · clauses ${p.image.version}`,
+    p.image.uses.map((u) => row(u.label, pill(u.yes))).join('') +
+    row('Personnes photographiées', escapeHtml(p.image.persons) + (p.image.minors ? ' <b style="color:#b3261e;">· dont au moins un mineur</b>' : '')) +
+    (p.image.othersToCollect ? row('À faire', 'Collecter les autorisations individuelles des autres personnes (fiche du devis → Suivi). <b>N\'utilisez pas leurs images sans autorisation.</b>') : '')) : '';
+  const html = `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#f6f1fc;font-family:${FONT};">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f6f1fc;padding:28px 0;"><tr><td align="center">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;border-radius:10px;overflow:hidden;">
+  <tr><td style="background:#0a0a0c;padding:22px 28px;">
+    <div style="font-size:11px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#d9cdf5;font-family:${FONT};">${p.test ? 'Devis de test · ' : ''}Devis signé</div>
+    <div style="font-size:22px;font-weight:700;color:#ffffff;margin-top:4px;font-family:${FONT};">✍️ Devis n° ${escapeHtml(p.number)}</div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.65);margin-top:2px;font-family:${FONT};">${escapeHtml(p.clientName)} · ${eurFmt(p.totalHT)}</div>
+  </td></tr>
+  ${section('Le devis', row('Client', `<b>${escapeHtml(p.clientName)}</b><br><a href="mailto:${escapeHtml(p.clientEmail)}" style="color:#6e5aa8;text-decoration:none;">${escapeHtml(p.clientEmail)}</a>`) + row('Prestation', escapeHtml(p.prestation)) + row('Montant', `<b>${eurFmt(p.totalHT)}</b> net (TVA non applicable)`))}
+  ${section('La signature', row('Signataire', escapeHtml(p.signerName)) + row('Date et heure', escapeHtml(p.signedAtLabel)) + row('Mode', escapeHtml(p.mode)) + row('Preuve', (p.handwritten ? '✓ Mention « Bon pour accord » saisie et signature manuscrite' : 'Signature électronique (nom, date, IP, empreinte)') + (p.retractationWaiver === undefined || !p.particulier ? '' : `<br>Exécution avant fin de rétractation : <b>${p.retractationWaiver ? 'demandée' : 'non demandée'}</b>`)))}
+  ${section('Facture d\'acompte', row('Statut', depositMsg))}
+  ${imageSection}
+  <tr><td style="padding:24px 28px 28px;"><a href="${escapeHtml(p.adminUrl)}" style="${btnStyle}">Ouvrir le devis dans l'admin</a><div style="font-size:12px;color:#76717f;margin-top:12px;font-family:${FONT};">Le PDF signé est dans la fiche du devis (Suivi → Droit à l'image → PDF signé).</div></td></tr>
+</table></td></tr></table></body></html>`;
+  const text = [
+    `${p.test ? '[TEST] ' : ''}Devis n° ${p.number} signé`,
+    '',
+    'LE DEVIS', `Client : ${p.clientName} <${p.clientEmail}>`, `Prestation : ${p.prestation}`, `Montant : ${eurFmt(p.totalHT)} net`,
+    '', 'LA SIGNATURE', `Signataire : ${p.signerName}`, `Date et heure : ${p.signedAtLabel}`, `Mode : ${p.mode}`, `Preuve : ${p.handwritten ? 'mention + signature manuscrite' : 'signature électronique'}`,
+    '', "FACTURE D'ACOMPTE", depositMsg.replace(/<[^>]+>/g, ''),
+    ...(p.image ? ['', `DROIT À L'IMAGE (clauses ${p.image.version})`, ...p.image.uses.map((u) => `${u.label} : ${u.yes ? 'Autorisé' : 'Refusé'}`), `Personnes photographiées : ${p.image.persons}${p.image.minors ? ' (dont mineur)' : ''}`, ...(p.image.othersToCollect ? ['À faire : collecter les autorisations individuelles des autres personnes.'] : [])] : []),
+    '', `Admin : ${p.adminUrl}`,
+  ].join('\n');
+  return { subject: `${p.test ? '[TEST] ' : ''}✍️ Devis n° ${p.number} signé — ${p.clientName} (${eurFmt(p.totalHT)})`, html, text };
+}
+
 const fmtDate = (lang: Lang, iso: string): string => {
   const d = new Date(`${iso}T12:00:00Z`);
   if (Number.isNaN(d.getTime())) return iso;
