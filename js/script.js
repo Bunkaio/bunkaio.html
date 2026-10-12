@@ -320,6 +320,7 @@ const I18N = {
     'about-step1':'Devis personnalisé sous 48 h','about-step2':'Shooting à la date convenue','about-step3':'Retouche et post-production','about-step4':'Livraison en HD dans une galerie privée, depuis votre espace client',
     'about-cta-portfolio':'Voir le portfolio','about-cta-contact':'Contacter BUNKAIO',
     'ft-about':'À propos','ft-privacy':'Confidentialité et mentions légales','legal-title-privacy':'Politique de confidentialité et mentions légales','acc-h1':'Mon espace','ft-advice':'Conseils photo','ft-review':'Laisser un avis Google','cred-about-link':'Qui est derrière BUNKAIO ? →',
+    'abb-kicker':'À propos','abb-title':'Aya Nascimento, la photographe derrière BUNKAIO','abb-f1':'8+ ans d\'expérience','abb-f2':'200+ projets réalisés','abb-f3':'Diplômée de l\'ETPA · BTS Photographie 2018','abb-f4':'Basée à Montpellier, mobile partout en France','abb-cta':'Découvrir son parcours →',
     'hours-label':'Horaires','hours-value':'Du lundi au samedi, de 9h à 18h','zone-label':'Zone d\'intervention','zone-value':'Basé à Montpellier — intervient à Montpellier et Toulouse',
     'share-sub':'Vous avez travaillé avec BUNKAIO ? Votre avis Google aide d\'autres clients à nous trouver et à nous faire confiance.',
     'share-info-label':'Comment ça marche',
@@ -677,6 +678,7 @@ const I18N = {
     'about-step1':'Personalised quote within 48 hours','about-step2':'Shoot on the agreed date','about-step3':'Retouching and post-production','about-step4':'HD delivery in a private gallery, from your client area',
     'about-cta-portfolio':'See the portfolio','about-cta-contact':'Contact BUNKAIO',
     'ft-about':'About','ft-privacy':'Privacy and legal notice','legal-title-privacy':'Privacy policy and legal notice','acc-h1':'My space','ft-advice':'Photo advice','ft-review':'Leave a Google review','cred-about-link':'Who is behind BUNKAIO? →',
+    'abb-kicker':'About','abb-title':'Aya Nascimento, the photographer behind BUNKAIO','abb-f1':'8+ years of experience','abb-f2':'200+ projects completed','abb-f3':'ETPA graduate · BTS Photography 2018','abb-f4':'Based in Montpellier, available across France','abb-cta':'Discover her background →',
     'hours-label':'Opening hours','hours-value':'Monday to Saturday, 9am to 6pm','zone-label':'Service area','zone-value':'Based in Montpellier — works in Montpellier and Toulouse',
     'share-sub':'Have you worked with BUNKAIO? Your Google review helps other clients find us and trust us.',
     'share-info-label':'How it works',
@@ -2036,7 +2038,7 @@ function goView(v, subTab, opts){
     document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
     document.getElementById('view-' + v).classList.add('active');
     document.body.dataset.view = v;
-    document.querySelectorAll('.nav-link').forEach(l => l.classList.toggle('active', l.dataset.view === ((v === 'service' || v === 'discover') ? 'services' : v === 'about' ? 'contact' : v)));
+    document.querySelectorAll('.nav-link').forEach(l => l.classList.toggle('active', l.dataset.view === ((v === 'service' || v === 'discover') ? 'services' : v)));
     window.scrollTo({ top:0, behavior:'instant' });
     updateHeroScrollFx();
     updateNavScrollState();
@@ -2077,7 +2079,7 @@ function goView(v, subTab, opts){
     if (v === 'discover') renderDiscoverPage();
     if (v === 'legal') { renderFaqAccordion(); renderPrivacyAccordion(); renderCgvAccordion(); renderCookiesAccordion(); renderImageAccordion(); setLegalTab(subTab === 'privacy' || subTab === 'cgv' || subTab === 'cookies' || subTab === 'image' ? subTab : 'faq', true); }
     if (v === 'about') initAboutStats();
-    if (v === 'about') applyAyaPortrait();
+    if (v === 'about' || v === 'home') applyAyaPortrait();
     /* Anime au scroll tous les éléments .rv de la vue active — cohérent
        sur l'ensemble du site, plus besoin de le câbler page par page.
        .reassure-section utilise un seuil de déclenchement plus tardif
@@ -7553,7 +7555,7 @@ initNavScrollState();
   document.body.dataset.view = v;
   history.replaceState({ v }, '', location.pathname + location.hash);
   if (window.track) track('pageview');
-  if (v === 'home') { applySeoMeta('home'); return; }
+  if (v === 'home') { applySeoMeta('home'); applyAyaPortrait(); return; }
   goView(v === 'account' ? 'login' : v, r ? (r.cat || r.slug || r.city || r.sub || null) : null, { initial: true });
 })();
 

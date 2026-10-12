@@ -35,7 +35,7 @@
 <link rel="icon" type="image/png" sizes="64x64" href="/images/favicon-64.png">
 <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
 <link rel="preload" href="fonts/dm-sans-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/style.min.css?v=b48dff2c">
+<link rel="stylesheet" href="css/style.min.css?v=82e3a859">
 
 <script type="application/ld+json">
 {
@@ -430,6 +430,7 @@
       <a class="nav-link" data-view="quiz" href="/devis/" onclick="return navLink(event,'quiz')" data-lang="estimate">Devis</a>
       <a class="nav-link" data-view="services" href="/services/" onclick="return navLink(event,'services')" data-lang="services">Services</a>
       <a class="nav-link" data-view="portfolio" href="/portfolio/" onclick="return navLink(event,'portfolio')" data-lang="portfolio">Portfolio</a>
+      <a class="nav-link nav-about" data-view="about" href="/a-propos/" onclick="return navLink(event,'about')" data-lang="ctab-about">À propos</a>
       <button class="nav-link" data-view="drone" onclick="goView('drone')" data-lang="drone">4K Drone</button>
       <a class="nav-link" data-view="contact" href="/contact/" onclick="return navLink(event,'contact')" data-lang="contact">Contact</a>
       <a class="nav-link" data-view="partners" href="/collaboration/" onclick="return navLink(event,'partners')" data-lang="partners">Collaboration</a>
@@ -452,6 +453,7 @@
     <a class="nav-link mobile-link" data-view="quiz" href="/devis/" onclick="return navLink(event,'quiz')" data-lang="estimate">Devis</a>
     <a class="nav-link mobile-link" data-view="services" href="/services/" onclick="return navLink(event,'services')" data-lang="services">Services</a>
     <a class="nav-link mobile-link" data-view="portfolio" href="/portfolio/" onclick="return navLink(event,'portfolio')" data-lang="portfolio">Portfolio</a>
+    <a class="nav-link mobile-link nav-about" data-view="about" href="/a-propos/" onclick="return navLink(event,'about')" data-lang="ctab-about">À propos</a>
     <button class="nav-link mobile-link" data-view="drone" onclick="goView('drone');closeMobileMenu()" data-lang="drone">4K Drone</button>
     <a class="nav-link mobile-link" data-view="contact" href="/contact/" onclick="return navLink(event,'contact')" data-lang="contact">Contact</a>
     <a class="nav-link mobile-link" data-view="partners" href="/collaboration/" onclick="return navLink(event,'partners')" data-lang="partners">Collaboration</a>
@@ -561,6 +563,22 @@
   </div>
 
   <!-- Espace client & moodboard par commande -->
+  <!-- Mini bannière À propos -->
+  <a class="about-banner rv" href="/a-propos/" onclick="return navLink(event,'about')">
+    <img class="about-banner-photo" src="/images/about/aya-nascimento-photographe-en-studio.webp" width="1672" height="958" loading="lazy" decoding="async" alt="" aria-hidden="true">
+    <span class="about-banner-body">
+      <span class="about-banner-kicker" data-lang="abb-kicker">À propos</span>
+      <span class="about-banner-title" data-lang="abb-title">Aya Nascimento, la photographe derrière BUNKAIO</span>
+      <span class="about-banner-facts">
+        <span data-lang="abb-f1">8+ ans d'expérience</span>
+        <span data-lang="abb-f2">200+ projets réalisés</span>
+        <span data-lang="abb-f3">Diplômée de l'ETPA · BTS Photographie 2018</span>
+        <span data-lang="abb-f4">Basée à Montpellier, mobile partout en France</span>
+      </span>
+    </span>
+    <span class="about-banner-cta" data-lang="abb-cta">Découvrir son parcours →</span>
+  </a>
+
   <div class="cs-slot" id="csSlotHome" data-variant="full"><!--snap--><!--/snap--></div>
 
   <!-- Qualifications & zone d'intervention -->
@@ -2033,6 +2051,6 @@
 <script src="config/articles.en.js?v=f8219609"></script>
 <script src="config/routes.js?v=0b24d8a2"></script>
 <script src="config/media.js?v=c9221980"></script>
-<script src="js/script.min.js?v=4b8270bb"></script>
+<script src="js/script.min.js?v=80d9da55"></script>
 </body>
 </html>
