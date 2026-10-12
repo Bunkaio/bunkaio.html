@@ -2012,6 +2012,8 @@ function navLink(e, v, subTab){
   return false;
 }
 window.addEventListener('popstate', () => {
+  /* Geste retour pendant le portfolio plein écran : on ferme la couche, la page reste où elle était. */
+  if (PFI.open) { closePfImmersive(); return; }
   const r = seoRouteForPath(location.pathname);
   const lg = /^\/en(\/|$)/.test(location.pathname) ? 'en' : 'fr';
   if (lg !== LANG) { LANG = lg; updateLang(); }
@@ -4641,6 +4643,117 @@ function renderPfGalleryInto(container, catId, catLabel, max, emptyText){
     });
   });
 }
+
+/* ═══════════════ PORTFOLIO PLEIN ÉCRAN (immersif) ═══════════════
+   Couche par-dessus la page Portfolio (la page ne change pas) : planches de 4 × 4 sur toute la hauteur, catégories en pastilles,
+   glisser / flèches pour la planche suivante, visionneuse au toucher. Mêmes photos et même ordre que la grille (loadPortfolioPhotos,
+   ordre des numéros de fichier). Fermeture : ×, Échap ou geste retour (une entrée d'historique est ajoutée à l'ouverture). */
+Object.assign(I18N.fr, { 'pf-imm-open':'Voir en plein écran' });
+Object.assign(I18N.en, { 'pf-imm-open':'View full screen' });
+const PFI = { el: null, c: 0, p: 0, v: -1, photos: {}, open: false };
+const pfiPages = () => Math.max(1, Math.ceil((PFI.photos[PF_CATS[PFI.c].id] || []).length / 16));
+function openPfImmersive(catId){
+  if (PFI.open) return;
+  const act = document.querySelector('#pfTabs .pf-cat-tab.active');
+  const id = catId || (act && act.dataset.cat) || PF_CATS[0].id;
+  PFI.c = Math.max(0, PF_CATS.findIndex(c => c.id === id)); PFI.p = 0; PFI.v = -1; PFI.open = true;
+  const el = document.createElement('div');
+  el.className = 'pfi'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-label', t({fr:'Portfolio en plein écran', en:'Full-screen portfolio'}));
+  el.innerHTML = `<div class="pfi-top"><div class="pfi-brand">BUNKAIO<span>PORTFOLIO</span></div><button class="pfi-close" type="button" aria-label="${t({fr:'Fermer le plein écran', en:'Close full screen'})}">×</button></div>
+    <div class="pfi-tabs" role="tablist">${PF_CATS.map((c, i) => `<button class="pfi-tab" role="tab" type="button" data-i="${i}">${t(c.label)}<small></small></button>`).join('')}</div>
+    <div class="pfi-body"><button class="pfi-arrow l" type="button" aria-label="${t({fr:'Planche précédente', en:'Previous page'})}">‹</button><div class="pfi-track"></div><button class="pfi-arrow r" type="button" aria-label="${t({fr:'Planche suivante', en:'Next page'})}">›</button></div>
+    <div class="pfi-foot"><span class="pfi-count"></span><div class="pfi-dots"></div><button class="pfi-cta" type="button">${t({fr:'Demander un devis', en:'Request a quote'})}</button></div>
+    <div class="pfi-view" aria-hidden="true"><div class="pfi-view-top"><span class="pfi-view-n"></span><button class="pfi-close" type="button" aria-label="${t({fr:'Fermer la photo', en:'Close photo'})}">×</button></div><div class="pfi-view-img"><img alt=""></div><div class="pfi-strip"></div></div>`;
+  document.body.appendChild(el); PFI.el = el;
+  document.documentElement.classList.add('pfi-lock');
+  history.pushState({ v: currentView, pfi: 1 }, '', location.pathname + location.search);
+  if (window.track) track('cta_click', 'portfolio_plein_ecran');
+  const $ = s => el.querySelector(s);
+  $('.pfi-top .pfi-close').onclick = () => history.back();
+  $('.pfi-view .pfi-close').onclick = () => pfiCloseView();
+  $('.pfi-cta').onclick = () => { closePfImmersive(); goView('quiz'); };
+  $('.pfi-tabs').onclick = e => { const b = e.target.closest('.pfi-tab'); if (b) { PFI.c = +b.dataset.i; PFI.p = 0; pfiRender(); } };
+  $('.pfi-track').onclick = e => { const b = e.target.closest('.pfi-tile'); if (b) pfiOpenView(+b.dataset.i); };
+  $('.pfi-arrow.l').onclick = () => pfiGo(PFI.p - 1);
+  $('.pfi-arrow.r').onclick = () => pfiGo(PFI.p + 1);
+  $('.pfi-strip').onclick = e => { const b = e.target.closest('button'); if (b) pfiOpenView(+b.dataset.i); };
+  const swipe = (node, fn) => { let x0 = null, y0 = 0; node.addEventListener('pointerdown', e => { x0 = e.clientX; y0 = e.clientY; }); node.addEventListener('pointerup', e => { if (x0 === null) return; const dx = e.clientX - x0, dy = e.clientY - y0; x0 = null; if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) { fn(dx < 0 ? 1 : -1); node._swiped = Date.now(); } }); node.addEventListener('click', e => { if (node._swiped && Date.now() - node._swiped < 300) { e.stopPropagation(); e.preventDefault(); } }, true); };
+  swipe($('.pfi-body'), d => pfiGo(PFI.p + d));
+  swipe($('.pfi-view-img'), d => { const n = (PFI.photos[PF_CATS[PFI.c].id] || []).length; if (n) pfiOpenView((PFI.v + d + n) % n); });
+  pfiRender();
+  /* Nombre de photos par catégorie (mêmes sondes que la grille, mises en cache) */
+  PF_CATS.forEach((c, i) => loadPortfolioPhotos(c.id, 24).then(list => {
+    PFI.photos[c.id] = list;
+    const s = el.querySelector(`.pfi-tab[data-i="${i}"] small`); if (s) s.textContent = list.length;
+    if (i === PFI.c && PFI.el === el) pfiRender();
+  }));
+  setTimeout(() => { const f = $('.pfi-tab.on'); if (f) f.focus({ preventScroll: true }); }, 50);
+}
+function pfiRender(){
+  const el = PFI.el; if (!el) return;
+  const cat = PF_CATS[PFI.c], list = PFI.photos[cat.id];
+  el.querySelectorAll('.pfi-tab').forEach((b, i) => { b.classList.toggle('on', i === PFI.c); b.setAttribute('aria-selected', i === PFI.c ? 'true' : 'false'); });
+  const tabs = el.querySelector('.pfi-tabs'), on = el.querySelector('.pfi-tab.on');
+  if (on && tabs.scrollWidth > tabs.clientWidth) tabs.scrollTo({ left: on.offsetLeft - (tabs.clientWidth - on.offsetWidth) / 2, behavior: 'smooth' });
+  const track = el.querySelector('.pfi-track');
+  if (!list) { track.innerHTML = `<div class="pfi-msg">${t({fr:'Chargement…', en:'Loading…'})}</div>`; pfiGo(0); return; }
+  if (!list.length) { track.innerHTML = `<div class="pfi-msg">${t({fr:'Visuels à venir dans cette catégorie.', en:'Visuals coming soon in this category.'})}</div>`; pfiGo(0); return; }
+  const label = t(cat.label);
+  let html = '';
+  for (let p = 0; p < pfiPages(); p++) {
+    html += '<div class="pfi-page">';
+    for (let k = 0; k < 16; k++) {
+      const i = p * 16 + k;
+      html += i < list.length
+        ? `<button class="pfi-tile" type="button" data-i="${i}" style="animation-delay:${k * 22}ms" aria-label="${escHtml(label)}, ${t({fr:'photo', en:'photo'})} ${i + 1}"><img src="${list[i]}" alt="" loading="${p ? 'lazy' : 'eager'}" decoding="async"></button>`
+        : '<span class="pfi-tile pfi-empty" aria-hidden="true"></span>';
+    }
+    html += '</div>';
+  }
+  track.innerHTML = html;
+  pfiGo(PFI.p);
+}
+function pfiGo(p){
+  const el = PFI.el; if (!el) return;
+  const np = pfiPages(), list = PFI.photos[PF_CATS[PFI.c].id] || [];
+  PFI.p = Math.max(0, Math.min(np - 1, p));
+  el.querySelector('.pfi-track').style.transform = 'translateX(' + (-100 * PFI.p) + '%)';
+  el.querySelector('.pfi-dots').innerHTML = np > 1 ? Array.from({ length: np }, (_, i) => `<i class="${i === PFI.p ? 'on' : ''}"></i>`).join('') : '';
+  const a = PFI.p * 16 + 1, b = Math.min(list.length, a + 15);
+  el.querySelector('.pfi-count').textContent = list.length ? a + '–' + b + t({fr:' sur ', en:' of '}) + list.length : '';
+  el.querySelector('.pfi-arrow.l').disabled = PFI.p === 0;
+  el.querySelector('.pfi-arrow.r').disabled = PFI.p >= np - 1;
+}
+function pfiOpenView(i){
+  const el = PFI.el, cat = PF_CATS[PFI.c], list = PFI.photos[cat.id] || [];
+  if (!el || !list[i]) return;
+  PFI.v = i;
+  const img = el.querySelector('.pfi-view-img img');
+  img.src = list[i]; img.alt = (LANG === 'fr' ? 'Réalisation BUNKAIO — ' : 'BUNKAIO work — ') + t(cat.label) + ' (' + (i + 1) + ')';
+  el.querySelector('.pfi-view-n').textContent = t(cat.label) + ' · ' + (i + 1) + ' / ' + list.length;
+  const strip = el.querySelector('.pfi-strip');
+  if (strip.dataset.cat !== cat.id) { strip.dataset.cat = cat.id; strip.innerHTML = list.map((u, k) => `<button type="button" data-i="${k}" aria-label="${t({fr:'Photo', en:'Photo'})} ${k + 1}"><img src="${u}" alt="" loading="lazy" decoding="async"></button>`).join(''); }
+  strip.querySelectorAll('button').forEach((b, k) => b.classList.toggle('on', k === i));
+  const cur = strip.querySelector('.on'); if (cur) strip.scrollTo({ left: cur.offsetLeft - (strip.clientWidth - cur.offsetWidth) / 2, behavior: 'smooth' });
+  const view = el.querySelector('.pfi-view'); view.classList.add('on'); view.setAttribute('aria-hidden', 'false');
+}
+function pfiCloseView(){ const v = PFI.el && PFI.el.querySelector('.pfi-view'); if (v) { v.classList.remove('on'); v.setAttribute('aria-hidden', 'true'); PFI.v = -1; } }
+function closePfImmersive(){
+  if (!PFI.open) return;
+  PFI.open = false;
+  if (PFI.el) PFI.el.remove();
+  PFI.el = null;
+  document.documentElement.classList.remove('pfi-lock');
+  /* La grille de la page suit la dernière catégorie vue en plein écran. */
+  if (currentView === 'portfolio') selectPfTab(PF_CATS[PFI.c].id);
+}
+document.addEventListener('keydown', e => {
+  if (!PFI.open) return;
+  const viewing = PFI.v >= 0, n = (PFI.photos[PF_CATS[PFI.c].id] || []).length;
+  if (e.key === 'Escape') { if (viewing) pfiCloseView(); else history.back(); }
+  else if (e.key === 'ArrowRight') { if (viewing && n) pfiOpenView((PFI.v + 1) % n); else pfiGo(PFI.p + 1); }
+  else if (e.key === 'ArrowLeft') { if (viewing && n) pfiOpenView((PFI.v - 1 + n) % n); else pfiGo(PFI.p - 1); }
+});
 
 function renderPfTabs(){
   const el = document.getElementById('pfTabs');
