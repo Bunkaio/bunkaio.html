@@ -2085,6 +2085,7 @@ function goView(v, subTab, opts){
        pour que l'animation soit visible plutôt que déjà terminée. */
     localizeLinks(document.getElementById('view-' + v));
     initCstDecor(document.getElementById('view-' + v));
+    if (typeof CstField !== 'undefined') CstField.start();
     autoReveal(document.getElementById('view-' + v));
     document.querySelectorAll('#view-' + v + ' .rv:not(.in):not(.reassure-section)').forEach(observe);
     document.querySelectorAll('#view-' + v + ' .reassure-section:not(.in)').forEach(observeLate);
@@ -7509,6 +7510,77 @@ function initCstDecor(root){
     if (_cstIO && !REDUCED_MOTION) _cstIO.observe(svg); else svg.classList.add('is-on');
   });
 }
+/* ═══════════════ FOND CONSTELLATION DYNAMIQUE — espaces client et partenaire ═══════════════
+   Champ d'étoiles qui dérivent lentement et se relient par des traits fins quand elles se rapprochent ; quelques étoiles prennent la forme
+   de la signature ⊹. Couleurs de chaque espace conservées : client = blanc + violet pâle, partenaire = blanc + champagne, connexion = violet.
+   Le canevas couvre l'écran visible (suivi du défilement) ; pause hors de ces vues, onglet caché ou animations réduites (image fixe). */
+const CstField = (() => {
+  let raf = 0, wrap = null, cv = null, ctx = null, pts = [], W = 0, H = 0, view = null, frame = 0;
+  const VIEWS = ['login', 'account'];
+  function palette(){
+    if (currentView === 'account') {
+      const partner = view && view.dataset.acct === 'partner';
+      return { line: '255,255,255', dot: '255,255,255', cross: partner ? '217,196,154' : '214,201,247', a: 1 };
+    }
+    return { line: '110,90,168', dot: '110,90,168', cross: '110,90,168', a: 0.8 };
+  }
+  function size(){
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    W = wrap.clientWidth; H = window.innerHeight;
+    cv.style.height = H + 'px';
+    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const n = Math.max(26, Math.min(80, Math.round(W * H / 21000)));
+    pts = Array.from({ length: n }, (_, i) => ({ x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - 0.5) * 0.24, vy: (Math.random() - 0.5) * 0.24, r: 0.7 + Math.random() * 1.2, ph: Math.random() * 6.28, cross: i % 9 === 0 }));
+  }
+  function place(){
+    const top = view.getBoundingClientRect().top;
+    const off = Math.max(0, Math.min(-top, view.offsetHeight - H));
+    cv.style.transform = 'translateY(' + off + 'px)';
+  }
+  function draw(still){
+    const c = palette(), D = W < 700 ? 105 : 135;
+    ctx.clearRect(0, 0, W, H);
+    for (const p of pts) {
+      if (!still) { p.x += p.vx; p.y += p.vy; if (p.x < -20) p.x = W + 20; if (p.x > W + 20) p.x = -20; if (p.y < -20) p.y = H + 20; if (p.y > H + 20) p.y = -20; }
+    }
+    ctx.lineWidth = 0.6;
+    for (let i = 0; i < pts.length; i++) for (let j = i + 1; j < pts.length; j++) {
+      const a = pts[i], b = pts[j], dx = a.x - b.x, dy = a.y - b.y, d = Math.hypot(dx, dy);
+      if (d < D) { ctx.strokeStyle = 'rgba(' + c.line + ',' + ((1 - d / D) * 0.3 * c.a).toFixed(3) + ')'; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); }
+    }
+    const t = frame / 60;
+    for (const p of pts) {
+      const tw = 0.45 + 0.45 * Math.sin(t * 1.3 + p.ph);
+      if (p.cross) {
+        const s = 7, g = 2.4;
+        ctx.strokeStyle = 'rgba(' + c.cross + ',' + (0.55 + 0.4 * tw) * c.a + ')'; ctx.lineWidth = 1.3; ctx.beginPath();
+        ctx.moveTo(p.x - s, p.y); ctx.lineTo(p.x - g, p.y); ctx.moveTo(p.x + g, p.y); ctx.lineTo(p.x + s, p.y);
+        ctx.moveTo(p.x, p.y - s); ctx.lineTo(p.x, p.y - g); ctx.moveTo(p.x, p.y + g); ctx.lineTo(p.x, p.y + s); ctx.stroke();
+        ctx.fillStyle = 'rgba(' + c.dot + ',' + (0.6 + 0.4 * tw) * c.a + ')'; ctx.beginPath(); ctx.arc(p.x, p.y, 1.1, 0, 6.29); ctx.fill();
+      } else {
+        ctx.fillStyle = 'rgba(' + c.dot + ',' + (0.25 + 0.6 * tw) * c.a + ')'; ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 6.29); ctx.fill();
+      }
+    }
+  }
+  function loop(){ frame++; place(); draw(false); raf = requestAnimationFrame(loop); }
+  function stop(){ cancelAnimationFrame(raf); raf = 0; }
+  function start(){
+    stop();
+    if (!VIEWS.includes(currentView)) return;
+    view = document.getElementById('view-' + currentView); if (!view) return;
+    wrap = view.querySelector(':scope > .cst-field');
+    if (!wrap) { wrap = document.createElement('div'); wrap.className = 'cst-field'; wrap.setAttribute('aria-hidden', 'true'); wrap.innerHTML = '<canvas></canvas>'; view.prepend(wrap); }
+    cv = wrap.querySelector('canvas'); ctx = cv.getContext('2d');
+    size(); place();
+    if (REDUCED_MOTION) { draw(true); return; }
+    loop();
+  }
+  document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); else if (VIEWS.includes(currentView)) start(); });
+  window.addEventListener('resize', () => { if (raf || (cv && VIEWS.includes(currentView))) start(); });
+  return { start, stop };
+})();
+
 /* ═══════════════ PAGE BG ═══════════════ */
 function setPageBg(viewKey){
   /* Use CSS variable on html::before — works on iOS too */
