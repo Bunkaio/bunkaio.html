@@ -173,7 +173,15 @@
     transition: border-color 0.18s, color 0.18s;
   }
   .pf-add-btn:hover { border-color: var(--black); color: var(--black); }
-  .pf-grid { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-start; }
+  .pf-grid { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-start; border-radius: 12px; transition: background .15s, outline-color .15s; outline: 2px dashed transparent; outline-offset: 6px; }
+  .pf-grid.drop-files { outline-color: var(--blue); background: rgba(80,110,255,0.05); }
+  .pf-img-card[draggable="true"] { cursor: grab; }
+  .pf-img-card.dragging { opacity: .35; }
+  .pf-img-card.drop-before { box-shadow: -5px 0 0 var(--blue); }
+  .pf-img-card.drop-after { box-shadow: 5px 0 0 var(--blue); }
+  .pf-cat.busy { pointer-events: none; opacity: .6; }
+  .pf-note { font-size: 11.5px; color: #888; min-height: 16px; margin: -4px 0 8px; }
+  .pf-note.err { color: var(--red); }
   .pf-img-card {
     width: 148px; border-radius: 8px; overflow: hidden;
     border: 1.5px solid var(--line); background: #fff; position: relative;
@@ -821,11 +829,12 @@ function makePfImgCard(key, size, onChange) {
   const card = document.createElement('div');
   card.className = 'pf-img-card';
   card.dataset.key = key;
+  card.draggable = true;
   const name = key.split('/').pop();
   const heavy = size && size > PF_HEAVY;
   card.innerHTML = `
     <label class="pf-thumb" title="Cliquer pour remplacer cette photo">
-      <img src="${MEDIA_BASE}/${key}?t=${Date.now()}" alt="${name}" loading="lazy">
+      <img src="${MEDIA_BASE}/${key}?t=${Date.now()}" alt="${name}" loading="lazy" draggable="false">
       <input type="file" accept="image/*" style="display:none">
     </label>
     <div class="pf-img-foot">
@@ -881,6 +890,12 @@ function makePfCategory(cat) {
   titleEl.innerHTML = `${cat.label}<span class="pf-count"></span>`;
   wrap.appendChild(titleEl);
 
+  const note = document.createElement('div');
+  note.className = 'pf-note';
+  note.textContent = 'Glissez des photos ici pour les ajouter · glissez une vignette pour changer l\'ordre d\'affichage.';
+  wrap.appendChild(note);
+  const say = (msg, err) => { note.textContent = msg; note.classList.toggle('err', !!err); };
+
   const grid = document.createElement('div');
   grid.className = 'pf-grid';
   wrap.appendChild(grid);
@@ -917,10 +932,8 @@ function makePfCategory(cat) {
   }
   wrap._refresh = refresh;
 
-  input.addEventListener('change', async (e) => {
+  async function addFiles(files) {
     if (!getToken()) { alert('Entre ton token admin d\'abord.'); return; }
-    const files = Array.from(e.target.files);
-    input.value = '';
     for (const f of files) {
       const used = usedNums();
       let idx = 1; while (used.has(idx) && idx <= PF_MAX) idx++;
@@ -941,7 +954,76 @@ function makePfCategory(cat) {
       } catch { card.removeAttribute('data-key'); card.innerHTML = `<div class="pf-img-label" style="color:var(--red);padding:8px;">Erreur réseau</div>`; }
       updateCount();
     }
+  }
+  input.addEventListener('change', (e) => { const files = Array.from(e.target.files); input.value = ''; addFiles(files); });
+
+  /* ── Glisser-déposer : fichiers depuis l'ordinateur + réorganisation des vignettes ──
+     L'ordre d'affichage sur le site = l'ordre des numéros de fichier (1.webp, 2.webp…). Réordonner = réaffecter les mêmes numéros dans le nouvel ordre
+     (seuls les fichiers qui changent de numéro sont renvoyés, tels quels, sans nouvelle conversion). */
+  let dragCard = null;
+  const cards = () => [...grid.querySelectorAll('.pf-img-card[data-key]')];
+  const clearMarks = () => { grid.classList.remove('drop-files'); grid.querySelectorAll('.drop-before,.drop-after').forEach((c) => c.classList.remove('drop-before', 'drop-after')); };
+  const hasFiles = (e) => e.dataTransfer && [...(e.dataTransfer.types || [])].includes('Files');
+  grid.addEventListener('dragstart', (e) => {
+    const c = e.target.closest && e.target.closest('.pf-img-card[data-key]');
+    if (!c) return;
+    dragCard = c; c.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move'; try { e.dataTransfer.setData('text/plain', c.dataset.key); } catch {}
   });
+  grid.addEventListener('dragend', () => { if (dragCard) dragCard.classList.remove('dragging'); dragCard = null; clearMarks(); });
+  grid.addEventListener('dragover', (e) => {
+    if (dragCard) {
+      const t = e.target.closest('.pf-img-card[data-key]');
+      clearMarks();
+      if (t && t !== dragCard) { e.preventDefault(); const r = t.getBoundingClientRect(); t.classList.add(e.clientX < r.left + r.width / 2 ? 'drop-before' : 'drop-after'); }
+      else if (e.target.closest('.pf-add-btn')) e.preventDefault();
+    } else if (hasFiles(e)) { e.preventDefault(); grid.classList.add('drop-files'); }
+  });
+  grid.addEventListener('dragleave', (e) => { if (!grid.contains(e.relatedTarget)) clearMarks(); });
+  grid.addEventListener('drop', async (e) => {
+    if (dragCard) {
+      e.preventDefault();
+      const t = e.target.closest('.pf-img-card[data-key]');
+      const moved = dragCard;
+      if (t && t !== moved) { const r = t.getBoundingClientRect(); grid.insertBefore(moved, e.clientX < r.left + r.width / 2 ? t : t.nextSibling); }
+      else if (e.target.closest('.pf-add-btn')) grid.insertBefore(moved, addBtn);
+      else { clearMarks(); return; }
+      clearMarks(); persistOrder();
+    } else if (hasFiles(e)) {
+      e.preventDefault(); clearMarks();
+      const imgs = [...e.dataTransfer.files].filter((f) => f.type.startsWith('image/'));
+      if (!imgs.length) { say('Seules les images sont acceptées.', true); return; }
+      addFiles(imgs);
+    }
+  });
+  async function persistOrder() {
+    const list = cards();
+    const nums = list.map((c) => pfNum(c.dataset.key)).sort((a, b) => a - b);
+    const plan = list.map((c, i) => ({ from: c.dataset.key, to: `portfolio/${cat.id}/${nums[i]}.webp` })).filter((m) => m.from !== m.to);
+    if (!plan.length) return;
+    wrap.classList.add('busy'); say('Enregistrement du nouvel ordre…');
+    try {
+      /* 1) tout lire en mémoire (aucune écriture tant que tout n'est pas lu), 2) réécrire sous les nouveaux numéros */
+      const blobs = [];
+      for (const m of plan) {
+        const r = await fetch(MEDIA_BASE + '/' + m.from + '?t=' + Date.now(), { cache: 'no-store' });
+        if (!r.ok) throw new Error('lecture ' + m.from);
+        blobs.push(await r.blob());
+      }
+      for (let i = 0; i < plan.length; i++) {
+        const fd = new FormData(); fd.append('file', new File([blobs[i]], 'image.webp', { type: blobs[i].type || 'image/webp' })); fd.append('path', plan[i].to);
+        const res = await fetch(WORKER_BASE + '/upload-image', { method: 'POST', headers: { 'Authorization': 'Bearer ' + getToken() }, body: fd });
+        const data = await res.json();
+        if (!res.ok || !data.ok) throw new Error(data.error || 'envoi ' + plan[i].to);
+      }
+      say('Ordre enregistré ✓ (les visiteurs le voient dans l\'heure, le temps que leur navigateur renouvelle son cache).');
+    } catch (err) {
+      say('Échec de l\'enregistrement de l\'ordre (' + err.message + '). Affichage rechargé : vérifiez l\'ordre réel.', true);
+    } finally {
+      wrap.classList.remove('busy');
+      await refresh();
+    }
+  }
 
   addBtn.addEventListener('click', () => {
     if (!getToken()) { alert('Entre ton token admin d\'abord.'); return; }
@@ -1027,7 +1109,7 @@ function buildUI() {
   // Portfolio — catégories actives
   container.appendChild(buildPfSection(
     'Portfolio — Réalisations',
-    'Les photos existantes s\'affichent dès que le token est renseigné. « + Ajouter » (plusieurs fichiers possibles) prend le premier numéro libre ; clic sur une photo = la remplacer ; × = la supprimer. 24 photos max par catégorie, environ 900 × 1200 px, idéalement 300 Ko maximum chacune.',
+    'Les photos existantes s\'affichent dès que le token est renseigné. « + Ajouter » (plusieurs fichiers possibles, ou glisser-déposer les fichiers sur la catégorie) prend le premier numéro libre ; glisser une vignette sur une autre change l\'ordre d\'affichage ; clic sur une photo = la remplacer ; × = la supprimer. 24 photos max par catégorie, environ 900 × 1200 px, idéalement 300 Ko maximum chacune.',
     PF_CATS
   ));
 
