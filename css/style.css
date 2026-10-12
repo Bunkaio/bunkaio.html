@@ -4879,3 +4879,11 @@ footer button[data-lang="ft-cookie-prefs"] { font: inherit; }
 #qs-5 .travel-hint, #qs-5 .travel-est, #qs-5 .quiz-reassurance-text, #qs-5 .quiz-reassurance-pay, #qs-5 .quiz-microcopy, #qs-5 .form-privacy { color: #3a3544; text-shadow: none; }
 #qs-5 .quiz-reassurance-pay strong { color: #0a0a0c; }
 #qs-5 .form-privacy a, #qs-5 .quiz-microcopy a { color: #4b3d7a; }
+
+/* FAQ / Confidentialité / CGV / Cookies : quatre onglets, donc grille 2 × 2 sur mobile (avant : rangée écrasée, textes coupés et peu lisibles sur la photo). */
+#view-legal .svc-tabs { background: rgba(255,255,255,0.9); }
+#view-legal .svc-tab:not(.active) { color: #4b3d7a; }
+@media (max-width: 760px) {
+  #view-legal .svc-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; width: 100%; padding: 6px; }
+  #view-legal .svc-tab { flex: none; display: flex; align-items: center; justify-content: center; min-height: 54px; padding: 10px 8px; font-size: 10.5px; letter-spacing: 0.08em; line-height: 1.35; white-space: normal; text-align: center; border-radius: 6px; }
+}
