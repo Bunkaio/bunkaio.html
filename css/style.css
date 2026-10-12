@@ -5391,3 +5391,8 @@ footer > .cst-foot canvas { transform: none; }
 /* Contact et À propos : fond constellation (CstField). */
 #view-contact, #view-about { position: relative; }
 #view-contact > .ct-page { position: relative; z-index: 1; }
+/* Devis : fond constellation dynamique (CstField) derrière le formulaire. */
+#view-quiz { position: relative; }
+#view-quiz > .cst-field { z-index: 2; }
+/* Les fonds constellation ne captent jamais les clics (même posés par-dessus un formulaire). */
+.cst-field, .cst-field canvas, .cst-deco, .mission-cst { pointer-events: none !important; }

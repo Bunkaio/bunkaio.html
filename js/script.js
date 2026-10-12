@@ -7564,7 +7564,7 @@ let _cstIO = null;
 function initCstDecor(root){
   if (!_cstIO && window.IntersectionObserver) _cstIO = new IntersectionObserver(es => es.forEach(e => e.target.classList.toggle('is-on', e.isIntersecting)), { threshold: 0.15 });
   /* Bandeaux sombres (traits blancs) et panneaux clairs d'appel à l'action (variante violette). */
-  (root || document).querySelectorAll('.pf-cta-band, .partner-cta, footer .footer-cta-row, .article-cta, #view-quiz .quiz-wrap').forEach(box => {
+  (root || document).querySelectorAll('.pf-cta-band, .partner-cta, footer .footer-cta-row, .article-cta').forEach(box => {
     if (box.querySelector(':scope > .cst-deco')) return;
     box.classList.add('has-cst');
     box.insertAdjacentHTML('afterbegin', cstDecoSvg());
@@ -7606,7 +7606,7 @@ function cstDrawField(ctx, pts, W, H, c, frame, still){
    Le canevas couvre l'écran visible (suivi du défilement) ; pause hors de ces vues, onglet caché ou animations réduites (image fixe). */
 const CstField = (() => {
   let raf = 0, wrap = null, cv = null, ctx = null, pts = [], W = 0, H = 0, view = null, frame = 0;
-  const VIEWS = ['login', 'account', 'portfolio', 'services', 'advice', 'article', 'contact', 'about'];
+  const VIEWS = ['login', 'account', 'portfolio', 'services', 'advice', 'article', 'contact', 'about', 'quiz'];
   function palette(){
     if (currentView === 'account') {
       const partner = view && view.dataset.acct === 'partner';
@@ -7614,6 +7614,8 @@ const CstField = (() => {
     }
     /* Portfolio : par-dessus la vidéo / les photos de fond, à faible opacité (les photos restent la vedette). */
     /* Conseils et articles : violet pâle, lisible sur la bannière photo comme sur les fonds clairs. */
+    /* Devis : la constellation passe par-dessus le formulaire (sans capter les clics), en violet très léger pour ne pas gêner la lecture. */
+    if (currentView === 'quiz') return { line: '110,90,168', dot: '110,90,168', cross: '165,143,230', a: 0.42 };
     if (currentView === 'advice' || currentView === 'article' || currentView === 'contact' || currentView === 'about') return { line: '165,143,230', dot: '165,143,230', cross: '214,201,247', a: 0.6 };
     if (currentView === 'portfolio' || currentView === 'services') return { line: '255,255,255', dot: '255,255,255', cross: '214,201,247', a: 0.4 };
     return { line: '110,90,168', dot: '110,90,168', cross: '110,90,168', a: 0.8 };
