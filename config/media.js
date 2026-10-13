@@ -238,10 +238,15 @@ const IMG = {
   /* Bannières propres à des pages qui empruntaient jusqu'ici la photo d'une autre rubrique (Conseils, articles, À propos, FAQ).
      Optionnel : déposées depuis l'admin média, elles remplacent automatiquement la photo partagée ; absentes, rien ne change. */
   heroOwn: {
-    advice:  MEDIA_BASE + '/hero/advice-1.webp',
-    article: MEDIA_BASE + '/hero/advice-1.webp',
-    about:   MEDIA_BASE + '/hero/about-1.webp',
-    legal:   MEDIA_BASE + '/hero/legal-1.webp',
+    advice:   MEDIA_BASE + '/hero/advice-1.webp',
+    /* Articles : photo propre (article-1) sinon celle de la page Conseils (advice-1). */
+    article:  [MEDIA_BASE + '/hero/article-1.webp', MEDIA_BASE + '/hero/advice-1.webp'],
+    about:    MEDIA_BASE + '/hero/about-1.webp',
+    legal:    MEDIA_BASE + '/hero/legal-1.webp',
+    service:  MEDIA_BASE + '/hero/service-1.webp',    // pages de prestation (/services/…) ; chaque prestation garde en plus sa propre photo
+    discover: MEDIA_BASE + '/hero/discover-1.webp',   // « Découvrir chaque prestation »
+    city:     MEDIA_BASE + '/hero/city-1.webp',       // pages Montpellier / Toulouse
+    share:    MEDIA_BASE + '/hero/share-1.webp',      // « Partager mon expérience »
   },
 
   /* Photos par formule : MEDIA_BASE/formulas/<catégorie>-<formule>.webp (à déposer dans l'admin média ; repli sur la photo de la catégorie). */

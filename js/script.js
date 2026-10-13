@@ -7760,14 +7760,20 @@ function setPageBg(viewKey){
 /* Bannières propres (IMG.heroOwn) : si la photo existe sur R2, elle remplace celle empruntée à une autre rubrique. */
 function applyOwnHeroes(){
   const own = IMG.heroOwn; if (!own) return;
-  const done = {};
+  const probes = {};
+  const probe = u => probes[u] || (probes[u] = probeImageExists(u));
   Object.keys(own).forEach(k => {
-    const u = own[k]; if (!u) return;
-    (done[u] = done[u] || probeImageExists(u)).then(ok => {
-      if (!ok) return;
-      IMG[k] = u; if (IMG.heroImages) IMG.heroImages[k] = [u];
-      if (currentView === k) initHeroCarousel(k);
-    });
+    /* Valeur = une adresse, ou une liste (la première photo existante gagne : ex. article → article-1.webp, sinon advice-1.webp). */
+    const list = (Array.isArray(own[k]) ? own[k] : [own[k]]).filter(Boolean);
+    (async () => {
+      for (const u of list) {
+        if (await probe(u)) {
+          IMG[k] = u; IMG.heroImages = IMG.heroImages || {}; IMG.heroImages[k] = [u];
+          if (currentView === k) initHeroCarousel(k);
+          return;
+        }
+      }
+    })();
   });
 }
 function applyImages(){
