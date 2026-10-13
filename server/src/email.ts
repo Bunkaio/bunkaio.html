@@ -1,5 +1,6 @@
 import { getBusinessAddress } from './config';
 import type { AccountType, ActivityEntry, Env } from './types';
+import { LOGO_CID, LOGO_PNG_BASE64 } from './logo-inline';
 
 const SITE = 'https://bunkaio.com';
 /** Logo officiel (clair, fond transparent, PNG car les clients mail n'affichent pas le WebP) : posé sur fond noir. */
@@ -1069,12 +1070,26 @@ export async function sendEmail(env: Env, to: string, subject: string, html: str
   // Le modèle est repéré par un commentaire HTML invisible posé par les constructeurs (voir finalize).
   const tpl = tplOverride ?? html.match(/<!--bk-tpl:([a-z_]+)-->/)?.[1] ?? '';
   let error = '';
+  /* Logo intégré à l'email (pièce jointe « inline », référencée par cid:) : les lecteurs de mail qui bloquent les images
+     distantes l'affichent quand même. Si Resend refusait l'image intégrée, l'email repart avec le logo distant (jamais bloquant). */
+  const inlineHtml = html.split(`src="${LOGO_URL}"`).join(`src="cid:${LOGO_CID}"`);
+  const useInline = inlineHtml !== html;
+  const send = (body: string, inline: boolean) => fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${env.RESEND_API_KEY}` },
+    body: JSON.stringify({
+      from: env.EMAIL_FROM, to, subject, html: body, text,
+      ...(extra?.headers && Object.keys(extra.headers).length ? { headers: extra.headers } : {}),
+      ...(extra?.replyTo ? { reply_to: extra.replyTo } : {}),
+      ...((extra?.attachments?.length || inline) ? { attachments: [...(extra?.attachments ?? []), ...(inline ? [{ filename: 'bunkaio-logo.png', content: LOGO_PNG_BASE64, content_type: 'image/png', content_id: LOGO_CID }] : [])] } : {}),
+    }),
+  });
   try {
-    const res = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${env.RESEND_API_KEY}` },
-      body: JSON.stringify({ from: env.EMAIL_FROM, to, subject, html, text, ...(extra?.headers && Object.keys(extra.headers).length ? { headers: extra.headers } : {}), ...(extra?.replyTo ? { reply_to: extra.replyTo } : {}), ...(extra?.attachments?.length ? { attachments: extra.attachments } : {}) }),
-    });
+    let res = await send(useInline ? inlineHtml : html, useInline);
+    if (!res.ok && useInline && res.status >= 400 && res.status < 500 && res.status !== 429) {
+      console.error('[email] logo intégré refusé, envoi avec le logo distant', res.status, await res.text().catch(() => ''));
+      res = await send(html, false);
+    }
     if (!res.ok) {
       const detail = await res.text();
       error = `resend_error: ${res.status} ${detail}`;
