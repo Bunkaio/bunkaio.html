@@ -1809,7 +1809,9 @@ function clearHeroCarousel(){
 
 function initHeroCarousel(viewKey){
   clearHeroCarousel();
-  setPageBg(viewKey);
+  /* Pages villes : photo propre à la ville (hero/city-<ville>-1.webp) si elle existe, sinon la bannière commune « city ». */
+  const heroKey = (viewKey === 'city' && currentSub && IMG['city-' + currentSub]) ? 'city-' + currentSub : viewKey;
+  setPageBg(heroKey);
   const wrap = document.getElementById('pageHeroWrap');
   if (!wrap) return;
   wrap.style.opacity = ''; wrap.style.visibility = '';
@@ -1819,7 +1821,7 @@ function initHeroCarousel(viewKey){
      servir de filet de sécurité si une vidéo de fond générique (voir
      plus bas) ne charge pas (pas encore déposée dans l'admin média). */
   const showHeroImages = () => {
-    let images = IMG.heroImages && IMG.heroImages[viewKey];
+    let images = IMG.heroImages && IMG.heroImages[heroKey];
     if (!images || (Array.isArray(images) && images.length === 0)){
       wrap.style.display = 'none'; return;
     }
@@ -4034,6 +4036,11 @@ const CITY_PAGES = {
     ]
   }
 };
+/* Illustrations optionnelles des pages villes : MEDIA_BASE/city/<ville>-1..3.webp (admin média). Absentes, rien ne s'affiche. */
+function cityFig(cityId, n, kind){
+  const alt = t({fr:'Séance photo avec BUNKAIO à ', en:'Photo session with BUNKAIO in '}) + t(CITY_PAGES[cityId].name);
+  return `<figure class="city-fig city-fig-${kind}"><img src="${IMG.cityPhotos}/${cityId}-${n}.webp" alt="${escHtml(alt)}" width="1600" height="900" decoding="async" onerror="this.closest('figure').remove()"></figure>`;
+}
 function renderCityPage(cityId){
   const el = document.getElementById('cityPageContent');
   const C = CITY_PAGES[cityId], route = seoRouteFor('city', cityId);
@@ -4078,6 +4085,7 @@ function renderCityPage(cityId){
       ${quizLink('', t({fr:'Demander un devis', en:'Request a quote'}), 'cta-primary')}
       <a class="btn btn-ghost" href="/contact/" data-nav="contact">${t({fr:'Parler de mon projet', en:'Talk about my project'})}</a>
     </div>
+    ${cityFig(cityId, 1, 'wide')}
     <section class="read-panel svcp-panel">
       <h2>${t({fr:'Nos prestations à ' + t(C.name), en:'Our services in ' + t(C.name)})}</h2>
       <ul class="value-grid">${svc.join('')}</ul>
@@ -4086,6 +4094,7 @@ function renderCityPage(cityId){
     <section class="read-panel svcp-panel">
       <h2>${t(C.placesTitle)}</h2>
       <p class="svcp-text">${t(C.places)}</p>
+      ${cityFig(cityId, 2, 'inline')}
     </section>
     <section class="read-panel svcp-panel">
       <h2>${t({fr:'Déplacement offert autour de ' + t(C.name), en:'Free travel around ' + t(C.name)})}</h2>
@@ -4096,6 +4105,7 @@ function renderCityPage(cityId){
     <section class="read-panel svcp-panel">
       <h2>${t(C.whoTitle)}</h2>
       <ul class="value-grid">${C.who.map(w => `<li><b>${t(w[0])}</b><span>${t(w[1])}</span></li>`).join('')}</ul>
+      ${cityFig(cityId, 3, 'inline')}
     </section>
     <section class="read-panel svcp-panel">
       <h2>${t({fr:'Comment ça se passe', en:'How it works'})}</h2>
@@ -4123,6 +4133,8 @@ function renderCityPage(cityId){
         <a class="svcp-chip" href="/portfolio/" data-nav="portfolio">Portfolio</a>
       </div>
     </section>`;
+  /* Illustrations : affichées seulement une fois chargées (pas de cadre vide ni de saut de mise en page si la photo n'existe pas). */
+  el.querySelectorAll('.city-fig img').forEach(im => { const fig = im.closest('figure'); const probe = new Image(); probe.onload = () => fig.classList.add('ok'); probe.onerror = () => fig.remove(); probe.src = im.src; });
   renderAccordionInto('cityPageFaq', faq, { exclusive: true, closed: true });
   localizeLinks(el);
 }
@@ -7849,7 +7861,7 @@ function applyOwnHeroes(){
       for (const u of list) {
         if (await probe(u)) {
           IMG[k] = u; IMG.heroImages = IMG.heroImages || {}; IMG.heroImages[k] = [u];
-          if (currentView === k) initHeroCarousel(k);
+          if (currentView === k || (currentView === 'city' && (k === 'city' || k === 'city-' + currentSub))) initHeroCarousel(currentView);
           return;
         }
       }

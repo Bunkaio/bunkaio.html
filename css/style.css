@@ -5588,3 +5588,13 @@ body:not([data-view="article"]) .art-progress { display: none; }
   .advice-teaser.adv-live .advice-teaser-head { opacity: 1; transform: none; transition: opacity .8s ease .55s, transform .9s cubic-bezier(.2,.7,.2,1) .55s; }
   .advice-teaser.adv-live .advice-card:nth-child(1) { animation-delay: .85s; } .advice-teaser.adv-live .advice-card:nth-child(2) { animation-delay: 1s; } .advice-teaser.adv-live .advice-card:nth-child(3) { animation-delay: 1.15s; }
 }
+
+/* Pages villes : illustrations optionnelles (retirées si la photo n'existe pas) */
+.city-fig { display: none; margin: 0 auto 22px; overflow: hidden; border-radius: 16px; background: #e9e3f4; box-shadow: 0 14px 40px rgba(10,10,12,0.14); }
+.city-fig img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; }
+.city-fig-wide { max-width: 1100px; }
+.city-fig-wide img { max-height: 520px; }
+.city-fig-inline { margin: 18px 0 0; box-shadow: none; }
+.city-fig-inline img { aspect-ratio: 21 / 9; }
+@media (max-width: 760px) { .city-fig { border-radius: 14px; } .city-fig-inline img { aspect-ratio: 16 / 9; } }
+.city-fig.ok { display: block; }

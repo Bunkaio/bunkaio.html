@@ -245,6 +245,9 @@ const IMG = {
     service:  MEDIA_BASE + '/hero/service-1.webp',    // pages de prestation (/services/…) ; chaque prestation garde en plus sa propre photo
     discover: MEDIA_BASE + '/hero/discover-1.webp',   // « Découvrir chaque prestation »
     city:     MEDIA_BASE + '/hero/city-1.webp',       // pages Montpellier / Toulouse
+    /* Une bannière par ville : la première photo existante gagne (photo de la ville, sinon la bannière commune « city »). */
+    'city-montpellier': [MEDIA_BASE + '/hero/city-montpellier-1.webp', MEDIA_BASE + '/hero/city-1.webp'],
+    'city-toulouse':    [MEDIA_BASE + '/hero/city-toulouse-1.webp',    MEDIA_BASE + '/hero/city-1.webp'],
     share:    MEDIA_BASE + '/hero/share-1.webp',      // « Partager mon expérience »
   },
 
@@ -252,6 +255,8 @@ const IMG = {
   formulas: MEDIA_BASE + '/formulas',
   /* Photo propre à chaque article de conseils : MEDIA_BASE/articles/<slug>.webp (admin média) ; repli sur la photo de la prestation. */
   articlePhotos: MEDIA_BASE + '/articles',
+  /* Illustrations des pages villes : MEDIA_BASE/city/<ville>-1..3.webp (admin média, rubrique « Pages villes — illustrations »). */
+  cityPhotos: MEDIA_BASE + '/city',
   /* Photo paysage en tête du panneau « Conseils photo » de l'accueil (admin média, rubrique « Accueil — photo du panneau Conseils »). */
   adviceBanner: MEDIA_BASE + '/hero/home-advice-1.webp',
   /* Fond de la page « Découvrir chaque prestation » : une photo par prestation, qui change selon la prestation ouverte (repli : photo de la catégorie). */
