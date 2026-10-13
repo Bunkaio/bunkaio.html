@@ -9,7 +9,7 @@ import { getLastPush, getVapid, notifyAdmin, removeSubscription, saveSubscriptio
 import { setContactTags, setTagNames } from './tags';
 import { autoSms, getSmsSettings, sendSms, setSmsSettings, smsProvider, toE164 } from './sms';
 import { bulkInbox, purgeInboxTrash, getInboxMessage, getSpamRules, previewReply, replyTo, rescanSpam, setLabelNames, setSpamRules, syncResendInbox, updateInbox } from './inbox';
-import { buildManualMail, getMailLog, isUnsubscribed, listCampaigns, MANUAL_TEMPLATES, saveCampaign, sendMailing, setUnsubscribed } from './mailing';
+import { mailingSender, buildManualMail, getMailLog, isUnsubscribed, listCampaigns, MANUAL_TEMPLATES, saveCampaign, sendMailing, setUnsubscribed } from './mailing';
 import type { ManualTemplate, MailingParams, RecipientCtx } from './mailing';
 import { unsubscribeToken } from './email';
 import { appendConsent, cleanQuoteInput, computeConsent, createQuote, freezeLegal, getConsentLog, getFrozenLegal, getQuote, IMAGE_USES, isExpired, listQuotes, missingQuoteFields, prepareSend, publicQuote, putFrozenLegal, putQuote, quoteHash, tokenMatches } from './quotes';
@@ -815,9 +815,11 @@ async function handleAdminDashboard(request: Request, env: Env, headers: Record<
     }
     if (body.action === 'test') {
       const to = env.ADMIN_NOTIFICATION_EMAIL;
+      const sender = mailingSender(env, params);
+      if (sender.error) return jsonResponse({ ok: false, error: sender.error }, 400, headers);
       const mail = await buildManualMail(env, template, { ...recipients[0]!, email: to }, params);
       if ('skip' in mail) return jsonResponse({ ok: false, error: mail.skip }, 400, headers);
-      try { await sendEmail(env, to, `[TEST] ${mail.subject}`, mail.html, mail.text); } catch (err) { return jsonResponse({ ok: false, error: 'send_error' }, 502, headers); }
+      try { await sendEmail(env, to, `[TEST] ${mail.subject}`, mail.html, mail.text, undefined, { from: sender.from, replyTo: sender.replyTo }); } catch (err) { return jsonResponse({ ok: false, error: 'send_error' }, 502, headers); }
       return jsonResponse({ ok: true, to }, 200, headers);
     }
     if (body.action === 'send') {

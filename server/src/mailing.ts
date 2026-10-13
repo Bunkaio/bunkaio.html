@@ -37,6 +37,11 @@ export interface MailingParams {
   body?: string;
   ctaLabel?: string;
   ctaUrl?: string;
+  /** Expéditeur choisi dans l'admin : nom affiché et adresse du domaine vérifié (ex. aya@bunkaio.com). */
+  fromName?: string;
+  fromEmail?: string;
+  /** Adresse de réponse (n'importe quelle adresse valide). */
+  replyTo?: string;
 }
 
 export const MANUAL_TEMPLATES = ['libre', 'relance_devis_quiz', 'rappel_moodboard', 'seance_reminder', 'seance_confirmation', 'merci_seance', 'rappel_impaye', 'demande_avis'] as const;
@@ -86,12 +91,36 @@ export async function buildManualMail(env: Env, template: ManualTemplate, r: Rec
   }
 }
 
+/**
+ * Expéditeur d'un envoi manuel. L'adresse doit appartenir au domaine vérifié chez Resend (celui d'EMAIL_FROM) :
+ * un autre domaine serait refusé ou classé en spam (SPF/DKIM). Nom affiché libre ; réponse vers n'importe quelle adresse.
+ */
+export function mailingSender(env: Env, p: MailingParams): { from?: string; replyTo?: string; error?: string } {
+  const domain = (env.EMAIL_FROM.match(/@([^>\s]+)>?\s*$/)?.[1] ?? 'bunkaio.com').toLowerCase();
+  const out: { from?: string; replyTo?: string; error?: string } = {};
+  const email = (p.fromEmail ?? '').trim().toLowerCase();
+  const name = (p.fromName ?? '').replace(/[<>"\r\n\\]/g, '').trim().slice(0, 60);
+  if (email || name) {
+    const addr = email || (env.EMAIL_FROM.match(/<([^>]+)>/)?.[1] ?? env.EMAIL_FROM).trim();
+    if (!/^[a-z0-9._%+-]+@[a-z0-9.-]+$/.test(addr) || !addr.endsWith('@' + domain)) return { error: 'expediteur_domaine' };
+    out.from = name ? `"${name}" <${addr}>` : addr;
+  }
+  const reply = (p.replyTo ?? '').trim();
+  if (reply) {
+    if (!/^[^\s@<>"]+@[^\s@<>"]+\.[^\s@<>"]+$/.test(reply)) return { error: 'reponse_invalide' };
+    out.replyTo = reply;
+  }
+  return out;
+}
+
 export interface SendResult { email: string; status: 'envoye' | 'ignore' | 'erreur'; detail?: string }
 
 /** Envoi en série (limite de débit du fournisseur d'emails). */
 export async function sendMailing(env: Env, template: ManualTemplate, recipients: RecipientCtx[], p: MailingParams): Promise<SendResult[]> {
   const results: SendResult[] = [];
   const seen = new Set<string>();
+  const sender = mailingSender(env, p);
+  if (sender.error) return recipients.slice(0, 100).map((r) => ({ email: String(r.email ?? ''), status: 'erreur' as const, detail: sender.error }));
   for (const r of recipients.slice(0, 100)) {
     const email = (r.email ?? '').trim().toLowerCase();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || seen.has(email)) { results.push({ email, status: 'ignore', detail: 'adresse invalide ou en double' }); continue; }
@@ -101,7 +130,7 @@ export async function sendMailing(env: Env, template: ManualTemplate, recipients
     try {
       const mail = await buildManualMail(env, template, { ...r, email }, p);
       if ('skip' in mail) { results.push({ email, status: 'ignore', detail: mail.skip }); continue; }
-      await sendEmail(env, email, mail.subject, mail.html, mail.text);
+      await sendEmail(env, email, mail.subject, mail.html, mail.text, undefined, { from: sender.from, replyTo: sender.replyTo });
       results.push({ email, status: 'envoye' });
     } catch (err) {
       results.push({ email, status: 'erreur', detail: err instanceof Error ? err.message.slice(0, 160) : 'erreur' });

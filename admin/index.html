@@ -613,6 +613,10 @@
           <div class="toolbar" style="margin-bottom:10px"><div class="chips" id="mSeg"></div></div>
           <div class="toolbar"><input id="mSearch" class="mi" placeholder="Filtrer par nom, email…" oninput="mailState.q=this.value;renderMailRecipients()" style="max-width:300px"><button class="btn ghost sm" onclick="mailSelectAll(true)">Tout sélectionner (applicables)</button><button class="btn ghost sm" onclick="mailSelectAll(false)">Tout désélectionner</button><span class="muted small" id="mHint"></span></div>
           <div id="mRecipients"></div>
+          <div class="fg" style="margin-top:14px"><label>Ajouter n'importe quelle adresse (hors base)</label>
+            <div style="display:flex;gap:8px;flex-wrap:wrap"><input class="mi" id="mFree" placeholder="ex. marie@entreprise.fr, Paul Martin <paul@studio.fr> — Entrée pour ajouter" style="flex:1;min-width:240px" onkeydown="mailFreeKey(event)" onpaste="setTimeout(()=>{this.value=mailAddFree(this.value).join(', ')},0)"><button class="btn ghost sm" onclick="$('mFree').value=mailAddFree($('mFree').value).join(', ')">+ Ajouter</button></div>
+            <div class="chips" id="mFreeList" style="margin-top:8px"></div>
+          </div>
         </div>
         <div class="card" style="margin-bottom:18px">
           <h3>4. Aperçu et envoi</h3>
@@ -1805,7 +1809,10 @@ const MAIL_TPLS = [
   ['rappel_impaye', 'Rappel de facture impayée', 'Relance manuelle avec le lien de paiement (nécessite une facture en attente).', false, 'Relation'],
   ['demande_avis', 'Demande d\'avis', 'Invitation à laisser un avis Google ; la remise de 15 % n\'est citée que si le client y a droit.', false, 'Relation'],
 ];
-const mailState = { tpl: 'libre', sel: new Set(), seg: 'all', q: '', p: { subject: '', heading: '', body: '', ctaLabel: '', ctaUrl: '' }, campaigns: null };
+const mailState = { tpl: 'libre', sel: new Set(), seg: 'all', q: '', p: { subject: '', heading: '', body: '', ctaLabel: '', ctaUrl: '', fromName: lsGet('bunkaio_mail_from_name', 'BUNKAIO'), fromEmail: lsGet('bunkaio_mail_from_email', 'contact@bunkaio.com'), replyTo: '' }, campaigns: null, extra: [] };
+/* Domaine vérifié chez Resend : seules ses adresses peuvent servir d'expéditeur (sinon refus ou spam). */
+const MAIL_DOMAIN = 'bunkaio.com';
+const MAIL_RE = /^[^\s@<>"(),;]+@[^\s@<>"(),;]+\.[^\s@<>"(),;]+$/;
 function mailApplicable(tplId, c) {
   if (!c.email || !c.email.includes('@')) return 'pas d\'email';
   const acc = primaryAcc(c);
@@ -1840,8 +1847,34 @@ function renderMailing() {
     <div class="frow"><div class="fg"><label>Bouton (texte)</label><input class="mi" value="${esc(P.ctaLabel)}" oninput="mailState.p.ctaLabel=this.value" placeholder="Découvrir"></div><div class="fg"><label>Bouton (lien https://)</label><input class="mi" value="${esc(P.ctaUrl)}" oninput="mailState.p.ctaUrl=this.value" placeholder="https://bunkaio.com/devis/"></div></div>
     <div class="hint small muted">Habillage identique aux emails automatiques : en-tête logo, typographie, « À très vite, » et signature BUNKAIO ajoutés automatiquement, avec le lien « se désinscrire » pour les messages d'information. Les désinscrits sont exclus.</div></div>`
     : `<div class="msg info">Ce modèle utilise le texte des emails automatiques : il est rempli avec les données de chaque destinataire (nom, séance, facture…). Cliquez sur « Actualiser l'aperçu » pour voir le résultat.</div>`;
+  const local = (P.fromEmail || '').split('@')[0];
+  $('mContent').insertAdjacentHTML('afterbegin', `<div class="form" style="border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:14px">
+    <div class="lab" style="margin-bottom:6px">Expéditeur</div>
+    <div class="frow"><div class="fg"><label>Nom affiché</label><input class="mi" id="mpFromName" value="${esc(P.fromName)}" placeholder="BUNKAIO" oninput="mailState.p.fromName=this.value;lsSet('bunkaio_mail_from_name',this.value)"></div>
+    <div class="fg"><label>Adresse d'envoi</label><div style="display:flex;align-items:center;gap:6px"><input class="mi" id="mpFromLocal" value="${esc(local)}" placeholder="contact" style="flex:1;min-width:0" oninput="mailFromLocal(this.value)"><span class="small" style="white-space:nowrap">@${MAIL_DOMAIN}</span></div></div></div>
+    <div class="fg"><label>Les réponses arrivent à (facultatif, n'importe quelle adresse)</label><input class="mi" id="mpReply" value="${esc(P.replyTo)}" placeholder="ex. aya.perso@gmail.com — vide : l'adresse d'envoi" oninput="mailState.p.replyTo=this.value.trim()"></div>
+    <div class="hint small muted">L'adresse d'envoi doit finir par @${MAIL_DOMAIN}, le domaine vérifié pour l'envoi : une adresse d'un autre domaine serait refusée ou classée en spam. Pour qu'on vous réponde ailleurs, utilisez « Les réponses arrivent à ».</div>
+  </div>`);
   renderMailSeg(); renderMailRecipients(); renderMailHistory();
 }
+function mailFromLocal(v) { const l = String(v || '').trim().toLowerCase().replace(/@.*$/, '').replace(/[^a-z0-9._+-]/g, ''); mailState.p.fromEmail = l ? l + '@' + MAIL_DOMAIN : ''; lsSet('bunkaio_mail_from_email', mailState.p.fromEmail); }
+/* Destinataires libres : n'importe quelle adresse, collée ou tapée (séparées par virgule, point-virgule, espace ou retour à la ligne ; format « Nom <adresse> » accepté). */
+function mailAddFree(raw) {
+  let txt = String(raw || ''), added = 0; const bad = [];
+  /* 1) « Nom <adresse> » ; 2) le reste : adresses séparées par virgule, point-virgule, espace ou retour à la ligne. */
+  txt = txt.replace(/([^,;<>\n]*)<([^<>]+)>/g, (all, name, email) => { email = email.trim().toLowerCase().replace(/^mailto:/, ''); if (MAIL_RE.test(email)) { mailAddOne(email, name.replace(/["']/g, '').trim()); added++; } else bad.push(email); return ' '; });
+  txt.split(/[\s,;]+/).map(x => x.trim().toLowerCase().replace(/^mailto:/, '')).filter(Boolean).forEach(email => { if (MAIL_RE.test(email)) { mailAddOne(email, ''); added++; } else bad.push(email); });
+  renderMailRecipients();
+  if (bad.length) toast('Adresse(s) non reconnue(s) : ' + bad.slice(0, 3).join(', ')); else if (added) toast(added + ' destinataire' + (added > 1 ? 's' : '') + ' ajouté' + (added > 1 ? 's' : ''));
+  return bad;
+}
+function mailAddOne(email, name) {
+  const c = contactByEmail(email);
+  if (c) { mailState.sel.add(c.email); return; }
+  if (!mailState.extra.some(x => x.email === email)) mailState.extra.push({ email, name });
+}
+function mailFreeKey(e) { if (e.key === 'Enter') { e.preventDefault(); e.target.value = mailAddFree(e.target.value).join(', '); } }
+function mailFreeRemove(email) { mailState.extra = mailState.extra.filter(x => x.email !== email); renderMailRecipients(); }
 function renderMailSeg() {
   const segs = SEGMENTS.filter(s => !['hot'].includes(s[0]));
   $('mSeg').innerHTML = segs.map(([id, l, f]) => `<button class="chip ${mailState.seg === id ? 'on' : ''}" onclick="mailState.seg='${id}';renderMailSeg();renderMailRecipients()">${l}<span class="c">${DB.contacts.filter(f).length}</span></button>`).join('') + LB_KEYS.filter(k => DB.contacts.some(c => (c.tags || []).includes(k))).map(k => `<button class="chip ${mailState.seg === 'tag:' + k ? 'on' : ''}" onclick="mailState.seg='tag:${k}';renderMailSeg();renderMailRecipients()"><span class="lbfilter lb-${k}"></span>${esc(tagName(k))}<span class="c">${DB.contacts.filter(c => (c.tags || []).includes(k)).length}</span></button>`).join('');
@@ -1851,7 +1884,9 @@ function renderMailRecipients() {
   const rows = list.map(c => { const why = mailApplicable(mailState.tpl, c); const st = STAGE[c.stage] || STAGE.contact; const dup = c.mail && c.mail.tpl === mailState.tpl && c.mail.last > addDays(-30);
     return `<tr style="${why ? 'opacity:.5' : ''}"><td style="width:34px"><input type="checkbox" ${why ? 'disabled' : ''} ${mailState.sel.has(c.email) && !why ? 'checked' : ''} onchange="mailToggle('${esc(c.email)}',this.checked)"></td><td class="who"><b>${esc(c.name || '(sans nom)')}</b><span>${esc(c.email)}</span></td><td><span class="badge">${st[1]}</span>${c.lang === 'en' ? ' <span class="badge line">EN</span>' : ''}</td><td class="small">${why ? '<span class="muted">' + esc(why) + '</span>' : dup ? '<span class="badge warn">déjà reçu il y a ' + Math.max(1, Math.round((Date.now() - Date.parse(c.mail.last)) / 864e5)) + ' j</span>' : '<span class="badge ok">applicable</span>'}</td><td class="small">${lastMailCell(c)}</td></tr>`; }).join('');
   $('mRecipients').innerHTML = list.length ? `<div class="tbl-wrap" style="max-height:420px;overflow:auto"><table><thead><tr><th></th><th>Contact</th><th>Étape</th><th>Statut pour ce modèle</th><th>Dernier email</th></tr></thead><tbody>${rows}</tbody></table></div>` : '<div class="empty">Aucun contact dans ce filtre.</div>';
-  const n = [...mailState.sel].filter(e => { const c = contactByEmail(e); return c && !mailApplicable(mailState.tpl, c); }).length;
+  const ex = mailState.extra; const exOk = mailState.tpl === 'libre';
+  if ($('mFreeList')) $('mFreeList').innerHTML = ex.map(x => `<span class="chip on" style="cursor:default">${esc(x.name ? x.name + ' · ' + x.email : x.email)}<button type="button" onclick="mailFreeRemove('${esc(x.email)}')" style="background:none;border:0;color:inherit;cursor:pointer;margin-left:6px;font-size:14px" aria-label="Retirer">×</button></span>`).join('') + (ex.length && !exOk ? '<span class="small muted" style="align-self:center">Adresses hors base : envoi possible seulement avec le modèle « Message libre » (les autres modèles ont besoin des données d\'un contact).</span>' : '');
+  const n = [...mailState.sel].filter(e => { const c = contactByEmail(e); return c && !mailApplicable(mailState.tpl, c); }).length + (exOk ? ex.length : 0);
   $('mSelCount').textContent = n + ' sélectionné' + (n > 1 ? 's' : '');
   $('mSendBtn').textContent = n ? 'Envoyer à ' + n + ' destinataire' + (n > 1 ? 's' : '') : 'Envoyer';
   $('mHint').textContent = list.length + ' contacts dans ce filtre · ' + list.filter(c => !mailApplicable(mailState.tpl, c)).length + ' applicables';
@@ -1859,36 +1894,41 @@ function renderMailRecipients() {
 function mailToggle(email, on) { if (on) mailState.sel.add(email); else mailState.sel.delete(email); renderMailRecipients(); }
 function mailSelectAll(on) { mailContacts().forEach(c => { if (on && !mailApplicable(mailState.tpl, c)) mailState.sel.add(c.email); if (!on) mailState.sel.delete(c.email); }); renderMailRecipients(); }
 function mailSelected() { return [...mailState.sel].map(contactByEmail).filter(c => c && !mailApplicable(mailState.tpl, c)); }
-function mailBody(action, list) { return JSON.stringify({ action, template: mailState.tpl, params: mailState.p, recipients: list.map(mailCtx) }); }
+function mailFreeCtx() { return mailState.tpl === 'libre' ? mailState.extra.map(x => ({ email: x.email, name: x.name, lang: 'fr', space: 'client' })) : []; }
+function mailBody(action, list, free) { return JSON.stringify({ action, template: mailState.tpl, params: mailState.p, recipients: list.map(mailCtx).concat(free || []) }); }
+const MAIL_ERR = { expediteur_domaine: 'L\'adresse d\'envoi doit finir par @' + MAIL_DOMAIN, reponse_invalide: 'Adresse de réponse invalide' };
 async function mailPreview() {
-  const list = mailSelected(); const c = list[0] || mailContacts().find(x => !mailApplicable(mailState.tpl, x));
-  if (!c) { toast('Aucun destinataire applicable pour ce modèle'); return; }
+  const list = mailSelected(); const c = list[0] || mailContacts().find(x => !mailApplicable(mailState.tpl, x)); const fc = mailFreeCtx()[0];
+  if (!c && !fc) { toast('Aucun destinataire applicable pour ce modèle'); return; }
   if (mailState.tpl === 'libre' && (!mailState.p.subject.trim() || !mailState.p.body.trim())) { toast('Renseignez l\'objet et le message'); return; }
   try {
-    const { res, data } = await api('/admin/mailing', { method: 'POST', body: mailBody('preview', [c]) });
+    const { res, data } = await api('/admin/mailing', { method: 'POST', body: c ? mailBody('preview', [c]) : mailBody('preview', [], [fc]) });
     if (!res.ok || !data.ok || data.skip) { $('mPrevMeta').textContent = data.skip || 'Erreur ' + (data.error || res.status); return; }
-    $('mPreview').srcdoc = data.html; $('mPrevMeta').innerHTML = 'Aperçu pour <b>' + esc(c.name || c.email) + '</b> · objet : <b>' + esc(data.subject) + '</b>';
+    $('mPreview').srcdoc = data.html; $('mPrevMeta').innerHTML = 'Aperçu pour <b>' + esc(c ? (c.name || c.email) : (fc.name || fc.email)) + '</b> · de : <b>' + esc((mailState.p.fromName || 'BUNKAIO') + ' <' + (mailState.p.fromEmail || 'contact@' + MAIL_DOMAIN) + '>') + '</b>' + (mailState.p.replyTo ? ' · réponses à : <b>' + esc(mailState.p.replyTo) + '</b>' : '') + ' · objet : <b>' + esc(data.subject) + '</b>';
   } catch (e) {}
 }
 async function mailTest() {
-  const c = mailSelected()[0] || mailContacts().find(x => !mailApplicable(mailState.tpl, x));
-  if (!c) { toast('Aucun destinataire applicable'); return; }
-  try { const { res, data } = await api('/admin/mailing', { method: 'POST', body: mailBody('test', [c]) }); toast(res.ok && data.ok ? 'Test envoyé à ' + data.to : 'Test impossible : ' + (data.error || res.status)); } catch (e) {}
+  const c = mailSelected()[0] || mailContacts().find(x => !mailApplicable(mailState.tpl, x)); const fc = mailFreeCtx()[0];
+  if (!c && !fc) { toast('Aucun destinataire applicable'); return; }
+  try { const { res, data } = await api('/admin/mailing', { method: 'POST', body: c ? mailBody('test', [c]) : mailBody('test', [], [fc]) }); toast(res.ok && data.ok ? 'Test envoyé à ' + data.to : 'Test impossible : ' + (MAIL_ERR[data.error] || data.error || res.status)); } catch (e) {}
 }
 async function mailSend() {
-  const list = mailSelected();
-  if (!list.length) { toast('Sélectionnez au moins un destinataire'); return; }
+  const list = mailSelected(); const free = mailFreeCtx(); const all = list.map(c => ({ name: c.name, email: c.email })).concat(free);
+  if (!all.length) { toast(mailState.extra.length ? 'Les adresses hors base ne sont possibles qu\'avec le modèle « Message libre »' : 'Sélectionnez au moins un destinataire'); return; }
+  if (mailState.p.fromEmail && !mailState.p.fromEmail.endsWith('@' + MAIL_DOMAIN)) { toast(MAIL_ERR.expediteur_domaine); return; }
+  if (mailState.p.replyTo && !MAIL_RE.test(mailState.p.replyTo)) { toast(MAIL_ERR.reponse_invalide); return; }
   if (mailState.tpl === 'libre' && (!mailState.p.subject.trim() || !mailState.p.body.trim())) { toast('Renseignez l\'objet et le message'); return; }
-  if (list.length > 100) { toast('Maximum 100 destinataires par envoi : réduisez la sélection'); return; }
+  if (all.length > 100) { toast('Maximum 100 destinataires par envoi : réduisez la sélection'); return; }
   const tn = (MAIL_TPLS.find(t => t[0] === mailState.tpl) || [])[1];
-  if (!confirm(`Envoyer « ${tn} » à ${list.length} destinataire${list.length > 1 ? 's' : ''} ?\n\n${list.slice(0, 8).map(c => '• ' + (c.name || c.email)).join('\n')}${list.length > 8 ? '\n… et ' + (list.length - 8) + ' autres' : ''}\n\nCette action est définitive. Un test préalable est recommandé.`)) return;
+  const fromTxt = (mailState.p.fromName || 'BUNKAIO') + ' <' + (mailState.p.fromEmail || 'contact@' + MAIL_DOMAIN) + '>';
+  if (!confirm(`Envoyer « ${tn} » à ${all.length} destinataire${all.length > 1 ? 's' : ''} ?\nDe : ${fromTxt}${mailState.p.replyTo ? '\nRéponses à : ' + mailState.p.replyTo : ''}\n\n${all.slice(0, 8).map(c => '• ' + (c.name || c.email)).join('\n')}${all.length > 8 ? '\n… et ' + (all.length - 8) + ' autres' : ''}\n\nCette action est définitive. Un test préalable est recommandé.`)) return;
   $('mSendBtn').disabled = true; $('mSendBtn').textContent = 'Envoi en cours…';
   try {
-    const { res, data } = await api('/admin/mailing', { method: 'POST', body: mailBody('send', list) });
-    if (!res.ok || !data.ok) { $('mResult').innerHTML = `<div class="msg err">Erreur : ${esc(data.error || res.status)}</div>`; return; }
+    const { res, data } = await api('/admin/mailing', { method: 'POST', body: mailBody('send', list, free) });
+    if (!res.ok || !data.ok) { $('mResult').innerHTML = `<div class="msg err">Erreur : ${esc(MAIL_ERR[data.error] || data.error || res.status)}</div>`; return; }
     const r = data.results; const ok = r.filter(x => x.status === 'envoye').length, ig = r.filter(x => x.status === 'ignore'), er = r.filter(x => x.status === 'erreur');
     $('mResult').innerHTML = `<div class="msg ${er.length ? 'warn' : 'ok'}" style="margin-top:12px"><b>${ok} envoyé${ok > 1 ? 's' : ''}</b>${ig.length ? ' · ' + ig.length + ' ignoré(s) (' + ig.map(x => esc(x.email + ' : ' + x.detail)).join(' ; ') + ')' : ''}${er.length ? ' · <b>' + er.length + ' en échec</b> (' + er.map(x => esc(x.email + ' : ' + x.detail)).join(' ; ') + ')' : ''}</div>`;
-    mailState.sel.clear(); mailState.campaigns = null; toast(ok + ' email(s) envoyé(s)');
+    mailState.sel.clear(); mailState.extra = []; mailState.campaigns = null; toast(ok + ' email(s) envoyé(s)');
     await loadDashboard();
   } catch (e) {} finally { $('mSendBtn').disabled = false; renderMailRecipients(); }
 }

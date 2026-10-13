@@ -1066,7 +1066,7 @@ export function buildClientActivityEmail(params: { type: AccountType; email: str
 }
 
 /** Envoie un email transactionnel via l'API Resend (https://resend.com). */
-export async function sendEmail(env: Env, to: string, subject: string, html: string, text: string, tplOverride?: string, extra?: { headers?: Record<string, string>; replyTo?: string; attachments?: { filename: string; content: string }[] }): Promise<void> {
+export async function sendEmail(env: Env, to: string, subject: string, html: string, text: string, tplOverride?: string, extra?: { headers?: Record<string, string>; replyTo?: string; from?: string; attachments?: { filename: string; content: string }[] }): Promise<void> {
   // Le modèle est repéré par un commentaire HTML invisible posé par les constructeurs (voir finalize).
   const tpl = tplOverride ?? html.match(/<!--bk-tpl:([a-z_]+)-->/)?.[1] ?? '';
   let error = '';
@@ -1078,7 +1078,7 @@ export async function sendEmail(env: Env, to: string, subject: string, html: str
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${env.RESEND_API_KEY}` },
     body: JSON.stringify({
-      from: env.EMAIL_FROM, to, subject, html: body, text,
+      from: extra?.from || env.EMAIL_FROM, to, subject, html: body, text,
       ...(extra?.headers && Object.keys(extra.headers).length ? { headers: extra.headers } : {}),
       ...(extra?.replyTo ? { reply_to: extra.replyTo } : {}),
       ...((extra?.attachments?.length || inline) ? { attachments: [...(extra?.attachments ?? []), ...(inline ? [{ filename: 'bunkaio-logo.png', content: LOGO_PNG_BASE64, content_type: 'image/png', content_id: LOGO_CID }] : [])] } : {}),
