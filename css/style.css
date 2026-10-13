@@ -5572,3 +5572,7 @@ body:not([data-view="article"]) .art-progress { display: none; }
   .art-main .article-cta { margin-top: 18px; }
 }
 @media (prefers-reduced-motion: reduce) { .art-toc a { transition: none; } }
+
+/* À propos : bouton sous l'introduction */
+.about-hero-cta { display: flex; justify-content: center; margin: 4px auto 22px; }
+@media (min-width: 761px) { .about-hero-cta { justify-content: flex-start; max-width: 1100px; } }
