@@ -7,7 +7,7 @@
    Les faits cités (prix, durées, délais, contenu des formules) viennent du
    catalogue du site — à tenir à jour si le catalogue change.
    ═══════════════════════════════════════════════════════════ */
-const ARTICLES = [
+const ARTICLES_ALL = [
   {
     slug: 'combien-coute-une-seance-photo',
     cat: 'photo-part',
@@ -165,6 +165,7 @@ const ARTICLES = [
   },
   {
     slug: 'photobooth-mariage-bien-choisir',
+    hidden: true,   /* Lumen (photobooth) n'est pas proposé pour l'instant : article retiré du site. Retirer cette ligne pour le remettre en ligne. */
     cat: 'lumen',
     title: 'BUNKAIO ⊹ | Photobooth de mariage : comment bien le choisir',
     description: 'Durée, personnalisation, impressions, galerie en ligne : les critères et les questions pour choisir un photobooth de mariage ou d\'événement.',
@@ -284,3 +285,6 @@ const ARTICLES = [
     ],
   },
 ];
+
+/* Articles publiés (ceux marqués hidden: true sont conservés ici mais n'existent pas sur le site : ni page, ni lien, ni sitemap). */
+const ARTICLES = ARTICLES_ALL.filter(a => !a.hidden);

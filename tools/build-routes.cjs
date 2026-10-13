@@ -436,7 +436,10 @@ function pinAssets(html) {
                    /* Lumen (prototype) : plus de page de formules, renvoi vers le formulaire de contact pré-rempli. */
                    { from: '/services/photobooth-ia-mariage-lumen/', to: '/contact/#lumen', label: 'Contact' },
                    /* Article renommé (la ville retirée de l'adresse). */
-                   { from: '/conseils/lieux-seance-photo-montpellier-beziers-toulouse/', to: '/conseils/lieux-seance-photo-montpellier-toulouse/', label: 'Conseils photo' }]) {
+                   { from: '/conseils/lieux-seance-photo-montpellier-beziers-toulouse/', to: '/conseils/lieux-seance-photo-montpellier-toulouse/', label: 'Conseils photo' },
+                   /* Article photobooth (Lumen) retiré : renvoi vers les conseils. */
+                   { from: '/conseils/photobooth-mariage-bien-choisir/', to: '/conseils/', label: 'Conseils photo' },
+                   { from: '/en/conseils/photobooth-mariage-bien-choisir/', to: '/en/conseils/', label: 'Photo advice' }]) {
     const f = path.join(ROOT, rd.from, 'index.html');
     fs.mkdirSync(path.dirname(f), { recursive: true });
     fs.writeFileSync(f, `<!DOCTYPE html>
