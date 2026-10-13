@@ -4130,9 +4130,19 @@ function articlePath(slug){ const r = seoRouteFor('article', slug); return r ? r
 function fmtDate(iso){ return new Date(iso + 'T12:00:00').toLocaleDateString(LANG === 'en' ? 'en-GB' : 'fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }); }
 /* Article dans la langue courante (textes anglais dans config/articles.en.js ; repli sur le français). */
 function artL(a){ return (LANG === 'en' && typeof ARTICLES_EN !== 'undefined' && ARTICLES_EN[a.slug]) ? Object.assign({}, a, ARTICLES_EN[a.slug]) : a; }
-function adviceCard(a0){
+/* Photo d'un article : la sienne (admin média, articles/<slug>.webp) sinon celle de sa prestation. */
+function articlePhoto(a){
+  const cat = IMG.servicePhotos && IMG.servicePhotos[a.cat];
+  const own = IMG.articlePhotos ? IMG.articlePhotos + '/' + a.slug + '.webp' : '';
+  return { src: own || cat || '', fallback: own && cat ? cat : '' };
+}
+function articleImgErr(fallback){
+  return fallback ? `if(!this.dataset.fb){this.dataset.fb=1;this.src='${fallback}'}else{this.closest('figure').classList.add('is-broken')}` : `this.closest('figure').classList.add('is-broken')`;
+}
+function adviceCard(a0, withImg){
   const a = artL(a0);
-  return `<a class="advice-card" href="${articlePath(a.slug)}" data-nav="article:${a.slug}">
+  const ph = withImg ? articlePhoto(a) : null;
+  return `<a class="advice-card${ph && ph.src ? ' has-img' : ''}" href="${articlePath(a.slug)}" data-nav="article:${a.slug}">${ph && ph.src ? `<figure class="advice-card-img"><img src="${ph.src}" alt="" width="600" height="400" loading="lazy" decoding="async" onerror="${articleImgErr(ph.fallback)}"></figure>` : ''}
     <span class="advice-card-meta">${a.minutes} ${t({fr:'min de lecture', en:'min read'})}</span>
     <span class="advice-card-title">${a.h1}</span>
     <span class="advice-card-text">${a.excerpt}</span>
@@ -4169,7 +4179,7 @@ function renderAdvicePage(){
     </div>
     <h1 data-pageh1 class="page-title">${t({fr:'Conseils photo', en:'Photo advice'})}</h1>
     <p class="page-sub">${t({fr:'Des guides pratiques pour préparer une séance portrait, choisir ses tenues, organiser un shooting produit, mode ou événementiel.', en:'Practical guides to prepare a portrait session, choose outfits, and plan a product, fashion or event shoot.'})}</p>
-    <section class="read-panel svcp-panel"><div class="advice-grid">${ARTICLES.map(a => adviceCard(a)).join('')}</div></section>`;
+    <section class="read-panel svcp-panel"><div class="advice-grid">${ARTICLES.map(a => adviceCard(a, true)).join('')}</div></section>`;
 }
 /* Illustrations des articles : pictogrammes au trait aux couleurs du site, choisis selon le sujet de chaque section. */
 const ART_ICONS = {
@@ -4244,11 +4254,9 @@ function renderArticlePage(slug){
   const cat = a.cat ? CATS.find(c => c.id === a.cat) : null;
   /* Photo de l'article : articles/<slug>.webp (admin média, rubrique « Conseils — photo de chaque article »), repli sur la photo
      de la prestation de l'article tant qu'aucune photo propre n'est déposée. */
-  const catSrc = IMG.servicePhotos && IMG.servicePhotos[a.cat];
-  const ownSrc = IMG.articlePhotos ? IMG.articlePhotos + '/' + a.slug + '.webp' : '';
-  const heroSrc = ownSrc || catSrc;
+  const ph = articlePhoto(a), heroSrc = ph.src;
   const heroAlt = (IMG.serviceAlt && t(IMG.serviceAlt[a.cat])) || (ART_ALT[a.cat] ? t(ART_ALT[a.cat]) : '');
-  const heroErr = ownSrc && catSrc ? `if(!this.dataset.fb){this.dataset.fb=1;this.src='${catSrc}'}else{this.closest('figure').classList.add('is-broken')}` : `this.closest('figure').classList.add('is-broken')`;
+  const heroErr = articleImgErr(ph.fallback);
   const heroFig = heroSrc ? `<figure class="art-hero"><img src="${heroSrc}" alt="${escHtml(heroAlt)}" width="1200" height="520" loading="lazy" decoding="async" onerror="${heroErr}"></figure>` : '';
   el.innerHTML = `
     <div class="breadcrumb" role="navigation" aria-label="${t({fr:'Fil d\'Ariane', en:'Breadcrumb'})}">

@@ -5455,3 +5455,27 @@ footer .footer-cta-row .hero-start:hover, footer .footer-cta-row .hero-start:foc
 .home-mid-cta { display: flex; justify-content: center; padding: 8px 22px 36px; position: relative; z-index: 1; }
 .home-mid-cta .cta-primary { display: inline-flex; align-items: center; justify-content: center; min-width: min(320px, 100%); }
 @media (max-width: 760px) { .home-mid-cta .cta-primary { width: 100%; } }
+
+/* ═══ À propos : photo hors de la carte (même mise en page que les articles) ═══ */
+.about-hero { margin: 0 auto 18px; max-width: 1100px; border-radius: 18px; overflow: hidden; box-shadow: 0 18px 50px rgba(10,10,12,0.18); background: #e9e3f4; }
+.about-hero .about-photo { width: 100%; height: auto; aspect-ratio: 16 / 9; max-height: 560px; object-fit: cover; border-radius: 0; display: block; }
+.about-card .about-grid { grid-template-columns: minmax(0, 1fr); }
+@media (max-width: 760px) {
+  .about-hero { border-radius: 16px; margin-bottom: 14px; }
+  .about-hero .about-photo { aspect-ratio: 4 / 5; max-height: none; }
+}
+
+/* ═══ Articles : bandeau photo au bon format (au lieu d'une bande très étroite) ═══ */
+.art-hero { max-width: 980px; box-shadow: 0 18px 50px rgba(10,10,12,0.18); background: #e9e3f4; }
+.art-hero img { height: auto; aspect-ratio: 16 / 9; max-height: 520px; object-position: center 35%; }
+@media (max-width: 760px) { .art-hero { border-radius: 16px; } .art-hero img { aspect-ratio: 4 / 3; } }
+
+/* ═══ Page Conseils : vignette photo en tête de chaque carte ═══ */
+.advice-grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 18px; }
+.advice-card.has-img { padding: 0 0 18px; }
+.advice-card.has-img > :not(.advice-card-img) { padding-left: 18px; padding-right: 18px; }
+.advice-card-img { margin: 0 0 6px; aspect-ratio: 3 / 2; overflow: hidden; background: #e9e3f4; }
+.advice-card-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 1s var(--ease-luxe, ease); }
+.advice-card:hover .advice-card-img img { transform: scale(1.04); }
+.advice-card-img.is-broken { display: none; }
+.advice-card.has-img:has(.is-broken) { padding-top: 18px; }
