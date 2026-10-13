@@ -141,6 +141,20 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://bunkaio.com/photographe-toulouse/"/>
   </url>
   <url>
+    <loc>https://bunkaio.com/photographe-france/</loc>
+    <lastmod>2026-10-13</lastmod>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://bunkaio.com/photographe-france/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bunkaio.com/en/photographer-france/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bunkaio.com/photographe-france/"/>
+  </url>
+  <url>
+    <loc>https://bunkaio.com/en/photographer-france/</loc>
+    <lastmod>2026-10-13</lastmod>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://bunkaio.com/photographe-france/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bunkaio.com/en/photographer-france/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bunkaio.com/photographe-france/"/>
+  </url>
+  <url>
     <loc>https://bunkaio.com/decouvrir-chaque-prestation/</loc>
     <lastmod>2026-10-13</lastmod>
     <xhtml:link rel="alternate" hreflang="fr" href="https://bunkaio.com/decouvrir-chaque-prestation/"/>

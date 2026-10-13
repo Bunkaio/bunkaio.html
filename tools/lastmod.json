@@ -1,26 +1,26 @@
 {
   "/": {
-    "hash": "19ae2c249f3bd68049fc61d2c2498283476695ea",
+    "hash": "d1883e945940280b6db4f6ea56f89e21d9a9ae1f",
     "date": "2026-10-13"
   },
   "/services/": {
-    "hash": "78045b3a559eb5beb12c90896aeae1171c9ec2d1",
+    "hash": "25dbef1bf99f1aa7a28a30c99f1ddcc87fd0a8e9",
     "date": "2026-10-13"
   },
   "/services/seance-photo-particuliers/": {
-    "hash": "cdc8eb648a07f86c9cbcf78673b495fd5eeb3c27",
+    "hash": "a7ed1587099a7dd5ef6631ca22bc606353b4f60a",
     "date": "2026-10-13"
   },
   "/services/photographe-mode-mannequins/": {
-    "hash": "6b0c1cb1a1796373ef1d7b0e8d5456719e5938ef",
+    "hash": "2ee8b9a2fbab911903827ed9e375541d032214f0",
     "date": "2026-10-13"
   },
   "/services/photo-produits-packshots/": {
-    "hash": "6ad22b03930c3a1cb2984a4860c93b100ac63bd3",
+    "hash": "42ef62c683915ad295601bdced29f889db1b8a7b",
     "date": "2026-10-13"
   },
   "/services/photographe-evenementiel/": {
-    "hash": "e9bdf46480c26c3dbff87683fa49d23e8733b4c2",
+    "hash": "a43fff28a42cb540e2e46cb572119007f549b2c0",
     "date": "2026-10-13"
   },
   "/services/photobooth-ia-mariage-lumen/": {
@@ -28,19 +28,19 @@
     "date": "2026-10-08"
   },
   "/a-propos/": {
-    "hash": "6a7127ce7b53006896d96d6fabbbde0eaee6af69",
+    "hash": "13626cbed9aec3fc3b9c814922457c14fe2d87c7",
     "date": "2026-10-13"
   },
   "/devis/": {
-    "hash": "f1998548d20831d1417d3ec278c283645572b0b3",
+    "hash": "65cd1fe76c1d8ff0b06a68474c48c178b05a65dd",
     "date": "2026-10-13"
   },
   "/portfolio/": {
-    "hash": "cf7c79d7475de639193b3441121458ebfbf07b23",
+    "hash": "34e1ed3044e2f430f3420dc783fd0a2fcd6ca70f",
     "date": "2026-10-13"
   },
   "/contact/": {
-    "hash": "961e5fca605ed45c53e86af414893793c8faa0bd",
+    "hash": "c151f9627c4a582667dfc2abb80dfc03011273d2",
     "date": "2026-10-13"
   },
   "/partenaires/": {
@@ -48,47 +48,47 @@
     "date": "2026-10-02"
   },
   "/faq/": {
-    "hash": "b575bd8950fa596a544d59c47a913355564c11d5",
+    "hash": "b479929b2c171243327dba9b6235bc7c01e58d14",
     "date": "2026-10-13"
   },
   "/partager-mon-experience/": {
-    "hash": "635775e8d01b26fdc5a703f4cfe63f9dbcc3e8d2",
+    "hash": "33b96d7e5fc35fd2499738b6d67f2409a2034318",
     "date": "2026-10-13"
   },
   "/drone/": {
-    "hash": "f0ab90a44acfca7f08902c648249001faabda1bc",
+    "hash": "fc249fb36b15a7b6d1f2ec7f1a148ac22eade631",
     "date": "2026-10-13"
   },
   "/connexion/": {
-    "hash": "a2d44da1bd0f80af5120449b392beb9a509b0994",
+    "hash": "c5d42500ba62dde59abcf76f169a3648e75e3469",
     "date": "2026-10-13"
   },
   "/espace-client/": {
-    "hash": "9327e15a05492c885f2c5e07d854e8e91562314f",
+    "hash": "37323b892e6e9778588b80393dbf15a01cad98ec",
     "date": "2026-10-13"
   },
   "/conseils/": {
-    "hash": "77c196b64bdd13c1f6794c5021b6fdd041525170",
+    "hash": "387b5bb12514cd059dbb818b4cc03c926e766baf",
     "date": "2026-10-13"
   },
   "/conseils/preparer-seance-photo-portrait/": {
-    "hash": "978897eb6a679bbe109c3a9ec4bbf9839f387bd2",
+    "hash": "3d3c14e2e7953fc6831e553a951f7bc357755202",
     "date": "2026-10-13"
   },
   "/conseils/que-porter-seance-photo/": {
-    "hash": "604abb3e89b5fea948111064ae60e61bf9ab8cab",
+    "hash": "3f6695c6f2cdf7618f06d1dd44926e0546c6ee8c",
     "date": "2026-10-13"
   },
   "/conseils/preparer-shooting-photo-produit/": {
-    "hash": "28af87e47676d8b8eb883d4e0d4998095d3703f4",
+    "hash": "3b8fe971f40968b3150d29cb8df29bae2715a54d",
     "date": "2026-10-13"
   },
   "/conseils/preparer-shooting-mode-lookbook/": {
-    "hash": "138c4b00a64a5ea53b0b7c7ed9541a15716bd8f4",
+    "hash": "131f1dd9754f98dbba6b604c8ca7e1c7b89b66b7",
     "date": "2026-10-13"
   },
   "/conseils/choisir-photographe-evenementiel/": {
-    "hash": "d154a970f7477ac9baf060d2b9681c5c802e594d",
+    "hash": "47d254bf0f4482ab8da719b884a39d703594836e",
     "date": "2026-10-13"
   },
   "/conseils/photobooth-mariage-bien-choisir/": {
@@ -96,171 +96,171 @@
     "date": "2026-10-13"
   },
   "/conseils/combien-coute-une-seance-photo/": {
-    "hash": "c23e6e56ac03821cfe4486421090764ac61e393f",
+    "hash": "13a21e456c42c773b5e41ee6f1f365c9bd6efd58",
     "date": "2026-10-13"
   },
   "/confidentialite/": {
-    "hash": "7d7d30c8e2b4a69b30e23d66468226abb19922cc",
+    "hash": "7d59ba0930bfda86404e4016684f1933294500b1",
     "date": "2026-10-13"
   },
   "/conseils/polas-mannequin-digitals-agence/": {
-    "hash": "c7278b883f6bb863c7786b0699633f324e370402",
+    "hash": "11c75be6a2c2b9c0fd060eeec6599bdfe703a867",
     "date": "2026-10-13"
   },
   "/conseils/packshot-ou-mise-en-scene-photo-produit/": {
-    "hash": "73493badbb93aecc7b43ace9ad646ad3fa972201",
+    "hash": "465870ee9eea8c69451c6f5743620b56a3f4ffad",
     "date": "2026-10-13"
   },
   "/conseils/portrait-professionnel-photo-profil-linkedin/": {
-    "hash": "5c0c2d990bb51da00e95d64f8e143913be47fedd",
+    "hash": "72fbd144241b667f202e3d8c209520b425b38743",
     "date": "2026-10-13"
   },
   "/services/portrait-professionnel-corporate/": {
-    "hash": "4b44997a9d47c08b7ebeed4310ebc578b40fc954",
+    "hash": "460944d186e9863038c01babcbbf901894b4ed5b",
     "date": "2026-10-13"
   },
   "/decouvrir-chaque-prestation/": {
-    "hash": "3155fac263a1fc2bda9ecea8db18f45923dd13f9",
+    "hash": "906202714fbf5520a90f21731348f263c7c2edb3",
     "date": "2026-10-13"
   },
   "/collaboration/": {
-    "hash": "c96dd21aaed32fa03a10502ba1c209db4000fc40",
+    "hash": "029bb8e9959579c2480e8f0d22c98602180fe616",
     "date": "2026-10-13"
   },
   "/conditions-generales-de-vente/": {
-    "hash": "0e92dcb3e1350ccbe0234bf54c779c4e5ed39102",
+    "hash": "1d830d37f1fd3cd562bde3359a629b567629a0c9",
     "date": "2026-10-13"
   },
   "/services/personal-branding-entrepreneurs/": {
-    "hash": "6e65c1f1e6164e9cd39e80bddf714da9438e9644",
+    "hash": "cacd9037e45a66e153dc1b29530b59cbcc43b98a",
     "date": "2026-10-13"
   },
   "/politique-cookies/": {
-    "hash": "0edcecf5a122ba1a47e3e91ae7d09e8d92422766",
+    "hash": "9d5f20b863723ee50d3fc79aaf95e601301a588e",
     "date": "2026-10-13"
   },
   "/conseils/lieux-seance-photo-montpellier-toulouse/": {
-    "hash": "f2431747d3dc18bad22334aa700ba99d0578994b",
+    "hash": "5a77460de38a0beff33d1425a3d417bad67d3f4b",
     "date": "2026-10-13"
   },
   "/droits-a-l-image/": {
-    "hash": "f49c30f0c37e35fc56bf850b2c2ecfa025f4d586",
+    "hash": "f77a5b7dc4100162665bd2bb6a15f31cf05500b4",
     "date": "2026-10-13"
   },
   "/en/": {
-    "hash": "42c04b5838396eaf52537512d4a4199cff3cd481",
+    "hash": "67305b075320d96cfaf3bd43fa218c0fd207c767",
     "date": "2026-10-13"
   },
   "/en/services/": {
-    "hash": "d6d09ff91f6b75b756b517662b40c384cb18c484",
+    "hash": "757dc20a80c955f5dc7c0251805547b15512206e",
     "date": "2026-10-13"
   },
   "/en/services/seance-photo-particuliers/": {
-    "hash": "756208a74bc3b75804f19a109c7a3403678502d4",
+    "hash": "cf640b2f26d93a545581aea77f6c409373c9e3b0",
     "date": "2026-10-13"
   },
   "/en/services/portrait-professionnel-corporate/": {
-    "hash": "bbe8fcdbb837ba33562e3f76c77759fd9cff1b71",
+    "hash": "fa9bedc10cfc339625fefc235c08c1fa70c1e3cd",
     "date": "2026-10-13"
   },
   "/en/services/personal-branding-entrepreneurs/": {
-    "hash": "59170e73adb8316074800006efbb58f1afbaa4a1",
+    "hash": "74b67a639f64179f45be773910bb8f46746094c4",
     "date": "2026-10-13"
   },
   "/en/services/photographe-mode-mannequins/": {
-    "hash": "00342dfcf165a893cf5f3492b21d7d67a47024e2",
+    "hash": "181439db48996df79bfc2bab2665d67d8060a625",
     "date": "2026-10-13"
   },
   "/en/services/photo-produits-packshots/": {
-    "hash": "83bbeeb45f6bbfd0875890ed07c48483f7b2dfa9",
+    "hash": "3349340c10c6eadc8a95f1ae54c4931bece33e2e",
     "date": "2026-10-13"
   },
   "/en/services/photographe-evenementiel/": {
-    "hash": "df8ce5030d164539d1ca81c07554db41bd15221b",
+    "hash": "44dc25dcd48736ba77ae37bd16ef65721661a67c",
     "date": "2026-10-13"
   },
   "/photographe-montpellier/": {
-    "hash": "c3e19c5c3b6beb0d7163057290f15fbbee521a6f",
+    "hash": "728221caf2046698985dd59f4f100da0c1fd403d",
     "date": "2026-10-13"
   },
   "/en/photographer-montpellier/": {
-    "hash": "b6145681a4038f0ce9ad093d292573e57e833b08",
+    "hash": "6f0146f8e481dd281211748f1db043227ab0b76a",
     "date": "2026-10-13"
   },
   "/photographe-toulouse/": {
-    "hash": "b288da3985a6e991dd7e4162801c1dfc039636bc",
+    "hash": "17a711dc327ed0e80e3e14d197dbc0e352b72e1f",
     "date": "2026-10-13"
   },
   "/en/photographer-toulouse/": {
-    "hash": "bc7c634b979f8cf9eace62bdcfefe76341683ddf",
+    "hash": "155e297871c03452eeb4927cb99e4217bb403345",
     "date": "2026-10-13"
   },
   "/en/decouvrir-chaque-prestation/": {
-    "hash": "2d62cd56c87f94f9ee5601f59e28583b3cb3ee14",
+    "hash": "c902a0255e685402f830dbcb3d732f52545822ef",
     "date": "2026-10-13"
   },
   "/en/a-propos/": {
-    "hash": "ae3804a448fabb5ae6d0a32bba7e235d65039f92",
+    "hash": "f37da7fdf2391fdbf380eda8321ecbbaf62a5932",
     "date": "2026-10-13"
   },
   "/en/devis/": {
-    "hash": "2f9e3fa6738d24088ee37cb175b0109d04bbc017",
+    "hash": "cf4690a915f9cb19a08375c328cc2a5852baa022",
     "date": "2026-10-13"
   },
   "/en/portfolio/": {
-    "hash": "8157aff23d0fc56d965660ac35a1cd013d3a7df5",
+    "hash": "2420a46699d4296b58eb5ebb6caf198a201673e1",
     "date": "2026-10-13"
   },
   "/en/contact/": {
-    "hash": "88285657de3585377acc3cdaa102453a1798ea5f",
+    "hash": "3634203db580dd84f3e9111c87e74c11d2b251e3",
     "date": "2026-10-13"
   },
   "/en/collaboration/": {
-    "hash": "fee6e53ec8060ca0e919059e90ce05d6db1686d3",
+    "hash": "07614e5e256322ccb927d39bb7ad0527ff972c15",
     "date": "2026-10-13"
   },
   "/en/faq/": {
-    "hash": "0e1dc30eee3b7715cf7e3ed97c60f76ff8ee976a",
+    "hash": "11a613a4f58d5d4d2ec2db001791524d424d959d",
     "date": "2026-10-13"
   },
   "/en/conditions-generales-de-vente/": {
-    "hash": "1524fa022d9dda7ddcfad1c82d930d307eb97581",
+    "hash": "ac924ab88c0d1a27eb4a9a79b85727c9b6260032",
     "date": "2026-10-13"
   },
   "/en/politique-cookies/": {
-    "hash": "d257c076a530580a50ca2c3403225077e147703e",
+    "hash": "65ada166221b9f2993b81d2c98d8e37384509cf7",
     "date": "2026-10-13"
   },
   "/en/droits-a-l-image/": {
-    "hash": "551b42cd67b9655dcae57718e96956496e0964ca",
+    "hash": "3cca52df57096c7d63e711788e85bc591bad01d3",
     "date": "2026-10-13"
   },
   "/en/conseils/": {
-    "hash": "a3a76c971f8f46bcbff679428126812515f49298",
+    "hash": "131060dc328e762b9ab2887f590f88245db4f29d",
     "date": "2026-10-13"
   },
   "/en/conseils/combien-coute-une-seance-photo/": {
-    "hash": "5790ad1fa894322b00c7f039866416c4c8f5aeeb",
+    "hash": "118b8180326c8aa8e1cfba3a340441ae045684e7",
     "date": "2026-10-13"
   },
   "/en/conseils/preparer-seance-photo-portrait/": {
-    "hash": "381e09dc376a803e4f405ae088e680148f905836",
+    "hash": "dde2a059ff0fc3f1ab9c98b5d227e510d1e8d916",
     "date": "2026-10-13"
   },
   "/en/conseils/que-porter-seance-photo/": {
-    "hash": "9b6f3764b7cbe57af352631e104466714552ca87",
+    "hash": "0c7bdf4a522e752367021bfb3934568d9691d62f",
     "date": "2026-10-13"
   },
   "/en/conseils/preparer-shooting-photo-produit/": {
-    "hash": "aa193daae5d26dba12ae9b3a056599779b4f67fa",
+    "hash": "e08a5ee02d72f5af2490006cbc9768f0d80b39d1",
     "date": "2026-10-13"
   },
   "/en/conseils/preparer-shooting-mode-lookbook/": {
-    "hash": "48b961f6694575118422d7472f450c19842b01d3",
+    "hash": "00500e1e0d2598f6f17a60839cf26d1ffe4f7b80",
     "date": "2026-10-13"
   },
   "/en/conseils/choisir-photographe-evenementiel/": {
-    "hash": "c6273ea8fb643ccd686a503a6b8ffcaefc6c726b",
+    "hash": "8b9f299fa18f2b328176298823eaec76bc0ac2b7",
     "date": "2026-10-13"
   },
   "/en/conseils/photobooth-mariage-bien-choisir/": {
@@ -268,19 +268,27 @@
     "date": "2026-10-13"
   },
   "/en/conseils/polas-mannequin-digitals-agence/": {
-    "hash": "26ff4f0aa10b755e3345ac1d5d9fc73595938ab6",
+    "hash": "f913c61321c16b956857183fa9d408e6399f54e3",
     "date": "2026-10-13"
   },
   "/en/conseils/packshot-ou-mise-en-scene-photo-produit/": {
-    "hash": "9c7302b3f7e34c4541f3f7fb834bc6469c9c3ef3",
+    "hash": "861b9dc7c2c2b9d09ca79244f49eada8c96fa494",
     "date": "2026-10-13"
   },
   "/en/conseils/lieux-seance-photo-montpellier-toulouse/": {
-    "hash": "78f53db552b46831a21d62bc9f47c11464ed44c4",
+    "hash": "608e6a3c1a598402d13ccf24966af666d057a450",
     "date": "2026-10-13"
   },
   "/en/conseils/portrait-professionnel-photo-profil-linkedin/": {
-    "hash": "5146601dd91516a99bf4e17aea4ac34f5574c480",
+    "hash": "162ec534a8ab1032edcc100f84542b6edb58d822",
+    "date": "2026-10-13"
+  },
+  "/photographe-france/": {
+    "hash": "72ceba4ce7328cc4a340cca7fb19f36017e22f03",
+    "date": "2026-10-13"
+  },
+  "/en/photographer-france/": {
+    "hash": "48ff990381947bcbb12df34e6a95d21868b9844f",
     "date": "2026-10-13"
   }
 }

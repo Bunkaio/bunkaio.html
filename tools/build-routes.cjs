@@ -131,7 +131,7 @@ function buildJsonLd(route, meta, snaps) {
     telephone: b.telephone, email: b.email, priceRange: b.priceRange, sameAs: b.sameAs,
     identifier: { '@type': 'PropertyValue', propertyID: 'SIRET', value: b.siret },
     address: { '@type': 'PostalAddress', addressLocality: b.baseCity, addressRegion: b.region, addressCountry: 'FR' },
-    areaServed: [...b.cities.map((c) => ({ '@type': 'City', name: c })), { '@type': 'AdministrativeArea', name: b.region }],
+    areaServed: [...b.cities.map((c) => ({ '@type': 'City', name: c })), { '@type': 'AdministrativeArea', name: b.region }, { '@type': 'Country', name: 'France' }],
     knowsAbout: per.knowsAbout,
     ...(b.openingHours ? { openingHoursSpecification: { '@type': 'OpeningHoursSpecification', dayOfWeek: b.openingHours.days, opens: b.openingHours.opens, closes: b.openingHours.closes } } : {}),
     ...(hasPerson ? { employee: { '@id': personId } } : {}),
@@ -195,7 +195,7 @@ function buildJsonLd(route, meta, snaps) {
   if (fig || art) page.primaryImageOfPage = { '@id': url + '#primaryimage' };
   if (art) page.mainEntity = { '@id': url + '#article' };
   if (route.view === 'advice' || route.view === 'discover') page.mainEntity = { '@id': url + '#list' };
-  if (route.view === 'city') { const cn = route.city === 'toulouse' ? 'Toulouse' : 'Montpellier'; page.contentLocation = { '@type': 'City', name: cn }; page.about = [{ '@id': bizId }, { '@type': 'City', name: cn }]; }
+  if (route.view === 'city') { const fr = route.city === 'france'; const cn = fr ? 'France' : route.city === 'toulouse' ? 'Toulouse' : 'Montpellier'; const ty = fr ? 'Country' : 'City'; page.contentLocation = { '@type': ty, name: cn }; page.about = [{ '@id': bizId }, { '@type': ty, name: cn }]; }
   if (route.path !== '/' && route.path !== '/en/') page.breadcrumb = { '@id': url + '#breadcrumb' };
   graph.push(page);
   if (route.path !== '/' && route.path !== '/en/') {

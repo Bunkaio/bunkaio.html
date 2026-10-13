@@ -248,6 +248,7 @@ const IMG = {
     /* Une bannière par ville : la première photo existante gagne (photo de la ville, sinon la bannière commune « city »). */
     'city-montpellier': [MEDIA_BASE + '/hero/city-montpellier-1.webp', MEDIA_BASE + '/hero/city-1.webp'],
     'city-toulouse':    [MEDIA_BASE + '/hero/city-toulouse-1.webp',    MEDIA_BASE + '/hero/city-1.webp'],
+    'city-france':      [MEDIA_BASE + '/hero/city-france-1.webp',      MEDIA_BASE + '/hero/city-1.webp'],
     share:    MEDIA_BASE + '/hero/share-1.webp',      // « Partager mon expérience »
   },
 

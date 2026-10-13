@@ -4007,6 +4007,57 @@ const CITY_PAGES = {
       [{fr:'Sous quel délai reçoit-on les photos ?', en:'How soon do I receive the photos?'}, {fr:'Les photos HD retouchées sont livrées dans une galerie privée en 3 à 10 jours ouvrés selon la formule ; le délai exact figure sur votre devis.', en:'Retouched HD photos are delivered in a private gallery within 3 to 10 working days depending on the package; the exact lead time is on your quote.'}]
     ]
   },
+  france: {
+    flag: 'france', name: {fr:'France', en:'France'}, other: 'montpellier',
+    linkLabel: {fr:'Photographe en France', en:'Photographer in France'},
+    lead: {
+      fr:'BUNKAIO est un studio de photographie mobile basé en Occitanie. Il se déplace sur devis partout en France — Paris, Lyon, Marseille, Bordeaux, Lille, Nantes, Nice, Strasbourg, Rennes… — pour vos portraits, votre Personal Branding, vos photos corporate, vos shootings mode et produits et vos événements. Le déplacement est offert jusqu\'à ' + TRAVEL_FREE_KM + ' km autour de Montpellier et de Toulouse ; ailleurs, il est calculé dans votre devis et plafonné à ' + TRAVEL_CAP + ' €.',
+      en:'BUNKAIO is a mobile photography studio based in Occitanie. It travels on quote anywhere in France — Paris, Lyon, Marseille, Bordeaux, Lille, Nantes, Nice, Strasbourg, Rennes… — for your portraits, Personal Branding, corporate photos, fashion and product shoots and events. Travel is free within ' + TRAVEL_FREE_KM + ' km of Montpellier and Toulouse; elsewhere it is calculated in your quote and capped at €' + TRAVEL_CAP + '.'
+    },
+    svcTitle: {fr:'Nos prestations partout en France', en:'Our services across France'},
+    citiesTitle: {fr:'Photographe à Paris, Lyon, Marseille et dans les grandes villes', en:'Photographer in Paris, Lyon, Marseille and the major cities'},
+    citiesIntro: {
+      fr:'Le studio vient à vous : bureau, boutique, showroom, atelier, hôtel ou lieu emblématique de la ville. Pour chaque ville, la distance et le déplacement estimé sont calculés comme dans le devis en ligne ; l\'estimation est confirmée sur votre devis avant toute signature.',
+      en:'The studio comes to you: office, shop, showroom, workshop, hotel or an emblematic place in the city. For each city, the distance and estimated travel are calculated as in the online quote; the estimate is confirmed on your quote before anything is signed.'
+    },
+    cities: [
+      {id:'paris', n:'Paris', c:[48.8566,2.3522], spots:{fr:'Le Marais, le Palais-Royal, les Tuileries, les berges de la Seine, Montmartre, les quartiers d\'affaires et La Défense, showrooms et coworkings.', en:'Le Marais, the Palais-Royal, the Tuileries, the banks of the Seine, Montmartre, business districts and La Défense, showrooms and coworking spaces.'}},
+      {id:'lyon', n:'Lyon', c:[45.764,4.8357], spots:{fr:'Le Vieux-Lyon, la Presqu\'île, la Part-Dieu, la Confluence, le parc de la Tête d\'Or.', en:'Vieux-Lyon, the Presqu\'île, Part-Dieu, La Confluence, the Parc de la Tête d\'Or.'}},
+      {id:'marseille', n:'Marseille', c:[43.2965,5.3698], spots:{fr:'Le Vieux-Port, le Panier, la Corniche, Euroméditerranée.', en:'The Vieux-Port, Le Panier, the Corniche, Euroméditerranée.'}},
+      {id:'bordeaux', n:'Bordeaux', c:[44.8378,-0.5792], spots:{fr:'Les quais et le miroir d\'eau, le quartier des Chartrons, la rive droite, Darwin.', en:'The quays and the Miroir d\'eau, the Chartrons district, the right bank, Darwin.'}},
+      {id:'lille', n:'Lille', c:[50.6292,3.0573], spots:{fr:'Le Vieux-Lille, la Grand-Place, Euralille, la Citadelle.', en:'Vieux-Lille, the Grand-Place, Euralille, the Citadelle.'}},
+      {id:'nantes', n:'Nantes', c:[47.2184,-1.5536], spots:{fr:'L\'île de Nantes, le passage Pommeraye, le Bouffay, les bords de l\'Erdre.', en:'The Île de Nantes, the Passage Pommeraye, the Bouffay, the banks of the Erdre.'}},
+      {id:'nice', n:'Nice', c:[43.7102,7.262], spots:{fr:'La Promenade des Anglais, le Vieux-Nice, la colline du Château, le port.', en:'The Promenade des Anglais, Old Nice, the Colline du Château, the harbour.'}},
+      {id:'strasbourg', n:'Strasbourg', c:[48.5734,7.7521], spots:{fr:'La Petite France, la Grande-Île, le quartier européen, la Neustadt.', en:'La Petite France, the Grande-Île, the European district, the Neustadt.'}},
+      {id:'rennes', n:'Rennes', c:[48.1173,-1.6778], spots:{fr:'Le centre historique à pans de bois, le Parlement de Bretagne, le Thabor, EuroRennes.', en:'The half-timbered old town, the Parlement de Bretagne, the Thabor, EuroRennes.'}},
+      {id:'toulouse', n:'Toulouse', c:[43.6047,1.4442], city:'toulouse', spots:{fr:'Page dédiée : briques roses, quais de la Garonne, Canal du Midi.', en:'Dedicated page: pink bricks, Garonne quays, Canal du Midi.'}},
+      {id:'montpellier', n:'Montpellier', c:[43.6108,3.8767], city:'montpellier', spots:{fr:'Page dédiée : l\'Écusson, Antigone, Port Marianne, le littoral.', en:'Dedicated page: the Écusson, Antigone, Port Marianne, the coast.'}}
+    ],
+    parisTitle: {fr:'Un photographe professionnel à Paris', en:'A professional photographer in Paris'},
+    paris: {
+      fr:'Entrepreneurs, marques, agences et équipes parisiennes : BUNKAIO vient dans vos bureaux, votre showroom ou votre atelier, ou choisit avec vous un lieu de la ville — cours du Palais-Royal, quais de Seine, ruelles du Marais, verrières des quartiers d\'affaires. Portraits Personal Branding, photos d\'équipe, lookbooks et packshots, reportages d\'événements : les mêmes formules et les mêmes prix que partout ailleurs, auxquels s\'ajoute le forfait de déplacement indiqué dans votre devis. Pour limiter ce forfait, regroupez plusieurs portraits ou plusieurs besoins sur une même journée.',
+      en:'Parisian entrepreneurs, brands, agencies and teams: BUNKAIO comes to your offices, showroom or workshop, or picks a place in the city with you — Palais-Royal courtyards, Seine quays, Marais lanes, glass-roofed business districts. Personal Branding portraits, team photos, lookbooks and packshots, event coverage: the same packages and prices as anywhere else, plus the travel flat rate shown in your quote. To keep that flat rate down, group several portraits or several needs into a single day.'
+    },
+    travelTitle: {fr:'Comment fonctionne le déplacement partout en France', en:'How travel works across France'},
+    towns: ['Aix-en-Provence', 'Angers', 'Clermont-Ferrand', 'Dijon', 'Grenoble', 'Le Havre', 'Metz', 'Orléans', 'Reims', 'Tours', 'Toulon', 'Cannes'],
+    townsLabel: {fr:'Et aussi, par exemple :', en:'And also, for example:'},
+    whoTitle: {fr:'Pour qui, partout en France', en:'Who it is for, across France'},
+    who: [
+      [{fr:'Entrepreneurs et indépendants', en:'Entrepreneurs and freelancers'}, {fr:'La formule Lancement construit votre image professionnelle, dans votre lieu de travail où que vous soyez en France.', en:'The Launch package builds your professional image, at your place of work wherever you are in France.'}],
+      [{fr:'Marques et créateurs', en:'Brands and designers'}, {fr:'Lookbooks, e-commerce, packshots et visuels de marque pour vos collections et vos produits.', en:'Lookbooks, e-commerce, packshots and brand visuals for your collections and products.'}],
+      [{fr:'Entreprises et équipes', en:'Companies and teams'}, {fr:'Portraits de dirigeants et d\'équipes, photos pour le site, LinkedIn et la presse.', en:'Portraits of executives and teams, photos for your website, LinkedIn and the press.'}],
+      [{fr:'Mannequins et particuliers', en:'Models and individuals'}, {fr:'Books mannequins, séances portrait et lifestyle, en solo, en couple ou en groupe.', en:'Model books, portrait and lifestyle sessions, solo, as a couple or in a group.'}],
+      [{fr:'Événements', en:'Events'}, {fr:'Réceptions, événements d\'entreprise et domaines : un reportage photo discret et soigné.', en:'Receptions, company events and estates: discreet, polished photo coverage.'}]
+    ],
+    faq: [
+      [{fr:'Le photographe se déplace-t-il partout en France ?', en:'Does the photographer travel anywhere in France?'}, {fr:'Oui. BUNKAIO est basé en Occitanie et se déplace sur devis dans toute la France : Paris, Lyon, Marseille, Bordeaux, Lille, Nantes, Nice, Strasbourg, Rennes et toute autre commune. Indiquez votre ville dans le devis en ligne : le déplacement est estimé automatiquement puis confirmé avant toute signature.', en:'Yes. BUNKAIO is based in Occitanie and travels on quote throughout France: Paris, Lyon, Marseille, Bordeaux, Lille, Nantes, Nice, Strasbourg, Rennes and any other town. Enter your city in the online quote: travel is estimated automatically, then confirmed before anything is signed.'}],
+      [{fr:'Combien coûte le déplacement d\'un photographe à Paris ?', en:'How much does it cost for a photographer to travel to Paris?'}, 'PARIS'],
+      [{fr:'Où est basé BUNKAIO et où le déplacement est-il offert ?', en:'Where is BUNKAIO based and where is travel free?'}, {fr:'BUNKAIO est basé en Occitanie. Le déplacement est offert jusqu\'à ' + TRAVEL_FREE_KM + ' km autour de Montpellier, de Toulouse et dans l\'ouest de l\'Hérault. Ailleurs, il est facturé ' + TRAVEL_PER_KM + ' € par km (aller-retour) au-delà de ' + TRAVEL_FREE_KM + ' km, plafonné à ' + TRAVEL_CAP + ' €.', en:'BUNKAIO is based in Occitanie. Travel is free within ' + TRAVEL_FREE_KM + ' km of Montpellier, Toulouse and in western Hérault. Elsewhere it is charged at €' + TRAVEL_PER_KM.replace(',', '.') + ' per km (round trip) beyond ' + TRAVEL_FREE_KM + ' km, capped at €' + TRAVEL_CAP + '.'}],
+      [{fr:'Combien coûte un photographe professionnel en France ?', en:'How much does a professional photographer cost in France?'}, null],
+      [{fr:'Les prestations sont-elles les mêmes hors d\'Occitanie ?', en:'Are the services the same outside Occitanie?'}, {fr:'Oui : mêmes formules, mêmes prix, mêmes délais de livraison (3 à 10 jours ouvrés) et même espace client. Seul le déplacement s\'ajoute, chiffré dans votre devis.', en:'Yes: same packages, same prices, same delivery times (3 to 10 working days) and same client area. Only travel is added, priced in your quote.'}],
+      [{fr:'Comment obtenir un devis pour une ville hors Occitanie ?', en:'How do I get a quote for a city outside Occitanie?'}, {fr:'Lancez le devis en ligne (2 minutes), choisissez votre prestation et saisissez votre ville : l\'estimation du déplacement s\'ajoute au prix. Vous recevez une proposition personnalisée sous 48 h, sans engagement.', en:'Start the online quote (2 minutes), choose your service and enter your city: the travel estimate is added to the price. You receive a personalised proposal within 48 hours, with no commitment.'}]
+    ]
+  },
   toulouse: {
     name: {fr:'Toulouse', en:'Toulouse'}, other: 'montpellier',
     lead: {
@@ -4038,7 +4089,7 @@ const CITY_PAGES = {
 };
 /* Illustrations optionnelles des pages villes : MEDIA_BASE/city/<ville>-1..3.webp (admin média). Absentes, rien ne s'affiche. */
 function cityFig(cityId, n, kind){
-  const alt = t({fr:'Séance photo avec BUNKAIO à ', en:'Photo session with BUNKAIO in '}) + t(CITY_PAGES[cityId].name);
+  const alt = CITY_PAGES[cityId].flag === 'france' ? t({fr:'Séance photo BUNKAIO partout en France', en:'BUNKAIO photo session anywhere in France'}) : t({fr:'Séance photo avec BUNKAIO à ', en:'Photo session with BUNKAIO in '}) + t(CITY_PAGES[cityId].name);
   return `<figure class="city-fig city-fig-${kind}"><img src="${IMG.cityPhotos}/${cityId}-${n}.webp" alt="${escHtml(alt)}" width="1600" height="900" decoding="async" onerror="this.closest('figure').remove()"></figure>`;
 }
 function renderCityPage(cityId){
@@ -4069,12 +4120,90 @@ function renderCityPage(cityId){
     fr:'Les formules démarrent à ' + money(allMin) + ', la formule Lancement pour entrepreneurs à ' + money(corp.tiers.lanc.price) + '. Le détail de chaque prestation est sur sa page. ' + vat,
     en:'Packages start at ' + money(allMin) + ', the Launch package for entrepreneurs at ' + money(corp.tiers.lanc.price) + '. Each service page gives the details. ' + vat
   });
+  const steps = `<ol class="disc-steps pb-steps">
+        <li class="disc-step"><b>01 · ${t({fr:'Devis en ligne', en:'Online quote'})}</b><span>${t({fr:'Vous choisissez votre univers, votre formule et vos options en 2 minutes.', en:'You pick your universe, package and options in 2 minutes.'})}</span></li>
+        <li class="disc-step"><b>02 · ${t({fr:'Proposition personnalisée', en:'Personalised proposal'})}</b><span>${t({fr:'Vous recevez une proposition sous 48 h, sans engagement.', en:'You receive a proposal within 48 hours, with no commitment.'})}</span></li>
+        <li class="disc-step"><b>03 · ${t({fr:'Séance', en:'Session'})}</b><span>${t({fr:'Brief, préparation puis direction de pose pendant la séance.', en:'Brief, preparation, then posing direction during the session.'})}</span></li>
+        <li class="disc-step"><b>04 · ${t({fr:'Galerie privée', en:'Private gallery'})}</b><span>${t({fr:'Vos photos HD retouchées, livrées dans votre espace client.', en:'Your retouched HD photos, delivered in your client area.'})}</span></li>
+      </ol>`;
+  const isFr = C.flag === 'france';
+  const frCities = isFr ? C.cities.map(x => { const tr = travelFromCoords(x.c[0], x.c[1], x.n); return Object.assign({}, x, { tr }); }) : [];
+  const parisTr = isFr ? frCities.find(x => x.id === 'paris').tr : null;
+  const parisAnswer = isFr ? t({
+    fr:'Paris est à environ ' + parisTr.km + ' km de nos pôles de départ : le déplacement est un forfait longue distance de ' + parisTr.fee + ' € maximum (plafond de ' + TRAVEL_CAP + ' €), indiqué dans votre devis avant signature. Ce forfait est unique pour la séance : regroupez plusieurs portraits ou besoins sur une journée pour le répartir.',
+    en:'Paris is about ' + parisTr.km + ' km from our departure hubs: travel is a long-distance flat rate of up to €' + parisTr.fee + ' (capped at €' + TRAVEL_CAP + '), shown in your quote before signing. It is charged once per session: group several portraits or needs into one day to spread it.'
+  }) : '';
   const faq = C.faq.map(f => {
-    let a = f[1] ? t(f[1]) : priceAnswer;
+    let a = f[1] === 'PARIS' ? parisAnswer : f[1] ? t(f[1]) : priceAnswer;
     if (f[1] && /\s$/.test(a)) a += `<a href="/conseils/lieux-seance-photo-montpellier-toulouse/" data-nav="article:lieux-seance-photo-montpellier-toulouse">${t({fr:'Voir nos conseils sur les lieux de séance', en:'See our advice on session locations'})}</a>.`;
     return { title: t(f[0]), body: '<p>' + a + '</p>' };
   });
-  el.innerHTML = `
+  const franceHtml = () => `
+    <div class="breadcrumb" role="navigation" aria-label="${t({fr:'Fil d\'Ariane', en:'Breadcrumb'})}">
+      <a href="/" onclick="return navLink(event,'home')">${t({fr:'Accueil', en:'Home'})}</a><span aria-hidden="true">›</span>
+      <span>${t(C.name)}</span>
+    </div>
+    <h1 data-pageh1 class="page-title">${h1}</h1>
+    <p class="page-sub">${t(C.lead)}</p>
+    <div class="svcp-cta-row">
+      ${quizLink('', t({fr:'Demander un devis', en:'Request a quote'}), 'cta-primary')}
+      <a class="btn btn-ghost" href="/contact/" data-nav="contact">${t({fr:'Parler de mon projet', en:'Talk about my project'})}</a>
+    </div>
+    ${cityFig(cityId, 1, 'wide')}
+    <section class="read-panel svcp-panel">
+      <h2>${t(C.svcTitle)}</h2>
+      <ul class="value-grid">${svc.join('')}</ul>
+      <p class="vat-note">${I18N[LANG]['vat-note']}</p>
+    </section>
+    <section class="read-panel svcp-panel">
+      <h2>${t(C.citiesTitle)}</h2>
+      <p class="svcp-text">${t(C.citiesIntro)}</p>
+      <ul class="value-grid fr-cities">${frCities.map(x => {
+        const nm = x.city ? `<a href="${routePath(seoRouteFor('city', x.city), LANG)}" data-nav="city:${x.city}">${x.n}</a>` : x.n;
+        const fee = x.tr.kind === 'free' ? t({fr:'déplacement offert', en:'free travel'}) : (x.tr.capped ? t({fr:'forfait longue distance ' + x.tr.fee + ' €', en:'long-distance flat rate €' + x.tr.fee}) : t({fr:'déplacement estimé ' + x.tr.fee + ' €', en:'estimated travel €' + x.tr.fee}));
+        return `<li><b>${nm} · ${x.tr.kind === 'free' ? '' : '≈ ' + x.tr.km + ' km · '}${fee}</b><span>${t(x.spots)}</span></li>`;
+      }).join('')}</ul>
+      <p class="svcp-note">${t({fr:'Estimations indicatives, calculées comme dans le devis en ligne et confirmées sur votre devis avant toute signature.', en:'Indicative estimates, calculated as in the online quote and confirmed on your quote before anything is signed.'})}</p>
+    </section>
+    <section class="read-panel svcp-panel">
+      <h2>${t(C.parisTitle)}</h2>
+      <p class="svcp-text">${t(C.paris)}</p>
+      ${cityFig(cityId, 2, 'inline')}
+    </section>
+    <section class="read-panel svcp-panel">
+      <h2>${t(C.travelTitle)}</h2>
+      <p class="svcp-text">${t({fr:TRAVEL_TXT.fr.full, en:TRAVEL_TXT.en.full})}</p>
+      <p class="svcp-note"><strong>${t(C.townsLabel)}</strong></p>
+      <ul class="disc-chips">${C.towns.map(x => `<li>${x}</li>`).join('')}</ul>
+    </section>
+    <section class="read-panel svcp-panel">
+      <h2>${t(C.whoTitle)}</h2>
+      <ul class="value-grid">${C.who.map(w => `<li><b>${t(w[0])}</b><span>${t(w[1])}</span></li>`).join('')}</ul>
+      ${cityFig(cityId, 3, 'inline')}
+    </section>
+    <section class="read-panel svcp-panel">
+      <h2>${t({fr:'Comment ça se passe', en:'How it works'})}</h2>
+      ${steps}
+    </section>
+    <section class="read-panel svcp-panel">
+      <h2>${t({fr:'Questions fréquentes — photographe en France', en:'Frequently asked questions — photographer in France'})}</h2>
+      <div id="cityPageFaq"></div>
+    </section>
+    <section class="read-panel svcp-panel article-cta">
+      <h2>${t({fr:'Parlons de votre projet, où que vous soyez en France', en:'Let\'s talk about your project, wherever you are in France'})}</h2>
+      <p class="svcp-text">${t({fr:'Dites-nous ce que vous faites et dans quelle ville : vous recevez une proposition personnalisée sous 48 h.', en:'Tell us what you do and in which city: you receive a personalised proposal within 48 hours.'})}</p>
+      <div class="svcp-cta-row" style="margin:0">${quizLink('', t({fr:'Construire mon projet', en:'Build my project'}), 'cta-primary')}</div>
+    </section>
+    <section class="read-panel svcp-panel svcp-others">
+      <h2>${t({fr:'Pages locales', en:'Local pages'})}</h2>
+      <div class="svcp-others-row">
+        <a class="svcp-chip" href="${routePath(seoRouteFor('city', 'montpellier'), LANG)}" data-nav="city:montpellier">${t({fr:'Photographe à Montpellier', en:'Photographer in Montpellier'})}</a>
+        <a class="svcp-chip" href="${routePath(seoRouteFor('city', 'toulouse'), LANG)}" data-nav="city:toulouse">${t({fr:'Photographe à Toulouse', en:'Photographer in Toulouse'})}</a>
+        <a class="svcp-chip" href="/services/" onclick="return navLink(event,'services')">${t({fr:'Tout le catalogue', en:'Full catalogue'})}</a>
+        <a class="svcp-chip" href="/portfolio/" data-nav="portfolio">Portfolio</a>
+      </div>
+    </section>`;
+  el.innerHTML = isFr ? franceHtml() : `
     <div class="breadcrumb" role="navigation" aria-label="${t({fr:'Fil d\'Ariane', en:'Breadcrumb'})}">
       <a href="/" onclick="return navLink(event,'home')">${t({fr:'Accueil', en:'Home'})}</a><span aria-hidden="true">›</span>
       <span>${t(C.name)}</span>
@@ -4109,12 +4238,7 @@ function renderCityPage(cityId){
     </section>
     <section class="read-panel svcp-panel">
       <h2>${t({fr:'Comment ça se passe', en:'How it works'})}</h2>
-      <ol class="disc-steps pb-steps">
-        <li class="disc-step"><b>01 · ${t({fr:'Devis en ligne', en:'Online quote'})}</b><span>${t({fr:'Vous choisissez votre univers, votre formule et vos options en 2 minutes.', en:'You pick your universe, package and options in 2 minutes.'})}</span></li>
-        <li class="disc-step"><b>02 · ${t({fr:'Proposition personnalisée', en:'Personalised proposal'})}</b><span>${t({fr:'Vous recevez une proposition sous 48 h, sans engagement.', en:'You receive a proposal within 48 hours, with no commitment.'})}</span></li>
-        <li class="disc-step"><b>03 · ${t({fr:'Séance', en:'Session'})}</b><span>${t({fr:'Brief, préparation puis direction de pose pendant la séance.', en:'Brief, preparation, then posing direction during the session.'})}</span></li>
-        <li class="disc-step"><b>04 · ${t({fr:'Galerie privée', en:'Private gallery'})}</b><span>${t({fr:'Vos photos HD retouchées, livrées dans votre espace client.', en:'Your retouched HD photos, delivered in your client area.'})}</span></li>
-      </ol>
+      ${steps}
     </section>
     <section class="read-panel svcp-panel">
       <h2>${t({fr:'Questions fréquentes — ' + t(C.name), en:'Frequently asked questions — ' + t(C.name)})}</h2>
@@ -4129,6 +4253,7 @@ function renderCityPage(cityId){
       <h2>${t({fr:'Aussi disponible', en:'Also available'})}</h2>
       <div class="svcp-others-row">
         <a class="svcp-chip" href="${otherRoute.path}" data-nav="city:${C.other}">${t({fr:'Photographe à ', en:'Photographer in '})}${t(other.name)}</a>
+        <a class="svcp-chip" href="${routePath(seoRouteFor('city', 'france'), LANG)}" data-nav="city:france">${t({fr:'Photographe en France', en:'Photographer in France'})}</a>
         <a class="svcp-chip" href="/services/" onclick="return navLink(event,'services')">${t({fr:'Tout le catalogue', en:'Full catalogue'})}</a>
         <a class="svcp-chip" href="/portfolio/" data-nav="portfolio">Portfolio</a>
       </div>
@@ -7629,7 +7754,7 @@ function renderFooterServices(){
   Object.keys(CITY_PAGES).forEach(id => {
     const r = seoRouteFor('city', id); if (!r) return;
     const li = document.createElement('li'), a = document.createElement('a');
-    a.href = routePath(r, LANG); a.textContent = t({fr:'Photographe à ', en:'Photographer in '}) + t(CITY_PAGES[id].name);
+    a.href = routePath(r, LANG); a.textContent = CITY_PAGES[id].linkLabel ? t(CITY_PAGES[id].linkLabel) : t({fr:'Photographe à ', en:'Photographer in '}) + t(CITY_PAGES[id].name);
     a.onclick = (e) => navLink(e, 'city', id);
     li.appendChild(a); el.appendChild(li);
   });
