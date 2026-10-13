@@ -239,8 +239,7 @@ const IMG = {
      Optionnel : déposées depuis l'admin média, elles remplacent automatiquement la photo partagée ; absentes, rien ne change. */
   heroOwn: {
     advice:   MEDIA_BASE + '/hero/advice-1.webp',
-    /* Articles : photo propre (article-1) sinon celle de la page Conseils (advice-1). */
-    article:  [MEDIA_BASE + '/hero/article-1.webp', MEDIA_BASE + '/hero/advice-1.webp'],
+    /* Articles : plus de photo de fond (fond constellation violet pâle, voir css « Articles de conseils »). */
     about:    MEDIA_BASE + '/hero/about-1.webp',
     legal:    MEDIA_BASE + '/hero/legal-1.webp',
     service:  MEDIA_BASE + '/hero/service-1.webp',    // pages de prestation (/services/…) ; chaque prestation garde en plus sa propre photo
