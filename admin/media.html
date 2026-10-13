@@ -378,7 +378,7 @@ const SECTIONS = [
   ...(typeof ARTICLES !== 'undefined' ? [{
     id: 'articles-photos',
     title: '📰 Conseils — photo de chaque article',
-    desc: 'Photo de chaque article de conseils. Sur ordinateur, elle s'affiche en entier (sans recadrage) dans la colonne de droite, à côté du texte, et suit la lecture : tous les formats passent, paysage ou portrait, sans rien d'important à garder au centre. Sur mobile, elle est en bandeau 4:3 au-dessus du texte (recadré au centre). Exporter au moins 1600 px de large (≤ 350 Ko). Sans photo déposée ici, l\'article reprend la photo de sa prestation (rubrique « Prestations »).',
+    desc: 'Photo de chaque article de conseils. Sur ordinateur, elle s\'affiche en entier (sans recadrage) dans la colonne de droite, à côté du texte, et suit la lecture : tous les formats passent, paysage ou portrait, sans rien d\'important à garder au centre. Sur mobile, elle est en bandeau 4:3 au-dessus du texte (recadré au centre). Exporter au moins 1600 px de large (≤ 350 Ko). Sans photo déposée ici, l\'article reprend la photo de sa prestation (rubrique « Prestations »).',
     slots: ARTICLES.map(a => ({ path: 'articles/' + a.slug + '.webp', label: a.h1 })),
   }] : []),
   // ── Accueil : photo paysage du panneau « Conseils photo » ──
