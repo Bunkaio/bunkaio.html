@@ -5524,3 +5524,51 @@ html:has(body[data-view="article"])::before { background-image: none; }
   #view-quiz > .cst-field { z-index: 0; }
   #view-quiz .quiz-wrap { position: relative; z-index: 1; }
 }
+
+/* ═══ Articles de conseils : mise en page éditoriale ═══
+   Barre de progression de lecture ; sur ordinateur (≥ 1081 px) deux colonnes : texte à gauche (lignes confortables, rubriques toutes ouvertes),
+   photo ENTIÈRE à droite qui reste à l'écran pendant la lecture, avec le sommaire en dessous (la rubrique en cours est mise en valeur).
+   Mobile / tablette : une colonne (titre, photo, texte), sans sommaire. */
+.art-progress { position: fixed; left: 0; right: 0; top: var(--nav-h, 70px); height: 3px; z-index: 900; background: rgba(110,90,168,0.12); pointer-events: none; }
+.art-progress i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #6e5aa8, #b7a3ee); box-shadow: 0 0 10px rgba(110,90,168,0.5); }
+body:not([data-view="article"]) .art-progress { display: none; }
+.art-layout { display: block; }
+.art-toc { display: none; }
+@media (min-width: 1081px) {
+  #view-article .services-page { max-width: 1320px; padding-left: 56px; padding-right: 56px; }
+  .art-layout { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(340px, 0.8fr); grid-template-areas: "head side" "main side"; column-gap: 56px; align-items: start; }
+  .art-headzone { grid-area: head; min-width: 0; }
+  .art-main { grid-area: main; min-width: 0; }
+  .art-side { grid-area: side; align-self: stretch; }
+  .art-side-in { display: grid; gap: 16px; padding-top: 6px; will-change: transform; }
+  /* Titre et en-tête plus éditoriaux */
+  .art-headzone .page-title { font-size: clamp(38px, 3.6vw, 54px); line-height: 1.04; letter-spacing: -0.035em; text-wrap: balance; margin-bottom: 14px; }
+  .art-headzone .article-meta { margin-bottom: 26px; }
+  /* Photo entière (format d'origine), ombre douce, légère mise à l'échelle au fil de la lecture */
+  .art-side .art-hero { max-width: none; margin: 0; border-radius: 22px; box-shadow: 0 34px 80px rgba(40,28,70,0.26); background: #e9e3f4; display: flex; justify-content: center; }
+  .art-side .art-hero img { width: 100%; height: auto; aspect-ratio: auto; max-height: calc(100vh - 440px); min-height: 260px; object-fit: contain; }
+  .art-side .art-hero:hover img { transform: none; }
+  /* Sommaire */
+  .art-toc { display: block; background: rgba(255,255,255,0.78); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border: 1px solid rgba(255,255,255,0.8); border-radius: 18px; padding: 14px 18px 8px; box-shadow: 0 14px 40px rgba(40,28,70,0.12); }
+  .art-toc p { margin: 0 0 6px; font-size: 10.5px; letter-spacing: 0.18em; text-transform: uppercase; color: #6b6577; font-weight: 700; }
+  .art-toc a { display: flex; gap: 10px; padding: 6px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-top: 1px solid rgba(10,10,12,0.08); font-size: 13px; line-height: 1.35; color: #5b566a; text-decoration: none; transition: color .3s ease, padding-left .3s ease; }
+  .art-toc a:first-of-type { border-top: 0; }
+  .art-toc a em { font-style: normal; font-size: 11px; color: rgba(110,90,168,0.55); width: 20px; flex: 0 0 auto; padding-top: 1px; }
+  .art-toc a:hover { color: #0a0a0c; }
+  .art-toc a.on { color: #0a0a0c; font-weight: 600; padding-left: 6px; }
+  .art-toc a.on em { color: #6e5aa8; }
+  /* Texte : rubriques ouvertes, plus aérées, titres de rubrique plus présents */
+  .art-main .read-panel.article { padding: 8px 4px 8px; background: transparent; box-shadow: none; border: 0; -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .art-main .article-summary { border-radius: 18px; padding: 22px 26px; }
+  .art-main .art-toolbar { display: none; }
+  .art-main .art-item { background: rgba(255,255,255,0.82); border-radius: 18px; margin-bottom: 14px; box-shadow: 0 10px 30px rgba(40,28,70,0.07); scroll-margin-top: 100px; }
+  .art-main .art-head { padding: 20px 24px; font-size: 19px; cursor: default; }
+  .art-main .art-head .cs-acc-chev { display: none; }
+  .art-main .art-body { padding: 0 24px 0 24px; }
+  .art-main .art-item.open .art-body { padding-bottom: 24px; }
+  .art-main .art-text, .art-main .art-text p, .art-main .art-text li { font-size: 16px; line-height: 1.85; }
+  .art-main .art-text { max-width: 66ch; }
+  .art-main .art-illus { width: 96px; height: 96px; flex: 0 0 auto; }
+  .art-main .article-cta { margin-top: 18px; }
+}
+@media (prefers-reduced-motion: reduce) { .art-toc a { transition: none; } }

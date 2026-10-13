@@ -4272,7 +4272,12 @@ function renderArticlePage(slug){
   const heroAlt = (IMG.serviceAlt && t(IMG.serviceAlt[a.cat])) || (ART_ALT[a.cat] ? t(ART_ALT[a.cat]) : '');
   const heroErr = articleImgErr(ph.fallback);
   const heroFig = heroSrc ? `<figure class="art-hero"><img src="${heroSrc}" alt="${escHtml(heroAlt)}" width="1200" height="520" loading="lazy" decoding="async" onerror="${heroErr}"></figure>` : '';
+  const openAll = window.innerWidth >= 1081;   /* ordinateur : toutes les rubriques ouvertes, l'article se lit d'un trait */
+  const tocHtml = `<div class="art-toc" role="navigation" aria-label="${t({fr:'Dans cet article', en:'In this article'})}"><p>${t({fr:'Dans cet article', en:'In this article'})}</p>${a.sections.map((sec, k) => `<a href="#art-s${k + 1}" data-go="${k}"><em>${String(k + 1).padStart(2, '0')}</em>${sec.h}</a>`).join('')}</div>`;
   el.innerHTML = `
+    <div class="art-progress" aria-hidden="true"><i></i></div>
+    <div class="art-layout">
+    <div class="art-headzone">
     <div class="breadcrumb" role="navigation" aria-label="${t({fr:'Fil d\'Ariane', en:'Breadcrumb'})}">
       <a href="/" data-nav="home">${t({fr:'Accueil', en:'Home'})}</a><span aria-hidden="true">›</span>
       <a href="/conseils/" data-nav="advice">${t({fr:'Conseils photo', en:'Photo advice'})}</a><span aria-hidden="true">›</span>
@@ -4280,14 +4285,16 @@ function renderArticlePage(slug){
     </div>
     <h1 data-pageh1 class="page-title">${a.h1}</h1>
     <p class="page-sub article-meta"><time datetime="${a.date}">${fmtDate(a.date)}</time> · ${a.minutes} ${t({fr:'min de lecture', en:'min read'})} · ${t({fr:'Par', en:'By'})} <a href="/a-propos/" data-nav="about" rel="author">Aya Nascimento</a></p>
-    ${heroFig}
+    </div>
+    <aside class="art-side"><div class="art-side-in">${heroFig}${tocHtml}</div></aside>
+    <div class="art-main">
     <article class="read-panel svcp-panel article">
       <div class="article-summary"><strong>${t({fr:'En bref', en:'In short'})}</strong><ul>${a.summary.map(x => `<li>${x}</li>`).join('')}</ul></div>
       <div class="art-toolbar"><span>${a.sections.length} ${t({fr:'rubriques', en:'sections'})}</span><button type="button" class="art-all" data-acc-all="#artAcc" data-label-open="${t({fr:'Tout déplier', en:'Expand all'})}" data-label-close="${t({fr:'Tout replier', en:'Collapse all'})}">${t({fr:'Tout déplier', en:'Expand all'})}</button></div>
       <div class="cs-acc art-acc acc-multi" id="artAcc">${(() => { const used = new Set(); return a.sections.map((sec, k) => {
         const ic = artIconFor(sec.h, String(sec.html).replace(/<[^>]+>/g, ' ').slice(0, 200), a.cat, used);
-        return `<section class="cs-acc-item art-item${k === 0 ? ' open' : ''}">
-          <h2 class="art-h2"><button type="button" class="cs-acc-head art-head" aria-expanded="${k === 0}"><span class="art-n">${String(k + 1).padStart(2, '0')}</span>${artIllus(ic, false)}<span class="art-t">${sec.h}</span><i class="cs-acc-chev" aria-hidden="true"></i></button></h2>
+        return `<section class="cs-acc-item art-item${k === 0 || openAll ? ' open' : ''}" id="art-s${k + 1}">
+          <h2 class="art-h2"><button type="button" class="cs-acc-head art-head" aria-expanded="${k === 0 || openAll}"><span class="art-n">${String(k + 1).padStart(2, '0')}</span>${artIllus(ic, false)}<span class="art-t">${sec.h}</span><i class="cs-acc-chev" aria-hidden="true"></i></button></h2>
           <div class="cs-acc-panel"><div class="art-body">${artIllus(ic, true)}<div class="art-text">${sec.html}</div></div></div>
         </section>`;
       }).join(''); })()}</div>
@@ -4310,8 +4317,54 @@ function renderArticlePage(slug){
         ${cat ? `<a class="btn btn-ghost" href="${servicePath(a.cat)}" data-nav="service:${a.cat}"><span>${t(cat.name)}</span></a>` : ''}
       </div>
     </section>
-    ${related.length ? `<section class="read-panel svcp-panel"><h2>${t({fr:'À lire aussi', en:'Keep reading'})}</h2><div class="advice-grid adv-row">${related.map(x => adviceCard(x)).join('')}</div></section>` : ''}`;
+    ${related.length ? `<section class="read-panel svcp-panel"><h2>${t({fr:'À lire aussi', en:'Keep reading'})}</h2><div class="advice-grid adv-row">${related.map(x => adviceCard(x)).join('')}</div></section>` : ''}
+    </div>
+    </div>`;
   renderAccordionInto('articleFaq', a.faq.map(f => ({ title: f.q, body: '<p>' + f.a + '</p>' })), { exclusive: true });
+  initArticleReading(el);
+}
+
+/* Lecture d'un article (ordinateur) : barre de progression, sommaire qui suit la section en cours, clic = section ouverte et amenée à l'écran. */
+let _artScroll = null;
+function initArticleReading(root){
+  if (_artScroll) { window.removeEventListener('scroll', _artScroll); _artScroll = null; }
+  const bar = root.querySelector('.art-progress i'), items = [...root.querySelectorAll('.art-item')], links = [...root.querySelectorAll('.art-toc a')];
+  if (!bar) return;
+  root.querySelector('.art-toc')?.addEventListener('click', e => {
+    const a = e.target.closest('a[data-go]'); if (!a) return;
+    e.preventDefault();
+    const it = items[+a.dataset.go]; if (!it) return;
+    if (!it.classList.contains('open')) { it.classList.add('open'); const b = it.querySelector('.art-head'); if (b) b.setAttribute('aria-expanded', 'true'); }
+    const navH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) || 70;
+    window.scrollTo({ top: it.getBoundingClientRect().top + window.scrollY - navH - 18, behavior: 'smooth' });
+  });
+  let tick = false;
+  const upd = () => {
+    tick = false;
+    if (currentView !== 'article' || !document.body.contains(bar)) return;
+    const art = root.querySelector('.art-main'); if (!art) return;
+    const r = art.getBoundingClientRect(), vh = window.innerHeight;
+    const p = Math.max(0, Math.min(1, (vh * 0.35 - r.top) / Math.max(1, r.height - vh * 0.2)));
+    bar.style.width = (p * 100).toFixed(1) + '%';
+    /* Colonne photo + sommaire : reste à l'écran pendant la lecture (décalage par transform : `sticky` ne fonctionne pas ici, html/body sont des
+       conteneurs de défilement), sans jamais sortir de sa colonne. Ordinateur seulement. */
+    const side = root.querySelector('.art-side'), inner = root.querySelector('.art-side-in');
+    if (side && inner) {
+      let want = 0;
+      if (window.innerWidth >= 1081) {
+        const off = inner._off || 0, navH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) || 70;
+        const nat = inner.getBoundingClientRect().top - off;
+        want = Math.max(0, Math.min(navH + 28 - nat, side.getBoundingClientRect().height - inner.offsetHeight));
+      }
+      if (Math.abs(want - (inner._off || 0)) > 0.5) { inner._off = want; inner.style.transform = want ? 'translateY(' + Math.round(want) + 'px)' : ''; }
+    }
+    let act = -1; items.forEach((it, i) => { if (it.getBoundingClientRect().top < vh * 0.4) act = i; });
+    links.forEach((l, i) => l.classList.toggle('on', i === Math.max(0, act)));
+  };
+  _artScroll = () => { if (!tick) { tick = true; requestAnimationFrame(upd); } };
+  window.addEventListener('scroll', _artScroll, { passive: true });
+  window.addEventListener('resize', _artScroll);
+  upd();
 }
 
 /* Liens internes déclarés par data-nav="vue[:sous-page]" (articles, cartes…) : navigation SPA
