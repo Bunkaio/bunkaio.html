@@ -5630,8 +5630,8 @@ body:not([data-view="article"]) .art-progress { display: none; }
 .cred-wrap { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 20px 40px; align-items: start; }
 .cred-avatar { margin: 4px 0 0; text-align: center; }
 .cred-avatar img { display: block; width: 132px; height: 132px; margin: 0 auto 10px; border-radius: 50%; object-fit: cover; object-position: 36% 35%; object-view-box: inset(10% 40% 8% 24%); box-shadow: 0 0 0 4px #fff, 0 0 0 5px rgba(110,90,168,.35), 0 14px 30px rgba(40,28,70,.18); background: #e9e3f4; }
-.cred-avatar figcaption b { display: block; font-size: 14px; color: var(--black); }
-.cred-avatar figcaption span { display: block; margin-top: 2px; font-size: 11.5px; line-height: 1.45; color: var(--grey); }
+.cred-avatar .cred-cap b { display: block; font-size: 14px; color: var(--black); }
+.cred-avatar .cred-cap span { display: block; margin-top: 2px; font-size: 11.5px; line-height: 1.45; color: var(--grey); }
 .cred-body .cred-lead { max-width: none; margin: 0 0 18px; flex: none; }
 .cred-minis { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 32px; margin: 0 0 18px; }
 .cred-minis .cred-mini { align-items: flex-start; line-height: 1.5; }
@@ -5643,7 +5643,8 @@ body:not([data-view="article"]) .art-progress { display: none; }
 @media (max-width: 860px) {
   .credentials-strip { padding: 0 24px; }
   .cred-wrap, .art-cred .cred-wrap { grid-template-columns: 1fr; gap: 16px; }
-  .cred-avatar { display: flex; align-items: center; gap: 14px; text-align: left; margin: 0; }
+  .cred-avatar { text-align: left; margin: 0; }
+  .cred-avatar-link { display: flex; align-items: center; gap: 14px; }
   .cred-avatar img, .art-cred .cred-avatar img { width: 72px; height: 72px; margin: 0; flex-shrink: 0; }
   .cred-minis { grid-template-columns: 1fr; gap: 12px; }
   .cred-links { flex-direction: column; gap: 12px; }
@@ -5653,3 +5654,13 @@ body:not([data-view="article"]) .art-progress { display: none; }
 @media (prefers-reduced-motion: reduce) { .cred-anim .cred-avatar { opacity: 1 !important; transform: none !important; animation: none !important; } }
 /* Le filtre de grain déborde du cadre des petites images rondes (rectangle clair visible) : désactivé sur la vignette d'Aya. */
 .cred-avatar img { filter: none !important; }
+
+/* Vignette d'Aya cliquable → page À propos */
+.cred-avatar-link { display: block; color: inherit; text-decoration: none; border-radius: 16px; outline-offset: 4px; }
+@media (max-width: 860px) { .cred-avatar-link { display: flex; } }
+.cred-avatar-link img { transition: transform .45s cubic-bezier(.2,.7,.2,1), box-shadow .45s ease; }
+.cred-avatar-link .cred-cap b { text-decoration: underline; text-decoration-color: rgba(110,90,168,.45); text-underline-offset: 3px; transition: text-decoration-color .3s; }
+@media (hover: hover) {
+  .cred-avatar-link:hover img { transform: scale(1.05); box-shadow: 0 0 0 4px #fff, 0 0 0 6px rgba(110,90,168,.7), 0 18px 36px rgba(40,28,70,.24); }
+  .cred-avatar-link:hover .cred-cap b { text-decoration-color: currentColor; }
+}

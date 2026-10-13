@@ -4448,7 +4448,7 @@ function renderArticlePage(slug){
       <h2>${t({fr:'Questions fréquentes', en:'Frequently asked questions'})}</h2>
       <div id="articleFaq"></div>
 <aside class="art-cred" aria-label="${t({fr:'À propos de BUNKAIO', en:'About BUNKAIO'})}"><div class="cred-wrap">
-        <figure class="cred-avatar"><img src="/images/about/aya-nascimento-photographe-en-studio.webp" width="240" height="240" loading="lazy" decoding="async" alt="${t({fr:'Aya Nascimento, photographe portraitiste, fondatrice de BUNKAIO', en:'Aya Nascimento, portrait photographer, founder of BUNKAIO'})}"><figcaption><b>Aya Nascimento</b><span>${I18N[LANG]['cred-avatar-role']}</span></figcaption></figure>
+        <figure class="cred-avatar"><a class="cred-avatar-link" href="/a-propos/" data-nav="about" aria-label="${t({fr:'Qui est Aya Nascimento ? Voir la page À propos', en:'Who is Aya Nascimento? See the About page'})}"><img src="/images/about/aya-nascimento-photographe-en-studio.webp" width="240" height="240" loading="lazy" decoding="async" alt="${t({fr:'Aya Nascimento, photographe portraitiste, fondatrice de BUNKAIO', en:'Aya Nascimento, portrait photographer, founder of BUNKAIO'})}"><span class="cred-cap"><b>Aya Nascimento</b><span>${I18N[LANG]['cred-avatar-role']}</span></span></a></figure>
         <div class="cred-body">
         <p class="cred-lead">${I18N[LANG]['cred-lead']}</p>
         <div class="cred-minis art-cred-minis">
