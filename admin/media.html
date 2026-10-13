@@ -371,14 +371,14 @@ const SECTIONS = [
   {
     id: 'about-portrait',
     title: '👤 Portrait d\'Aya — page À propos et signature des articles',
-    desc: 'Format libre, de préférence portrait 4:5 (≤ 350 Ko). Dépose ici la photo : elle remplace aussitôt la photo actuelle sur la page À propos (grande photo) et dans la petite pastille « Article rédigé par Aya » sous chaque article Conseils. Supprime-la pour revenir à la photo par défaut du site.',
+    desc: 'Format libre (≤ 350 Ko). Sur la page À propos, la grande photo est affichée en 16:9 sur ordinateur et en 4:5 sur mobile, recadrée au centre : garde le sujet bien centré. Dépose ici la photo : elle remplace aussitôt la photo actuelle sur la page À propos (grande photo, sous le bouton « Découvrir le portfolio ») et dans la petite pastille « Article rédigé par Aya » sous chaque article Conseils. Supprime-la pour revenir à la photo par défaut du site.',
     slots: [{ path: 'about/aya.webp', label: 'Portrait d\'Aya' }],
   },
   // ── Conseils : une photo par article (repli sur la photo de la prestation tant qu'aucune n'est déposée) ──
   ...(typeof ARTICLES !== 'undefined' ? [{
     id: 'articles-photos',
     title: '📰 Conseils — photo de chaque article',
-    desc: 'Photo affichée en haut de chaque article de conseils (bandeau large, recadré environ 1200 × 520) : exporter en paysage, au moins 1600 px de large (≤ 350 Ko), sujet au centre. Sans photo déposée ici, l\'article reprend la photo de sa prestation (rubrique « Prestations »).',
+    desc: 'Photo de chaque article de conseils. Sur ordinateur, elle s'affiche en entier (sans recadrage) dans la colonne de droite, à côté du texte, et suit la lecture : tous les formats passent, paysage ou portrait, sans rien d'important à garder au centre. Sur mobile, elle est en bandeau 4:3 au-dessus du texte (recadré au centre). Exporter au moins 1600 px de large (≤ 350 Ko). Sans photo déposée ici, l\'article reprend la photo de sa prestation (rubrique « Prestations »).',
     slots: ARTICLES.map(a => ({ path: 'articles/' + a.slug + '.webp', label: a.h1 })),
   }] : []),
   // ── Accueil : photo paysage du panneau « Conseils photo » ──
