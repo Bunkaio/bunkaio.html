@@ -1836,18 +1836,24 @@ function initHeroCarousel(viewKey){
       slide.className = 'hero-slide' + (i === 0 ? ' active' : '');
       const img = document.createElement('img');
       img.src = src; img.alt = ''; img.loading = i === 0 ? 'eager' : 'lazy';
+      /* Photo absente (emplacement du carrousel pas encore rempli dans l'admin média) : la diapositive est retirée. */
+      img.onerror = () => {
+        const wasActive = slide.classList.contains('active'); slide.remove();
+        const first = wrap.querySelector('.hero-slide');
+        if (wasActive && first) { first.classList.add('active'); document.documentElement.style.setProperty('--page-bg-url', 'url(' + first.querySelector('img').src + ')'); }
+      };
       slide.appendChild(img);
       wrap.insertBefore(slide, overlay || null);
     });
     if (images.length > 1){
-      let cur = 0;
       _carouselTimer = setInterval(() => {
-        const slides = wrap.querySelectorAll('.hero-slide');
-        if (!slides.length) return;
+        const slides = [...wrap.querySelectorAll('.hero-slide')];
+        if (slides.length < 2) return;
+        const cur = Math.max(0, slides.findIndex(x => x.classList.contains('active')));
         slides[cur].classList.remove('active');
-        cur = (cur + 1) % slides.length;
-        slides[cur].classList.add('active');
-        document.documentElement.style.setProperty('--page-bg-url','url('+images[cur]+')');
+        const next = slides[(cur + 1) % slides.length];
+        next.classList.add('active');
+        document.documentElement.style.setProperty('--page-bg-url', 'url(' + next.querySelector('img').src + ')');
       }, 5000);
     }
   };

@@ -305,18 +305,6 @@ const VIDEO_SECTIONS = [
     ],
   },
   {
-    id: 'partners-video',
-    view: 'partners',
-    label: 'Collaboration — fond plein écran',
-    path: 'partners/bg-video.mp4',
-    params: [
-      'Format vidéo : .mp4 (H.264)',
-      'Cadrage : paysage 16:9, 1920 × 1080 px minimum',
-      'Boucle courte et fluide, SANS piste audio (lue automatiquement en muet, en boucle) — 8 à 20 secondes idéalement',
-      'Qualité d\'abord : 8 à 15 Mo conviennent (20 Mo maximum). IMPORTANT : le fichier doit être « faststart » (commande ffmpeg indiquée en haut de cette rubrique), sinon il ne démarre qu\'une fois entièrement téléchargé',
-    ],
-  },
-  {
     id: 'devis-video',
     view: 'services',
     label: 'Services — illustration "Devis & déroulé" (vidéo optionnelle)',
@@ -481,11 +469,14 @@ const SECTIONS = [
   },
   {
     id: 'partners-hero',
-    title: '🤝 Collaboration — bannière en haut de page',
-    desc: '2560 × 1440 px, paysage 16:9 (≤ 450 Ko). Image affichée en plein écran sur ordinateur : sujet au centre, rien d\'important sur les bords (le site recadre selon l\'écran).',
+    title: '🤝 Collaboration — carrousel de fond (photos HD)',
+    desc: '2560 × 1440 px, paysage 16:9 (≤ 450 Ko). Jusqu\'à 5 photos qui défilent en fondu toutes les 5 secondes, en plein écran : sujet au centre, rien d\'important sur les bords (le site recadre selon l\'écran). Seules les photos déposées sont affichées ; une seule photo = fond fixe.',
     slots: [
       { path: 'hero/partners-1.webp', label: 'Photo 1' },
       { path: 'hero/partners-2.webp', label: 'Photo 2' },
+      { path: 'hero/partners-3.webp', label: 'Photo 3' },
+      { path: 'hero/partners-4.webp', label: 'Photo 4' },
+      { path: 'hero/partners-5.webp', label: 'Photo 5' },
     ],
   },
   {
