@@ -4314,13 +4314,16 @@ function renderArticlePage(slug){
       }).join(''); })()}</div>
       <h2>${t({fr:'Questions fréquentes', en:'Frequently asked questions'})}</h2>
       <div id="articleFaq"></div>
-      <aside class="author-box" aria-label="${t({fr:'À propos de l\'auteure', en:'About the author'})}">
-        <img src="/images/about/aya-nascimento-photographe-en-studio.webp" alt="${LANG==='fr'?'Aya Nascimento, photographe portraitiste':'Aya Nascimento, portrait photographer'}" width="72" height="72" loading="lazy" decoding="async">
-        <div>
-          <p class="author-name"><a href="/a-propos/" data-nav="about" rel="author">Aya Nascimento</a></p>
-          <p class="author-role">${t({fr:'Photographe portraitiste professionnelle, diplômée de l\'ETPA (BTS Photographie, 2018). Plus de 8 ans d\'expérience et plus de 200 projets réalisés.', en:'Professional portrait photographer, ETPA graduate (BTS Photography, 2018). Over 8 years of experience and 200+ projects.'})}</p>
-          <p class="author-sign">${t({fr:'Article rédigé et signé par Aya Nascimento, fondatrice de BUNKAIO.', en:'Article written and signed by Aya Nascimento, founder of BUNKAIO.'})}</p>
+<aside class="art-cred" aria-label="${t({fr:'À propos de BUNKAIO', en:'About BUNKAIO'})}">
+        <p class="cred-lead">${I18N[LANG]['cred-lead']}</p>
+        <div class="art-cred-minis">
+          <div class="cred-mini"><span class="cred-mini-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.5-7-12a7 7 0 0 1 14 0c0 5.5-7 12-7 12z"/><circle cx="12" cy="9" r="2.4"/></svg></span><span class="cred-mini-text">${I18N[LANG]['cred-mini1']}</span></div>
+          <div class="cred-mini"><span class="cred-mini-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8l10-4 10 4-10 4-10-4z"/><path d="M6 10.5v4.5c0 1.4 2.7 3 6 3s6-1.6 6-3v-4.5"/><path d="M22 8v6"/></svg></span><span class="cred-mini-text">${I18N[LANG]['cred-mini2']}</span></div>
+          <div class="cred-mini"><span class="cred-mini-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="14" r="3.5"/></svg></span><span class="cred-mini-text">${I18N[LANG]['cred-mini3']}</span></div>
+          <div class="cred-mini"><span class="cred-mini-icon"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2l2.9 6.6 7.1.7-5.4 4.7 1.6 7-6.2-3.7L5.8 21l1.6-7-5.4-4.7 7.1-.7L12 2z"/></svg></span><span class="cred-mini-text">${I18N[LANG]['cred-mini4']}</span></div>
         </div>
+        <p class="author-sign">${t({fr:'Article rédigé et signé par <a href="/a-propos/" data-nav="about" rel="author">Aya Nascimento</a>, fondatrice de BUNKAIO.', en:'Article written and signed by <a href="/a-propos/" data-nav="about" rel="author">Aya Nascimento</a>, founder of BUNKAIO.'})}</p>
+        <a class="cred-faq-link" href="/a-propos/" data-nav="about">${I18N[LANG]['cred-about-link']}</a>
       </aside>
     </article>
     <section class="read-panel svcp-panel article-cta">
