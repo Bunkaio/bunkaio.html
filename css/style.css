@@ -5485,26 +5485,19 @@ footer .footer-cta-row .hero-start:hover, footer .footer-cta-row .hero-start:foc
    textes d'en-tête passés en encre foncée pour rester lisibles sur le fond clair. */
 body[data-view="article"] #pageHeroWrap { display: none !important; }
 html:has(body[data-view="article"])::before { background-image: none; }
+/* Fond des articles (oct. 2026) : papier doux et professionnel — ivoire très clair, un seul voile lavande discret en haut,
+   aucun mouvement ; la constellation reste en filigrane (signature), sans prendre le dessus sur la lecture. */
 #view-article { isolation: isolate; min-height: 100vh;
   background:
-    radial-gradient(ellipse 60% 45% at 12% 8%, rgba(214,201,247,0.75), transparent 70%),
-    radial-gradient(ellipse 55% 40% at 92% 30%, rgba(190,170,240,0.45), transparent 70%),
-    radial-gradient(ellipse 70% 50% at 40% 95%, rgba(226,214,250,0.7), transparent 70%),
-    linear-gradient(180deg, #f6f2fd 0%, #efe8fb 55%, #f4effc 100%);
-  background-size: 140% 140%, 140% 140%, 140% 140%, 100% 100%;
-  animation: artAurora 26s ease-in-out infinite alternate;
-}
-@keyframes artAurora {
-  0%   { background-position: 0% 0%, 100% 0%, 50% 100%, 0 0; }
-  50%  { background-position: 30% 20%, 70% 30%, 20% 80%, 0 0; }
-  100% { background-position: 10% 40%, 90% 10%, 70% 90%, 0 0; }
+    radial-gradient(ellipse 70% 38% at 15% 0%, rgba(214,201,247,0.24), transparent 72%),
+    radial-gradient(ellipse 50% 30% at 95% 6%, rgba(232,224,250,0.3), transparent 70%),
+    linear-gradient(180deg, #faf9fb 0%, #f7f6f4 45%, #f5f4f2 100%);
 }
 #view-article > .cst-field { z-index: 0; }
 #view-article .page-title, #view-article .article-meta, #view-article .breadcrumb, #view-article .breadcrumb a, #view-article .breadcrumb span { color: #1a1625; text-shadow: none; }
 #view-article .article-meta, #view-article .breadcrumb { color: #5b566a; }
 #view-article .article-meta a { color: #4b3d7a; }
 #view-article .page-title { color: #0a0a0c; }
-@media (prefers-reduced-motion: reduce) { #view-article { animation: none; } }
 #view-article .page-title::after { background-image: var(--bk-glyph-deep); filter: none; }
 
 /* Accueil — panneau « Conseils photo » : photo paysage pleine largeur en tête (déborde le padding du panneau, coins hauts arrondis). */

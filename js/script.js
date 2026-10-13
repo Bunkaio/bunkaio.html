@@ -7834,8 +7834,8 @@ const CstField = (() => {
     /* Conseils et articles : violet pâle, lisible sur la bannière photo comme sur les fonds clairs. */
     /* Devis : la constellation passe par-dessus le formulaire (sans capter les clics), en violet très léger pour ne pas gêner la lecture. */
     if (currentView === 'quiz') return { line: '110,90,168', dot: '110,90,168', cross: '165,143,230', a: 0.42 };
-    /* Articles : la constellation est le décor principal (plus de photo de fond) — violet pâle de la charte, plus présente. */
-    if (currentView === 'article') return { line: '140,115,210', dot: '120,98,190', cross: '165,143,230', a: 1 };
+    /* Articles : fond papier doux ; constellation en filigrane (gris violet, clairsemée), la lecture reste au premier plan. */
+    if (currentView === 'article') return { line: '120,110,150', dot: '120,110,150', cross: '150,135,200', a: 0.32 };
     if (currentView === 'advice' || currentView === 'contact' || currentView === 'about') return { line: '165,143,230', dot: '165,143,230', cross: '214,201,247', a: 0.6 };
     if (currentView === 'portfolio' || currentView === 'services') return { line: '255,255,255', dot: '255,255,255', cross: '214,201,247', a: 0.4 };
     return { line: '110,90,168', dot: '110,90,168', cross: '110,90,168', a: 0.8 };
@@ -7846,7 +7846,7 @@ const CstField = (() => {
     cv.style.height = H + 'px';
     cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    const n = Math.max(26, Math.min(80, Math.round(W * H / (currentView === 'article' ? 13000 : 21000))));
+    const n = Math.max(26, Math.min(80, Math.round(W * H / (currentView === 'article' ? 30000 : 21000))));
     pts = Array.from({ length: n }, (_, i) => ({ x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - 0.5) * 0.24, vy: (Math.random() - 0.5) * 0.24, r: 0.7 + Math.random() * 1.2, ph: Math.random() * 6.28, cross: i % 9 === 0 }));
   }
   function place(){
