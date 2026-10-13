@@ -5512,3 +5512,15 @@ html:has(body[data-view="article"])::before { background-image: none; }
 .advice-teaser-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center 35%; display: block; }
 .advice-teaser-photo::after { content: ''; position: absolute; inset: auto 0 0 0; height: 40%; background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.55)); pointer-events: none; }
 @media (max-width: 760px) { .advice-teaser-photo { aspect-ratio: 16 / 9; } }
+
+/* Correctif iPhone / Safari : le panneau du devis en verre dépoli (backdrop-filter) pouvait s'afficher vide quand on arrive depuis un bouton
+   (contenu non peint sous le flou, fond constellation au-dessus). Sur mobile et écrans tactiles : fond lavande translucide SANS flou,
+   et le fond constellation repasse sous le panneau. Le verre dépoli reste sur ordinateur. */
+@media (max-width: 900px), (hover: none) {
+  .quiz-wrap .qstep.active, #qs-5.qstep.active {
+    -webkit-backdrop-filter: none !important; backdrop-filter: none !important;
+    background: linear-gradient(160deg, rgba(255,255,255,0.9), rgba(240,234,252,0.86));
+  }
+  #view-quiz > .cst-field { z-index: 0; }
+  #view-quiz .quiz-wrap { position: relative; z-index: 1; }
+}
