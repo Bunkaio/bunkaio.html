@@ -5326,6 +5326,7 @@ function initAdviceLive(){
   const sec = document.querySelector('.advice-teaser');
   if (!sec) return;
   if (!window.IntersectionObserver || REDUCED_MOTION) { sec.classList.add('adv-live'); return; }
+  sec.classList.add('adv-pre');
   const io = new IntersectionObserver((es) => es.forEach(e => { if (e.isIntersecting) { sec.classList.add('adv-live'); io.disconnect(); } }), { threshold: 0.2 });
   io.observe(sec);
 }

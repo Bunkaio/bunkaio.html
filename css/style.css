@@ -5576,3 +5576,15 @@ body:not([data-view="article"]) .art-progress { display: none; }
 /* À propos : bouton sous l'introduction */
 .about-hero-cta { display: flex; justify-content: center; margin: 4px auto 22px; }
 @media (min-width: 761px) { .about-hero-cta { justify-content: flex-start; max-width: 1100px; } }
+
+/* Conseils photo (accueil) : transition d'apparition (photo dévoilée de haut en bas, titre, puis guides en cascade).
+   Le panneau lui-même n'est pas animé (backdrop-filter) ; seuls ses contenus le sont. */
+@media (prefers-reduced-motion: no-preference) {
+  .advice-teaser.adv-pre .advice-teaser-photo { clip-path: inset(0 0 100% 0); }
+  .advice-teaser.adv-pre .advice-teaser-photo img { transform: scale(1.14); }
+  .advice-teaser.adv-pre .advice-teaser-head { opacity: 0; transform: translateY(18px); }
+  .advice-teaser.adv-live .advice-teaser-photo { clip-path: inset(0 0 0 0); transition: clip-path 1.2s cubic-bezier(.65,.05,.2,1); }
+  .advice-teaser.adv-live .advice-teaser-photo img { transform: scale(1); transition: transform 1.9s cubic-bezier(.2,.7,.2,1); }
+  .advice-teaser.adv-live .advice-teaser-head { opacity: 1; transform: none; transition: opacity .8s ease .55s, transform .9s cubic-bezier(.2,.7,.2,1) .55s; }
+  .advice-teaser.adv-live .advice-card:nth-child(1) { animation-delay: .85s; } .advice-teaser.adv-live .advice-card:nth-child(2) { animation-delay: 1s; } .advice-teaser.adv-live .advice-card:nth-child(3) { animation-delay: 1.15s; }
+}
