@@ -4149,6 +4149,19 @@ function adviceCard(a0, withImg){
     <span class="advice-card-more">${t({fr:'Lire le guide →', en:'Read the guide →'})}</span>
   </a>`;
 }
+/* Photo paysage en tête du panneau « Conseils photo » de l'accueil, sur toute la largeur du panneau.
+   Ordre : photo dédiée (admin média, hero/home-advice-1.webp) → bannière de la page Conseils (hero/advice-1.webp) → photo du premier article. */
+function teaserPhoto(first){
+  const fp = first ? articlePhoto(artL(first)) : null;
+  const list = [IMG.adviceBanner, IMG.heroOwn && IMG.heroOwn.advice, fp && fp.src, fp && fp.fallback].filter(Boolean);
+  if (!list.length) return '';
+  return `<figure class="advice-teaser-photo"><img src="${list[0]}" data-fb="${escHtml(JSON.stringify(list.slice(1)))}" alt="${t({fr:'Séance photo préparée avec BUNKAIO', en:'A photo session prepared with BUNKAIO'})}" width="1600" height="640" loading="lazy" decoding="async" onerror="teaserImgErr(this)"></figure>`;
+}
+/* Photo suivante de la liste si celle-ci n'existe pas (pas encore déposée) ; plus aucune → le bandeau disparaît. */
+function teaserImgErr(img){
+  let q = []; try { q = JSON.parse(img.dataset.fb || '[]'); } catch (e) {}
+  if (q.length) { img.src = q.shift(); img.dataset.fb = JSON.stringify(q); } else { const f = img.closest('figure'); if (f) f.remove(); }
+}
 function renderAdviceTeaser(){
   const el = document.getElementById('adviceTeaser');
   if (!el || typeof ARTICLES === 'undefined') return;
@@ -4156,6 +4169,7 @@ function renderAdviceTeaser(){
   const hook = t({fr:picks.length + ' guides pour arriver préparé(e) à votre séance ou à votre shooting — à lire en ' + picks.reduce((n, a) => n + a.minutes, 0) + ' minutes en tout.', en:picks.length + ' guides to arrive prepared for your session or shoot — ' + picks.reduce((n, a) => n + a.minutes, 0) + ' minutes in total.'});
   el.innerHTML = `
     <section class="advice-teaser rv in">
+      ${teaserPhoto(picks[0])}
       <div class="advice-teaser-head">
         <div>
           <div class="cs-kicker">${t({fr:'Conseils photo', en:'Photo advice'})}</div>

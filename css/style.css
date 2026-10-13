@@ -5506,3 +5506,9 @@ html:has(body[data-view="article"])::before { background-image: none; }
 #view-article .page-title { color: #0a0a0c; }
 @media (prefers-reduced-motion: reduce) { #view-article { animation: none; } }
 #view-article .page-title::after { background-image: var(--bk-glyph-deep); filter: none; }
+
+/* Accueil — panneau « Conseils photo » : photo paysage pleine largeur en tête (déborde le padding du panneau, coins hauts arrondis). */
+.advice-teaser-photo { margin: calc(-1 * clamp(22px, 4vw, 40px)) calc(-1 * clamp(22px, 4vw, 40px)) clamp(18px, 3vw, 28px); aspect-ratio: 21 / 8; border-radius: 16px 16px 0 0; overflow: hidden; background: #e9e3f4; position: relative; }
+.advice-teaser-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center 35%; display: block; }
+.advice-teaser-photo::after { content: ''; position: absolute; inset: auto 0 0 0; height: 40%; background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.55)); pointer-events: none; }
+@media (max-width: 760px) { .advice-teaser-photo { aspect-ratio: 16 / 9; } }

@@ -381,6 +381,13 @@ const SECTIONS = [
     desc: 'Photo affichée en haut de chaque article de conseils (bandeau large, recadré environ 1200 × 520) : exporter en paysage, au moins 1600 px de large (≤ 350 Ko), sujet au centre. Sans photo déposée ici, l\'article reprend la photo de sa prestation (rubrique « Prestations »).',
     slots: ARTICLES.map(a => ({ path: 'articles/' + a.slug + '.webp', label: a.h1 })),
   }] : []),
+  // ── Accueil : photo paysage du panneau « Conseils photo » ──
+  {
+    id: 'home-advice-photo',
+    title: '🏠 Accueil — photo du panneau « Conseils photo »',
+    desc: '2560 × 1440 px, paysage 16:9 (≤ 450 Ko). Affichée sur toute la largeur du panneau, recadrée en bandeau large (environ 21:9) : sujet au centre, rien d\'important en haut et en bas. Sans photo déposée ici, le site reprend la bannière de la page Conseils, puis la photo du premier article.',
+    slots: [{ path: 'hero/home-advice-1.webp', label: 'Photo du panneau' }],
+  },
   // ── Accueil ────────────────────────────────────────────────────────────────
   // Pas de section ici : le fond de la page d'accueil est une vidéo
   // (videos/home-bg.mp4 + videos/mission-bg.mp4), gérée depuis GitHub,
