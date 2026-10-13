@@ -274,7 +274,7 @@
       : '<tr class="total"><td>Prix total</td><td>' + eur(q.totalHT) + ' — net à payer (TVA non applicable, art. 293 B du CGI)</td></tr>' +
         '<tr><th>Acompte à la signature (' + (q.acomptePct || 30) + ' %)</th><td>' + eur(dep) + ' — réserve la date et le créneau</td></tr>' +
         '<tr><th>Solde (' + (100 - (q.acomptePct || 30)) + ' %)</th><td>' + eur(bal) + ' — facture envoyée lorsque les photos sont prêtes ; son règlement ouvre l\'accès à l\'album</td></tr>' +
-        '<tr><th>Moyens de paiement</th><td>Carte bancaire ; paiement en 3 fois sans frais avec Klarna, selon éligibilité</td></tr>') + '</table>');
+        '<tr><th>Moyens de paiement</th><td>Carte bancaire en une fois ; paiement en 3 fois sans frais avec Klarna ou Scalapay, sous réserve d\'éligibilité</td></tr>') + '</table>');
     h.push('<p class="mu">' + (pro ? 'En cas de retard de paiement' : 'Client professionnel uniquement : en cas de retard de paiement') + ', pénalités au taux de trois fois le taux d\'intérêt légal et indemnité forfaitaire de recouvrement de 40 € (art. L441-10 du Code de commerce).</p>');
 
     var d = q.droits || {};
