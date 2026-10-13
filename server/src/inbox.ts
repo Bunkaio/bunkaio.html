@@ -45,7 +45,7 @@ const cut = (s: string | undefined, n: number): string => (s ?? '').slice(0, n);
 const randomHex = (n: number): string => Array.from(crypto.getRandomValues(new Uint8Array(n)), (b) => b.toString(16).padStart(2, '0')).join('');
 
 const RESEND = 'https://api.resend.com';
-interface ResendAttachment { filename?: string; size?: number; content_type?: string; contentType?: string }
+interface ResendAttachment { id?: string; filename?: string; size?: number; content_type?: string; contentType?: string; content_id?: string; contentId?: string; content_disposition?: string; download_url?: string; downloadUrl?: string }
 interface ResendReceived { id: string; from?: string; to?: string[] | string; subject?: string; html?: string | null; text?: string | null; created_at?: string; message_id?: string; reply_to?: string[] | string | null; headers?: Record<string, string> | null; attachments?: ResendAttachment[] }
 
 /** « Nom <adresse> » → { nom, adresse }. */
@@ -94,6 +94,44 @@ export async function syncResendInbox(env: Env): Promise<{ added: number; checke
   return { added, checked: items.length };
 }
 
+/**
+ * Images intégrées (cid:, ex. logos et signatures) : le lecteur de l'admin ne peut pas les afficher telles quelles.
+ * À la relève, chaque image référencée dans le HTML est téléchargée depuis Resend, rangée dans R2 sous une adresse
+ * impossible à deviner (inbox/<aléatoire>/<n>.<ext>) puis le HTML pointe vers /media/… du Worker. 12 images, 2 Mo chacune au plus.
+ */
+const WORKER_ORIGIN = 'https://bunkaio-quiz-stripe.bunkaio.workers.dev';
+const IMG_EXT: Record<string, string> = { 'image/png': 'png', 'image/jpeg': 'jpg', 'image/jpg': 'jpg', 'image/gif': 'gif', 'image/webp': 'webp' };
+async function storeInlineImages(env: Env, m: ResendReceived, html: string): Promise<string> {
+  if (!html || !/cid:/i.test(html) || !env.MEDIA_BUCKET) return html;
+  let atts: ResendAttachment[] = (m.attachments ?? []).filter((a) => a.download_url || a.downloadUrl);
+  if (!atts.length) {
+    try {
+      const r = await resendGet<{ data?: ResendAttachment[] } | ResendAttachment[]>(env, `/emails/receiving/${encodeURIComponent(m.id)}/attachments`);
+      atts = Array.isArray(r) ? r : (r.data ?? []);
+    } catch { return html; }
+  }
+  const folder = 'inbox/' + randomHex(12);
+  let out = html, n = 0;
+  for (const a of atts) {
+    if (n >= 12) break;
+    const cid = String(a.content_id ?? a.contentId ?? '').replace(/^<|>$/g, '').trim();
+    const url = a.download_url ?? a.downloadUrl;
+    const type = String(a.content_type ?? a.contentType ?? '').toLowerCase().split(';')[0]!.trim();
+    const ext = IMG_EXT[type] ?? (/\.(png|jpe?g|gif|webp)$/i.exec(a.filename ?? '')?.[1]?.toLowerCase().replace('jpeg', 'jpg'));
+    if (!cid || !url || !ext) continue;
+    const ref = new RegExp('cid:' + cid.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+    if (!ref.test(out)) continue;
+    const res = await fetch(url);
+    if (!res.ok) continue;
+    const buf = await res.arrayBuffer();
+    if (!buf.byteLength || buf.byteLength > 2 * 1024 * 1024) continue;
+    const key = `${folder}/${++n}.${ext}`;
+    await env.MEDIA_BUCKET.put(key, buf, { httpMetadata: { contentType: type.startsWith('image/') ? type : 'image/' + (ext === 'jpg' ? 'jpeg' : ext) } });
+    out = out.replace(ref, `${WORKER_ORIGIN}/media/${key}`);
+  }
+  return out;
+}
+
 async function storeReceived(env: Env, m: ResendReceived): Promise<InboxMessage> {
   const now = new Date();
   const from = parseAddress(m.from);
@@ -118,8 +156,11 @@ async function storeReceived(env: Env, m: ResendReceived): Promise<InboxMessage>
     archived: false,
   };
   if (await looksLikeSpam(env, msg)) { msg.spam = true; msg.read = true; }
-  // Le prospect a écrit : les relances automatiques de devis s'arrêtent (voir automations.ts).
-  else if (msg.fromEmail) await markReplied(env, msg.fromEmail);
+  else {
+    msg.html = await storeInlineImages(env, m, msg.html).catch((err) => { console.error('[inbox] images intégrées non conservées', err); return msg.html; });
+    // Le prospect a écrit : les relances automatiques de devis s'arrêtent (voir automations.ts).
+    if (msg.fromEmail) await markReplied(env, msg.fromEmail);
+  }
   await env.ACCOUNTS_KV.put(PREFIX + msg.id, JSON.stringify(msg), { expirationTtl: TTL, metadata: summary(msg) });
   return msg;
 }
@@ -229,7 +270,13 @@ export async function getInboxMessage(env: Env, id: string): Promise<InboxMessag
 export async function updateInbox(env: Env, id: string, change: Partial<Pick<InboxMessage, 'read' | 'starred' | 'pinned' | 'archived' | 'spam' | 'note'>> & { labels?: string[]; remove?: boolean; trash?: boolean }): Promise<boolean> {
   const msg = await getInboxMessage(env, id);
   if (!msg) return false;
-  if (change.remove) { await env.ACCOUNTS_KV.delete(PREFIX + id); return true; }
+  if (change.remove) {
+    await env.ACCOUNTS_KV.delete(PREFIX + id);
+    // Images intégrées conservées dans R2 pour cet email : supprimées avec lui.
+    const keys = [...new Set([...(msg.html || '').matchAll(/\/media\/(inbox\/[a-f0-9]+\/\d+\.(?:png|jpg|gif|webp))/g)].map((x) => x[1]!))];
+    if (keys.length && env.MEDIA_BUCKET) await env.MEDIA_BUCKET.delete(keys).catch(() => undefined);
+    return true;
+  }
   for (const k of ['read', 'starred', 'pinned', 'archived', 'spam'] as const) if (typeof change[k] === 'boolean') msg[k] = change[k]!;
   if (Array.isArray(change.labels)) msg.labels = [...new Set(change.labels.filter((l): l is string => (LABEL_KEYS as readonly string[]).includes(l)))];
   if (typeof change.note === 'string') msg.note = change.note.slice(0, 2000);
@@ -290,7 +337,7 @@ export async function purgeInboxTrash(env: Env, all = false): Promise<number> {
   let n = 0;
   for (const it of await listInbox(env)) {
     if (!it.trashed || (!all && Date.parse(it.trashedAt) > limit)) continue;
-    await env.ACCOUNTS_KV.delete(PREFIX + it.id); n++;
+    if (await updateInbox(env, it.id, { remove: true })) n++;
   }
   return n;
 }

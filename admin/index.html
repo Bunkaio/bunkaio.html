@@ -1423,14 +1423,15 @@ async function openInbox(id) {
   try {
     const { res, data } = await api('/admin/inbox/message?id=' + encodeURIComponent(id));
     if (!res.ok || !data.ok) { $('inRead').innerHTML = '<div class="msg err">Email introuvable.</div>'; return; }
-    inboxState.msg = data.message; renderInboxRead();
+    /* Images affichées d'office (logos, signatures) ; seuls les emails classés en spam les bloquent (pisteurs). */
+    inboxState.msg = data.message; inboxState.images = !data.message.spam; renderInboxRead();
     const it = DB.inbox.find(x => x.id === id);
     if (it && !it.read) { it.read = true; api('/admin/inbox/update', { method: 'POST', body: JSON.stringify({ id, read: true }) }).catch(() => {}); renderInbox(); updateCounts(); }
   } catch (e) {}
 }
 function inboxDoc(m) {
-  // Corps de l'email dans un cadre isolé : aucun script ; images distantes bloquées tant qu'on ne les autorise pas (pisteurs), sauf celles de bunkaio.com (logo des emails du site).
-  const csp = `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src data: https://bunkaio.com ${inboxState.images ? 'https: http:' : ''}; style-src 'unsafe-inline'">`;
+  // Corps de l'email dans un cadre isolé : aucun script. Images affichées d'office (sauf spam) ; bunkaio.com et les images intégrées conservées par le Worker toujours autorisées.
+  const csp = `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src data: https://bunkaio.com ${WORKER} ${inboxState.images ? 'https: http:' : ''}; style-src 'unsafe-inline'">`;
   const base = '<base target="_blank">';
   const body = m.html ? m.html : `<pre style="white-space:pre-wrap;font-family:system-ui,sans-serif;font-size:14px;line-height:1.6">${esc(m.text)}</pre>`;
   return `<!doctype html><html><head><meta charset="utf-8">${csp}${base}<style>body{margin:0;padding:6px;font-family:system-ui,sans-serif;font-size:14px;color:#0a0a0c;word-break:break-word}img{max-width:100%;height:auto}</style></head><body>${body}</body></html>`;
@@ -1449,7 +1450,7 @@ function renderInboxRead() {
       <button class="btn ghost sm" onclick="inboxSpam(${!m.spam})">${m.spam ? '✓ Pas du spam' : '🚫 Spam'}</button>
       ${m.spam ? '' : '<button class="btn ghost sm" onclick="inboxBlockSender()" title="Classe cet email en spam et y envoie désormais tous les emails de cet expéditeur">Bloquer l\'expéditeur</button>'}
       ${c ? `<button class="btn soft sm" onclick="openDrawer('${esc(c.email)}')">Fiche de ${esc((c.name || c.email).slice(0, 24))}</button>` : `<button class="btn soft sm" onclick="openNewContact('${esc(m.fromEmail)}','${esc(m.fromName).replace(/&#39;/g, '')}')">+ Créer un espace</button>`}
-      ${m.html && !inboxState.images ? '<button class="btn ghost sm" onclick="inboxState.images=true;renderInboxRead()">Afficher les images</button>' : ''}
+      ${m.html ? (inboxState.images ? '<button class="btn ghost sm" onclick="inboxState.images=false;renderInboxRead()">Masquer les images</button>' : '<button class="btn ghost sm" onclick="inboxState.images=true;renderInboxRead()">Afficher les images</button>') : ''}
       ${(DB.inbox || []).some(x => x.id === m.id && x.trashed) ? `<button class="btn ghost sm" onclick="inboxBulk('restore', [inboxState.sel])">↺ Restaurer</button><button class="btn ghost sm" style="color:var(--danger)" onclick="inboxDelete()">Supprimer définitivement</button>` : `<button class="btn ghost sm" style="color:var(--danger)" onclick="inboxDelete()">🗑 Corbeille</button>`}
     </div>
     <div class="lbpick" aria-label="Étiquettes">${LB_KEYS.map(k => `<button class="lbl lb-${k} ${(m.labels || []).includes(k) ? 'on' : ''}" onclick="inboxToggleLabel('${k}')" title="Ajouter ou retirer l'étiquette">${esc(lbName(k))}</button>`).join('')}</div>
