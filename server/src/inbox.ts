@@ -1,6 +1,7 @@
 import { getAccount } from './accounts';
 import { buildReplyEmail, sendEmail } from './email';
 import { notifyAdmin } from './push';
+import { markReplied } from './automations';
 import type { Env } from './types';
 
 /**
@@ -114,6 +115,8 @@ async function storeReceived(env: Env, m: ResendReceived): Promise<InboxMessage>
     archived: false,
   };
   if (await looksLikeSpam(env, msg)) { msg.spam = true; msg.read = true; }
+  // Le prospect a écrit : les relances automatiques de devis s'arrêtent (voir automations.ts).
+  else if (msg.fromEmail) await markReplied(env, msg.fromEmail);
   await env.ACCOUNTS_KV.put(PREFIX + msg.id, JSON.stringify(msg), { expirationTtl: TTL, metadata: summary(msg) });
   return msg;
 }

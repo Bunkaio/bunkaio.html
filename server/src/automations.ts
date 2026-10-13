@@ -2,6 +2,7 @@ import { getAccount, listAccounts } from './accounts';
 import { isDemo } from './config';
 import { autoSms } from './sms';
 import { listQuotes, putQuote } from './quotes';
+import { isUnsubscribed } from './mailing';
 import {
   buildQuoteEmail,
   buildAdminAlertEmail,
@@ -29,6 +30,11 @@ export interface LeadMarker { name: string; lang: string; date: string }
 export async function markLead(env: Env, email: string, name: string, lang: string): Promise<void> {
   const marker: LeadMarker = { name, lang, date: new Date().toISOString() };
   await env.ACCOUNTS_KV.put(`lead:${norm(email)}`, JSON.stringify(marker), { expirationTtl: 60 * DAY / 1000 });
+}
+/** Le prospect a écrit (email reçu ou formulaire) : les relances automatiques de devis s'arrêtent. */
+export async function markReplied(env: Env, email: string): Promise<void> {
+  const e = norm(email); if (!e.includes('@')) return;
+  await env.ACCOUNTS_KV.put(`replied:${e}`, new Date().toISOString(), { expirationTtl: 120 * DAY / 1000 });
 }
 /** Facture d'acompte créée : le devis a eu une suite, plus de relance. */
 export async function markInvoiced(env: Env, email: string): Promise<void> {
@@ -102,20 +108,34 @@ async function sendMoodboardReminders(env: Env): Promise<void> {
   }
 }
 
+/**
+ * Relances des demandes de devis (quiz) restées sans suite : J+2 (« une question ? ») puis J+7 (« où en êtes-vous ? »).
+ * Arrêt dès que : un devis est envoyé, une facture d'acompte existe, l'acompte est payé, le prospect a écrit
+ * (email reçu ou formulaire, marqueur `replied:`) ou s'est désinscrit. Une demande reçue il y a plus de 7 jours
+ * au moment du passage ne reçoit que la relance J+7 (jamais deux emails le même jour).
+ */
 async function sendQuoteFollowUps(env: Env): Promise<void> {
   const list = await env.ACCOUNTS_KV.list({ prefix: 'lead:', limit: 1000 });
   for (const k of list.keys) {
     const email = k.name.slice(5);
+    if (isDemo(email)) continue;
     const marker = await readMarker(env, k.name);
-    if (!marker || Date.now() - Date.parse(marker.date) < 7 * DAY) continue;
-    // Un devis envoyé a sa propre relance : pas de relance « quiz » en plus.
-    if ((await env.ACCOUNTS_KV.get(`inv:${email}`)) || (await env.ACCOUNTS_KV.get(`dep:${email}`)) || (await env.ACCOUNTS_KV.get(`fu:${email}`)) || (await env.ACCOUNTS_KV.get(`qsent:${email}`))) continue;
+    if (!marker) continue;
+    const age = Date.now() - Date.parse(marker.date);
+    if (!(age >= 2 * DAY)) continue;
+    if (await env.ACCOUNTS_KV.get(`fu:${email}`)) continue;
+    const step: 1 | 2 = age >= 7 * DAY ? 2 : 1;
+    if (step === 1 && (await env.ACCOUNTS_KV.get(`fu1:${email}`))) continue;
+    if ((await env.ACCOUNTS_KV.get(`inv:${email}`)) || (await env.ACCOUNTS_KV.get(`dep:${email}`)) || (await env.ACCOUNTS_KV.get(`qsent:${email}`))) continue;
+    const replied = await env.ACCOUNTS_KV.get(`replied:${email}`);
+    if (replied && Date.parse(replied) >= Date.parse(marker.date)) continue;
+    if (await isUnsubscribed(env, email)) continue;
     const isPartner = !!(await getAccount(env, 'partner', email));
     try {
-      const m = buildQuoteFollowUpEmail({ customerName: marker.name, space: isPartner ? 'partner' : 'client', lang: normalizeLang(marker.lang) });
+      const m = buildQuoteFollowUpEmail({ customerName: marker.name, space: isPartner ? 'partner' : 'client', lang: normalizeLang(marker.lang), step });
       await sendEmail(env, email, m.subject, m.html, m.text);
-      await env.ACCOUNTS_KV.put(`fu:${email}`, '1', { expirationTtl: 120 * DAY / 1000 });
-      console.log('[automatisation] relance de devis envoyée', { email });
+      await env.ACCOUNTS_KV.put(step === 1 ? `fu1:${email}` : `fu:${email}`, '1', { expirationTtl: 120 * DAY / 1000 });
+      console.log('[automatisation] relance de devis envoyée', { email, step });
     } catch (err) {
       console.error('[automatisation] échec relance de devis', err);
     }

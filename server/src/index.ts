@@ -1,3 +1,4 @@
+import { goClicks, handleGo, listGoLinks, saveGoLink } from './golinks';
 import type Stripe from 'stripe';
 import { adminAccountView, getAccount, listAccounts, putAccount, sanitizeAccount, upsertAccountFromAdmin, verifyLogin, LoginThrottled } from './accounts';
 import { handleCollect, handleStats, purgeOldAnalytics } from './analytics';
@@ -823,6 +824,15 @@ async function handleAdminDashboard(request: Request, env: Env, headers: Record<
   if (path === '/admin/ads-report' && request.method === 'GET') {
     const days = Math.min(365, Math.max(1, parseInt(new URL(request.url).searchParams.get('days') ?? '30', 10) || 30));
     return jsonResponse({ ok: true, days, traffic: await campaignTraffic(env, days), data: await getCampaignData(env) }, 200, headers);
+  }
+  if (path === '/admin/golinks' && request.method === 'GET') {
+    const days = Math.min(365, Math.max(1, parseInt(new URL(request.url).searchParams.get('days') ?? '30', 10) || 30));
+    return jsonResponse({ ok: true, links: await listGoLinks(env), clicks: await goClicks(env, days) }, 200, headers);
+  }
+  if (path === '/admin/golinks' && request.method === 'POST') {
+    const body = (await request.json().catch(() => ({}))) as Record<string, unknown>;
+    const r = await saveGoLink(env, body);
+    return jsonResponse(r, r.ok ? 200 : 400, headers);
   }
   if (path === '/admin/ads-data' && request.method === 'POST') {
     const body = (await request.json().catch(() => ({}))) as Record<string, unknown>;
@@ -1680,6 +1690,9 @@ export default {
     }
     if (url.pathname === '/consent/withdraw' && request.method === 'POST') {
       return handleWithdrawPublic(request, env, headers);
+    }
+    if (url.pathname.startsWith('/go/') && request.method === 'GET') {
+      return handleGo(request, env, ctx);
     }
     if (url.pathname.startsWith('/admin/')) {
       return handleAdminDashboard(request, env, headers, url.pathname);

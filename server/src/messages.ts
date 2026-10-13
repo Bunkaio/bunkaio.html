@@ -1,3 +1,4 @@
+import { markReplied } from './automations';
 import type { Env } from './types';
 
 /**
@@ -39,6 +40,7 @@ export async function storeMessage(env: Env, msg: Omit<FormMessage, 'id' | 'date
   const rand = Array.from(crypto.getRandomValues(new Uint8Array(4)), (b) => b.toString(16).padStart(2, '0')).join('');
   const full: FormMessage = { ...msg, id: `${date}:${rand}`, date, status: 'nouveau' };
   await env.ACCOUNTS_KV.put(PREFIX + full.id, JSON.stringify(full), { expirationTtl: TTL });
+  if (full.email) await markReplied(env, full.email);
   return full;
 }
 

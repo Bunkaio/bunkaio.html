@@ -263,7 +263,7 @@ export async function buildDashboard(env: Env, stripe: Stripe): Promise<Record<s
   }
 
   // 6. Marqueurs d'automatisation (relances, rappels…).
-  const prefixes: Record<string, string> = { 'lead:': 'quizLe', 'inv:': 'acompteCree', 'dep:': 'acomptePaye', 'bal:': 'soldeCree', 'fu:': 'relanceDevis', 'mbr:': 'rappelMoodboard', 'qsent:': 'qsent' };
+  const prefixes: Record<string, string> = { 'lead:': 'quizLe', 'inv:': 'acompteCree', 'dep:': 'acomptePaye', 'bal:': 'soldeCree', 'fu1:': 'relanceJ2', 'fu:': 'relanceDevis', 'replied:': 'aRepondu', 'mbr:': 'rappelMoodboard', 'qsent:': 'qsent' };
   try {
     for (const [prefix, label] of Object.entries(prefixes)) {
       const list = await env.ACCOUNTS_KV.list({ prefix, limit: 1000 });
@@ -344,7 +344,7 @@ export async function deleteContact(env: Env, stripe: Stripe, email: string, typ
   }
   summary.quotesDeleted = quotesDeleted;
   let markers = 0;
-  for (const p of ['lead:', 'inv:', 'dep:', 'bal:', 'fu:', 'mbr:']) {
+  for (const p of ['lead:', 'inv:', 'dep:', 'bal:', 'fu1:', 'fu:', 'mbr:', 'replied:']) {
     if (await env.ACCOUNTS_KV.get(p + key)) { await env.ACCOUNTS_KV.delete(p + key); markers++; }
   }
   for (const p of [`rem:${key}:`, `thx:${key}:`, `alv:${key}:`, `adt:${key}:`, `ack:contact:${key}`, `ack:collab:${key}`, `ack:partner:${key}`, `ack:account:${key}`]) {

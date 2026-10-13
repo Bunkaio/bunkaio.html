@@ -670,6 +670,7 @@
 <div class="toast" id="toast"></div>
 
 <script src="../js/devis-model.js"></script>
+<script src="qrcode.js"></script>
 <script>
 'use strict';
 document.head.insertAdjacentHTML('beforeend', '<style>' + BunkaioDevis.CSS + '</style>');
@@ -1258,7 +1259,7 @@ function renderSessions() {
     return `<div class="li click" onclick="openDrawer('${esc(c.email)}','${c.stage === 'postprod' ? 'invoices' : 'space'}')"><div class="ic ${late ? 'danger' : ''}">${c.stage === 'solde' ? '€' : '🎞'}</div><div class="tx"><b>${esc(c.name || c.email)}</b><div class="d">${c.stage === 'solde' ? 'Solde envoyé, en attente du paiement' : 'Séance du ' + fdate(s.date) + ' · livraison ' + (s.livraison ? 'prévue ' + fdate(s.livraison) : 'non datée')}</div></div><div class="act">${a.lightroomUrl ? '<span class="badge ok">Lightroom ✓</span>' : '<span class="badge warn">Lightroom à saisir</span>'}</div></div>${a.lightroomUrl ? '' : `<div style="display:flex;gap:8px;padding:0 0 12px 44px" onclick="event.stopPropagation()"><input class="mi" id="lrq-${esc(c.email)}" inputmode="url" placeholder="Coller le lien de l'album Lightroom" style="flex:1;min-width:0"><button class="btn sm" onclick="lrSave('${esc(c.email)}','lrq-${esc(c.email)}')">Ajouter</button></div>`}`; }).join('')}</div>` : '<div class="empty">Aucun projet en post-production.</div>';
   // Automatisations : en attente = ce que la prochaine exécution enverra (ou enverra plus tard).
   const c = DB.contacts;
-  const leadsWaiting = c.filter(x => x.markers.quizLe && !x.markers.acompteCree && !x.markers.acomptePaye && !x.markers.relanceDevis);
+  const leadsWaiting = c.filter(x => x.markers.quizLe && !x.markers.acompteCree && !x.markers.acomptePaye && !x.markers.relanceDevis && !x.markers.qsent && !x.markers.aRepondu && !x.unsub);
   const mbWaiting = c.filter(x => x.markers.acomptePaye && !x.markers.rappelMoodboard && x.accounts.length && !x.accounts.some(a => (a.moodboards || []).length));
   const sess = upcomingSessions().filter(x => x.s.statut !== 'annulee');
   const rows = [
@@ -1267,7 +1268,7 @@ function renderSessions() {
     ['Devis à signer en ligne', 'Envoi depuis « Devis » ; signature → facture d\'acompte automatique', (DB.quotes || []).filter(q => q.status === 'envoye').length, (DB.quotes || []).filter(q => q.status === 'signe').length],
     ['Acompte non créé après signature', 'Une nouvelle tentative automatique est faite aux passages planifiés ; sinon alerte « Devis signé sans acompte »', (DB.quotes || []).filter(q => q.status === 'signe' && !q.depositInvoice && !q.abonnement).length, (DB.quotes || []).filter(q => q.depositRetryAt && q.depositInvoice).length],
     ['Relance du devis envoyé', '5 jours après l\'envoi s\'il n\'est pas signé, puis expiration', (DB.quotes || []).filter(q => q.status === 'envoye' && !q.reminderSentAt).length, (DB.quotes || []).filter(q => q.reminderSentAt).length],
-    ['Relance de devis (quiz)', '7 jours après le quiz, sans devis envoyé ni facture d\'acompte', leadsWaiting.length, c.filter(x => x.markers.relanceDevis).length],
+    ['Relances de devis (quiz)', 'J+2 « une question ? » puis J+7 « où en êtes-vous ? » ; arrêt si devis envoyé, acompte, réponse du prospect (email ou formulaire) ou désinscription', leadsWaiting.length, c.filter(x => x.markers.relanceJ2).length + ' (J+2) · ' + c.filter(x => x.markers.relanceDevis).length + ' (J+7)'],
     ['Facture d\'acompte + paiement reçu', 'Création dans « Factures », puis paiement Stripe', c.filter(x => x.invoices.some(i => i.kind === 'acompte' && i.status === 'open')).length, c.filter(x => x.invoices.some(i => i.kind === 'acompte' && i.status === 'paid')).length],
     ['Rappel moodboard', '3 jours après l\'acompte payé, si aucun moodboard', mbWaiting.length, c.filter(x => x.markers.rappelMoodboard).length],
     ['Rappel de séance J-2', 'Chaque matin, séances dans 2 jours', sess.filter(x => x.s.date >= today()).length, '—'],
@@ -1297,7 +1298,7 @@ function renderActivity() {
 }
 
 /* ── Emails : libellés, étape du devis, emails envoyés / à venir ── */
-const TPL_LABEL = { facture_acompte: 'Facture d\'acompte', photos_pretes_solde: 'Photos prêtes + facture de solde', paiement_recu: 'Paiement reçu', rappel_impaye: 'Rappel de facture impayée', confirmation_devis_quiz: 'Confirmation de demande de devis', acces_espace: 'Vos accès à l\'espace', album_accessible: 'Album accessible + avis + remise', merci_seance: 'Merci + date de livraison', seance_confirmation: 'Confirmation de séance', seance_reminder: 'Rappel de séance J-2', seance_report: 'Report de séance', seance_cancel: 'Annulation de séance', accuse_contact: 'Accusé · contact', accuse_collab: 'Accusé · collaboration', accuse_partner: 'Accusé · candidature partenaire', accuse_account: 'Accusé · demande d\'espace', relance_devis_quiz: 'Relance de devis (quiz)', rappel_moodboard: 'Rappel moodboard', devis_a_signer: 'Devis à signer', relance_devis_envoye: 'Relance du devis envoyé', devis_signe: 'Devis signé (confirmation)', sms_photos_pretes: 'SMS · photos disponibles', sms_acces_album: 'SMS · accès à l\'album', sms_rappel_seance: 'SMS · rappel de séance', sms_manuel: 'SMS', libre: 'Message libre', reponse: 'Réponse à un email reçu', demande_avis: 'Demande d\'avis' };
+const TPL_LABEL = { facture_acompte: 'Facture d\'acompte', photos_pretes_solde: 'Photos prêtes + facture de solde', paiement_recu: 'Paiement reçu', rappel_impaye: 'Rappel de facture impayée', confirmation_devis_quiz: 'Confirmation de demande de devis', acces_espace: 'Vos accès à l\'espace', album_accessible: 'Album accessible + avis + remise', merci_seance: 'Merci + date de livraison', seance_confirmation: 'Confirmation de séance', seance_reminder: 'Rappel de séance J-2', seance_report: 'Report de séance', seance_cancel: 'Annulation de séance', accuse_contact: 'Accusé · contact', accuse_collab: 'Accusé · collaboration', accuse_partner: 'Accusé · candidature partenaire', accuse_account: 'Accusé · demande d\'espace', relance_devis_j2: 'Relance de devis J+2 (quiz)', relance_devis_quiz: 'Relance de devis J+7 (quiz)', rappel_moodboard: 'Rappel moodboard', devis_a_signer: 'Devis à signer', relance_devis_envoye: 'Relance du devis envoyé', devis_signe: 'Devis signé (confirmation)', sms_photos_pretes: 'SMS · photos disponibles', sms_acces_album: 'SMS · accès à l\'album', sms_rappel_seance: 'SMS · rappel de séance', sms_manuel: 'SMS', libre: 'Message libre', reponse: 'Réponse à un email reçu', demande_avis: 'Demande d\'avis' };
 const tplName = t => TPL_LABEL[t] || t;
 function quoteSteps(c) {
   const qs = realQ(c).filter(q => q.status !== 'annule');
@@ -1332,7 +1333,7 @@ function plannedMails(c) {
   const qs = realQ(c); const acc = primaryAcc(c);
   const sentQ = qs.find(q => q.status === 'envoye');
   const hasQuoteFlow = qs.some(q => q.status !== 'annule') || c.markers.qsent;
-  if (c.lead && !hasQuoteFlow && !c.markers.acompteCree && !c.markers.acomptePaye && !c.markers.relanceDevis && c.markers.quizLe) add('Relance de devis (quiz)', iso(new Date(Date.parse(c.markers.quizLe) + 7 * 864e5).toISOString()), '7 jours après la demande');
+  if (c.lead && !hasQuoteFlow && !c.markers.acompteCree && !c.markers.acomptePaye && !c.markers.relanceDevis && !c.markers.aRepondu && !c.unsub && c.markers.quizLe) { if (!c.markers.relanceJ2 && Date.now() - Date.parse(c.markers.quizLe) < 7 * 864e5) add('Relance de devis J+2 (quiz)', iso(new Date(Date.parse(c.markers.quizLe) + 2 * 864e5).toISOString()), '2 jours après la demande'); add('Relance de devis J+7 (quiz)', iso(new Date(Date.parse(c.markers.quizLe) + 7 * 864e5).toISOString()), '7 jours après la demande'); }
   if (sentQ && !sentQ.reminderSentAt && sentQ.sentAt) { const d = iso(new Date(Date.parse(sentQ.sentAt) + 5 * 864e5).toISOString()); if (d <= sentQ.validUntil) add('Relance du devis n° ' + sentQ.number, d, '5 jours après l\'envoi, s\'il n\'est pas signé'); }
   if (c.markers.acomptePaye && !c.markers.rappelMoodboard && acc && !(acc.moodboards || []).length && !(acc.seance && acc.seance.date < now)) add('Rappel moodboard', iso(new Date(Date.parse(c.markers.acomptePaye) + 3 * 864e5).toISOString()), '3 jours après l\'acompte, si aucun moodboard');
   if (acc && acc.seance && acc.seance.statut !== 'annulee') {
@@ -2252,7 +2253,7 @@ function exportImageRegister() {
 }
 
 /* ── Campagne & Ads ── */
-const CAMP = { days: 30, traffic: null, data: { posts: [], spend: [] }, loaded: false, edit: null };
+const CAMP = { days: 30, traffic: null, data: { posts: [], spend: [] }, loaded: false, edit: null, go: { links: [], clicks: {} }, goEdit: null };
 const CAMP_LINKS = [
   ['Google Ads', 'Campagnes, budgets, mots clés, conversions', 'https://ads.google.com/'],
   ['Planificateur de mots clés', 'Volumes de recherche et coûts par clic estimés', 'https://ads.google.com/aw/keywordplanner/home'],
@@ -2271,7 +2272,9 @@ async function loadCampaign() {
   try {
     const { res, data } = await api('/admin/ads-report?days=' + CAMP.days);
     if (!res.ok || !data.ok) { $('campOut').innerHTML = '<div class="msg err">Données indisponibles (' + esc(data.error || res.status) + ').</div>'; return; }
-    CAMP.traffic = data.traffic; CAMP.data = data.data; CAMP.loaded = true; renderCampaign();
+    CAMP.traffic = data.traffic; CAMP.data = data.data; CAMP.loaded = true;
+    try { const g = await api('/admin/golinks?days=' + CAMP.days); if (g.res.ok && g.data.ok) CAMP.go = { links: g.data.links || [], clicks: g.data.clicks || {} }; } catch (e) { if (e && e.message === 'unauthorized') throw e; }
+    renderCampaign();
   } catch (e) { if (e && e.message !== 'unauthorized') $('campOut').innerHTML = '<div class="msg err">Connexion impossible.</div>'; }
 }
 document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('#campDays button'); if (!b) return; CAMP.days = +b.dataset.d; document.querySelectorAll('#campDays button').forEach(x => x.classList.toggle('on', x === b)); loadCampaign(); });
@@ -2341,6 +2344,8 @@ function renderCampaign() {
     </div>
   </div>
 
+  ${goCard(rows)}
+
   <div class="card" style="margin-top:18px"><h3>Créer un lien suivi (UTM)</h3>
     <div class="small muted" style="margin-bottom:10px">À coller dans la bio, une story (sticker lien), un lien d'annonce ou un QR code. Chaque visite et chaque demande est rattachée au contenu qui l'a amenée.</div>
     <div class="form">
@@ -2374,6 +2379,74 @@ function renderCampaign() {
   </div>`;
   campUtm();
 }
+/* ── Liens courts suivis + QR codes (bunkaio.com/go/<code>) ──
+   Le site (404.html) renvoie /go/<code> vers le Worker, qui compte le clic (anonyme) et redirige vers la page avec ses UTM. */
+const GO_BASE = 'https://bunkaio.com/go/';
+const GO_PAGES = CAMP_PAGES.concat([['/photographe-france/', 'Photographe en France'], ['/photographe-montpellier/', 'Photographe à Montpellier'], ['/photographe-toulouse/', 'Photographe à Toulouse'], ['/portfolio/', 'Portfolio'], ['/conseils/', 'Conseils photo']]);
+const GO_IDEAS = [['insta', 'Lien en bio Instagram', 'instagram', 'bio'], ['story', 'Stories Instagram', 'instagram', 'story'], ['flyer', 'Flyer / affiche', 'print', 'qr'], ['carte', 'Carte de visite', 'print', 'qr'], ['salon', 'Salon / événement', 'evenement', 'qr'], ['linkedin', 'Profil LinkedIn', 'linkedin', 'bio']];
+function goCard(rows) {
+  const L = CAMP.go.links || [], C = CAMP.go.clicks || {};
+  const visits = l => { const k = campNorm([l.source, l.medium, l.campaign, l.content].join('/')); const r = rows.find(x => x.utm === k); return r ? r : null; };
+  const e = CAMP.goEdit;
+  const form = e ? `<div class="form" style="border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:12px">
+      <div class="frow"><div class="fg"><label>Code (fin du lien, non modifiable une fois créé)</label><input id="goCode" value="${esc(e.code || '')}" ${e.exists ? 'disabled' : ''} placeholder="ex. insta, flyer-salon" oninput="goPreview()"></div><div class="fg"><label>Nom (pour vous)</label><input id="goLabel" value="${esc(e.label || '')}" placeholder="ex. Lien en bio Instagram"></div></div>
+      <div class="frow"><div class="fg"><label>Page de destination</label><select id="goPage" oninput="goPreview()">${GO_PAGES.map(([p, l]) => `<option value="${p}" ${p === (e.page || '/services/personal-branding-entrepreneurs/') ? 'selected' : ''}>${l}</option>`).join('')}</select></div><div class="fg"><label>Source</label><input id="goSrc" value="${esc(e.source || 'instagram')}" oninput="goPreview()"></div></div>
+      <div class="frow"><div class="fg"><label>Support</label><input id="goMed" value="${esc(e.medium || 'bio')}" oninput="goPreview()"></div><div class="fg"><label>Campagne</label><input id="goCamp" value="${esc(e.campaign || 'lancement')}" oninput="goPreview()"></div></div>
+      <div class="fg"><label>Contenu (facultatif)</label><input id="goCnt" value="${esc(e.content || '')}" oninput="goPreview()"></div>
+      <div class="small muted" id="goPrev" style="margin:4px 0 10px;word-break:break-all"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn sm" onclick="goSave()">${e.exists ? 'Enregistrer' : 'Créer le lien'}</button><button class="btn ghost sm" onclick="CAMP.goEdit=null;renderCampaign()">Annuler</button></div>
+    </div>` : `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px"><button class="btn sm" onclick="goNew()">+ Nouveau lien court</button>${GO_IDEAS.filter(i => !L.some(l => l.code === i[0])).slice(0, 4).map(i => `<button class="btn ghost sm" onclick="goNew('${i[0]}')">+ ${esc(i[1])}</button>`).join('')}</div>`;
+  const table = L.length ? `<div class="tbl-wrap"><table><thead><tr><th>Lien court</th><th>Nom</th><th>Destination</th><th class="num">Clics (${CAMP.days} j)</th><th class="num">Clics total</th><th class="num">Visiteurs</th><th class="num">Leads</th><th></th></tr></thead><tbody>${L.map(l => { const c = C[l.code] || { period: 0, total: 0 }; const v = visits(l); return `<tr${l.archived ? ' style="opacity:.5"' : ''}><td><b>bunkaio.com/go/${esc(l.code)}</b>${l.archived ? ' <span class="badge">en pause</span>' : ''}</td><td>${esc(l.label || '—')}</td><td class="small">${esc(l.page)}<br><span class="muted">${esc([l.source, l.medium, l.campaign, l.content].filter(Boolean).join(' / '))}</span></td><td class="num"><b>${c.period}</b></td><td class="num">${c.total}</td><td class="num">${v ? v.uv : 0}</td><td class="num">${v ? v.leads : 0}</td><td style="white-space:nowrap"><button class="btn ghost sm" onclick="goCopy('${esc(l.code)}')">Copier</button> <button class="btn ghost sm" onclick="goQr('${esc(l.code)}','png')">QR PNG</button> <button class="btn ghost sm" onclick="goQr('${esc(l.code)}','svg')">QR SVG</button> <button class="btn ghost sm" onclick="goEditLink('${esc(l.code)}')">Modifier</button> <button class="btn ghost sm" onclick="goToggle('${esc(l.code)}')">${l.archived ? 'Réactiver' : 'Pause'}</button> <button class="btn ghost sm" onclick="goDelete('${esc(l.code)}')">✕</button></td></tr>`; }).join('')}</tbody></table></div>` : '<div class="empty">Aucun lien court pour l\'instant. Créez-en un par support (bio, flyer, carte de visite, salon…) : chaque scan ou clic est compté ici.</div>';
+  return `<div class="card" style="margin-top:18px"><h3>Liens courts et QR codes</h3>
+    <div class="small muted" style="margin-bottom:10px">Un lien court par support (<b>bunkaio.com/go/insta</b>, <b>/go/flyer</b>…) : facile à lire, à dire et à imprimer en QR code. Chaque clic ou scan est compté (anonyme, sans cookie), puis le visiteur arrive sur la page choisie avec les bons paramètres de campagne : ses visites, demandes et devis apparaissent dans « Résultats par campagne ». Une destination peut être changée à tout moment, même après impression ; « Pause » renvoie vers l'accueil.</div>
+    ${form}${table}</div>`;
+}
+function goNew(idea) {
+  const i = GO_IDEAS.find(x => x[0] === idea);
+  CAMP.goEdit = i ? { code: i[0], label: i[1], source: i[2], medium: i[3], campaign: 'lancement', page: '/services/personal-branding-entrepreneurs/' } : { campaign: 'lancement' };
+  renderCampaign(); goPreview(); const f = $('goCode'); if (f) f.scrollIntoView({ block: 'center' });
+}
+function goEditLink(code) { const l = (CAMP.go.links || []).find(x => x.code === code); if (!l) return; CAMP.goEdit = { ...l, exists: true }; renderCampaign(); goPreview(); }
+function goFormValue() { return { code: campSlug($('goCode').value).replace(/[._]/g, '-'), label: $('goLabel').value.trim(), page: $('goPage').value, source: campSlug($('goSrc').value), medium: campSlug($('goMed').value), campaign: campSlug($('goCamp').value), content: campSlug($('goCnt').value) }; }
+function goPreview() {
+  const el = $('goPrev'); if (!el) return; const v = goFormValue();
+  const q = [['utm_source', v.source], ['utm_medium', v.medium], ['utm_campaign', v.campaign], ['utm_content', v.content]].filter(x => x[1]);
+  el.innerHTML = '<b>' + esc(GO_BASE + (v.code || '…')) + '</b> → ' + esc('https://bunkaio.com' + v.page + (q.length ? '?' + q.map(x => x[0] + '=' + x[1]).join('&') : ''));
+}
+async function goPost(body, okMsg) {
+  try {
+    const { data } = await api('/admin/golinks', { method: 'POST', body: JSON.stringify(body) });
+    if (!data.ok) { toast(({ code_invalide: 'Code invalide (lettres, chiffres, tirets)', code_existant: 'Ce code existe déjà', page_invalide: 'Page invalide', trop_de_liens: 'Limite de 300 liens atteinte' })[data.error] || 'Erreur : ' + (data.error || '')); return false; }
+    CAMP.go.links = data.links || []; toast(okMsg); return true;
+  } catch (e) { toast('Connexion impossible'); return false; }
+}
+async function goSave() {
+  const v = goFormValue(), e = CAMP.goEdit || {}; if (e.exists) v.code = e.code;
+  if (!v.code) { toast('Choisissez un code'); return; }
+  if (await goPost({ ...v, action: e.exists ? 'save' : 'create', archived: !!e.archived }, e.exists ? 'Lien enregistré' : 'Lien créé : bunkaio.com/go/' + v.code)) { CAMP.goEdit = null; renderCampaign(); }
+}
+async function goToggle(code) { const l = (CAMP.go.links || []).find(x => x.code === code); if (!l) return; if (await goPost({ ...l, action: 'save', archived: !l.archived }, l.archived ? 'Lien réactivé' : 'Lien en pause (renvoie vers l\'accueil)')) renderCampaign(); }
+async function goDelete(code) { if (!confirm('Supprimer le lien court /go/' + code + ' ? S\'il est imprimé, il renverra vers l\'accueil (préférez « Pause »).')) return; if (await goPost({ code, action: 'delete' }, 'Lien supprimé')) renderCampaign(); }
+function goCopy(code) { const v = GO_BASE + code; navigator.clipboard.writeText(v).then(() => toast('Copié : ' + v), () => prompt('Copiez le lien :', v)); }
+/* QR code (admin/qrcode.js, générateur MIT hébergé avec l'admin) : PNG 1200 px pour le web / l'impression courante, SVG vectoriel pour l'imprimeur. */
+function goQr(code, fmt) {
+  if (!window.BKQR) { toast('Générateur de QR indisponible'); return; }
+  const q = new BKQR(-1, BKQR.L.M); q.addData(GO_BASE + code); q.make();
+  const n = q.getModuleCount(), quiet = 4, size = n + quiet * 2;
+  let blob;
+  if (fmt === 'svg') {
+    let d = ''; for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (q.isDark(r, c)) d += 'M' + (c + quiet) + ' ' + (r + quiet) + 'h1v1h-1z';
+    blob = new Blob(['<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + size + ' ' + size + '" shape-rendering="crispEdges"><rect width="100%" height="100%" fill="#fff"/><path d="' + d + '" fill="#0a0a0c"/></svg>'], { type: 'image/svg+xml' });
+    goDownload(blob, 'qr-bunkaio-' + code + '.svg');
+  } else {
+    const px = Math.floor(1200 / size), cv = document.createElement('canvas'); cv.width = cv.height = px * size;
+    const g = cv.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, cv.width, cv.height); g.fillStyle = '#0a0a0c';
+    for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (q.isDark(r, c)) g.fillRect((c + quiet) * px, (r + quiet) * px, px, px);
+    cv.toBlob(b => goDownload(b, 'qr-bunkaio-' + code + '.png'), 'image/png');
+  }
+}
+function goDownload(blob, name) { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500); toast('QR code téléchargé'); }
+
 function campUtm() {
   if (!$('utmOut')) return;
   const q = [['utm_source', campSlug($('utmSrc').value)], ['utm_medium', campSlug($('utmMed').value)], ['utm_campaign', campSlug($('utmCamp').value)], ['utm_content', campSlug($('utmCnt').value)]].filter(x => x[1]);
@@ -2566,7 +2639,7 @@ function drSummary(c) {
   const steps = [
     ['Demande de devis (quiz)', L ? fdate(L.date) : null],
     ['Devis', lastQ ? 'n° ' + lastQ.number + ' · ' + (Q_STATUS[lastQ.status] || [lastQ.status])[0].toLowerCase() : null, lastQ && lastQ.status === 'signe'],
-    ['Relance de devis', c.markers.relanceDevis ? 'envoyée' : null],
+    ['Relances de devis', c.markers.relanceDevis ? 'J+7 envoyée' : c.markers.relanceJ2 ? 'J+2 envoyée' : c.markers.aRepondu ? 'arrêtées (le prospect a écrit)' : null],
     ['Facture d\'acompte', dep ? (INV_STATUS[dep.status] || [dep.status])[0] + ' · ' + eur(dep.amount) : null, dep && dep.status === 'paid'],
     ['Espace créé', a ? (a.infosCompletes ? 'validé' : 'coordonnées à compléter') : null, a && a.infosCompletes],
     ['Rappel moodboard', c.markers.rappelMoodboard ? 'envoyé' : null],

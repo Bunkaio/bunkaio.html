@@ -837,10 +837,27 @@ export function buildAcknowledgementEmail(params: {
 }
 
 /** Relance unique si le prospect n'a pas donné suite à son devis. */
-export function buildQuoteFollowUpEmail(params: { customerName: string; space?: Space; lang?: Lang }): { subject: string; html: string; text: string } {
+export function buildQuoteFollowUpEmail(params: { customerName: string; space?: Space; lang?: Lang; step?: 1 | 2 }): { subject: string; html: string; text: string } {
   const lang = params.lang ?? 'fr';
   const greeting = greet(lang, params.customerName);
   const t = (fr: string, en: string): string => tr(lang, fr, en);
+  if (params.step === 1) {
+    /* Relance J+2 : courte, utile, sans pression — une question, un ajustement, ou la suite du parcours. */
+    const b1 = t(
+      "Merci encore pour votre demande de devis. Nous la préparons avec attention : avant de vous faire une proposition, avez-vous une question sur la formule, le lieu de la séance ou les délais ?",
+      'Thank you again for your quote request. We are preparing it carefully: before we send you a proposal, do you have any question about the package, the location of the session or the timing?');
+    const b2 = t(
+      "Répondez simplement à cet email (une phrase suffit) : vous échangez directement avec la photographe, votre seul interlocuteur du brief à la livraison.",
+      'Simply reply to this email (one sentence is enough): you talk directly to the photographer, your single point of contact from the brief to delivery.');
+    const html1 = emailShell(`
+    <h1 style="font-size:20px;margin:0 0 16px;">${t('Une question sur votre projet ?', 'Any question about your project?')}</h1>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">${greeting}</p>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 16px;">${b1}</p>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 8px;">${b2}</p>
+    ${spaceBlock(lang, params.space, 'quote')}
+  `, lang);
+    return finalize(lang, { tpl: `relance_devis_j2`, subject: t('Bunkaio — Une question sur votre projet ?', 'Bunkaio — Any question about your project?'), html: html1, text: `${greeting}\n\n${b1}\n\n${b2}\n\n${spaceText(lang, params.space, 'quote')}` });
+  }
   const body = t(
     "Nous revenons vers vous au sujet de votre demande de devis. Avez-vous eu le temps d'y réfléchir ? Si vous avez la moindre question, ou si vous souhaitez ajuster le projet (formule, options, date), répondez simplement à cet email : nous en discutons avec plaisir.",
     'We are following up on your quote request. Have you had time to think it over? If you have any question, or if you would like to adjust the project (package, options, date), simply reply to this email: we will be happy to discuss it.');
