@@ -8,7 +8,7 @@ import { buildDashboard, deleteContact, removeInvoice } from './admin';
 import { getLastPush, getVapid, notifyAdmin, removeSubscription, saveSubscription } from './push';
 import { setContactTags, setTagNames } from './tags';
 import { autoSms, getSmsSettings, sendSms, setSmsSettings, smsProvider, toE164 } from './sms';
-import { getInboxMessage, getSpamRules, previewReply, replyTo, rescanSpam, setLabelNames, setSpamRules, syncResendInbox, updateInbox } from './inbox';
+import { bulkInbox, purgeInboxTrash, getInboxMessage, getSpamRules, previewReply, replyTo, rescanSpam, setLabelNames, setSpamRules, syncResendInbox, updateInbox } from './inbox';
 import { buildManualMail, getMailLog, isUnsubscribed, listCampaigns, MANUAL_TEMPLATES, saveCampaign, sendMailing, setUnsubscribed } from './mailing';
 import type { ManualTemplate, MailingParams, RecipientCtx } from './mailing';
 import { unsubscribeToken } from './email';
@@ -735,7 +735,7 @@ async function handleAdminDashboard(request: Request, env: Env, headers: Record<
     return jsonResponse({ ok: true, message: msg }, 200, headers);
   }
   if (path === '/admin/inbox/update' && request.method === 'POST') {
-    const body = (await request.json().catch(() => ({}))) as { id?: unknown; read?: unknown; starred?: unknown; pinned?: unknown; labels?: unknown; archived?: unknown; spam?: unknown; note?: unknown; remove?: unknown };
+    const body = (await request.json().catch(() => ({}))) as { id?: unknown; read?: unknown; starred?: unknown; pinned?: unknown; labels?: unknown; archived?: unknown; spam?: unknown; note?: unknown; remove?: unknown; trash?: unknown };
     if (typeof body.id !== 'string') return jsonResponse({ ok: false, error: 'invalid_payload' }, 400, headers);
     const ok = await updateInbox(env, body.id, {
       spam: typeof body.spam === 'boolean' ? body.spam : undefined,
@@ -746,8 +746,18 @@ async function handleAdminDashboard(request: Request, env: Env, headers: Record<
       archived: typeof body.archived === 'boolean' ? body.archived : undefined,
       note: typeof body.note === 'string' ? body.note : undefined,
       remove: body.remove === true,
+      trash: typeof body.trash === 'boolean' ? body.trash : undefined,
     });
     return jsonResponse({ ok }, ok ? 200 : 404, headers);
+  }
+  if (path === '/admin/inbox/bulk' && request.method === 'POST') {
+    const body = (await request.json().catch(() => ({}))) as { ids?: unknown; action?: unknown };
+    if (body.action === 'empty-trash') return jsonResponse({ ok: true, done: await purgeInboxTrash(env, true) }, 200, headers);
+    const actions = ['trash', 'restore', 'delete', 'read', 'unread', 'archive'] as const;
+    const action = actions.find((a) => a === body.action);
+    const ids = Array.isArray(body.ids) ? body.ids.filter((x): x is string => typeof x === 'string' && x.length < 120) : [];
+    if (!action || !ids.length) return jsonResponse({ ok: false, error: 'invalid_payload' }, 400, headers);
+    return jsonResponse({ ok: true, done: await bulkInbox(env, ids, action) }, 200, headers);
   }
   if (path === '/admin/inbox/labels' && request.method === 'POST') {
     const body = (await request.json().catch(() => ({}))) as { names?: unknown };
@@ -1763,6 +1773,7 @@ export default {
       return;
     }
     await purgeOldAnalytics(env);
+    await purgeInboxTrash(env).catch((err) => console.error('[inbox] purge de la corbeille en échec', err));
     await runDailyAutomations(env);
     await retrySignedQuoteDeposits(env).catch((err) => console.error('[devis] relance des acomptes en échec', err));
     try {

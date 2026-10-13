@@ -178,6 +178,16 @@
   .inlist { background: #fff; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; max-height: calc(100vh - 230px); overflow-y: auto; }
   .inrow { display: block; width: 100%; text-align: left; background: none; border: 0; border-bottom: 1px solid var(--line); padding: 12px 14px; cursor: pointer; }
   .inrow:hover { background: #faf8fe; } .inrow.on { background: var(--violet); }
+  .inrow { display: flex !important; gap: 10px; align-items: flex-start; } .inrow-b { flex: 1; min-width: 0; }
+  .inrow.checked { background: #f3effb; }
+  .incb { flex-shrink: 0; width: 18px; height: 18px; margin-top: 1px; border: 1.5px solid #b9b3c6; border-radius: 5px; background: #fff; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+  .incb:hover { border-color: #6e5aa8; }
+  .incb.on, .incb.part { background: #6e5aa8; border-color: #6e5aa8; }
+  .incb.on::after { content: ''; width: 9px; height: 5px; border: 2px solid #fff; border-top: 0; border-right: 0; transform: translateY(-1px) rotate(-45deg); }
+  .incb.part::after { content: ''; width: 8px; height: 2px; background: #fff; }
+  .inbulk { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 10px 14px; border-bottom: 1px solid var(--line); background: #fbfafd; position: sticky; top: 0; z-index: 2; }
+  .inbulk.has { background: #f3effb; }
+  .inbulk .grow { flex: 1; }
   .inrow .top1 { display: flex; gap: 8px; align-items: baseline; } .inrow .nm { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .inrow .dt { color: var(--grey); font-size: 11.5px; white-space: nowrap; }
   .inrow .sj { font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .inrow .pv { color: var(--grey); font-size: 12.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -950,7 +960,7 @@ function updateCounts() {
   set('activity', allActivity().filter(a => a.unseen).length);
   set('invoices', DB.invoices.filter(i => i.overdue).length);
   set('messages', (DB.messages || []).filter(m => m.status === 'nouveau').length);
-  set('inbox', (DB.inbox || []).filter(m => !m.read && !m.archived && !m.spam).length);
+  set('inbox', (DB.inbox || []).filter(m => !m.read && !m.archived && !m.spam && !m.trashed).length);
   set('image', imageTodoCount());
   set('quotes', (DB.quotes || []).filter(q => q.status === 'signe' && !q.depositInvoice && !q.abonnement).length);
 }
@@ -996,7 +1006,7 @@ function computeAlerts() {
     if (q.status === 'envoye' && q.validUntil <= addDays(3)) out.push({ lvl: 'info', ic: '⌛', t: `Devis bientôt expiré — ${q.client.nom}`, d: `N° ${esc(q.number)} valable jusqu'au ${fdate(q.validUntil)}${q.viewedAt ? ' · consulté' : ' · jamais ouvert'}.`, email: q.email, quote: q.id });
   });
   imageAlerts().forEach(a => out.push(a));
-  const unreadIn = (DB.inbox || []).filter(m => !m.read && !m.archived && !m.spam);
+  const unreadIn = (DB.inbox || []).filter(m => !m.read && !m.archived && !m.spam && !m.trashed);
   if (unreadIn.length) out.push({ lvl: 'info', ic: '📥', t: `${unreadIn.length} email${unreadIn.length > 1 ? 's' : ''} non lu${unreadIn.length > 1 ? 's' : ''}`, d: esc(unreadIn.slice(0, 3).map(m => (m.fromName || m.fromEmail) + ' : ' + m.subject).join(' · ')), go: 'inbox' });
   (DB.messages || []).filter(m => m.status === 'nouveau').forEach(m => out.push({ lvl: 'info', ic: '✉️', t: `${MSG_KIND[m.kind] || 'Message'} — ${m.name || m.email}`, d: `Reçu ${ago(m.date)}. ${esc((m.details.message || m.details.projet || m.details.temoignage || m.details.activite || '').slice(0, 90))}`, email: m.email, go: 'messages' }));
   const unseen = allActivity().filter(a => a.unseen);
@@ -1356,23 +1366,30 @@ function nextMailCell(c) {
 }
 
 /* ── Boîte de réception ── */
-const inboxState = { filter: 'unread', q: '', label: '', sel: null, msg: null, images: false, replying: false, reading: false };
+const inboxState = { filter: 'unread', q: '', label: '', sel: null, msg: null, images: false, replying: false, reading: false, checked: new Set(), view: [] };
 const LB_KEYS = ['rouge', 'orange', 'jaune', 'vert', 'bleu', 'violet', 'rose', 'gris'];
 const lbName = k => (DB.inboxLabels && DB.inboxLabels[k]) || k;
 const lbPill = k => `<span class="lbl lb-${k}">${esc(lbName(k))}</span>`;
 function renderInbox() {
   if (!$('inList')) return;
   const all = DB.inbox || [];
-  const F = [['unread', 'Non lus', m => !m.read && !m.archived && !m.spam], ['all', 'Reçus', m => !m.archived && !m.spam], ['pin', '📌 Épinglés', m => m.pinned && !m.archived && !m.spam], ['star', 'Favoris', m => m.starred && !m.spam], ['arch', 'Archivés', m => m.archived && !m.spam], ['spam', '🚫 Spam', m => m.spam]];
+  const F = [['unread', 'Non lus', m => !m.trashed && !m.read && !m.archived && !m.spam], ['all', 'Reçus', m => !m.trashed && !m.archived && !m.spam], ['pin', '📌 Épinglés', m => !m.trashed && m.pinned && !m.archived && !m.spam], ['star', 'Favoris', m => !m.trashed && m.starred && !m.spam], ['arch', 'Archivés', m => !m.trashed && m.archived && !m.spam], ['spam', '🚫 Spam', m => !m.trashed && m.spam], ['trash', '🗑 Corbeille', m => m.trashed]];
   const lbf = inboxState.label;
   /* Une couleur choisie cherche dans TOUS les dossiers (hors spam) : sinon, avec « Non lus » actif, les emails étiquetés déjà lus restaient invisibles. */
-  $('inFilters').innerHTML = F.map(([id, l, f]) => `<button class="chip ${!lbf && inboxState.filter === id ? 'on' : ''}" onclick="inboxState.filter='${id}';inboxState.label='';renderInbox()">${l}<span class="c">${all.filter(f).length}</span></button>`).join('');
-  const f = lbf ? (m => !m.spam) : F.find(x => x[0] === inboxState.filter)[2]; const q = inboxState.q.toLowerCase();
+  $('inFilters').innerHTML = F.map(([id, l, f]) => `<button class="chip ${!lbf && inboxState.filter === id ? 'on' : ''}" onclick="inboxState.filter='${id}';inboxState.label='';inboxState.checked.clear();renderInbox()">${l}<span class="c">${all.filter(f).length}</span></button>`).join('');
+  const f = lbf ? (m => !m.spam && !m.trashed) : F.find(x => x[0] === inboxState.filter)[2]; const q = inboxState.q.toLowerCase();
   const list = all.filter(m => f(m) && (!lbf || (m.labels || []).includes(lbf)) && (!q || [m.fromName, m.fromEmail, m.subject, m.preview].join(' ').toLowerCase().includes(q)))
     .sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) || b.date.localeCompare(a.date));
-  $('inLabels').innerHTML = LB_KEYS.filter(k => all.some(m => !m.spam && (m.labels || []).includes(k)) || inboxState.label === k).map(k => `<button class="chip ${inboxState.label === k ? 'on' : ''}" onclick="inboxState.label=inboxState.label==='${k}'?'':'${k}';renderInbox()"><span class="lbfilter lb-${k}"></span>${esc(lbName(k))}<span class="c">${all.filter(m => (m.labels || []).includes(k) && !m.spam).length}</span></button>`).join('');
+  $('inLabels').innerHTML = LB_KEYS.filter(k => all.some(m => !m.spam && !m.trashed && (m.labels || []).includes(k)) || inboxState.label === k).map(k => `<button class="chip ${inboxState.label === k ? 'on' : ''}" onclick="inboxState.label=inboxState.label==='${k}'?'':'${k}';inboxState.checked.clear();renderInbox()"><span class="lbfilter lb-${k}"></span>${esc(lbName(k))}<span class="c">${all.filter(m => (m.labels || []).includes(k) && !m.spam && !m.trashed).length}</span></button>`).join('');
   $('inboxSetup').innerHTML = !all.length ? `<div class="card" style="margin-bottom:18px"><h3>Recevoir vos emails ici</h3><div class="small" style="line-height:1.7">Aucun email reçu pour l'instant. Principe : votre messagerie <b>Zoho</b> continue de recevoir <b>contact@bunkaio.com</b> comme aujourd'hui et en envoie une copie à une adresse de réception Resend ; le tableau de bord relève cette copie toutes les 5 minutes (ou avec « Relever le courrier »).<ol style="margin:8px 0 0 18px"><li><b>Resend</b> → Domains → <b>bunkaio.com</b> → activez <b>Receiving</b> et ajoutez l'enregistrement MX indiqué (sur un sous-domaine du type <code>inbound</code>, sans toucher à vos MX Zoho) dans la zone DNS de votre domaine.</li><li>Adresse de réception : n'importe quelle adresse de ce sous-domaine, par exemple <code>copie@inbound.bunkaio.com</code>.</li><li><b>Zoho Mail</b> → Paramètres → <i>Transfert et POP/IMAP</i> → ajoutez cette adresse en <b>transfert</b> et cochez « conserver une copie ». Le code de vérification de Zoho arrivera ici.</li><li>La clé API Resend du Worker doit avoir l'accès <b>complet</b> (pas seulement « envoi »).</li></ol></div></div>` : '';
-  $('inList').innerHTML = list.length ? list.map(m => `<button class="inrow ${m.read ? '' : 'unread'} ${m.pinned ? 'pinned' : ''} ${inboxState.sel === m.id ? 'on' : ''}" onclick="openInbox('${esc(m.id)}')"><div class="top1"><span class="nm">${m.pinned ? '<span class="pin">📌</span> ' : ''}${m.starred ? '★ ' : ''}${esc(m.fromName || m.fromEmail)}</span><span class="dt">${ago(m.date)}</span></div><div class="sj">${esc(m.subject)}${m.attachments ? ' 📎' : ''}${m.replied ? ' ↩' : ''}</div><div class="pv">${esc(m.preview)}</div>${(m.labels || []).length ? `<div class="lbs">${m.labels.map(lbPill).join('')}</div>` : ''}</button>`).join('') : '<div class="empty">Aucun email dans cette vue.</div>';
+  /* Sélection multiple : cases à cocher + barre d'actions (corbeille, restauration, suppression définitive…). */
+  inboxState.view = list.map(m => m.id);
+  const ck = inboxState.checked; [...ck].forEach(id => { if (!inboxState.view.includes(id)) ck.delete(id); });
+  const inTrash = !lbf && inboxState.filter === 'trash', nSel = ck.size, allOn = list.length && nSel === list.length;
+  const bar = !list.length && !inTrash ? '' : `<div class="inbulk ${nSel ? 'has' : ''}"><span class="incb ${allOn ? 'on' : nSel ? 'part' : ''}" role="checkbox" aria-checked="${allOn ? 'true' : nSel ? 'mixed' : 'false'}" tabindex="0" title="Tout sélectionner" onclick="inboxCheckAll()" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();inboxCheckAll()}"></span><span class="small">${nSel ? nSel + ' sélectionné' + (nSel > 1 ? 's' : '') : 'Tout sélectionner'}</span><span class="grow"></span>${nSel ? (inTrash
+      ? `<button class="btn ghost sm" onclick="inboxBulk('restore')">↺ Restaurer</button><button class="btn sm danger" onclick="inboxBulk('delete')">Supprimer définitivement</button>`
+      : `<button class="btn ghost sm" onclick="inboxBulk('read')">Marquer lu</button><button class="btn ghost sm" onclick="inboxBulk('archive')">Archiver</button><button class="btn sm" onclick="inboxBulk('trash')">🗑 Corbeille</button>`) : ''}${inTrash && list.length && !nSel ? '<button class="btn ghost sm" onclick="inboxEmptyTrash()">Vider la corbeille</button>' : ''}</div>${inTrash ? '<div class="small muted" style="padding:8px 14px;border-bottom:1px solid var(--line)">Les emails de la corbeille sont supprimés définitivement après 30 jours.</div>' : ''}`;
+  $('inList').innerHTML = bar + (list.length ? list.map(m => `<button class="inrow ${m.read ? '' : 'unread'} ${m.pinned ? 'pinned' : ''} ${inboxState.sel === m.id ? 'on' : ''} ${ck.has(m.id) ? 'checked' : ''}" onclick="openInbox('${esc(m.id)}')"><span class="incb ${ck.has(m.id) ? 'on' : ''}" role="checkbox" aria-checked="${ck.has(m.id)}" title="Sélectionner" onclick="event.stopPropagation();inboxCheck('${esc(m.id)}')"></span><div class="inrow-b"><div class="top1"><span class="nm">${m.pinned ? '<span class="pin">📌</span> ' : ''}${m.starred ? '★ ' : ''}${esc(m.fromName || m.fromEmail)}</span><span class="dt">${ago(m.date)}</span></div><div class="sj">${esc(m.subject)}${m.attachments ? ' 📎' : ''}${m.replied ? ' ↩' : ''}</div><div class="pv">${esc(m.preview)}</div>${(m.labels || []).length ? `<div class="lbs">${m.labels.map(lbPill).join('')}</div>` : ''}</div></button>`).join('') : `<div class="empty">${inTrash ? 'La corbeille est vide.' : 'Aucun email dans cette vue.'}</div>`);
 }
 let inboxSyncedAt = 0;
 async function inboxSync(manual) {
@@ -1433,7 +1450,7 @@ function renderInboxRead() {
       ${m.spam ? '' : '<button class="btn ghost sm" onclick="inboxBlockSender()" title="Classe cet email en spam et y envoie désormais tous les emails de cet expéditeur">Bloquer l\'expéditeur</button>'}
       ${c ? `<button class="btn soft sm" onclick="openDrawer('${esc(c.email)}')">Fiche de ${esc((c.name || c.email).slice(0, 24))}</button>` : `<button class="btn soft sm" onclick="openNewContact('${esc(m.fromEmail)}','${esc(m.fromName).replace(/&#39;/g, '')}')">+ Créer un espace</button>`}
       ${m.html && !inboxState.images ? '<button class="btn ghost sm" onclick="inboxState.images=true;renderInboxRead()">Afficher les images</button>' : ''}
-      <button class="btn ghost sm" style="color:var(--danger)" onclick="inboxDelete()">Supprimer</button>
+      ${(DB.inbox || []).some(x => x.id === m.id && x.trashed) ? `<button class="btn ghost sm" onclick="inboxBulk('restore', [inboxState.sel])">↺ Restaurer</button><button class="btn ghost sm" style="color:var(--danger)" onclick="inboxDelete()">Supprimer définitivement</button>` : `<button class="btn ghost sm" style="color:var(--danger)" onclick="inboxDelete()">🗑 Corbeille</button>`}
     </div>
     <div class="lbpick" aria-label="Étiquettes">${LB_KEYS.map(k => `<button class="lbl lb-${k} ${(m.labels || []).includes(k) ? 'on' : ''}" onclick="inboxToggleLabel('${k}')" title="Ajouter ou retirer l'étiquette">${esc(lbName(k))}</button>`).join('')}</div>
     ${m.attachments.length ? `<div class="msg warn" style="margin:8px 0">📎 ${m.attachments.map(a => esc(a.filename) + ' (' + Math.max(1, Math.round(a.size / 1024)) + ' Ko)').join(' · ')} — les pièces jointes ne sont pas conservées ici : retrouvez-les dans la copie reçue dans votre boîte mail habituelle.</div>` : ''}
@@ -1513,10 +1530,38 @@ async function saveSpamEditor(rescan) {
     $('lbEditor').innerHTML = ''; $('lbEditor').dataset.mode = ''; renderInbox();
   } catch (e) { if (e.message !== 'unauthorized') toast('Connexion impossible, réessayez'); }
 }
+/* « Supprimer » met à la corbeille ; depuis la corbeille, suppression définitive (après confirmation). */
 async function inboxDelete() {
-  if (!confirm('Supprimer définitivement cet email du tableau de bord ? (Votre copie dans la boîte mail habituelle n\'est pas touchée.)')) return;
-  try { const { res } = await api('/admin/inbox/update', { method: 'POST', body: JSON.stringify({ id: inboxState.sel, remove: true }) }); if (!res.ok) { toast('Erreur'); return; }
-    DB.inbox = DB.inbox.filter(x => x.id !== inboxState.sel); setInboxReading(false); inboxState.sel = null; inboxState.msg = null; $('inRead').innerHTML = '<div class="empty">Email supprimé.</div>'; renderInbox(); updateCounts(); toast('Email supprimé'); } catch (e) {}
+  const it = (DB.inbox || []).find(x => x.id === inboxState.sel);
+  if (it && it.trashed) { await inboxBulk('delete', [inboxState.sel]); return; }
+  await inboxBulk('trash', [inboxState.sel]);
+}
+function inboxCheck(id) { const ck = inboxState.checked; if (ck.has(id)) ck.delete(id); else ck.add(id); renderInbox(); }
+function inboxCheckAll() { const ck = inboxState.checked, v = inboxState.view; if (v.length && v.every(id => ck.has(id))) ck.clear(); else v.forEach(id => ck.add(id)); renderInbox(); }
+async function inboxBulk(action, only) {
+  const ids = only || [...inboxState.checked]; if (!ids.length) return;
+  const n = ids.length, s = n > 1 ? 's' : '';
+  if (action === 'delete' && !confirm(`Supprimer définitivement ${n} email${s} ? Cette action est irréversible (votre copie dans la messagerie Zoho n'est pas touchée).`)) return;
+  try {
+    const { res, data } = await api('/admin/inbox/bulk', { method: 'POST', body: JSON.stringify({ ids, action }) });
+    if (!res.ok || !data.ok) { toast(res.status === 404 ? 'Le Worker n\'est pas à jour : redéployez-le (npx wrangler deploy)' : 'Erreur ' + res.status); return; }
+    const set = new Set(ids), now = new Date().toISOString();
+    if (action === 'delete') DB.inbox = DB.inbox.filter(x => !set.has(x.id));
+    else DB.inbox.forEach(x => { if (!set.has(x.id)) return; if (action === 'trash') { x.trashed = true; x.trashedAt = now; } if (action === 'restore') { x.trashed = false; x.trashedAt = ''; } if (action === 'read') x.read = true; if (action === 'unread') x.read = false; if (action === 'archive') x.archived = true; });
+    if (set.has(inboxState.sel) && action !== 'read' && action !== 'unread') { setInboxReading(false); inboxState.sel = null; inboxState.msg = null; $('inRead').innerHTML = '<div class="empty">Sélectionnez un email pour le lire.</div>'; }
+    else if (inboxState.msg && set.has(inboxState.sel)) { Object.assign(inboxState.msg, { read: action === 'read' }); renderInboxRead(); }
+    inboxState.checked.clear(); renderInbox(); updateCounts();
+    toast(({ trash: `${n} email${s} mis à la corbeille`, restore: `${n} email${s} restauré${s}`, delete: `${n} email${s} supprimé${s} définitivement`, read: `${n} email${s} marqué${s} comme lu${s}`, unread: `${n} email${s} marqué${s} non lu${s}`, archive: `${n} email${s} archivé${s}` })[action]);
+  } catch (e) { if (e && e.message !== 'unauthorized') toast('Connexion impossible, réessayez'); }
+}
+async function inboxEmptyTrash() {
+  const n = (DB.inbox || []).filter(x => x.trashed).length; if (!n) return;
+  if (!confirm(`Vider la corbeille (${n} email${n > 1 ? 's' : ''}) ? Cette action est irréversible.`)) return;
+  try {
+    const { res, data } = await api('/admin/inbox/bulk', { method: 'POST', body: JSON.stringify({ action: 'empty-trash' }) });
+    if (!res.ok || !data.ok) { toast(res.status === 404 ? 'Le Worker n\'est pas à jour : redéployez-le (npx wrangler deploy)' : 'Erreur ' + res.status); return; }
+    DB.inbox = DB.inbox.filter(x => !x.trashed); inboxState.checked.clear(); renderInbox(); updateCounts(); toast('Corbeille vidée');
+  } catch (e) { if (e && e.message !== 'unauthorized') toast('Connexion impossible, réessayez'); }
 }
 
 

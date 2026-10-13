@@ -31,11 +31,14 @@ export interface InboxMessage {
   spam?: boolean;
   repliedAt?: string;
   note?: string;
+  /** Mis à la corbeille (date) : supprimé définitivement après TRASH_DAYS jours. */
+  trashedAt?: string;
 }
 
 const PREFIX = 'inbox:';
 const TTL = 2 * 365 * 24 * 3600;
 const TEXT_MAX = 30_000;
+export const TRASH_DAYS = 30;
 const HTML_MAX = 120_000;
 
 const cut = (s: string | undefined, n: number): string => (s ?? '').slice(0, n);
@@ -127,7 +130,7 @@ export const DEFAULT_LABELS: Record<string, string> = { rouge: 'Urgent', orange:
 
 function summary(m: InboxMessage): Record<string, unknown> {
   // Métadonnées KV limitées à 1 024 octets : champs tronqués (accents = 2 octets).
-  const s = { d: m.date, fn: m.fromName.slice(0, 40), fe: m.fromEmail.slice(0, 80), s: m.subject.slice(0, 90), p: m.text.replace(/\s+/g, ' ').slice(0, 90), r: m.read, st: m.starred, pi: m.pinned === true, lb: (m.labels ?? []).join(','), a: m.archived, sp: m.spam === true, att: m.attachments.length, rep: !!m.repliedAt };
+  const s = { d: m.date, fn: m.fromName.slice(0, 40), fe: m.fromEmail.slice(0, 80), s: m.subject.slice(0, 90), p: m.text.replace(/\s+/g, ' ').slice(0, 90), r: m.read, st: m.starred, pi: m.pinned === true, lb: (m.labels ?? []).join(','), a: m.archived, sp: m.spam === true, att: m.attachments.length, rep: !!m.repliedAt, tr: m.trashedAt ?? '' };
   if (JSON.stringify(s).length > 900) s.p = s.p.slice(0, 30);
   return s;
 }
@@ -141,7 +144,7 @@ export async function setLabelNames(env: Env, names: Record<string, unknown>): P
   await env.ACCOUNTS_KV.put('inbox-labels', JSON.stringify(clean));
 }
 
-export interface InboxItem { id: string; date: string; fromName: string; fromEmail: string; subject: string; preview: string; read: boolean; starred: boolean; pinned: boolean; labels: string[]; archived: boolean; spam: boolean; attachments: number; replied: boolean }
+export interface InboxItem { id: string; date: string; fromName: string; fromEmail: string; subject: string; preview: string; read: boolean; starred: boolean; pinned: boolean; labels: string[]; archived: boolean; spam: boolean; attachments: number; replied: boolean; trashed: boolean; trashedAt: string }
 
 export async function listInbox(env: Env): Promise<InboxItem[]> {
   const out: InboxItem[] = [];
@@ -151,7 +154,7 @@ export async function listInbox(env: Env): Promise<InboxItem[]> {
     for (const k of page.keys) {
       const m = k.metadata;
       if (!m) continue;
-      out.push({ id: k.name.slice(PREFIX.length), date: String(m.d ?? ''), fromName: String(m.fn ?? ''), fromEmail: String(m.fe ?? ''), subject: String(m.s ?? ''), preview: String(m.p ?? ''), read: m.r === true, starred: m.st === true, pinned: m.pi === true, labels: typeof m.lb === 'string' && m.lb ? m.lb.split(',') : [], archived: m.a === true, spam: m.sp === true, attachments: Number(m.att ?? 0), replied: m.rep === true });
+      out.push({ id: k.name.slice(PREFIX.length), date: String(m.d ?? ''), fromName: String(m.fn ?? ''), fromEmail: String(m.fe ?? ''), subject: String(m.s ?? ''), preview: String(m.p ?? ''), read: m.r === true, starred: m.st === true, pinned: m.pi === true, labels: typeof m.lb === 'string' && m.lb ? m.lb.split(',') : [], archived: m.a === true, spam: m.sp === true, attachments: Number(m.att ?? 0), replied: m.rep === true, trashed: !!m.tr, trashedAt: String(m.tr ?? '') });
     }
     cursor = page.list_complete ? undefined : (page as { cursor?: string }).cursor;
   } while (cursor && out.length < 3000);
@@ -208,7 +211,7 @@ export async function rescanSpam(env: Env): Promise<{ moved: number; checked: nu
   const items = await listInbox(env);
   let moved = 0, checked = 0;
   for (const it of items) {
-    if (it.spam || it.starred || it.pinned || it.labels.length || it.replied) continue;
+    if (it.spam || it.trashed || it.starred || it.pinned || it.labels.length || it.replied) continue;
     checked++;
     const msg = await getInboxMessage(env, it.id);
     if (!msg || msg.repliedAt || msg.starred || msg.pinned) continue;
@@ -223,13 +226,15 @@ export async function getInboxMessage(env: Env, id: string): Promise<InboxMessag
   return raw ? (JSON.parse(raw) as InboxMessage) : null;
 }
 
-export async function updateInbox(env: Env, id: string, change: Partial<Pick<InboxMessage, 'read' | 'starred' | 'pinned' | 'archived' | 'spam' | 'note'>> & { labels?: string[]; remove?: boolean }): Promise<boolean> {
+export async function updateInbox(env: Env, id: string, change: Partial<Pick<InboxMessage, 'read' | 'starred' | 'pinned' | 'archived' | 'spam' | 'note'>> & { labels?: string[]; remove?: boolean; trash?: boolean }): Promise<boolean> {
   const msg = await getInboxMessage(env, id);
   if (!msg) return false;
   if (change.remove) { await env.ACCOUNTS_KV.delete(PREFIX + id); return true; }
   for (const k of ['read', 'starred', 'pinned', 'archived', 'spam'] as const) if (typeof change[k] === 'boolean') msg[k] = change[k]!;
   if (Array.isArray(change.labels)) msg.labels = [...new Set(change.labels.filter((l): l is string => (LABEL_KEYS as readonly string[]).includes(l)))];
   if (typeof change.note === 'string') msg.note = change.note.slice(0, 2000);
+  if (change.trash === true) msg.trashedAt = msg.trashedAt || new Date().toISOString();
+  if (change.trash === false) delete msg.trashedAt;
   await env.ACCOUNTS_KV.put(PREFIX + id, JSON.stringify(msg), { expirationTtl: TTL, metadata: summary(msg) });
   return true;
 }
@@ -266,4 +271,26 @@ export async function replyTo(env: Env, id: string, body: string, subject?: stri
   msg.repliedAt = new Date().toISOString();
   msg.read = true;
   await env.ACCOUNTS_KV.put(PREFIX + id, JSON.stringify(msg), { expirationTtl: TTL, metadata: summary(msg) });
+}
+
+/** Actions groupées (sélection dans l'admin) : corbeille, restauration, suppression définitive, lu / non lu, archivage. */
+export type InboxBulkAction = 'trash' | 'restore' | 'delete' | 'read' | 'unread' | 'archive';
+export async function bulkInbox(env: Env, ids: string[], action: InboxBulkAction): Promise<number> {
+  const change: Parameters<typeof updateInbox>[2] =
+    action === 'trash' ? { trash: true } : action === 'restore' ? { trash: false } : action === 'delete' ? { remove: true }
+    : action === 'read' ? { read: true } : action === 'unread' ? { read: false } : { archived: true };
+  let done = 0;
+  for (const id of ids.slice(0, 500)) if (await updateInbox(env, id, change)) done++;
+  return done;
+}
+
+/** Vide la corbeille : tout (`all`) ou seulement les emails mis à la corbeille depuis plus de TRASH_DAYS jours (tâche quotidienne). */
+export async function purgeInboxTrash(env: Env, all = false): Promise<number> {
+  const limit = Date.now() - TRASH_DAYS * 86400000;
+  let n = 0;
+  for (const it of await listInbox(env)) {
+    if (!it.trashed || (!all && Date.parse(it.trashedAt) > limit)) continue;
+    await env.ACCOUNTS_KV.delete(PREFIX + it.id); n++;
+  }
+  return n;
 }
