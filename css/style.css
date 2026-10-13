@@ -5627,3 +5627,33 @@ body:not([data-view="article"]) .art-progress { display: none; }
 .cred-anim .cred-faq-link { text-decoration-color: transparent; background-size: 0 1px; }
 .cred-anim.cred-live .cred-faq-link { background-size: 100% 1px; transition-delay: calc(var(--ci, 0) * 0.11s + 0.5s); }
 @media (prefers-reduced-motion: reduce) { .cred-anim .cred-lead, .cred-anim .cred-mini, .cred-anim .cred-faq-link, .cred-anim .cred-mini-icon svg { opacity: 1 !important; transform: none !important; animation: none !important; } }
+
+/* Bloc « BUNKAIO, c'est le savoir-faire… » réorganisé (oct. 2026) : vignette du portrait d'Aya à gauche, texte aligné,
+   4 vignettes en grille 2 × 2, liens sur une ligne — plus de trous dus au retour à la ligne flexible. */
+.credentials-strip { display: block; max-width: 1100px; }
+.cred-wrap { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 20px 40px; align-items: start; }
+.cred-avatar { margin: 4px 0 0; text-align: center; }
+.cred-avatar img { display: block; width: 132px; height: 132px; margin: 0 auto 10px; border-radius: 50%; object-fit: cover; object-position: 36% 35%; object-view-box: inset(10% 40% 8% 24%); box-shadow: 0 0 0 4px #fff, 0 0 0 5px rgba(110,90,168,.35), 0 14px 30px rgba(40,28,70,.18); background: #e9e3f4; }
+.cred-avatar figcaption b { display: block; font-size: 14px; color: var(--black); }
+.cred-avatar figcaption span { display: block; margin-top: 2px; font-size: 11.5px; line-height: 1.45; color: var(--grey); }
+.cred-body .cred-lead { max-width: none; margin: 0 0 18px; flex: none; }
+.cred-minis { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 32px; margin: 0 0 18px; }
+.cred-minis .cred-mini { align-items: flex-start; line-height: 1.5; }
+.cred-minis .cred-mini-icon { margin-top: 2px; }
+.cred-links { display: flex; flex-wrap: wrap; gap: 10px 28px; }
+.cred-links .cred-faq-link { margin-left: 0; display: inline-block; }
+.art-cred .cred-wrap { grid-template-columns: 120px minmax(0, 1fr); gap: 16px 28px; }
+.art-cred .cred-avatar img { width: 104px; height: 104px; }
+@media (max-width: 860px) {
+  .credentials-strip { padding: 0 24px; }
+  .cred-wrap, .art-cred .cred-wrap { grid-template-columns: 1fr; gap: 16px; }
+  .cred-avatar { display: flex; align-items: center; gap: 14px; text-align: left; margin: 0; }
+  .cred-avatar img, .art-cred .cred-avatar img { width: 72px; height: 72px; margin: 0; flex-shrink: 0; }
+  .cred-minis { grid-template-columns: 1fr; gap: 12px; }
+  .cred-links { flex-direction: column; gap: 12px; }
+}
+.cred-anim .cred-avatar { opacity: 0; transform: scale(.85); }
+.cred-anim.cred-live .cred-avatar { animation: credIn .8s cubic-bezier(.2,.7,.2,1) forwards; }
+@media (prefers-reduced-motion: reduce) { .cred-anim .cred-avatar { opacity: 1 !important; transform: none !important; animation: none !important; } }
+/* Le filtre de grain déborde du cadre des petites images rondes (rectangle clair visible) : désactivé sur la vignette d'Aya. */
+.cred-avatar img { filter: none !important; }
