@@ -59,6 +59,9 @@ Premium accessible : direction artistique, accompagnement, interlocuteur unique,
 ## Tests
 Banc local Miniflare avec faux Stripe/Resend et Playwright (scripts hors dépôt). Un test de régression doit couvrir : parcours devis, formulaires en échec, espace client, admin, crawl de toutes les pages.
 
+## Cloudflare
+- Plan Workers Paid (5 $/mois) actif depuis le 13 oct. 2026 (le plan gratuit avait dépassé 1 000 opérations KV « list » par jour) : 10 M lectures, 1 M écritures/suppressions/listes par mois inclus. Pistes pour la campagne proposées à la propriétaire : liens courts suivis + QR codes, test A/B de la landing Lancement, relances automatiques des leads, Turnstile sur les formulaires (à déclarer dans la politique de confidentialité si activé).
+
 ## À faire côté propriétaire
 Redéployer le Worker, tester un devis réel en mode test Stripe, désactiver SEPA et ajouter l'événement `charge.dispute.created` dans Stripe, Search Console, fiche Google Business.
 
