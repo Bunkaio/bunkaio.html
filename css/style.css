@@ -5450,3 +5450,8 @@ footer .footer-cta-row .hero-start:hover, footer .footer-cta-row .hero-start:foc
 
 }
 @media print { .page-hero-wrap::after { display: none; } }
+
+/* Accueil : appel « Construire mon projet » entre le bloc de réassurance et « Conseils photo ». */
+.home-mid-cta { display: flex; justify-content: center; padding: 8px 22px 36px; position: relative; z-index: 1; }
+.home-mid-cta .cta-primary { display: inline-flex; align-items: center; justify-content: center; min-width: min(320px, 100%); }
+@media (max-width: 760px) { .home-mid-cta .cta-primary { width: 100%; } }
