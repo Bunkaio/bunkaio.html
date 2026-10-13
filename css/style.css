@@ -5602,3 +5602,10 @@ body:not([data-view="article"]) .art-progress { display: none; }
 .art-cred .author-sign a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
 .art-cred .cred-faq-link { display: inline-block; margin-left: 0; }
 @media (max-width: 760px) { .art-cred-minis { grid-template-columns: 1fr; } }
+
+/* Articles, mobile et tablette (< 1081 px) : la photo s'affiche en entier, sans recadrage (ratio d'origine, portrait ou paysage). */
+@media (max-width: 1080px) {
+  #view-article .art-hero { background: #eceaf1; }
+  #view-article .art-hero img { aspect-ratio: auto; height: auto; max-height: 78vh; object-fit: contain; object-position: center; }
+  #view-article .art-hero:hover img { transform: none; }
+}
