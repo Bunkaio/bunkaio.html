@@ -5609,3 +5609,21 @@ body:not([data-view="article"]) .art-progress { display: none; }
   #view-article .art-hero img { aspect-ratio: auto; height: auto; max-height: 78vh; object-fit: contain; object-position: center; }
   #view-article .art-hero:hover img { transform: none; }
 }
+
+/* Bloc « BUNKAIO, c'est le savoir-faire… » : apparition en cascade (texte, vignettes, liens), icônes qui s'allument d'un anneau violet. */
+.cred-anim .cred-lead, .cred-anim .cred-mini, .cred-anim .cred-faq-link { opacity: 0; transform: translateY(16px); }
+.cred-anim.cred-live .cred-lead, .cred-anim.cred-live .cred-mini, .cred-anim.cred-live .cred-faq-link { animation: credIn .75s cubic-bezier(.2,.7,.2,1) forwards; animation-delay: calc(var(--ci, 0) * 0.11s + 0.05s); }
+@keyframes credIn { to { opacity: 1; transform: none; } }
+.cred-mini-icon { position: relative; }
+.cred-anim .cred-mini-icon svg { transform: scale(.4) rotate(-25deg); opacity: 0; }
+.cred-anim.cred-live .cred-mini-icon svg { animation: credIcon .8s cubic-bezier(.3,1.6,.4,1) forwards; animation-delay: calc(var(--ci, 0) * 0.11s + 0.2s); }
+@keyframes credIcon { 60% { opacity: 1; transform: scale(1.18) rotate(4deg); } to { opacity: 1; transform: none; } }
+.cred-anim .cred-mini-icon::after { content: ''; position: absolute; left: 50%; top: 50%; width: 30px; height: 30px; margin: -15px 0 0 -15px; border-radius: 50%; border: 1px solid rgba(110,90,168,.55); opacity: 0; pointer-events: none; }
+.cred-anim.cred-live .cred-mini:nth-of-type(n) .cred-mini-icon::after { animation: credRing 1.3s ease-out forwards; animation-delay: calc(var(--ci, 0) * 0.11s + 0.3s); }
+@keyframes credRing { 0% { opacity: .9; transform: scale(.3); } 100% { opacity: 0; transform: scale(1.5); } }
+.cred-mini { transition: transform .35s cubic-bezier(.2,.7,.2,1); }
+@media (hover: hover) { .cred-mini:hover { transform: translateX(4px); } .cred-mini:hover .cred-mini-icon { color: #6e5aa8; } }
+.cred-faq-link { background-image: linear-gradient(currentColor, currentColor); background-size: 0 1px; background-repeat: no-repeat; background-position: 0 100%; transition: background-size .45s ease; }
+.cred-anim .cred-faq-link { text-decoration-color: transparent; background-size: 0 1px; }
+.cred-anim.cred-live .cred-faq-link { background-size: 100% 1px; transition-delay: calc(var(--ci, 0) * 0.11s + 0.5s); }
+@media (prefers-reduced-motion: reduce) { .cred-anim .cred-lead, .cred-anim .cred-mini, .cred-anim .cred-faq-link, .cred-anim .cred-mini-icon svg { opacity: 1 !important; transform: none !important; animation: none !important; } }

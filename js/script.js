@@ -4464,6 +4464,7 @@ function renderArticlePage(slug){
     </div>`;
   renderAccordionInto('articleFaq', a.faq.map(f => ({ title: f.q, body: '<p>' + f.a + '</p>' })), { exclusive: true });
   initArticleReading(el);
+  initCredLive(el);
 }
 
 /* Lecture d'un article (ordinateur) : barre de progression, sommaire qui suit la section en cours, clic = section ouverte et amenée à l'écran. */
@@ -5462,6 +5463,19 @@ document.addEventListener('click', (e) => {
 });
 
 /* Conseils photo (accueil) : apparition en cascade des guides quand la section entre à l'écran. */
+/* Bloc « BUNKAIO, c'est le savoir-faire… » (accueil et fin d'article) : texte, vignettes et liens apparaissent en cascade à l'écran. */
+function initCredLive(root){
+  (root || document).querySelectorAll('.credentials-strip, .art-cred').forEach(box => {
+    if (box.dataset.credLive) return; box.dataset.credLive = '1';
+    box.querySelectorAll('.cred-lead, .cred-mini, .cred-faq-link').forEach((x, i) => x.style.setProperty('--ci', i));
+    if (!window.IntersectionObserver || REDUCED_MOTION) return;
+    box.classList.add('cred-anim');
+    const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { box.classList.add('cred-live'); io.disconnect(); } }), { threshold: 0.2 });
+    io.observe(box);
+  });
+}
+initCredLive();
+
 function initAdviceLive(){
   const sec = document.querySelector('.advice-teaser');
   if (!sec) return;
