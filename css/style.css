@@ -5670,3 +5670,8 @@ body:not([data-view="article"]) .art-progress { display: none; }
 
 /* Places restantes (décompte automatique) */
 .pp-universe-spots.pp-full { color: #8a5a3a; }
+
+/* Programme partenaires : note d'introduction placée avant les univers */
+.pp-note + .pp-max { margin: 0 0 22px; }
+#partnersAccordion .pp-note { margin: 0 0 12px; }
+#partnersAccordion .pp-max { margin: 0 0 22px; font-size: 14px; line-height: 1.8; color: #1a1625; }

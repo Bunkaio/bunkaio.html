@@ -7317,8 +7317,8 @@ function renderPartnersPitch(){
             <div class="pp-universe-spots" data-spots="${u.id}">${ppSpotsText(u.id)}</div>
             ${u.soon ? `<div class="pp-universe-soon">${t(u.soon)}</div>` : ''}
           </div>`).join('')}
-      </div>
-      <p class="pp-note">${t({fr:'Le programme n\'est pas ouvert à tous : chaque candidature est étudiée individuellement pour préserver la cohérence éditoriale de Bunkaio. Une fois les places pourvues, les nouvelles candidatures rejoignent une liste d\'attente.', en:'The programme is not open to everyone: each application is reviewed individually to preserve Bunkaio\'s editorial coherence. Once places are filled, new applications join a waiting list.'})}</p>`,
+      </div>`,
+    universesNote: `<p class="pp-note">${t({fr:'Le programme n\'est pas ouvert à tous : chaque candidature est étudiée individuellement pour préserver la cohérence éditoriale de Bunkaio. Une fois les places pourvues, les nouvelles candidatures rejoignent une liste d\'attente.', en:'The programme is not open to everyone: each application is reviewed individually to preserve Bunkaio\'s editorial coherence. Once places are filled, new applications join a waiting list.'})}</p>`,
     steps: `<div class="pp-steps">
         ${steps.map(st => `
           <div class="pp-step"><div class="pp-step-num">${st.n}</div><div class="pp-step-title">${t(st.title)}</div><div class="pp-step-text">${t(st.text)}</div></div>`).join('')}
@@ -7368,12 +7368,12 @@ function renderPartnersAccordion(){
   const sec = window._ppSections || {};
   const sections = LANG === 'fr' ? [
     { title:'Ce que vous obtenez', body: sec.benefits },
-    { title:'Pour qui ? Cinq univers, cinq places chacun', body: `${sec.universes}<p style="margin-top:6px">Maximum <strong>25 partenaires fondateurs</strong>. Une fois les places pourvues, les nouvelles candidatures rejoignent une liste d'attente.</p>` },
+    { title:'Pour qui ? Cinq univers, cinq places chacun', body: `${sec.universesNote}<p class="pp-max">Maximum <strong>25 partenaires fondateurs</strong> : 5 places par univers.</p>${sec.universes}` },
     { title:'Comment ça marche', body: `${sec.steps}<p style="margin-top:18px">Chaque candidature est étudiée selon la qualité des réalisations et la cohérence avec l'univers Bunkaio : sélectionné, compatible (ponctuel) ou réorienté selon vos besoins.</p>` },
     { title:'Pourquoi Bunkaio existe', body:`<p>Bunkaio, c'est le regard d'une <strong>photographe portraitiste professionnelle</strong> : plus de huit ans de métier et plus de 200 projets pour des personnes, des marques et des entreprises. Chaque image est pensée avec une vraie direction artistique, de la lumière à la retouche.</p><p>Votre projet est <strong>guidé de bout en bout et centralisé</strong> dans votre espace client : moodboard, devis, suivi des étapes, factures et galerie privée. Un seul interlocuteur, rien ne se disperse.</p><p>Un beau résultat tient à la lumière et au regard, pas au lieu. C'est pourquoi un <strong>véritable matériel de studio, entièrement mobile</strong>, se déplace jusqu'à vous : éclairage, optiques et accessoires professionnels s'installent chez vous, dans vos locaux ou sur votre lieu de tournage, avec la même exigence qu'en studio.</p><p><strong>Ici, le métier, c'est la photographie : une image soignée, de la préparation à la livraison.</strong></p>` },
   ] : [
     { title:'What you get', body: sec.benefits },
-    { title:'Who is it for? Five universes, five places each', body: `${sec.universes}<p style="margin-top:6px">A maximum of <strong>25 founding partners</strong>. Once places are filled, new applications join a waiting list.</p>` },
+    { title:'Who is it for? Five universes, five places each', body: `${sec.universesNote}<p class="pp-max">A maximum of <strong>25 founding partners</strong>: 5 places per universe.</p>${sec.universes}` },
     { title:'How it works', body: `${sec.steps}<p style="margin-top:18px">Each application is assessed on the quality of your work and its fit with the Bunkaio universe: selected, compatible (one-off) or redirected according to your needs.</p>` },
     { title:'Why Bunkaio exists', body:`<p>Bunkaio is the eye of a <strong>professional portrait photographer</strong>: more than eight years in the craft and over 200 projects for people, brands and companies. Every image is shaped by real art direction, from the lighting to the retouching.</p><p>Your project is <strong>guided from start to finish and centralised</strong> in your client area: moodboard, quote, progress tracking, invoices and private gallery. One point of contact, nothing gets scattered.</p><p>A great result comes from light and vision, not from the location. That is why <strong>genuine studio equipment, fully mobile</strong>, travels to you: professional lighting, lenses and accessories set up at your home, in your premises or on your shoot location, with the same standards as in a studio.</p><p><strong>Here, the craft is photography: a polished image, from preparation to delivery.</strong></p>` },
   ];
