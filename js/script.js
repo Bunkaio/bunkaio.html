@@ -945,8 +945,8 @@ const I18N = {
   }
 };
 
-Object.assign(I18N.fr, { 'acc-promotions':'Mes promotions', 'acc-reseau':'Mon réseau', 'acc-collabs':'Mes collaborations' });
-Object.assign(I18N.en, { 'acc-promotions':'My promotions', 'acc-reseau':'My network', 'acc-collabs':'My collaborations' });
+Object.assign(I18N.fr, { 'acc-promotions':'Mon tarif partenaire', 'acc-reseau':'Mon réseau', 'acc-collabs':'Mes collaborations' });
+Object.assign(I18N.en, { 'acc-promotions':'My partner rate', 'acc-reseau':'My network', 'acc-collabs':'My collaborations' });
 
 function t(obj){ return typeof obj === 'object' ? obj[LANG] : obj; }
 
@@ -5184,7 +5184,7 @@ function selectApplyType(id){
 }
 
 /* Accordéon « Ce que vous obtenez » : reprend les avantages du programme
-   (remise permanente, promotions, missions, visibilité, réseau, espace). */
+   (remise permanente, missions, visibilité, réseau, espace). */
 function renderApplyBenefits(){
   const el = document.getElementById('applyBenefitsAccordion');
   if (!el) return;
@@ -5196,17 +5196,15 @@ function renderApplyBenefits(){
   const li = arr => '<ul class="ft-list" style="margin-top:12px">' + arr.map(x => `<li style="margin-bottom:8px">⊹ ${x}</li>`).join('') + '</ul>';
   const sections = LANG === 'fr' ? [
     { title:`-${PARTNER_DISCOUNT}% permanent sur tout le catalogue`, body:`<p>Un tarif partenaire appliqué automatiquement à tous vos devis, tant que votre partenariat est actif.</p>${li(['Toutes les prestations du catalogue, options comprises','Abonnements Studio Continu inclus','Remise visible dans le récapitulatif de votre devis'])}${exLine ? `<p style="margin-top:12px"><strong>${exLine}</strong></p>` : ''}` },
-    { title:'Promotions supplémentaires sur certaines prestations', body:`<p>Bunkaio peut vous accorder des promotions ciblées, en plus de la remise permanente : prestation offerte ou tarif spécial sur une période. Elles apparaissent dans l'onglet <strong>« Mes promotions »</strong> de votre espace partenaire.</p>` },
     { title:'Des missions collaboratives rémunérées', body:`<p>Selon votre type de prestataire, Bunkaio vous sollicite pour intervenir sur des projets clients. Vous acceptez ou déclinez en un clic depuis <strong>« Mes collaborations »</strong>, et vous indiquez quand vous êtes disponible.</p>` },
     { title:'Visibilité et réseau', body:`<p>Une mise en lumière éditoriale de votre savoir-faire, une présence sur le site et les réseaux Bunkaio, et l'accès à l'<strong>annuaire du réseau</strong> pour trouver d'autres professionnels (traiteurs, lieux, créateurs…) et être mis en relation. Vous choisissez d'y être référencé·e ou non.</p>` },
-    { title:'Un espace partenaire dédié', body:`<p>Vos promotions, votre réseau, vos collaborations, vos commandes et vos <strong>moodboards personnalisés</strong> (un par commande) au même endroit, avec un accès prioritaire à nos disponibilités.</p>` },
+    { title:'Un espace partenaire dédié', body:`<p>Votre tarif partenaire, votre réseau, vos collaborations, vos commandes et vos <strong>moodboards personnalisés</strong> (un par commande) au même endroit, avec un accès prioritaire aux disponibilités de Bunkaio.</p>` },
     { title:'Comment se passe la candidature ?', body:`<p>Vous candidatez ci-dessous, nous étudions votre profil individuellement et vous répondons sous 5 jours ouvrés. Une fois accepté·e, vous recevez vos accès et vous confirmez votre type de prestataire dans votre espace.</p>` },
   ] : [
     { title:`-${PARTNER_DISCOUNT}% permanent across the catalogue`, body:`<p>A partner rate applied automatically to all your quotes for as long as your partnership is active.</p>${li(['Every catalogue service, add-ons included','Studio Continu subscriptions included','Discount shown in your quote summary'])}${exLine ? `<p style="margin-top:12px"><strong>${exLine}</strong></p>` : ''}` },
-    { title:'Extra promotions on selected services', body:`<p>Bunkaio can grant you targeted promotions on top of the permanent discount: a free service or a special rate for a period. They appear in the <strong>"My promotions"</strong> tab of your partner space.</p>` },
     { title:'Paid collaborative missions', body:`<p>Depending on your provider type, Bunkaio calls on you for client projects. You accept or decline in one click from <strong>"My collaborations"</strong>, and you tell us when you are available.</p>` },
     { title:'Visibility and network', body:`<p>An editorial spotlight on your craft, a presence on Bunkaio's site and social channels, and access to the <strong>network directory</strong> to find other professionals (caterers, venues, designers…) and get introduced. You choose whether to be listed.</p>` },
-    { title:'A dedicated partner space', body:`<p>Your promotions, network, collaborations, orders and <strong>personalised moodboards</strong> (one per order) in one place, with priority access to our schedule.</p>` },
+    { title:'A dedicated partner space', body:`<p>Your partner rate, network, collaborations, orders and <strong>personalised moodboards</strong> (one per order) in one place, with priority access to Bunkaio's schedule.</p>` },
     { title:'How does the application work?', body:`<p>Apply below, we review your profile individually and reply within 5 working days. Once accepted, you receive your access and confirm your provider type in your space.</p>` },
   ];
   renderAccordionInto('applyBenefitsAccordion', sections);
@@ -5931,7 +5929,7 @@ function renderAccPartner(){
           <div class="pt-adv">
             <div class="pt-adv-big">-${PARTNER_DISCOUNT}%</div>
             <div class="pt-adv-title">${t({fr:'Sur chaque prestation du catalogue', en:'On every catalogue service'})}</div>
-            <div class="pt-adv-text">${t({fr:'Tarif partenaire permanent sur toutes les prestations Bunkaio, options comprises. Détail dans « Mes promotions ».', en:'A permanent partner rate on every Bunkaio service, add-ons included. Details in "My promotions".'})}</div>
+            <div class="pt-adv-text">${t({fr:'Tarif partenaire permanent sur toutes les prestations Bunkaio, options comprises. Détail dans « Mon tarif partenaire ».', en:'A permanent partner rate on every Bunkaio service, add-ons included. Details in "My partner rate".'})}</div>
           </div>
           <div class="pt-adv">
             <div class="pt-adv-big pt-adv-icon">€</div>
@@ -6040,10 +6038,10 @@ function savePartnerPresentation(){
   savePartnerData({ partenariat: { presentation: value } }, () => { renderAccPartner(); }, () => { if (btn) btn.disabled = false; });
 }
 
-/* ═══════════════ ESPACE PARTENAIRE — MES PROMOTIONS ═══════════════
+/* ═══════════════ ESPACE PARTENAIRE — MON TARIF PARTENAIRE ═══════════════
    Le -20% est permanent et lu depuis PARTNER_DISCOUNT ; les prix du
-   tableau sont calculés depuis CATS (jamais dupliqués). Les promotions
-   additionnelles viennent de USER.promotions, renseignées par l'admin. */
+   tableau sont calculés depuis CATS (jamais dupliqués). Plus de promotions
+   ciblées en plus de la remise permanente (décision du 14 oct. 2026). */
 function partnerPrice(price){ return Math.round(price * (100 - PARTNER_DISCOUNT) / 100); }
 /* Remise partenaire appliquée au questionnaire de devis : -20% sur les
    prestations, abonnements et options pour un partenaire connecté
@@ -6109,7 +6107,6 @@ function initUsdPrices(){
 function renderAccPromos(){
   const el = document.getElementById('accPromosContent');
   if (!el || !USER) return;
-  const promos = USER.promotions || [];
   const rows = CATS.filter(c => c.tiers && TIERS.some(tr => c.tiers[tr.id] && typeof c.tiers[tr.id].price === 'number')).map(c => {
     const cells = TIERS.map(tr => {
       const p = c.tiers[tr.id] && c.tiers[tr.id].price;
@@ -6127,22 +6124,6 @@ function renderAccPromos(){
         <p class="acc-info-note" style="margin:0">${t({fr:'Sur chaque prestation du catalogue Bunkaio, options comprises, tant que votre partenariat est actif.', en:'On every Bunkaio catalogue service, add-ons included, for as long as your partnership is active.'})}</p>
       </div>
     </div>
-
-    <div class="pt-section-label">${t({fr:'Promotions en cours', en:'Current promotions'})}</div>
-    ${promos.length ? `<div class="pt-promo-list">${promos.map(p => `
-      <div class="pt-promo">
-        <div class="pt-promo-top">
-          <div class="pt-promo-title">${escHtml(p.titre)}</div>
-          ${p.remise ? `<span class="mb-tag">${escHtml(p.remise)}</span>` : ''}
-        </div>
-        ${p.description ? `<p class="pt-promo-text">${escHtml(p.description)}</p>` : ''}
-        <div class="pt-promo-foot">
-          ${p.code ? `<span class="pt-code">${escHtml(p.code)}</span>` : ''}
-          ${p.validiteJusquAu ? `<span class="pt-promo-meta">${t({fr:'Valable jusqu\'au', en:'Valid until'})} ${escHtml(p.validiteJusquAu)}</span>` : ''}
-          ${p.statut ? `<span class="status-pill ${statusClass(p.statut)}">${escHtml(p.statut)}</span>` : ''}
-        </div>
-      </div>`).join('')}</div>`
-    : `<div class="acc-info-card"><div class="empty-note">${t({fr:'Aucune promotion additionnelle pour le moment. Vos offres exclusives apparaîtront ici.', en:'No additional promotions right now. Your exclusive offers will appear here.'})}</div></div>`}
 
     <div class="pt-section-label">${t({fr:'Vos prix partenaire', en:'Your partner prices'})}</div>
     <div class="table-wrap"><table class="data-table pt-price-table">
@@ -7294,7 +7275,7 @@ function renderPartnersPitch(){
       text:{fr:'Un annuaire de partenaires triés sur le volet et des mises en relation par l\'équipe : traiteurs, lieux, architectes, artisans.', en:'A directory of hand-picked partners and introductions by the team: caterers, venues, architects, craftspeople.'} },
     { n:'06', icon:'<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 9.5h16M9.5 9.5V20"/>',
       title:{fr:'Un espace partenaire dédié', en:'A dedicated partner space'},
-      text:{fr:'Vos promotions, votre réseau, vos collaborations et vos moodboards au même endroit. Plus un accès prioritaire à nos disponibilités.', en:'Your promotions, network, collaborations and moodboards in one place. Plus priority access to our schedule.'} },
+      text:{fr:'Votre tarif partenaire, votre réseau, vos collaborations et vos moodboards au même endroit. Plus un accès prioritaire aux disponibilités de Bunkaio.', en:'Your partner rate, network, collaborations and moodboards in one place. Plus priority access to Bunkaio\'s schedule.'} },
   ];
   const universes = [
     { id:'portrait', name:{fr:'Portrait & lifestyle', en:'Portrait & lifestyle'}, who:{fr:'Coiffeurs, maquilleurs, coachs en image, instituts, studios', en:'Hairstylists, make-up artists, image coaches, wellness studios, studios'} },
@@ -7536,7 +7517,7 @@ function renderFaqAccordion(){
     { title:'Qu\'est-ce qu\'un moodboard, et est-il obligatoire ?', body:`<p>Non, il est facultatif mais très utile : un <strong>moodboard par commande</strong> pour nous partager votre vision — direction artistique, ambiance, palette de couleurs, inspirations (Pinterest, liens), et les prestataires impliqués. Vous le complétez depuis votre espace client et vous échangez avec l'équipe grâce aux commentaires.</p>` },
     { title:'Mes informations et mes images sont-elles en sécurité ?', body:`<p>Votre espace est protégé par votre email et un <strong>code d'accès personnel</strong>, conservé sous forme chiffrée. Vos données ne servent qu'à la réalisation de votre projet, et vos visuels vous sont livrés dans une galerie privée. Le détail est dans l'onglet « Politique de confidentialité ».</p>` },
     { title:'Où intervenez-vous ?', body:`<p>BUNKAIO est basé à <strong>Montpellier</strong> et se déplace <strong>partout en France</strong>, gratuitement autour de <strong>Montpellier et de Toulouse</strong>. Le lieu se choisit avec vous : vos locaux, l'extérieur ou, en option, le studio à 60 € (<a href="/conseils/lieux-seance-photo-montpellier-toulouse/" data-nav="article:lieux-seance-photo-montpellier-toulouse">idées de lieux</a>). ${TRAVEL_TXT.fr.full}</p>` },
-    { title:'Comment devenir partenaire, et que propose l\'espace partenaire ?', body:`<p>Candidatez depuis la page <strong>Partenariat et collaboration</strong> : réponse personnalisée sous 5 jours ouvrés. Une fois admis, votre espace partenaire vous donne <strong>-20 % permanent</strong> sur le catalogue, des promotions, des <strong>missions collaboratives rémunérées</strong> que vous acceptez ou déclinez en un clic, et l'accès au réseau de professionnels. Vous choisissez d'être référencé·e ou non dans l'annuaire.</p>` },
+    { title:'Comment devenir partenaire, et que propose l\'espace partenaire ?', body:`<p>Candidatez depuis la page <strong>Partenariat et collaboration</strong> : réponse personnalisée sous 5 jours ouvrés. Une fois admis, votre espace partenaire vous donne <strong>-20 % permanent</strong> sur le catalogue, des <strong>missions collaboratives rémunérées</strong> que vous acceptez ou déclinez en un clic, et l'accès au réseau de professionnels. Vous choisissez d'être référencé·e ou non dans l'annuaire.</p>` },
     { title:'Qu\'est-ce que Lumen by Bunkaio ?', body:`<p>Lumen est l\'expérience photo IA de Bunkaio, conçue pour les mariages haut de gamme et les événements : le photobooth est installé et opérationnel pendant votre événement (proposé en location pour sa durée), pour offrir aux invités une expérience mémorable et vous laisser des souvenirs durables. Trois formules — Découverte, Signature et Premium sur mesure — selon la durée et la personnalisation souhaitées.</p>` },
   ] : [
     { title:'What services do you offer?', body:`<p>Bunkaio is a professional photographer: we produce premium, high-definition images for <strong>portrait & lifestyle</strong>, <strong>fashion, agencies and models</strong>, <strong>commercial & products</strong>, <strong>events</strong>, and <strong>Lumen</strong>, the AI photobooth for weddings (being finalised). Each universe has its packages detailed in our <strong>catalogue & rates</strong>.</p>` },
@@ -7551,7 +7532,7 @@ function renderFaqAccordion(){
     { title:'What is a moodboard, and is it compulsory?', body:`<p>No, it is optional but very useful: <strong>one moodboard per order</strong> to share your vision — art direction, mood, colour palette, inspiration (Pinterest, links) and the providers involved. You complete it from your client area and chat with the team through comments.</p>` },
     { title:'Are my details and images safe?', body:`<p>Your space is protected by your email and a <strong>personal access code</strong>, stored in encrypted form. Your data is only used to carry out your project, and your visuals are delivered in a private gallery. Details are in the "Privacy policy" tab.</p>` },
     { title:'Where do you work?', body:`<p>BUNKAIO is based in <strong>Montpellier</strong> and travels <strong>anywhere in France</strong>, free around <strong>Montpellier and Toulouse</strong>. ${TRAVEL_TXT.en.full}</p>` },
-    { title:'How do I become a partner, and what does the partner area offer?', body:`<p>Apply from the <strong>Partnership & collaboration</strong> page: a personal reply within 5 working days. Once admitted, your partner area gives you a <strong>permanent 20% discount</strong> on the catalogue, promotions, <strong>paid collaborative missions</strong> you accept or decline in one click, and access to the professional network. You choose whether to be listed in the directory.</p>` },
+    { title:'How do I become a partner, and what does the partner area offer?', body:`<p>Apply from the <strong>Partnership & collaboration</strong> page: a personal reply within 5 working days. Once admitted, your partner area gives you a <strong>permanent 20% discount</strong> on the catalogue, <strong>paid collaborative missions</strong> you accept or decline in one click, and access to the professional network. You choose whether to be listed in the directory.</p>` },
     { title:'What is Lumen by Bunkaio?', body:`<p>Lumen is Bunkaio's AI photo experience, designed for luxury weddings and events: the photobooth is set up and running throughout your event (offered as a rental for its duration), giving guests a memorable experience and leaving you lasting memories. Three packages — Discovery, Signature and a bespoke Premium — depending on duration and customisation.</p>` },
   ];
   renderAccordionInto('faqAccordion', sections, { exclusive: true });

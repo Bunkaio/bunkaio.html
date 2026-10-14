@@ -231,7 +231,7 @@ export interface AccountPartnerInfo {
   presentation?: string; // courte présentation affichée à l'équipe Bunkaio
 }
 
-/** Promotion accordée à un partenaire (en plus du -20% permanent). Renseignée par l'admin. */
+/** Ancienne promotion ciblée d'un partenaire : retirée du site et de l'admin le 14 oct. 2026 (plus de promotion en plus du -20 % permanent) ; type conservé pour les données déjà enregistrées, jamais affichées. */
 export interface AccountPromotion {
   titre: string;
   description?: string;

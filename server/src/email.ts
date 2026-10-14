@@ -87,23 +87,23 @@ function spaceCopy(lang: Lang, space: Space, stage: Stage): { title: string; bod
     body: client
       ? T("Votre moodboard (direction artistique, ambiance, palette, inspirations), l'avancement de votre projet, vos devis, factures et paiements, et vos photos HD dans « Mon portfolio » une fois votre projet livré.",
           'Your moodboard (art direction, mood, palette, inspiration), your project’s progress, your quotes, invoices and payments, and your HD photos under “My portfolio” once your project is delivered.')
-      : T("Votre tarif partenaire permanent (-20 %), vos promotions, votre réseau, vos collaborations, vos moodboards et l'avancement de votre projet.",
-          'Your permanent partner rate (-20%), your promotions, your network, your collaborations, your moodboards and your project’s progress.'),
+      : T("Votre tarif partenaire permanent (-20 %), votre réseau, vos collaborations, vos moodboards et l'avancement de votre projet.",
+          'Your permanent partner rate (-20%), your network, your collaborations, your moodboards and your project’s progress.'),
     button: btn };
   if (stage === 'quote') return client
     ? { title: T('Votre espace client', 'Your client area'),
         body: T("Dès que votre devis est confirmé, vous recevez votre code d'accès personnel. Votre espace client vous permet de créer votre moodboard (direction artistique, ambiance, palette, inspirations), de suivre l'avancement de votre projet, de retrouver vos devis, factures et paiements, et de récupérer vos photos HD dans votre galerie privée.",
                 'As soon as your quote is confirmed, you receive your personal access code. Your client area lets you build your moodboard (art direction, mood, palette, inspiration), follow your project’s progress, find your quotes, invoices and payments, and collect your HD photos from your private gallery.'), button: T('Découvrir mon espace client', 'Discover my client area') }
     : { title: T('Votre espace partenaire', 'Your partner area'),
-        body: T("Votre espace partenaire réunit votre tarif partenaire permanent (-20 %), vos promotions, votre réseau, vos collaborations et vos moodboards. Vous y suivez aussi l'avancement de votre projet.",
-                'Your partner area brings together your permanent partner rate (-20%), your promotions, your network, your collaborations and your moodboards. You also follow your project’s progress there.'), button: T('Découvrir mon espace partenaire', 'Discover my partner area') };
+        body: T("Votre espace partenaire réunit votre tarif partenaire permanent (-20 %), votre réseau, vos collaborations et vos moodboards. Vous y suivez aussi l'avancement de votre projet.",
+                'Your partner area brings together your permanent partner rate (-20%), your network, your collaborations and your moodboards. You also follow your project’s progress there.'), button: T('Découvrir mon espace partenaire', 'Discover my partner area') };
   if (stage === 'deposit') return {
     title: T('Prochaine étape : votre moodboard', 'Next step: your moodboard'),
     body: client
       ? T("Une fois l'acompte réglé, votre date est réservée. Connectez-vous à votre espace client avec votre code d'accès pour créer votre moodboard avant le shooting : direction artistique, ambiance, palette de couleurs, inspirations. Vous y suivez aussi l'avancement de votre projet. Code perdu ? Répondez simplement à cet email.",
           'Once the deposit is paid, your date is booked. Sign in to your client area with your access code to build your moodboard before the shoot: art direction, mood, colour palette, inspiration. You also follow your project’s progress there. Lost your code? Simply reply to this email.')
-      : T("Une fois l'acompte réglé, votre date est réservée. Dans votre espace partenaire, créez votre moodboard avant le shooting et retrouvez votre tarif partenaire (-20 %), vos promotions et vos collaborations. Code perdu ? Répondez simplement à cet email.",
-          'Once the deposit is paid, your date is booked. In your partner area, build your moodboard before the shoot and find your partner rate (-20%), your promotions and your collaborations. Lost your code? Simply reply to this email.'),
+      : T("Une fois l'acompte réglé, votre date est réservée. Dans votre espace partenaire, créez votre moodboard avant le shooting et retrouvez votre tarif partenaire (-20 %) et vos collaborations. Code perdu ? Répondez simplement à cet email.",
+          'Once the deposit is paid, your date is booked. In your partner area, build your moodboard before the shoot and find your partner rate (-20%) and your collaborations. Lost your code? Simply reply to this email.'),
     button: btn };
   if (stage === 'balance') return {
     title: T('Vos photos, juste après le règlement', 'Your photos, right after payment'),

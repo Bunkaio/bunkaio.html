@@ -2866,7 +2866,7 @@ function drActivity(c) {
   const list = allActivity().filter(a => a.email === c.email);
   return list.length ? `<div class="card"><div class="list">${list.map(a => `<div class="li"><div class="ic">${a.type === 'moodboard' ? '🎨' : a.type === 'infos' ? '🧾' : a.type === 'collaboration' ? '🤝' : '⭐'}</div><div class="tx"><b>${esc(a.resume)}</b>${a.details && a.details.length ? `<ul style="margin:4px 0 0 16px" class="small">${a.details.map(d => `<li>${esc(d)}</li>`).join('')}</ul>` : ''}<div class="d">${esc(ACT_LABEL[a.type] || a.type)} · ${fdt(a.date)}</div></div></div>`).join('')}</div></div>` : '<div class="card"><div class="empty">Aucune modification faite par ce contact dans son espace.</div></div>';
 }
-const ADV = [['commandes', 'Mes commandes'], ['paiements', 'Mes paiements'], ['factures', 'Mes factures'], ['abonnement', 'Mon abonnement'], ['moodboards', 'Moodboards'], ['partenariat', 'Partenariat'], ['promotions', 'Promotions'], ['reseau', 'Réseau'], ['collaborations', 'Collaborations']];
+const ADV = [['commandes', 'Mes commandes'], ['paiements', 'Mes paiements'], ['factures', 'Mes factures'], ['abonnement', 'Mon abonnement'], ['moodboards', 'Moodboards'], ['partenariat', 'Partenariat'], ['reseau', 'Réseau'], ['collaborations', 'Collaborations']];
 function drAdvanced(c) {
   const a = currentAcc(c);
   if (!a) return '<div class="card"><div class="empty">Aucun espace pour ce contact.</div></div>';
