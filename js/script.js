@@ -7301,7 +7301,7 @@ function renderPartnersPitch(){
     { id:'mode', name:{fr:'Mode & mannequins', en:'Fashion & models'}, who:{fr:'Créateurs, agences de mannequins, stylistes, bijoutiers', en:'Designers, model agencies, stylists, jewellers'} },
     { id:'commercial', name:{fr:'Commercial & produits', en:'Commercial & products'}, who:{fr:'Marques, artisans, cosmétique, restaurateurs, agences', en:'Brands, artisans, cosmetics, restaurateurs, agencies'} },
     { id:'evenementiel', name:{fr:'Événementiel', en:'Events'}, who:{fr:'Organisateurs, lieux de réception, traiteurs, décorateurs, animation', en:'Planners, venues, caterers, decorators, entertainment'} },
-    { id:'mariage', name:{fr:'Mariage & Lumen', en:'Weddings & Lumen'}, who:{fr:'Wedding planners, domaines, fleuristes, créateurs de robes, traiteurs', en:'Wedding planners, estates, florists, gown designers, caterers'}, soon:{fr:'Partenariat disponible dès maintenant · lancement prévu en 2027', en:'Partnership available now · launch planned for 2027'} },
+    { id:'mariage', name:{fr:'Mariage & Lumen', en:'Weddings & Lumen'}, who:{fr:'Wedding planners, domaines, fleuristes, créateurs de robes, traiteurs', en:'Wedding planners, estates, florists, gown designers, caterers'}, soon:{fr:'Candidatures ouvertes · lancement 2027', en:'Applications open · launch in 2027'} },
   ];
   const steps = [
     { n:'1', title:{fr:'Candidatez', en:'Apply'}, text:{fr:'Présentez votre activité et vos réalisations.', en:'Present your business and your work.'} },
