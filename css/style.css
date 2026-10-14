@@ -4726,8 +4726,8 @@ html.photo-shield img, html.photo-shield video, html.photo-shield .hero-slide, h
 /* Accueil : un vide entre le bandeau de réassurance (fond blanc) et l'encadré « Votre espace client ». */
 #csSlotHome .cs-spotlight { margin-top: clamp(32px, 6vw, 72px); }
 
-/* Services : la mention « Prix nets : TVA non applicable… » est posée sur la vidéo de fond, en blanc pour rester lisible. */
-#view-services .vat-note { color: #fff; text-shadow: 0 1px 8px rgba(0,0,0,0.65), 0 0 2px rgba(0,0,0,0.5); }
+/* Services : la mention « Prix nets : TVA non applicable… » est posée sur le fond clair de la page : en noir, avec un léger halo clair pour rester lisible même sur la photo ou la vidéo (oct. 2026 : le blanc était illisible). */
+#view-services .vat-note { color: #0a0a0c; font-weight: 500; text-shadow: 0 0 10px rgba(255,255,255,0.9), 0 0 3px rgba(255,255,255,0.8); }
 /* Pages de prestation : mentions de prix et de déplacement dans un encadré blanc, en violet profond de la charte, sans ombre. */
 #view-service .vat-note, #view-service .travel-note { color: #4b3d7a; text-shadow: none; }
 
