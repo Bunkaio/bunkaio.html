@@ -5675,3 +5675,7 @@ body:not([data-view="article"]) .art-progress { display: none; }
 .pp-note + .pp-max { margin: 0 0 22px; }
 #partnersAccordion .pp-note { margin: 0 0 12px; }
 #partnersAccordion .pp-max { margin: 0 0 22px; font-size: 14px; line-height: 1.8; color: #1a1625; }
+
+/* À propos : bouton « Construire mon projet » entre la présentation et les spécialités */
+.about-mid-cta { display: flex; justify-content: center; max-width: 1100px; margin: 0 auto 24px; }
+@media (max-width: 760px) { .about-mid-cta .cta-primary { width: 100%; text-align: center; } }
