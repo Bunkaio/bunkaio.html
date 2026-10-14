@@ -379,7 +379,7 @@ const I18N = {
     'p-b3-title':'Une relation privilégiée.','p-b3-text':'Accès prioritaire aux disponibilités, un tarif partenaire permanent et une collaboration sur le long terme.',
     'p-b4-title':'Une appartenance à un écosystème.','p-b4-text':'Rejoindre Bunkaio, c\'est intégrer un cercle de professionnels partageant l\'exigence, le goût du détail et l\'amour du travail bien fait.',
     'p-places':'Les places disponibles',
-    'p-places-text':'Afin de préserver la qualité des collaborations, le nombre de partenaires fondateurs est volontairement limité\u00a0: 10 places par univers (portrait & lifestyle, mode & mannequins, commercial & produits, événementiel, mariage & Lumen), soit un maximum de <strong>60 partenaires fondateurs</strong> sur l\'ensemble du territoire.',
+    'p-places-text':'Afin de préserver la qualité des collaborations, le nombre de partenaires fondateurs est volontairement limité\u00a0: 5 places par univers (portrait & lifestyle, mode & mannequins, commercial & produits, événementiel, mariage & Lumen), soit un maximum de <strong>25 partenaires fondateurs</strong> sur l\'ensemble du territoire.',
     'p-places-note':'Une fois ce quota atteint, les nouvelles candidatures seront placées sur liste d\'attente.',
     'p-process':'Le processus de sélection',
     'p-step1':'<strong>Étape 1 — Présentation du projet.</strong> Le candidat complète le questionnaire Bunkaio et présente son activité, ses réalisations, ses objectifs et son univers.',
@@ -395,7 +395,7 @@ const I18N = {
     'apply-who-label':'Qui peut candidater',
     'apply-who-value':'Les entreprises et professionnels dont les réalisations correspondent à l\'univers Bunkaio — portrait & lifestyle, mode & mannequins, commercial & produits, événementiel, mariage & Lumen.',
     'apply-eval-label':'Ce qui est évalué',
-    'apply-eval-value':'La qualité de vos réalisations et la cohérence avec la ligne éditoriale Bunkaio. 10 places par univers, 60 partenaires fondateurs au total.',
+    'apply-eval-value':'La qualité de vos réalisations et la cohérence avec la ligne éditoriale Bunkaio. 5 places par univers, 25 partenaires fondateurs au total.',
     'apply-delay-value':'Sous 5 jours ouvrés.',
     'apply-web-label':'Site web / réseaux sociaux *',
     'apply-sector-label':'Votre type de prestataire *',
@@ -738,7 +738,7 @@ const I18N = {
     'p-b3-title':'A privileged relationship.','p-b3-text':'Priority access to our schedule, a permanent partner rate and a long-term working relationship.',
     'p-b4-title':'Belonging to an ecosystem.','p-b4-text':'Joining Bunkaio means entering a circle of professionals who share the same high standards, eye for detail and love of work well done.',
     'p-places':'Available places',
-    'p-places-text':'To preserve the quality of every collaboration, the number of founding partners is deliberately limited: 10 places per universe (portrait & lifestyle, fashion & models, commercial & products, events, weddings & Lumen), for a maximum of <strong>60 founding partners</strong> nationwide.',
+    'p-places-text':'To preserve the quality of every collaboration, the number of founding partners is deliberately limited: 5 places per universe (portrait & lifestyle, fashion & models, commercial & products, events, weddings & Lumen), for a maximum of <strong>25 founding partners</strong> nationwide.',
     'p-places-note':'Once this quota is reached, new applications will be placed on a waiting list.',
     'p-process':'The selection process',
     'p-step1':'<strong>Step 1 — Presenting your project.</strong> The candidate completes the Bunkaio questionnaire and presents their activity, their work, their goals and their universe.',
@@ -754,7 +754,7 @@ const I18N = {
     'apply-who-label':'Who can apply',
     'apply-who-value':'Companies and professionals whose work aligns with the Bunkaio universe — portrait & lifestyle, fashion & models, commercial & products, events, weddings & Lumen.',
     'apply-eval-label':'What we assess',
-    'apply-eval-value':'The quality of your work and its fit with the Bunkaio editorial line. 10 places per universe, 60 founding partners in total.',
+    'apply-eval-value':'The quality of your work and its fit with the Bunkaio editorial line. 5 places per universe, 25 founding partners in total.',
     'apply-delay-value':'Within 5 working days.',
     'apply-web-label':'Website / social media *',
     'apply-sector-label':'Your provider type *',
@@ -7335,18 +7335,18 @@ function renderPartnersPitch(){
       </div>
       <div class="pp-stats">
         <div><div class="pp-stat-num">-${PARTNER_DISCOUNT}%</div><div class="pp-stat-label">${t({fr:'permanent sur le catalogue', en:'permanent on the catalogue'})}</div></div>
-        <div><div class="pp-stat-num">60</div><div class="pp-stat-label">${t({fr:'partenaires fondateurs maximum', en:'founding partners maximum'})}</div></div>
-        <div><div class="pp-stat-num">5</div><div class="pp-stat-label">${t({fr:'univers · 10 places chacun', en:'universes · 10 places each'})}</div></div>
+        <div><div class="pp-stat-num">25</div><div class="pp-stat-label">${t({fr:'partenaires fondateurs maximum', en:'founding partners maximum'})}</div></div>
+        <div><div class="pp-stat-num">5</div><div class="pp-stat-label">${t({fr:'univers · 5 places chacun', en:'universes · 5 places each'})}</div></div>
         <div><div class="pp-stat-num">€</div><div class="pp-stat-label">${t({fr:'missions rémunérées', en:'paid missions'})}</div></div>
       </div>
     </section>`;
 }
 
 /* Places restantes par univers : décompte automatique tenu par le Worker (/partner-spots) d'après les partenaires « Actif » ;
-   10 places affichées tant que la réponse n'est pas arrivée ou si le service est indisponible. */
+   5 places affichées tant que la réponse n'est pas arrivée ou si le service est indisponible. */
 window._ppLeft = window._ppLeft || null;
 function ppSpotsText(id){
-  const n = window._ppLeft && typeof window._ppLeft[id] === 'number' ? window._ppLeft[id] : 10;
+  const n = window._ppLeft && typeof window._ppLeft[id] === 'number' ? window._ppLeft[id] : 5;
   if (n <= 0) return t({fr:'Complet · liste d\'attente', en:'Full · waiting list'});
   if (n === 1) return t({fr:'1 place disponible', en:'1 place available'});
   return t({fr:n + ' places disponibles', en:n + ' places available'});
@@ -7368,12 +7368,12 @@ function renderPartnersAccordion(){
   const sec = window._ppSections || {};
   const sections = LANG === 'fr' ? [
     { title:'Ce que vous obtenez', body: sec.benefits },
-    { title:'Pour qui ? Cinq univers, dix places chacun', body: `${sec.universes}<p style="margin-top:6px">Maximum <strong>60 partenaires fondateurs</strong>. Une fois les places pourvues, les nouvelles candidatures rejoignent une liste d'attente.</p>` },
+    { title:'Pour qui ? Cinq univers, cinq places chacun', body: `${sec.universes}<p style="margin-top:6px">Maximum <strong>25 partenaires fondateurs</strong>. Une fois les places pourvues, les nouvelles candidatures rejoignent une liste d'attente.</p>` },
     { title:'Comment ça marche', body: `${sec.steps}<p style="margin-top:18px">Chaque candidature est étudiée selon la qualité des réalisations et la cohérence avec l'univers Bunkaio : sélectionné, compatible (ponctuel) ou réorienté selon vos besoins.</p>` },
     { title:'Pourquoi Bunkaio existe', body:`<p>Bunkaio, c'est le regard d'une <strong>photographe portraitiste professionnelle</strong> : plus de huit ans de métier et plus de 200 projets pour des personnes, des marques et des entreprises. Chaque image est pensée avec une vraie direction artistique, de la lumière à la retouche.</p><p>Votre projet est <strong>guidé de bout en bout et centralisé</strong> dans votre espace client : moodboard, devis, suivi des étapes, factures et galerie privée. Un seul interlocuteur, rien ne se disperse.</p><p>Un beau résultat tient à la lumière et au regard, pas au lieu. C'est pourquoi un <strong>véritable matériel de studio, entièrement mobile</strong>, se déplace jusqu'à vous : éclairage, optiques et accessoires professionnels s'installent chez vous, dans vos locaux ou sur votre lieu de tournage, avec la même exigence qu'en studio.</p><p><strong>Ici, le métier, c'est la photographie : une image soignée, de la préparation à la livraison.</strong></p>` },
   ] : [
     { title:'What you get', body: sec.benefits },
-    { title:'Who is it for? Five universes, ten places each', body: `${sec.universes}<p style="margin-top:6px">A maximum of <strong>60 founding partners</strong>. Once places are filled, new applications join a waiting list.</p>` },
+    { title:'Who is it for? Five universes, five places each', body: `${sec.universes}<p style="margin-top:6px">A maximum of <strong>25 founding partners</strong>. Once places are filled, new applications join a waiting list.</p>` },
     { title:'How it works', body: `${sec.steps}<p style="margin-top:18px">Each application is assessed on the quality of your work and its fit with the Bunkaio universe: selected, compatible (one-off) or redirected according to your needs.</p>` },
     { title:'Why Bunkaio exists', body:`<p>Bunkaio is the eye of a <strong>professional portrait photographer</strong>: more than eight years in the craft and over 200 projects for people, brands and companies. Every image is shaped by real art direction, from the lighting to the retouching.</p><p>Your project is <strong>guided from start to finish and centralised</strong> in your client area: moodboard, quote, progress tracking, invoices and private gallery. One point of contact, nothing gets scattered.</p><p>A great result comes from light and vision, not from the location. That is why <strong>genuine studio equipment, fully mobile</strong>, travels to you: professional lighting, lenses and accessories set up at your home, in your premises or on your shoot location, with the same standards as in a studio.</p><p><strong>Here, the craft is photography: a polished image, from preparation to delivery.</strong></p>` },
   ];

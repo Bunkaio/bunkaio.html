@@ -1,15 +1,15 @@
 import type { AccountRecord, Env } from './types';
 
 /**
- * Places du Programme Partenaires Fondateurs : 10 par univers (portrait, mode, commercial, evenementiel, mariage).
+ * Places du Programme Partenaires Fondateurs : 5 par univers (réduit de 10 à 5 le 14 oct. 2026, soit 25 au total) (portrait, mode, commercial, evenementiel, mariage).
  * Une place est prise par un compte partenaire dont `partenariat.secteur` = l'univers et `partenariat.statut` = « Actif ».
  * « En attente » et « Terminé », comme un compte supprimé, libèrent (ou ne prennent pas) la place.
  * Le décompte est recalculé à la demande depuis les comptes, puis gardé en cache KV 5 min ; le cache est effacé dès qu'un compte
  * partenaire est créé, modifié ou supprimé (putAccount, deleteContact), donc le site se met à jour sans attendre.
  */
 export const PARTNER_UNIVERSES = ['portrait', 'mode', 'commercial', 'evenementiel', 'mariage'] as const;
-export const PARTNER_CAPACITY = 10;
-const CACHE_KEY = 'partnerspots:v1';
+export const PARTNER_CAPACITY = 5;
+const CACHE_KEY = 'partnerspots:v2';
 const CACHE_TTL_S = 300;
 
 export interface PartnerSpots { capacity: number; taken: Record<string, number>; left: Record<string, number>; at: string }
