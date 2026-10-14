@@ -5667,3 +5667,6 @@ body:not([data-view="article"]) .art-progress { display: none; }
 
 /* Univers « Mariage & Lumen » : partenariat ouvert, lancement prévu en 2027 */
 .pp-universe-soon { display: inline-block; margin-top: 10px; padding: 5px 11px; border-radius: 999px; background: rgba(110,90,168,.1); border: 1px solid rgba(110,90,168,.28); color: #4b3d7a; font-size: 11.5px; font-weight: 600; line-height: 1.45; }
+
+/* Places restantes (décompte automatique) */
+.pp-universe-spots.pp-full { color: #8a5a3a; }

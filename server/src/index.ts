@@ -1,3 +1,4 @@
+import { getPartnerSpots } from './partners';
 import { goClicks, handleGo, listGoLinks, saveGoLink } from './golinks';
 import type Stripe from 'stripe';
 import { adminAccountView, getAccount, listAccounts, putAccount, sanitizeAccount, upsertAccountFromAdmin, verifyLogin, LoginThrottled } from './accounts';
@@ -1747,6 +1748,10 @@ export default {
     }
     if (url.pathname === '/collect') {
       return handleCollect(request, env, headers);
+    }
+    if (url.pathname === '/partner-spots' && request.method === 'GET') {
+      // Public : places restantes par univers (aucune donnée personnelle), mises en cache 1 minute côté navigateur.
+      return new Response(JSON.stringify({ ok: true, ...(await getPartnerSpots(env)) }), { status: 200, headers: { ...headers, 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=60' } });
     }
     if (url.pathname === '/stats') {
       return handleStats(request, env, headers);

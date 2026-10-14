@@ -7333,7 +7333,7 @@ function renderPartnersPitch(){
           <div class="pp-universe">
             <div class="pp-universe-name">${t(u.name)}</div>
             <div class="pp-universe-who">${t(u.who)}</div>
-            <div class="pp-universe-spots">${t({fr:'10 places', en:'10 places'})}</div>
+            <div class="pp-universe-spots" data-spots="${u.id}">${ppSpotsText(u.id)}</div>
             ${u.soon ? `<div class="pp-universe-soon">${t(u.soon)}</div>` : ''}
           </div>`).join('')}
       </div>
@@ -7361,6 +7361,27 @@ function renderPartnersPitch(){
     </section>`;
 }
 
+/* Places restantes par univers : décompte automatique tenu par le Worker (/partner-spots) d'après les partenaires « Actif » ;
+   10 places affichées tant que la réponse n'est pas arrivée ou si le service est indisponible. */
+window._ppLeft = window._ppLeft || null;
+function ppSpotsText(id){
+  const n = window._ppLeft && typeof window._ppLeft[id] === 'number' ? window._ppLeft[id] : 10;
+  if (n <= 0) return t({fr:'Complet · liste d\'attente', en:'Full · waiting list'});
+  if (n === 1) return t({fr:'1 place disponible', en:'1 place available'});
+  return t({fr:n + ' places disponibles', en:n + ' places available'});
+}
+function ppPaintSpots(){
+  document.querySelectorAll('[data-spots]').forEach(el => {
+    el.textContent = ppSpotsText(el.dataset.spots);
+    el.classList.toggle('pp-full', !!window._ppLeft && window._ppLeft[el.dataset.spots] <= 0);
+  });
+}
+function loadPartnerSpots(){
+  fetch(ACCOUNTS_API_BASE + '/partner-spots').then(r => r.ok ? r.json() : null).then(d => {
+    if (!d || !d.ok || !d.left) return;
+    window._ppLeft = d.left; ppPaintSpots();
+  }).catch(() => {});
+}
 function renderPartnersAccordion(){
   renderPartnersPitch();
   const sec = window._ppSections || {};
@@ -7376,6 +7397,7 @@ function renderPartnersAccordion(){
     { title:'Why Bunkaio exists', body:`<p>Bunkaio is the eye of a <strong>professional portrait photographer</strong>: more than eight years in the craft and over 200 projects for people, brands and companies. Every image is shaped by real art direction, from the lighting to the retouching.</p><p>Your project is <strong>guided from start to finish and centralised</strong> in your client area: moodboard, quote, progress tracking, invoices and private gallery. One point of contact, nothing gets scattered.</p><p>A great result comes from light and vision, not from the location. That is why <strong>genuine studio equipment, fully mobile</strong>, travels to you: professional lighting, lenses and accessories set up at your home, in your premises or on your shoot location, with the same standards as in a studio.</p><p><strong>Here, the craft is photography: a polished image, from preparation to delivery.</strong></p>` },
   ];
   renderAccordionInto('partnersAccordion', sections, { exclusive: true });
+  loadPartnerSpots();
 }
 function openPartnersAccordion(i){
   const el = document.getElementById('partnersAccordion');

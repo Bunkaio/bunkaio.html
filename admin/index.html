@@ -2339,6 +2339,9 @@ function exportImageRegister() {
 }
 
 /* ── Campagne & Ads ── */
+let PARTNER_SPOTS = null;
+async function loadPartnerSpotsAdmin() { try { const r = await fetch(WORKER + '/partner-spots'); const d = await r.json(); if (d && d.ok) PARTNER_SPOTS = d.left; } catch (e) {} }
+loadPartnerSpotsAdmin();
 const CAMP = { days: 30, traffic: null, data: { posts: [], spend: [] }, loaded: false, edit: null, go: { links: [], clicks: {} }, goEdit: null };
 const CAMP_LINKS = [
   ['Google Ads', 'Campagnes, budgets, mots clés, conversions', 'https://ads.google.com/'],
@@ -2791,6 +2794,12 @@ function drSpace(c) {
     <div class="frow"><div class="fg"><label>Code postal</label><input id="aCp" value="${esc(f.codePostal)}"></div><div class="fg"><label>Ville</label><input id="aVille" value="${esc(f.ville)}"></div></div>
     <div class="frow"><div class="fg"><label>Pays</label><input id="aPays" value="${esc(f.pays || 'France')}"></div><div class="fg"><label>SIRET ${type === 'partner' ? '(obligatoire)' : '(optionnel)'}</label><input id="aSiret" value="${esc(f.siret)}"></div></div>
     <div class="fg"><label>N° TVA intracommunautaire</label><input id="aTva" value="${esc(f.tvaIntra)}"></div>
+    ${type === 'partner' ? `<div class="lab" style="margin-top:8px">Programme partenaires fondateurs</div>
+    <div class="frow">
+      <div class="fg"><label>Univers</label><select id="aSecteur"><option value="">—</option>${[['portrait', 'Portrait & lifestyle'], ['mode', 'Mode & mannequins'], ['commercial', 'Commercial & produits'], ['evenementiel', 'Événementiel'], ['mariage', 'Mariage & Lumen']].map(([k, l]) => `<option value="${k}" ${((a && a.partenariat && a.partenariat.secteur) || '') === k ? 'selected' : ''}>${l}</option>`).join('')}</select></div>
+      <div class="fg"><label>Statut</label><select id="aStatutP">${['', 'En attente', 'Actif', 'Terminé'].map(k => `<option value="${k}" ${((a && a.partenariat && a.partenariat.statut) || '') === k ? 'selected' : ''}>${k || '—'}</option>`).join('')}</select></div>
+    </div>
+    <div class="hint" style="margin-top:-4px">Seul le statut <b>Actif</b> occupe une place : le décompte « 10 places disponibles » du site (page Collaboration) se met à jour automatiquement à l'enregistrement, ainsi qu'à la suppression ou au passage en « Terminé ».${(() => { const sp = (typeof PARTNER_SPOTS !== 'undefined' && PARTNER_SPOTS) || null; return sp ? ' Places restantes : ' + Object.entries(sp).map(([k, v]) => k + ' ' + v).join(' · ') + '.' : ''; })()}</div>` : ''}
     <div class="lab" style="margin-top:8px">Album photo</div>
     <div class="fg"><label>Lien Lightroom (album partagé)</label><input id="aLr" value="${esc(a ? a.lightroomUrl : '')}" placeholder="https://lightroom.adobe.com/shares/..."><div class="hint">À saisir avant la facture de solde. Le client ne le voit qu'une fois le solde payé.</div></div>
     ${a ? `<div class="msg ${a.photosAcces ? 'ok' : 'info'}">Accès aux photos : <b>${a.photosAcces ? 'ouvert' : 'fermé'}</b></div>
@@ -2875,6 +2884,11 @@ async function saveAccount(extra) {
   if (tab === 'space') {
     Object.assign(payload, { nom: fv('aNom') || undefined, telephone: fv('aTel') || undefined, lightroomUrl: fv('aLr') || undefined, lang: fv('aLang'), etapeActuelle: fv('aEtape') ? Number(fv('aEtape')) : undefined });
     if (fv('aCode')) payload.code = fv('aCode');
+    if (payload.type === 'partner' && $('aSecteur')) {
+      const cur = (a && a.partenariat) || {}; const pt = { ...cur, secteur: fv('aSecteur') || undefined, statut: fv('aStatutP') || undefined };
+      if (pt.statut === 'Actif' && !pt.dateAdhesion) pt.dateAdhesion = today();
+      payload.partenariat = pt;
+    }
     if (fv('aProfil') || fv('aRue')) payload.facturation = { profil: fv('aProfil') || (payload.type === 'partner' ? 'professionnel' : 'particulier'), contact: fv('aContact') || undefined, forme: fv('aForme') || undefined, rue: fv('aRue'), codePostal: fv('aCp'), ville: fv('aVille'), pays: fv('aPays'), siret: fv('aSiret') || undefined, tvaIntra: fv('aTva') || undefined };
     if ($('aSendAccess') && $('aSendAccess').checked) { if (!payload.code) { msg.innerHTML = '<div class="msg err">Saisissez un code d\'accès pour l\'envoyer (l\'actuel n\'est pas lisible).</div>'; return; } payload.sendAccessMail = true; }
     if ($('aSendPhotos') && $('aSendPhotos').checked) payload.sendPhotosMail = true;
@@ -2905,6 +2919,7 @@ async function saveAccount(extra) {
       if (em.photos === true) notes.push('accès photos envoyé'); if (em.photos === 'no_lightroom_url') notes.push('⚠ lien Lightroom manquant'); if (em.photos === false) notes.push('⚠ mail photos non envoyé');
       toast((drawer.isNew ? 'Espace créé' : 'Enregistré') + (notes.length ? ' · ' + notes.join(' · ') : ''));
       const email = payload.email;
+      if (payload.type === 'partner') loadPartnerSpotsAdmin();
       await loadDashboard();
       drawer.isNew = false; drawer.email = email;
       const c2 = contactByEmail(email); if (c2) drawer.accIdx = Math.max(0, c2.accounts.findIndex(x => x.type === payload.type));

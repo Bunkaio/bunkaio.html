@@ -1,3 +1,4 @@
+import { invalidatePartnerSpots } from './partners';
 import type Stripe from 'stripe';
 import { adminAccountView, getAccount, listAccounts } from './accounts';
 import { getBusinessAddress, isDemo } from './config';
@@ -331,7 +332,7 @@ export async function deleteContact(env: Env, stripe: Stripe, email: string, typ
   let accounts = 0;
   for (const t of types) {
     const k = `account:${t}:${key}`;
-    if (await env.ACCOUNTS_KV.get(k)) { await env.ACCOUNTS_KV.delete(k); accounts++; }
+    if (await env.ACCOUNTS_KV.get(k)) { await env.ACCOUNTS_KV.delete(k); accounts++; if (t === 'partner') await invalidatePartnerSpots(env); }
   }
   summary.accounts = accounts;
   if (type) return summary;

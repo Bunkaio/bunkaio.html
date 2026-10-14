@@ -1,4 +1,5 @@
 import { billingErrors, cleanBilling, composeAddress } from './billing';
+import { invalidatePartnerSpots } from './partners';
 import type {
   AccountRecord,
   AccountSeance,
@@ -47,6 +48,8 @@ export async function putAccount(env: Env, record: AccountRecord): Promise<void>
   await env.ACCOUNTS_KV.put(accountKey(record.type, record.email), JSON.stringify(record), {
     metadata: { type: record.type, email: record.email, nom: record.nom ?? '', derniereActivite: record.derniereActivite ?? '' },
   });
+  // Les places du programme partenaires se recalculent à la prochaine visite.
+  if (record.type === 'partner') await invalidatePartnerSpots(env);
 }
 
 export function sanitizeAccount(record: AccountRecord): PublicAccountRecord {
