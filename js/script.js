@@ -399,7 +399,7 @@ const I18N = {
     'apply-delay-value':'Sous 5 jours ouvrés.',
     'apply-web-label':'Site web / réseaux sociaux *',
     'apply-sector-label':'Votre type de prestataire *',
-    'apply-sector-opt1':'Portrait & lifestyle','apply-sector-opt2':'Mode & mannequins','apply-sector-opt3':'Commercial & produits','apply-sector-opt4':'Événementiel','apply-sector-opt5':'Mariage & Lumen',
+    'apply-sector-opt1':'Portrait & lifestyle','apply-sector-opt2':'Mode & mannequins','apply-sector-opt3':'Commercial & produits','apply-sector-opt4':'Événementiel','apply-sector-opt5':'Mariage & Lumen (lancement prévu en 2027)',
     'apply-sector-error':'Sélectionnez votre type de prestataire ci-dessus.',
     'apply-project-label':'Présentez votre activité et vos réalisations *',
     'apply-btn':'Envoyer ma candidature',
@@ -758,7 +758,7 @@ const I18N = {
     'apply-delay-value':'Within 5 working days.',
     'apply-web-label':'Website / social media *',
     'apply-sector-label':'Your provider type *',
-    'apply-sector-opt1':'Portrait & lifestyle','apply-sector-opt2':'Fashion & models','apply-sector-opt3':'Commercial & products','apply-sector-opt4':'Events','apply-sector-opt5':'Weddings & Lumen',
+    'apply-sector-opt1':'Portrait & lifestyle','apply-sector-opt2':'Fashion & models','apply-sector-opt3':'Commercial & products','apply-sector-opt4':'Events','apply-sector-opt5':'Weddings & Lumen (launch planned for 2027)',
     'apply-sector-error':'Please select your provider type above.',
     'apply-project-label':'Tell us about your business and your work *',
     'apply-btn':'Send my application',
@@ -7301,7 +7301,7 @@ function renderPartnersPitch(){
     { id:'mode', name:{fr:'Mode & mannequins', en:'Fashion & models'}, who:{fr:'Créateurs, agences de mannequins, stylistes, bijoutiers', en:'Designers, model agencies, stylists, jewellers'} },
     { id:'commercial', name:{fr:'Commercial & produits', en:'Commercial & products'}, who:{fr:'Marques, artisans, cosmétique, restaurateurs, agences', en:'Brands, artisans, cosmetics, restaurateurs, agencies'} },
     { id:'evenementiel', name:{fr:'Événementiel', en:'Events'}, who:{fr:'Organisateurs, lieux de réception, traiteurs, décorateurs, animation', en:'Planners, venues, caterers, decorators, entertainment'} },
-    { id:'mariage', name:{fr:'Mariage & Lumen', en:'Weddings & Lumen'}, who:{fr:'Wedding planners, domaines, fleuristes, créateurs de robes, traiteurs', en:'Wedding planners, estates, florists, gown designers, caterers'} },
+    { id:'mariage', name:{fr:'Mariage & Lumen', en:'Weddings & Lumen'}, who:{fr:'Wedding planners, domaines, fleuristes, créateurs de robes, traiteurs', en:'Wedding planners, estates, florists, gown designers, caterers'}, soon:{fr:'Partenariat disponible dès maintenant · lancement prévu en 2027', en:'Partnership available now · launch planned for 2027'} },
   ];
   const steps = [
     { n:'1', title:{fr:'Candidatez', en:'Apply'}, text:{fr:'Présentez votre activité et vos réalisations.', en:'Present your business and your work.'} },
@@ -7334,6 +7334,7 @@ function renderPartnersPitch(){
             <div class="pp-universe-name">${t(u.name)}</div>
             <div class="pp-universe-who">${t(u.who)}</div>
             <div class="pp-universe-spots">${t({fr:'10 places', en:'10 places'})}</div>
+            ${u.soon ? `<div class="pp-universe-soon">${t(u.soon)}</div>` : ''}
           </div>`).join('')}
       </div>
       <p class="pp-note">${t({fr:'Le programme n\'est pas ouvert à tous : chaque candidature est étudiée individuellement pour préserver la cohérence éditoriale de Bunkaio. Une fois les places pourvues, les nouvelles candidatures rejoignent une liste d\'attente.', en:'The programme is not open to everyone: each application is reviewed individually to preserve Bunkaio\'s editorial coherence. Once places are filled, new applications join a waiting list.'})}</p>`,
