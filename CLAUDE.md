@@ -13,7 +13,7 @@ Le code est la source de vérité. Ce fichier ne sert qu'à reprendre vite.
 - Ne pas modifier les dimensions d'export : `IMAGE_SPECS` et `toWebP` dans `admin/media.html`, images de partage 1200×630.
 - Aucune adresse personnelle, clé ou donnée client dans le dépôt (l'adresse légale est un secret du Worker).
 - Pas de redesign. Pas de promotion de lancement, pas de prix barré. Prix nets (franchise de TVA).
-- Pas de fausse preuve sociale ni de service inventé. Les 10 marques réelles (Musardise Bijoux… Studio Doutor) défilent sur la page Collaboration : ne pas écrire « collaboration » (lu comme non rémunéré, décision de la propriétaire). Accueil : les 8 témoignages d'exemple sont remis à la demande de la propriétaire, qui les remplacera à la main ; la propriétaire gère elle-même ce contenu : ne pas y ajouter de mention ni changer le titre.
+- Pas de fausse preuve sociale ni de service inventé. Les 12 marques réelles (Musardise Bijoux… Studio Doutor, puis ÉCLAT et Restaurant Trophies ajoutées le 23 oct. 2026) défilent sur la page Collaboration : ne pas écrire « collaboration » (lu comme non rémunéré, décision de la propriétaire). Accueil : les 8 témoignages d'exemple sont remis à la demande de la propriétaire, qui les remplacera à la main ; la propriétaire gère elle-même ce contenu : ne pas y ajouter de mention ni changer le titre.
 - Lien d'avis Google unique : `config/media.js` (`GOOGLE_REVIEW_URL`) et `server/wrangler.toml` doivent rester identiques.
 - Ne jamais écrire la ville de Béziers sur le site (décision de la propriétaire, 12 oct. 2026) ; l'article « lieux de séance » a pour adresse `/conseils/lieux-seance-photo-montpellier-toulouse/` (l'ancienne redirige).
 - Ne pas lancer `pkill -f "http.server"` depuis le shell de l'agent.
