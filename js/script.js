@@ -566,7 +566,7 @@ const I18N = {
     'ft-services':'Services','ft-studio':'Le studio',
     'footer-claim2':'Studio de photographie mobile · Montpellier · Toulouse',
     'stab-catalogue':'Catalogue & prix','stab-devis':'Devis & déroulé',
-    'p-trust':'Partenaires de BUNKAIO',
+    'p-trust':'Ils ont collaboré avec BUNKAIO',
     'process-payment-info':'<strong>Modalités de paiement :</strong> 30 % à la commande à la signature du devis, solde à la livraison des livrables. Chaque versement est réglable par carte bancaire en une fois, ou en 3 fois sans frais avec Klarna ou Scalapay (sous réserve d\'éligibilité).',
     'process-cancel-info':'<strong>Annulation :</strong> une fois le devis validé, l\'acompte de 30 % versé à la commande reste acquis à BUNKAIO et n\'est pas remboursé en cas d\'annulation de votre part.',
     'process-delay-info':'Les délais indiqués sur chaque formule démarrent à la date du shooting.',
@@ -925,7 +925,7 @@ const I18N = {
     'ft-services':'Services','ft-studio':'The studio',
     'footer-claim2':'Mobile photography studio · Montpellier · Toulouse',
     'stab-catalogue':'Catalogue & rates','stab-devis':'Quote & process',
-    'p-trust':'BUNKAIO partners',
+    'p-trust':'They collaborated with BUNKAIO',
     'process-payment-info':'<strong>Payment terms:</strong> 30% deposit upon signing the quote, balance due on delivery of your deliverables. Each payment can be made by credit card in one go, or in 3 interest-free instalments with Klarna or Scalapay (subject to eligibility).',
     'process-cancel-info':'<strong>Cancellation:</strong> once the quote is accepted, the 30% deposit paid at booking is retained by BUNKAIO and is non-refundable if you cancel.',
     'process-delay-info':'The delivery timelines indicated on each package begin on the day of the shoot.',
@@ -7778,8 +7778,7 @@ const PARTNER_LOGOS = [
   { name:'Palmynala', style:'font-family:Georgia,serif;font-weight:400;letter-spacing:0.08em;text-transform:uppercase' },
   { name:'Studio Doutor', style:'font-weight:600;letter-spacing:0.02em' },
   { name:'ÉCLAT', url:'https://eclatevents.fr', style:'font-weight:300;letter-spacing:0.28em;text-transform:uppercase' },
-  { name:'Restaurant Trophies', style:'font-family:Georgia,serif;font-weight:700;font-style:italic;letter-spacing:0' },
-  { name:'Wolf Silveri', url:'https://www.photography-was-dead.com', style:'font-weight:800;letter-spacing:0.12em;text-transform:uppercase' }
+  { name:'Restaurant Trophies', style:'font-family:Georgia,serif;font-weight:700;font-style:italic;letter-spacing:0' }
 ];
 
 function renderLogoCarousel(){
