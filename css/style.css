@@ -7211,3 +7211,34 @@ body[data-view="quiz"] .quiz-nav-btn svg { stroke: #111; }
 #view-account .pt-quiz-notice { background: var(--rose) !important; border: 0 !important; border-left: 3px solid #111 !important; color: #111 !important; }
 #view-account .pt-demo-flag { color: #111 !important; border: 1px solid #111 !important; background: transparent !important; }
 #view-account .pt-promo, #view-account .pt-promo-list > *, #view-account .pt-contact { background: transparent !important; border-color: #111 !important; }
+
+/* ═══ Accueil : haut de page plus épuré + apparition soignée (nov. 2026) ═══
+   Plus d'air entre la constellation et le titre ; titre révélé mot à mot (montée masquée + flou qui se précise + écartement qui se resserre),
+   puis lieu, trait, bouton principal (rideau qui s'ouvre + halo violet) et accès (montée en cascade). Sans animation si mouvement réduit. */
+#view-home .hero { padding-top: clamp(110px, 15vh, 160px) !important; padding-bottom: clamp(70px, 10vh, 110px) !important; }
+#view-home .hero-title .hero-kicker { margin-bottom: clamp(96px, 16vh, 170px) !important; }
+@keyframes hmWordIn {
+  0%   { opacity: 0; transform: translateY(62%) skewY(5deg); filter: blur(14px); clip-path: inset(0 0 100% 0); letter-spacing: .06em; }
+  55%  { opacity: 1; filter: blur(2px); }
+  100% { opacity: 1; transform: none; filter: blur(0); clip-path: inset(-20% -8% -20% -8%); letter-spacing: -.055em; }
+}
+@keyframes hmFade { from { opacity: 0; transform: translateY(14px); letter-spacing: .32em; } to { opacity: 1; transform: none; letter-spacing: .04em; } }
+@keyframes hmLineIn { from { transform: scaleY(0); opacity: 0; } to { transform: scaleY(1); opacity: 1; } }
+@keyframes hmCurtain { from { opacity: 0; clip-path: inset(0 100% 0 0); transform: translateY(18px); } 40% { opacity: 1; } to { opacity: 1; clip-path: inset(-30% -10% -30% -10%); transform: none; } }
+@keyframes hmHalo { 0% { box-shadow: 0 0 0 0 rgba(214,201,247,.55); } 70%, 100% { box-shadow: 0 0 0 18px rgba(214,201,247,0); } }
+@keyframes hmRiseIn { from { opacity: 0; transform: translateY(26px); clip-path: inset(100% 0 0 0); } to { opacity: 1; transform: none; clip-path: inset(-20% -10% -20% -10%); } }
+#view-home .hero-title .word { opacity: 0; animation: hmWordIn 1.5s cubic-bezier(.16,.84,.24,1) both !important; }
+#view-home .hero-title .word:nth-of-type(1), #view-home .hero-title .word:nth-child(2) { animation-delay: .9s !important; }
+#view-home .hero-title .word:nth-child(3) { animation-delay: 1.18s !important; }
+#view-home .hero-title .word:nth-child(4) { animation-delay: 1.46s !important; }
+#view-home .hero-loc { opacity: 0; animation: hmFade 1.3s cubic-bezier(.16,.84,.24,1) 2.2s both !important; }
+#view-home .hero-line { transform-origin: top; animation: hmLineIn 1.1s cubic-bezier(.7,0,.2,1) 2.5s both; }
+#view-home .hero > .hero-start { opacity: 0; animation: hmCurtain 1.1s cubic-bezier(.7,0,.2,1) 2.8s both, hmHalo 3.4s ease-out 4.2s infinite !important; }
+#view-home .hero-access-row { opacity: 1; animation: none !important; }
+#view-home .hero-access { opacity: 0; animation: hmRiseIn .9s cubic-bezier(.16,.84,.24,1) both; }
+#view-home .hero-access:nth-child(1) { animation-delay: 3.3s; }
+#view-home .hero-access:nth-child(2) { animation-delay: 3.45s; }
+@media (prefers-reduced-motion: reduce) {
+  #view-home .hero-title .word, #view-home .hero-loc, #view-home .hero-line, #view-home .hero > .hero-start, #view-home .hero-access { animation: none !important; opacity: 1 !important; clip-path: none !important; filter: none !important; transform: none !important; }
+}
+#view-home .hero-title .word { font-size: clamp(52px, min(9.2vw, 14.5svh), 156px) !important; }
