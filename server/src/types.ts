@@ -52,6 +52,11 @@ export interface QuizLeadPayload {
   interetCommunication?: boolean;
   /** Langue du site au moment de la demande : détermine la langue des emails envoyés au client ('fr' par défaut). */
   lang?: string;
+  /** Identifiants des réponses du questionnaire (prestation, formule, profil, délai) : servent aux réponses automatiques (autoreply.ts). */
+  categoryId?: string;
+  tierId?: string;
+  profileId?: string;
+  delayId?: string;
 }
 
 /** Résultat du create-or-update Stripe, renvoyé au front à titre informatif uniquement. */

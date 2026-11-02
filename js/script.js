@@ -3220,7 +3220,12 @@ function submitQuiz(e){
     villePrestation: (travelApplies() && S.city) ? ((S.travel && S.travel.city) || S.city) : undefined,
     fraisDeplacementEur: (travelApplies() && S.city && S.travel && typeof S.travel.fee === 'number') ? S.travel.fee : undefined,
     deplacementType: (travelApplies() && S.city) ? ((S.travel && S.travel.kind) || 'unknown') : undefined,
-    interetCommunication: S.comm
+    interetCommunication: S.comm,
+    /* Identifiants des réponses : choix du message de réponse automatique (admin « Réponses aux devis »). */
+    categoryId: S.cat || undefined,
+    tierId: S.tier || undefined,
+    profileId: S.prof || undefined,
+    delayId: S.delay || undefined
   });
 
   if (window.track) track('quiz_submit', cat.name.fr + (S.tier === 'lanc' ? ' · Lancement' : ''));

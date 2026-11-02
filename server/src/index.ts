@@ -1,4 +1,6 @@
 import { getPartnerSpots } from './partners';
+import { AR_OPTIONS, cleanConfig as cleanAutoReplyConfig, defaultConfig, getConfig as getAutoReplyConfig, getLog as getAutoReplyLog, pickTemplate, renderAutoReply, sampleFacts, saveConfig as saveAutoReplyConfig, sendManualAutoReply, sendQuizAutoReply } from './autoreply';
+import type { ARFacts } from './autoreply';
 import { goClicks, handleGo, listGoLinks, saveGoLink } from './golinks';
 import type Stripe from 'stripe';
 import { adminAccountView, getAccount, listAccounts, putAccount, sanitizeAccount, upsertAccountFromAdmin, verifyLogin, LoginThrottled } from './accounts';
@@ -37,7 +39,6 @@ import {
   buildDepositInvoiceEmail,
   buildOverdueReminderEmail,
   buildPaymentConfirmationEmail,
-  buildQuizConfirmationEmail,
     normalizeLang,
   sendEmail,
 } from './email';
@@ -141,7 +142,8 @@ function isValidQuizLeadPayload(body: unknown): body is QuizLeadPayload {
     (b.fraisDeplacementEur === undefined || (typeof b.fraisDeplacementEur === 'number' && Number.isFinite(b.fraisDeplacementEur))) &&
     (b.deplacementType === undefined || typeof b.deplacementType === 'string') &&
     (b.interetCommunication === undefined || typeof b.interetCommunication === 'boolean') &&
-    (b.lang === undefined || typeof b.lang === 'string')
+    (b.lang === undefined || typeof b.lang === 'string') &&
+    ['categoryId', 'tierId', 'profileId', 'delayId'].every((k) => b[k] === undefined || typeof b[k] === 'string')
   );
 }
 
@@ -838,6 +840,41 @@ async function handleAdminDashboard(request: Request, env: Env, headers: Record<
     const days = Math.min(365, Math.max(1, parseInt(new URL(request.url).searchParams.get('days') ?? '30', 10) || 30));
     return jsonResponse({ ok: true, days, traffic: await campaignTraffic(env, days), data: await getCampaignData(env) }, 200, headers);
   }
+  if (path === '/admin/autoreply' && request.method === 'GET') {
+    return jsonResponse({ ok: true, config: await getAutoReplyConfig(env), defaults: defaultConfig(), log: await getAutoReplyLog(env), options: AR_OPTIONS }, 200, headers);
+  }
+  if (path === '/admin/autoreply' && request.method === 'POST') {
+    const body = (await request.json().catch(() => ({}))) as Record<string, unknown>;
+    if (body.action === 'save') {
+      const c = await saveAutoReplyConfig(env, body.config);
+      return jsonResponse(c ? { ok: true, config: c } : { ok: false, error: 'configuration_invalide' }, c ? 200 : 400, headers);
+    }
+    if (body.action === 'preview') {
+      const f = sampleFacts(body.sample);
+      const cfg = (body.config ?? null) as { templates?: unknown; rules?: unknown } | null;
+      const c = cleanAutoReplyConfig(cfg) ?? await getAutoReplyConfig(env);
+      const t = typeof body.templateId === 'string' ? c.templates.find((x) => x.id === body.templateId) : pickTemplate(c, f).template;
+      if (!t) return jsonResponse({ ok: false, error: 'message_inconnu' }, 400, headers);
+      const picked = pickTemplate(c, f);
+      const m = renderAutoReply(t, f, 'client');
+      return jsonResponse({ ok: true, subject: m.subject, html: m.html, picked: { templateId: picked.template.id, ruleId: picked.ruleId } }, 200, headers);
+    }
+    if (body.action === 'test' || body.action === 'send') {
+      const templateId = typeof body.templateId === 'string' ? body.templateId : '';
+      if (body.action === 'test') {
+        const to = typeof body.to === 'string' && /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(body.to.trim()) ? body.to.trim() : env.ADMIN_NOTIFICATION_EMAIL;
+        const r = await sendManualAutoReply(env, sampleFacts(body.sample), templateId, 'client', to);
+        return jsonResponse(r, r.ok ? 200 : 400, headers);
+      }
+      const at = typeof body.at === 'string' ? body.at : '';
+      const entry = (await getAutoReplyLog(env)).find((e) => e.at === at);
+      if (!entry) return jsonResponse({ ok: false, error: 'demande_introuvable' }, 404, headers);
+      const f: ARFacts = entry.facts;
+      const r = await sendManualAutoReply(env, f, templateId, await detectSpace(env, f.email));
+      return jsonResponse(r, r.ok ? 200 : 400, headers);
+    }
+    return jsonResponse({ ok: false, error: 'unknown_action' }, 400, headers);
+  }
   if (path === '/admin/golinks' && request.method === 'GET') {
     const days = Math.min(365, Math.max(1, parseInt(new URL(request.url).searchParams.get('days') ?? '30', 10) || 30));
     return jsonResponse({ ok: true, links: await listGoLinks(env), clicks: await goClicks(env, days) }, 200, headers);
@@ -1150,8 +1187,8 @@ async function handleQuizLead(request: Request, env: Env, headers: Record<string
     try {
       // Un seul accusé par adresse et par heure : l'endpoint est public, sans cette limite il pourrait servir à inonder une boîte mail.
       if (await claimAckSlot(env, 'quiz', body.email)) {
-        const { subject, html, text } = buildQuizConfirmationEmail({ customerName: body.name, lang: normalizeLang(body.lang), space: await detectSpace(env, body.email) });
-        await sendEmail(env, body.email, subject, html, text);
+        // Message choisi selon les réponses du questionnaire (règles de l'admin « Réponses aux devis »).
+        await sendQuizAutoReply(env, body, await detectSpace(env, body.email));
       }
     } catch (emailErr) {
       console.error("[quiz-lead] échec de l'envoi de l'email de confirmation", emailErr);

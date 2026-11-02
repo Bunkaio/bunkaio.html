@@ -1179,3 +1179,35 @@ export function buildWithdrawalDoneEmail(params: { name: string; usages: string[
   `, lang);
   return finalize(lang, { tpl: 'autorisation_retrait_ok', subject: t('BUNKAIO — Retrait enregistré', 'BUNKAIO — Withdrawal recorded'), html, text: `${greeting}\n\n${body}` });
 }
+
+/** Réponse automatique personnalisée à une demande de devis (message préconçu choisi par une règle, voir autoreply.ts).
+ *  Le texte saisi dans l'admin est échappé ; les paragraphes sont séparés par une ligne vide, les adresses web deviennent des liens. */
+export function buildQuizAutoReplyEmail(params: {
+  lang: Lang; space?: Space; customerName: string; subject: string; body: string; tpl: string;
+  recap?: { label: string; value: string }[]; steps?: boolean;
+}): { subject: string; html: string; text: string } {
+  const lang = params.lang;
+  const greeting = greet(lang, params.customerName);
+  const paras = params.body.replace(/\r/g, '').split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
+  const link = (s: string): string => s.replace(/\b(https?:\/\/[^\s<]+[^\s<.,;:!?)])/g, '<a href="$1" style="color:#6e5aa8;">$1</a>');
+  const parasHtml = paras.map((p) => `<p style="font-size:15px;line-height:1.6;margin:0 0 18px;">${link(escapeHtml(p)).replace(/\n/g, '<br>')}</p>`).join('');
+  const recap = (params.recap ?? []).filter((r) => r.value);
+  const recapHtml = recap.length ? `
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:8px 0 26px;border:1px solid #e6dff3;border-radius:10px;">
+      <tr><td style="padding:18px 20px 8px;font-size:11px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#6e5aa8;font-family:${FONT};">${tr(lang, 'Récapitulatif de votre demande', 'Summary of your request')}</td></tr>
+      ${recap.map((r) => `<tr><td style="padding:4px 20px 10px;font-size:14px;line-height:1.5;color:#3a3544;font-family:${FONT};"><span style="color:#8a8496;">${escapeHtml(r.label)}</span><br><b style="color:#0a0a0c;">${escapeHtml(r.value)}</b></td></tr>`).join('')}
+      <tr><td style="height:8px;"></td></tr>
+    </table>` : '';
+  const html = emailShell(`
+    <h1 style="font-size:20px;margin:0 0 16px;">${tr(lang, 'Merci pour votre demande', 'Thank you for your request')}</h1>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">${escapeHtml(greeting)}</p>
+    ${parasHtml}
+    ${recapHtml}
+    ${params.steps ? quizNextStepsHtml(lang) : ''}
+    ${spaceBlock(lang, params.space, 'quote')}
+  `, lang);
+  const stepsText = params.steps ? `\n\n${tr(lang, 'LES PROCHAINES ÉTAPES', 'NEXT STEPS')}\n${QUIZ_NEXT_STEPS[lang].map((s, i) => `${i + 1}. ${s.title}${s.badge ? ` (${s.badge})` : ''} — ${s.text}`).join('\n')}` : '';
+  const recapText = recap.length ? `\n\n${tr(lang, 'RÉCAPITULATIF DE VOTRE DEMANDE', 'SUMMARY OF YOUR REQUEST')}\n${recap.map((r) => `${r.label} : ${r.value}`).join('\n')}` : '';
+  const text = `${greeting}\n\n${paras.join('\n\n')}${recapText}${stepsText}\n\n${spaceText(lang, params.space, 'quote')}`;
+  return finalize(lang, { tpl: params.tpl, subject: params.subject, html, text });
+}

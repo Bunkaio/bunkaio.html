@@ -640,6 +640,11 @@
         <iframe class="media" id="mediaFrame" title="Gestion des médias" loading="lazy"></iframe>
       </section>
 
+      <!-- ═══ Réponses aux devis ═══ -->
+      <section class="section" id="sec-autoreply">
+        <div id="arOut"><div class="card"><div class="empty">Chargement…</div></div></div>
+      </section>
+
       <!-- ═══ Veille du site ═══ -->
       <section class="section" id="sec-veille">
         <div class="toolbar">
@@ -758,6 +763,7 @@ const ICON = {
   media: '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/>',
   stats: '<path d="M18 20V10M12 20V4M6 20v-6"/>',
   campaign: '<path d="M3 11v2a1 1 0 0 0 1 1h3l5 4V6L7 10H4a1 1 0 0 0-1 1z"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12"/>',
+  autoreply: '<path d="M4 4h16v12H5.2L4 17.2z"/><path d="m9 10 2 2 4-4"/>',
   veille: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/>',
 };
 const SECTIONS = [
@@ -770,6 +776,7 @@ const SECTIONS = [
   ['sessions', 'Séances & automatisations', 'Planning, livraisons et emails automatiques'],
   ['inbox', 'Boîte de réception', 'Les emails reçus sur contact@bunkaio.com : lecture et réponse depuis le tableau de bord'],
   ['mailing', 'Mailing', 'Envoyez des emails à votre base : modèles, destinataires, historique'],
+  ['autoreply', 'Réponses aux devis', 'Message envoyé automatiquement à chaque demande de devis, choisi selon les réponses au questionnaire'],
   ['messages', 'Messages', 'Formulaires du site : contact, collaborations, candidatures, demandes d\'espace, témoignages'],
   ['activity', 'Activité des espaces', 'Ce que les clients et partenaires modifient dans leur espace'],
   ['media', 'Médias', 'Photos et vidéos du site'],
@@ -897,6 +904,7 @@ function go(id, noPush) {
   if (id === 'media' && !$('mediaFrame').src) $('mediaFrame').src = 'media.html?embed=1';
   if (id === 'veille') loadWatch();
   if (id === 'campaign') loadCampaign();
+  if (id === 'autoreply') loadAutoReply();
   renderTabbar();
   window.scrollTo({ top: 0 });
 }
@@ -1313,7 +1321,7 @@ function renderActivity() {
 
 /* ── Emails : libellés, étape du devis, emails envoyés / à venir ── */
 const TPL_LABEL = { facture_acompte: 'Facture d\'acompte', photos_pretes_solde: 'Photos prêtes + facture de solde', paiement_recu: 'Paiement reçu', rappel_impaye: 'Rappel de facture impayée', confirmation_devis_quiz: 'Confirmation de demande de devis', acces_espace: 'Vos accès à l\'espace', album_accessible: 'Album accessible + avis + remise', merci_seance: 'Merci + date de livraison', seance_confirmation: 'Confirmation de séance', seance_reminder: 'Rappel de séance J-2', seance_report: 'Report de séance', seance_cancel: 'Annulation de séance', accuse_contact: 'Accusé · contact', accuse_collab: 'Accusé · collaboration', accuse_partner: 'Accusé · candidature partenaire', accuse_account: 'Accusé · demande d\'espace', relance_devis_j2: 'Relance de devis J+2 (quiz)', relance_devis_quiz: 'Relance de devis J+7 (quiz)', rappel_moodboard: 'Rappel moodboard', devis_a_signer: 'Devis à signer', relance_devis_envoye: 'Relance du devis envoyé', devis_signe: 'Devis signé (confirmation)', sms_photos_pretes: 'SMS · photos disponibles', sms_acces_album: 'SMS · accès à l\'album', sms_rappel_seance: 'SMS · rappel de séance', sms_manuel: 'SMS', libre: 'Message libre', reponse: 'Réponse à un email reçu', demande_avis: 'Demande d\'avis' };
-const tplName = t => TPL_LABEL[t] || t;
+const tplName = t => { if (TPL_LABEL[t]) return TPL_LABEL[t]; if (!String(t).startsWith('reponse_devis_')) return t; let n = ''; try { n = (AR.cfg && (AR.cfg.templates.find(x => 'reponse_devis_' + x.id === t) || {}).name) || ''; } catch (e) {} return 'Réponse au devis · ' + (n || t.slice(14)); };
 function quoteSteps(c) {
   const qs = realQ(c).filter(q => q.status !== 'annule');
   const q = qs[0];
@@ -2336,6 +2344,149 @@ function exportImageRegister() {
   const head = ['Qui', 'Devis', 'Client', 'Nom', 'Email', 'Lien (mineur)', 'Date', 'Version clauses', 'Échéance (5 ans)', 'Statut', ...Object.values(USE_NAMES)];
   const csv = '\ufeff' + [head, ...rows].map(r => r.map(csvCell).join(';')).join('\n');
   const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' })); a.download = 'bunkaio-registre-droits-image-' + today() + '.csv'; a.click();
+}
+
+/* ── Réponses aux devis : règles → message préconçu (Worker autoreply.ts) ── */
+const AR = { cfg: null, defaults: null, log: [], opt: null, editTpl: null, editRule: null, dirty: false, sim: { cat: 'corporate', tier: 'lanc', profile: 'entrepreneur', delay: '1_mois', budget: 320, lang: 'fr', partner: false }, testTo: lsGet('bunkaio_ar_test_to', '') };
+async function loadAutoReply() {
+  try {
+    const { res, data } = await api('/admin/autoreply');
+    if (!res.ok || !data.ok) { $('arOut').innerHTML = '<div class="msg err">Rubrique indisponible (' + esc(data.error || res.status) + '). Le Worker doit être redéployé : <code>cd server &amp;&amp; npx wrangler deploy</code>.</div>'; return; }
+    if (!AR.dirty) AR.cfg = data.config;
+    AR.defaults = data.defaults; AR.log = data.log || []; AR.opt = data.options;
+    renderAutoReply();
+  } catch (e) { if (e && e.message !== 'unauthorized') $('arOut').innerHTML = '<div class="msg err">Connexion impossible.</div>'; }
+}
+const arLbl = (m, id) => (AR.opt[m][id] ? AR.opt[m][id].fr : id);
+const arTplName = id => { const t = AR.cfg.templates.find(x => x.id === id); return t ? t.name : '—'; };
+function arMatch(r, f) {
+  if (!r.enabled) return false;
+  if (r.cats.length && !r.cats.includes(f.cat)) return false;
+  if (r.tiers.length && !r.tiers.includes(f.tier)) return false;
+  if (r.profiles.length && !r.profiles.includes(f.profile)) return false;
+  if (r.delays.length && !r.delays.includes(f.delay)) return false;
+  if (r.budgetMin != null && (f.budget == null || f.budget < r.budgetMin)) return false;
+  if (r.budgetMax != null && (f.budget == null || f.budget > r.budgetMax)) return false;
+  if (r.partner === 'yes' && !f.partner) return false;
+  if (r.partner === 'no' && f.partner) return false;
+  return true;
+}
+function arPick(f) { const r = AR.cfg.rules.find(x => arMatch(x, f)); return { tpl: r ? r.templateId : AR.cfg.fallback, rule: r || null }; }
+function arCond(r) {
+  const p = [];
+  if (r.cats.length) p.push(r.cats.map(x => arLbl('cats', x)).join(' ou '));
+  if (r.tiers.length) p.push('formule ' + r.tiers.map(x => arLbl('tiers', x)).join(' ou '));
+  if (r.profiles.length) p.push('profil ' + r.profiles.map(x => arLbl('profiles', x)).join(' ou '));
+  if (r.delays.length) p.push('délai ' + r.delays.map(x => arLbl('delays', x)).join(' ou '));
+  if (r.budgetMin != null) p.push('budget ≥ ' + r.budgetMin + ' €');
+  if (r.budgetMax != null) p.push('budget ≤ ' + r.budgetMax + ' €');
+  if (r.partner === 'yes') p.push('partenaire'); if (r.partner === 'no') p.push('hors partenaires');
+  return p.length ? p.join(' · ') : 'Toutes les demandes';
+}
+function arDirty() { AR.dirty = true; const b = $('arSave'); if (b) { b.disabled = false; b.textContent = 'Enregistrer les modifications'; } }
+const arTplOptions = sel => AR.cfg.templates.map(t => `<option value="${esc(t.id)}"${t.id === sel ? ' selected' : ''}>${esc(t.name)}</option>`).join('');
+function arChips(group, sel, ri) { return `<div class="chips" style="margin-top:6px">${Object.keys(AR.opt[group]).map(id => `<button type="button" class="chip${sel.includes(id) ? ' on' : ''}" onclick="arToggleCond(${ri},'${group}','${esc(id)}')">${esc(AR.opt[group][id].fr)}</button>`).join('')}</div>`; }
+const AR_GROUPS = [['cats', 'cats', 'Prestation'], ['tiers', 'tiers', 'Formule'], ['profiles', 'profiles', 'Profil'], ['delays', 'delays', 'Délai souhaité']];
+function renderAutoReply() {
+  const c = AR.cfg; if (!c) return;
+  const used = id => c.rules.filter(r => r.templateId === id).length + (c.fallback === id ? 1 : 0);
+  const head = `<div class="card" style="margin-bottom:18px"><h3>Fonctionnement</h3>
+    <p class="muted small" style="margin:4px 0 12px">À chaque demande de devis envoyée depuis le site, un email part tout de suite au prospect. Les règles ci-dessous sont lues <b>dans l'ordre</b> : la première qui correspond aux réponses du questionnaire choisit le message. Si aucune ne correspond, le message par défaut part.</p>
+    <label style="display:flex;gap:8px;align-items:center;font-weight:600;margin-bottom:12px"><input type="checkbox" ${c.enabled ? 'checked' : ''} onchange="AR.cfg.enabled=this.checked;arDirty();renderAutoReply()"> Réponses personnalisées activées</label>
+    ${c.enabled ? '' : '<div class="msg warn" style="margin-bottom:12px">Désactivées : chaque demande reçoit l\'email de confirmation d\'origine (« Nous avons bien reçu votre demande »).</div>'}
+    <div class="frow"><div class="fg"><label>Message par défaut (aucune règle ne correspond)</label><select onchange="AR.cfg.fallback=this.value;arDirty()">${arTplOptions(c.fallback)}</select></div></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px"><button class="btn" id="arSave" onclick="arSave()" ${AR.dirty ? '' : 'disabled'}>${AR.dirty ? 'Enregistrer les modifications' : 'Enregistré'}</button><button class="btn ghost" onclick="arReset()">Rétablir les messages et règles proposés</button></div>
+    <p class="muted small" style="margin:10px 0 0">Les changements ne s'appliquent qu'après « Enregistrer ».${c.updatedAt ? ' Dernier enregistrement : ' + fdt(c.updatedAt) + '.' : ' Configuration proposée par défaut (jamais enregistrée).'}</p></div>`;
+  const rules = `<div class="card" style="margin-bottom:18px"><h3>Règles <span class="badge line">${c.rules.length}</span></h3>
+    ${c.rules.length ? `<div class="tbl-wrap"><table><thead><tr><th>Ordre</th><th>Active</th><th>Règle</th><th>Conditions</th><th>Message envoyé</th><th></th></tr></thead><tbody>${c.rules.map((r, i) => `<tr${r.enabled ? '' : ' style="opacity:.5"'}><td>${i + 1}</td><td><input type="checkbox" ${r.enabled ? 'checked' : ''} onchange="AR.cfg.rules[${i}].enabled=this.checked;arDirty();renderAutoReply()"></td><td><b>${esc(r.label)}</b></td><td class="small">${esc(arCond(r))}</td><td><select onchange="AR.cfg.rules[${i}].templateId=this.value;arDirty()">${arTplOptions(r.templateId)}</select></td><td style="white-space:nowrap"><button class="btn ghost sm" onclick="arMove(${i},-1)" ${i ? '' : 'disabled'}>↑</button> <button class="btn ghost sm" onclick="arMove(${i},1)" ${i < c.rules.length - 1 ? '' : 'disabled'}>↓</button> <button class="btn ghost sm" onclick="AR.editRule=${i};renderAutoReply()">Modifier</button> <button class="btn ghost sm" onclick="arDelRule(${i})">✕</button></td></tr>`).join('')}</tbody></table></div>` : '<div class="empty">Aucune règle : toutes les demandes reçoivent le message par défaut.</div>'}
+    ${AR.editRule != null && c.rules[AR.editRule] ? arRuleEditor(AR.editRule) : ''}
+    <div style="margin-top:12px"><button class="btn soft sm" onclick="arAddRule()">+ Ajouter une règle</button></div></div>`;
+  const f = AR.sim, pick = arPick(f);
+  const selO = (g, v) => `<option value="">—</option>` + Object.keys(AR.opt[g]).map(id => `<option value="${esc(id)}"${id === v ? ' selected' : ''}>${esc(AR.opt[g][id].fr)}</option>`).join('');
+  const sim = `<div class="card" style="margin-bottom:18px"><h3>Simulateur</h3><p class="muted small" style="margin:4px 0 12px">Choisissez des réponses fictives pour voir quel message partirait (avec les réglages affichés, même non enregistrés).</p>
+    <div class="frow"><div class="fg"><label>Prestation</label><select onchange="AR.sim.cat=this.value;renderAutoReply()">${selO('cats', f.cat)}</select></div><div class="fg"><label>Formule</label><select onchange="AR.sim.tier=this.value;renderAutoReply()">${selO('tiers', f.tier)}</select></div><div class="fg"><label>Profil</label><select onchange="AR.sim.profile=this.value;renderAutoReply()">${selO('profiles', f.profile)}</select></div></div>
+    <div class="frow"><div class="fg"><label>Délai</label><select onchange="AR.sim.delay=this.value;renderAutoReply()">${selO('delays', f.delay)}</select></div><div class="fg"><label>Budget (€)</label><input type="number" min="0" value="${f.budget}" onchange="AR.sim.budget=+this.value||0;renderAutoReply()"></div><div class="fg"><label>Langue</label><select onchange="AR.sim.lang=this.value;renderAutoReply()"><option value="fr"${f.lang === 'fr' ? ' selected' : ''}>Français</option><option value="en"${f.lang === 'en' ? ' selected' : ''}>Anglais</option></select></div></div>
+    <label style="display:flex;gap:8px;align-items:center;margin:6px 0 12px" class="small"><input type="checkbox" ${f.partner ? 'checked' : ''} onchange="AR.sim.partner=this.checked;renderAutoReply()"> Demande d'un partenaire (tarif partenaire)</label>
+    <div class="msg info">Message envoyé : <b>${esc(arTplName(pick.tpl))}</b> — ${pick.rule ? 'règle « ' + esc(pick.rule.label) + ' »' : 'message par défaut'}${c.enabled ? '' : ' <span class="muted">(réponses personnalisées désactivées : l\'email d\'origine partirait)</span>'}</div>
+    <div style="margin-top:10px"><button class="btn ghost sm" onclick="arPreview('${esc(pick.tpl)}')">Voir l'aperçu de cet email</button></div></div>`;
+  const tpls = `<div class="card" style="margin-bottom:18px"><h3>Messages préconçus <span class="badge line">${c.templates.length}</span></h3>
+    <p class="muted small" style="margin:4px 0 12px">Variables utilisables dans l'objet et le texte : <code>{prenom}</code> <code>{nom}</code> <code>{prestation}</code> <code>{formule}</code> <code>{budget}</code> <code>{delai}</code> <code>{ville}</code>. Le texte anglais part aux demandes faites sur la version anglaise du site (s'il est vide, le français part).</p>
+    <div class="tbl-wrap"><table><thead><tr><th>Message</th><th>Objet</th><th class="num">Utilisé par</th><th></th></tr></thead><tbody>${c.templates.map(t => `<tr><td><b>${esc(t.name)}</b>${c.fallback === t.id ? ' <span class="badge">par défaut</span>' : ''}</td><td class="small">${esc(t.subject.fr)}</td><td class="num">${used(t.id)}</td><td style="white-space:nowrap"><button class="btn ghost sm" onclick="AR.editTpl='${esc(t.id)}';renderAutoReply();setTimeout(()=>$('arTplEd')&&$('arTplEd').scrollIntoView({behavior:'smooth',block:'start'}),50)">Modifier</button> <button class="btn ghost sm" onclick="arPreview('${esc(t.id)}')">Aperçu</button> <button class="btn ghost sm" onclick="arDupTpl('${esc(t.id)}')">Dupliquer</button> <button class="btn ghost sm" onclick="arDelTpl('${esc(t.id)}')" ${used(t.id) ? 'disabled title="Utilisé par une règle ou par défaut"' : ''}>✕</button></td></tr>`).join('')}</tbody></table></div>
+    ${AR.editTpl && c.templates.find(t => t.id === AR.editTpl) ? arTplEditor(AR.editTpl) : ''}
+    <div style="margin-top:12px"><button class="btn soft sm" onclick="arNewTpl()">+ Nouveau message</button></div>
+    <div id="arPrev" style="margin-top:14px"></div></div>`;
+  const statusOf = e => e.error ? '<span class="badge" style="background:var(--danger);color:#fff">échec</span>' : e.manual ? '<span class="badge line">envoi manuel</span>' : '';
+  const log = `<div class="card"><h3>Dernières demandes <span class="badge line">${AR.log.length}</span></h3><p class="muted small" style="margin:4px 0 12px">Le message parti pour chaque demande. Vous pouvez en envoyer un autre à la main (par exemple après un appel).</p>
+    ${AR.log.length ? `<div class="tbl-wrap"><table><thead><tr><th>Date</th><th>Prospect</th><th>Demande</th><th>Message envoyé</th><th>Envoyer un autre message</th></tr></thead><tbody>${AR.log.map((e, i) => { const x = e.facts; return `<tr><td class="small">${fdt(e.at)}</td><td><b>${esc(x.name)}</b><br><span class="small muted">${esc(x.email)}${x.lang === 'en' ? ' · EN' : ''}</span></td><td class="small">${esc([x.categoryLabel, x.formuleLabel, x.delayLabel, x.budgetLabel, x.city].filter(Boolean).join(' · '))}${x.partner ? ' · partenaire' : ''}</td><td>${e.templateId ? esc(arTplName(e.templateId)) : '<span class="muted">Confirmation d\'origine</span>'} ${statusOf(e)}</td><td style="white-space:nowrap"><select id="arLogSel${i}">${arTplOptions(e.templateId || c.fallback)}</select> <button class="btn ghost sm" onclick="arSendLog(${i})">Envoyer</button></td></tr>`; }).join('')}</tbody></table></div>` : '<div class="empty">Aucune demande depuis la mise en service. Elles apparaîtront ici avec le message envoyé.</div>'}</div>`;
+  $('arOut').innerHTML = head + rules + sim + tpls + log;
+}
+function arRuleEditor(i) {
+  const r = AR.cfg.rules[i];
+  return `<div class="card" style="margin-top:14px;background:var(--bg2,#faf8fd)"><h3>Modifier la règle ${i + 1}</h3>
+    <div class="frow"><div class="fg"><label>Nom de la règle</label><input value="${esc(r.label)}" oninput="AR.cfg.rules[${i}].label=this.value;arDirty()"></div><div class="fg"><label>Message envoyé</label><select onchange="AR.cfg.rules[${i}].templateId=this.value;arDirty()">${arTplOptions(r.templateId)}</select></div></div>
+    <p class="muted small" style="margin:10px 0 0">Cochez les réponses concernées. Un groupe sans rien de coché = n'importe quelle réponse. Plusieurs cases dans un groupe = l'une ou l'autre.</p>
+    ${AR_GROUPS.map(([g, , label]) => `<div style="margin-top:12px"><span class="lab">${label}</span>${arChips(g, r[g], i)}</div>`).join('')}
+    <div class="frow" style="margin-top:12px"><div class="fg"><label>Budget minimum (€)</label><input type="number" min="0" value="${r.budgetMin ?? ''}" placeholder="aucun" onchange="AR.cfg.rules[${i}].budgetMin=this.value===''?null:Math.max(0,+this.value);arDirty()"></div><div class="fg"><label>Budget maximum (€)</label><input type="number" min="0" value="${r.budgetMax ?? ''}" placeholder="aucun" onchange="AR.cfg.rules[${i}].budgetMax=this.value===''?null:Math.max(0,+this.value);arDirty()"></div><div class="fg"><label>Partenaires</label><select onchange="AR.cfg.rules[${i}].partner=this.value;arDirty()"><option value="any"${r.partner === 'any' ? ' selected' : ''}>Tous</option><option value="yes"${r.partner === 'yes' ? ' selected' : ''}>Seulement les partenaires</option><option value="no"${r.partner === 'no' ? ' selected' : ''}>Hors partenaires</option></select></div></div>
+    <div style="margin-top:12px"><button class="btn sm" onclick="AR.editRule=null;renderAutoReply()">Fermer</button></div></div>`;
+}
+function arTplEditor(id) {
+  const t = AR.cfg.templates.find(x => x.id === id), k = AR.cfg.templates.indexOf(t);
+  const set = (path, v) => `AR.cfg.templates[${k}].${path}=${v};arDirty()`;
+  return `<div class="card" id="arTplEd" style="margin-top:14px;background:var(--bg2,#faf8fd)"><h3>Modifier « ${esc(t.name)} »</h3>
+    <div class="fg"><label>Nom (visible seulement dans l'admin)</label><input value="${esc(t.name)}" oninput="${set('name', 'this.value')}"></div>
+    <div class="fg" style="margin-top:10px"><label>Objet (français)</label><input value="${esc(t.subject.fr)}" oninput="${set('subject.fr', 'this.value')}"></div>
+    <div class="fg" style="margin-top:10px"><label>Texte (français) — une ligne vide sépare les paragraphes</label><textarea rows="9" oninput="${set('body.fr', 'this.value')}">${esc(t.body.fr)}</textarea></div>
+    <div class="fg" style="margin-top:10px"><label>Objet (anglais)</label><input value="${esc(t.subject.en)}" oninput="${set('subject.en', 'this.value')}"></div>
+    <div class="fg" style="margin-top:10px"><label>Texte (anglais)</label><textarea rows="7" oninput="${set('body.en', 'this.value')}">${esc(t.body.en)}</textarea></div>
+    <p class="muted small" style="margin:8px 0 0">L'email commence toujours par « Bonjour {nom}, » et se termine par votre signature et le bloc de l'espace client.</p>
+    <label style="display:flex;gap:8px;align-items:center;margin-top:10px" class="small"><input type="checkbox" ${t.recap ? 'checked' : ''} onchange="${set('recap', 'this.checked')}"> Ajouter le récapitulatif de la demande (prestation, formule, budget, délai, lieu)</label>
+    <label style="display:flex;gap:8px;align-items:center;margin-top:6px" class="small"><input type="checkbox" ${t.steps ? 'checked' : ''} onchange="${set('steps', 'this.checked')}"> Ajouter la frise « Les prochaines étapes » (48 h, acompte 30 %, solde 70 %)</label>
+    <div class="frow" style="margin-top:12px;align-items:end"><div class="fg"><label>Envoyer un test à</label><input type="email" id="arTestTo" value="${esc(AR.testTo)}" placeholder="votre adresse"></div><div class="fg"><label>Langue du test</label><select id="arTestLang"><option value="fr">Français</option><option value="en">Anglais</option></select></div></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"><button class="btn ghost sm" onclick="arPreview('${esc(t.id)}')">Aperçu</button><button class="btn ghost sm" onclick="arTest('${esc(t.id)}')">Envoyer le test</button><button class="btn sm" onclick="AR.editTpl=null;renderAutoReply()">Fermer</button></div></div>`;
+}
+function arToggleCond(i, g, id) { const a = AR.cfg.rules[i][g], k = a.indexOf(id); if (k >= 0) a.splice(k, 1); else a.push(id); arDirty(); renderAutoReply(); }
+function arMove(i, d) { const r = AR.cfg.rules, j = i + d; if (j < 0 || j >= r.length) return; [r[i], r[j]] = [r[j], r[i]]; if (AR.editRule === i) AR.editRule = j; arDirty(); renderAutoReply(); }
+function arDelRule(i) { if (!confirm('Supprimer la règle « ' + AR.cfg.rules[i].label + ' » ?')) return; AR.cfg.rules.splice(i, 1); AR.editRule = null; arDirty(); renderAutoReply(); }
+function arAddRule() { AR.cfg.rules.push({ id: 'r_' + Date.now().toString(36), label: 'Nouvelle règle', enabled: true, templateId: AR.cfg.fallback, cats: [], tiers: [], profiles: [], delays: [], budgetMin: null, budgetMax: null, partner: 'any' }); AR.editRule = AR.cfg.rules.length - 1; arDirty(); renderAutoReply(); }
+function arNewTpl(from) {
+  const id = 'msg_' + Date.now().toString(36);
+  const base = from ? JSON.parse(JSON.stringify(from)) : { name: 'Nouveau message', subject: { fr: 'Bunkaio — Votre demande de devis', en: 'Bunkaio — Your quote request' }, body: { fr: 'Merci pour votre demande ({prestation}).\n\nJe reviens vers vous sous 48 h ouvrées.', en: 'Thank you for your request ({prestation}).\n\nI will get back to you within 48 business hours.' }, recap: true, steps: true };
+  base.id = id; if (from) base.name = from.name + ' (copie)';
+  AR.cfg.templates.push(base); AR.editTpl = id; arDirty(); renderAutoReply(); setTimeout(() => $('arTplEd') && $('arTplEd').scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+}
+function arDupTpl(id) { arNewTpl(AR.cfg.templates.find(t => t.id === id)); }
+function arDelTpl(id) { if (!confirm('Supprimer ce message ?')) return; AR.cfg.templates = AR.cfg.templates.filter(t => t.id !== id); if (AR.editTpl === id) AR.editTpl = null; arDirty(); renderAutoReply(); }
+function arReset() { if (!confirm('Remplacer tous les messages et règles par ceux proposés au départ ? (À enregistrer ensuite.)')) return; AR.cfg = JSON.parse(JSON.stringify(AR.defaults)); AR.editRule = AR.editTpl = null; arDirty(); renderAutoReply(); }
+async function arSave() {
+  const b = $('arSave'); b.disabled = true; b.textContent = 'Enregistrement…';
+  try {
+    const { res, data } = await api('/admin/autoreply', { method: 'POST', body: JSON.stringify({ action: 'save', config: AR.cfg }) });
+    if (!res.ok || !data.ok) { toast('Enregistrement impossible (' + (data.error || res.status) + ')'); b.disabled = false; b.textContent = 'Enregistrer les modifications'; return; }
+    AR.cfg = data.config; AR.dirty = false; toast('Réponses aux devis enregistrées'); renderAutoReply();
+  } catch (e) { b.disabled = false; b.textContent = 'Enregistrer les modifications'; }
+}
+async function arPreview(id, lang) {
+  const box = $('arPrev'); if (!box) return;
+  box.innerHTML = '<div class="muted small">Aperçu…</div>';
+  box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  const sample = { ...AR.sim, lang: lang || ($('arTestLang') && AR.editTpl === id ? $('arTestLang').value : AR.sim.lang) };
+  const { res, data } = await api('/admin/autoreply', { method: 'POST', body: JSON.stringify({ action: 'preview', templateId: id, sample, config: AR.cfg }) });
+  if (!res.ok || !data.ok) { box.innerHTML = '<div class="msg err">Aperçu impossible (' + esc(data.error || res.status) + ').</div>'; return; }
+  box.innerHTML = `<div class="small" style="margin-bottom:6px"><b>Objet :</b> ${esc(data.subject)} <span class="muted">· exemple : ${esc(sample.lang === 'en' ? 'English' : 'français')}, réponses du simulateur</span> <button class="btn ghost sm" onclick="$('arPrev').innerHTML=''">Fermer</button></div><iframe title="Aperçu" style="width:100%;height:640px;border:1px solid var(--line);border-radius:8px;background:#fff"></iframe>`;
+  box.querySelector('iframe').srcdoc = data.html;
+}
+async function arTest(id) {
+  const to = ($('arTestTo').value || '').trim(); AR.testTo = to; lsSet('bunkaio_ar_test_to', to);
+  if (AR.dirty) { toast('Enregistrez d\'abord vos modifications : le test utilise la version enregistrée.'); return; }
+  const { res, data } = await api('/admin/autoreply', { method: 'POST', body: JSON.stringify({ action: 'test', templateId: id, to, sample: { ...AR.sim, lang: $('arTestLang').value } }) });
+  toast(res.ok && data.ok ? 'Test envoyé' + (to ? ' à ' + to : ' à l\'adresse de notification') : 'Envoi impossible (' + (data.error || res.status) + ')');
+}
+async function arSendLog(i) {
+  const e = AR.log[i], id = $('arLogSel' + i).value;
+  if (AR.dirty) { toast('Enregistrez d\'abord vos modifications.'); return; }
+  if (!confirm('Envoyer « ' + arTplName(id) + ' » à ' + e.facts.email + ' ?')) return;
+  const { res, data } = await api('/admin/autoreply', { method: 'POST', body: JSON.stringify({ action: 'send', at: e.at, templateId: id }) });
+  if (res.ok && data.ok) { toast('Message envoyé à ' + e.facts.email); loadAutoReply(); } else toast('Envoi impossible (' + (data.error || res.status) + ')');
 }
 
 /* ── Campagne & Ads ── */
