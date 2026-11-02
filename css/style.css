@@ -7195,3 +7195,19 @@ body[data-view="quiz"] .quiz-nav-btn svg { stroke: #111; }
   -webkit-backdrop-filter: blur(10px) saturate(1.2) !important; backdrop-filter: blur(10px) saturate(1.2) !important; }
 :is(.nav-cta, .hero-start, .cta-primary, .partner-cta-btn, .mobile-cta, .btn-solid, button, a):is([data-lang="start"], :has(> [data-lang="start"])):not(#bkv):is(:hover, :focus-visible, :active) { background: var(--bk-violet-hover) !important; color: #111 !important; border-color: #6e5aa8 !important; }
 :is(.nav-cta, .hero-start, .cta-primary, .partner-cta-btn, .mobile-cta, button, a):is([data-lang="start"], :has(> [data-lang="start"])):not(#bkv) span { color: #111 !important; }
+
+/* Espace partenaire : blocs bleu nuit / dorés d'origine remis dans la DA (papier, encre noire, rose/champagne en accent) */
+#view-account .pt-status { background: transparent !important; border: 0 !important; border-top: 10px solid #111 !important; border-left: 0 !important; padding: 16px 0 18px !important; color: #111 !important; }
+#view-account .pt-status-label { color: rgba(17,17,17,.55) !important; letter-spacing: .03em !important; font-size: 11px !important; font-weight: 500 !important; }
+#view-account .pt-status-value { color: #111 !important; font-size: clamp(22px, 2.6vw, 34px) !important; font-weight: 600 !important; letter-spacing: -.04em !important; line-height: 1 !important; text-transform: uppercase; }
+#view-account .pt-link { color: #111 !important; border-bottom: 1px solid #111 !important; letter-spacing: .03em; }
+#view-account .pt-link:hover { background: var(--rose); }
+#view-account .pt-adv { background: transparent !important; border: 0 !important; border-top: 1px solid #111 !important; padding: 14px 0 22px !important; }
+#view-account .pt-adv-big, #view-account .pt-hero-big { color: #111 !important; font-weight: 500 !important; letter-spacing: -.065em !important; }
+#view-account .pt-adv-icon { color: #111 !important; }
+#view-account .pt-adv-text, #view-account .pt-promo-text, #view-account .pt-contact-line { color: rgba(17,17,17,.7) !important; }
+#view-account .pt-adv-title, #view-account .pt-promo-title, #view-account .pt-contact-name, #view-account .pt-hero-title { color: #111 !important; }
+#view-account .pt-code { background: var(--rose) !important; border: 1px solid #111 !important; color: #111 !important; }
+#view-account .pt-quiz-notice { background: var(--rose) !important; border: 0 !important; border-left: 3px solid #111 !important; color: #111 !important; }
+#view-account .pt-demo-flag { color: #111 !important; border: 1px solid #111 !important; background: transparent !important; }
+#view-account .pt-promo, #view-account .pt-promo-list > *, #view-account .pt-contact { background: transparent !important; border-color: #111 !important; }
