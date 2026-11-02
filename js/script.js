@@ -1089,13 +1089,13 @@ function refreshDynamic(){
   if (S.cat && S.tier && document.getElementById('qs-4').classList.contains('active')) { renderRecap(); renderOptions(); }
   if (S.cat && S.tier && document.getElementById('qs-5').classList.contains('active')) updateQuizPayReassurance();
   if (S.cat && document.getElementById('qs-6').classList.contains('active')) renderQuizPortfolio();
-  if (document.getElementById('view-services').classList.contains('active')) { renderServices(); if (activeSvcTab === 'devis') renderProcessSteps(); }
+  if (document.getElementById('view-services').classList.contains('active')) { renderServices(); if (activeSvcTab === 'devis') renderProcessSteps(); const sv = document.getElementById('view-services'); bkKick(sv, 'services'); bkMountNext(sv, 'services'); bkScrambleWatch(sv); }
   if (document.getElementById('view-drone').classList.contains('active')) { renderDroneCats(); renderDroneProjects(activeDroneCat); }
   if (document.getElementById('view-partners').classList.contains('active')) { renderPartnersAccordion(); renderApplyBenefits(); renderApplyTypePicker(); }
   if (document.getElementById('view-legal').classList.contains('active')) { renderFaqAccordion(); renderPrivacyAccordion(); renderCgvAccordion(); renderCookiesAccordion(); renderImageAccordion(); }
   if (GX_VIEWS.includes(currentView) && document.getElementById('view-' + currentView).classList.contains('active')) { gxInit(currentView); if (currentView === 'legal') { const a = document.querySelector('#view-legal .svc-tab.active'); gxLegalTab(a ? a.id.replace('legaltab-', '') : 'faq'); } }
   if (document.getElementById('view-portfolio').classList.contains('active')) {
-    renderPortfolioV2();
+    renderPortfolioV2(); bkMountNext(document.getElementById('view-portfolio'), 'portfolio');
   }
   if (document.getElementById('view-login').classList.contains('active')) setLoginType(loginType);
   if (USER && document.getElementById('view-account').classList.contains('active')) renderAccount();
@@ -2080,12 +2080,12 @@ function goView(v, subTab, opts){
     /* Revenir sur une vue peut avoir mis en pause ses vidéos de fond
        (navigateurs mobiles) — on les relance systématiquement. */
     resumeAllBgVideos();
-    if (v === 'services') { renderServices(); renderServiceLinks(); setSvcTab('catalogue'); initSvxMega(); svxAuto(); initCursorTag(); }
+    if (v === 'services') { renderServices(); renderServiceLinks(); setSvcTab('catalogue'); initSvxMega(); svxAuto(); initCursorTag(); svxStageCine(); const sv = document.getElementById('view-services'); bkKick(sv, 'services'); bkMountNext(sv, 'services'); bkScrambleWatch(sv); }
     if (v === 'share') renderGoogleReview();
     if (v === 'drone') { renderDroneCats(); renderDroneProjects(activeDroneCat); }
     if (v === 'portfolio') {
       /* Toujours re-rendre : la langue a pu changer depuis la dernière visite de cette vue */
-      renderPortfolioV2(); pfLoaded = true; initCursorTag();
+      renderPortfolioV2(); pfLoaded = true; initCursorTag(); bkMountNext(document.getElementById('view-portfolio'), 'portfolio');
     }
     if (v === 'portfolio') renderPortfolioLinks();
     if (v === 'partners') {
@@ -4646,6 +4646,9 @@ function svxTierDetail(c, tid){
     </div>`;
 }
 function svxPanel(c){
+  return svxPanelCore(c).replace(/^<div class="svx-panel-in">/, `<div class="svx-panel-in"><div class="svx-reel" data-reel="${c.id}"><p class="svx-kick">${t({fr:'Prestation', en:'Service'})} ${svxNum(CATS.indexOf(c) + 1)},</p></div>`).replace(/<\/div>$/, svxNextHtml(c) + '</div>');
+}
+function svxPanelCore(c){
   if (c.lumen || c.comingSoon) return `<div class="svx-panel-in"><div class="svx-pitch">${c.pitch ? `<p>${t(c.pitch)}</p>` : ''}<p class="svx-soon">${t({fr:'Prototype en cours de finalisation — tarifs sur demande.', en:'Prototype being finalised — rates on request.'})}</p></div>
       <div class="svx-actions"><button type="button" class="svx-cta" onclick="svxQuiz('${c.id}')">${t({fr:'Nous contacter', en:'Contact us'})} <i>→</i></button></div></div>`;
   const tiers = catTiers(c);
@@ -4676,14 +4679,16 @@ function renderServices(){
   const grid = document.getElementById('servicesGrid'); if (!grid) return;
   updatePayFlexBanner(CATS);
   if (activeServiceFilter) { SVX.open = activeServiceFilter; activeServiceFilter = null; }
-  grid.innerHTML = `<div class="svx-index-head"><span>${t({fr:'N°', en:'No.'})}</span><span>${t({fr:'Prestation', en:'Service'})}</span><span>${t({fr:'Formules', en:'Packages'})}</span><span>${t({fr:'Livraison', en:'Delivery'})}</span><span>${t({fr:'À partir de', en:'From'})}</span></div>` +
+  const tiles = SVX.view === 'tiles';
+  grid.classList.toggle('is-tiles', tiles);
+  grid.innerHTML = `<div class="pfx-view svx-view" role="group" aria-label="${escHtml(t({fr:'Affichage', en:'View'}))}"><button type="button" class="${tiles ? '' : 'on'}" aria-pressed="${!tiles}" onclick="svxSetView('list')">${t({fr:'Liste', en:'List'})}</button><button type="button" class="${tiles ? 'on' : ''}" aria-pressed="${tiles}" onclick="svxSetView('tiles')">${t({fr:'Planches', en:'Boards'})}</button></div>` + svxTilesHtml() + `<div class="svx-index-head"><span>${t({fr:'N°', en:'No.'})}</span><span>${t({fr:'Prestation', en:'Service'})}</span><span>${t({fr:'Formules', en:'Packages'})}</span><span>${t({fr:'Livraison', en:'Delivery'})}</span><span>${t({fr:'À partir de', en:'From'})}</span></div>` +
     CATS.map((c, i) => {
       const open = SVX.open === c.id;
       const from = c.lumen ? t({fr:'Sur demande', en:'On request'}) : catFacts(c).from.toLocaleString('fr-FR') + ' €';
       return `<article class="svx-item${open ? ' is-open' : ''}" data-cat="${c.id}" data-i="${i}">
         <button type="button" class="svx-row" aria-expanded="${open}" aria-controls="svx-p-${c.id}" data-cursor="${open ? t({fr:'Fermer', en:'Close'}) : t({fr:'Ouvrir', en:'Open'})}" onclick="svxToggle('${c.id}')">
           <span class="svx-n">${svxNum(i + 1)}</span>
-          <span class="svx-name"><span class="svx-name-t bk-echo" data-text="${escHtml(t(c.name))}">${t(c.name)}</span><small>${t(c.tag)}</small></span>
+          <span class="svx-name"><span class="svx-name-t bk-echo bk-scramble" data-text="${escHtml(t(c.name))}">${t(c.name)}</span><small>${t(c.tag)}</small></span>
           <span class="svx-count">${c.lumen ? '—' : svxNum(catTiers(c).length) + ' ' + t({fr:'formules', en:'packages'})}</span>
           <span class="svx-delay">${c.lumen ? '—' : svxDelays(c)}</span>
           <span class="svx-from">${from}<i class="svx-plus" aria-hidden="true"></i></span>
@@ -4692,6 +4697,8 @@ function renderServices(){
       </article>`;
     }).join('');
   svxBind(grid);
+  bkScrambleWatch(grid); pfxStrips();
+  if (SVX.open) { const it = grid.querySelector(`.svx-item[data-cat="${SVX.open}"]`); if (it) svxReel(it); }
   svxStage(SVX.open);
   if (SVX.open) setTimeout(() => { const el = grid.querySelector(`.svx-item[data-cat="${SVX.open}"]`); if (el) el.scrollIntoView({ block: 'start', behavior: REDUCED_MOTION ? 'auto' : 'smooth' }); }, 350);
 }
@@ -4703,7 +4710,7 @@ function svxToggle(id){
     it.classList.toggle('is-open', on);
     it.querySelector('.svx-row').setAttribute('aria-expanded', String(on));
     it.querySelector('.svx-row').dataset.cursor = on ? t({fr:'Fermer', en:'Close'}) : t({fr:'Ouvrir', en:'Open'});
-    if (on) svxCount(it);
+    if (on) { svxCount(it); svxReel(it); }
   });
   svxStage(SVX.open);
   if (SVX.open && window.track) track('cta_click', 'services_dossier_' + SVX.open);
@@ -4732,7 +4739,7 @@ function svxStage(catId){
   const i = CATS.findIndex(c => c.id === catId), c = CATS[i];
   const label = c ? svxNum(i + 1) : svxNum(CATS.length);
   if (num.textContent !== label) { num.classList.remove('roll'); void num.offsetWidth; num.textContent = label; num.classList.add('roll'); }
-  cap.textContent = c ? t(c.name) : t({fr:'Prestations', en:'Services'});
+  cap.textContent = c ? '00:' + svxNum(i + 1) + ' / 00:' + svxNum(CATS.length) + ' · ' + t(c.name) : t({fr:'Prestations', en:'Services'});
   const url = c && IMG.servicePhotos && IMG.servicePhotos[c.id];
   if (SVX.stageCat === catId) return;
   SVX.stageCat = catId;
@@ -4777,6 +4784,103 @@ function initSvxMega(){
   const spans = [...el.children];
   el.addEventListener('pointermove', e => { spans.forEach(s => { const r = s.getBoundingClientRect(); const d = Math.abs(e.clientX - (r.left + r.width / 2)); s.style.fontWeight = Math.round(300 + 600 * Math.max(0, 1 - d / 260)); }); });
   el.addEventListener('pointerleave', () => spans.forEach(s => { s.style.fontWeight = ''; }));
+}
+
+/* ═══ Services × Almira Kho (nov. 2026) : vue Liste / Planches, noms en capitales brouillées, planche-contact du Portfolio dans chaque
+   dossier (visionneuse « projection »), « Prestation suivante », scène cliquable avec timecode. */
+try { SVX.view = localStorage.getItem('bunkaio_svc_view') === 'tiles' ? 'tiles' : 'list'; } catch (e) { SVX.view = 'list'; }
+function svxSetView(v){
+  SVX.view = v === 'tiles' ? 'tiles' : 'list';
+  try { localStorage.setItem('bunkaio_svc_view', SVX.view); } catch (e) {}
+  const g = document.getElementById('servicesGrid'); if (!g) return;
+  g.classList.toggle('is-tiles', SVX.view === 'tiles');
+  g.querySelectorAll('.svx-view button').forEach((b, k) => { const on = (k === 1) === (SVX.view === 'tiles'); b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on)); });
+  if (window.track) track('cta_click', 'services_vue_' + SVX.view);
+}
+function svxTilesHtml(){
+  return `<div class="svx-tiles">${CATS.map((c, i) => { const ph = IMG.servicePhotos && IMG.servicePhotos[c.id]; const from = c.lumen ? t({fr:'Sur demande', en:'On request'}) : t({fr:'dès ', en:'from '}) + catFacts(c).from.toLocaleString('fr-FR') + ' €';
+    return `<button type="button" class="pfx-tile svx-tile" data-cursor="${escHtml(t({fr:'Ouvrir', en:'Open'}))}" onclick="svxFromTile('${c.id}')">
+      ${ph ? `<img loading="lazy" decoding="async" src="${ph}" alt="" onerror="this.remove()">` : ''}
+      <span class="pfx-tile-n">${svxNum(i + 1)}</span>
+      <span class="pfx-tile-t"><span class="bk-echo" data-text="${escHtml(t(c.name))}">${t(c.name)}</span></span>
+      <span class="pfx-tile-c">${from}</span></button>`; }).join('')}</div>`;
+}
+function svxFromTile(id){
+  svxSetView('list'); if (SVX.open !== id) svxToggle(id);
+  const it = document.querySelector(`.svx-item[data-cat="${id}"]`); if (it) setTimeout(() => it.scrollIntoView({ block: 'start', behavior: REDUCED_MOTION ? 'auto' : 'smooth' }), 60);
+}
+/* Planche-contact : photos du Portfolio de la même prestation (rien si aucune photo). */
+function svxReel(it){
+  const box = it.querySelector('.svx-reel'); if (!box || box.dataset.loaded) return; box.dataset.loaded = '1';
+  const c = CATS.find(x => x.id === it.dataset.cat); if (!c || !PF_CATS.some(p => p.id === c.id)) return;
+  loadPortfolioPhotos(c.id, 24).then(list => {
+    if (!list.length || !box.isConnected) return;
+    const k = bkReel({ title: t(c.name), cat: c.id, photos: list.slice(), label: t({fr:'Prestation ', en:'Service '}) + svxNum(CATS.indexOf(c) + 1) + ', ' });
+    box.insertAdjacentHTML('beforeend', `<p class="svx-reel-meta">${t({fr:'Planche-contact', en:'Contact sheet'})} · ${pfxNum(list.length)} ${t({fr:'images', en:'images'})} · <a href="${(seoRouteFor('portfolio') && routePath(seoRouteFor('portfolio'), LANG)) || '/portfolio/'}" onclick="return navLink(event,'portfolio')">${t({fr:'Voir le portfolio', en:'View the portfolio'})} ↗</a></p>` + bkStripHtml(k, list));
+    pfxStrips();
+  });
+}
+function svxNextHtml(c){
+  const i = CATS.indexOf(c), n = CATS[(i + 1) % CATS.length]; if (!n || n === c) return '';
+  const ph = IMG.servicePhotos && IMG.servicePhotos[n.id];
+  return `<button type="button" class="pfx-next svx-next" data-cursor="${escHtml(t({fr:'Ouvrir', en:'Open'}))}" onclick="svxFromTile('${n.id}')">
+    <span class="pfx-next-k">${t({fr:'Prestation suivante', en:'Next service'})}</span>
+    <span class="pfx-next-t"><span class="bk-echo" data-text="${escHtml(t(n.name))}">${t(n.name)}</span></span>
+    ${ph ? `<span class="pfx-next-img"><img loading="lazy" decoding="async" src="${ph}" alt="" onerror="this.parentNode.remove()"></span>` : ''}</button>`;
+}
+/* Scène des Services : timecode + clic = projection des photos des prestations. */
+function svxStageCine(){
+  const st = document.getElementById('svxStage'); if (!st || st._cine) return; st._cine = true;
+  st.dataset.cursor = t({fr:'Projeter', en:'Play'});
+  st.addEventListener('click', () => {
+    const list = CATS.filter(c => IMG.servicePhotos && IMG.servicePhotos[c.id]);
+    if (!list.length) return;
+    const i = Math.max(0, list.findIndex(c => c.id === SVX.stageCat));
+    pfxOpen({ title: t({fr:'Prestations', en:'Services'}), photos: list.map(c => IMG.servicePhotos[c.id]), label: '' }, i);
+  });
+}
+
+/* ═══ Outils communs du mélange Grids × Almira Kho ═══ */
+var BK_REELS = [];
+function bkReel(o){ BK_REELS.push(o); return BK_REELS.length - 1; }
+function bkPlay(k, i){ pfxOpen(BK_REELS[k], i || 0); }
+function bkStripHtml(k, photos){
+  return `<div class="pfx-strip bk-strip" aria-label="${escHtml(t({fr:'Planche-contact', en:'Contact sheet'}))}"><div class="pfx-strip-in">${photos.map((src, i) => `<button type="button" class="pfx-thumb" data-cursor="${pfxNum(i + 1)}" onclick="bkPlay(${k},${i})" aria-label="${escHtml(t({fr:'Agrandir', en:'Enlarge'}))} ${i + 1}/${photos.length}"><img loading="lazy" decoding="async" src="${src}" alt=""></button>`).join('')}</div></div>`;
+}
+/* Chapitres du site (kicker « Chapitre 0x, ») et page suivante en fin de page, comme « Série suivante » du Portfolio. */
+var BK_CHAPTER = { portfolio: 1, services: 2, partners: 3, contact: 4, legal: 5, drone: 6 };
+var BK_NEXT = { portfolio: 'services', services: 'partners', partners: 'contact', contact: 'legal', legal: 'portfolio', drone: 'portfolio' };
+var BK_VIEW_NAME = { portfolio: {fr:'Portfolio', en:'Portfolio'}, services: {fr:'Services', en:'Services'}, partners: {fr:'Collaboration', en:'Collaboration'}, contact: {fr:'Contact', en:'Contact'}, legal: {fr:'FAQ', en:'FAQ'} };
+function bkKick(root, v){
+  const h = root.querySelector('.gx-main .page-title, .gx-main .ct-title, .gx-main .drone-placeholder-title, .svx-head-main .page-title'); if (!h) return;
+  let k = h.previousElementSibling && h.previousElementSibling.classList.contains('gx-kick') ? h.previousElementSibling : null;
+  if (!k) { k = document.createElement('p'); k.className = 'gx-kick'; k.setAttribute('aria-hidden', 'true'); h.before(k); }
+  k.textContent = t({fr:'Chapitre ', en:'Chapter '}) + pfxNum(BK_CHAPTER[v] || 0) + ',';
+  if (!h.querySelector('.bk-echo')) { const txt = h.textContent.trim(); h.innerHTML = `<span class="bk-echo bk-scramble" data-text="${escHtml(txt)}">${escHtml(txt)}</span>`; }
+}
+function bkMountNext(root, v){
+  const page = root.querySelector('.gx-page') || root.querySelector('.services-page') || root.querySelector('.pf-page'); if (!page) return;
+  const old = page.querySelector(':scope > .bk-next'); if (old) old.remove();
+  const n = BK_NEXT[v]; if (!n) return;
+  const r = seoRouteFor(n, null), href = r ? routePath(r, LANG) : '/';
+  let img = IMG.heroImages && IMG.heroImages[n]; img = Array.isArray(img) ? img[0] : img;
+  const name = t(BK_VIEW_NAME[n]);
+  page.insertAdjacentHTML('beforeend', `<a class="pfx-next bk-next" href="${href}" data-cursor="${escHtml(t({fr:'Entrer', en:'Enter'}))}" onclick="return navLink(event,'${n}')">
+    <span class="pfx-next-k">${t({fr:'Chapitre suivant', en:'Next chapter'})} · ${pfxNum(BK_CHAPTER[n])}</span>
+    <span class="pfx-next-t"><span class="bk-echo" data-text="${escHtml(name)}">${escHtml(name)}</span></span>
+    ${img ? `<span class="pfx-next-img"><img loading="lazy" decoding="async" src="${img}" alt="" onerror="this.parentNode.remove()"></span>` : ''}</a>`);
+}
+/* Planche-contact d'une page (Contact : un peu de chaque univers ; Collaboration : les collaborations du Portfolio). */
+function bkPageReel(root, v){
+  const box = root.querySelector('.gx-reel'); if (!box || box.dataset.lang === LANG) return; box.dataset.lang = LANG; box.innerHTML = '';
+  const cats = v === 'partners' ? ['collaboration'] : ['photo-part', 'corporate', 'mode', 'commercial', 'event'];
+  Promise.all(cats.map(c => loadPortfolioPhotos(c, 24).then(l => v === 'partners' ? l : l.slice(0, 4)))).then(ls => {
+    const list = [].concat(...ls); if (!list.length || !box.isConnected) return;
+    const title = v === 'partners' ? t({fr:'Collaborations', en:'Collaborations'}) : t({fr:'Planche-contact', en:'Contact sheet'});
+    const k = bkReel({ title, photos: list.slice(), label: '' });
+    box.innerHTML = `<div class="gx-reel-head"><p class="gx-reel-k"><span class="bk-scramble bk-echo" data-text="${escHtml(title)}">${escHtml(title)}</span></p><span class="gx-reel-n">${pfxNum(list.length)} ${t({fr:'images', en:'images'})}</span></div>` + bkStripHtml(k, list);
+    bkScrambleWatch(box); pfxStrips();
+  });
 }
 
 /* ═══════════════ PROCESS DÉROULÉ ═══════════════ */
@@ -5321,8 +5425,9 @@ function togglePfGrid(){
   if (window.track) track('cta_click', 'portfolio_grille_' + (PFX.grid ? 'on' : 'off'));
 }
 /* Visionneuse : flèches, clavier, glisser, Échap. */
+/* ci : index d'une série du Portfolio, ou une « bobine » externe { title, client, cat, photos, label } (Services, Contact, Collaboration…). */
 function pfxOpen(ci, i){
-  const c = PFX.chapters[ci]; if (!c) return;
+  const c = typeof ci === 'object' ? ci : PFX.chapters[ci]; if (!c || !c.photos || !c.photos.length) return;
   let lb = PFX.lb;
   if (!lb) {
     lb = document.createElement('div'); lb.className = 'pfx-lb'; lb.setAttribute('role', 'dialog'); lb.setAttribute('aria-modal', 'true');
@@ -5343,23 +5448,24 @@ function pfxOpen(ci, i){
     lb.addEventListener('pointerup', e => { if (x0 !== null && Math.abs(e.clientX - x0) > 50) { pfxStep(e.clientX < x0 ? 1 : -1); lb.querySelector('.pfx-lb-fig')._sw = Date.now(); } x0 = null; });
     document.addEventListener('keydown', e => { if (!lb.classList.contains('on')) return; if (e.key === 'Escape') pfxClose(); if (e.key === 'ArrowRight') pfxStep(1); if (e.key === 'ArrowLeft') pfxStep(-1); });
   }
-  lb._ci = ci; lb._i = i; pfxShow();
+  lb._c = c; lb._label = typeof ci === 'object' ? (c.label || '') : t({fr:'Série ', en:'Series '}) + pfxNum(ci + 1) + ', '; lb._i = i; pfxShow();
   lb.querySelector('.pfx-lb-fig').dataset.cursor = t({fr:'Suivante →', en:'Next →'});
   if (window._bkTag) window._bkTag.classList.remove('on');
   lb.classList.add('on'); document.documentElement.classList.add('pfx-lock');
   lb.querySelector('.pfx-lb-x').focus({ preventScroll: true });
 }
 function pfxShow(){
-  const lb = PFX.lb, c = PFX.chapters[lb._ci]; if (!c) return;
+  const lb = PFX.lb, c = lb._c; if (!c) return;
   const src = c.photos[lb._i], img = lb.querySelector('img');
-  img.src = src; img.alt = pfxAlt(c, src, lb._i);
-  lb.querySelector('.pfx-lb-t').textContent = t({fr:'Série ', en:'Series '}) + pfxNum(lb._ci + 1) + ', ' + c.title;
+  img.onerror = () => { if (c.photos.length < 2) return pfxClose(); c.photos.splice(lb._i, 1); lb._i = lb._i % c.photos.length; pfxShow(); };
+  img.src = src; img.alt = c.cat ? pfxAlt(c, src, lb._i) : (c.title + ' (' + (lb._i + 1) + '/' + c.photos.length + ')');
+  lb.querySelector('.pfx-lb-t').textContent = lb._label + c.title;
   lb.querySelector('.pfx-lb-c').textContent = (c.client || pfxCatLabel(c.cat)) + (c.year ? ' · ' + c.year : '');
   lb.querySelector('.pfx-lb-cap').textContent = img.alt;
   lb.querySelector('.pfx-lb-tc').textContent = '00:' + pfxNum(lb._i + 1) + ' / 00:' + pfxNum(c.photos.length);
   img.classList.remove('in'); void img.offsetWidth; img.classList.add('in');
 }
-function pfxStep(d){ const lb = PFX.lb, c = PFX.chapters[lb._ci]; if (!c) return; lb._i = (lb._i + d + c.photos.length) % c.photos.length; pfxShow(); }
+function pfxStep(d){ const lb = PFX.lb, c = lb._c; if (!c) return; lb._i = (lb._i + d + c.photos.length) % c.photos.length; pfxShow(); }
 function pfxClose(){ if (!PFX.lb) return; PFX.lb.classList.remove('on'); document.documentElement.classList.remove('pfx-lock'); }
 
 /* ═══ Touches « cinéma » (nov. 2026, inspiration Almira Kho) — communes au Portfolio et aux Services ═══
@@ -5400,8 +5506,8 @@ function pfxStrips(){
   if (window._pfxStrip || REDUCED_MOTION) return; window._pfxStrip = true;
   let tick = false;
   const upd = () => {
-    tick = false; if (currentView !== 'portfolio') return;
-    document.querySelectorAll('#pfGrid .pfx-strip').forEach(st => {
+    tick = false;
+    document.querySelectorAll('.view.active .pfx-strip').forEach(st => {
       const r = st.getBoundingClientRect(); if (r.bottom < 0 || r.top > innerHeight) return;
       const inner = st.firstElementChild, max = inner.scrollWidth - st.clientWidth; if (max <= 0) { inner.style.transform = ''; return; }
       const p = Math.min(1, Math.max(0, (innerHeight - r.top) / (innerHeight + r.height)));
@@ -5433,13 +5539,16 @@ function gxInit(v){
   if (v === 'partners') { gxSpots(); gxMarquee(); }
   if (v === 'drone') gxDrone();
   if (v === 'legal') { const s = document.getElementById('gxSearch'); if (s) { s.value = ''; s.placeholder = t({fr:'Rechercher une question…', en:'Search a question…'}); } }
+  bkKick(root, v); bkMountNext(root, v);
+  if (v === 'contact' || v === 'partners') bkPageReel(root, v);
   gxDecorate(root);
-  initCursorTag(); gxMagnet();
+  initCursorTag(); gxMagnet(); pfxStrips();
 }
 /* Ce qui doit être refait après chaque rendu (onglets, accordéons) : numéros, étiquettes curseur, barres, titres brouillés. */
 function gxDecorate(root){
   root.querySelectorAll('.accordion-trigger').forEach(b => { b.dataset.cursor = b.getAttribute('aria-expanded') === 'true' ? t({fr:'Fermer', en:'Close'}) : t({fr:'Ouvrir', en:'Open'}); });
   root.querySelectorAll('a.logo-link').forEach(a => { a.dataset.cursor = t({fr:'Visiter ↗', en:'Visit ↗'}); });
+  root.querySelectorAll('.accordion-trigger > span:first-child').forEach(sp => { sp.classList.add('bk-echo'); sp.dataset.text = sp.dataset.raw != null ? sp.dataset.raw : sp.textContent; });
   root.querySelectorAll('button[type="submit"], .partner-cta-btn, .hero-start').forEach(b => b.classList.add('gx-mag'));
   root.querySelectorAll('.gx-copy').forEach(b => { b.dataset.cursor = t({fr:'Copier', en:'Copy'}); b.textContent = t({fr:'Copier', en:'Copy'}); b.onclick = gxCopy; });
   root.querySelectorAll('.collab-title, .apply-benefits-label, .trust-label, .pp-kicker').forEach(h => h.classList.add('bk-scramble'));
@@ -5495,11 +5604,14 @@ function gxStage(st, v){
   const show = () => {
     if (!good.length) { st.classList.remove('has-ph'); return; }
     const src = good[i % good.length], img = flip ? b : a;
-    img.onload = () => { st.classList.add('has-ph'); st.classList.toggle('show-b', flip); if (cap) cap.textContent = pfxNum(good.indexOf(src) + 1) + ' / ' + pfxNum(good.length); };
+    img.onload = () => { st.classList.add('has-ph'); st.classList.toggle('show-b', flip); st._cur = good.indexOf(src); if (cap) cap.textContent = '00:' + pfxNum(good.indexOf(src) + 1) + ' / 00:' + pfxNum(good.length); };
     img.onerror = () => { good = good.filter(x => x !== src); if (good.length) { i = i % good.length; show(); } else st.classList.remove('has-ph'); };
     img.src = src;
   };
   show();
+  st._good = () => good;
+  st.dataset.cursor = t({fr:'Projeter', en:'Play'});
+  if (!st._cl) { st._cl = true; st.addEventListener('click', () => { const g = st._good ? st._good() : []; if (!g.length) return; const h = st.closest('.view').querySelector('.gx-main h1, .gx-main h2'); pfxOpen({ title: h ? h.textContent.trim() : '', photos: g.slice(), label: '' }, st._cur || 0); }); }
   clearInterval(st._t);
   if (!REDUCED_MOTION) st._t = setInterval(() => { if (!st.closest('.view.active') || document.hidden || good.length < 2) return; i++; flip = !flip; show(); }, 4200);
 }

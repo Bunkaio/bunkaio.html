@@ -6474,3 +6474,55 @@ html:has(body[data-view="contact"])::before, html:has(body[data-view="partners"]
 }
 .view.gx { overflow-x: clip; }
 .view.gx .logo-carousel { margin: 0 calc(50% - 50vw) !important; }
+
+/* ═══ Mélange Grids × Almira Kho étendu (nov. 2026) : Services + pages GX ═══ */
+.view.gx .gx-page, .svx { --pfx-gap: var(--g); }
+/* Titres « chapitre » : kicker gris + titre en capitales serrées, brouillé à l'arrivée, écho au survol */
+.gx-kick { font: 600 clamp(28px, 3.8vw, 54px)/.94 'Inter Tight', sans-serif; letter-spacing: -.035em; text-transform: uppercase; color: rgba(17,17,17,.28); margin: 0; }
+.view.gx .gx-main .page-title, .view.gx .gx-main .ct-title, .view.gx .gx-main .drone-placeholder-title, #view-services .svx .svx-head-main .page-title { font-family: 'Inter Tight', sans-serif !important; font-size: clamp(28px, 3.8vw, 54px) !important; font-weight: 600 !important; line-height: .94 !important; letter-spacing: -.035em !important; text-transform: uppercase !important; margin: 0 0 22px !important; }
+#view-services .svx .svx-head-main .page-title { margin-top: 0 !important; }
+#view-services .svx .svx-head-main .gx-kick { margin-top: 30px; }
+.view.gx .gx-main .page-title::after, .view.gx .gx-main .ct-title::after, #view-services .svx .svx-head-main .page-title::after { width: .32em !important; height: .32em !important; vertical-align: .5em; }
+.gx-main:hover .bk-echo::after, .svx-head-main:hover .page-title .bk-echo::after, .gx-reel-head:hover .bk-echo::after, .view.gx .accordion-trigger:hover .bk-echo::after { opacity: .32; transform: translateY(.36em); }
+/* Scènes cliquables (projection) */
+.gx-stage, .svx-stage { cursor: pointer; }
+/* Planche-contact des pages */
+.gx-reel:empty { display: none; }
+.gx-reel { margin: -24px 0 64px; }
+.gx-reel-head { display: flex; justify-content: space-between; align-items: baseline; border-top: 10px solid #111; padding-top: 12px; margin-bottom: 10px; }
+.gx-reel-k { font: 600 clamp(22px, 2.6vw, 38px)/.94 'Inter Tight', sans-serif; letter-spacing: -.035em; text-transform: uppercase; margin: 0; color: #111; }
+.gx-reel-n { font-size: 12px; color: var(--mute); font-variant-numeric: tabular-nums; }
+.view.gx .gx-reel .pfx-strip, .svx-reel .pfx-strip { margin: 0; }
+.view.gx .pfx-thumb { width: 74px; height: 98px; }
+#psec-program .gx-reel { margin: 0 0 80px; }
+/* Page suivante */
+.view.gx .bk-next, .svx .bk-next { margin-top: 96px; border-top: 10px solid #111; padding-top: 18px; }
+button.pfx-next { width: 100%; background: none; border: 0; border-top: 1px solid #111; font: inherit; text-align: left; cursor: pointer; }
+/* Services : vue Planches */
+.svx .svx-view { margin-bottom: 4px; }
+.svx-tiles { display: none; grid-template-columns: repeat(3, 1fr); gap: 0; margin-bottom: 30px; }
+#servicesGrid.is-tiles .svx-tiles { display: grid; }
+#servicesGrid.is-tiles .svx-index-head, #servicesGrid.is-tiles .svx-item { display: none; }
+.svx-tile { border: 0; padding: 0; cursor: pointer; height: min(64vh, 560px); font: inherit; text-align: left; background: #111; }
+/* Services : dossier — kicker, planche-contact, prestation suivante */
+.svx-reel { grid-column: 1 / -1; min-width: 0; }
+.svx-kick { font: 600 clamp(22px, 2.6vw, 38px)/.94 'Inter Tight', sans-serif; letter-spacing: -.035em; text-transform: uppercase; color: rgba(17,17,17,.28); margin: 6px 0 14px; }
+.svx-reel-meta { font-size: 12px; color: var(--mute); margin: 0 0 8px; }
+.svx-reel-meta a { color: #111; }
+.svx-next { grid-column: 1 / -1; margin-top: 30px; }
+.svx-name-t { text-transform: uppercase; letter-spacing: -.045em !important; font-weight: 600 !important; }
+@media (max-width: 1080px) { .svx-tiles { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 760px) {
+  .gx-kick, .view.gx .gx-main .page-title, .view.gx .gx-main .ct-title, .view.gx .gx-main .drone-placeholder-title, #view-services .svx .svx-head-main .page-title { font-size: 30px !important; }
+  .svx-tiles { grid-template-columns: 1fr 1fr; }
+  .svx-tile { height: 46vw; min-height: 170px; }
+  .gx-reel { margin: -10px 0 44px; }
+  .view.gx .bk-next, .svx .bk-next { margin-top: 64px; border-top-width: 7px; }
+}
+/* Signature ⊹ portée par le kicker « Chapitre 0x, » (le titre en capitales occupe toute la largeur) */
+.view.gx .gx-main .page-title::after, .view.gx .gx-main .ct-title::after, #view-services .svx .svx-head-main .page-title::after { display: none !important; }
+.gx-kick::after { content: ''; display: inline-block; width: .34em; height: .34em; margin-left: .14em; vertical-align: .46em; background: var(--bk-glyph-deep) center / contain no-repeat; }
+.svx-tile img { filter: none; }
+#view-portfolio .bk-next { margin-top: 110px; border-top: 10px solid #111; padding-top: 18px; --pfx-gap: 24px; }
+#view-partners.gx #partnersAccordion .accordion-trigger { font-size: clamp(22px, 2.8vw, 40px) !important; font-weight: 600 !important; line-height: .95 !important; letter-spacing: -.035em !important; text-transform: uppercase !important; padding: 24px 0 !important; }
+.view.gx .accordion-trigger > .bk-echo { display: block; }

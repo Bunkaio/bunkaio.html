@@ -34,7 +34,7 @@
 <link rel="icon" type="image/png" sizes="64x64" href="/images/favicon-64.png">
 <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
 <link rel="preload" href="fonts/dm-sans-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/style.min.css?v=33894cc7">
+<link rel="stylesheet" href="css/style.min.css?v=ff9cdd7a">
 
 <script type="application/ld+json">
 {
@@ -927,7 +927,7 @@
     <div class="gx-sub">
       <div class="gx-main drone-placeholder">
         <div class="drone-placeholder-kicker" data-lang="drone-title">4K Drone & vidéo</div>
-        <h2 data-pageh1 class="drone-placeholder-title bk-scramble" data-lang="drone-placeholder-title">En cours de réalisation</h2>
+        <h2 data-pageh1 class="drone-placeholder-title" data-lang="drone-placeholder-title">En cours de réalisation</h2>
         <p class="drone-placeholder-text" data-lang="drone-placeholder-text">Nous préparons cette prestation avec le même soin que le reste du studio — formules, certifications et portfolio aérien seront bientôt en ligne. En attendant, estimons ensemble votre projet.</p>
         <button class="hero-start" onclick="goView('quiz')"><span data-lang="start">Construire mon projet</span></button>
       </div>
@@ -1133,6 +1133,7 @@
       <div class="gx-stage" data-stage="contact" aria-hidden="true"><div class="gx-stage-ph"><img class="gx-ph-a" alt=""><img class="gx-ph-b" alt=""></div><div class="gx-stage-cap"></div></div>
     </div>
   </header>
+  <div class="gx-reel"></div>
   <div class="ct-page">
     <div>
       <div class="read-panel ct-info-panel">
@@ -1347,6 +1348,7 @@
         <div class="trust-label" data-lang="p-trust">Ils ont collaboré avec BUNKAIO</div>
         <div class="logo-carousel"><div class="logo-track" id="logoTrack"></div></div>
       </div>
+      <div class="gx-reel"></div>
 
       <!-- Accordéon partenaires -->
       <div id="partnersAccordion"><!--snap--><!--/snap--></div>
@@ -1549,7 +1551,7 @@
       <div id="cookiesAccordion"><!--snap-->
     <div class="accordion-item rv" style="--rv-d: 0s;">
       <button class="accordion-trigger" aria-expanded="true" onclick="toggleAccordion(this)">
-        <span>Qu'est-ce qu'un cookie ou un traceur ?</span>
+        <span class="bk-echo" data-text="Qu'est-ce qu'un cookie ou un traceur ?">Qu'est-ce qu'un cookie ou un traceur ?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
       <div class="accordion-body open">
@@ -1558,7 +1560,7 @@
     </div>
     <div class="accordion-item rv" style="--rv-d: 0.07s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
-        <span>Ce que BUNKAIO utilise aujourd'hui</span>
+        <span class="bk-echo" data-text="Ce que BUNKAIO utilise aujourd'hui">Ce que BUNKAIO utilise aujourd'hui</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
       <div class="accordion-body ">
@@ -1567,7 +1569,7 @@
     </div>
     <div class="accordion-item rv" style="--rv-d: 0.14s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
-        <span>Mesure d'audience anonyme de BUNKAIO</span>
+        <span class="bk-echo" data-text="Mesure d'audience anonyme de BUNKAIO">Mesure d'audience anonyme de BUNKAIO</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
       <div class="accordion-body ">
@@ -1576,7 +1578,7 @@
     </div>
     <div class="accordion-item rv" style="--rv-d: 0.21000000000000002s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
-        <span>Services soumis à votre consentement</span>
+        <span class="bk-echo" data-text="Services soumis à votre consentement">Services soumis à votre consentement</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
       <div class="accordion-body ">
@@ -1585,7 +1587,7 @@
     </div>
     <div class="accordion-item rv" style="--rv-d: 0.28s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
-        <span>Contenus externes</span>
+        <span class="bk-echo" data-text="Contenus externes">Contenus externes</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
       <div class="accordion-body ">
@@ -1594,7 +1596,7 @@
     </div>
     <div class="accordion-item rv" style="--rv-d: 0.35000000000000003s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
-        <span>Gérer ou retirer votre consentement</span>
+        <span class="bk-echo" data-text="Gérer ou retirer votre consentement">Gérer ou retirer votre consentement</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
       <div class="accordion-body ">
@@ -1603,7 +1605,7 @@
     </div>
     <div class="accordion-item rv" style="--rv-d: 0.35000000000000003s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
-        <span>Prestataires techniques et transferts</span>
+        <span class="bk-echo" data-text="Prestataires techniques et transferts">Prestataires techniques et transferts</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
       <div class="accordion-body ">
@@ -1612,7 +1614,7 @@
     </div>
     <div class="accordion-item rv" style="--rv-d: 0.35000000000000003s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
-        <span>Nous contacter</span>
+        <span class="bk-echo" data-text="Nous contacter">Nous contacter</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
       <div class="accordion-body ">
@@ -1997,6 +1999,6 @@
 <script src="config/articles.en.js?v=a5fd138b"></script>
 <script src="config/routes.js?v=f47dd51d"></script>
 <script src="config/media.js?v=3d72d6fd"></script>
-<script src="js/script.min.js?v=682ed6ba"></script>
+<script src="js/script.min.js?v=1cbae054"></script>
 </body>
 </html>

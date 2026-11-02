@@ -34,7 +34,7 @@
 <link rel="icon" type="image/png" sizes="64x64" href="/images/favicon-64.png">
 <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
 <link rel="preload" href="fonts/dm-sans-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/style.min.css?v=33894cc7">
+<link rel="stylesheet" href="css/style.min.css?v=ff9cdd7a">
 
 <script type="application/ld+json">
 {
@@ -927,7 +927,7 @@
     <div class="gx-sub">
       <div class="gx-main drone-placeholder">
         <div class="drone-placeholder-kicker" data-lang="drone-title">4K Drone & vidéo</div>
-        <h2 data-pageh1 class="drone-placeholder-title bk-scramble" data-lang="drone-placeholder-title">En cours de réalisation</h2>
+        <h2 data-pageh1 class="drone-placeholder-title" data-lang="drone-placeholder-title">En cours de réalisation</h2>
         <p class="drone-placeholder-text" data-lang="drone-placeholder-text">Nous préparons cette prestation avec le même soin que le reste du studio — formules, certifications et portfolio aérien seront bientôt en ligne. En attendant, estimons ensemble votre projet.</p>
         <button class="hero-start" onclick="goView('quiz')"><span data-lang="start">Construire mon projet</span></button>
       </div>
@@ -1133,6 +1133,7 @@
       <div class="gx-stage" data-stage="contact" aria-hidden="true"><div class="gx-stage-ph"><img class="gx-ph-a" alt=""><img class="gx-ph-b" alt=""></div><div class="gx-stage-cap"></div></div>
     </div>
   </header>
+  <div class="gx-reel"></div>
   <div class="ct-page">
     <div>
       <div class="read-panel ct-info-panel">
@@ -1347,6 +1348,7 @@
         <div class="trust-label" data-lang="p-trust">Ils ont collaboré avec BUNKAIO</div>
         <div class="logo-carousel"><div class="logo-track" id="logoTrack"></div></div>
       </div>
+      <div class="gx-reel"></div>
 
       <!-- Accordéon partenaires -->
       <div id="partnersAccordion"><!--snap--><!--/snap--></div>
@@ -1534,7 +1536,7 @@
       <div id="faqAccordion"><!--snap-->
     <div class="accordion-item rv" style="--rv-d: 0s;">
       <button class="accordion-trigger" aria-expanded="true" onclick="toggleAccordion(this)">
-        <span data-raw="Quelles prestations proposez-vous ?">Quelles prestations proposez-vous ?</span>
+        <span data-raw="Quelles prestations proposez-vous ?" class="bk-echo" data-text="Quelles prestations proposez-vous ?">Quelles prestations proposez-vous ?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
       <div class="accordion-body open">
@@ -1543,7 +1545,7 @@
     </div>
     <div class="accordion-item rv" style="--rv-d: 0.07s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
-        <span data-raw="Quelle est la qualité des images livrées ?">Quelle est la qualité des images livrées ?</span>
+        <span data-raw="Quelle est la qualité des images livrées ?" class="bk-echo" data-text="Quelle est la qualité des images livrées ?">Quelle est la qualité des images livrées ?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
       <div class="accordion-body ">
@@ -1552,7 +1554,7 @@
     </div>
     <div class="accordion-item rv" style="--rv-d: 0.14s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
-        <span data-raw="Comment se déroule une prestation, de la demande à la livraison ?">Comment se déroule une prestation, de la demande à la livraison ?</span>
+        <span data-raw="Comment se déroule une prestation, de la demande à la livraison ?" class="bk-echo" data-text="Comment se déroule une prestation, de la demande à la livraison ?">Comment se déroule une prestation, de la demande à la livraison ?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
       <div class="accordion-body ">
@@ -1561,7 +1563,7 @@
     </div>
     <div class="accordion-item rv" style="--rv-d: 0.21000000000000002s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
-        <span data-raw="Je ne suis pas à l'aise devant l'objectif, est-ce un problème ?">Je ne suis pas à l'aise devant l'objectif, est-ce un problème ?</span>
+        <span data-raw="Je ne suis pas à l'aise devant l'objectif, est-ce un problème ?" class="bk-echo" data-text="Je ne suis pas à l'aise devant l'objectif, est-ce un problème ?">Je ne suis pas à l'aise devant l'objectif, est-ce un problème ?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
       <div class="accordion-body ">
@@ -1570,7 +1572,7 @@
     </div>
     <div class="accordion-item rv" style="--rv-d: 0.28s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
-        <span data-raw="Quels sont les délais de livraison ?">Quels sont les délais de livraison ?</span>
+        <span data-raw="Quels sont les délais de livraison ?" class="bk-echo" data-text="Quels sont les délais de livraison ?">Quels sont les délais de livraison ?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
       <div class="accordion-body ">
@@ -1579,7 +1581,7 @@
     </div>
     <div class="accordion-item rv" style="--rv-d: 0.35000000000000003s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
-        <span data-raw="Comment fonctionne le paiement ?">Comment fonctionne le paiement ?</span>
+        <span data-raw="Comment fonctionne le paiement ?" class="bk-echo" data-text="Comment fonctionne le paiement ?">Comment fonctionne le paiement ?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
       <div class="accordion-body ">
@@ -1588,7 +1590,7 @@
     </div>
     <div class="accordion-item rv" style="--rv-d: 0.35000000000000003s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
-        <span data-raw="Que se passe-t-il si j'annule ma prestation ?">Que se passe-t-il si j'annule ma prestation ?</span>
+        <span data-raw="Que se passe-t-il si j'annule ma prestation ?" class="bk-echo" data-text="Que se passe-t-il si j'annule ma prestation ?">Que se passe-t-il si j'annule ma prestation ?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
       <div class="accordion-body ">
@@ -1597,7 +1599,7 @@
     </div>
     <div class="accordion-item rv" style="--rv-d: 0.35000000000000003s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
-        <span data-raw="Puis-je utiliser les visuels pour un usage commercial ?">Puis-je utiliser les visuels pour un usage commercial ?</span>
+        <span data-raw="Puis-je utiliser les visuels pour un usage commercial ?" class="bk-echo" data-text="Puis-je utiliser les visuels pour un usage commercial ?">Puis-je utiliser les visuels pour un usage commercial ?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
       <div class="accordion-body ">
@@ -1606,7 +1608,7 @@
     </div>
     <div class="accordion-item rv" style="--rv-d: 0.35000000000000003s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
-        <span data-raw="Comment accéder à mon espace client, et à quoi sert-il ?">Comment accéder à mon espace client, et à quoi sert-il ?</span>
+        <span data-raw="Comment accéder à mon espace client, et à quoi sert-il ?" class="bk-echo" data-text="Comment accéder à mon espace client, et à quoi sert-il ?">Comment accéder à mon espace client, et à quoi sert-il ?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
       <div class="accordion-body ">
@@ -1615,7 +1617,7 @@
     </div>
     <div class="accordion-item rv" style="--rv-d: 0.35000000000000003s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
-        <span data-raw="Qu'est-ce qu'un moodboard, et est-il obligatoire ?">Qu'est-ce qu'un moodboard, et est-il obligatoire ?</span>
+        <span data-raw="Qu'est-ce qu'un moodboard, et est-il obligatoire ?" class="bk-echo" data-text="Qu'est-ce qu'un moodboard, et est-il obligatoire ?">Qu'est-ce qu'un moodboard, et est-il obligatoire ?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
       <div class="accordion-body ">
@@ -1624,7 +1626,7 @@
     </div>
     <div class="accordion-item rv" style="--rv-d: 0.35000000000000003s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
-        <span data-raw="Mes informations et mes images sont-elles en sécurité ?">Mes informations et mes images sont-elles en sécurité ?</span>
+        <span data-raw="Mes informations et mes images sont-elles en sécurité ?" class="bk-echo" data-text="Mes informations et mes images sont-elles en sécurité ?">Mes informations et mes images sont-elles en sécurité ?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
       <div class="accordion-body ">
@@ -1633,7 +1635,7 @@
     </div>
     <div class="accordion-item rv" style="--rv-d: 0.35000000000000003s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
-        <span data-raw="Où intervenez-vous ?">Où intervenez-vous ?</span>
+        <span data-raw="Où intervenez-vous ?" class="bk-echo" data-text="Où intervenez-vous ?">Où intervenez-vous ?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
       <div class="accordion-body ">
@@ -1642,7 +1644,7 @@
     </div>
     <div class="accordion-item rv" style="--rv-d: 0.35000000000000003s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
-        <span data-raw="Comment devenir partenaire, et que propose l'espace partenaire ?">Comment devenir partenaire, et que propose l'espace partenaire ?</span>
+        <span data-raw="Comment devenir partenaire, et que propose l'espace partenaire ?" class="bk-echo" data-text="Comment devenir partenaire, et que propose l'espace partenaire ?">Comment devenir partenaire, et que propose l'espace partenaire ?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
       <div class="accordion-body ">
@@ -1651,7 +1653,7 @@
     </div>
     <div class="accordion-item rv" style="--rv-d: 0.35000000000000003s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
-        <span data-raw="Qu'est-ce que Lumen by Bunkaio ?">Qu'est-ce que Lumen by Bunkaio ?</span>
+        <span data-raw="Qu'est-ce que Lumen by Bunkaio ?" class="bk-echo" data-text="Qu'est-ce que Lumen by Bunkaio ?">Qu'est-ce que Lumen by Bunkaio ?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
       <div class="accordion-body ">
@@ -2051,6 +2053,6 @@
 <script src="config/articles.en.js?v=a5fd138b"></script>
 <script src="config/routes.js?v=f47dd51d"></script>
 <script src="config/media.js?v=3d72d6fd"></script>
-<script src="js/script.min.js?v=682ed6ba"></script>
+<script src="js/script.min.js?v=1cbae054"></script>
 </body>
 </html>

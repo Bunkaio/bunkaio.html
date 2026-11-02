@@ -34,7 +34,7 @@
 <link rel="icon" type="image/png" sizes="64x64" href="/images/favicon-64.png">
 <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
 <link rel="preload" href="fonts/dm-sans-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/style.min.css?v=33894cc7">
+<link rel="stylesheet" href="css/style.min.css?v=ff9cdd7a">
 
 <script type="application/ld+json">
 {
@@ -847,15 +847,39 @@
         <div class="svc-cat-photo" id="svcCatPhoto" style="display:none">
           <img id="svcCatPhotoImg" alt="">
         </div>
-        <div class="services-grid" id="servicesGrid"><!--snap--><div class="svx-index-head"><span>N°</span><span>Prestation</span><span>Formules</span><span>Livraison</span><span>À partir de</span></div><article class="svx-item" data-cat="photo-part" data-i="0" style="--d: 0s;">
+        <div class="services-grid" id="servicesGrid"><!--snap--><div class="pfx-view svx-view" role="group" aria-label="Affichage"><button type="button" class="on" aria-pressed="true" onclick="svxSetView('list')">Liste</button><button type="button" class="" aria-pressed="false" onclick="svxSetView('tiles')">Planches</button></div><div class="svx-tiles"><button type="button" class="pfx-tile svx-tile" onclick="svxFromTile('photo-part')">
+      
+      <span class="pfx-tile-n">01</span>
+      <span class="pfx-tile-t"><span class="bk-echo" data-text="Séance photo — particuliers">Séance photo — particuliers</span></span>
+      <span class="pfx-tile-c">dès 250 €</span></button><button type="button" class="pfx-tile svx-tile" onclick="svxFromTile('corporate')">
+      
+      <span class="pfx-tile-n">02</span>
+      <span class="pfx-tile-t"><span class="bk-echo" data-text="Corporate &amp; Personal Branding">Corporate &amp; Personal Branding</span></span>
+      <span class="pfx-tile-c">dès 250 €</span></button><button type="button" class="pfx-tile svx-tile" onclick="svxFromTile('mode')">
+      
+      <span class="pfx-tile-n">03</span>
+      <span class="pfx-tile-t"><span class="bk-echo" data-text="Mode, agence et mannequins">Mode, agence et mannequins</span></span>
+      <span class="pfx-tile-c">dès 490 €</span></button><button type="button" class="pfx-tile svx-tile" onclick="svxFromTile('commercial')">
+      
+      <span class="pfx-tile-n">04</span>
+      <span class="pfx-tile-t"><span class="bk-echo" data-text="Commercial &amp; produits">Commercial &amp; produits</span></span>
+      <span class="pfx-tile-c">dès 390 €</span></button><button type="button" class="pfx-tile svx-tile" onclick="svxFromTile('event')">
+      
+      <span class="pfx-tile-n">05</span>
+      <span class="pfx-tile-t"><span class="bk-echo" data-text="Événementiel">Événementiel</span></span>
+      <span class="pfx-tile-c">dès 420 €</span></button><button type="button" class="pfx-tile svx-tile" onclick="svxFromTile('lumen')">
+      
+      <span class="pfx-tile-n">06</span>
+      <span class="pfx-tile-t"><span class="bk-echo" data-text="Lumen — Photobooth IA (location)">Lumen — Photobooth IA (location)</span></span>
+      <span class="pfx-tile-c">Sur demande</span></button></div><div class="svx-index-head"><span>N°</span><span>Prestation</span><span>Formules</span><span>Livraison</span><span>À partir de</span></div><article class="svx-item" data-cat="photo-part" data-i="0" style="--d: 0s;">
         <button type="button" class="svx-row" aria-expanded="false" aria-controls="svx-p-photo-part" onclick="svxToggle('photo-part')">
           <span class="svx-n">01</span>
-          <span class="svx-name"><span class="svx-name-t bk-echo" data-text="Séance photo — particuliers">Séance photo — particuliers</span><small>Extérieur · studio · solo · couple · groupe · book grossesse</small></span>
+          <span class="svx-name"><span class="svx-name-t bk-echo bk-scramble" data-text="Séance photo — particuliers" data-sc="1">Séance photo — particuliers</span><small>Extérieur · studio · solo · couple · groupe · book grossesse</small></span>
           <span class="svx-count">04 formules</span>
           <span class="svx-delay">5–10 j. ouvrés</span>
           <span class="svx-from">250 €<i class="svx-plus" aria-hidden="true"></i></span>
         </button>
-        <div class="svx-panel" id="svx-p-photo-part" role="region"><div class="svx-panel-in">
+        <div class="svx-panel" id="svx-p-photo-part" role="region"><div class="svx-panel-in"><div class="svx-reel" data-reel="photo-part"><p class="svx-kick">Prestation 01,</p></div>
       <div class="svx-pitch">
         <p>Pas besoin d'être à l'aise devant l'objectif : c'est notre rôle de vous mettre en confiance. Résultat, des photos qui vous ressemblent vraiment — livrées en 5 à 10 jours ouvrés selon la formule.</p>
         <p class="svx-for"><span>Pour qui</span>Extérieur · studio · solo · couple · groupe · book grossesse</p>
@@ -879,16 +903,19 @@
           <span class="svx-note">Devis personnalisé sous 48 h ouvrées</span>
         </div>
       </div>
-    </div></div>
+    <button type="button" class="pfx-next svx-next" onclick="svxFromTile('corporate')">
+    <span class="pfx-next-k">Prestation suivante</span>
+    <span class="pfx-next-t"><span class="bk-echo" data-text="Corporate &amp; Personal Branding">Corporate &amp; Personal Branding</span></span>
+    </button></div></div>
       </article><article class="svx-item" data-cat="corporate" data-i="1" style="--d: 0.06s;">
         <button type="button" class="svx-row" aria-expanded="false" aria-controls="svx-p-corporate" onclick="svxToggle('corporate')">
           <span class="svx-n">02</span>
-          <span class="svx-name"><span class="svx-name-t bk-echo" data-text="Corporate &amp; Personal Branding">Corporate &amp; Personal Branding</span><small>Entrepreneurs · indépendants · dirigeants · équipes</small></span>
+          <span class="svx-name"><span class="svx-name-t bk-echo bk-scramble" data-text="Corporate &amp; Personal Branding" data-sc="1">Corporate &amp; Personal Branding</span><small>Entrepreneurs · indépendants · dirigeants · équipes</small></span>
           <span class="svx-count">05 formules</span>
           <span class="svx-delay">5–10 j. ouvrés</span>
           <span class="svx-from">250 €<i class="svx-plus" aria-hidden="true"></i></span>
         </button>
-        <div class="svx-panel" id="svx-p-corporate" role="region"><div class="svx-panel-in">
+        <div class="svx-panel" id="svx-p-corporate" role="region"><div class="svx-panel-in"><div class="svx-reel" data-reel="corporate"><p class="svx-kick">Prestation 02,</p></div>
       <div class="svx-pitch">
         <p>Une image professionnelle qui inspire confiance dès le premier regard. Le shooting peut se faire directement dans votre environnement de travail : vos locaux deviennent votre décor.</p>
         <p class="svx-for"><span>Pour qui</span>Entrepreneurs · indépendants · dirigeants · équipes</p>
@@ -912,16 +939,19 @@
           <span class="svx-note">Devis personnalisé sous 48 h ouvrées</span>
         </div>
       </div>
-    </div></div>
+    <button type="button" class="pfx-next svx-next" onclick="svxFromTile('mode')">
+    <span class="pfx-next-k">Prestation suivante</span>
+    <span class="pfx-next-t"><span class="bk-echo" data-text="Mode, agence et mannequins">Mode, agence et mannequins</span></span>
+    </button></div></div>
       </article><article class="svx-item" data-cat="mode" data-i="2" style="--d: 0.12s;">
         <button type="button" class="svx-row" aria-expanded="false" aria-controls="svx-p-mode" onclick="svxToggle('mode')">
           <span class="svx-n">03</span>
-          <span class="svx-name"><span class="svx-name-t bk-echo" data-text="Mode, agence et mannequins">Mode, agence et mannequins</span><small>Marques · agences · e-commerce · lookbook</small></span>
+          <span class="svx-name"><span class="svx-name-t bk-echo bk-scramble" data-text="Mode, agence et mannequins" data-sc="1">Mode, agence et mannequins</span><small>Marques · agences · e-commerce · lookbook</small></span>
           <span class="svx-count">04 formules</span>
           <span class="svx-delay">5–10 j. ouvrés</span>
           <span class="svx-from">490 €<i class="svx-plus" aria-hidden="true"></i></span>
         </button>
-        <div class="svx-panel" id="svx-p-mode" role="region"><div class="svx-panel-in">
+        <div class="svx-panel" id="svx-p-mode" role="region"><div class="svx-panel-in"><div class="svx-reel" data-reel="mode"><p class="svx-kick">Prestation 03,</p></div>
       <div class="svx-pitch">
         <p>Des visuels qui vendent, pas seulement qui plaisent. Chaque lookbook est pensé pour votre stratégie de marque, du shooting jusqu'à la publication.</p>
         <p class="svx-for"><span>Pour qui</span>Marques · agences · e-commerce · lookbook</p>
@@ -945,16 +975,19 @@
           <span class="svx-note">Devis personnalisé sous 48 h ouvrées</span>
         </div>
       </div>
-    </div></div>
+    <button type="button" class="pfx-next svx-next" onclick="svxFromTile('commercial')">
+    <span class="pfx-next-k">Prestation suivante</span>
+    <span class="pfx-next-t"><span class="bk-echo" data-text="Commercial &amp; produits">Commercial &amp; produits</span></span>
+    </button></div></div>
       </article><article class="svx-item" data-cat="commercial" data-i="3" style="--d: 0.18s;">
         <button type="button" class="svx-row" aria-expanded="false" aria-controls="svx-p-commercial" onclick="svxToggle('commercial')">
           <span class="svx-n">04</span>
-          <span class="svx-name"><span class="svx-name-t bk-echo" data-text="Commercial &amp; produits">Commercial &amp; produits</span><small>Packshots · produits · marques · entreprises</small></span>
+          <span class="svx-name"><span class="svx-name-t bk-echo bk-scramble" data-text="Commercial &amp; produits" data-sc="1">Commercial &amp; produits</span><small>Packshots · produits · marques · entreprises</small></span>
           <span class="svx-count">04 formules</span>
           <span class="svx-delay">3–10 j. ouvrés</span>
           <span class="svx-from">390 €<i class="svx-plus" aria-hidden="true"></i></span>
         </button>
-        <div class="svx-panel" id="svx-p-commercial" role="region"><div class="svx-panel-in">
+        <div class="svx-panel" id="svx-p-commercial" role="region"><div class="svx-panel-in"><div class="svx-reel" data-reel="commercial"><p class="svx-kick">Prestation 04,</p></div>
       <div class="svx-pitch">
         <p>Des packshots nets et lumineux, prêts à convertir — sur votre site comme sur vos réseaux. La même exigence qu'une campagne, quel que soit le nombre de produits.</p>
         <p class="svx-for"><span>Pour qui</span>Packshots · produits · marques · entreprises</p>
@@ -978,16 +1011,19 @@
           <span class="svx-note">Devis personnalisé sous 48 h ouvrées</span>
         </div>
       </div>
-    </div></div>
+    <button type="button" class="pfx-next svx-next" onclick="svxFromTile('event')">
+    <span class="pfx-next-k">Prestation suivante</span>
+    <span class="pfx-next-t"><span class="bk-echo" data-text="Événementiel">Événementiel</span></span>
+    </button></div></div>
       </article><article class="svx-item" data-cat="event" data-i="4" style="--d: 0.24s;">
         <button type="button" class="svx-row" aria-expanded="false" aria-controls="svx-p-event" onclick="svxToggle('event')">
           <span class="svx-n">05</span>
-          <span class="svx-name"><span class="svx-name-t bk-echo" data-text="Événementiel">Événementiel</span><small>Domaines · entreprises · réceptions</small></span>
+          <span class="svx-name"><span class="svx-name-t bk-echo bk-scramble" data-text="Événementiel" data-sc="1">Événementiel</span><small>Domaines · entreprises · réceptions</small></span>
           <span class="svx-count">04 formules</span>
           <span class="svx-delay">3–10 j. ouvrés</span>
           <span class="svx-from">420 €<i class="svx-plus" aria-hidden="true"></i></span>
         </button>
-        <div class="svx-panel" id="svx-p-event" role="region"><div class="svx-panel-in">
+        <div class="svx-panel" id="svx-p-event" role="region"><div class="svx-panel-in"><div class="svx-reel" data-reel="event"><p class="svx-kick">Prestation 05,</p></div>
       <div class="svx-pitch">
         <p>Votre journée ne se rejoue pas deux fois. Nous restons discrets pour que vous puissiez la vivre pleinement, pendant que nous en capturons chaque instant.</p>
         <p class="svx-for"><span>Pour qui</span>Domaines · entreprises · réceptions</p>
@@ -1011,17 +1047,23 @@
           <span class="svx-note">Devis personnalisé sous 48 h ouvrées</span>
         </div>
       </div>
-    </div></div>
+    <button type="button" class="pfx-next svx-next" onclick="svxFromTile('lumen')">
+    <span class="pfx-next-k">Prestation suivante</span>
+    <span class="pfx-next-t"><span class="bk-echo" data-text="Lumen — Photobooth IA (location)">Lumen — Photobooth IA (location)</span></span>
+    </button></div></div>
       </article><article class="svx-item" data-cat="lumen" data-i="5" style="--d: 0.3s;">
         <button type="button" class="svx-row" aria-expanded="false" aria-controls="svx-p-lumen" onclick="svxToggle('lumen')">
           <span class="svx-n">06</span>
-          <span class="svx-name"><span class="svx-name-t bk-echo" data-text="Lumen — Photobooth IA (location)">Lumen — Photobooth IA (location)</span><small>Expérience photo IA — mariages et événements haut de gamme</small></span>
+          <span class="svx-name"><span class="svx-name-t bk-echo bk-scramble" data-text="Lumen — Photobooth IA (location)" data-sc="1">Lumen — Photobooth IA (location)</span><small>Expérience photo IA — mariages et événements haut de gamme</small></span>
           <span class="svx-count">—</span>
           <span class="svx-delay">—</span>
           <span class="svx-from">Sur demande<i class="svx-plus" aria-hidden="true"></i></span>
         </button>
-        <div class="svx-panel" id="svx-p-lumen" role="region"><div class="svx-panel-in"><div class="svx-pitch"><p>Un souvenir unique, généré par IA en quelques secondes, sans jamais sacrifier l'élégance de votre réception. Vos invités repartent avec bien plus qu'une photo.</p><p class="svx-soon">Prototype en cours de finalisation — tarifs sur demande.</p></div>
-      <div class="svx-actions"><button type="button" class="svx-cta" onclick="svxQuiz('lumen')">Nous contacter <i>→</i></button></div></div></div>
+        <div class="svx-panel" id="svx-p-lumen" role="region"><div class="svx-panel-in"><div class="svx-reel" data-reel="lumen"><p class="svx-kick">Prestation 06,</p></div><div class="svx-pitch"><p>Un souvenir unique, généré par IA en quelques secondes, sans jamais sacrifier l'élégance de votre réception. Vos invités repartent avec bien plus qu'une photo.</p><p class="svx-soon">Prototype en cours de finalisation — tarifs sur demande.</p></div>
+      <div class="svx-actions"><button type="button" class="svx-cta" onclick="svxQuiz('lumen')">Nous contacter <i>→</i></button></div><button type="button" class="pfx-next svx-next" onclick="svxFromTile('photo-part')">
+    <span class="pfx-next-k">Prestation suivante</span>
+    <span class="pfx-next-t"><span class="bk-echo" data-text="Séance photo — particuliers">Séance photo — particuliers</span></span>
+    </button></div></div>
       </article><!--/snap--></div>
       </div>
       <!-- Garanties : puces compactes, détail dépliable — le catalogue reste à portée de scroll -->
@@ -1244,7 +1286,7 @@
     <div class="gx-sub">
       <div class="gx-main drone-placeholder">
         <div class="drone-placeholder-kicker" data-lang="drone-title">4K Drone & vidéo</div>
-        <h2 data-pageh1 class="drone-placeholder-title bk-scramble" data-lang="drone-placeholder-title">En cours de réalisation</h2>
+        <h2 data-pageh1 class="drone-placeholder-title" data-lang="drone-placeholder-title">En cours de réalisation</h2>
         <p class="drone-placeholder-text" data-lang="drone-placeholder-text">Nous préparons cette prestation avec le même soin que le reste du studio — formules, certifications et portfolio aérien seront bientôt en ligne. En attendant, estimons ensemble votre projet.</p>
         <button class="hero-start" onclick="goView('quiz')"><span data-lang="start">Construire mon projet</span></button>
       </div>
@@ -1450,6 +1492,7 @@
       <div class="gx-stage" data-stage="contact" aria-hidden="true"><div class="gx-stage-ph"><img class="gx-ph-a" alt=""><img class="gx-ph-b" alt=""></div><div class="gx-stage-cap"></div></div>
     </div>
   </header>
+  <div class="gx-reel"></div>
   <div class="ct-page">
     <div>
       <div class="read-panel ct-info-panel">
@@ -1664,6 +1707,7 @@
         <div class="trust-label" data-lang="p-trust">Ils ont collaboré avec BUNKAIO</div>
         <div class="logo-carousel"><div class="logo-track" id="logoTrack"></div></div>
       </div>
+      <div class="gx-reel"></div>
 
       <!-- Accordéon partenaires -->
       <div id="partnersAccordion"><!--snap--><!--/snap--></div>
@@ -2242,6 +2286,6 @@
 <script src="config/articles.en.js?v=a5fd138b"></script>
 <script src="config/routes.js?v=f47dd51d"></script>
 <script src="config/media.js?v=3d72d6fd"></script>
-<script src="js/script.min.js?v=682ed6ba"></script>
+<script src="js/script.min.js?v=1cbae054"></script>
 </body>
 </html>
