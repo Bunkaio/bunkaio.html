@@ -6526,3 +6526,24 @@ button.pfx-next { width: 100%; background: none; border: 0; border-top: 1px soli
 #view-portfolio .bk-next { margin-top: 110px; border-top: 10px solid #111; padding-top: 18px; --pfx-gap: 24px; }
 #view-partners.gx #partnersAccordion .accordion-trigger { font-size: clamp(22px, 2.8vw, 40px) !important; font-weight: 600 !important; line-height: .95 !important; letter-spacing: -.035em !important; text-transform: uppercase !important; padding: 24px 0 !important; }
 .view.gx .accordion-trigger > .bk-echo { display: block; }
+
+/* Safari iOS : l'alignement « baseline » d'une grille avec des titres sur plusieurs lignes faisait remonter le titre par-dessus la barre
+   noire. Alignement en haut, et les petites colonnes (n°, délais, prix, compteurs) décalées pour tomber sur la première ligne du titre. */
+.svx-row { align-items: start !important; --tf: clamp(26px, 3.4vw, 50px); }
+.svx-name-t { font-size: var(--tf) !important; }
+.svx-n, .svx-count, .svx-delay { padding-top: max(0px, calc(var(--tf) * .76 - 11px)); }
+.svx-from { padding-top: max(0px, calc(var(--tf) * .76 - 14px)); }
+.svx-name, .svx-name-t { min-width: 0; }
+.pfx-row { align-items: start !important; }
+.pfx-row-n, .pfx-row-c, .pfx-row-y, .pfx-row-i { padding-top: max(0px, calc(clamp(22px, 2.6vw, 36px) * .76 - 11px)); }
+.view.gx .accordion-trigger { align-items: start !important; --tf: clamp(18px, 1.8vw, 25px); font-size: var(--tf) !important; }
+#view-partners.gx #partnersAccordion .accordion-trigger { --tf: clamp(22px, 2.8vw, 40px); }
+.view.gx .accordion-trigger::before { padding-top: max(0px, calc(var(--tf) * .78 - 11px)); }
+.view.gx .accordion-chevron { align-self: start !important; margin-top: max(0px, calc(var(--tf) * .5 - 7px)); }
+@media (max-width: 760px) {
+  .svx-row { --tf: 26px; }
+  .pfx-row-n, .pfx-row-c, .pfx-row-y, .pfx-row-i { padding-top: max(0px, calc(22px * .76 - 11px)); }
+  .view.gx .accordion-trigger { --tf: 18px; }
+  #view-partners.gx #partnersAccordion .accordion-trigger { --tf: 22px; }
+}
+.svx-name-t.bk-echo { display: block; }
