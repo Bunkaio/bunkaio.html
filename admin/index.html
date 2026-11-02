@@ -2802,6 +2802,7 @@ function msgCard(m, inDrawer) {
     actions.push(`<button class="btn ghost sm" onclick="mailPartner('${esc(m.email)}','partenaire_bienvenue')">Souhaiter la bienvenue</button>`);
   } else actions.push(`<a class="btn ghost sm" href="mailto:${esc(m.email)}?subject=${encodeURIComponent('BUNKAIO — ' + (MSG_KIND[m.kind] || 'Votre message'))}">Répondre</a>`);
   if (m.kind === 'account' || m.kind === 'partner') { const c = contactByEmail(m.email); if (!c || !c.accounts.length) actions.push(`<button class="btn sm" onclick="openNewContact('${esc(m.email)}','${esc(m.name).replace(/&#39;/g, '')}','${esc(m.details.telephone || '')}','${m.kind === 'partner' || m.details.espace === 'partenaire' ? 'partner' : 'client'}')">Créer l'espace</button>`); }
+  actions.push(`<button class="btn ghost sm" onclick="fixMsgEmail('${esc(m.id)}','${esc(m.email)}')">Corriger l'email</button>`);
   actions.push(`<button class="btn ${m.status === 'nouveau' ? '' : 'ghost'} sm" onclick="setMsgStatus('${esc(m.id)}','${m.status === 'nouveau' ? 'traite' : 'nouveau'}')">${m.status === 'nouveau' ? '✓ Marquer traité' : 'Remettre à traiter'}</button>`);
   actions.push(`<button class="btn ghost sm" style="color:var(--danger)" onclick="deleteMsg('${esc(m.id)}')">Supprimer</button>`);
   return `<div class="card" style="margin-bottom:12px${m.status === 'nouveau' ? ';border-color:var(--lav)' : ''}"><div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:10px"><span class="badge ${m.kind === 'share' ? 'ok' : m.kind === 'partner' ? 'dark' : ''}">${MSG_KIND[m.kind] || m.kind}</span>${m.status === 'nouveau' ? '<span class="badge warn">À traiter</span>' : '<span class="badge line">Traité</span>'}<span class="small muted">${fdt(m.date)}${m.lang === 'en' ? ' · EN' : ''}</span></div>
@@ -2820,6 +2821,13 @@ function renderMessages() {
 }
 async function setMsgStatus(id, status) {
   try { const { res } = await api('/admin/message', { method: 'POST', body: JSON.stringify({ id, status }) }); if (!res.ok) { toast('Erreur'); return; } const m = (DB.messages || []).find(x => x.id === id); if (m) m.status = status; DB.contacts.forEach(c => c.messages.forEach(x => { if (x.id === id) x.status = status; })); renderMessages(); renderAlerts(); updateCounts(); if (drawer.email) renderDrawer(); toast(status === 'traite' ? 'Message traité' : 'Message remis à traiter'); } catch (e) {}
+}
+async function fixMsgEmail(id, current) {
+  const v = (prompt('Adresse email corrigée :', current) || '').trim().toLowerCase();
+  if (!v || v === current) return;
+  if (!MAIL_RE.test(v)) { toast('Adresse email invalide.'); return; }
+  try { const { res } = await api('/admin/message', { method: 'POST', body: JSON.stringify({ id, email: v }) }); if (!res.ok) { toast('Correction impossible (redéployez le Worker si besoin)'); return; } toast('Adresse corrigée : ' + v); if (drawer.email === current) drawer.email = v; await loadDashboard(); if (drawer.email) renderDrawer(); }
+  catch (e) {}
 }
 async function deleteMsg(id) {
   if (!confirm('Supprimer définitivement ce message ?')) return;

@@ -642,11 +642,12 @@ async function handleAdminDashboard(request: Request, env: Env, headers: Record<
     return jsonResponse({ ok: true, run: await runSiteWatch(env) }, 200, headers);
   }
   if (path === '/admin/message' && request.method === 'POST') {
-    const body = (await request.json().catch(() => ({}))) as { id?: unknown; status?: unknown; remove?: unknown };
-    if (typeof body.id !== 'string' || (body.status !== undefined && body.status !== 'nouveau' && body.status !== 'traite')) {
+    const body = (await request.json().catch(() => ({}))) as { id?: unknown; status?: unknown; remove?: unknown; email?: unknown };
+    const email = typeof body.email === 'string' ? body.email.trim().toLowerCase() : undefined;
+    if (typeof body.id !== 'string' || (body.status !== undefined && body.status !== 'nouveau' && body.status !== 'traite') || (email !== undefined && (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 200))) {
       return jsonResponse({ ok: false, error: 'invalid_payload' }, 400, headers);
     }
-    const ok = await updateMessage(env, body.id, { status: body.status as 'nouveau' | 'traite' | undefined, remove: body.remove === true });
+    const ok = await updateMessage(env, body.id, { status: body.status as 'nouveau' | 'traite' | undefined, remove: body.remove === true, email });
     return jsonResponse({ ok }, ok ? 200 : 404, headers);
   }
   if (path === '/admin/delete' && request.method === 'POST') {
