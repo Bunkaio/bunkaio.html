@@ -2795,7 +2795,11 @@ function msgCard(m, inDrawer) {
   const det = Object.entries(m.details || {});
   const actions = [];
   if (!inDrawer) actions.push(`<button class="btn ghost sm" onclick="openDrawer('${esc(m.email)}')">Fiche</button>`);
-  actions.push(`<a class="btn ghost sm" href="mailto:${esc(m.email)}?subject=${encodeURIComponent('BUNKAIO — ' + (MSG_KIND[m.kind] || 'Votre message'))}">Répondre</a>`);
+  if (m.kind === 'partner') {
+    /* Candidature partenaire : l'éditeur du Mailing s'ouvre avec le modèle de réponse et le candidat déjà coché. */
+    actions.push(`<button class="btn soft sm" onclick="mailPartner('${esc(m.email)}','partenaire_reponse')">✉ Répondre (modèle partenaire)</button>`);
+    actions.push(`<button class="btn ghost sm" onclick="mailPartner('${esc(m.email)}','partenaire_bienvenue')">Souhaiter la bienvenue</button>`);
+  } else actions.push(`<a class="btn ghost sm" href="mailto:${esc(m.email)}?subject=${encodeURIComponent('BUNKAIO — ' + (MSG_KIND[m.kind] || 'Votre message'))}">Répondre</a>`);
   if (m.kind === 'account' || m.kind === 'partner') { const c = contactByEmail(m.email); if (!c || !c.accounts.length) actions.push(`<button class="btn sm" onclick="openNewContact('${esc(m.email)}','${esc(m.name).replace(/&#39;/g, '')}','${esc(m.details.telephone || '')}','${m.kind === 'partner' || m.details.espace === 'partenaire' ? 'partner' : 'client'}')">Créer l'espace</button>`); }
   actions.push(`<button class="btn ${m.status === 'nouveau' ? '' : 'ghost'} sm" onclick="setMsgStatus('${esc(m.id)}','${m.status === 'nouveau' ? 'traite' : 'nouveau'}')">${m.status === 'nouveau' ? '✓ Marquer traité' : 'Remettre à traiter'}</button>`);
   actions.push(`<button class="btn ghost sm" style="color:var(--danger)" onclick="deleteMsg('${esc(m.id)}')">Supprimer</button>`);
@@ -2901,7 +2905,7 @@ function renderDrawer() {
   if (drawer.tab === 'emails' && c && !EXTRA[c.email]) loadExtra(c.email);
   $('drBody').innerHTML = fn(c);
   const needsSave = ['space', 'session', 'advanced'].includes(drawer.tab) && (drawer.isNew || currentAcc(c));
-  $('drFoot').innerHTML = needsSave ? `<button class="btn" id="drSave" onclick="saveAccount()">${drawer.isNew ? 'Créer l\'espace' : 'Enregistrer'}</button><button class="btn ghost" onclick="closeDrawer()">Fermer</button><span class="small muted">${drawer.tab === 'session' ? 'Le rappel J-2 et le remerciement J+1 partent automatiquement.' : ''}</span>${!drawer.isNew && drawer.tab === 'space' && currentAcc(c) ? `<button class="btn ghost" style="color:var(--danger);margin-left:auto" onclick="deleteContactUI('${currentAcc(c).type}')">Supprimer cet espace</button>` : ''}<div id="drMsg"></div>` : `<button class="btn ghost" onclick="closeDrawer()">Fermer</button>${c ? `<a class="btn ghost" href="mailto:${esc(c.email)}">Écrire un email</a>${c.customerId ? `<a class="btn ghost" href="https://dashboard.stripe.com/customers/${esc(c.customerId)}" target="_blank" rel="noopener">Ouvrir dans Stripe</a>` : ''}${drawer.tab === 'summary' ? `<button class="btn ghost" style="color:var(--danger);margin-left:auto" onclick="deleteContactUI()">Supprimer le contact…</button><button class="btn ghost" style="color:var(--danger)" onclick="deleteContactUI(undefined, true)" title="Contact de test : supprime aussi la fiche Stripe et ses factures">Contact de test : tout effacer…</button>` : ''}` : ''}<div id="drMsg"></div>`;
+  $('drFoot').innerHTML = needsSave ? `<button class="btn" id="drSave" onclick="saveAccount()">${drawer.isNew ? 'Créer l\'espace' : 'Enregistrer'}</button><button class="btn ghost" onclick="closeDrawer()">Fermer</button><span class="small muted">${drawer.tab === 'session' ? 'Le rappel J-2 et le remerciement J+1 partent automatiquement.' : ''}</span>${!drawer.isNew && drawer.tab === 'space' && currentAcc(c) ? `<button class="btn ghost" style="color:var(--danger);margin-left:auto" onclick="deleteContactUI('${currentAcc(c).type}')">Supprimer cet espace</button>` : ''}<div id="drMsg"></div>` : `<button class="btn ghost" onclick="closeDrawer()">Fermer</button>${c ? (c.roles.includes('candidat') ? `<button class="btn soft" onclick="mailPartner('${esc(c.email)}','partenaire_reponse')">✉ Répondre (modèle partenaire)</button>` : '') + `<a class="btn ghost" href="mailto:${esc(c.email)}">Écrire un email</a>${c.customerId ? `<a class="btn ghost" href="https://dashboard.stripe.com/customers/${esc(c.customerId)}" target="_blank" rel="noopener">Ouvrir dans Stripe</a>` : ''}${drawer.tab === 'summary' ? `<button class="btn ghost" style="color:var(--danger);margin-left:auto" onclick="deleteContactUI()">Supprimer le contact…</button><button class="btn ghost" style="color:var(--danger)" onclick="deleteContactUI(undefined, true)" title="Contact de test : supprime aussi la fiche Stripe et ses factures">Contact de test : tout effacer…</button>` : ''}` : ''}<div id="drMsg"></div>`;
 }
 function accSwitch(c) {
   if (!c || c.accounts.length < 2) return '';
@@ -3047,6 +3051,7 @@ async function saveNote() {
 async function toggleUnsub(email, value) {
   try { const { res } = await api('/admin/unsub', { method: 'POST', body: JSON.stringify({ email, value }) }); if (res.ok) { const c = contactByEmail(email); if (c) c.unsub = value; toast(value ? 'Contact désinscrit' : 'Contact réabonné'); renderDrawer(); renderMailing(); } } catch (e) {}
 }
+function mailPartner(email, tpl) { mailState.tpl = tpl; mailState.sel = new Set([email.toLowerCase()]); mailState.seg = 'all'; mailState.q = ''; closeDrawer(); go('mailing'); renderMailing(); }
 function mailTo(email) { mailState.sel = new Set([email]); mailState.seg = 'all'; mailState.q = ''; closeDrawer(); go('mailing'); }
 function drActivity(c) {
   const list = allActivity().filter(a => a.email === c.email);
