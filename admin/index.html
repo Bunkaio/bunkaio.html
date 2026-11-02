@@ -1959,6 +1959,18 @@ function mailBody(action, list, free) { return JSON.stringify({ action, template
 const MAIL_ERR = { expediteur_domaine: 'L\'adresse d\'envoi doit finir par @' + MAIL_DOMAIN, reponse_invalide: 'Adresse de réponse invalide' };
 /* Langue de la signature ou salutation modifiée : l'aperçu déjà affiché est recalculé tout de suite (sinon il resterait sur l'ancien réglage). */
 function mailPrefChanged(rerender) { if (rerender !== false) renderMailing(); if ($('mPreview') && $('mPreview').srcdoc) mailPreview(); }
+/* Le Worker en ligne doit connaître le choix de langue / de salutation : sinon l'aperçu (et l'envoi) ignorent ces réglages. */
+function mailPreviewWarn(data) {
+  const caps = Array.isArray(data.caps) ? data.caps : [];
+  const need = [];
+  if (mailState.p.lang && !caps.includes('lang')) need.push('la langue de la signature');
+  if (mailState.p.autoGreeting === false && !caps.includes('autoGreeting')) need.push('la salutation désactivée');
+  let w = $('mPrevWarn');
+  if (!w) { w = document.createElement('div'); w.id = 'mPrevWarn'; w.className = 'msg err'; w.style.margin = '0 0 10px'; $('mPreview').parentNode.insertBefore(w, $('mPreview')); }
+  if (need.length) { w.hidden = false; w.innerHTML = '<b>Ce réglage n\'est pas pris en compte :</b> le serveur en ligne est une ancienne version qui ignore ' + need.join(' et ') + '. Redéployez-le : dans PowerShell, <code>cd</code> vers le dossier <code>server</code>, puis <code>git pull</code> et <code>npx wrangler deploy</code>.'; }
+  else if (mailState.p.lang && data.lang && data.lang !== mailState.p.lang) { w.hidden = false; w.textContent = 'Langue reçue du serveur : ' + data.lang + ' (demandée : ' + mailState.p.lang + ').'; }
+  else w.hidden = true;
+}
 async function mailPreview() {
   const list = mailSelected(); const c = list[0] || mailContacts().find(x => !mailApplicable(mailState.tpl, x)); const fc = mailFreeCtx()[0];
   if (!c && !fc) { toast('Aucun destinataire applicable pour ce modèle'); return; }
@@ -1966,7 +1978,7 @@ async function mailPreview() {
   try {
     const { res, data } = await api('/admin/mailing', { method: 'POST', body: c ? mailBody('preview', [c]) : mailBody('preview', [], [fc]) });
     if (!res.ok || !data.ok || data.skip) { $('mPrevMeta').textContent = data.skip || 'Erreur ' + (data.error || res.status); return; }
-    $('mPreview').srcdoc = data.html; $('mPrevMeta').innerHTML = 'Aperçu pour <b>' + esc(c ? (c.name || c.email) : (fc.name || fc.email)) + '</b> · de : <b>' + esc((mailState.p.fromName || 'BUNKAIO') + ' <' + (mailState.p.fromEmail || 'contact@' + MAIL_DOMAIN) + '>') + '</b>' + (mailState.p.replyTo ? ' · réponses à : <b>' + esc(mailState.p.replyTo) + '</b>' : '') + ' · objet : <b>' + esc(data.subject) + '</b>';
+    $('mPreview').srcdoc = data.html; mailPreviewWarn(data); $('mPrevMeta').innerHTML = 'Aperçu pour <b>' + esc(c ? (c.name || c.email) : (fc.name || fc.email)) + '</b> · de : <b>' + esc((mailState.p.fromName || 'BUNKAIO') + ' <' + (mailState.p.fromEmail || 'contact@' + MAIL_DOMAIN) + '>') + '</b>' + (mailState.p.replyTo ? ' · réponses à : <b>' + esc(mailState.p.replyTo) + '</b>' : '') + ' · objet : <b>' + esc(data.subject) + '</b>';
   } catch (e) {}
 }
 async function mailTest() {

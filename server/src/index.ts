@@ -819,7 +819,9 @@ async function handleAdminDashboard(request: Request, env: Env, headers: Record<
     if (body.action === 'preview') {
       const mail = await buildManualMail(env, template, recipients[0]!, params);
       if ('skip' in mail) return jsonResponse({ ok: true, skip: mail.skip }, 200, headers);
-      return jsonResponse({ ok: true, subject: mail.subject, html: mail.html }, 200, headers);
+      // `lang` et `caps` : l'admin vérifie que le serveur en ligne a bien pris en compte la langue / la salutation demandées (sinon : redéploiement nécessaire).
+      const langUsed = params.lang === 'fr' || params.lang === 'en' ? params.lang : normalizeLang(recipients[0]!.lang);
+      return jsonResponse({ ok: true, subject: mail.subject, html: mail.html, lang: langUsed, caps: ['lang', 'autoGreeting'] }, 200, headers);
     }
     if (body.action === 'test') {
       const to = env.ADMIN_NOTIFICATION_EMAIL;
