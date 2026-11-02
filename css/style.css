@@ -6917,3 +6917,37 @@ footer .footer-cols-right { grid-column: 5 / span 8 !important; grid-template-co
 /* Numéro au-dessus du libellé, dans le flux (ne chevauche plus le point) */
 .hero-kicker .hk-w em { display: inline-flex !important; flex-direction: column-reverse; align-items: center; }
 .hero-kicker .hk-w em::after, .hero-kicker .hk-w:nth-of-type(2) em::after, .hero-kicker .hk-w:nth-of-type(4) em::after { position: static !important; translate: none !important; top: auto !important; bottom: auto !important; margin-bottom: 2px; }
+
+/* ═══ Séquence « Le studio » restylée (nov. 2026, inspiration page projet Almira Kho) : mécanique inchangée ═══ */
+#missionVideoWrap .mission-content, #missionVideoWrap .mission-video-content { font-family: 'Inter Tight', sans-serif; }
+#missionVideoWrap .mission-kicker { font-size: 11px !important; font-weight: 500 !important; letter-spacing: .04em !important; text-transform: uppercase; display: inline-flex; gap: 10px; align-items: center; border-top: 1px solid rgba(255,255,255,.6); padding-top: 8px; }
+#missionVideoWrap .mission-kicker::before { content: 'N° 00'; color: #e8c6c4; }
+#missionVideoWrap .mission-text { font-family: 'Inter Tight', sans-serif !important; font-size: clamp(22px, min(4vw, 5.6svh), 58px) !important; font-weight: 600 !important; line-height: .95 !important; letter-spacing: -.04em !important; text-transform: uppercase; max-width: 18ch; margin-left: auto; margin-right: auto; }
+.ms-sel { counter-reset: msn; gap: 0 !important; }
+.ms-pill { counter-increment: msn; border-radius: 0 !important; background: rgba(11,11,12,.35) !important; border: 1px solid rgba(255,255,255,.4) !important; margin-left: -1px; font-family: 'Inter Tight', sans-serif !important; font-size: 13px !important; font-weight: 600 !important; letter-spacing: -.01em; text-transform: uppercase; display: inline-flex; align-items: baseline; gap: 6px; }
+.ms-pill::before { content: counter(msn, decimal-leading-zero); font-size: 10px; font-weight: 500; opacity: .6; }
+.ms-pill:hover { background: rgba(255,255,255,.14) !important; }
+.ms-pill.on { background: #e8c6c4 !important; color: #111 !important; border-color: #e8c6c4 !important; }
+.ms-pill i { background: #111 !important; height: 2px !important; }
+.ms-prev { border-radius: 0 !important; background: rgba(11,11,12,.78) !important; border: 1px solid rgba(255,255,255,.3) !important; }
+.ms-im { position: relative; overflow: hidden; transition: filter .8s ease; }
+.ms-prev:hover .ms-im { filter: saturate(1.15); }
+.ms-tx { font-family: 'Inter Tight', sans-serif; }
+.ms-tx h3 { font-size: clamp(22px, 2.6vw, 38px) !important; font-weight: 600 !important; letter-spacing: -.045em !important; line-height: .94 !important; text-transform: uppercase; }
+.ms-from { font-size: 12px !important; text-transform: uppercase; letter-spacing: .03em; color: rgba(255,255,255,.7) !important; border-top: 1px solid rgba(255,255,255,.25); padding-top: 8px; }
+.ms-from b { font-size: clamp(28px, 3vw, 44px) !important; font-weight: 500 !important; letter-spacing: -.05em !important; text-transform: none; margin-left: 4px; }
+.ms-tx ul { counter-reset: msl; gap: 0 !important; }
+.ms-tx li { counter-increment: msl; display: grid; grid-template-columns: 26px 1fr; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,.14); }
+.ms-tx li::before { content: counter(msl, decimal-leading-zero) !important; opacity: .55 !important; font-size: 10px; padding-top: 3px; }
+.ms-cta { border-radius: 0 !important; background: #e8c6c4 !important; color: #111 !important; font-weight: 600 !important; letter-spacing: -.01em; transition: background .3s, transform .3s; }
+.ms-cta:hover { background: #fff !important; }
+.ms-link { text-decoration: none !important; border-bottom: 1px solid currentColor; padding-bottom: 1px; }
+#missionVideoWrap .home-claim-cta { border-radius: 0 !important; background: transparent !important; border: 1px solid rgba(255,255,255,.75) !important; color: #fff !important; box-shadow: none !important; font-family: 'Inter Tight', sans-serif !important; font-weight: 600 !important; letter-spacing: -.01em !important; text-transform: none !important; animation: none !important; }
+#missionVideoWrap .home-claim-cta span { color: inherit !important; }
+#missionVideoWrap .home-claim-cta::before { display: none !important; }
+#missionVideoWrap .home-claim-cta::after { content: '  →'; white-space: pre; }
+#missionVideoWrap .home-claim-cta:hover { background: #fff !important; color: #111 !important; }
+@media (max-width: 760px) {
+  .ms-pill { font-size: 12px !important; padding: 9px 12px !important; }
+  #missionVideoWrap .mission-text { font-size: clamp(20px, 6.4vw, 28px) !important; }
+}
