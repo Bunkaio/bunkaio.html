@@ -162,6 +162,30 @@
 
   /* ── Portfolio section ── */
   .pf-section { border: 1px solid var(--line); border-radius: 10px; padding: 20px; }
+  .ser-section #serList { display: grid; gap: 16px; margin: 14px 0; }
+  .ser-card { border: 1px solid var(--black); padding: 16px; background: #fff; }
+  .ser-card.is-hidden { opacity: .55; }
+  .ser-top { display: flex; justify-content: space-between; align-items: center; border-top: 6px solid var(--black); padding-top: 8px; margin-bottom: 12px; font-size: 13px; }
+  .ser-tools button { border: 1px solid var(--black); background: none; width: 30px; height: 30px; cursor: pointer; margin-left: 4px; font: inherit; }
+  .ser-tools button:hover { background: var(--black); color: #fff; }
+  .ser-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px 14px; }
+  .ser-grid label { display: flex; flex-direction: column; gap: 4px; font-size: 11px; color: var(--grey); text-transform: uppercase; letter-spacing: .02em; }
+  .ser-grid input, .ser-grid select, .ser-grid textarea { font: inherit; font-size: 14px; color: var(--black); text-transform: none; letter-spacing: 0; border: 0; border-bottom: 1px solid #bbb; padding: 6px 0; background: transparent; }
+  .ser-grid .ser-wide { grid-column: 1 / -1; }
+  .ser-grid .ser-chk { flex-direction: row; align-items: center; gap: 8px; align-self: end; }
+  .ser-ph-head { font-size: 12px; font-weight: 600; margin: 14px 0 8px; }
+  .ser-ph-head small { font-weight: 400; color: var(--grey); }
+  .ser-ph { display: flex; flex-wrap: wrap; gap: 6px; }
+  .ser-th { position: relative; width: 64px; height: 84px; border: 2px solid transparent; padding: 0; cursor: pointer; background: #eee; opacity: .45; transition: opacity .2s; }
+  .ser-th.on { border-color: var(--black); opacity: 1; }
+  .ser-th img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .ser-th span { position: absolute; left: 0; top: 0; background: var(--black); color: #fff; font-size: 10px; padding: 1px 5px; }
+  .ser-th.on span { background: #e8c6c4; color: var(--black); font-weight: 700; }
+  .ser-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .ser-btn { font: inherit; font-size: 14px; padding: 12px 18px; border: 1px solid var(--black); background: var(--black); color: #fff; cursor: pointer; }
+  .ser-btn.ghost { background: transparent; color: var(--black); }
+  .ser-btn:disabled { opacity: .5; cursor: default; }
+  .ser-warn { color: var(--red); font-size: 13px; }
   .pf-cat { margin-bottom: 24px; }
   .pf-cat:last-child { margin-bottom: 0; }
   .pf-cat-title { font-size: 13px; font-weight: 600; margin-bottom: 10px; }
@@ -638,6 +662,7 @@ document.getElementById('token').value = localStorage.getItem('bunkaio_admin_tok
 document.getElementById('token').addEventListener('change', (e) => {
   localStorage.setItem('bunkaio_admin_token', e.target.value.trim());
   refreshAllPortfolios();
+  serLoad();
 });
 
 function getToken() {
@@ -1163,6 +1188,99 @@ function buildPfSection(title, desc, cats) {
   return wrap;
 }
 
+
+// ── Séries du Portfolio (nov. 2026) ────────────────────────────────────────────
+// Présente le Portfolio par projets : chaque série = titre FR/EN, client, année, univers, photos choisies dans la catégorie
+// (dans l'ordre des clics), petit texte. Enregistré dans le Worker (KV portfolio:series) ; le site les lit aussitôt
+// (GET /portfolio-series). Aucune série = un chapitre par univers. Ne jamais inventer de client : saisir uniquement des projets réels.
+const SER = { list: [], photos: {}, loaded: false };
+const serEsc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+async function serPhotos(cat) {
+  if (SER.photos[cat]) return SER.photos[cat];
+  try {
+    const res = await fetch(WORKER_BASE + '/list-media?prefix=portfolio/' + cat + '/', { headers: { 'Authorization': 'Bearer ' + getToken() } });
+    const data = await res.json();
+    const objs = data.objects || (data.keys || []).map((key) => ({ key }));
+    SER.photos[cat] = objs.map((o) => parseInt((o.key.match(/\/(\d+)\.webp$/) || [])[1], 10)).filter(Boolean).sort((a, b) => a - b);
+  } catch { SER.photos[cat] = []; }
+  return SER.photos[cat];
+}
+async function serLoad() {
+  const box = document.getElementById('serList'); if (!box || !getToken()) return;
+  box.innerHTML = '<p class="section-desc">Chargement…</p>';
+  try {
+    const res = await fetch(WORKER_BASE + '/admin/series', { headers: { 'Authorization': 'Bearer ' + getToken() } });
+    if (res.status === 404) { box.innerHTML = `<p class="ser-warn">${WORKER_OUTDATED}</p>`; return; }
+    const data = await res.json();
+    if (!data.ok) { box.innerHTML = '<p class="ser-warn">Token refusé.</p>'; return; }
+    SER.list = data.series || []; SER.loaded = true; serRender();
+  } catch { box.innerHTML = `<p class="ser-warn">Serveur injoignable. ${WORKER_OUTDATED}</p>`; }
+}
+async function serRender() {
+  const box = document.getElementById('serList'); if (!box) return;
+  if (!SER.list.length) { box.innerHTML = '<p class="section-desc">Aucune série : le site présente un chapitre par univers. Clique sur « + Nouvelle série ».</p>'; return; }
+  box.innerHTML = SER.list.map((s, i) => `
+    <div class="ser-card${s.hidden ? ' is-hidden' : ''}" data-i="${i}">
+      <div class="ser-top"><b>Série ${String(i + 1).padStart(2, '0')}</b>
+        <span class="ser-tools"><button type="button" onclick="serMove(${i},-1)" title="Monter">↑</button><button type="button" onclick="serMove(${i},1)" title="Descendre">↓</button><button type="button" onclick="serDel(${i})" title="Supprimer">×</button></span></div>
+      <div class="ser-grid">
+        <label>Titre (FR)<input data-k="title.fr" value="${serEsc(s.title && s.title.fr)}" maxlength="90" placeholder="Ex. : Lookbook automne"></label>
+        <label>Titre (EN)<input data-k="title.en" value="${serEsc(s.title && s.title.en)}" maxlength="90" placeholder="Ex. : Autumn lookbook"></label>
+        <label>Client (facultatif)<input data-k="client" value="${serEsc(s.client)}" maxlength="80"></label>
+        <label>Année<input data-k="year" value="${serEsc(s.year)}" maxlength="9" placeholder="2026"></label>
+        <label>Univers (catégorie des photos)<select data-k="cat">${PF_CATS.map((c) => `<option value="${c.id}"${c.id === s.cat ? ' selected' : ''}>${serEsc(c.label)}</option>`).join('')}</select></label>
+        <label class="ser-chk"><input type="checkbox" data-k="hidden"${s.hidden ? ' checked' : ''}> Masquer sur le site</label>
+        <label class="ser-wide">Texte (FR, facultatif)<textarea data-k="text.fr" maxlength="400" rows="2">${serEsc(s.text && s.text.fr)}</textarea></label>
+        <label class="ser-wide">Texte (EN, facultatif)<textarea data-k="text.en" maxlength="400" rows="2">${serEsc(s.text && s.text.en)}</textarea></label>
+      </div>
+      <div class="ser-ph-head">Photos de la série <small>(clic = ajouter / retirer ; le numéro rose = la place de la photo dans la série ; aucune photo choisie = toutes les photos de l'univers)</small></div>
+      <div class="ser-ph" data-ph="${i}"></div>
+    </div>`).join('');
+  box.querySelectorAll('.ser-card').forEach((card) => {
+    const i = +card.dataset.i;
+    card.querySelectorAll('[data-k]').forEach((el) => el.addEventListener(el.type === 'checkbox' || el.tagName === 'SELECT' ? 'change' : 'input', () => {
+      const s = SER.list[i], k = el.dataset.k, v = el.type === 'checkbox' ? el.checked : el.value;
+      if (k.includes('.')) { const [a, b] = k.split('.'); s[a] = s[a] || { fr: '', en: '' }; s[a][b] = v; } else s[k] = v;
+      if (k === 'cat') { s.photos = []; serPaintPhotos(i); }
+      if (k === 'hidden') card.classList.toggle('is-hidden', v);
+      serDirty(true);
+    }));
+    serPaintPhotos(i);
+  });
+}
+async function serPaintPhotos(i) {
+  const s = SER.list[i], box = document.querySelector(`.ser-ph[data-ph="${i}"]`); if (!box) return;
+  const nums = await serPhotos(s.cat);
+  if (!nums.length) { box.innerHTML = '<p class="section-desc">Aucune photo dans cet univers : ajoute-les d\'abord dans « Portfolio — Réalisations ».</p>'; return; }
+  const sel = s.photos || [];
+  box.innerHTML = nums.map((n) => { const k = sel.indexOf(n); return `<button type="button" class="ser-th${k >= 0 ? ' on' : ''}" onclick="serToggle(${i},${n})"><img loading="lazy" src="${WORKER_BASE}/media/portfolio/${s.cat}/${n}.webp" alt="">${k >= 0 ? `<span>${k + 1}</span>` : ''}</button>`; }).join('');
+}
+function serToggle(i, n) { const s = SER.list[i]; s.photos = s.photos || []; const k = s.photos.indexOf(n); if (k >= 0) s.photos.splice(k, 1); else s.photos.push(n); serPaintPhotos(i); serDirty(true); }
+function serMove(i, d) { const j = i + d; if (j < 0 || j >= SER.list.length) return; [SER.list[i], SER.list[j]] = [SER.list[j], SER.list[i]]; serRender(); serDirty(true); }
+function serDel(i) { if (!confirm('Supprimer cette série ? (les photos ne sont pas supprimées)')) return; SER.list.splice(i, 1); serRender(); serDirty(true); }
+function serAdd() { if (!SER.loaded) { alert('Entre ton token admin d\'abord.'); return; } SER.list.push({ title: { fr: '', en: '' }, client: '', year: String(new Date().getFullYear()), cat: 'photo-part', photos: [], text: { fr: '', en: '' } }); serRender(); serDirty(true); }
+function serDirty(on) { const b = document.getElementById('serSave'); if (b) { b.disabled = !on; b.textContent = on ? 'Enregistrer les séries' : 'Séries enregistrées ✓'; } }
+async function serSave() {
+  const bad = SER.list.findIndex((s) => !(s.title && (s.title.fr || s.title.en)));
+  if (bad >= 0) { alert('La série ' + (bad + 1) + ' n\'a pas de titre.'); return; }
+  const b = document.getElementById('serSave'); b.disabled = true; b.textContent = 'Enregistrement…';
+  try {
+    const res = await fetch(WORKER_BASE + '/admin/series', { method: 'POST', headers: { 'Authorization': 'Bearer ' + getToken(), 'Content-Type': 'application/json' }, body: JSON.stringify({ series: SER.list }) });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.ok) throw new Error(res.status === 404 ? WORKER_OUTDATED : 'Erreur ' + res.status);
+    SER.list = data.series; serRender(); serDirty(false);
+  } catch (e) { alert(e.message || 'Enregistrement impossible.'); serDirty(true); }
+}
+function buildSeriesSection() {
+  const wrap = document.createElement('div');
+  wrap.className = 'section ser-section';
+  wrap.innerHTML = `<div class="section-head"><div class="section-title">Portfolio — Séries (projets)</div>
+    <div class="section-desc">Présente le Portfolio par projets, comme des chapitres numérotés (« Série 01, … »), avec sommaire, planche-contact et « Série suivante ». Choisis l'univers puis les photos de la série. Saisis uniquement des projets et des clients réels. Sans série, le Portfolio présente un chapitre par univers. Les modifications apparaissent sur le site environ une minute après l'enregistrement (nécessite le Worker à jour).</div></div>
+    <div id="serList"><p class="section-desc">Entre ton token admin pour charger les séries.</p></div>
+    <div class="ser-actions"><button type="button" class="ser-btn ghost" onclick="serAdd()">+ Nouvelle série</button><button type="button" class="ser-btn" id="serSave" onclick="serSave()" disabled>Séries enregistrées ✓</button></div>`;
+  return wrap;
+}
+
 // ── Build UI ─────────────────────────────────────────────────────────────────
 function buildUI() {
   const container = document.getElementById('sections');
@@ -1183,6 +1301,7 @@ function buildUI() {
     'Les photos existantes s\'affichent dès que le token est renseigné. « + Ajouter » (plusieurs fichiers possibles, ou glisser-déposer les fichiers sur la catégorie) prend le premier numéro libre ; glisser une vignette sur une autre change l\'ordre d\'affichage ; clic sur une photo = la remplacer ; × = la supprimer. 24 photos max par catégorie, environ 900 × 1200 px, idéalement 300 Ko maximum chacune.',
     PF_CATS
   ));
+  container.appendChild(buildSeriesSection());
 
   // ── Catégories & rubriques désactivées — accordéon replié, grisé ──────────
   const accordion = document.createElement('div');
@@ -1215,6 +1334,7 @@ function buildUI() {
 
 buildUI();
 refreshAllPortfolios();
+serLoad();
 </script>
 </body>
 </html>

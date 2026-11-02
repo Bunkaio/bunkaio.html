@@ -5400,9 +5400,16 @@ try { PFX.grid = localStorage.getItem('bunkaio_pf_grid') === '1'; } catch (e) {}
 const pfxNum = n => String(n).padStart(2, '0');
 const pfxSlug = s => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 /* Chapitres prévus (sans réseau) : séries déclarées, sinon un par univers. Sert au rendu immédiat du sommaire (et au pré-rendu SEO). */
+/* Séries : celles de l'admin (Worker GET /portfolio-series, KV portfolio:series), sinon PF_SERIES de config/media.js, sinon un chapitre par univers. */
+function pfxLoadSeries(){
+  if (window._pfSeriesP) return window._pfSeriesP;
+  window._pfSeriesP = fetch(ACCOUNTS_API_BASE + '/portfolio-series').then(r => r.ok ? r.json() : null).then(d => { window._pfSeries = d && d.ok && Array.isArray(d.series) ? d.series : []; }).catch(() => { window._pfSeries = []; });
+  return window._pfSeriesP;
+}
 function pfxPlan(){
-  const series = (typeof PF_SERIES !== 'undefined' && Array.isArray(PF_SERIES)) ? PF_SERIES.filter(s => s && s.cat) : [];
-  if (series.length) return series.map(s => ({ id: s.id || pfxSlug(t(s.title || {})), title: s.title ? t(s.title) : '', client: s.client || '', year: s.year || '', cat: s.cat, nums: Array.isArray(s.photos) ? s.photos : null, text: s.text ? t(s.text) : '' }));
+  const srv = Array.isArray(window._pfSeries) ? window._pfSeries.filter(s => s && s.cat && !s.hidden) : [];
+  const series = srv.length ? srv : (typeof PF_SERIES !== 'undefined' && Array.isArray(PF_SERIES)) ? PF_SERIES.filter(s => s && s.cat) : [];
+  if (series.length) return series.map(s => ({ id: s.id || pfxSlug(t(s.title || {})), title: s.title ? (t(s.title) || s.title.fr || s.title.en || '') : '', client: s.client || '', year: s.year || '', cat: s.cat, nums: Array.isArray(s.photos) && s.photos.length ? s.photos : null, text: s.text ? (t(s.text) || s.text.fr || s.text.en || '') : '' }));
   return PF_CATS.map(c => ({ id: c.id, title: t(c.label), client: '', year: '', cat: c.id, nums: null, text: '' }));
 }
 const pfxCatLabel = id => { const c = PF_CATS.find(x => x.id === id); return c ? t(c.label) : ''; };
@@ -5486,6 +5493,7 @@ function pfxMeta(){
 function renderPortfolioV2(){
   const idx = document.getElementById('pfIndex'), wrap = document.getElementById('pfGrid');
   if (!idx || !wrap) return;
+  if (window._pfSeries === undefined) { pfxLoadSeries().then(() => { if (currentView === 'portfolio') renderPortfolioV2(); }); }
   const gen = ++PFX.gen, plan = pfxPlan();
   idx.innerHTML = pfxIndexHtml(plan, true);
   pfxApplyGrid(); pfxMeta();

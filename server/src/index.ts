@@ -3,6 +3,7 @@ import { WORKER_VERSION } from './version';
 import { AR_OPTIONS, cleanConfig as cleanAutoReplyConfig, defaultConfig, getConfig as getAutoReplyConfig, getLog as getAutoReplyLog, pickTemplate, renderAutoReply, sampleFacts, saveConfig as saveAutoReplyConfig, sendManualAutoReply, sendQuizAutoReply } from './autoreply';
 import type { ARFacts } from './autoreply';
 import { goClicks, handleGo, listGoLinks, saveGoLink } from './golinks';
+import { getSeries, saveSeries } from './series';
 import type Stripe from 'stripe';
 import { adminAccountView, getAccount, listAccounts, putAccount, sanitizeAccount, upsertAccountFromAdmin, verifyLogin, LoginThrottled } from './accounts';
 import { handleCollect, handleStats, purgeOldAnalytics } from './analytics';
@@ -893,6 +894,13 @@ async function handleAdminDashboard(request: Request, env: Env, headers: Record<
     const details = cleanDetails({ source: 'Ajout manuel (admin)', telephone: body.phone, site: body.site, secteur: body.sector, projet: body.note });
     await storeMessage(env, { kind: partner ? 'partner' : 'contact', name, email, lang: normalizeLang(body.lang), details });
     return jsonResponse({ ok: true }, 200, headers);
+  }
+  if (path === '/admin/series' && request.method === 'GET') {
+    return jsonResponse({ ok: true, series: await getSeries(env) }, 200, headers);
+  }
+  if (path === '/admin/series' && request.method === 'POST') {
+    const body = (await request.json().catch(() => ({}))) as Record<string, unknown>;
+    return jsonResponse({ ok: true, series: await saveSeries(env, body.series) }, 200, headers);
   }
   if (path === '/admin/golinks' && request.method === 'GET') {
     const days = Math.min(365, Math.max(1, parseInt(new URL(request.url).searchParams.get('days') ?? '30', 10) || 30));
@@ -1814,6 +1822,11 @@ export default {
     }
     if (url.pathname === '/version' && request.method === 'GET') {
       return jsonResponse({ ok: true, version: WORKER_VERSION }, 200, headers);
+    }
+    if (url.pathname === '/portfolio-series' && request.method === 'GET') {
+      // Public : séries du Portfolio (titres, univers, numéros de photos — aucune donnée personnelle), cache navigateur 1 minute.
+      const series = (await getSeries(env)).filter(x => !x.hidden);
+      return new Response(JSON.stringify({ ok: true, series }), { status: 200, headers: { ...headers, 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=60' } });
     }
     if (url.pathname === '/partner-spots' && request.method === 'GET') {
       // Public : places restantes par univers (aucune donnée personnelle), mises en cache 1 minute côté navigateur.
