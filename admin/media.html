@@ -7,7 +7,7 @@
 <title>Bunkaio — Médias</title>
 <script>if (/[?&]embed=1/.test(location.search)) document.documentElement.classList.add('embed');</script>
 <style>
-  @font-face { font-family: 'DM Sans'; font-style: normal; font-display: swap; font-weight: 100 1000; src: url('../fonts/dm-sans-latin-opsz-normal.woff2') format('woff2'); }
+  @font-face { font-family: 'Inter Tight'; font-style: normal; font-display: swap; font-weight: 100 900; src: url('../fonts/inter-tight-latin-wght-normal.woff2') format('woff2'); }
   html.embed .header { display: none; }
   html.embed .page { padding-top: 20px; }
   :root {
@@ -21,7 +21,7 @@
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
-    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-family: 'Inter Tight', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     background: var(--bg); color: var(--black);
   }
 
@@ -383,7 +383,7 @@ const SECTIONS = [
   {
     id: 'about-portrait',
     title: '👤 Portrait d\'Aya — page À propos et signature des articles',
-    desc: 'Format libre (≤ 350 Ko). Sur la page À propos, la grande photo est affichée en 16:9 sur ordinateur et en 4:5 sur mobile, recadrée au centre : garde le sujet bien centré. Dépose ici la photo : elle remplace aussitôt la photo actuelle sur la page À propos (grande photo, sous le bouton « Découvrir le portfolio ») et dans la petite pastille « Article rédigé par Aya » sous chaque article Conseils. Supprime-la pour revenir à la photo par défaut du site.',
+    desc: 'Format libre (≤ 350 Ko). Depuis la refonte, sur la page À propos le portrait est affiché à droite de l\'en-tête en 4:5 (portrait), en noir et blanc sur rose poudré, et reprend ses couleurs au survol : garde le sujet bien centré. Il apparaît aussi dans la pastille ronde du bloc « BUNKAIO, c\'est le savoir-faire… » (Accueil et fin des articles). Supprime-le pour revenir à la photo par défaut du site.',
     slots: [{ path: 'about/aya.webp', label: 'Portrait d\'Aya' }],
   },
   // ── Conseils : une photo par article (repli sur la photo de la prestation tant qu'aucune n'est déposée) ──
@@ -397,7 +397,7 @@ const SECTIONS = [
   {
     id: 'home-advice-photo',
     title: '🏠 Accueil — photo du panneau « Conseils photo »',
-    desc: '2560 × 1440 px, paysage 16:9 (≤ 450 Ko). Affichée sur toute la largeur du panneau, recadrée en bandeau large (environ 21:9) : sujet au centre, rien d\'important en haut et en bas. Sans photo déposée ici, le site reprend la bannière de la page Conseils, puis la photo du premier article.',
+    desc: '2560 × 1440 px, paysage 16:9 (≤ 450 Ko). Affichée sur toute la largeur du panneau « Conseils photo » de l\'Accueil, recadrée en bandeau large (environ 21:9) ; depuis la refonte elle est en noir et blanc et reprend ses couleurs au survol du panneau. Sujet au centre. Sans photo ici : photo de la page Conseils, puis celle du premier article.',
     slots: [{ path: 'hero/home-advice-1.webp', label: 'Photo du panneau' }],
   },
   // ── Accueil ────────────────────────────────────────────────────────────────
@@ -417,7 +417,7 @@ const SECTIONS = [
   {
     id: 'services-cats',
     title: '📸 Prestations — 5 catégories actives',
-    desc: '2000 × 2500 px, portrait 4:5 (≤ 450 Ko, largeur minimum 1600 px), sujet CENTRÉ. Elle sert aussi de fond d\'écran (devis, accueil) : exporter en grand. La même photo sert à 4 endroits (dont la page de chaque prestation, recadrée en 3:4, avec son texte alternatif) : fond plein écran du parcours "prestations" sur l\'accueil, vignette quand on filtre par catégorie sur la page Services, ET miniature de la catégorie à la 1ère étape du questionnaire de devis. La modifier ici la met à jour partout automatiquement.',
+    desc: '2000 × 2500 px, portrait 4:5 (≤ 450 Ko, largeur minimum 1600 px), sujet CENTRÉ. Elle sert aussi de fond d\'écran (devis, accueil) : exporter en grand. La même photo sert à plusieurs endroits (mise à jour partout automatiquement) : page de la prestation (3:4, avec son texte alternatif), photo de la séquence « Le studio » de l\'accueil, aperçu qui suit la souris dans l\'index des prestations de l\'accueil, scène de l\'en-tête Services (noir et blanc sur rose, défilement automatique, clic = projection), vue « Planches » des Services, « Prestation suivante » dans chaque dossier, et miniature de la 1ère étape du devis.',
     slots: [
       { path: 'services/photo-part.webp', label: 'Séance photo — particuliers' },
       { path: 'services/corporate.webp', label: 'Corporate & Personal Branding (optionnel : provisoirement, le portrait d\'Aya est utilisé)' },
@@ -455,7 +455,7 @@ const SECTIONS = [
   {
     id: 'portfolio-hero',
     title: '🖼 Portfolio — bannière en haut de page',
-    desc: '2560 × 1440 px, paysage 16:9 (≤ 450 Ko). Image affichée en plein écran sur ordinateur : sujet au centre, rien d\'important sur les bords (le site recadre selon l\'écran).',
+    desc: '2560 × 1440 px, paysage 16:9 (≤ 450 Ko). Depuis la refonte (fond papier, refonte nov. 2026), le Portfolio n\'a plus de photo de fond : la photo 1 sert d\'image au bloc « Chapitre suivant · Portfolio » en bas de l\'Accueil, de la FAQ et du Drone. Garder une photo forte, sujet centré.',
     slots: [
       { path: 'hero/portfolio-1.webp', label: 'Photo 1' },
       { path: 'hero/portfolio-2.webp', label: 'Photo 2' },
@@ -467,7 +467,7 @@ const SECTIONS = [
   {
     id: 'services-hero',
     title: '🛠 Services — bannière en haut de page',
-    desc: '2560 × 1440 px, paysage 16:9 (≤ 450 Ko). Image affichée en plein écran sur ordinateur : sujet au centre, rien d\'important sur les bords (le site recadre selon l\'écran).',
+    desc: '2560 × 1440 px, paysage 16:9 (≤ 450 Ko). Depuis la refonte (fond papier), la page Services n\'a plus de photo de fond : la photo 1 illustre le bloc « Chapitre suivant · Services » en bas du Portfolio. La scène de l\'en-tête Services et les Planches utilisent les photos « Prestations » ci-dessus.',
     slots: [
       { path: 'hero/services-1.webp', label: 'Photo 1' },
       { path: 'hero/services-2.webp', label: 'Photo 2' },
@@ -485,7 +485,7 @@ const SECTIONS = [
   {
     id: 'contact-hero',
     title: '✉️ Contact — bannière en haut de page',
-    desc: '2560 × 1440 px, paysage 16:9 (≤ 450 Ko). Image affichée en plein écran sur ordinateur : sujet au centre, rien d\'important sur les bords (le site recadre selon l\'écran).',
+    desc: '2560 × 1440 px, paysage 16:9 (≤ 450 Ko). Depuis la refonte : affichée dans la « scène » de l\'en-tête Contact (cadre 4:3 à droite, en noir et blanc sur rose poudré, couleurs au survol, clic = projection plein écran) et dans « Chapitre suivant · Contact ». Sujet centré : le cadre recadre en 4:3.',
     slots: [
       { path: 'hero/contact-1.webp', label: 'Photo 1' },
       { path: 'hero/contact-2.webp', label: 'Photo 2' },
@@ -494,7 +494,7 @@ const SECTIONS = [
   {
     id: 'partners-hero',
     title: '🤝 Collaboration — carrousel de fond (photos HD)',
-    desc: '2560 × 1440 px, paysage 16:9 (≤ 450 Ko). Jusqu\'à 5 photos qui défilent en fondu toutes les 5 secondes, en plein écran : sujet au centre, rien d\'important sur les bords (le site recadre selon l\'écran). Seules les photos déposées sont affichées ; une seule photo = fond fixe.',
+    desc: '2560 × 1440 px, paysage 16:9 (≤ 450 Ko). Jusqu\'à 5 photos. Depuis la refonte : elles défilent toutes les 4 s dans la « scène » de l\'en-tête Collaboration (cadre 4:3, noir et blanc sur rose, volet, couleurs au survol, clic = projection plein écran avec compteur 00:01 / 00:05) ; la photo 1 sert aussi au bloc « Chapitre suivant · Collaboration ». Un emplacement vide est simplement sauté. Sujet centré.',
     slots: [
       { path: 'hero/partners-1.webp', label: 'Photo 1' },
       { path: 'hero/partners-2.webp', label: 'Photo 2' },
@@ -565,13 +565,13 @@ const SECTIONS = [
   {
     id: 'about-hero',
     title: '👤 À propos — bannière en haut de page',
-    desc: '2560 × 1440 px, paysage 16:9 (≤ 450 Ko). Image affichée en plein écran sur ordinateur : sujet au centre, rien d\'important sur les bords (le site recadre selon l\'écran). Optionnelle : tant qu\'aucune photo n\'est déposée, la page garde la photo qu\'elle empruntait jusqu\'ici (celles de Contact).',
+    desc: '2560 × 1440 px, paysage 16:9 (≤ 450 Ko). Optionnelle. Depuis la refonte, la page À propos montre le portrait d\'Aya (emplacement « Portrait d\'Aya ») ; cette photo sert au bloc « Chapitre suivant · À propos » en bas de la page Contact.',
     slots: [{ path: 'hero/about-1.webp', label: 'Photo bannière' }],
   },
   {
     id: 'legal-hero',
     title: '❓ FAQ, confidentialité et CGV — bannière en haut de page',
-    desc: '2560 × 1440 px, paysage 16:9 (≤ 450 Ko). Image affichée en plein écran sur ordinateur : sujet au centre, rien d\'important sur les bords (le site recadre selon l\'écran). Optionnelle : tant qu\'aucune photo n\'est déposée, la page garde la photo qu\'elle empruntait jusqu\'ici (celle de Contact).',
+    desc: '2560 × 1440 px, paysage 16:9 (≤ 450 Ko). Optionnelle. Depuis la refonte : affichée dans la « scène » de l\'en-tête FAQ / pages juridiques (cadre 4:3, noir et blanc sur rose, couleurs au survol, clic = projection) et dans « Chapitre suivant · FAQ ». Sans photo, la photo Contact est utilisée.',
     slots: [{ path: 'hero/legal-1.webp', label: 'Photo bannière' }],
   },
 
@@ -616,7 +616,7 @@ const DISABLED_SECTIONS = [
   {
     id: 'drone-hero',
     title: '🚁 4K Drone — bannière en haut de page',
-    desc: '2560 × 1440 px, paysage 16:9 (≤ 450 Ko). Rubrique en "Bientôt disponible" — pas urgent.',
+    desc: '2560 × 1440 px, paysage 16:9 (≤ 450 Ko). Rubrique « En cours de réalisation » : depuis la refonte, la page affiche un viseur animé (pas de photo). Pas urgent.',
     slots: [
       { path: 'hero/drone-1.webp', label: 'Photo 1' },
       { path: 'hero/drone-2.webp', label: 'Photo 2' },
