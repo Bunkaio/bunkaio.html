@@ -7305,7 +7305,7 @@ function setPartnersTab(tab){
 /* ═══════════════ PAGE PARTENAIRES — ARGUMENTAIRE ═══════════════
    Bloc d'accroche au-dessus de l'accordéon : proposition de valeur,
    chiffres clés, avantages concrets, univers et parcours. Les chiffres
-   (-20%, 60 places) viennent de PARTNER_DISCOUNT / du texte du
+   (-20%, 25 places) viennent de PARTNER_DISCOUNT / du texte du
    programme ; l'exemple de prix est calculé depuis CATS. */
 function renderPartnersPitch(){
   const el = document.getElementById('partnersPitch');
@@ -7381,9 +7381,9 @@ function renderPartnersPitch(){
   };
   el.innerHTML = `
     <section class="pp-hero rv">
-      <div class="pp-kicker">${t({fr:'Programme Partenaires Fondateurs · 60 places', en:'Founding Partners Programme · 60 places'})}</div>
+      <div class="pp-kicker">${t({fr:'Programme Partenaires Fondateurs · 25 places', en:'Founding Partners Programme · 25 places'})}</div>
       <h2 class="pp-title">${t({fr:'Votre savoir-faire mérite mieux qu\'une simple prestation.', en:'Your craft deserves more than a simple service.'})}</h2>
-      <p class="pp-lead">${t({fr:'Rejoignez le cercle restreint des professionnels que Bunkaio met en lumière. Des images haut de gamme en HD, un tarif partenaire permanent, des missions rémunérées et un réseau d\'exception.', en:'Join the select circle of professionals Bunkaio puts in the spotlight. Premium HD imagery, a permanent partner rate, paid missions and an exceptional network.'})}</p>
+      <p class="pp-lead">${t({fr:'Rejoignez le cercle restreint des professionnels que Bunkaio met en lumière. Des images haut de gamme en HD, un tarif partenaire permanent, des projets collaboratifs et un réseau d\'exception.', en:'Join the select circle of professionals Bunkaio puts in the spotlight. Premium HD imagery, a permanent partner rate, collaborative projects and an exceptional network.'})}</p>
       <div class="pp-cta-row">
         <button class="partner-cta-btn" onclick="goView('partners','apply')">${t({fr:'Candidater', en:'Apply'})}</button>
         <a class="pp-ghost" href="#partnersAccordion" onclick="event.preventDefault();openPartnersAccordion(0)">${t({fr:'Découvrir les avantages', en:'See the benefits'})}</a>
@@ -7392,7 +7392,7 @@ function renderPartnersPitch(){
         <div><div class="pp-stat-num">-${PARTNER_DISCOUNT}%</div><div class="pp-stat-label">${t({fr:'permanent sur le catalogue', en:'permanent on the catalogue'})}</div></div>
         <div><div class="pp-stat-num">25</div><div class="pp-stat-label">${t({fr:'partenaires fondateurs maximum', en:'founding partners maximum'})}</div></div>
         <div><div class="pp-stat-num">5</div><div class="pp-stat-label">${t({fr:'univers · 5 places chacun', en:'universes · 5 places each'})}</div></div>
-        <div><div class="pp-stat-num">€</div><div class="pp-stat-label">${t({fr:'missions rémunérées', en:'paid missions'})}</div></div>
+        <div><div class="pp-stat-num">⊹</div><div class="pp-stat-label">${t({fr:'projets collaboratifs', en:'collaborative projects'})}</div></div>
       </div>
     </section>`;
 }
