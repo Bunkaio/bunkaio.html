@@ -1094,6 +1094,7 @@ function refreshDynamic(){
   if (document.getElementById('view-partners').classList.contains('active')) { renderPartnersAccordion(); renderApplyBenefits(); renderApplyTypePicker(); }
   if (document.getElementById('view-legal').classList.contains('active')) { renderFaqAccordion(); renderPrivacyAccordion(); renderCgvAccordion(); renderCookiesAccordion(); renderImageAccordion(); }
   if (currentView === 'home' && document.getElementById('view-home').classList.contains('active')) hmInit();
+  if (PX_VIEWS.includes(currentView) && document.getElementById('view-' + currentView).classList.contains('active')) setTimeout(() => pxInit(currentView), 0);
   if (GX_VIEWS.includes(currentView) && document.getElementById('view-' + currentView).classList.contains('active')) { gxInit(currentView); if (currentView === 'legal') { const a = document.querySelector('#view-legal .svc-tab.active'); gxLegalTab(a ? a.id.replace('legaltab-', '') : 'faq'); } }
   if (document.getElementById('view-portfolio').classList.contains('active')) {
     renderPortfolioV2(); bkMountNext(document.getElementById('view-portfolio'), 'portfolio');
@@ -2109,7 +2110,7 @@ function goView(v, subTab, opts){
        sur l'ensemble du site, plus besoin de le câbler page par page.
        .reassure-section utilise un seuil de déclenchement plus tardif
        pour que l'animation soit visible plutôt que déjà terminée. */
-    gxInit(v);
+    gxInit(v); pxInit(v);
     localizeLinks(document.getElementById('view-' + v));
     initCstDecor(document.getElementById('view-' + v));
     if (typeof CstField !== 'undefined') CstField.start();
@@ -4954,6 +4955,71 @@ function hmPreview(){
   box.addEventListener('pointerleave', () => { pv.classList.remove('on'); on = false; });
   img.onerror = () => pv.classList.add('noimg'); img.onload = () => pv.classList.remove('noimg');
 }
+/* ═══ Pages éditoriales « PX » (nov. 2026) : prestation, Découvrir, Conseils, article, villes, avis, devis, connexion passent dans la
+   DA Grids × Almira Kho (classe .gx + .px ajoutée à la vue) : mot géant + compteur, kicker « Prestation, / Guide, / Ville, … » + titre en
+   capitales, scène photo (bannières de l'admin), composants restylés, chapitre suivant. Aucun texte ni prix modifié. */
+var PX_VIEWS = ['service', 'discover', 'advice', 'article', 'city', 'share', 'quiz', 'login'];
+var PX_SVC_MEGA = { 'photo-part': {fr:'PORTRAIT', en:'PORTRAIT'}, corporate: {fr:'CORPORATE', en:'CORPORATE'}, mode: {fr:'MODE', en:'FASHION'}, commercial: {fr:'PRODUITS', en:'PRODUCTS'}, event: {fr:'ÉVÉNEMENTS', en:'EVENTS'}, branding: {fr:'BRANDING', en:'BRANDING'} };
+function pxSpec(v){
+  const sub = currentSub;
+  if (v === 'service') {
+    const c = CATS.find(x => x.id === (sub === 'branding' ? 'corporate' : sub));
+    const price = c ? (sub === 'branding' && c.tiers.lanc ? c.tiers.lanc.price : catFacts(c).from) : null;
+    const own = IMG.heroOwn && IMG.heroOwn.service;
+    return { mega: PX_SVC_MEGA[sub] || {fr:'PRESTATION', en:'SERVICE'}, count: price ? price.toLocaleString('fr-FR') + '€' : '', lbl: {fr:'à partir de', en:'from'}, kick: {fr:'Prestation,', en:'Service,'}, stage: [IMG.servicePhotos && IMG.servicePhotos[sub === 'branding' ? 'corporate' : sub], own].filter(Boolean), next: 'services' };
+  }
+  if (v === 'discover') return { mega: {fr:'DÉCOUVRIR', en:'DISCOVER'}, count: pfxNum(CATS.length), lbl: {fr:'prestations', en:'services'}, kick: {fr:'Orientation,', en:'Guide,'}, stage: 'discover', next: 'services' };
+  if (v === 'advice') return { mega: {fr:'CONSEILS', en:'ADVICE'}, count: pfxNum((typeof ARTICLES !== 'undefined' ? ARTICLES : []).length), lbl: {fr:'guides', en:'guides'}, kick: {fr:'Journal,', en:'Journal,'}, stage: 'advice', next: 'services' };
+  if (v === 'article') { const i = (typeof ARTICLES !== 'undefined' ? ARTICLES : []).findIndex(a => a.slug === sub); return { mega: {fr:'GUIDE', en:'GUIDE'}, count: 'N°' + pfxNum(i + 1), lbl: {fr:'conseils photo', en:'photo advice'}, kick: {fr:'Guide ' + pfxNum(i + 1) + ',', en:'Guide ' + pfxNum(i + 1) + ','}, next: 'advice' }; }
+  if (v === 'city') {
+    const name = { montpellier: 'MONTPELLIER', toulouse: 'TOULOUSE', france: 'FRANCE' }[sub] || 'OCCITANIE';
+    const fr = sub === 'france';
+    const key = 'city-' + sub, own = IMG.heroOwn && IMG.heroOwn[key];
+    return { mega: {fr:name, en:name}, count: fr ? TRAVEL_CAP + '€' : TRAVEL_FREE_KM + ' km', lbl: fr ? {fr:'déplacement plafonné', en:'travel cap'} : {fr:'déplacement offert', en:'free travel'}, kick: {fr:'Ville,', en:'City,'}, stage: [].concat(own || [], IMG.heroOwn && IMG.heroOwn.city || []), next: 'services' };
+  }
+  if (v === 'share') return { mega: {fr:'AVIS', en:'REVIEWS'}, count: '★', lbl: {fr:'avis Google', en:'Google review'}, kick: {fr:'Partager,', en:'Share,'}, stage: 'share', next: 'portfolio' };
+  if (v === 'quiz') return { mega: {fr:'DEVIS', en:'QUOTE'}, count: '48 h', lbl: {fr:'réponse sous 48 h ouvrées', en:'reply within 48 working hours'} };
+  if (v === 'login') return { mega: {fr:'ESPACE', en:'SPACE'}, count: '⊹', lbl: {fr:'client · partenaire', en:'client · partner'}, kick: {fr:'Connexion,', en:'Sign in,'} };
+  return null;
+}
+function pxInit(v){
+  if (!PX_VIEWS.includes(v)) return;
+  const root = document.getElementById('view-' + v); if (!root) return;
+  const spec = pxSpec(v); if (!spec) return;
+  root.classList.add('gx', 'px', 'px-' + v);
+  if (v === 'quiz') { gxDecorate(root); initCursorTag(); bkFooter(); return; }   /* devis : parcours concentré, sans grand en-tête */
+  const page = root.firstElementChild && root.firstElementChild.tagName !== 'H2' ? root.firstElementChild : root.querySelector('.quiz-wrap');
+  if (!page) return;
+  page.classList.add('gx-page');
+  let head = page.querySelector(':scope > .px-head');
+  if (!head) {
+    head = document.createElement('header'); head.className = 'gx-head px-head';
+    head.innerHTML = `<div class="gx-top"><div class="gx-mega" aria-hidden="true"></div><div class="gx-count" aria-hidden="true"><b></b><span></span></div></div>` + (spec.stage ? `<div class="gx-stage px-stage" aria-hidden="true"><div class="gx-stage-ph"><img class="gx-ph-a" alt=""><img class="gx-ph-b" alt=""></div><div class="gx-stage-cap"></div></div>` : '');
+    page.prepend(head);
+    if (!page.querySelector(':scope > .gx-cols')) page.insertAdjacentHTML('afterbegin', '<div class="gx-cols" aria-hidden="true">' + '<span></span>'.repeat(12) + '</div>');
+  }
+  head.querySelector('.gx-count b').textContent = spec.count || '';
+  head.querySelector('.gx-count span').textContent = spec.lbl ? t(spec.lbl) : '';
+  gxMega(head.querySelector('.gx-mega'), t(spec.mega));
+  const st = head.querySelector('.px-stage');
+  if (st) {
+    if (Array.isArray(spec.stage)) { pxStage(st, spec.stage, v + (currentSub || '')); }
+    else gxStage(st, spec.stage);
+  }
+  if (spec.kick) {
+    const h = root.querySelector('h1.page-title, h2.page-title, h2.ct-title, h1.ct-title');
+    if (h && !h.closest('.px-head')) {
+      let k = h.previousElementSibling && h.previousElementSibling.classList.contains('gx-kick') ? h.previousElementSibling : null;
+      if (!k) { k = document.createElement('p'); k.className = 'gx-kick'; k.setAttribute('aria-hidden', 'true'); h.before(k); }
+      k.textContent = t(spec.kick);
+      if (!h.querySelector('.bk-echo')) { const txt = h.textContent.trim(); h.innerHTML = `<span class="bk-echo bk-scramble" data-text="${escHtml(txt)}">${escHtml(txt)}</span>`; }
+    }
+  }
+  if (spec.next) { BK_NEXT[v] = spec.next; bkMountNext(root, v); }
+  gxDecorate(root); initCursorTag(); gxMagnet(); bkFooter();
+}
+/* Scène à partir d'une liste d'adresses (prestation, ville). */
+function pxStage(st, list, key){ gxStage(st, key, list); }
 /* ═══ Outils communs du mélange Grids × Almira Kho ═══ */
 var BK_REELS = [];
 function bkReel(o){ BK_REELS.push(o); return BK_REELS.length - 1; }
@@ -4964,7 +5030,7 @@ function bkStripHtml(k, photos){
 /* Chapitres du site (kicker « Chapitre 0x, ») et page suivante en fin de page, comme « Série suivante » du Portfolio. */
 var BK_CHAPTER = { home: 0, portfolio: 1, services: 2, partners: 3, contact: 4, about: 5, legal: 6, drone: 7 };
 var BK_NEXT = { home: 'portfolio', portfolio: 'services', services: 'partners', partners: 'contact', contact: 'about', about: 'legal', legal: 'portfolio', drone: 'portfolio' };
-var BK_VIEW_NAME = { portfolio: {fr:'Portfolio', en:'Portfolio'}, services: {fr:'Services', en:'Services'}, partners: {fr:'Collaboration', en:'Collaboration'}, contact: {fr:'Contact', en:'Contact'}, about: {fr:'À propos', en:'About'}, legal: {fr:'FAQ', en:'FAQ'} };
+var BK_VIEW_NAME = { portfolio: {fr:'Portfolio', en:'Portfolio'}, services: {fr:'Services', en:'Services'}, partners: {fr:'Collaboration', en:'Collaboration'}, contact: {fr:'Contact', en:'Contact'}, about: {fr:'À propos', en:'About'}, legal: {fr:'FAQ', en:'FAQ'}, advice: {fr:'Conseils', en:'Advice'} };
 function bkKick(root, v){
   const h = root.querySelector('.gx-main .page-title, .gx-main .ct-title, .gx-main .drone-placeholder-title, .svx-head-main .page-title'); if (!h) return;
   let k = h.previousElementSibling && h.previousElementSibling.classList.contains('gx-kick') ? h.previousElementSibling : null;
@@ -5716,11 +5782,11 @@ function gxFit(el){
 }
 if (!window._gxFitRs) { window._gxFitRs = true; let to; addEventListener('resize', () => { clearTimeout(to); to = setTimeout(() => { const r = document.querySelector('.view.gx.active .gx-mega, #view-home.active #hmMega'); if (r) gxFit(r); const f = document.querySelector('.ft-mega'); if (f) gxFit(f); }, 120); }); }
 /* Scène : photos de la page (bannières de l'admin média) en noir et blanc sur rose poudré, dévoilées par un volet ; une photo absente est sautée. */
-function gxStage(st, v){
+function gxStage(st, v, custom){
   if (!st) return;
-  let list = (IMG.heroImages && IMG.heroImages[v]) || IMG[v];
+  let list = custom || (IMG.heroImages && IMG.heroImages[v]) || IMG[v];
   list = (Array.isArray(list) ? list : [list]).filter(Boolean);
-  const own = IMG.heroOwn && IMG.heroOwn[v]; if (own) list = [].concat(own, list);
+  const own = !custom && IMG.heroOwn && IMG.heroOwn[v]; if (own) list = [].concat(own, list);
   list = [...new Set(list)];
   if (st._v === LANG + v) return; st._v = LANG + v;
   const a = st.querySelector('.gx-ph-a'), b = st.querySelector('.gx-ph-b'), cap = st.querySelector('.gx-stage-cap');
