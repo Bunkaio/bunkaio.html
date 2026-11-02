@@ -7180,3 +7180,9 @@ body[data-view="quiz"] .quiz-nav-btn svg { stroke: #111; }
 .view.px-quiz .cat-tag .soon-chip, .view.px .soon-chip { color: #111 !important; background: #e8c6c4 !important; border: 0 !important; }
 .view.px-quiz .cat-item:hover .soon-chip { background: #fff !important; }
 .gx-kick, .svx-kick, .hm-head-sub .gx-kick { color: rgba(17,17,17,.42); }
+
+/* Constellation des 5 publics : libellés NOIRS en gras ; ils passent en blanc (sur pastille sombre) quand le viseur les atteint (surbrillance) */
+.hero-kicker .hk-w em { color: #0a0a0c; font-weight: 800 !important; text-shadow: none !important; border-radius: 0; }
+.hero-kicker .hk-w em::after { color: inherit !important; opacity: .65; font-weight: 700; }
+@keyframes hkFx { 0% { color: #0a0a0c; background-color: rgba(10,10,12,0); } 3%, 18% { color: #fff; background-color: rgba(10,10,12,.78); } 22%, 100% { color: #0a0a0c; background-color: rgba(10,10,12,0); } }
+@media (prefers-reduced-motion: reduce) { .hero-kicker .hk-b em { color: #0a0a0c; } }
