@@ -7147,3 +7147,13 @@ body[data-view="account"] .nav-burger-glyph { color: #111 !important; }
 .hm-claim { font-size: clamp(32px, 4.6vw, 72px); }
 @media (max-width: 760px) { #missionVideoWrap .mission-text { font-size: clamp(34px, 11vw, 52px) !important; } }
 @media (max-width: 920px) { #view-account .account-section { border-top-width: 0; padding-top: 0; } }
+
+/* Devis : boutons Retour / Accueil fixes → fond dépoli (le contenu qui défile dessous reste lisible) */
+body[data-view="quiz"] .quiz-nav-btn { background: rgba(236,235,232,.6) !important; -webkit-backdrop-filter: blur(16px) saturate(1.2) !important; backdrop-filter: blur(16px) saturate(1.2) !important; border: 1px solid #111 !important; color: #111 !important; z-index: 6; }
+body[data-view="quiz"] .quiz-nav-btn:hover, body[data-view="quiz"] .quiz-nav-btn:active { background: rgba(232,198,196,.75) !important; }
+body[data-view="quiz"] .quiz-nav-btn svg { stroke: #111; }
+/* Devis : survol (et appui tactile) des cartes — fond rose clair, texte noir lisible (avant : texte blanc sur fond clair) */
+.view.px-quiz .quiz-wrap .qstep.active :is(.prof-card, .tier-card, .opt-card, [class*="-card"]):hover { background: rgba(232,198,196,.55) !important; border: 1px solid #111 !important; color: #111 !important; }
+.view.px-quiz .quiz-wrap .qstep.active :is(.prof-card, .tier-card, .opt-card, [class*="-card"]):hover * { color: #111 !important; }
+.view.px-quiz .quiz-wrap .qstep.active :is(.prof-card, .tier-card, .opt-card, [class*="-card"]).selected { background: #e8c6c4 !important; border: 1px solid #111 !important; }
+.view.px-quiz .quiz-wrap .qstep.active :is(.prof-card, .tier-card, .opt-card, [class*="-card"]).selected * { color: #111 !important; }
