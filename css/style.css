@@ -7241,4 +7241,4 @@ body[data-view="quiz"] .quiz-nav-btn svg { stroke: #111; }
 @media (prefers-reduced-motion: reduce) {
   #view-home .hero-title .word, #view-home .hero-loc, #view-home .hero-line, #view-home .hero > .hero-start, #view-home .hero-access { animation: none !important; opacity: 1 !important; clip-path: none !important; filter: none !important; transform: none !important; }
 }
-#view-home .hero-title .word { font-size: clamp(52px, min(9.2vw, 14.5svh), 156px) !important; }
+#view-home .hero-title .word { font-size: clamp(52px, min(9.2vw, 12svh), 156px) !important; }
