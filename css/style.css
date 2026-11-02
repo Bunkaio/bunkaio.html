@@ -7157,3 +7157,26 @@ body[data-view="quiz"] .quiz-nav-btn svg { stroke: #111; }
 .view.px-quiz .quiz-wrap .qstep.active :is(.prof-card, .tier-card, .opt-card, [class*="-card"]):hover * { color: #111 !important; }
 .view.px-quiz .quiz-wrap .qstep.active :is(.prof-card, .tier-card, .opt-card, [class*="-card"]).selected { background: #e8c6c4 !important; border: 1px solid #111 !important; }
 .view.px-quiz .quiz-wrap .qstep.active :is(.prof-card, .tier-card, .opt-card, [class*="-card"]).selected * { color: #111 !important; }
+
+/* ═══ Correctif lisibilité des boutons (nov. 2026) ═══
+   Les anciens boutons .btn remplissaient leur fond en noir (::before) au survol/toucher pendant que la DA impose un texte noir : texte
+   invisible (noir sur noir, ex. « + Ajouter un contact »). Plus de remplissage : le survol change seulement la couleur de fond, texte toujours lisible. */
+.btn::before { display: none !important; }
+.btn.btn-ghost, .btn-ghost { transition: background .3s ease, color .3s ease, border-color .3s ease !important; }
+.btn-ghost:hover, .btn-ghost:focus-visible, .btn-ghost:active { background: var(--rose, #e8c6c4) !important; color: #111 !important; border-color: #111 !important; }
+.btn-ghost:hover span, .btn-ghost:focus-visible span, .btn-ghost:active span { color: #111 !important; }
+.btn-solid:hover:not(:disabled), .btn-solid:focus-visible, .btn-solid:active:not(:disabled) { background: var(--rose, #e8c6c4) !important; color: #111 !important; }
+.btn-solid:hover:not(:disabled) span, .btn-solid:focus-visible span { color: #111 !important; }
+/* Espaces : libellés de section et notes (étaient blancs sur papier) */
+#view-account .pt-section-label { color: rgba(17,17,17,.55) !important; }
+#view-account .pt-foot-note { color: rgba(17,17,17,.6) !important; }
+.cta-primary:hover, .cta-primary:focus-visible, .cta-primary:active { background: var(--rose, #e8c6c4) !important; color: #111 !important; border-color: #111 !important; }
+.cta-primary:hover span, .cta-primary:focus-visible span, .cta-primary:active span { color: #111 !important; }
+.cta-primary:hover::after { color: #111 !important; }
+/* Lisibilité sur papier : fil d'Ariane et pastilles « bientôt » (étaient blancs, pensés pour les anciennes bannières photo) */
+.view.px .breadcrumb, .view.gx .breadcrumb { color: rgba(17,17,17,.6) !important; text-shadow: none !important; }
+.view.px .breadcrumb a, .view.gx .breadcrumb a { color: #111 !important; }
+.view.px .breadcrumb span, .view.gx .breadcrumb span { color: rgba(17,17,17,.6) !important; }
+.view.px-quiz .cat-tag .soon-chip, .view.px .soon-chip { color: #111 !important; background: #e8c6c4 !important; border: 0 !important; }
+.view.px-quiz .cat-item:hover .soon-chip { background: #fff !important; }
+.gx-kick, .svx-kick, .hm-head-sub .gx-kick { color: rgba(17,17,17,.42); }
