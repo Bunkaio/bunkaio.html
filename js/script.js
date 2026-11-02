@@ -2079,12 +2079,12 @@ function goView(v, subTab, opts){
     /* Revenir sur une vue peut avoir mis en pause ses vidéos de fond
        (navigateurs mobiles) — on les relance systématiquement. */
     resumeAllBgVideos();
-    if (v === 'services') { renderServices(); renderServiceLinks(); setSvcTab('catalogue'); initSvxMega(); svxAuto(); }
+    if (v === 'services') { renderServices(); renderServiceLinks(); setSvcTab('catalogue'); initSvxMega(); svxAuto(); initCursorTag(); }
     if (v === 'share') renderGoogleReview();
     if (v === 'drone') { renderDroneCats(); renderDroneProjects(activeDroneCat); }
     if (v === 'portfolio') {
       /* Toujours re-rendre : la langue a pu changer depuis la dernière visite de cette vue */
-      renderPortfolioV2(); pfLoaded = true;
+      renderPortfolioV2(); pfLoaded = true; initCursorTag();
     }
     if (v === 'portfolio') renderPortfolioLinks();
     if (v === 'partners') {
@@ -4679,9 +4679,9 @@ function renderServices(){
       const open = SVX.open === c.id;
       const from = c.lumen ? t({fr:'Sur demande', en:'On request'}) : catFacts(c).from.toLocaleString('fr-FR') + ' €';
       return `<article class="svx-item${open ? ' is-open' : ''}" data-cat="${c.id}" data-i="${i}">
-        <button type="button" class="svx-row" aria-expanded="${open}" aria-controls="svx-p-${c.id}" onclick="svxToggle('${c.id}')">
+        <button type="button" class="svx-row" aria-expanded="${open}" aria-controls="svx-p-${c.id}" data-cursor="${open ? t({fr:'Fermer', en:'Close'}) : t({fr:'Ouvrir', en:'Open'})}" onclick="svxToggle('${c.id}')">
           <span class="svx-n">${svxNum(i + 1)}</span>
-          <span class="svx-name"><span class="svx-name-t">${t(c.name)}</span><small>${t(c.tag)}</small></span>
+          <span class="svx-name"><span class="svx-name-t bk-echo" data-text="${escHtml(t(c.name))}">${t(c.name)}</span><small>${t(c.tag)}</small></span>
           <span class="svx-count">${c.lumen ? '—' : svxNum(catTiers(c).length) + ' ' + t({fr:'formules', en:'packages'})}</span>
           <span class="svx-delay">${c.lumen ? '—' : svxDelays(c)}</span>
           <span class="svx-from">${from}<i class="svx-plus" aria-hidden="true"></i></span>
@@ -4700,6 +4700,7 @@ function svxToggle(id){
     const on = it.dataset.cat === SVX.open;
     it.classList.toggle('is-open', on);
     it.querySelector('.svx-row').setAttribute('aria-expanded', String(on));
+    it.querySelector('.svx-row').dataset.cursor = on ? t({fr:'Fermer', en:'Close'}) : t({fr:'Ouvrir', en:'Open'});
     if (on) svxCount(it);
   });
   svxStage(SVX.open);
@@ -5173,7 +5174,8 @@ function selectPfTab(id){
    visionneuse plein écran. Mêmes photos que l'admin média (portfolio/<univers>/<n>.webp). */
 Object.assign(I18N.fr, { 'pfx-index':'Sommaire', 'pfx-series':'Séries', 'pfx-images':'Images', 'pfx-since':'Expérience', 'pfx-years':'8+ ans' });
 Object.assign(I18N.en, { 'pfx-index':'Index', 'pfx-series':'Series', 'pfx-images':'Images', 'pfx-since':'Experience', 'pfx-years':'8+ years' });
-const PFX = { chapters: [], gen: 0, lb: null, grid: false };
+const PFX = { chapters: [], gen: 0, lb: null, grid: false, view: 'list' };
+try { PFX.view = localStorage.getItem('bunkaio_pf_view') === 'tiles' ? 'tiles' : 'list'; } catch (e) {}
 try { PFX.grid = localStorage.getItem('bunkaio_pf_grid') === '1'; } catch (e) {}
 const pfxNum = n => String(n).padStart(2, '0');
 const pfxSlug = s => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
@@ -5197,14 +5199,31 @@ function pfxLayout(n){
   return out.slice(0, n);
 }
 function pfxIndexHtml(chs, loading){
-  return `<div class="pfx-index-head"><span>${t({fr:'N°', en:'No.'})}</span><span>${t({fr:'Série', en:'Series'})}</span><span>${t({fr:'Univers', en:'Field'})}</span><span>${t({fr:'Année', en:'Year'})}</span><span>${t({fr:'Images', en:'Images'})}</span></div>` +
-    chs.map((c, i) => `<a class="pfx-row" href="#serie-${escHtml(c.id)}" data-i="${i}" onclick="return pfxGo(event,'${escHtml(c.id)}')">
+  const cv = PFX.view === 'tiles';
+  const tog = `<div class="pfx-view" role="group" aria-label="${escHtml(t({fr:'Affichage du sommaire', en:'Index view'}))}"><button type="button" class="${cv ? '' : 'on'}" aria-pressed="${!cv}" onclick="pfxSetView('list')">${t({fr:'Liste', en:'List'})}</button><button type="button" class="${cv ? 'on' : ''}" aria-pressed="${cv}" onclick="pfxSetView('tiles')">${t({fr:'Planches', en:'Boards'})}</button></div>`;
+  const list = `<div class="pfx-list"><div class="pfx-index-head"><span>${t({fr:'N°', en:'No.'})}</span><span>${t({fr:'Série', en:'Series'})}</span><span>${t({fr:'Univers', en:'Field'})}</span><span>${t({fr:'Année', en:'Year'})}</span><span>${t({fr:'Images', en:'Images'})}</span></div>` +
+    chs.map((c, i) => `<a class="pfx-row" href="#serie-${escHtml(c.id)}" data-i="${i}" data-cursor="${escHtml(t({fr:'Voir la série', en:'View series'}))}" onclick="return pfxGo(event,'${escHtml(c.id)}')">
       <span class="pfx-row-n">${pfxNum(i + 1)}</span>
-      <span class="pfx-row-t">${escHtml(c.title)}${c.client ? `<em>${escHtml(c.client)}</em>` : ''}</span>
+      <span class="pfx-row-t"><span class="bk-echo" data-text="${escHtml(c.title)}">${escHtml(c.title)}</span>${c.client ? `<em>${escHtml(c.client)}</em>` : ''}</span>
       <span class="pfx-row-c">${escHtml(pfxCatLabel(c.cat))}</span>
       <span class="pfx-row-y">${escHtml(String(c.year || '—'))}</span>
       <span class="pfx-row-i">${loading ? '··' : pfxNum((c.photos || []).length)}<span class="pfx-row-arrow" aria-hidden="true">↘</span></span>
-    </a>`).join('');
+    </a>`).join('') + `</div>`;
+  const tiles = loading ? '' : `<div class="pfx-tiles">${chs.map((c, i) => `<a class="pfx-tile" href="#serie-${escHtml(c.id)}" data-cursor="${escHtml(t({fr:'Voir', en:'View'}))}" onclick="return pfxGo(event,'${escHtml(c.id)}')">
+      <img loading="lazy" decoding="async" src="${c.photos[0]}" alt="">
+      <span class="pfx-tile-n">${pfxNum(i + 1)}</span>
+      <span class="pfx-tile-t"><span class="bk-echo" data-text="${escHtml(c.title)}">${escHtml(c.title)}</span></span>
+      <span class="pfx-tile-c">${pfxNum(c.photos.length)} ${t({fr:'images', en:'images'})}</span>
+    </a>`).join('')}</div>`;
+  return tog + list + tiles;
+}
+function pfxSetView(v){
+  PFX.view = v === 'tiles' ? 'tiles' : 'list';
+  try { localStorage.setItem('bunkaio_pf_view', PFX.view); } catch (e) {}
+  const idx = document.getElementById('pfIndex'); if (!idx) return;
+  idx.classList.toggle('is-tiles', PFX.view === 'tiles');
+  idx.querySelectorAll('.pfx-view button').forEach((b, k) => { const on = (k === 1) === (PFX.view === 'tiles'); b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on)); });
+  if (window.track) track('cta_click', 'portfolio_vue_' + PFX.view);
 }
 function pfxAlt(c, src, i){
   const num = parseInt((src.match(/\/(\d+)\.webp/) || [])[1], 10) || (i + 1);
@@ -5214,22 +5233,31 @@ function pfxAlt(c, src, i){
 function pfxChapterHtml(c, ci){
   const lay = pfxLayout(c.photos.length);
   const meta = [pfxCatLabel(c.cat) !== c.title ? pfxCatLabel(c.cat) : '', c.client, c.year].filter(Boolean).map(escHtml).join(' · ');
+  const next = PFX.chapters[ci + 1];
   return `<section class="pfx-ch" id="serie-${escHtml(c.id)}" aria-labelledby="pfx-t-${ci}">
     <header class="pfx-ch-head">
       <span class="pfx-ch-n">${pfxNum(ci + 1)}</span>
       <div class="pfx-ch-body">
-        <h3 class="pfx-ch-t" id="pfx-t-${ci}">${escHtml(c.title)}</h3>
+        <p class="pfx-ch-kick">${t({fr:'Série', en:'Series'})} ${pfxNum(ci + 1)},</p>
+        <h3 class="pfx-ch-t" id="pfx-t-${ci}"><span class="bk-scramble bk-echo" data-text="${escHtml(c.title)}">${escHtml(c.title)}</span></h3>
         ${meta ? `<p class="pfx-ch-meta">${meta}</p>` : ''}
         ${c.text ? `<p class="pfx-ch-text">${escHtml(c.text)}</p>` : ''}
       </div>
       <span class="pfx-ch-count">${pfxNum(c.photos.length)} ${t({fr:'img', en:'img'})}</span>
     </header>
+    <div class="pfx-strip" aria-label="${escHtml(t({fr:'Planche-contact', en:'Contact sheet'}))}"><div class="pfx-strip-in">${c.photos.map((src, i) => `<button type="button" class="pfx-thumb" data-cursor="${pfxNum(i + 1)}" onclick="pfxOpen(${ci},${i})" aria-label="${escHtml(t({fr:'Agrandir', en:'Enlarge'}))} ${i + 1}/${c.photos.length}"><img loading="lazy" decoding="async" src="${src}" alt=""></button>`).join('')}</div></div>
     <div class="pfx-grid">${c.photos.map((src, i) => `<figure class="pfx-item ${lay[i]} rv" data-ch="${ci}" data-i="${i}">
-        <button type="button" class="pfx-open" onclick="pfxOpen(${ci},${i})" aria-label="${escHtml(t({fr:'Agrandir', en:'Enlarge'}))} ${i + 1}/${c.photos.length}"><img loading="lazy" decoding="async" src="${src}" alt="${escHtml(pfxAlt(c, src, i))}"></button>
+        <button type="button" class="pfx-open" data-cursor="${escHtml(t({fr:'Voir', en:'View'}))}" onclick="pfxOpen(${ci},${i})" aria-label="${escHtml(t({fr:'Agrandir', en:'Enlarge'}))} ${i + 1}/${c.photos.length}"><img loading="lazy" decoding="async" src="${src}" alt="${escHtml(pfxAlt(c, src, i))}"></button>
         <figcaption>${pfxNum(ci + 1)}.${pfxNum(i + 1)}</figcaption>
       </figure>`).join('')}</div>
+    ${next ? `<a class="pfx-next" href="#serie-${escHtml(next.id)}" data-cursor="${escHtml(t({fr:'Voir', en:'View'}))}" onclick="return pfxGo(event,'${escHtml(next.id)}')">
+      <span class="pfx-next-k">${t({fr:'Série suivante', en:'Next series'})}</span>
+      <span class="pfx-next-t"><span class="bk-echo" data-text="${escHtml(next.title)}">${escHtml(next.title)}</span></span>
+      <span class="pfx-next-img"><img loading="lazy" decoding="async" src="${next.photos[0]}" alt=""></span>
+    </a>` : `<a class="pfx-next is-top" href="#pfIndex" onclick="return pfxTop(event)"><span class="pfx-next-k">${t({fr:'Fin du portfolio', en:'End of portfolio'})}</span><span class="pfx-next-t"><span class="bk-echo" data-text="${escHtml(t({fr:'Retour au sommaire', en:'Back to index'}))}">${t({fr:'Retour au sommaire', en:'Back to index'})}</span></span></a>`}
   </section>`;
 }
+function pfxTop(e){ e.preventDefault(); const el = document.getElementById('pfIndex'); if (el) el.scrollIntoView({ block: 'start', behavior: REDUCED_MOTION ? 'auto' : 'smooth' }); return false; }
 function pfxMeta(){
   const el = document.getElementById('pfMeta'); if (!el) return;
   const n = PFX.chapters.length, img = PFX.chapters.reduce((a, c) => a + c.photos.length, 0);
@@ -5251,7 +5279,8 @@ function renderPortfolioV2(){
     wrap.innerHTML = PFX.chapters.length ? PFX.chapters.map(pfxChapterHtml).join('')
       : `<div class="pf-empty">${t({fr:'Les premières séries arrivent très bientôt — contactez-moi pour voir des exemples adaptés à votre projet.', en:'The first series are coming very soon — get in touch to see examples suited to your project.'})}</div>`;
     wrap.querySelectorAll('.rv').forEach(observe);
-    pfxMeta(); pfxBindPreview();
+    idx.classList.toggle('is-tiles', PFX.view === 'tiles');
+    pfxMeta(); pfxBindPreview(); bkScrambleWatch(wrap); pfxStrips();
   });
 }
 function pfxGo(e, id){
@@ -5296,18 +5325,25 @@ function pfxOpen(ci, i){
   if (!lb) {
     lb = document.createElement('div'); lb.className = 'pfx-lb'; lb.setAttribute('role', 'dialog'); lb.setAttribute('aria-modal', 'true');
     lb.innerHTML = `<div class="pfx-lb-top"><span class="pfx-lb-t"></span><span class="pfx-lb-c"></span><button type="button" class="pfx-lb-x" aria-label="${escHtml(t({fr:'Fermer', en:'Close'}))}">×</button></div>
-      <button type="button" class="pfx-lb-nav prev" aria-label="${escHtml(t({fr:'Précédente', en:'Previous'}))}">←</button><figure class="pfx-lb-fig"><img alt=""></figure><button type="button" class="pfx-lb-nav next" aria-label="${escHtml(t({fr:'Suivante', en:'Next'}))}">→</button>`;
+      <button type="button" class="pfx-lb-nav prev" aria-label="${escHtml(t({fr:'Précédente', en:'Previous'}))}">←</button><figure class="pfx-lb-fig"><img alt=""></figure><button type="button" class="pfx-lb-nav next" aria-label="${escHtml(t({fr:'Suivante', en:'Next'}))}">→</button>
+      <div class="pfx-lb-bot"><p class="pfx-lb-cap"></p><span class="pfx-lb-tc"></span></div>`;
     document.body.appendChild(lb); PFX.lb = lb;
     lb.querySelector('.pfx-lb-x').onclick = pfxClose;
     lb.querySelector('.prev').onclick = () => pfxStep(-1);
     lb.querySelector('.next').onclick = () => pfxStep(1);
-    lb.addEventListener('click', e => { if (e.target === lb || e.target.classList.contains('pfx-lb-fig')) pfxClose(); });
+    /* Façon salle de projection : clic à gauche = précédente, à droite = suivante (l'étiquette du curseur l'annonce) ; × ou Échap pour sortir. */
+    const fig = lb.querySelector('.pfx-lb-fig');
+    fig.addEventListener('pointermove', e => { fig.dataset.cursor = e.clientX < innerWidth / 2 ? t({fr:'← Précédente', en:'← Previous'}) : t({fr:'Suivante →', en:'Next →'}); });
+    fig.addEventListener('click', e => { if (fig._sw && Date.now() - fig._sw < 300) return; pfxStep(e.clientX < innerWidth / 2 ? -1 : 1); });
+    lb.addEventListener('click', e => { if (e.target === lb) pfxClose(); });
     let x0 = null;
     lb.addEventListener('pointerdown', e => { x0 = e.clientX; });
-    lb.addEventListener('pointerup', e => { if (x0 !== null && Math.abs(e.clientX - x0) > 50) pfxStep(e.clientX < x0 ? 1 : -1); x0 = null; });
+    lb.addEventListener('pointerup', e => { if (x0 !== null && Math.abs(e.clientX - x0) > 50) { pfxStep(e.clientX < x0 ? 1 : -1); lb.querySelector('.pfx-lb-fig')._sw = Date.now(); } x0 = null; });
     document.addEventListener('keydown', e => { if (!lb.classList.contains('on')) return; if (e.key === 'Escape') pfxClose(); if (e.key === 'ArrowRight') pfxStep(1); if (e.key === 'ArrowLeft') pfxStep(-1); });
   }
   lb._ci = ci; lb._i = i; pfxShow();
+  lb.querySelector('.pfx-lb-fig').dataset.cursor = t({fr:'Suivante →', en:'Next →'});
+  if (window._bkTag) window._bkTag.classList.remove('on');
   lb.classList.add('on'); document.documentElement.classList.add('pfx-lock');
   lb.querySelector('.pfx-lb-x').focus({ preventScroll: true });
 }
@@ -5315,11 +5351,64 @@ function pfxShow(){
   const lb = PFX.lb, c = PFX.chapters[lb._ci]; if (!c) return;
   const src = c.photos[lb._i], img = lb.querySelector('img');
   img.src = src; img.alt = pfxAlt(c, src, lb._i);
-  lb.querySelector('.pfx-lb-t').textContent = pfxNum(lb._ci + 1) + ' — ' + c.title;
-  lb.querySelector('.pfx-lb-c').textContent = pfxNum(lb._i + 1) + ' / ' + pfxNum(c.photos.length);
+  lb.querySelector('.pfx-lb-t').textContent = t({fr:'Série ', en:'Series '}) + pfxNum(lb._ci + 1) + ', ' + c.title;
+  lb.querySelector('.pfx-lb-c').textContent = (c.client || pfxCatLabel(c.cat)) + (c.year ? ' · ' + c.year : '');
+  lb.querySelector('.pfx-lb-cap').textContent = img.alt;
+  lb.querySelector('.pfx-lb-tc').textContent = '00:' + pfxNum(lb._i + 1) + ' / 00:' + pfxNum(c.photos.length);
+  img.classList.remove('in'); void img.offsetWidth; img.classList.add('in');
 }
 function pfxStep(d){ const lb = PFX.lb, c = PFX.chapters[lb._ci]; if (!c) return; lb._i = (lb._i + d + c.photos.length) % c.photos.length; pfxShow(); }
 function pfxClose(){ if (!PFX.lb) return; PFX.lb.classList.remove('on'); document.documentElement.classList.remove('pfx-lock'); }
+
+/* ═══ Touches « cinéma » (nov. 2026, inspiration Almira Kho) — communes au Portfolio et aux Services ═══
+   Étiquette noire qui suit le curseur sur tout élément [data-cursor] (souris uniquement) ; titres qui se brouillent puis se
+   stabilisent à leur arrivée à l'écran (.bk-scramble) ; planche-contact qui glisse avec le défilement (.pfx-strip). */
+function initCursorTag(){
+  if (window._bkTag || !matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+  const tag = document.createElement('div'); tag.className = 'bk-ctag'; tag.setAttribute('aria-hidden', 'true'); document.body.appendChild(tag); window._bkTag = tag;
+  let raf = 0, x = 0, y = 0;
+  document.addEventListener('pointermove', e => {
+    x = e.clientX; y = e.clientY;
+    const el = e.target && e.target.closest ? e.target.closest('[data-cursor]') : null;
+    if (el && el.dataset.cursor) { if (tag.textContent !== el.dataset.cursor) tag.textContent = el.dataset.cursor; tag.classList.add('on'); } else tag.classList.remove('on');
+    if (!raf) raf = requestAnimationFrame(() => { raf = 0; tag.style.transform = `translate(${x + 16}px, ${y + 14}px)`; });
+  }, { passive: true });
+  document.addEventListener('pointerleave', () => tag.classList.remove('on'));
+}
+const BK_GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+function bkScramble(el){
+  if (!el.dataset.text) el.dataset.text = el.textContent;
+  const final = el.dataset.text; if (!final || REDUCED_MOTION) return;
+  const n = final.length, stops = [...final].map((ch, i) => 180 + Math.random() * 520 + i * 18), t0 = performance.now();
+  const step = now => {
+    const dt = now - t0; let done = true, out = '';
+    for (let i = 0; i < n; i++) { const ch = final[i]; if (dt >= stops[i] || ch === ' ' || /[^\p{L}\p{N}]/u.test(ch)) out += ch; else { done = false; out += BK_GLYPHS[(Math.random() * BK_GLYPHS.length) | 0]; } }
+    el.textContent = out; if (!done) requestAnimationFrame(step); else el.textContent = final;
+  };
+  requestAnimationFrame(step);
+  clearTimeout(el._scT); el._scT = setTimeout(() => { el.textContent = final; }, 1600);   /* filet : texte exact garanti même si l'animation est suspendue */
+}
+function bkScrambleWatch(root){
+  const els = (root || document).querySelectorAll('.bk-scramble:not([data-sc])'); if (!els.length) return;
+  if (!('IntersectionObserver' in window)) return;
+  window._bkScIo = window._bkScIo || new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { window._bkScIo.unobserve(e.target); bkScramble(e.target); } }), { threshold: 0.6 });
+  els.forEach(el => { el.dataset.sc = '1'; window._bkScIo.observe(el); });
+}
+function pfxStrips(){
+  if (window._pfxStrip || REDUCED_MOTION) return; window._pfxStrip = true;
+  let tick = false;
+  const upd = () => {
+    tick = false; if (currentView !== 'portfolio') return;
+    document.querySelectorAll('#pfGrid .pfx-strip').forEach(st => {
+      const r = st.getBoundingClientRect(); if (r.bottom < 0 || r.top > innerHeight) return;
+      const inner = st.firstElementChild, max = inner.scrollWidth - st.clientWidth; if (max <= 0) { inner.style.transform = ''; return; }
+      const p = Math.min(1, Math.max(0, (innerHeight - r.top) / (innerHeight + r.height)));
+      inner.style.transform = `translate3d(${-max * p}px,0,0)`;
+    });
+  };
+  addEventListener('scroll', () => { if (!tick) { tick = true; requestAnimationFrame(upd); } }, { passive: true });
+  addEventListener('resize', upd); upd();
+}
 
 /* ═══════════════ CONTACT ═══════════════ */
 function sendContact(e){
