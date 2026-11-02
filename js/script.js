@@ -5994,7 +5994,8 @@ function renderAccPartner(){
       </div>
 
       <div class="mb-detail-block">
-        <div class="mb-detail-label">${t({fr:'Annuaire BUNKAIO', en:'BUNKAIO directory'})}</div>
+        <div class="mb-detail-label">${t({fr:'Annuaire BUNKAIO', en:'BUNKAIO directory'})} <span class="pt-soon-badge" style="margin:0 0 0 8px;vertical-align:middle">${t({fr:'En cours de réalisation', en:'Coming soon'})}</span></div>
+        <p class="acc-info-note" style="margin:0 0 12px">${t({fr:'BUNKAIO vient d\'ouvrir son site : l\'espace réseau et son annuaire ouvriront dès que quelques autres prestataires partenaires auront rejoint le programme. Cochez dès maintenant pour y figurer à son ouverture.', en:'BUNKAIO has just launched its website: the network space and its directory will open as soon as a few more partner providers have joined the programme. Tick now to be listed when it opens.'})}</p>
         <label class="pt-check">
           <input type="checkbox" id="ptDirectoryCheckbox" ${info.visibleInDirectory === true ? 'checked' : ''} onchange="setDirectoryVisibility(this.checked)">
           <span>${t({fr:'Je souhaite être référencé·e dans l\'annuaire BUNKAIO', en:'I would like to be listed in the BUNKAIO directory'})}</span>
@@ -7775,17 +7776,22 @@ const PARTNER_LOGOS = [
   { name:'Palmynala', style:'font-family:Georgia,serif;font-weight:400;letter-spacing:0.08em;text-transform:uppercase' },
   { name:'Studio Doutor', style:'font-weight:600;letter-spacing:0.02em' },
   { name:'ÉCLAT', style:'font-weight:300;letter-spacing:0.28em;text-transform:uppercase' },
-  { name:'Restaurant Trophies', style:'font-family:Georgia,serif;font-weight:700;font-style:italic;letter-spacing:0' }
+  { name:'Restaurant Trophies', style:'font-family:Georgia,serif;font-weight:700;font-style:italic;letter-spacing:0' },
+  { name:'Wolf Silveri', url:'https://www.photography-was-dead.com', style:'font-weight:800;letter-spacing:0.12em;text-transform:uppercase' }
 ];
 
 function renderLogoCarousel(){
   const el = document.getElementById('logoTrack');
   if (!el) return;
-  const make = () => PARTNER_LOGOS.map(l => `
+  /* `url` facultatif : le nom devient un lien vers le site du partenaire (nouvel onglet). */
+  const make = (dup) => PARTNER_LOGOS.map(l => l.url ? `
+    <a class="logo-item logo-link" href="${l.url}" target="_blank" rel="noopener"${dup ? ' tabindex="-1" aria-hidden="true"' : ` aria-label="${l.name} — ${t({fr:'site du partenaire', en:'partner website'})}"`}>
+      <span style="${l.style}">${l.name}</span>
+    </a>` : `
     <div class="logo-item" aria-label="${l.name}">
       <span style="${l.style}">${l.name}</span>
     </div>`).join('');
-  el.innerHTML = make() + make();
+  el.innerHTML = make(false) + make(true);
 }
 
 

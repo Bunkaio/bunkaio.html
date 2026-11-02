@@ -5691,3 +5691,7 @@ body:not([data-view="article"]) .art-progress { display: none; }
 .acc-lang-label { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.62); margin-right: 4px; }
 .acc-lang-btn { font: inherit; font-size: 12.5px; font-weight: 600; padding: 5px 12px; border-radius: 100px; border: 1px solid rgba(255,255,255,.4); background: transparent; color: #fff; cursor: pointer; }
 .acc-lang-btn.on { background: #fff; color: #0a0a0c; border-color: #fff; }
+
+/* Défilé « Ils ont travaillé avec BUNKAIO » : nom cliquable vers le site du partenaire */
+a.logo-item.logo-link { text-decoration: none; cursor: pointer; }
+a.logo-item.logo-link:hover span, a.logo-item.logo-link:focus-visible span { text-decoration: underline; text-underline-offset: 4px; }
