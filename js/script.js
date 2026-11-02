@@ -290,7 +290,7 @@ const I18N = {
     'p-why-1':'Nous vivons dans un monde où les contenus se multiplient, mais où les histoires se raréfient. Chaque jour, des milliers d\'images sont publiées puis oubliées.',
     'p-why-2':'Pourtant, derrière chaque lieu, chaque objet et chaque réalisation se cache une histoire qui mérite d\'être racontée.',
     'p-why-3':'Chez Bunkaio, nous croyons que la valeur d\'un projet ne réside pas uniquement dans son résultat final, mais également dans la vision, les défis et le savoir-faire qui ont permis son existence.',
-    'p-mission':'BUNKAIO accompagne les personnes qui entreprennent dans la construction de leur image professionnelle.',
+    'p-mission':'Votre image, à la hauteur de vos ambitions.',
     'reassure1-title':'Devis gratuit sous 48h',
     'reassure1-text':'Aucun engagement, aucune carte bancaire. Vous recevez une proposition claire et chiffrée en moins de 48 heures.',
     'reassure2-title':'Créneaux limités chaque mois',
@@ -562,7 +562,7 @@ const I18N = {
     'comm-redirect-text':'Vous avez exprimé un intérêt pour des services de communication complémentaires. Agency Nascimento, partenaire de BUNKAIO, accompagne nos clients sur la création de site, le SEO, la publicité en ligne et les réseaux sociaux. Découvrez leur approche.',
     'comm-redirect-btn':'Découvrir Agency Nascimento',
     'home-claim-kicker':'Le studio',
-    'home-claim-text':'BUNKAIO accompagne les personnes qui entreprennent dans la construction de leur image professionnelle.',
+    'home-claim-text':'Votre image, à la hauteur de vos ambitions.',
     'ft-services':'Services','ft-studio':'Le studio',
     'footer-claim2':'Studio de photographie mobile · Montpellier · Toulouse',
     'stab-catalogue':'Catalogue & prix','stab-devis':'Devis & déroulé',
@@ -649,7 +649,7 @@ const I18N = {
     'p-why-1':'We live in a world where content keeps multiplying, yet stories are becoming rare. Every day, thousands of images are published and then forgotten.',
     'p-why-2':'And yet, behind every place, every object and every achievement lies a story that deserves to be told.',
     'p-why-3':'At Bunkaio, we believe the value of a project lies not only in its final result, but also in the vision, the challenges and the craftsmanship that brought it to life.',
-    'p-mission':'BUNKAIO helps people who run a business build their professional image.',
+    'p-mission':'Your image, as ambitious as you are.',
     'reassure1-title':'Free quote within 48h',
     'reassure1-text':'No commitment, no credit card. You receive a clear, priced proposal in under 48 hours.',
     'reassure2-title':'Limited slots every month',
@@ -921,7 +921,7 @@ const I18N = {
     'comm-redirect-text':'You expressed an interest in complementary communication services. Agency Nascimento, a BUNKAIO partner, supports our clients with website creation, SEO, online advertising and social media. Discover their approach.',
     'comm-redirect-btn':'Discover Agency Nascimento',
     'home-claim-kicker':'The studio',
-    'home-claim-text':'BUNKAIO helps people who run a business build their professional image.',
+    'home-claim-text':'Your image, as ambitious as you are.',
     'ft-services':'Services','ft-studio':'The studio',
     'footer-claim2':'Mobile photography studio · Montpellier · Toulouse',
     'stab-catalogue':'Catalogue & rates','stab-devis':'Quote & process',
@@ -2111,6 +2111,7 @@ function goView(v, subTab, opts){
        .reassure-section utilise un seuil de déclenchement plus tardif
        pour que l'animation soit visible plutôt que déjà terminée. */
     gxInit(v); pxInit(v);
+    if (v === 'account') accHead();
     localizeLinks(document.getElementById('view-' + v));
     initCstDecor(document.getElementById('view-' + v));
     if (typeof CstField !== 'undefined') CstField.start();
@@ -7767,9 +7768,24 @@ function addMbComment(){
   saveMoodboards(list, () => { renderAccMoodboards(); }, () => { if (btn) btn.disabled = false; });
 }
 
+/* En-tête éditorial des espaces : mot géant « ESPACE CLIENT / PARTENAIRE », compteur (commandes ; partenaire : tarif partenaire). */
+function accHead(){
+  if (!USER) return;
+  const m = document.getElementById('accMega'); if (!m) return;
+  const partner = USER.type === 'partner';
+  gxMega(m, partner ? t({fr:'ESPACE PARTENAIRE', en:'PARTNER SPACE'}) : t({fr:'ESPACE CLIENT', en:'CLIENT SPACE'}));
+  const c = document.getElementById('accCount'), l = document.getElementById('accCountLbl');
+  if (partner) { c.textContent = '-' + PARTNER_DISCOUNT + '%'; l.textContent = t({fr:'tarif partenaire', en:'partner rate'}); }
+  else { c.textContent = pfxNum((USER.commandes || []).length); l.textContent = t({fr:'commandes', en:'orders'}); }
+  const root = document.getElementById('view-account'); root.classList.toggle('acc-is-partner', partner);
+  root.querySelectorAll('.pf-cat-tab').forEach(b => { b.dataset.cursor = t({fr:'Ouvrir', en:'Open'}); });
+  initCursorTag(); gxMagnet();
+  gxFit(m);
+}
 function renderAccount(){
   renderAccLang();
   if (!USER) return;
+  accHead();
   document.getElementById('accBadge').textContent =
     I18N[LANG][USER.type === 'client' ? 'acc-client-badge' : 'acc-partner-badge'];
   document.getElementById('accName').textContent = USER.nom || USER.email;
