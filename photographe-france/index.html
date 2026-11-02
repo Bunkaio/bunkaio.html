@@ -34,7 +34,7 @@
 <link rel="icon" type="image/png" sizes="64x64" href="/images/favicon-64.png">
 <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
 <link rel="preload" href="fonts/dm-sans-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/style.min.css?v=d60d77a8">
+<link rel="stylesheet" href="css/style.min.css?v=33894cc7">
 
 <script type="application/ld+json">
 {
@@ -925,15 +925,33 @@
      Tout le contenu complet (certifications, formules & tarifs, portfolio drone)
      est conservé intact en commentaire juste en dessous, prêt à être réactivé :
      il suffit de retirer ce commentaire et de supprimer le bloc .drone-placeholder. -->
-<div class="view" id="view-drone">
-  <div class="drone-placeholder">
-    <div class="drone-placeholder-icon">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M12 3v2.4M12 18.6V21M21 12h-2.4M5.4 12H3M18.1 5.9l-1.7 1.7M7.6 16.4l-1.7 1.7M18.1 18.1l-1.7-1.7M7.6 7.6 5.9 5.9"/></svg>
+<div class="view gx" id="view-drone">
+  <div class="gx-page">
+  <div class="gx-cols" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+  <header class="gx-head">
+    <div class="gx-top">
+      <div class="gx-mega" data-fr="4K DRONE" data-en="4K DRONE" aria-hidden="true">4K DRONE</div>
+      <div class="gx-count gx-rec" aria-hidden="true"><b><i></i>REC</b><span id="gxTc">00:00:00:00</span></div>
     </div>
-    <div class="drone-placeholder-kicker" data-lang="drone-title">4K Drone & vidéo</div>
-    <h2 data-pageh1 class="drone-placeholder-title" data-lang="drone-placeholder-title">En cours de réalisation</h2>
-    <p class="drone-placeholder-text" data-lang="drone-placeholder-text">Nous préparons cette prestation avec le même soin que le reste du studio — formules, certifications et portfolio aérien seront bientôt en ligne. En attendant, estimons ensemble votre projet.</p>
-    <button class="hero-start" onclick="goView('quiz')"><span data-lang="start">Construire mon projet</span></button>
+    <div class="gx-sub">
+      <div class="gx-main drone-placeholder">
+        <div class="drone-placeholder-kicker" data-lang="drone-title">4K Drone & vidéo</div>
+        <h2 data-pageh1 class="drone-placeholder-title bk-scramble" data-lang="drone-placeholder-title">En cours de réalisation</h2>
+        <p class="drone-placeholder-text" data-lang="drone-placeholder-text">Nous préparons cette prestation avec le même soin que le reste du studio — formules, certifications et portfolio aérien seront bientôt en ligne. En attendant, estimons ensemble votre projet.</p>
+        <button class="hero-start" onclick="goView('quiz')"><span data-lang="start">Construire mon projet</span></button>
+      </div>
+      <div class="gx-vf" id="gxVf" aria-hidden="true">
+        <div class="gx-vf-grid"></div>
+        <span class="gx-vf-c tl"></span><span class="gx-vf-c tr"></span><span class="gx-vf-c bl"></span><span class="gx-vf-c br"></span>
+        <div class="gx-vf-drone"><svg viewBox="0 0 200 120" fill="none" stroke="#111" stroke-width="2"><path d="M70 60h60M60 40l20 14M140 40l-20 14M60 80l20-14M140 80l-20-14"/><rect x="80" y="50" width="40" height="20" rx="6" fill="#111"/><circle cx="100" cy="74" r="5" fill="#e8c6c4" stroke="#111"/><g class="gx-rotor"><ellipse cx="50" cy="34" rx="26" ry="4"/></g><g class="gx-rotor r2"><ellipse cx="150" cy="34" rx="26" ry="4"/></g><g class="gx-rotor r3"><ellipse cx="50" cy="86" rx="26" ry="4"/></g><g class="gx-rotor r4"><ellipse cx="150" cy="86" rx="26" ry="4"/></g><path d="M50 34v6M150 34v6M50 86v-6M150 86v-6"/></svg></div>
+        <div class="gx-vf-x" id="gxVfX"><span></span></div>
+        <div class="gx-vf-hud tl">4K · 25 FPS · HDR</div>
+        <div class="gx-vf-hud tr" id="gxAlt">ALT 000 M</div>
+        <div class="gx-vf-hud bl">A1/A3 · A2</div>
+        <div class="gx-vf-hud br" id="gxVfPct">⊹ 0%</div>
+      </div>
+    </div>
+  </header>
   </div>
   <!--
   <div class="drone-soon-banner">
@@ -1102,20 +1120,34 @@
 </div>
 
 <!-- CONTACT -->
-<div class="view" id="view-contact">
-  <div class="ct-page">
-    <div>
+<div class="view gx" id="view-contact">
+  <div class="gx-page">
+  <div class="gx-cols" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+  <header class="gx-head">
+    <div class="gx-top">
+      <div class="gx-mega" data-fr="CONTACT" data-en="CONTACT" aria-hidden="true">CONTACT</div>
+      <div class="gx-count" aria-hidden="true"><b id="gxClock">--:--</b><span id="gxClockLbl">Heure de Paris</span></div>
+    </div>
+    <div class="gx-sub">
+      <div class="gx-main">
       <div class="svc-tabs ct-tabs" role="navigation">
       <a class="svc-tab active" href="/contact/" onclick="return navLink(event,'contact')" data-lang="ctab-contact">Contact</a>
       <a class="svc-tab" href="/a-propos/" onclick="return navLink(event,'about')" data-lang="ctab-about">À propos</a>
     </div>
-            <h2 data-pageh1 class="ct-title" data-lang="contact-title">Contacter votre photographe</h2>
+      <h2 data-pageh1 class="ct-title" data-lang="contact-title">Contacter votre photographe</h2>
       <p class="ct-sub" data-lang="contact-sub">Une question, un projet, une collaboration ? Écrivez-nous — nous répondons sous 24h.</p>
       <p class="loc-line ct-loc" data-lang="loc-line">Basé en Occitanie, déplacement partout en France sur devis</p>
+      <p class="gx-status" id="gxStatus" aria-live="polite"></p>
+      </div>
+      <div class="gx-stage" data-stage="contact" aria-hidden="true"><div class="gx-stage-ph"><img class="gx-ph-a" alt=""><img class="gx-ph-b" alt=""></div><div class="gx-stage-cap"></div></div>
+    </div>
+  </header>
+  <div class="ct-page">
+    <div>
       <div class="read-panel ct-info-panel">
       <div class="ct-info-block">
         <div class="ct-info-label">Email</div>
-        <div class="ct-info-value"><a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a></div>
+        <div class="ct-info-value"><a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a> <button type="button" class="gx-copy" data-copy="contact@bunkaio.com" data-cursor="Copier">Copier</button></div>
       </div>
       <div class="ct-info-block">
         <div class="ct-info-label" data-lang="phone-label">Téléphone</div>
@@ -1180,6 +1212,7 @@
       <p class="svcp-text" data-lang="ct-extra-links">Vous préférez construire votre projet en ligne ? Utilisez le <a href="/devis/" data-nav="quiz">devis en ligne</a> (2 minutes) ou consultez la <a href="/faq/" data-nav="faq">FAQ</a>.</p>
     </section>
   </div>
+</div>
 </div>
 
 <!-- CONSEILS PHOTO : hub et articles (contenu rendu par renderAdvicePage / renderArticlePage) -->
@@ -1411,9 +1444,22 @@
 </div>
 
 <!-- PARTNERS -->
-<div class="view" id="view-partners">
-  <div class="partners-page">
-    <h2 data-pageh1 class="page-title" data-lang="partners-title">Partenariat et collaboration</h2>
+<div class="view gx" id="view-partners">
+  <div class="partners-page gx-page">
+  <div class="gx-cols" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+  <header class="gx-head">
+    <div class="gx-top">
+      <div class="gx-mega" data-fr="COLLABORATION" data-en="COLLABORATION" aria-hidden="true">COLLABORATION</div>
+      <div class="gx-count" aria-hidden="true"><b id="gxSpots">23</b><span id="gxSpotsLbl">places sur 25</span></div>
+    </div>
+    <div class="gx-sub">
+      <div class="gx-main">
+        <h2 data-pageh1 class="page-title" data-lang="partners-title">Partenariat et collaboration</h2>
+        <div class="gx-uni" id="gxUni"></div>
+      </div>
+      <div class="gx-stage" data-stage="partners" aria-hidden="true"><div class="gx-stage-ph"><img class="gx-ph-a" alt=""><img class="gx-ph-b" alt=""></div><div class="gx-stage-cap"></div></div>
+    </div>
+  </header>
 
     <div class="svc-tabs">
       <button class="svc-tab active" id="ptab-program" onclick="setPartnersTab('program')" data-lang="ptab-program">Programme Partenaires</button>
@@ -1580,10 +1626,22 @@
 </div>
 
 <!-- FAQ & POLITIQUE DE CONFIDENTIALITÉ -->
-<div class="view" id="view-legal">
-  <div class="services-page">
+<div class="view gx" id="view-legal">
+  <div class="services-page gx-page">
+  <div class="gx-cols" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+  <header class="gx-head">
+    <div class="gx-top">
+      <div class="gx-mega" id="gxLegalMega" aria-hidden="true">FAQ</div>
+      <div class="gx-count" aria-hidden="true"><b id="gxQn">00</b><span id="gxQnLbl">questions</span></div>
+    </div>
+    <div class="gx-sub">
+      <div class="gx-main">
     <h2 data-pageh1 class="page-title" data-lang="legal-title">FAQ : questions fréquentes</h2>
     <p class="page-sub" data-lang="legal-sub">Les réponses aux questions les plus fréquentes, ainsi que nos engagements en matière de confidentialité et de droits d'utilisation des visuels.</p>
+      </div>
+      <div class="gx-stage" data-stage="legal" aria-hidden="true"><div class="gx-stage-ph"><img class="gx-ph-a" alt=""><img class="gx-ph-b" alt=""></div><div class="gx-stage-cap"></div></div>
+    </div>
+  </header>
 
     <div class="svc-tabs">
       <button class="svc-tab active" id="legaltab-faq" onclick="setLegalTab('faq')" data-lang="legaltab-faq">FAQ</button>
@@ -1593,6 +1651,12 @@
       <button class="svc-tab" id="legaltab-image" onclick="setLegalTab('image')" data-lang="legaltab-image">Droits à l'image</button>
     </div>
 
+    <div class="gx-search" role="search">
+      <label for="gxSearch" class="gx-search-k">⊹</label>
+      <input type="search" id="gxSearch" autocomplete="off" placeholder="Rechercher une question…" oninput="gxFaqSearch(this.value)">
+      <span class="gx-search-n" id="gxSearchN" aria-live="polite"></span>
+    </div>
+    <p class="gx-search-empty" id="gxSearchEmpty" hidden></p>
     <!-- FAQ -->
     <div id="lsec-faq">
       <div id="faqAccordion"><!--snap--><!--/snap--></div>
@@ -1989,6 +2053,6 @@
 <script src="config/articles.en.js?v=a5fd138b"></script>
 <script src="config/routes.js?v=f47dd51d"></script>
 <script src="config/media.js?v=3d72d6fd"></script>
-<script src="js/script.min.js?v=35024394"></script>
+<script src="js/script.min.js?v=682ed6ba"></script>
 </body>
 </html>

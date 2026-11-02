@@ -1093,6 +1093,7 @@ function refreshDynamic(){
   if (document.getElementById('view-drone').classList.contains('active')) { renderDroneCats(); renderDroneProjects(activeDroneCat); }
   if (document.getElementById('view-partners').classList.contains('active')) { renderPartnersAccordion(); renderApplyBenefits(); renderApplyTypePicker(); }
   if (document.getElementById('view-legal').classList.contains('active')) { renderFaqAccordion(); renderPrivacyAccordion(); renderCgvAccordion(); renderCookiesAccordion(); renderImageAccordion(); }
+  if (GX_VIEWS.includes(currentView) && document.getElementById('view-' + currentView).classList.contains('active')) { gxInit(currentView); if (currentView === 'legal') { const a = document.querySelector('#view-legal .svc-tab.active'); gxLegalTab(a ? a.id.replace('legaltab-', '') : 'faq'); } }
   if (document.getElementById('view-portfolio').classList.contains('active')) {
     renderPortfolioV2();
   }
@@ -2106,6 +2107,7 @@ function goView(v, subTab, opts){
        sur l'ensemble du site, plus besoin de le câbler page par page.
        .reassure-section utilise un seuil de déclenchement plus tardif
        pour que l'animation soit visible plutôt que déjà terminée. */
+    gxInit(v);
     localizeLinks(document.getElementById('view-' + v));
     initCstDecor(document.getElementById('view-' + v));
     if (typeof CstField !== 'undefined') CstField.start();
@@ -5410,6 +5412,242 @@ function pfxStrips(){
   addEventListener('resize', upd); upd();
 }
 
+/* ═══ Pages éditoriales « GX » (nov. 2026) : Contact, Collaboration, 4K Drone, FAQ — même DA « Grids » que Portfolio / Services,
+   touches « cinéma ». En-tête : mot géant ajusté à la largeur (lettres qui montent, graisse qui suit la souris), grand compteur à
+   droite (heure de Paris, places restantes, REC, nombre de questions), scène photo (bannières de la page en noir et blanc sur rose
+   poudré, volet), barres qui se tracent, boutons aimantés, étiquette curseur, formulaires avec jauge de complétion. */
+var GX_VIEWS = ['contact', 'partners', 'drone', 'legal'];
+var GX = { timers: [], mag: false };
+var GX_LEGAL_MEGA = {
+  faq: {fr:'FAQ', en:'FAQ'}, privacy: {fr:'CONFIDENTIALITÉ', en:'PRIVACY'}, cgv: {fr:'CGV', en:'TERMS'},
+  cookies: {fr:'COOKIES', en:'COOKIES'}, image: {fr:'DROITS À L\'IMAGE', en:'IMAGE RIGHTS'}
+};
+function gxInit(v){
+  GX.timers.forEach(clearInterval); GX.timers = [];
+  if (!GX_VIEWS.includes(v)) return;
+  const root = document.getElementById('view-' + v); if (!root) return;
+  const mega = root.querySelector('.gx-mega');
+  if (mega && v !== 'legal') gxMega(mega, mega.dataset[LANG] || mega.dataset.fr);
+  gxStage(root.querySelector('.gx-stage'), v);
+  if (v === 'contact') { gxClock(); GX.timers.push(setInterval(gxClock, 15000)); }
+  if (v === 'partners') { gxSpots(); gxMarquee(); }
+  if (v === 'drone') gxDrone();
+  if (v === 'legal') { const s = document.getElementById('gxSearch'); if (s) { s.value = ''; s.placeholder = t({fr:'Rechercher une question…', en:'Search a question…'}); } }
+  gxDecorate(root);
+  initCursorTag(); gxMagnet();
+}
+/* Ce qui doit être refait après chaque rendu (onglets, accordéons) : numéros, étiquettes curseur, barres, titres brouillés. */
+function gxDecorate(root){
+  root.querySelectorAll('.accordion-trigger').forEach(b => { b.dataset.cursor = b.getAttribute('aria-expanded') === 'true' ? t({fr:'Fermer', en:'Close'}) : t({fr:'Ouvrir', en:'Open'}); });
+  root.querySelectorAll('a.logo-link').forEach(a => { a.dataset.cursor = t({fr:'Visiter ↗', en:'Visit ↗'}); });
+  root.querySelectorAll('button[type="submit"], .partner-cta-btn, .hero-start').forEach(b => b.classList.add('gx-mag'));
+  root.querySelectorAll('.gx-copy').forEach(b => { b.dataset.cursor = t({fr:'Copier', en:'Copy'}); b.textContent = t({fr:'Copier', en:'Copy'}); b.onclick = gxCopy; });
+  root.querySelectorAll('.collab-title, .apply-benefits-label, .trust-label, .pp-kicker').forEach(h => h.classList.add('bk-scramble'));
+  root.querySelectorAll('form').forEach(gxFormMeter);
+  gxDraw(root); bkScrambleWatch(root);
+}
+function gxDraw(root){
+  const els = root.querySelectorAll('.accordion-item:not([data-gxd]), .gx-draw:not([data-gxd]), .pp-benefit:not([data-gxd]), .pp-universe:not([data-gxd]), .pp-step:not([data-gxd]), .ct-info-block:not([data-gxd])');
+  if (!els.length) return;
+  if (REDUCED_MOTION || !('IntersectionObserver' in window)) { els.forEach(e => { e.dataset.gxd = '1'; e.classList.add('gx-in'); }); return; }
+  window._gxIo = window._gxIo || new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return; window._gxIo.unobserve(e.target);
+    const sib = [...e.target.parentElement.children].indexOf(e.target);
+    e.target.style.setProperty('--gxd', Math.min(sib, 8) * 70 + 'ms'); e.target.classList.add('gx-in');
+    e.target.querySelectorAll('.pp-stat-num').forEach(gxCountUp);
+  }), { threshold: 0.12 });
+  els.forEach(e => { e.dataset.gxd = '1'; window._gxIo.observe(e); });
+}
+/* Mot géant : une lettre par span, taille calculée pour remplir la largeur disponible (moins le compteur), plafonnée. */
+function gxMega(el, text){
+  if (!el || !text) return;
+  if (el._txt !== text) {
+    el._txt = text; el.classList.remove('in');
+    el.innerHTML = '<span class="gx-mega-in">' + [...text].map((ch, i) => `<span style="--i:${i}">${ch === ' ' ? '&nbsp;' : escHtml(ch)}</span>`).join('') + '</span>';
+    gxFit(el);
+    requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('in')));
+  } else gxFit(el);
+  if (el._wired || REDUCED_MOTION || !matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+  el._wired = true;
+  el.addEventListener('pointermove', e => { el.querySelectorAll('.gx-mega-in > span').forEach(s => { const r = s.getBoundingClientRect(); const d = Math.abs(e.clientX - (r.left + r.width / 2)); s.style.fontWeight = Math.round(260 + 520 * Math.max(0, 1 - d / 240)); }); });
+  el.addEventListener('pointerleave', () => el.querySelectorAll('.gx-mega-in > span').forEach(s => { s.style.fontWeight = ''; }));
+}
+function gxFit(el){
+  const inner = el.querySelector('.gx-mega-in'); if (!inner) return;
+  const top = el.parentElement, count = top.querySelector('.gx-count');
+  const avail = top.clientWidth - (count && getComputedStyle(count).position !== 'absolute' && innerWidth > 760 ? count.offsetWidth + 32 : 0);
+  el.style.fontSize = '100px';
+  const w = inner.scrollWidth || 1;
+  const cap = innerWidth > 760 ? Math.min(250, innerWidth * .2) : innerWidth * .3;
+  el.style.fontSize = Math.max(28, Math.min(cap, 100 * avail * .97 / w)) + 'px';
+}
+if (!window._gxFitRs) { window._gxFitRs = true; let to; addEventListener('resize', () => { clearTimeout(to); to = setTimeout(() => { const r = document.querySelector('.view.gx.active .gx-mega'); if (r) gxFit(r); }, 120); }); }
+/* Scène : photos de la page (bannières de l'admin média) en noir et blanc sur rose poudré, dévoilées par un volet ; une photo absente est sautée. */
+function gxStage(st, v){
+  if (!st) return;
+  let list = (IMG.heroImages && IMG.heroImages[v]) || IMG[v];
+  list = (Array.isArray(list) ? list : [list]).filter(Boolean);
+  const own = IMG.heroOwn && IMG.heroOwn[v]; if (own) list = [].concat(own, list);
+  list = [...new Set(list)];
+  if (st._v === LANG + v) return; st._v = LANG + v;
+  const a = st.querySelector('.gx-ph-a'), b = st.querySelector('.gx-ph-b'), cap = st.querySelector('.gx-stage-cap');
+  let i = 0, good = list.slice(), flip = false;
+  const show = () => {
+    if (!good.length) { st.classList.remove('has-ph'); return; }
+    const src = good[i % good.length], img = flip ? b : a;
+    img.onload = () => { st.classList.add('has-ph'); st.classList.toggle('show-b', flip); if (cap) cap.textContent = pfxNum(good.indexOf(src) + 1) + ' / ' + pfxNum(good.length); };
+    img.onerror = () => { good = good.filter(x => x !== src); if (good.length) { i = i % good.length; show(); } else st.classList.remove('has-ph'); };
+    img.src = src;
+  };
+  show();
+  clearInterval(st._t);
+  if (!REDUCED_MOTION) st._t = setInterval(() => { if (!st.closest('.view.active') || document.hidden || good.length < 2) return; i++; flip = !flip; show(); }, 4200);
+}
+/* Bouton aimanté : suit légèrement la souris quand elle s'approche. */
+function gxMagnet(){
+  if (GX.mag || REDUCED_MOTION || !matchMedia('(hover: hover) and (pointer: fine)').matches) return; GX.mag = true;
+  let raf = 0, ev = null;
+  document.addEventListener('pointermove', e => { ev = e; if (raf) return; raf = requestAnimationFrame(() => {
+    raf = 0; const v = document.querySelector('.view.gx.active'); if (!v) return;
+    v.querySelectorAll('.gx-mag').forEach(b => {
+      const r = b.getBoundingClientRect(); if (!r.width) return;
+      const dx = ev.clientX - (r.left + r.width / 2), dy = ev.clientY - (r.top + r.height / 2), d = Math.hypot(dx, dy), R = Math.max(r.width, 120);
+      b.style.transform = d < R ? `translate(${dx * .22 * (1 - d / R)}px, ${dy * .3 * (1 - d / R)}px)` : '';
+    });
+  }); }, { passive: true });
+}
+function gxCountUp(el){
+  if (el._cu) return; el._cu = true;
+  const m = el.textContent.match(/^(\D*)(\d+)(\D*)$/); if (!m || REDUCED_MOTION) return;
+  const n = +m[2], t0 = performance.now(), D = 1100;
+  const step = now => { const k = Math.min(1, (now - t0) / D), e = 1 - Math.pow(1 - k, 4); el.textContent = m[1] + Math.round(n * e) + m[3]; if (k < 1) requestAnimationFrame(step); };
+  requestAnimationFrame(step);
+}
+function gxRoll(el, txt){
+  if (!el || el.textContent === txt) return;
+  el.textContent = txt; el.classList.remove('roll'); void el.offsetWidth; el.classList.add('roll');
+}
+/* Jauge de complétion des formulaires : champs obligatoires remplis et valides. */
+function gxFormMeter(f){
+  if (f._gxm) return; f._gxm = true;
+  const req = [...f.querySelectorAll('input[required], textarea[required]')]; if (!req.length) return;
+  const m = document.createElement('div'); m.className = 'gx-meter'; m.setAttribute('aria-hidden', 'true');
+  m.innerHTML = '<span class="gx-meter-bar"><i></i></span><span class="gx-meter-t"></span>';
+  f.insertBefore(m, f.firstChild);
+  const upd = () => {
+    const ok = req.filter(x => x.value.trim() && x.checkValidity()).length, p = ok / req.length;
+    m.style.setProperty('--p', p); m.classList.toggle('done', p === 1);
+    m.querySelector('.gx-meter-t').textContent = p === 1 ? t({fr:'Prêt à envoyer ⊹', en:'Ready to send ⊹'}) : pfxNum(ok) + ' / ' + pfxNum(req.length) + t({fr:' champs requis', en:' required fields'});
+    f.querySelectorAll('.fgroup').forEach(g => { const x = g.querySelector('input:not([type=hidden]), textarea'); g.classList.toggle('gx-ok', !!(x && x.value.trim() && x.checkValidity())); });
+  };
+  f.addEventListener('input', upd); f.addEventListener('reset', () => setTimeout(upd)); upd();
+  f.querySelectorAll('textarea').forEach(ta => {
+    const c = document.createElement('span'); c.className = 'gx-chars'; c.setAttribute('aria-hidden', 'true');
+    ta.after(c); const u = () => { c.textContent = ta.value.length ? ta.value.length + t({fr:' caractères', en:' characters'}) : ''; }; ta.addEventListener('input', u); u();
+  });
+}
+function gxCopy(e){
+  const b = e.currentTarget, v = b.dataset.copy;
+  const ok = () => { b.textContent = t({fr:'Copié ✓', en:'Copied ✓'}); b.dataset.cursor = t({fr:'Copié ✓', en:'Copied ✓'}); if (window._bkTag) window._bkTag.textContent = b.dataset.cursor; setTimeout(() => { b.textContent = t({fr:'Copier', en:'Copy'}); b.dataset.cursor = b.textContent; }, 1800); };
+  try { navigator.clipboard.writeText(v).then(ok, ok); } catch (err) { ok(); }
+}
+/* Contact : heure de Paris et disponibilité (horaires du site : du lundi au samedi, 9 h – 18 h). */
+function gxClock(){
+  const el = document.getElementById('gxClock'); if (!el) return;
+  const parts = Object.fromEntries(new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Paris', hour: '2-digit', minute: '2-digit', weekday: 'short', hourCycle: 'h23' }).formatToParts(new Date()).map(p => [p.type, p.value]));
+  gxRoll(el, parts.hour + ':' + parts.minute);
+  const lbl = document.getElementById('gxClockLbl'); if (lbl) lbl.textContent = t({fr:'Heure de Paris', en:'Paris time'});
+  const h = +parts.hour, open = parts.weekday !== 'Sun' && h >= 9 && h < 18;
+  const st = document.getElementById('gxStatus');
+  if (st) { st.classList.toggle('open', open); st.innerHTML = '<i></i>' + (open ? t({fr:'Joignable maintenant · réponse sous 24 h', en:'Available now · reply within 24 hours'}) : t({fr:'Hors horaires (lun.–sam., 9 h – 18 h) · réponse sous 24 h', en:'Outside hours (Mon–Sat, 9am – 6pm) · reply within 24 hours'})); }
+}
+/* Collaboration : places restantes (même source que les univers : Worker /partner-spots, sinon PP_SPOTS_DEFAULT) + mini-tableau des univers. */
+var GX_UNI = [['portrait', {fr:'Portrait', en:'Portrait'}], ['mode', {fr:'Mode', en:'Fashion'}], ['commercial', {fr:'Commercial', en:'Commercial'}], ['evenementiel', {fr:'Événementiel', en:'Events'}], ['mariage', {fr:'Mariage', en:'Weddings'}]];
+function gxLeft(id){ const n = window._ppLeft && typeof window._ppLeft[id] === 'number' ? window._ppLeft[id] : (PP_SPOTS_DEFAULT[id] ?? 5); return Math.max(0, Math.min(5, n)); }
+function gxSpots(){
+  const tot = GX_UNI.reduce((s, [id]) => s + gxLeft(id), 0);
+  gxRoll(document.getElementById('gxSpots'), String(tot));
+  const l = document.getElementById('gxSpotsLbl'); if (l) l.textContent = t({fr:'places libres sur 25', en:'places left of 25'});
+  const u = document.getElementById('gxUni'); if (!u) return;
+  u.innerHTML = GX_UNI.map(([id, name], k) => { const left = gxLeft(id); return `<button type="button" class="gx-uni-row" data-cursor="${escHtml(t({fr:'Candidater', en:'Apply'}))}" onclick="goView('partners','apply')" style="--k:${k}">
+    <span class="gx-uni-n">${pfxNum(k + 1)}</span><span class="gx-uni-t">${t(name)}</span>
+    <span class="gx-uni-dots" aria-label="${escHtml(ppSpotsText(id))}">${[0,1,2,3,4].map(j => `<i class="${j < 5 - left ? 'on' : ''}" style="--j:${j}"></i>`).join('')}</span>
+    <span class="gx-uni-l">${left ? left + '/5' : t({fr:'Complet', en:'Full'})}</span></button>`; }).join('');
+}
+/* Défilé des marques : vitesse qui réagit au défilement de la page (et inclinaison), pause au survol. */
+function gxMarquee(){
+  const track = document.getElementById('logoTrack'); if (!track || track._gxm || REDUCED_MOTION) return; track._gxm = true;
+  let x = 0, vel = 0, lastY = scrollY, hover = false, last = performance.now();
+  track.parentElement.addEventListener('pointerenter', () => { hover = true; });
+  track.parentElement.addEventListener('pointerleave', () => { hover = false; });
+  const loop = now => {
+    const dt = Math.min(50, now - last); last = now;
+    if (track.closest('.view.active')) {
+      const y = document.scrollingElement ? document.scrollingElement.scrollTop || scrollY : scrollY; vel += (Math.abs(y - lastY) * 0.6 - vel) * .12; lastY = y;
+      const sp = hover ? 0 : (0.05 + Math.min(vel, 40) * 0.02) * dt;
+      const half = track.scrollWidth / 2; x -= sp; if (half && -x >= half) x += half;
+      track.style.transform = `translate3d(${x}px,0,0) skewX(${-Math.min(vel, 30) * .25}deg)`;
+    }
+    requestAnimationFrame(loop);
+  };
+  requestAnimationFrame(loop);
+}
+/* 4K Drone : viseur — réticule qui suit la souris, altitude selon la hauteur visée (0 à 120 m, plafond réglementaire de la catégorie ouverte), timecode qui défile. */
+function gxDrone(){
+  const vf = document.getElementById('gxVf'), tc = document.getElementById('gxTc'); if (!vf) return;
+  const t0 = performance.now();
+  GX.timers.push(setInterval(() => {
+    if (REDUCED_MOTION) return;
+    const s = (performance.now() - t0) / 1000, f = Math.floor((s % 1) * 25), p2 = n => String(n).padStart(2, '0');
+    tc.textContent = `00:${p2(Math.floor(s / 60) % 60)}:${p2(Math.floor(s) % 60)}:${p2(f)}`;
+  }, 40));
+  if (vf._ok) return; vf._ok = true;
+  const x = document.getElementById('gxVfX'), alt = document.getElementById('gxAlt'), pct = document.getElementById('gxVfPct'), dr = vf.querySelector('.gx-vf-drone');
+  const aim = (px, py) => {
+    vf.style.setProperty('--vx', (px * 100).toFixed(1) + '%'); vf.style.setProperty('--vy', (py * 100).toFixed(1) + '%');
+    alt.textContent = 'ALT ' + String(Math.round((1 - py) * 120)).padStart(3, '0') + ' M';
+    pct.textContent = '⊹ ' + Math.round(px * 100) + '%';
+    if (!REDUCED_MOTION) dr.style.transform = `translate(${(px - .5) * 40}px, ${(py - .5) * 30}px) rotate(${(px - .5) * 8}deg)`;
+  };
+  vf.addEventListener('pointermove', e => { const r = vf.getBoundingClientRect(); vf.classList.add('aim'); aim((e.clientX - r.left) / r.width, (e.clientY - r.top) / r.height); });
+  vf.addEventListener('pointerleave', () => { vf.classList.remove('aim'); aim(.5, .5); });
+  aim(.5, .5);
+}
+/* FAQ : recherche instantanée dans l'onglet affiché (questions + réponses), mots trouvés surlignés dans les questions. */
+function gxFaqSearch(q){
+  const sec = [...document.querySelectorAll('#view-legal [id^="lsec-"]')].find(s => s.style.display !== 'none'); if (!sec) return;
+  const norm = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+  const words = norm(q.trim()).split(/\s+/).filter(Boolean);
+  let n = 0;
+  sec.querySelectorAll('.accordion-item').forEach(it => {
+    const tt = it.querySelector('.accordion-trigger > span'); if (!tt) return;
+    if (tt.dataset.raw == null) tt.dataset.raw = tt.textContent;
+    const raw = tt.dataset.raw, hit = !words.length || words.every(w => norm(raw + ' ' + it.querySelector('.accordion-body').textContent).includes(w));
+    it.hidden = !hit; if (hit) n++;
+    if (!words.length) { tt.textContent = raw; return; }
+    const nr = norm(raw); const marks = new Array(raw.length).fill(false);
+    words.forEach(w => { let k = nr.indexOf(w); while (k >= 0 && w) { for (let j = k; j < k + w.length; j++) marks[j] = true; k = nr.indexOf(w, k + w.length); } });
+    let out = '', on = false; [...raw].forEach((ch, j) => { if (marks[j] !== on) { out += marks[j] ? '<mark>' : '</mark>'; on = marks[j]; } out += escHtml(ch); }); if (on) out += '</mark>';
+    tt.innerHTML = out;
+  });
+  const nEl = document.getElementById('gxSearchN'), empty = document.getElementById('gxSearchEmpty');
+  if (nEl) nEl.textContent = words.length ? pfxNum(n) + t({fr:' résultat' + (n > 1 ? 's' : ''), en:' result' + (n > 1 ? 's' : '')}) : '';
+  if (empty) { empty.hidden = !(words.length && !n); empty.innerHTML = t({fr:'Aucune réponse pour cette recherche. <a href="/contact/" data-nav="contact">Posez votre question</a>, réponse sous 24 h.', en:'No answer for this search. <a href="/en/contact/" data-nav="contact">Ask your question</a>, reply within 24 hours.'}); }
+}
+function gxLegalTab(tab){
+  const m = document.getElementById('gxLegalMega'); if (!m) return;
+  gxMega(m, t(GX_LEGAL_MEGA[tab] || GX_LEGAL_MEGA.faq));
+  const sec = document.getElementById('lsec-' + tab), n = sec ? sec.querySelectorAll('.accordion-item').length : 0;
+  gxRoll(document.getElementById('gxQn'), pfxNum(n));
+  const l = document.getElementById('gxQnLbl'); if (l) l.textContent = tab === 'faq' ? t({fr:'questions', en:'questions'}) : t({fr:'rubriques', en:'sections'});
+  const s = document.getElementById('gxSearch'); if (s) { s.value = ''; gxFaqSearch(''); s.placeholder = tab === 'faq' ? t({fr:'Rechercher une question…', en:'Search a question…'}) : t({fr:'Rechercher dans cette page…', en:'Search this page…'}); }
+  const v = document.getElementById('view-legal'); if (v) gxDecorate(v);
+}
+document.addEventListener('keydown', e => {
+  if (e.key !== '/' || currentView !== 'legal' || /input|textarea|select/i.test((document.activeElement || {}).tagName || '')) return;
+  const s = document.getElementById('gxSearch'); if (s) { e.preventDefault(); s.focus(); }
+});
+
 /* ═══════════════ CONTACT ═══════════════ */
 function sendContact(e){
   e.preventDefault();
@@ -7626,6 +7864,7 @@ function setPartnersTab(tab){
   document.getElementById('psec-apply').style.display = tab === 'apply' ? 'block' : 'none';
   document.getElementById('psec-collab').style.display = tab === 'collab' ? 'block' : 'none';
   if (tab === 'apply') { renderApplyBenefits(); renderApplyTypePicker(); }
+  const pv = document.getElementById('view-partners'); if (pv && pv.classList.contains('active')) gxDecorate(pv);
 }
 
 /* ═══════════════ ACCORDÉON PARTENAIRES ═══════════════ */
@@ -7740,6 +7979,7 @@ function ppPaintSpots(){
     el.textContent = ppSpotsText(el.dataset.spots);
     el.classList.toggle('pp-full', !!window._ppLeft && window._ppLeft[el.dataset.spots] <= 0);
   });
+  if (currentView === 'partners') gxSpots();
 }
 function loadPartnerSpots(){
   fetch(ACCOUNTS_API_BASE + '/partner-spots').then(r => r.ok ? r.json() : null).then(d => {
@@ -7817,6 +8057,7 @@ function initTestiAutoplay(){
    qui retardait la fermeture et décalait la page). */
 function setAccordionOpen(trigger, body, open){
   trigger.setAttribute('aria-expanded', String(open));
+  if (trigger.dataset.cursor) { trigger.dataset.cursor = open ? t({fr:'Fermer', en:'Close'}) : t({fr:'Ouvrir', en:'Open'}); if (window._bkTag && window._bkTag.classList.contains('on')) window._bkTag.textContent = trigger.dataset.cursor; }
   if (open) {
     body.classList.add('open');
     body.style.maxHeight = body.scrollHeight + 'px';
@@ -7868,6 +8109,7 @@ function setLegalTab(tab, fromRoute){
     applySeoMeta('legal', currentSub);
     if (window.track) track('pageview');
   }
+  gxLegalTab(tab);
 }
 
 function renderAccordionInto(elId, sections, opts){

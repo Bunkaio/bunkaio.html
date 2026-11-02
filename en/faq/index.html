@@ -34,7 +34,7 @@
 <link rel="icon" type="image/png" sizes="64x64" href="/images/favicon-64.png">
 <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
 <link rel="preload" href="fonts/dm-sans-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/style.min.css?v=d60d77a8">
+<link rel="stylesheet" href="css/style.min.css?v=33894cc7">
 
 <script type="application/ld+json">
 {
@@ -916,15 +916,33 @@
      Tout le contenu complet (certifications, formules & tarifs, portfolio drone)
      est conservé intact en commentaire juste en dessous, prêt à être réactivé :
      il suffit de retirer ce commentaire et de supprimer le bloc .drone-placeholder. -->
-<div class="view" id="view-drone">
-  <div class="drone-placeholder">
-    <div class="drone-placeholder-icon">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M12 3v2.4M12 18.6V21M21 12h-2.4M5.4 12H3M18.1 5.9l-1.7 1.7M7.6 16.4l-1.7 1.7M18.1 18.1l-1.7-1.7M7.6 7.6 5.9 5.9"/></svg>
+<div class="view gx" id="view-drone">
+  <div class="gx-page">
+  <div class="gx-cols" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+  <header class="gx-head">
+    <div class="gx-top">
+      <div class="gx-mega" data-fr="4K DRONE" data-en="4K DRONE" aria-hidden="true">4K DRONE</div>
+      <div class="gx-count gx-rec" aria-hidden="true"><b><i></i>REC</b><span id="gxTc">00:00:00:00</span></div>
     </div>
-    <div class="drone-placeholder-kicker" data-lang="drone-title">4K Drone & video</div>
-    <h2 data-pageh1 class="drone-placeholder-title" data-lang="drone-placeholder-title">Coming soon</h2>
-    <p class="drone-placeholder-text" data-lang="drone-placeholder-text">We're preparing this service with the same care as the rest of the studio — plans, certifications and aerial portfolio will be online soon. In the meantime, let's estimate your project.</p>
-    <button class="hero-start" onclick="goView('quiz')"><span data-lang="start">Build my project</span></button>
+    <div class="gx-sub">
+      <div class="gx-main drone-placeholder">
+        <div class="drone-placeholder-kicker" data-lang="drone-title">4K Drone & video</div>
+        <h2 data-pageh1 class="drone-placeholder-title bk-scramble" data-lang="drone-placeholder-title">Coming soon</h2>
+        <p class="drone-placeholder-text" data-lang="drone-placeholder-text">We're preparing this service with the same care as the rest of the studio — plans, certifications and aerial portfolio will be online soon. In the meantime, let's estimate your project.</p>
+        <button class="hero-start" onclick="goView('quiz')"><span data-lang="start">Build my project</span></button>
+      </div>
+      <div class="gx-vf" id="gxVf" aria-hidden="true">
+        <div class="gx-vf-grid"></div>
+        <span class="gx-vf-c tl"></span><span class="gx-vf-c tr"></span><span class="gx-vf-c bl"></span><span class="gx-vf-c br"></span>
+        <div class="gx-vf-drone"><svg viewBox="0 0 200 120" fill="none" stroke="#111" stroke-width="2"><path d="M70 60h60M60 40l20 14M140 40l-20 14M60 80l20-14M140 80l-20-14"/><rect x="80" y="50" width="40" height="20" rx="6" fill="#111"/><circle cx="100" cy="74" r="5" fill="#e8c6c4" stroke="#111"/><g class="gx-rotor"><ellipse cx="50" cy="34" rx="26" ry="4"/></g><g class="gx-rotor r2"><ellipse cx="150" cy="34" rx="26" ry="4"/></g><g class="gx-rotor r3"><ellipse cx="50" cy="86" rx="26" ry="4"/></g><g class="gx-rotor r4"><ellipse cx="150" cy="86" rx="26" ry="4"/></g><path d="M50 34v6M150 34v6M50 86v-6M150 86v-6"/></svg></div>
+        <div class="gx-vf-x" id="gxVfX"><span></span></div>
+        <div class="gx-vf-hud tl">4K · 25 FPS · HDR</div>
+        <div class="gx-vf-hud tr" id="gxAlt">ALT 000 M</div>
+        <div class="gx-vf-hud bl">A1/A3 · A2</div>
+        <div class="gx-vf-hud br" id="gxVfPct">⊹ 0%</div>
+      </div>
+    </div>
+  </header>
   </div>
   <!--
   <div class="drone-soon-banner">
@@ -1093,20 +1111,34 @@
 </div>
 
 <!-- CONTACT -->
-<div class="view" id="view-contact">
-  <div class="ct-page">
-    <div>
+<div class="view gx" id="view-contact">
+  <div class="gx-page">
+  <div class="gx-cols" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+  <header class="gx-head">
+    <div class="gx-top">
+      <div class="gx-mega" data-fr="CONTACT" data-en="CONTACT" aria-hidden="true">CONTACT</div>
+      <div class="gx-count" aria-hidden="true"><b id="gxClock">--:--</b><span id="gxClockLbl">Heure de Paris</span></div>
+    </div>
+    <div class="gx-sub">
+      <div class="gx-main">
       <div class="svc-tabs ct-tabs" role="navigation">
       <a class="svc-tab active" href="/en/contact/" onclick="return navLink(event,'contact')" data-lang="ctab-contact">Contact</a>
       <a class="svc-tab" href="/en/a-propos/" onclick="return navLink(event,'about')" data-lang="ctab-about">About</a>
     </div>
-            <h2 data-pageh1 class="ct-title" data-lang="contact-title">Contact your photographer</h2>
+      <h2 data-pageh1 class="ct-title" data-lang="contact-title">Contact your photographer</h2>
       <p class="ct-sub" data-lang="contact-sub">A question, a project, a collaboration? Write to us — we reply within 24 hours.</p>
       <p class="loc-line ct-loc" data-lang="loc-line">Based in Occitanie, travelling across France on quote</p>
+      <p class="gx-status" id="gxStatus" aria-live="polite"></p>
+      </div>
+      <div class="gx-stage" data-stage="contact" aria-hidden="true"><div class="gx-stage-ph"><img class="gx-ph-a" alt=""><img class="gx-ph-b" alt=""></div><div class="gx-stage-cap"></div></div>
+    </div>
+  </header>
+  <div class="ct-page">
+    <div>
       <div class="read-panel ct-info-panel">
       <div class="ct-info-block">
         <div class="ct-info-label">Email</div>
-        <div class="ct-info-value"><a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a></div>
+        <div class="ct-info-value"><a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a> <button type="button" class="gx-copy" data-copy="contact@bunkaio.com" data-cursor="Copier">Copier</button></div>
       </div>
       <div class="ct-info-block">
         <div class="ct-info-label" data-lang="phone-label">Phone</div>
@@ -1171,6 +1203,7 @@
       <p class="svcp-text" data-lang="ct-extra-links">Prefer an instant estimate? Use the <a href="/devis/" data-nav="quiz">online quote</a> (2 minutes) or read the <a href="/faq/" data-nav="faq">FAQ</a>.</p>
     </section>
   </div>
+</div>
 </div>
 
 <!-- CONSEILS PHOTO : hub et articles (contenu rendu par renderAdvicePage / renderArticlePage) -->
@@ -1283,9 +1316,22 @@
 </div>
 
 <!-- PARTNERS -->
-<div class="view" id="view-partners">
-  <div class="partners-page">
-    <h2 data-pageh1 class="page-title" data-lang="partners-title">Partnership & collaboration</h2>
+<div class="view gx" id="view-partners">
+  <div class="partners-page gx-page">
+  <div class="gx-cols" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+  <header class="gx-head">
+    <div class="gx-top">
+      <div class="gx-mega" data-fr="COLLABORATION" data-en="COLLABORATION" aria-hidden="true">COLLABORATION</div>
+      <div class="gx-count" aria-hidden="true"><b id="gxSpots">23</b><span id="gxSpotsLbl">places sur 25</span></div>
+    </div>
+    <div class="gx-sub">
+      <div class="gx-main">
+        <h2 data-pageh1 class="page-title" data-lang="partners-title">Partnership & collaboration</h2>
+        <div class="gx-uni" id="gxUni"></div>
+      </div>
+      <div class="gx-stage" data-stage="partners" aria-hidden="true"><div class="gx-stage-ph"><img class="gx-ph-a" alt=""><img class="gx-ph-b" alt=""></div><div class="gx-stage-cap"></div></div>
+    </div>
+  </header>
 
     <div class="svc-tabs">
       <button class="svc-tab active" id="ptab-program" onclick="setPartnersTab('program')" data-lang="ptab-program">Partner Programme</button>
@@ -1452,10 +1498,22 @@
 </div>
 
 <!-- FAQ & POLITIQUE DE CONFIDENTIALITÉ -->
-<div class="view active" id="view-legal">
-  <div class="services-page">
+<div class="view gx" id="view-legal">
+  <div class="services-page gx-page">
+  <div class="gx-cols" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+  <header class="gx-head">
+    <div class="gx-top">
+      <div class="gx-mega" id="gxLegalMega" aria-hidden="true">FAQ</div>
+      <div class="gx-count" aria-hidden="true"><b id="gxQn">00</b><span id="gxQnLbl">questions</span></div>
+    </div>
+    <div class="gx-sub">
+      <div class="gx-main">
     <h1 data-pageh1 class="page-title" data-lang="legal-title">FAQ: frequently asked questions</h1>
     <p class="page-sub" data-lang="legal-sub">Answers to the most frequently asked questions, along with our commitments on data privacy and image/video usage rights.</p>
+      </div>
+      <div class="gx-stage" data-stage="legal" aria-hidden="true"><div class="gx-stage-ph"><img class="gx-ph-a" alt=""><img class="gx-ph-b" alt=""></div><div class="gx-stage-cap"></div></div>
+    </div>
+  </header>
 
     <div class="svc-tabs">
       <button class="svc-tab active" id="legaltab-faq" onclick="setLegalTab('faq')" data-lang="legaltab-faq">FAQ</button>
@@ -1465,75 +1523,81 @@
       <button class="svc-tab" id="legaltab-image" onclick="setLegalTab('image')" data-lang="legaltab-image">Image rights</button>
     </div>
 
+    <div class="gx-search" role="search">
+      <label for="gxSearch" class="gx-search-k">⊹</label>
+      <input type="search" id="gxSearch" autocomplete="off" placeholder="Rechercher une question…" oninput="gxFaqSearch(this.value)">
+      <span class="gx-search-n" id="gxSearchN" aria-live="polite"></span>
+    </div>
+    <p class="gx-search-empty" id="gxSearchEmpty" hidden></p>
     <!-- FAQ -->
     <div id="lsec-faq">
       <div id="faqAccordion"><!--snap-->
-    <div class="accordion-item">
+    <div class="accordion-item rv" style="--rv-d: 0s;">
       <button class="accordion-trigger" aria-expanded="true" onclick="toggleAccordion(this)">
-        <span>What services do you offer?</span>
+        <span data-raw="What services do you offer?">What services do you offer?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
       <div class="accordion-body open">
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>Bunkaio is a professional photographer: we produce premium, high-definition images for <strong>portrait &amp; lifestyle</strong>, <strong>fashion, agencies and models</strong>, <strong>commercial &amp; products</strong>, <strong>events</strong>, and <strong>Lumen</strong>, the AI photobooth for weddings (being finalised). Each universe has its packages detailed in our <strong>catalogue &amp; rates</strong>.</p></div>
       </div>
     </div>
-    <div class="accordion-item">
+    <div class="accordion-item rv" style="--rv-d: 0.07s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
-        <span>What is the quality of the delivered images?</span>
+        <span data-raw="What is the quality of the delivered images?">What is the quality of the delivered images?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
       <div class="accordion-body ">
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p><strong>High-definition, carefully retouched</strong> photos, ready to publish or print. They are delivered in a <strong>private gallery</strong> you can download from your client area, with commercial usage rights.</p></div>
       </div>
     </div>
-    <div class="accordion-item">
+    <div class="accordion-item rv" style="--rv-d: 0.14s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
-        <span>How does a project run, from request to delivery?</span>
+        <span data-raw="How does a project run, from request to delivery?">How does a project run, from request to delivery?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
       <div class="accordion-body ">
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>Five simple steps: a personalised <strong>quote</strong> within 48h, <strong>online signature</strong> of the quote with your image authorisations (four Yes or No answers to give, the choice itself being free) then the deposit, the <strong>shoot</strong> on the agreed date, <strong>post-production</strong> (selection, retouching, editing), then <strong>delivery</strong> via your client area. Full details are under the "Quote &amp; process" tab on the Services page.</p></div>
       </div>
     </div>
-    <div class="accordion-item rv" style="--rv-d: 0s;">
+    <div class="accordion-item rv" style="--rv-d: 0.21000000000000002s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
-        <span>I'm not comfortable in front of the camera — is that a problem?</span>
+        <span data-raw="I'm not comfortable in front of the camera — is that a problem?">I'm not comfortable in front of the camera — is that a problem?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
       <div class="accordion-body ">
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>Not at all: it's our job to put you at ease. We guide you on poses and mood so the photos truly look like you. To get ready, see our guide <a href="/en/conseils/preparer-seance-photo-portrait/" data-nav="article:preparer-seance-photo-portrait">Preparing your portrait photo session</a> (in French).</p></div>
       </div>
     </div>
-    <div class="accordion-item rv" style="--rv-d: 0.07s;">
+    <div class="accordion-item rv" style="--rv-d: 0.28s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
-        <span>What are the delivery times?</span>
+        <span data-raw="What are the delivery times?">What are the delivery times?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
       <div class="accordion-body ">
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>They depend on the package chosen and are shown on each catalogue offer. They start from the shoot date, excluding any additional retouching requests.</p></div>
       </div>
     </div>
-    <div class="accordion-item rv" style="--rv-d: 0.14s;">
+    <div class="accordion-item rv" style="--rv-d: 0.35000000000000003s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
-        <span>How does payment work?</span>
+        <span data-raw="How does payment work?">How does payment work?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
       <div class="accordion-body ">
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>30% upon booking (quote signature), balance on delivery. Pay by card in one go, or in 3 interest-free instalments with Klarna or Scalapay (subject to eligibility).</p></div>
       </div>
     </div>
-    <div class="accordion-item rv" style="--rv-d: 0.21000000000000002s;">
+    <div class="accordion-item rv" style="--rv-d: 0.35000000000000003s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
-        <span>What happens if I cancel my booking?</span>
+        <span data-raw="What happens if I cancel my booking?">What happens if I cancel my booking?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
       <div class="accordion-body ">
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>Your date and time slot are reserved once the quote is accepted and the <strong>30% deposit</strong> is paid. If you cancel after that point, <strong>the deposit is retained by Bunkaio and is non-refundable</strong>. If you run into any difficulty, please contact us as early as possible.</p></div>
       </div>
     </div>
-    <div class="accordion-item rv" style="--rv-d: 0.28s;">
+    <div class="accordion-item rv" style="--rv-d: 0.35000000000000003s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
-        <span>Can I use the visuals for commercial purposes?</span>
+        <span data-raw="Can I use the visuals for commercial purposes?">Can I use the visuals for commercial purposes?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
       <div class="accordion-body ">
@@ -1542,7 +1606,7 @@
     </div>
     <div class="accordion-item rv" style="--rv-d: 0.35000000000000003s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
-        <span>How do I access my client area, and what is it for?</span>
+        <span data-raw="How do I access my client area, and what is it for?">How do I access my client area, and what is it for?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
       <div class="accordion-body ">
@@ -1551,7 +1615,7 @@
     </div>
     <div class="accordion-item rv" style="--rv-d: 0.35000000000000003s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
-        <span>What is a moodboard, and is it compulsory?</span>
+        <span data-raw="What is a moodboard, and is it compulsory?">What is a moodboard, and is it compulsory?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
       <div class="accordion-body ">
@@ -1560,7 +1624,7 @@
     </div>
     <div class="accordion-item rv" style="--rv-d: 0.35000000000000003s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
-        <span>Are my details and images safe?</span>
+        <span data-raw="Are my details and images safe?">Are my details and images safe?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
       <div class="accordion-body ">
@@ -1569,7 +1633,7 @@
     </div>
     <div class="accordion-item rv" style="--rv-d: 0.35000000000000003s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
-        <span>Where do you work?</span>
+        <span data-raw="Where do you work?">Where do you work?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
       <div class="accordion-body ">
@@ -1578,7 +1642,7 @@
     </div>
     <div class="accordion-item rv" style="--rv-d: 0.35000000000000003s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
-        <span>How do I become a partner, and what does the partner area offer?</span>
+        <span data-raw="How do I become a partner, and what does the partner area offer?">How do I become a partner, and what does the partner area offer?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
       <div class="accordion-body ">
@@ -1587,7 +1651,7 @@
     </div>
     <div class="accordion-item rv" style="--rv-d: 0.35000000000000003s;">
       <button class="accordion-trigger" aria-expanded="false" onclick="toggleAccordion(this)">
-        <span>What is Lumen by Bunkaio?</span>
+        <span data-raw="What is Lumen by Bunkaio?">What is Lumen by Bunkaio?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
       <div class="accordion-body ">
@@ -1987,6 +2051,6 @@
 <script src="config/articles.en.js?v=a5fd138b"></script>
 <script src="config/routes.js?v=f47dd51d"></script>
 <script src="config/media.js?v=3d72d6fd"></script>
-<script src="js/script.min.js?v=35024394"></script>
+<script src="js/script.min.js?v=682ed6ba"></script>
 </body>
 </html>

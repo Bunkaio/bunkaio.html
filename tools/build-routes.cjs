@@ -332,7 +332,8 @@ function pinAssets(html) {
     if (lang === 'en') await page.evaluate(() => { LANG = 'en'; updateLang(); goView('home', null, { initial: true }); });
     const dict = await page.evaluate(() => I18N[LANG]);
     const grab = async (ids) => {
-      const out = await page.evaluate((list) => Object.fromEntries(list.map((id) => [id, (document.getElementById(id) || {}).innerHTML || ''])), ids);
+      /* États d'animation des pages GX (apparitions, étiquettes curseur) retirés du pré-rendu : le HTML statique reste lisible sans script. */
+    const out = await page.evaluate((list) => Object.fromEntries(list.map((id) => { const el = document.getElementById(id); if (!el) return [id, '']; const c = el.cloneNode(true); c.querySelectorAll('[data-gxd]').forEach(x => { x.removeAttribute('data-gxd'); x.classList.remove('gx-in'); x.style.removeProperty('--gxd'); if (!x.getAttribute('style')) x.removeAttribute('style'); if (!x.className) x.removeAttribute('class'); }); c.querySelectorAll('[data-cursor]').forEach(x => x.removeAttribute('data-cursor')); return [id, c.innerHTML]; })), ids);
       /* Retire les habillages d'animation d'écriture (machine à écrire) : le HTML statique garde le texte brut. */
       for (const k of Object.keys(out)) {
         out[k] = out[k]
