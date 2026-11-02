@@ -2079,7 +2079,7 @@ function goView(v, subTab, opts){
     /* Revenir sur une vue peut avoir mis en pause ses vidéos de fond
        (navigateurs mobiles) — on les relance systématiquement. */
     resumeAllBgVideos();
-    if (v === 'services') { renderServices(); renderServiceLinks(); setSvcTab('catalogue'); }
+    if (v === 'services') { renderServices(); renderServiceLinks(); setSvcTab('catalogue'); initSvxMega(); svxAuto(); }
     if (v === 'share') renderGoogleReview();
     if (v === 'drone') { renderDroneCats(); renderDroneProjects(activeDroneCat); }
     if (v === 'portfolio') {
@@ -4607,86 +4607,173 @@ function updatePayFlexBanner(list){
     : `<strong>From €${monthly}/mo in 3 instalments with Klarna or Scalapay</strong> (subject to eligibility), or credit card in one go — in two stages: 30% deposit then balance. No extra fees.`;
 }
 
+/* ═══════════════ SERVICES — maison éditoriale (nov. 2026, DA « Grids ») ═══════════════
+   Index numéroté des prestations (données : CATS, TIERS, SUBS, POLAS — aucun prix écrit en dur) ; au survol, la scène de
+   l'en-tête révèle la photo de la prestation et fait rouler son numéro ; au clic, un dossier s'ouvre : texte, formules à
+   choisir (prix qui défile, contenu, délai), options Polas / Studio Continu, appel à l'action vers le devis. */
+const SVX = { open: null, tier: {}, stageCat: null, io: null, auto: null };
+const svxNum = n => String(n).padStart(2, '0');
+function svxQuiz(catId){
+  const c = CATS.find(x => x.id === catId); if (!c) return;
+  if (c.comingSoon) { goToComingSoon(c.id); return; }
+  S.cat = c.id; S.tier = null; S.prof = null;
+  document.getElementById('profQBox').style.display = 'none';
+  renderProfiles();
+  goView('quiz');
+  setTimeout(() => quizStep(2), 500);
+}
+function svxDelays(c){
+  const ds = catTiers(c).map(tr => c.tiers[tr.id].delay).filter(Boolean).map(d => parseInt(t(d), 10)).filter(n => !isNaN(n));
+  if (!ds.length) return '';
+  const a = Math.min(...ds), b = Math.max(...ds);
+  return (a === b ? a : a + '–' + b) + ' ' + t({fr:'j. ouvrés', en:'working days'});
+}
+function svxTierDetail(c, tid){
+  const tr = TIERS.find(x => x.id === tid), d = c.tiers[tid];
+  if (!tr || !d) return '';
+  const items = d.items ? t(d.items) : [];
+  return `<div class="svx-td" data-tier="${tid}">
+      <div class="svx-td-top">
+        <div><div class="svx-td-name">${tid === 'lanc' ? `<a href="${servicePath('branding')}" data-nav="service:branding" data-track="lancement">${t(tr.name)}</a>` : t(tr.name)}</div>
+        <div class="svx-td-badge">${t(tr.badge)}</div></div>
+        <div class="svx-td-price"><span class="svx-amt" data-v="${d.price}" data-no-usd>${d.price.toLocaleString('fr-FR')}</span><span class="svx-eur">€</span></div>
+      </div>
+      ${(d.line || tr.line) ? `<p class="svx-td-line">${t(d.line || tr.line)}</p>` : ''}
+      <ol class="svx-td-items">${items.map((it, i) => `<li style="--i:${i}"><span>${svxNum(i + 1)}</span>${escHtml(it)}</li>`).join('')}</ol>
+      ${d.delay ? `<div class="svx-td-delay">${t({fr:'Livraison', en:'Delivery'})} · ${t(d.delay)}</div>` : ''}
+    </div>`;
+}
+function svxPanel(c){
+  if (c.lumen || c.comingSoon) return `<div class="svx-panel-in"><div class="svx-pitch">${c.pitch ? `<p>${t(c.pitch)}</p>` : ''}<p class="svx-soon">${t({fr:'Prototype en cours de finalisation — tarifs sur demande.', en:'Prototype being finalised — rates on request.'})}</p></div>
+      <div class="svx-actions"><button type="button" class="svx-cta" onclick="svxQuiz('${c.id}')">${t({fr:'Nous contacter', en:'Contact us'})} <i>→</i></button></div></div>`;
+  const tiers = catTiers(c);
+  const cur = SVX.tier[c.id] && c.tiers[SVX.tier[c.id]] ? SVX.tier[c.id] : (c.tiers.sig ? 'sig' : tiers[0].id);
+  SVX.tier[c.id] = cur;
+  const sub = SUBS[c.id] ? `<div class="svx-extra"><span>${I18N[LANG]['svc-sub-label']}${SUBS[c.id].audience ? ' — ' + t(SUBS[c.id].audience) : ''}</span><b>${SUBS[c.id].price.toLocaleString('fr-FR')}€<small>/${LANG === 'fr' ? 'mois' : 'mo'}</small></b></div>` : '';
+  const polas = POLAS[c.id] ? `<div class="svx-extra"><span><strong>${t(POLAS[c.id].name)}</strong> · ${t(POLAS[c.id].short)}</span><b>${specialTotal(POLAS[c.id]).toLocaleString('fr-FR')}€</b></div>` : '';
+  return `<div class="svx-panel-in">
+      <div class="svx-pitch">
+        ${c.pitch ? `<p>${t(c.pitch)}</p>` : ''}
+        <p class="svx-for"><span>${t({fr:'Pour qui', en:'For whom'})}</span>${t(c.tag)}</p>
+        <a class="svx-more" href="${servicePath(c.id)}" onclick="return navLink(event,'service','${c.id}')">${t({fr:'Détails et tarifs', en:'Details and rates'})} — ${navName(c)} <i>↗</i></a>
+      </div>
+      <div class="svx-tiers">
+        <div class="svx-tabs" role="tablist" aria-label="${escHtml(t({fr:'Formules', en:'Packages'}))}">${tiers.map(tr => `<button type="button" role="tab" class="svx-tab${tr.id === cur ? ' on' : ''}" aria-selected="${tr.id === cur}" onclick="svxPickTier('${c.id}','${tr.id}')"><span>${t(tr.name)}</span><b>${c.tiers[tr.id].price.toLocaleString('fr-FR')}€</b></button>`).join('')}</div>
+        <div class="svx-td-wrap">${svxTierDetail(c, cur)}</div>
+        ${polas}${sub}
+        <div class="svx-actions">
+          <button type="button" class="svx-cta" onclick="svxQuiz('${c.id}')">${I18N[LANG]['svc-cta']} <i>→</i></button>
+          <span class="svx-note">${t({fr:'Devis personnalisé sous 48 h ouvrées', en:'Personalised quote within 48 working hours'})}</span>
+        </div>
+      </div>
+    </div>`;
+}
 function renderServices(){
-  const fl = document.getElementById('servicesFilters');
-  fl.innerHTML = '';
-  const allBtn = document.createElement('button');
-  allBtn.className = 'filter-btn' + (activeServiceFilter === null ? ' active' : '');
-  allBtn.textContent = I18N[LANG]['svc-all'];
-  allBtn.onclick = () => { activeServiceFilter = null; renderServices(); };
-  fl.appendChild(allBtn);
-  CATS.forEach(c => {
-    const b = document.createElement('button');
-    b.className = 'filter-btn' + (activeServiceFilter === c.id ? ' active' : '');
-    b.textContent = t(c.name);
-    b.onclick = () => { activeServiceFilter = c.id; renderServices(); };
-    fl.appendChild(b);
+  const fl = document.getElementById('servicesFilters'); if (fl) fl.innerHTML = '';
+  const photoEl = document.getElementById('svcCatPhoto'); if (photoEl) photoEl.style.display = 'none';
+  const grid = document.getElementById('servicesGrid'); if (!grid) return;
+  updatePayFlexBanner(CATS);
+  if (activeServiceFilter) { SVX.open = activeServiceFilter; activeServiceFilter = null; }
+  grid.innerHTML = `<div class="svx-index-head"><span>${t({fr:'N°', en:'No.'})}</span><span>${t({fr:'Prestation', en:'Service'})}</span><span>${t({fr:'Formules', en:'Packages'})}</span><span>${t({fr:'Livraison', en:'Delivery'})}</span><span>${t({fr:'À partir de', en:'From'})}</span></div>` +
+    CATS.map((c, i) => {
+      const open = SVX.open === c.id;
+      const from = c.lumen ? t({fr:'Sur demande', en:'On request'}) : catFacts(c).from.toLocaleString('fr-FR') + ' €';
+      return `<article class="svx-item${open ? ' is-open' : ''}" data-cat="${c.id}" data-i="${i}">
+        <button type="button" class="svx-row" aria-expanded="${open}" aria-controls="svx-p-${c.id}" onclick="svxToggle('${c.id}')">
+          <span class="svx-n">${svxNum(i + 1)}</span>
+          <span class="svx-name"><span class="svx-name-t">${t(c.name)}</span><small>${t(c.tag)}</small></span>
+          <span class="svx-count">${c.lumen ? '—' : svxNum(catTiers(c).length) + ' ' + t({fr:'formules', en:'packages'})}</span>
+          <span class="svx-delay">${c.lumen ? '—' : svxDelays(c)}</span>
+          <span class="svx-from">${from}<i class="svx-plus" aria-hidden="true"></i></span>
+        </button>
+        <div class="svx-panel" id="svx-p-${c.id}" role="region">${svxPanel(c)}</div>
+      </article>`;
+    }).join('');
+  svxBind(grid);
+  svxStage(SVX.open);
+  if (SVX.open) setTimeout(() => { const el = grid.querySelector(`.svx-item[data-cat="${SVX.open}"]`); if (el) el.scrollIntoView({ block: 'start', behavior: REDUCED_MOTION ? 'auto' : 'smooth' }); }, 350);
+}
+function svxToggle(id){
+  const grid = document.getElementById('servicesGrid'); if (!grid) return;
+  SVX.open = SVX.open === id ? null : id;
+  grid.querySelectorAll('.svx-item').forEach(it => {
+    const on = it.dataset.cat === SVX.open;
+    it.classList.toggle('is-open', on);
+    it.querySelector('.svx-row').setAttribute('aria-expanded', String(on));
+    if (on) svxCount(it);
   });
-  const photoEl  = document.getElementById('svcCatPhoto');
-  const photoImg = document.getElementById('svcCatPhotoImg');
-  const layout   = document.getElementById('servicesLayout');
-  if (photoEl && photoImg && activeServiceFilter && IMG.servicePhotos && IMG.servicePhotos[activeServiceFilter]) {
-    photoEl.style.display = 'block';
-    layout && layout.classList.add('has-photo');
-    photoImg.classList.remove('loaded');
-    photoImg.src = IMG.servicePhotos[activeServiceFilter];
-    photoImg.onload = () => photoImg.classList.add('loaded');
-  } else if (photoEl) {
-    photoEl.style.display = 'none';
-    layout && layout.classList.remove('has-photo');
+  svxStage(SVX.open);
+  if (SVX.open && window.track) track('cta_click', 'services_dossier_' + SVX.open);
+}
+function svxPickTier(catId, tid){
+  const c = CATS.find(x => x.id === catId), it = document.querySelector(`.svx-item[data-cat="${catId}"]`);
+  if (!c || !it) return;
+  SVX.tier[catId] = tid;
+  it.querySelectorAll('.svx-tab').forEach(b => { const on = b.getAttribute('onclick').includes(`'${tid}'`); b.classList.toggle('on', on); b.setAttribute('aria-selected', String(on)); });
+  const wrap = it.querySelector('.svx-td-wrap');
+  wrap.innerHTML = svxTierDetail(c, tid);
+  svxCount(it);
+}
+/* Prix qui défile jusqu'à sa valeur (français uniquement : en anglais l'équivalent en dollars est ajouté à côté du prix). */
+function svxCount(it){
+  const el = it.querySelector('.svx-amt'); if (!el) return;
+  const v = +el.dataset.v; if (REDUCED_MOTION || LANG !== 'fr' || !v) { el.textContent = v.toLocaleString('fr-FR'); return; }
+  const t0 = performance.now(), dur = 650;
+  const step = now => { const k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3); el.textContent = Math.round(v * e).toLocaleString('fr-FR'); if (k < 1) requestAnimationFrame(step); };
+  requestAnimationFrame(step);
+}
+/* Scène de l'en-tête : photo de la prestation dévoilée (volet), numéro qui roule, légende. */
+function svxStage(catId){
+  const st = document.getElementById('svxStage'); if (!st) return;
+  const num = document.getElementById('svxNum'), cap = document.getElementById('svxCap');
+  const i = CATS.findIndex(c => c.id === catId), c = CATS[i];
+  const label = c ? svxNum(i + 1) : svxNum(CATS.length);
+  if (num.textContent !== label) { num.classList.remove('roll'); void num.offsetWidth; num.textContent = label; num.classList.add('roll'); }
+  cap.textContent = c ? t(c.name) : t({fr:'Prestations', en:'Services'});
+  const url = c && IMG.servicePhotos && IMG.servicePhotos[c.id];
+  if (SVX.stageCat === catId) return;
+  SVX.stageCat = catId;
+  const a = st.querySelector('.svx-ph-a'), b = st.querySelector('.svx-ph-b');
+  const front = st.classList.contains('show-b') ? b : a, back = front === a ? b : a;
+  if (!url) { st.classList.remove('has-ph'); return; }
+  back.onload = () => { st.classList.add('has-ph'); st.classList.toggle('show-b', back === b); };
+  back.onerror = () => st.classList.remove('has-ph');
+  back.alt = ''; back.src = url;
+}
+function svxBind(grid){
+  if (!SVX.io && 'IntersectionObserver' in window) SVX.io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('is-in'); SVX.io.unobserve(e.target); } }), { threshold: 0.2 });
+  grid.querySelectorAll('.svx-item').forEach((it, i) => { it.style.setProperty('--d', (i * 0.06) + 's'); if (SVX.io && !REDUCED_MOTION) SVX.io.observe(it); else it.classList.add('is-in'); });
+  if (grid._svx) return; grid._svx = true;
+  const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
+  if (fine) {
+    grid.addEventListener('pointerover', e => { const it = e.target.closest('.svx-item'); if (it) svxStage(it.dataset.cat); });
+    grid.addEventListener('pointerleave', () => svxStage(SVX.open));
   }
+}
+/* Scène en lecture automatique (toutes les 3,2 s) tant que personne ne survole l'index ni n'ouvre un dossier ; arrêtée hors écran
+   ou hors de la page Services, jamais si les animations sont réduites. */
+function svxAuto(){
+  if (SVX.auto || REDUCED_MOTION) return;
+  let k = -1, hover = false;
   const grid = document.getElementById('servicesGrid');
-  grid.innerHTML = '';
-  const list = activeServiceFilter ? CATS.filter(c => c.id === activeServiceFilter) : CATS;
-  updatePayFlexBanner(list);
-  list.forEach(c => {
-    const card = document.createElement('div');
-    card.className = 'service-card rv';
-    const subRow = SUBS[c.id] ? `
-      <div class="service-sub-row">
-        <span class="service-sub-label">${I18N[LANG]['svc-sub-label']}${SUBS[c.id].audience ? ' — ' + t(SUBS[c.id].audience) : ''}${SUBS[c.id].promo ? `<span class="service-tier-promo">${t(SUBS[c.id].promo)}</span>` : ''}</span>
-        <span class="service-sub-price">${SUBS[c.id].price.toLocaleString('fr-FR')}€<small>/${LANG === 'fr' ? 'mois' : 'mo'}</small></span>
-      </div>` : '';
-    card.innerHTML = `
-      <div class="service-head">
-        <div class="service-icon">${getIcon(c.icon)}</div>
-        <div class="service-name">${t(c.name)}</div>
-        ${c.comingSoon ? `<span class="soon-chip">${t({fr:'Bientôt disponible', en:'Coming soon'})}</span>` : ''}${c.lumen ? '' : `<span class="service-from">${t({fr:'dès', en:'from'})} ${catFacts(c).from.toLocaleString('fr-FR')} €</span>`}
-        <i class="service-chev" aria-hidden="true"></i>
-      </div>
-      <div class="service-tag">${t(c.tag)}</div>
-      ${c.pitch ? `<p class="service-pitch">${t(c.pitch)}</p>` : ''}
-      <div class="service-tiers">
-        ${c.lumen
-          ? `<div class="service-tier"><span class="service-tier-name">${t({fr:'Prototype en cours de finalisation', en:'Prototype being finalised'})}</span><span class="service-tier-price">${t({fr:'Sur demande', en:'On request'})}</span></div>`
-          : catTiers(c).map(tier => `
-              <div class="service-tier">
-                <span class="service-tier-name">${tier.id === 'lanc' ? `<a href="${servicePath('branding')}" data-nav="service:branding" data-track="lancement">${t(tier.name)}</a><small class="service-tier-for">${t(tier.badge)}</small>` : t(tier.name)}${c.tiers[tier.id].promo ? `<span class="service-tier-promo">${t(c.tiers[tier.id].promo)}</span>` : ''}</span>
-                <span class="service-tier-price">${c.tiers[tier.id].price.toLocaleString('fr-FR')}€</span>
-              </div>`).join('')}
-      </div>
-      <div class="service-extras">${subRow}
-      ${POLAS[c.id] ? `<div class="service-polas"><span class="service-tier-name"><strong>${t(POLAS[c.id].name)}</strong> <span class="service-polas-tag">${t(POLAS[c.id].label)}</span><small>${t(POLAS[c.id].short)}</small></span><span class="service-tier-price">${specialTotal(POLAS[c.id]).toLocaleString('fr-FR')}€</span></div>` : ''}</div>
-      <div class="service-actions">
-        <button class="service-cta" type="button"><span class="sc-label">${I18N[LANG]['svc-cta']}</span><i class="sc-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></i></button>
-        <a class="service-more" href="${servicePath(c.id)}" onclick="return navLink(event,'service','${c.id}')"><span class="sm-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><line x1="8.5" y1="8" x2="15.5" y2="8"/><line x1="8.5" y1="12" x2="15.5" y2="12"/><line x1="8.5" y1="16" x2="12.5" y2="16"/></svg></span><span class="sm-txt"><b>${t({fr:'Détails et tarifs', en:'Details and rates'})}</b><small>${navName(c)}</small></span><i class="sm-arrow" aria-hidden="true">→</i></a>
-      </div>`;
-    /* Mobile : fiches repliées (nom + prix « dès »), le détail s'ouvre au toucher ; un filtre actif ouvre la fiche. */
-    if (activeServiceFilter) card.classList.add('is-open');
-    card.querySelector('.service-head').addEventListener('click', () => card.classList.toggle('is-open'));
-    if (c.comingSoon) card.querySelector('.service-cta .sc-label').textContent = t({fr:'Nous contacter', en:'Contact us'});
-    card.querySelector('.service-cta').onclick = () => {
-      if (c.comingSoon) { goToComingSoon(c.id); return; }
-      S.cat = c.id; S.tier = null; S.prof = null;
-      /* profNext removed */
-      document.getElementById('profQBox').style.display = 'none';
-      renderProfiles();
-      goView('quiz');
-      setTimeout(() => quizStep(2), 500);
-    };
-    grid.appendChild(card);
-    observe(card);
-  });
+  if (grid) { grid.addEventListener('pointerenter', () => { hover = true; }); grid.addEventListener('pointerleave', () => { hover = false; }); }
+  SVX.auto = setInterval(() => {
+    const st = document.getElementById('svxStage');
+    if (!st || currentView !== 'services' || document.hidden || hover || SVX.open) return;
+    const r = st.getBoundingClientRect(); if (r.bottom < 0 || r.top > innerHeight) return;
+    const list = CATS.filter(c => IMG.servicePhotos && IMG.servicePhotos[c.id]); if (!list.length) return;
+    k = (k + 1) % list.length; svxStage(list[k].id);
+  }, 3200);
+}
+/* Mot géant « SERVICES » : lettres qui montent à l'arrivée, graisse qui suit le curseur (police variable). */
+function initSvxMega(){
+  const el = document.getElementById('svxMega'); if (!el || el._ok) return; el._ok = true;
+  el.innerHTML = [...el.textContent.trim()].map((ch, i) => `<span style="--i:${i}">${ch}</span>`).join('');
+  requestAnimationFrame(() => el.classList.add('in'));
+  if (REDUCED_MOTION || !matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+  const spans = [...el.children];
+  el.addEventListener('pointermove', e => { spans.forEach(s => { const r = s.getBoundingClientRect(); const d = Math.abs(e.clientX - (r.left + r.width / 2)); s.style.fontWeight = Math.round(300 + 600 * Math.max(0, 1 - d / 260)); }); });
+  el.addEventListener('pointerleave', () => spans.forEach(s => { s.style.fontWeight = ''; }));
 }
 
 /* ═══════════════ PROCESS DÉROULÉ ═══════════════ */

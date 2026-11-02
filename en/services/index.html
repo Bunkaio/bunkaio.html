@@ -34,7 +34,7 @@
 <link rel="icon" type="image/png" sizes="64x64" href="/images/favicon-64.png">
 <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
 <link rel="preload" href="fonts/dm-sans-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/style.min.css?v=79737841">
+<link rel="stylesheet" href="css/style.min.css?v=df8c2262">
 
 <script type="application/ld+json">
 {
@@ -820,10 +820,20 @@
 
 <!-- SERVICES -->
 <div class="view active" id="view-services">
-  <div class="services-page">
-    <h1 data-pageh1 class="page-title" data-lang="services-title">Photography services & rates</h1>
+  <div class="services-page svx">
+    <header class="svx-head">
+      <div class="svx-head-main">
+        <div class="svx-mega" id="svxMega" aria-hidden="true">SERVICES</div>
+        <h1 data-pageh1 class="page-title" data-lang="services-title">Photography services & rates</h1>
     <p class="page-sub" data-lang="services-sub">Professional photographer in Montpellier and Toulouse: premium, high-definition images that showcase your project. Our services and rates, by universe. Travel anywhere in France on quote.</p>
     <div class="svc-cta-row"><a class="cta-primary" href="/en/devis/" data-quiz=""><span data-lang="svc-reserve">Book my session</span></a><a class="btn btn-ghost" href="/en/decouvrir-chaque-prestation/" data-nav="discover"><span data-lang="svc-discover">Explore each service</span></a></div>
+      </div>
+      <div class="svx-stage" id="svxStage" aria-hidden="true">
+        <div class="svx-stage-ph"><img class="svx-ph-a" alt=""><img class="svx-ph-b" alt=""></div>
+        <div class="svx-stage-num"><span id="svxNum">06</span></div>
+        <div class="svx-stage-cap" id="svxCap"></div>
+      </div>
+    </header>
     <div class="svc-tabs">
       <button class="svc-tab active" id="stab-catalogue" onclick="setSvcTab('catalogue')" data-lang="stab-catalogue">Catalogue & rates</button>
       <button class="svc-tab" id="stab-devis" onclick="setSvcTab('devis')" data-lang="stab-devis">Quote & process</button>
@@ -831,6 +841,189 @@
 
     <!-- Catalogue -->
     <div id="ssec-catalogue">
+      <div class="services-filters" id="servicesFilters"><!--snap--><!--/snap--></div>
+      <p class="vat-note" data-lang="vat-note">Net prices: VAT not applicable (art. 293 B of the French Tax Code). The price shown is the price you pay, with nothing to add.</p>
+      <div class="services-layout" id="servicesLayout">
+        <div class="svc-cat-photo" id="svcCatPhoto" style="display:none">
+          <img id="svcCatPhotoImg" alt="">
+        </div>
+        <div class="services-grid" id="servicesGrid"><!--snap--><div class="svx-index-head"><span>No.</span><span>Service</span><span>Packages</span><span>Delivery</span><span>From</span></div><article class="svx-item" data-cat="photo-part" data-i="0" style="--d: 0s;">
+        <button type="button" class="svx-row" aria-expanded="false" aria-controls="svx-p-photo-part" onclick="svxToggle('photo-part')">
+          <span class="svx-n">01</span>
+          <span class="svx-name"><span class="svx-name-t">Portrait &amp; lifestyle — individuals</span><small>Outdoor · studio · solo · couple · group · maternity book</small></span>
+          <span class="svx-count">04 packages</span>
+          <span class="svx-delay">5–10 working days</span>
+          <span class="svx-from">250 €<span class="usd-eq"> ≈ $275</span><i class="svx-plus" aria-hidden="true"></i></span>
+        </button>
+        <div class="svx-panel" id="svx-p-photo-part" role="region"><div class="svx-panel-in">
+      <div class="svx-pitch">
+        <p>No need to feel at ease in front of the camera — that's our job. The result: photos that truly look like you, delivered within 5 to 10 working days depending on the package.</p>
+        <p class="svx-for"><span>For whom</span>Outdoor · studio · solo · couple · group · maternity book</p>
+        <a class="svx-more" href="/en/services/seance-photo-particuliers/" onclick="return navLink(event,'service','photo-part')">Details and rates — Portrait &amp; lifestyle — individuals <i>↗</i></a>
+      </div>
+      <div class="svx-tiers">
+        <div class="svx-tabs" role="tablist" aria-label="Packages"><button type="button" role="tab" class="svx-tab" aria-selected="false" onclick="svxPickTier('photo-part','deco')"><span>Discovery</span><b>250€<span class="usd-eq"> ≈ $275</span></b></button><button type="button" role="tab" class="svx-tab on" aria-selected="true" onclick="svxPickTier('photo-part','sig')"><span>Signature</span><b>420€<span class="usd-eq"> ≈ $460</span></b></button><button type="button" role="tab" class="svx-tab" aria-selected="false" onclick="svxPickTier('photo-part','prem')"><span>Premium</span><b>650€<span class="usd-eq"> ≈ $715</span></b></button><button type="button" role="tab" class="svx-tab" aria-selected="false" onclick="svxPickTier('photo-part','edit')"><span>Bunkaio editorial</span><b>1 090€<span class="usd-eq"> ≈ $1,200</span></b></button></div>
+        <div class="svx-td-wrap"><div class="svx-td" data-tier="sig">
+      <div class="svx-td-top">
+        <div><div class="svx-td-name">Signature</div>
+        <div class="svx-td-badge">Recommended</div></div>
+        <div class="svx-td-price"><span class="svx-amt" data-v="420" data-no-usd="">420</span><span class="svx-eur">€</span></div>
+      </div>
+      <p class="svx-td-line">The best balance of time, guidance and result.</p>
+      <ol class="svx-td-items"><li style="--i:0"><span>01</span>2h session</li><li style="--i:1"><span>02</span>15 retouched HD photos</li><li style="--i:2"><span>03</span>Posing guidance included</li><li style="--i:3"><span>04</span>Private download gallery</li></ol>
+      <div class="svx-td-delay">Delivery · 7 working days</div>
+    </div></div>
+        <div class="svx-extra"><span><strong>Maternity book</strong> · Solo or as a couple · studio optional (+€60<span class="usd-eq"> ≈ $66</span>)</span><b>450€<span class="usd-eq"> ≈ $495</span></b></div>
+        <div class="svx-actions">
+          <button type="button" class="svx-cta" onclick="svxQuiz('photo-part')">Build this project <i>→</i></button>
+          <span class="svx-note">Personalised quote within 48 working hours</span>
+        </div>
+      </div>
+    </div></div>
+      </article><article class="svx-item" data-cat="corporate" data-i="1" style="--d: 0.06s;">
+        <button type="button" class="svx-row" aria-expanded="false" aria-controls="svx-p-corporate" onclick="svxToggle('corporate')">
+          <span class="svx-n">02</span>
+          <span class="svx-name"><span class="svx-name-t">Corporate &amp; Personal Branding</span><small>Entrepreneurs · freelancers · executives · teams</small></span>
+          <span class="svx-count">05 packages</span>
+          <span class="svx-delay">5–10 working days</span>
+          <span class="svx-from">250 €<span class="usd-eq"> ≈ $275</span><i class="svx-plus" aria-hidden="true"></i></span>
+        </button>
+        <div class="svx-panel" id="svx-p-corporate" role="region"><div class="svx-panel-in">
+      <div class="svx-pitch">
+        <p>A professional image that builds trust at first glance. The shoot can take place right where you work: your premises become your set.</p>
+        <p class="svx-for"><span>For whom</span>Entrepreneurs · freelancers · executives · teams</p>
+        <a class="svx-more" href="/en/services/portrait-professionnel-corporate/" onclick="return navLink(event,'service','corporate')">Details and rates — Corporate — companies &amp; teams <i>↗</i></a>
+      </div>
+      <div class="svx-tiers">
+        <div class="svx-tabs" role="tablist" aria-label="Packages"><button type="button" role="tab" class="svx-tab" aria-selected="false" onclick="svxPickTier('corporate','deco')"><span>Discovery</span><b>250€<span class="usd-eq"> ≈ $275</span></b></button><button type="button" role="tab" class="svx-tab" aria-selected="false" onclick="svxPickTier('corporate','lanc')"><span>Launch</span><b>320€<span class="usd-eq"> ≈ $350</span></b></button><button type="button" role="tab" class="svx-tab on" aria-selected="true" onclick="svxPickTier('corporate','sig')"><span>Signature</span><b>450€<span class="usd-eq"> ≈ $495</span></b></button><button type="button" role="tab" class="svx-tab" aria-selected="false" onclick="svxPickTier('corporate','prem')"><span>Premium</span><b>690€<span class="usd-eq"> ≈ $760</span></b></button><button type="button" role="tab" class="svx-tab" aria-selected="false" onclick="svxPickTier('corporate','edit')"><span>Bunkaio editorial</span><b>1 090€<span class="usd-eq"> ≈ $1,200</span></b></button></div>
+        <div class="svx-td-wrap"><div class="svx-td" data-tier="sig">
+      <div class="svx-td-top">
+        <div><div class="svx-td-name">Signature</div>
+        <div class="svx-td-badge">Recommended</div></div>
+        <div class="svx-td-price"><span class="svx-amt" data-v="450" data-no-usd="">450</span><span class="svx-eur">€</span></div>
+      </div>
+      <p class="svx-td-line">To build a genuine library of professional images.</p>
+      <ol class="svx-td-items"><li style="--i:0"><span>01</span>2h session — at your premises, outdoors or in the studio (+€60<span class="usd-eq"> ≈ $66</span>)</li><li style="--i:1"><span>02</span>Up to 3 outfits and 3 moods or real-work set-ups</li><li style="--i:2"><span>03</span>15 retouched HD photos</li><li style="--i:3"><span>04</span>Preparation brief and posing direction</li><li style="--i:4"><span>05</span>Private download gallery</li></ol>
+      <div class="svx-td-delay">Delivery · 7 working days</div>
+    </div></div>
+        
+        <div class="svx-actions">
+          <button type="button" class="svx-cta" onclick="svxQuiz('corporate')">Build this project <i>→</i></button>
+          <span class="svx-note">Personalised quote within 48 working hours</span>
+        </div>
+      </div>
+    </div></div>
+      </article><article class="svx-item" data-cat="mode" data-i="2" style="--d: 0.12s;">
+        <button type="button" class="svx-row" aria-expanded="false" aria-controls="svx-p-mode" onclick="svxToggle('mode')">
+          <span class="svx-n">03</span>
+          <span class="svx-name"><span class="svx-name-t">Fashion, agencies &amp; models</span><small>Brands · agencies · e-commerce · lookbook</small></span>
+          <span class="svx-count">04 packages</span>
+          <span class="svx-delay">5–10 working days</span>
+          <span class="svx-from">490 €<span class="usd-eq"> ≈ $540</span><i class="svx-plus" aria-hidden="true"></i></span>
+        </button>
+        <div class="svx-panel" id="svx-p-mode" role="region"><div class="svx-panel-in">
+      <div class="svx-pitch">
+        <p>Visuals that sell, not just visuals that please. Every lookbook is built around your brand strategy, from shoot to publication.</p>
+        <p class="svx-for"><span>For whom</span>Brands · agencies · e-commerce · lookbook</p>
+        <a class="svx-more" href="/en/services/photographe-mode-mannequins/" onclick="return navLink(event,'service','mode')">Details and rates — Fashion, agencies &amp; models <i>↗</i></a>
+      </div>
+      <div class="svx-tiers">
+        <div class="svx-tabs" role="tablist" aria-label="Packages"><button type="button" role="tab" class="svx-tab" aria-selected="false" onclick="svxPickTier('mode','deco')"><span>Discovery</span><b>490€<span class="usd-eq"> ≈ $540</span></b></button><button type="button" role="tab" class="svx-tab on" aria-selected="true" onclick="svxPickTier('mode','sig')"><span>Signature</span><b>990€<span class="usd-eq"> ≈ $1,090</span></b></button><button type="button" role="tab" class="svx-tab" aria-selected="false" onclick="svxPickTier('mode','prem')"><span>Premium</span><b>1 690€<span class="usd-eq"> ≈ $1,860</span></b></button><button type="button" role="tab" class="svx-tab" aria-selected="false" onclick="svxPickTier('mode','edit')"><span>Bunkaio editorial</span><b>2 490€<span class="usd-eq"> ≈ $2,740</span></b></button></div>
+        <div class="svx-td-wrap"><div class="svx-td" data-tier="sig">
+      <div class="svx-td-top">
+        <div><div class="svx-td-name">Signature</div>
+        <div class="svx-td-badge">Recommended</div></div>
+        <div class="svx-td-price"><span class="svx-amt" data-v="990" data-no-usd="">990</span><span class="svx-eur">€</span></div>
+      </div>
+      <p class="svx-td-line">The best balance of time, guidance and result.</p>
+      <ol class="svx-td-items"><li style="--i:0"><span>01</span>Lookbook — 20 retouched HD photos</li><li style="--i:1"><span>02</span>1 vertical Reel for social media</li><li style="--i:2"><span>03</span>Art direction included</li></ol>
+      <div class="svx-td-delay">Delivery · 7 working days</div>
+    </div></div>
+        <div class="svx-extra"><span><strong>Polas</strong> · Raw digitals · studio included</span><b>160€<span class="usd-eq"> ≈ $175</span></b></div><div class="svx-extra"><span>Monthly plan — models</span><b>790€<span class="usd-eq"> ≈ $870</span><small>/mo</small></b></div>
+        <div class="svx-actions">
+          <button type="button" class="svx-cta" onclick="svxQuiz('mode')">Build this project <i>→</i></button>
+          <span class="svx-note">Personalised quote within 48 working hours</span>
+        </div>
+      </div>
+    </div></div>
+      </article><article class="svx-item" data-cat="commercial" data-i="3" style="--d: 0.18s;">
+        <button type="button" class="svx-row" aria-expanded="false" aria-controls="svx-p-commercial" onclick="svxToggle('commercial')">
+          <span class="svx-n">04</span>
+          <span class="svx-name"><span class="svx-name-t">Commercial &amp; products</span><small>Packshots · products · brands · businesses</small></span>
+          <span class="svx-count">04 packages</span>
+          <span class="svx-delay">3–10 working days</span>
+          <span class="svx-from">390 €<span class="usd-eq"> ≈ $430</span><i class="svx-plus" aria-hidden="true"></i></span>
+        </button>
+        <div class="svx-panel" id="svx-p-commercial" role="region"><div class="svx-panel-in">
+      <div class="svx-pitch">
+        <p>Crisp, bright packshots built to convert — on your site and your socials alike. Campaign-level quality, whatever the size of your catalogue.</p>
+        <p class="svx-for"><span>For whom</span>Packshots · products · brands · businesses</p>
+        <a class="svx-more" href="/en/services/photo-produits-packshots/" onclick="return navLink(event,'service','commercial')">Details and rates — Commercial &amp; products <i>↗</i></a>
+      </div>
+      <div class="svx-tiers">
+        <div class="svx-tabs" role="tablist" aria-label="Packages"><button type="button" role="tab" class="svx-tab" aria-selected="false" onclick="svxPickTier('commercial','deco')"><span>Discovery</span><b>390€<span class="usd-eq"> ≈ $430</span></b></button><button type="button" role="tab" class="svx-tab on" aria-selected="true" onclick="svxPickTier('commercial','sig')"><span>Signature</span><b>750€<span class="usd-eq"> ≈ $825</span></b></button><button type="button" role="tab" class="svx-tab" aria-selected="false" onclick="svxPickTier('commercial','prem')"><span>Premium</span><b>1 390€<span class="usd-eq"> ≈ $1,530</span></b></button><button type="button" role="tab" class="svx-tab" aria-selected="false" onclick="svxPickTier('commercial','edit')"><span>Bunkaio editorial</span><b>2 390€<span class="usd-eq"> ≈ $2,630</span></b></button></div>
+        <div class="svx-td-wrap"><div class="svx-td" data-tier="sig">
+      <div class="svx-td-top">
+        <div><div class="svx-td-name">Signature</div>
+        <div class="svx-td-badge">Recommended</div></div>
+        <div class="svx-td-price"><span class="svx-amt" data-v="750" data-no-usd="">750</span><span class="svx-eur">€</span></div>
+      </div>
+      <p class="svx-td-line">The best balance of time, guidance and result.</p>
+      <ol class="svx-td-items"><li style="--i:0"><span>01</span>Up to 12 products — 20 retouched HD photos</li><li style="--i:1"><span>02</span>Styled setup included</li><li style="--i:2"><span>03</span>Private download gallery</li></ol>
+      <div class="svx-td-delay">Delivery · 5 working days</div>
+    </div></div>
+        
+        <div class="svx-actions">
+          <button type="button" class="svx-cta" onclick="svxQuiz('commercial')">Build this project <i>→</i></button>
+          <span class="svx-note">Personalised quote within 48 working hours</span>
+        </div>
+      </div>
+    </div></div>
+      </article><article class="svx-item" data-cat="event" data-i="4" style="--d: 0.24s;">
+        <button type="button" class="svx-row" aria-expanded="false" aria-controls="svx-p-event" onclick="svxToggle('event')">
+          <span class="svx-n">05</span>
+          <span class="svx-name"><span class="svx-name-t">Events</span><small>Estates · corporate · receptions</small></span>
+          <span class="svx-count">04 packages</span>
+          <span class="svx-delay">3–10 working days</span>
+          <span class="svx-from">420 €<span class="usd-eq"> ≈ $460</span><i class="svx-plus" aria-hidden="true"></i></span>
+        </button>
+        <div class="svx-panel" id="svx-p-event" role="region"><div class="svx-panel-in">
+      <div class="svx-pitch">
+        <p>Your day only happens once. We stay discreet so you can live it fully, while we capture every moment that matters.</p>
+        <p class="svx-for"><span>For whom</span>Estates · corporate · receptions</p>
+        <a class="svx-more" href="/en/services/photographe-evenementiel/" onclick="return navLink(event,'service','event')">Details and rates — Events <i>↗</i></a>
+      </div>
+      <div class="svx-tiers">
+        <div class="svx-tabs" role="tablist" aria-label="Packages"><button type="button" role="tab" class="svx-tab" aria-selected="false" onclick="svxPickTier('event','deco')"><span>Discovery</span><b>420€<span class="usd-eq"> ≈ $460</span></b></button><button type="button" role="tab" class="svx-tab on" aria-selected="true" onclick="svxPickTier('event','sig')"><span>Signature</span><b>750€<span class="usd-eq"> ≈ $825</span></b></button><button type="button" role="tab" class="svx-tab" aria-selected="false" onclick="svxPickTier('event','prem')"><span>Premium</span><b>1 290€<span class="usd-eq"> ≈ $1,420</span></b></button><button type="button" role="tab" class="svx-tab" aria-selected="false" onclick="svxPickTier('event','edit')"><span>Bunkaio editorial</span><b>2 190€<span class="usd-eq"> ≈ $2,410</span></b></button></div>
+        <div class="svx-td-wrap"><div class="svx-td" data-tier="sig">
+      <div class="svx-td-top">
+        <div><div class="svx-td-name">Signature</div>
+        <div class="svx-td-badge">Recommended</div></div>
+        <div class="svx-td-price"><span class="svx-amt" data-v="750" data-no-usd="">750</span><span class="svx-eur">€</span></div>
+      </div>
+      <p class="svx-td-line">The best balance of time, guidance and result.</p>
+      <ol class="svx-td-items"><li style="--i:0"><span>01</span>40 retouched HD photos</li><li style="--i:1"><span>02</span>Up to 4-hour coverage — key moments and atmosphere</li><li style="--i:2"><span>03</span>Private download gallery</li></ol>
+      <div class="svx-td-delay">Delivery · 5 working days</div>
+    </div></div>
+        
+        <div class="svx-actions">
+          <button type="button" class="svx-cta" onclick="svxQuiz('event')">Build this project <i>→</i></button>
+          <span class="svx-note">Personalised quote within 48 working hours</span>
+        </div>
+      </div>
+    </div></div>
+      </article><article class="svx-item" data-cat="lumen" data-i="5" style="--d: 0.3s;">
+        <button type="button" class="svx-row" aria-expanded="false" aria-controls="svx-p-lumen" onclick="svxToggle('lumen')">
+          <span class="svx-n">06</span>
+          <span class="svx-name"><span class="svx-name-t">Lumen — AI photobooth (rental)</span><small>AI photo experience — weddings and high-end events</small></span>
+          <span class="svx-count">—</span>
+          <span class="svx-delay">—</span>
+          <span class="svx-from">On request<i class="svx-plus" aria-hidden="true"></i></span>
+        </button>
+        <div class="svx-panel" id="svx-p-lumen" role="region"><div class="svx-panel-in"><div class="svx-pitch"><p>A one-of-a-kind keepsake, AI-generated in seconds, without ever compromising the elegance of your event. Your guests leave with far more than a photo.</p><p class="svx-soon">Prototype being finalised — rates on request.</p></div>
+      <div class="svx-actions"><button type="button" class="svx-cta" onclick="svxQuiz('lumen')">Contact us <i>→</i></button></div></div></div>
+      </article><!--/snap--></div>
+      </div>
       <!-- Garanties : puces compactes, détail dépliable — le catalogue reste à portée de scroll -->
       <div class="svc-assure" id="svcAssure">
         <div class="svc-assure-chips">
@@ -848,204 +1041,6 @@
         </button>
         </div>
         <div class="svc-assure-panel" id="svcAssurePanel" aria-live="polite"><div class="svc-assure-panel-inner" id="svcAssureText"></div></div>
-      </div>
-      <div class="services-filters" id="servicesFilters"><!--snap--><button class="filter-btn active">All</button><button class="filter-btn">Portrait &amp; lifestyle — individuals</button><button class="filter-btn">Corporate &amp; Personal Branding</button><button class="filter-btn">Fashion, agencies &amp; models</button><button class="filter-btn">Commercial &amp; products</button><button class="filter-btn">Events</button><button class="filter-btn">Lumen — AI photobooth (rental)</button><!--/snap--></div>
-      <p class="vat-note" data-lang="vat-note">Net prices: VAT not applicable (art. 293 B of the French Tax Code). The price shown is the price you pay, with nothing to add.</p>
-      <div class="services-layout" id="servicesLayout">
-        <div class="svc-cat-photo" id="svcCatPhoto" style="display:none">
-          <img id="svcCatPhotoImg" alt="">
-        </div>
-        <div class="services-grid" id="servicesGrid"><!--snap--><div class="service-card rv">
-      <div class="service-head">
-        <div class="service-icon"><svg width="52" height="52" viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 20h6l3-5h18l3 5h6a2 2 0 0 1 2 2v20a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2V22a2 2 0 0 1 2-2z"></path><circle cx="28" cy="32" r="8"></circle></svg></div>
-        <div class="service-name">Portrait &amp; lifestyle — individuals</div>
-        <span class="service-from">from 250 €<span class="usd-eq"> ≈ $275</span></span>
-        <i class="service-chev" aria-hidden="true"></i>
-      </div>
-      <div class="service-tag">Outdoor · studio · solo · couple · group · maternity book</div>
-      <p class="service-pitch">No need to feel at ease in front of the camera — that's our job. The result: photos that truly look like you, delivered within 5 to 10 working days depending on the package.</p>
-      <div class="service-tiers">
-        
-              <div class="service-tier">
-                <span class="service-tier-name">Discovery</span>
-                <span class="service-tier-price">250€<span class="usd-eq"> ≈ $275</span></span>
-              </div>
-              <div class="service-tier">
-                <span class="service-tier-name">Signature</span>
-                <span class="service-tier-price">420€<span class="usd-eq"> ≈ $460</span></span>
-              </div>
-              <div class="service-tier">
-                <span class="service-tier-name">Premium</span>
-                <span class="service-tier-price">650€<span class="usd-eq"> ≈ $715</span></span>
-              </div>
-              <div class="service-tier">
-                <span class="service-tier-name">Bunkaio editorial</span>
-                <span class="service-tier-price">1 090€<span class="usd-eq"> ≈ $1,200</span></span>
-              </div>
-      </div>
-      <div class="service-extras">
-      <div class="service-polas"><span class="service-tier-name"><strong>Maternity book</strong> <span class="service-polas-tag">Maternity book</span><small>Solo or as a couple · studio optional (+€60<span class="usd-eq"> ≈ $66</span>)</small></span><span class="service-tier-price">450€<span class="usd-eq"> ≈ $495</span></span></div></div>
-      <div class="service-actions">
-        <button class="service-cta" type="button"><span class="sc-label">Build this project</span><i class="sc-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="13 6 19 12 13 18"></polyline></svg></i></button>
-        <a class="service-more" href="/en/services/seance-photo-particuliers/" onclick="return navLink(event,'service','photo-part')"><span class="sm-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"></rect><line x1="8.5" y1="8" x2="15.5" y2="8"></line><line x1="8.5" y1="12" x2="15.5" y2="12"></line><line x1="8.5" y1="16" x2="12.5" y2="16"></line></svg></span><span class="sm-txt"><b>Details and rates</b><small>Portrait &amp; lifestyle — individuals</small></span><i class="sm-arrow" aria-hidden="true">→</i></a>
-      </div></div><div class="service-card rv">
-      <div class="service-head">
-        <div class="service-icon"><svg width="52" height="52" viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="10" y="16" width="36" height="30" rx="2"></rect><line x1="10" y1="26" x2="46" y2="26"></line><line x1="22" y1="26" x2="22" y2="46"></line><line x1="34" y1="26" x2="34" y2="46"></line><line x1="16" y1="10" x2="16" y2="16"></line><line x1="40" y1="10" x2="40" y2="16"></line></svg></div>
-        <div class="service-name">Corporate &amp; Personal Branding</div>
-        <span class="service-from">from 250 €<span class="usd-eq"> ≈ $275</span></span>
-        <i class="service-chev" aria-hidden="true"></i>
-      </div>
-      <div class="service-tag">Entrepreneurs · freelancers · executives · teams</div>
-      <p class="service-pitch">A professional image that builds trust at first glance. The shoot can take place right where you work: your premises become your set.</p>
-      <div class="service-tiers">
-        
-              <div class="service-tier">
-                <span class="service-tier-name">Discovery</span>
-                <span class="service-tier-price">250€<span class="usd-eq"> ≈ $275</span></span>
-              </div>
-              <div class="service-tier">
-                <span class="service-tier-name"><a href="/en/services/personal-branding-entrepreneurs/" data-nav="service:branding" data-track="lancement">Launch</a><small class="service-tier-for">Entrepreneurs &amp; freelancers</small></span>
-                <span class="service-tier-price">320€<span class="usd-eq"> ≈ $350</span></span>
-              </div>
-              <div class="service-tier">
-                <span class="service-tier-name">Signature</span>
-                <span class="service-tier-price">450€<span class="usd-eq"> ≈ $495</span></span>
-              </div>
-              <div class="service-tier">
-                <span class="service-tier-name">Premium</span>
-                <span class="service-tier-price">690€<span class="usd-eq"> ≈ $760</span></span>
-              </div>
-              <div class="service-tier">
-                <span class="service-tier-name">Bunkaio editorial</span>
-                <span class="service-tier-price">1 090€<span class="usd-eq"> ≈ $1,200</span></span>
-              </div>
-      </div>
-      <div class="service-extras">
-      </div>
-      <div class="service-actions">
-        <button class="service-cta" type="button"><span class="sc-label">Build this project</span><i class="sc-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="13 6 19 12 13 18"></polyline></svg></i></button>
-        <a class="service-more" href="/en/services/portrait-professionnel-corporate/" onclick="return navLink(event,'service','corporate')"><span class="sm-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"></rect><line x1="8.5" y1="8" x2="15.5" y2="8"></line><line x1="8.5" y1="12" x2="15.5" y2="12"></line><line x1="8.5" y1="16" x2="12.5" y2="16"></line></svg></span><span class="sm-txt"><b>Details and rates</b><small>Corporate — companies &amp; teams</small></span><i class="sm-arrow" aria-hidden="true">→</i></a>
-      </div></div><div class="service-card rv">
-      <div class="service-head">
-        <div class="service-icon"><svg width="52" height="52" viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 14 L38 14 L42 22 L28 46 L14 22 Z"></path><line x1="14" y1="22" x2="42" y2="22"></line><line x1="22" y1="14" x2="28" y2="46"></line><line x1="34" y1="14" x2="28" y2="46"></line></svg></div>
-        <div class="service-name">Fashion, agencies &amp; models</div>
-        <span class="service-from">from 490 €<span class="usd-eq"> ≈ $540</span></span>
-        <i class="service-chev" aria-hidden="true"></i>
-      </div>
-      <div class="service-tag">Brands · agencies · e-commerce · lookbook</div>
-      <p class="service-pitch">Visuals that sell, not just visuals that please. Every lookbook is built around your brand strategy, from shoot to publication.</p>
-      <div class="service-tiers">
-        
-              <div class="service-tier">
-                <span class="service-tier-name">Discovery</span>
-                <span class="service-tier-price">490€<span class="usd-eq"> ≈ $540</span></span>
-              </div>
-              <div class="service-tier">
-                <span class="service-tier-name">Signature</span>
-                <span class="service-tier-price">990€<span class="usd-eq"> ≈ $1,090</span></span>
-              </div>
-              <div class="service-tier">
-                <span class="service-tier-name">Premium</span>
-                <span class="service-tier-price">1 690€<span class="usd-eq"> ≈ $1,860</span></span>
-              </div>
-              <div class="service-tier">
-                <span class="service-tier-name">Bunkaio editorial</span>
-                <span class="service-tier-price">2 490€<span class="usd-eq"> ≈ $2,740</span></span>
-              </div>
-      </div>
-      <div class="service-extras">
-      <div class="service-sub-row">
-        <span class="service-sub-label">Monthly plan — models</span>
-        <span class="service-sub-price">790€<span class="usd-eq"> ≈ $870</span><small>/mo</small></span>
-      </div>
-      <div class="service-polas"><span class="service-tier-name"><strong>Polas</strong> <span class="service-polas-tag">For agencies</span><small>Raw digitals · studio included</small></span><span class="service-tier-price">160€<span class="usd-eq"> ≈ $175</span></span></div></div>
-      <div class="service-actions">
-        <button class="service-cta" type="button"><span class="sc-label">Build this project</span><i class="sc-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="13 6 19 12 13 18"></polyline></svg></i></button>
-        <a class="service-more" href="/en/services/photographe-mode-mannequins/" onclick="return navLink(event,'service','mode')"><span class="sm-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"></rect><line x1="8.5" y1="8" x2="15.5" y2="8"></line><line x1="8.5" y1="12" x2="15.5" y2="12"></line><line x1="8.5" y1="16" x2="12.5" y2="16"></line></svg></span><span class="sm-txt"><b>Details and rates</b><small>Fashion, agencies &amp; models</small></span><i class="sm-arrow" aria-hidden="true">→</i></a>
-      </div></div><div class="service-card rv">
-      <div class="service-head">
-        <div class="service-icon"><svg width="52" height="52" viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 20 L28 12 L42 20 L42 38 L28 46 L14 38 Z"></path><path d="M14 20 L28 28 L42 20"></path><line x1="28" y1="28" x2="28" y2="46"></line></svg></div>
-        <div class="service-name">Commercial &amp; products</div>
-        <span class="service-from">from 390 €<span class="usd-eq"> ≈ $430</span></span>
-        <i class="service-chev" aria-hidden="true"></i>
-      </div>
-      <div class="service-tag">Packshots · products · brands · businesses</div>
-      <p class="service-pitch">Crisp, bright packshots built to convert — on your site and your socials alike. Campaign-level quality, whatever the size of your catalogue.</p>
-      <div class="service-tiers">
-        
-              <div class="service-tier">
-                <span class="service-tier-name">Discovery</span>
-                <span class="service-tier-price">390€<span class="usd-eq"> ≈ $430</span></span>
-              </div>
-              <div class="service-tier">
-                <span class="service-tier-name">Signature</span>
-                <span class="service-tier-price">750€<span class="usd-eq"> ≈ $825</span></span>
-              </div>
-              <div class="service-tier">
-                <span class="service-tier-name">Premium</span>
-                <span class="service-tier-price">1 390€<span class="usd-eq"> ≈ $1,530</span></span>
-              </div>
-              <div class="service-tier">
-                <span class="service-tier-name">Bunkaio editorial</span>
-                <span class="service-tier-price">2 390€<span class="usd-eq"> ≈ $2,630</span></span>
-              </div>
-      </div>
-      <div class="service-extras">
-      </div>
-      <div class="service-actions">
-        <button class="service-cta" type="button"><span class="sc-label">Build this project</span><i class="sc-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="13 6 19 12 13 18"></polyline></svg></i></button>
-        <a class="service-more" href="/en/services/photo-produits-packshots/" onclick="return navLink(event,'service','commercial')"><span class="sm-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"></rect><line x1="8.5" y1="8" x2="15.5" y2="8"></line><line x1="8.5" y1="12" x2="15.5" y2="12"></line><line x1="8.5" y1="16" x2="12.5" y2="16"></line></svg></span><span class="sm-txt"><b>Details and rates</b><small>Commercial &amp; products</small></span><i class="sm-arrow" aria-hidden="true">→</i></a>
-      </div></div><div class="service-card rv">
-      <div class="service-head">
-        <div class="service-icon"><svg width="52" height="52" viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M28 10 L32 22 L44 22 L34 30 L38 42 L28 34 L18 42 L22 30 L12 22 L24 22 Z"></path></svg></div>
-        <div class="service-name">Events</div>
-        <span class="service-from">from 420 €<span class="usd-eq"> ≈ $460</span></span>
-        <i class="service-chev" aria-hidden="true"></i>
-      </div>
-      <div class="service-tag">Estates · corporate · receptions</div>
-      <p class="service-pitch">Your day only happens once. We stay discreet so you can live it fully, while we capture every moment that matters.</p>
-      <div class="service-tiers">
-        
-              <div class="service-tier">
-                <span class="service-tier-name">Discovery</span>
-                <span class="service-tier-price">420€<span class="usd-eq"> ≈ $460</span></span>
-              </div>
-              <div class="service-tier">
-                <span class="service-tier-name">Signature</span>
-                <span class="service-tier-price">750€<span class="usd-eq"> ≈ $825</span></span>
-              </div>
-              <div class="service-tier">
-                <span class="service-tier-name">Premium</span>
-                <span class="service-tier-price">1 290€<span class="usd-eq"> ≈ $1,420</span></span>
-              </div>
-              <div class="service-tier">
-                <span class="service-tier-name">Bunkaio editorial</span>
-                <span class="service-tier-price">2 190€<span class="usd-eq"> ≈ $2,410</span></span>
-              </div>
-      </div>
-      <div class="service-extras">
-      </div>
-      <div class="service-actions">
-        <button class="service-cta" type="button"><span class="sc-label">Build this project</span><i class="sc-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="13 6 19 12 13 18"></polyline></svg></i></button>
-        <a class="service-more" href="/en/services/photographe-evenementiel/" onclick="return navLink(event,'service','event')"><span class="sm-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"></rect><line x1="8.5" y1="8" x2="15.5" y2="8"></line><line x1="8.5" y1="12" x2="15.5" y2="12"></line><line x1="8.5" y1="16" x2="12.5" y2="16"></line></svg></span><span class="sm-txt"><b>Details and rates</b><small>Events</small></span><i class="sm-arrow" aria-hidden="true">→</i></a>
-      </div></div><div class="service-card rv">
-      <div class="service-head">
-        <div class="service-icon"><svg width="52" height="52" viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="28" cy="28" r="13"></circle><circle cx="28" cy="28" r="5"></circle><line x1="28" y1="10" x2="28" y2="15"></line><line x1="28" y1="41" x2="28" y2="46"></line><line x1="10" y1="28" x2="15" y2="28"></line><line x1="41" y1="28" x2="46" y2="28"></line><line x1="38.2" y1="17.8" x2="34.4" y2="21.6"></line><line x1="17.8" y1="38.2" x2="21.6" y2="34.4"></line><line x1="17.8" y1="17.8" x2="21.6" y2="21.6"></line><line x1="38.2" y1="38.2" x2="34.4" y2="34.4"></line></svg></div>
-        <div class="service-name">Lumen — AI photobooth (rental)</div>
-        <span class="soon-chip">Coming soon</span>
-        <i class="service-chev" aria-hidden="true"></i>
-      </div>
-      <div class="service-tag">AI photo experience — weddings and high-end events</div>
-      <p class="service-pitch">A one-of-a-kind keepsake, AI-generated in seconds, without ever compromising the elegance of your event. Your guests leave with far more than a photo.</p>
-      <div class="service-tiers">
-        <div class="service-tier"><span class="service-tier-name">Prototype being finalised</span><span class="service-tier-price">On request</span></div>
-      </div>
-      <div class="service-extras">
-      </div>
-      <div class="service-actions">
-        <button class="service-cta" type="button"><span class="sc-label">Contact us</span><i class="sc-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="13 6 19 12 13 18"></polyline></svg></i></button>
-        <a class="service-more" href="/en/contact/#lumen" onclick="return navLink(event,'service','lumen')"><span class="sm-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"></rect><line x1="8.5" y1="8" x2="15.5" y2="8"></line><line x1="8.5" y1="12" x2="15.5" y2="12"></line><line x1="8.5" y1="16" x2="12.5" y2="16"></line></svg></span><span class="sm-txt"><b>Details and rates</b><small>Lumen — AI photobooth (rental)</small></span><i class="sm-arrow" aria-hidden="true">→</i></a>
-      </div></div><!--/snap--></div>
       </div>
       <div id="svcLinks"><!--snap--><section class="read-panel svcp-panel pf-links rv" style="--rv-d: 0s;"><h2>Explore each service</h2>
     <p class="svcp-text">Not sure which service suits you? Browse each one: who it is for, what it brings, starting rates and delivery times, with tips to choose well.</p>
@@ -1098,7 +1093,7 @@
     <div id="ssec-devis" style="display:none">
       <div class="process-grid">
         <div class="process-steps" id="processSteps"><!--snap-->
-    <div class="pt-card rv in">
+    <div class="pt-card rv">
       <div class="pt-kicker">What happens next</div>
       <div class="pt-sub">Here's how your project will be handled, step by step.</div>
       <div class="pt-list">
@@ -2183,6 +2178,6 @@
 <script src="config/articles.en.js?v=a5fd138b"></script>
 <script src="config/routes.js?v=f47dd51d"></script>
 <script src="config/media.js?v=3d72d6fd"></script>
-<script src="js/script.min.js?v=2b173577"></script>
+<script src="js/script.min.js?v=92c9267f"></script>
 </body>
 </html>

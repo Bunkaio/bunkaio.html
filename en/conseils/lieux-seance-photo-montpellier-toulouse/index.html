@@ -35,7 +35,7 @@
 <link rel="icon" type="image/png" sizes="64x64" href="/images/favicon-64.png">
 <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
 <link rel="preload" href="fonts/dm-sans-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/style.min.css?v=79737841">
+<link rel="stylesheet" href="css/style.min.css?v=df8c2262">
 
 <script type="application/ld+json">
 {
@@ -918,10 +918,20 @@
 
 <!-- SERVICES -->
 <div class="view" id="view-services">
-  <div class="services-page">
-    <h2 data-pageh1 class="page-title" data-lang="services-title">Photography services & rates</h2>
+  <div class="services-page svx">
+    <header class="svx-head">
+      <div class="svx-head-main">
+        <div class="svx-mega" id="svxMega" aria-hidden="true">SERVICES</div>
+        <h2 data-pageh1 class="page-title" data-lang="services-title">Photography services & rates</h2>
     <p class="page-sub" data-lang="services-sub">Professional photographer in Montpellier and Toulouse: premium, high-definition images that showcase your project. Our services and rates, by universe. Travel anywhere in France on quote.</p>
     <div class="svc-cta-row"><a class="cta-primary" href="/en/devis/" data-quiz=""><span data-lang="svc-reserve">Book my session</span></a><a class="btn btn-ghost" href="/en/decouvrir-chaque-prestation/" data-nav="discover"><span data-lang="svc-discover">Explore each service</span></a></div>
+      </div>
+      <div class="svx-stage" id="svxStage" aria-hidden="true">
+        <div class="svx-stage-ph"><img class="svx-ph-a" alt=""><img class="svx-ph-b" alt=""></div>
+        <div class="svx-stage-num"><span id="svxNum">06</span></div>
+        <div class="svx-stage-cap" id="svxCap"></div>
+      </div>
+    </header>
     <div class="svc-tabs">
       <button class="svc-tab active" id="stab-catalogue" onclick="setSvcTab('catalogue')" data-lang="stab-catalogue">Catalogue & rates</button>
       <button class="svc-tab" id="stab-devis" onclick="setSvcTab('devis')" data-lang="stab-devis">Quote & process</button>
@@ -929,6 +939,14 @@
 
     <!-- Catalogue -->
     <div id="ssec-catalogue">
+      <div class="services-filters" id="servicesFilters"><!--snap--><!--/snap--></div>
+      <p class="vat-note" data-lang="vat-note">Net prices: VAT not applicable (art. 293 B of the French Tax Code). The price shown is the price you pay, with nothing to add.</p>
+      <div class="services-layout" id="servicesLayout">
+        <div class="svc-cat-photo" id="svcCatPhoto" style="display:none">
+          <img id="svcCatPhotoImg" alt="">
+        </div>
+        <div class="services-grid" id="servicesGrid"><!--snap--><!--/snap--></div>
+      </div>
       <!-- Garanties : puces compactes, détail dépliable — le catalogue reste à portée de scroll -->
       <div class="svc-assure" id="svcAssure">
         <div class="svc-assure-chips">
@@ -946,14 +964,6 @@
         </button>
         </div>
         <div class="svc-assure-panel" id="svcAssurePanel" aria-live="polite"><div class="svc-assure-panel-inner" id="svcAssureText"></div></div>
-      </div>
-      <div class="services-filters" id="servicesFilters"><!--snap--><!--/snap--></div>
-      <p class="vat-note" data-lang="vat-note">Net prices: VAT not applicable (art. 293 B of the French Tax Code). The price shown is the price you pay, with nothing to add.</p>
-      <div class="services-layout" id="servicesLayout">
-        <div class="svc-cat-photo" id="svcCatPhoto" style="display:none">
-          <img id="svcCatPhotoImg" alt="">
-        </div>
-        <div class="services-grid" id="servicesGrid"><!--snap--><!--/snap--></div>
       </div>
       <div id="svcLinks"><!--snap--><!--/snap--></div>
       <div class="payment-flex-strip">
@@ -2066,6 +2076,6 @@
 <script src="config/articles.en.js?v=a5fd138b"></script>
 <script src="config/routes.js?v=f47dd51d"></script>
 <script src="config/media.js?v=3d72d6fd"></script>
-<script src="js/script.min.js?v=2b173577"></script>
+<script src="js/script.min.js?v=92c9267f"></script>
 </body>
 </html>
