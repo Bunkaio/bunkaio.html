@@ -197,6 +197,13 @@ export function renderAutoReply(t: ARTemplate, f: ARFacts, space?: Space): { sub
 export async function getLog(env: Env): Promise<ARLogEntry[]> {
   try { const raw = await env.ACCOUNTS_KV.get(LOG_KEY); return raw ? (JSON.parse(raw) as ARLogEntry[]) : []; } catch { return []; }
 }
+/** Suppression d'un contact : ses demandes disparaissent aussi du journal « Dernières demandes ». */
+export async function removeLogOf(env: Env, email: string): Promise<void> {
+  const e = email.trim().toLowerCase();
+  const log = await getLog(env);
+  const kept = log.filter((x) => x.facts.email !== e);
+  if (kept.length !== log.length) await env.ACCOUNTS_KV.put(LOG_KEY, JSON.stringify(kept));
+}
 async function appendLog(env: Env, e: ARLogEntry): Promise<void> {
   const log = await getLog(env);
   log.unshift(e);

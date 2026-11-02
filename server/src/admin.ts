@@ -9,6 +9,7 @@ import { listQuotes, putQuote } from './quotes';
 import type { Quote } from './quotes';
 import { deleteMessagesOf, listMessages } from './messages';
 import { getQuizLead } from './automations';
+import { removeLogOf } from './autoreply';
 import type { FormMessage } from './messages';
 import type { AccountRecord, AccountType, Env } from './types';
 
@@ -381,6 +382,7 @@ export async function deleteContact(env: Env, stripe: Stripe, email: string, typ
     for (const k of (await env.ACCOUNTS_KV.list({ prefix: p })).keys) { await env.ACCOUNTS_KV.delete(k.name); markers++; }
   }
   summary.markers = markers;
+  await removeLogOf(env, key).catch(() => undefined);
 
   const customers = (await stripe.customers.list({ email: key, limit: 10 })).data;
   let stripeDeleted = 0;
