@@ -7768,10 +7768,10 @@ function initAboutStats(){
 /* Marques avec lesquelles BUNKAIO a travaillé (noms en texte, aucun logo reproduit). */
 const PARTNER_LOGOS = [
   { name:'Musardise Bijoux', url:'https://musardise.fr/', style:'font-weight:300;letter-spacing:0.28em;text-transform:uppercase' },
-  { name:'Art Tea Shop', style:'font-family:Georgia,serif;font-weight:700;font-style:italic;letter-spacing:0' },
+  { name:'Art Tea Shop', url:'https://share.google/v2obyGiJkceQ6sWo7', style:'font-family:Georgia,serif;font-weight:700;font-style:italic;letter-spacing:0' },
   { name:'Waxeba', style:'font-weight:800;letter-spacing:0.12em;text-transform:uppercase' },
-  { name:'Ness Boutique', style:'font-family:Georgia,serif;font-weight:400;letter-spacing:0.08em;text-transform:uppercase' },
-  { name:'Maison Sarima', url:'https://maket.store/items/01a0244e-a9c3-7884-b5d9-bd90a37eb213', style:'font-weight:300;letter-spacing:0.28em;text-transform:uppercase' },
+  { name:'Ness Boutique', url:'https://share.google/VEe5UMKd1GQZmqabB', style:'font-family:Georgia,serif;font-weight:400;letter-spacing:0.08em;text-transform:uppercase' },
+  { name:'Maison Sarima', url:'https://www.instagram.com/maisonsarima', style:'font-weight:300;letter-spacing:0.28em;text-transform:uppercase' },
   { name:'Paname Lunetier', url:'https://paname-lunetier.fr', style:'font-family:Georgia,serif;font-weight:700;font-style:italic;letter-spacing:0' },
   { name:'Royal R Cosmétique', url:'https://www.royalrcosmetique.com', style:'font-weight:800;letter-spacing:0.12em;text-transform:uppercase' },
   { name:'Palmynala', url:'https://www.noixdarec.com/fr/brand/302-palmynala', style:'font-family:Georgia,serif;font-weight:400;letter-spacing:0.08em;text-transform:uppercase' },
