@@ -46,6 +46,8 @@ export interface MailingParams {
   replyTo?: string;
   /** Langue imposée à l'email (textes, signature, « À très vite ») ; absente = langue de chaque destinataire. */
   lang?: string;
+  /** Message libre : false = aucune salutation automatique (le texte commence comme vous l'écrivez). */
+  autoGreeting?: boolean;
 }
 
 export const MANUAL_TEMPLATES = ['libre', 'relance_devis_quiz', 'rappel_moodboard', 'seance_reminder', 'seance_confirmation', 'merci_seance', 'rappel_impaye', 'demande_avis', 'partenaire_reponse', 'partenaire_bienvenue'] as const;
@@ -75,7 +77,7 @@ export async function buildManualMail(env: Env, template: ManualTemplate, r: Rec
     case 'libre': {
       if (!p.subject?.trim() || !p.body?.trim()) return { skip: 'objet ou message vide' };
       const token = await unsubscribeToken(env, r.email);
-      return buildFreeEmail({ subject: p.subject, heading: p.heading, body: p.body, ctaLabel: p.ctaLabel, ctaUrl: p.ctaUrl, customerName: name, lang, unsubscribeUrl: `${WORKER_ORIGIN}/unsubscribe?e=${encodeURIComponent(r.email)}&s=${token}` });
+      return buildFreeEmail({ autoGreeting: p.autoGreeting, subject: p.subject, heading: p.heading, body: p.body, ctaLabel: p.ctaLabel, ctaUrl: p.ctaUrl, customerName: name, lang, unsubscribeUrl: `${WORKER_ORIGIN}/unsubscribe?e=${encodeURIComponent(r.email)}&s=${token}` });
     }
     case 'relance_devis_quiz':
       return buildQuoteFollowUpEmail({ customerName: name, space, lang });

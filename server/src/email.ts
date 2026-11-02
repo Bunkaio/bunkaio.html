@@ -995,14 +995,14 @@ export async function unsubscribeToken(env: Env, email: string): Promise<string>
  * paragraphes séparés par une ligne vide, sauts de ligne conservés, {prenom} et {nom} remplacés.
  * `marketing` ajoute le lien de désinscription obligatoire pour une communication non transactionnelle.
  */
-export function buildFreeEmail(params: { subject: string; heading?: string; body: string; ctaLabel?: string; ctaUrl?: string; customerName: string; unsubscribeUrl?: string; lang?: Lang }): { subject: string; html: string; text: string } {
+export function buildFreeEmail(params: { subject: string; heading?: string; body: string; ctaLabel?: string; ctaUrl?: string; customerName: string; unsubscribeUrl?: string; lang?: Lang; autoGreeting?: boolean }): { subject: string; html: string; text: string } {
   const lang = params.lang ?? 'fr';
   const first = (params.customerName || '').trim().split(/\s+/)[0] ?? '';
   const fill = (s: string): string => s.replace(/\{prenom\}/gi, first).replace(/\{nom\}/gi, params.customerName || first);
   const greeting = first ? tr(lang, `Bonjour ${first},`, `Hello ${first},`) : tr(lang, 'Bonjour,', 'Hello,');
   const paragraphs = fill(params.body).split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
   /* « Bonjour {prénom}, » est ajouté automatiquement, sauf si le message commence déjà par sa propre formule d'appel (Hello Wolf, Dear…, Bonjour…) : jamais de double salutation. */
-  const ownGreeting = /^\s*(hello|hi|hey|dear|good\s+(morning|afternoon|evening)|greetings|bonjour|bonsoir|salut|cher|chère|madame|monsieur)\b/i.test(paragraphs[0] ?? '');
+  const ownGreeting = params.autoGreeting === false || /^\s*(hello|hi|hey|dear|good\s+(morning|afternoon|evening)|greetings|bonjour|bonsoir|salut|cher|chère|madame|monsieur)\b/i.test(paragraphs[0] ?? '');
   const bodyHtml = paragraphs.map((p) => `<p style="font-size:15px;line-height:1.65;margin:0 0 16px;">${escapeHtml(p).replace(/\n/g, '<br>')}</p>`).join('');
   const cta = params.ctaLabel && params.ctaUrl && /^https:\/\//.test(params.ctaUrl)
     ? `<p style="margin:24px 0 8px;"><a href="${escapeHtml(params.ctaUrl)}" style="${btnStyle}">${escapeHtml(fill(params.ctaLabel))}</a></p>` : '';
