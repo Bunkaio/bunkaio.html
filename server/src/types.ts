@@ -379,6 +379,8 @@ export interface AccountSelfUpdatePayload {
   /** Partenaires uniquement — remplace les contacts ajoutés par le partenaire ; ceux de Bunkaio sont conservés. */
   reseau?: NetworkContact[];
   collaborationReponses?: CollaborationResponse[];
+  /** Langue choisie par le client dans son espace : celle des emails qui lui sont envoyés ensuite. */
+  lang?: 'fr' | 'en';
 }
 
 /** Payload de POST /accounts (admin) — crée ou met à jour un compte. `code` est optionnel

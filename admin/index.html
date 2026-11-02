@@ -747,14 +747,14 @@ const STAGES = [
   ['solde', 'Solde envoyé', 'Photos prêtes, solde en attente'],
   ['livre', 'Livré', 'Solde payé, album ouvert'],
   ['annule', 'Annulé', 'Séance annulée'],
-  ['partenaire', 'Partenaire', 'Espace partenaire'],
-  ['candidat', 'Candidat partenaire', 'A demandé à devenir partenaire, espace pas encore créé'],
+  ['candidat', 'Demande de partenariat', 'Candidature reçue : espace partenaire pas encore créé'],
+  ['partenaire', 'Partenaire', 'Espace partenaire créé'],
   ['contact', 'Contact', 'Autre contact'],
 ];
 const STAGE = Object.fromEntries(STAGES.map(s => [s[0], s]));
 /* Devis réels d'un contact : les devis de test n'influencent ni son étape, ni les segments, ni les alertes. */
 const realQ = c => (c.quotes || []).filter(q => !q.test);
-const ROLE_LABEL = { message: ['Formulaire', 'line'], lead: ['Lead quiz', ''], client: ['Client', 'ok'], espace: ['Espace client', 'dark'], partner: ['Partenaire', 'dark'], candidat: ['Candidat partenaire', 'warn'] };
+const ROLE_LABEL = { message: ['Formulaire', 'line'], lead: ['Lead quiz', ''], client: ['Client', 'ok'], espace: ['Espace client', 'dark'], partner: ['Partenaire', 'dark'], candidat: ['Demande de partenariat', 'warn'] };
 const TEMP = { chaud: ['Chaud', 'danger'], tiede: ['Tiède', 'warn'], froid: ['Froid', 'line'] };
 const INV_STATUS = { paid: ['Payée', 'ok'], open: ['En attente', 'warn'], uncollectible: ['Irrécouvrable', 'danger'], void: ['Annulée', 'line'], draft: ['Brouillon', 'line'] };
 const ACT_LABEL = { moodboard: 'Moodboard', infos: 'Coordonnées', collaboration: 'Collaboration', partenariat: 'Profil partenaire' };
@@ -1112,7 +1112,7 @@ const SEGMENTS = [
   ['client', 'Clients', c => c.roles.includes('client')],
   ['espace', 'Espaces clients', c => c.roles.includes('espace')],
   ['partner', 'Partenaires', c => c.roles.includes('partner')],
-  ['candidat', 'Candidats partenaires', c => c.roles.includes('candidat')],
+  ['candidat', 'Demandes de partenariat', c => c.roles.includes('candidat')],
   ['hot', 'Leads chauds', c => c.lead && c.lead.temperature === 'chaud' && c.stage === 'lead'],
   ['incomplete', 'Espaces non validés', c => c.accounts.length && c.accounts.some(a => !a.infosCompletes)],
   ['due', 'À encaisser', c => c.totalDue > 0],
@@ -2797,7 +2797,8 @@ function msgCard(m, inDrawer) {
   if (!inDrawer) actions.push(`<button class="btn ghost sm" onclick="openDrawer('${esc(m.email)}')">Fiche</button>`);
   if (m.kind === 'partner') {
     /* Candidature partenaire : l'éditeur du Mailing s'ouvre avec le modèle de réponse et le candidat déjà coché. */
-    actions.push(`<button class="btn soft sm" onclick="mailPartner('${esc(m.email)}','partenaire_reponse')">✉ Répondre (modèle partenaire)</button>`);
+    actions.push(`<button class="btn soft sm" onclick="mailPartner('${esc(m.email)}','libre')">✉ Répondre (message libre)</button>`);
+    actions.push(`<button class="btn ghost sm" onclick="mailPartner('${esc(m.email)}','partenaire_reponse')">Répondre (modèle partenaire)</button>`);
     actions.push(`<button class="btn ghost sm" onclick="mailPartner('${esc(m.email)}','partenaire_bienvenue')">Souhaiter la bienvenue</button>`);
   } else actions.push(`<a class="btn ghost sm" href="mailto:${esc(m.email)}?subject=${encodeURIComponent('BUNKAIO — ' + (MSG_KIND[m.kind] || 'Votre message'))}">Répondre</a>`);
   if (m.kind === 'account' || m.kind === 'partner') { const c = contactByEmail(m.email); if (!c || !c.accounts.length) actions.push(`<button class="btn sm" onclick="openNewContact('${esc(m.email)}','${esc(m.name).replace(/&#39;/g, '')}','${esc(m.details.telephone || '')}','${m.kind === 'partner' || m.details.espace === 'partenaire' ? 'partner' : 'client'}')">Créer l'espace</button>`); }
@@ -2899,13 +2900,13 @@ function renderDrawer() {
   if (!drawer.isNew && !c) { closeDrawer(); return; }
   const st = c ? (STAGE[c.stage] || STAGE.contact) : null;
   $('drHead').innerHTML = `<div class="row1"><div style="min-width:0"><h2>${esc(c ? (c.name || '(sans nom)') : 'Nouvel espace')}</h2><div class="em">${esc(c ? c.email : 'Créer un espace client ou partenaire')}${c && c.phone ? ' · ' + esc(c.phone) : ''}</div></div><button class="close" onclick="closeDrawer()" aria-label="Fermer">✕</button></div>
-    ${c ? `<div class="badges"><span class="badge lav">${st[1]}</span>${c.roles.map(r => ROLE_LABEL[r] ? `<span class="badge">${ROLE_LABEL[r][0]}</span>` : '').join('')}${c.lang === 'en' ? '<span class="badge">EN</span>' : ''}${c.totalPaid ? `<span class="badge">Encaissé ${eur(c.totalPaid)}</span>` : ''}${c.totalDue ? `<span class="badge">À payer ${eur(c.totalDue)}</span>` : ''}</div>` : ''}
+    ${c ? `<div class="badges"><span class="badge lav">${st[1]}</span>${c.roles.filter(r => !(r === 'candidat' && c.stage === 'candidat')).map(r => ROLE_LABEL[r] ? `<span class="badge">${ROLE_LABEL[r][0]}</span>` : '').join('')}${c.lang === 'en' ? '<span class="badge">EN</span>' : ''}${c.totalPaid ? `<span class="badge">Encaissé ${eur(c.totalPaid)}</span>` : ''}${c.totalDue ? `<span class="badge">À payer ${eur(c.totalDue)}</span>` : ''}</div>` : ''}
     <div class="dr-tabs">${(c ? DR_TABS : [['space', 'Espace & coordonnées']]).map(([id, l]) => `<button class="${drawer.tab === id ? 'on' : ''}" onclick="setDrTab('${id}')">${l}</button>`).join('')}</div>`;
   const fn = { summary: drSummary, space: drSpace, session: drSession, invoices: drInvoices, emails: drEmails, activity: drActivity, advanced: drAdvanced }[drawer.tab] || drSummary;
   if (drawer.tab === 'emails' && c && !EXTRA[c.email]) loadExtra(c.email);
   $('drBody').innerHTML = fn(c);
   const needsSave = ['space', 'session', 'advanced'].includes(drawer.tab) && (drawer.isNew || currentAcc(c));
-  $('drFoot').innerHTML = needsSave ? `<button class="btn" id="drSave" onclick="saveAccount()">${drawer.isNew ? 'Créer l\'espace' : 'Enregistrer'}</button><button class="btn ghost" onclick="closeDrawer()">Fermer</button><span class="small muted">${drawer.tab === 'session' ? 'Le rappel J-2 et le remerciement J+1 partent automatiquement.' : ''}</span>${!drawer.isNew && drawer.tab === 'space' && currentAcc(c) ? `<button class="btn ghost" style="color:var(--danger);margin-left:auto" onclick="deleteContactUI('${currentAcc(c).type}')">Supprimer cet espace</button>` : ''}<div id="drMsg"></div>` : `<button class="btn ghost" onclick="closeDrawer()">Fermer</button>${c ? (c.roles.includes('candidat') ? `<button class="btn soft" onclick="mailPartner('${esc(c.email)}','partenaire_reponse')">✉ Répondre (modèle partenaire)</button>` : '') + `<a class="btn ghost" href="mailto:${esc(c.email)}">Écrire un email</a>${c.customerId ? `<a class="btn ghost" href="https://dashboard.stripe.com/customers/${esc(c.customerId)}" target="_blank" rel="noopener">Ouvrir dans Stripe</a>` : ''}${drawer.tab === 'summary' ? `<button class="btn ghost" style="color:var(--danger);margin-left:auto" onclick="deleteContactUI()">Supprimer le contact…</button><button class="btn ghost" style="color:var(--danger)" onclick="deleteContactUI(undefined, true)" title="Contact de test : supprime aussi la fiche Stripe et ses factures">Contact de test : tout effacer…</button>` : ''}` : ''}<div id="drMsg"></div>`;
+  $('drFoot').innerHTML = needsSave ? `<button class="btn" id="drSave" onclick="saveAccount()">${drawer.isNew ? 'Créer l\'espace' : 'Enregistrer'}</button><button class="btn ghost" onclick="closeDrawer()">Fermer</button><span class="small muted">${drawer.tab === 'session' ? 'Le rappel J-2 et le remerciement J+1 partent automatiquement.' : ''}</span>${!drawer.isNew && drawer.tab === 'space' && currentAcc(c) ? `<button class="btn ghost" style="color:var(--danger);margin-left:auto" onclick="deleteContactUI('${currentAcc(c).type}')">Supprimer cet espace</button>` : ''}<div id="drMsg"></div>` : `<button class="btn ghost" onclick="closeDrawer()">Fermer</button>${c ? (c.roles.includes('candidat') ? `<button class="btn soft" onclick="mailPartner('${esc(c.email)}','libre')">✉ Répondre (message libre)</button><button class="btn ghost" onclick="mailPartner('${esc(c.email)}','partenaire_reponse')">Répondre (modèle partenaire)</button>` : '') + `<a class="btn ghost" href="mailto:${esc(c.email)}">Écrire un email</a>${c.customerId ? `<a class="btn ghost" href="https://dashboard.stripe.com/customers/${esc(c.customerId)}" target="_blank" rel="noopener">Ouvrir dans Stripe</a>` : ''}${drawer.tab === 'summary' ? `<button class="btn ghost" style="color:var(--danger);margin-left:auto" onclick="deleteContactUI()">Supprimer le contact…</button><button class="btn ghost" style="color:var(--danger)" onclick="deleteContactUI(undefined, true)" title="Contact de test : supprime aussi la fiche Stripe et ses factures">Contact de test : tout effacer…</button>` : ''}` : ''}<div id="drMsg"></div>`;
 }
 function accSwitch(c) {
   if (!c || c.accounts.length < 2) return '';

@@ -120,10 +120,12 @@ function spaceCopy(lang: Lang, space: Space, stage: Stage): { title: string; bod
     body: T('Toutes vos factures et vos paiements sont aussi consultables dans votre espace, rubrique « Mes factures ».', 'All your invoices and payments can also be viewed in your area, under “My invoices”.'),
     button: btn };
 }
+/** Page de connexion : en anglais, l'espace s'ouvre directement en anglais (?lang=en, voir js/script.js). */
+const loginUrl = (lang: Lang): string => `${SITE}/connexion/${lang === 'en' ? '?lang=en' : ''}`;
 function spaceBlock(lang: Lang, space: Space | undefined, stage: Stage): string {
   const sp = space ?? 'client';
   const c = spaceCopy(lang, sp, stage);
-  const url = `${SITE}/connexion/`;
+  const url = loginUrl(lang);
   return `
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:26px 0 24px;">
       <tr><td style="background:#f6f1fc;border-radius:10px;padding:22px 22px 20px;">
@@ -136,7 +138,7 @@ function spaceBlock(lang: Lang, space: Space | undefined, stage: Stage): string 
 }
 function spaceText(lang: Lang, space: Space | undefined, stage: Stage): string {
   const c = spaceCopy(lang, space ?? 'client', stage);
-  return `${c.title.toUpperCase()}\n${c.body}\n${c.button} : ${SITE}/connexion/`;
+  return `${c.title.toUpperCase()}\n${c.body}\n${c.button} : ${loginUrl(lang)}`;
 }
 
 /** Délais réels du catalogue (config du site) : 3 à 10 jours ouvrés selon la formule, comptés à partir du shooting. */
@@ -526,7 +528,7 @@ export function buildAccessCodeEmail(params: { customerName: string; email: stri
   const greeting = greet(lang, params.customerName);
   const client = params.space === 'client';
   const area = tr(lang, client ? 'espace client' : 'espace partenaire', client ? 'client area' : 'partner area');
-  const url = `${SITE}/connexion/`;
+  const url = loginUrl(lang);
   const intro = tr(lang,
     `Votre ${area} BUNKAIO est prêt. Voici vos identifiants de connexion personnels.`,
     `Your BUNKAIO ${area} is ready. Here are your personal login details.`);

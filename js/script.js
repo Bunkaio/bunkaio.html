@@ -222,6 +222,17 @@ function sendQuizLeadToStripe(payload){
 /* ═══════════════ LANGUE ═══════════════ */
 /* La langue vient de l'adresse : /en/… = anglais, le reste = français (chaque langue a ses propres URL, hreflang). */
 let LANG = /^\/en(\/|$)/.test(location.pathname) ? 'en' : 'fr';
+/* Connexion et espaces client/partenaire (sans adresse /en/) : ?lang=en (liens des emails en anglais) ou dernier choix fait dans l'espace. */
+const SPACE_LANG_KEY = 'bunkaio_space_lang';
+const isSpacePath = () => /^\/(connexion|espace-client)\//.test(location.pathname);
+(function(){
+  if (LANG === 'en' || !isSpacePath()) return;
+  try {
+    const q = new URLSearchParams(location.search).get('lang');
+    if (q === 'en' || q === 'fr') localStorage.setItem(SPACE_LANG_KEY, q);
+    if ((q || localStorage.getItem(SPACE_LANG_KEY)) === 'en') LANG = 'en';
+  } catch (e) {}
+})();
 
 const I18N = {
   fr: {
@@ -983,6 +994,7 @@ function updateLang(){
 function toggleLang(){
   LANG = LANG === 'fr' ? 'en' : 'fr';
   updateLang();
+  rememberSpaceLang();
   /* L'adresse suit la langue (/en/… ↔ version française) pour que chaque langue garde son URL partageable. */
   const r = seoRouteFor(currentView, currentSub);
   if (r) history.replaceState({ v: currentView }, '', routePath(r, LANG) + location.hash);
@@ -5311,6 +5323,7 @@ function doLogin(){
       USER = data.account;
       USER_CODE = code;
       saveSession();
+      applyAccountLang();
       if (window.track) track('login', USER.type);
       updateNavLogin();
       renderAccount();
@@ -5372,6 +5385,30 @@ function doLogout(){
    depuis le Worker à chaque ouverture du site pour ne jamais afficher de
    données périmées. */
 const SESSION_KEY = 'bunkaio_session';
+/* Langue de l'espace : mémorisée sur l'appareil et sur le compte (langue des emails envoyés ensuite au client). */
+function rememberSpaceLang(){
+  if (!isSpacePath() && !['login', 'account'].includes(currentView)) return;
+  try { localStorage.setItem(SPACE_LANG_KEY, LANG); } catch (e) {}
+  if (USER && USER_CODE && USER.lang !== LANG) savePartnerData({ lang: LANG });
+}
+function setSpaceLang(l){
+  if (l !== 'fr' && l !== 'en') return;
+  if (l !== LANG) { LANG = l; updateLang(); }
+  rememberSpaceLang();
+}
+/* À la connexion : l'espace s'ouvre dans la langue enregistrée sur le compte (sauf choix contraire sur cet appareil). */
+function applyAccountLang(){
+  if (!USER || !USER.lang || USER.lang === LANG || /^\/en(\/|$)/.test(location.pathname)) return;
+  let pref = null; try { pref = localStorage.getItem(SPACE_LANG_KEY); } catch (e) {}
+  if (pref && pref !== USER.lang) return;
+  LANG = USER.lang; updateLang();
+}
+function renderAccLang(){
+  const el = document.getElementById('accLang'); if (!el) return;
+  el.innerHTML = `<span class="acc-lang-label">${t({fr:'Langue de l\'espace', en:'Space language'})}</span>` +
+    [['fr', 'Français'], ['en', 'English']].map(([k, l]) => `<button type="button" class="acc-lang-btn${LANG === k ? ' on' : ''}" aria-pressed="${LANG === k}" onclick="setSpaceLang('${k}')">${l}</button>`).join('');
+}
+
 function saveSession(){
   try { localStorage.setItem(SESSION_KEY, JSON.stringify({ type: USER.type, email: USER.email, code: USER_CODE })); } catch(e) {}
 }
@@ -5392,6 +5429,7 @@ function restoreSession(){
     .then(data => {
       if (data && data.ok && data.account) {
         USER = data.account; USER_CODE = saved.code;
+        applyAccountLang();
         updateNavLogin();
         if (location.pathname === '/espace-client/') { renderAccount(); goView('account', null, { initial: true }); }
         if (document.getElementById('view-account').classList.contains('active')) renderAccount();
@@ -5611,6 +5649,10 @@ function setAccountTab(tab){
   });
 }
 
+/* Statuts saisis en français dans l'admin : affichés en anglais quand l'espace est en anglais (valeur inconnue → telle quelle). */
+const STATUT_EN = { 'en cours':'In progress', 'en attente':'Pending', 'livré':'Delivered', 'livrée':'Delivered', 'payé':'Paid', 'payée':'Paid', 'réglé':'Paid', 'réglée':'Paid', 'annulé':'Cancelled', 'annulée':'Cancelled', 'terminé':'Completed', 'terminée':'Completed', 'proposée':'Proposed', 'acceptée':'Accepted', 'refusée':'Declined', 'actif':'Active', 'active':'Active', 'en production':'In production', 'en post-production':'In post-production', 'à venir':'Upcoming', 'remboursé':'Refunded', 'remboursée':'Refunded', 'impayée':'Unpaid', 'brouillon':'Draft' };
+function trStatut(statut){ if (!statut || LANG !== 'en') return statut; return STATUT_EN[String(statut).trim().toLowerCase()] || statut; }
+
 function statusClass(statut){
   const s = (statut || '').toLowerCase();
   if (s.includes('livr') || s.includes('pay') || s.includes('termin') || s.includes('deliver') || s.includes('paid') || s.includes('complet')) return 'st-done';
@@ -5783,7 +5825,7 @@ function renderAccSubs(){
           </div>
         </div>
         <div style="text-align:right">
-          <span class="status-pill ${statusClass(sub.statut)}" style="margin-bottom:10px;display:inline-block">${sub.statut || '—'}</span>
+          <span class="status-pill ${statusClass(sub.statut)}" style="margin-bottom:10px;display:inline-block">${trStatut(sub.statut) || '—'}</span>
           <div class="acc-sub-price">${pp(plan.price)}€<small>${I18N[LANG]['acc-subs-month']}</small></div>
         </div>
       </div>
@@ -5897,7 +5939,7 @@ function renderAccPartner(){
   const info = USER.partenariat || {};
   const ptype = partnerProviderType(info.typePrestataire);
   const sector = PARTNER_SECTORS.find(s => s.id === (ptype ? ptype.sector : info.secteur));
-  const statut = info.statut || I18N[LANG]['partner-statut-attente'];
+  const statut = trStatut(info.statut) || I18N[LANG]['partner-statut-attente'];
   const choosing = !ptype || partnerEditType;
 
   const typeBlock = choosing ? `
@@ -6164,6 +6206,11 @@ function renderAccReseau(){
     </div>`;
 
   el.innerHTML = `
+    <div class="acc-info-card pt-soon">
+      <span class="pt-soon-badge">${t({fr:'En cours de réalisation', en:'Coming soon'})}</span>
+      <div class="pt-soon-title">${t({fr:'L\'espace réseau arrive bientôt', en:'The network space is coming soon'})}</div>
+      <p class="pt-soon-text">${t({fr:'BUNKAIO vient d\'ouvrir son site. L\'annuaire du réseau ouvrira dès que quelques autres prestataires partenaires auront rejoint le programme, pour vous proposer des mises en relation vraiment utiles. En attendant, vous pouvez déjà enregistrer ici vos propres contacts professionnels.', en:'BUNKAIO has just launched its website. The network directory will open as soon as a few more partner providers have joined the programme, so that the introductions it offers are truly useful. In the meantime, you can already save your own professional contacts here.'})}</p>
+    </div>
     ${introduced.length ? `
       <div class="pt-section-label">${t({fr:'Mises en relation par Bunkaio', en:'Introduced by Bunkaio'})}</div>
       <div class="pt-contact-grid">${introduced.map(c => card(c, false)).join('')}</div>` : ''}
@@ -6192,10 +6239,12 @@ function renderAccReseau(){
 
     ${own.length ? `<div class="pt-contact-grid">${own.map(c => card(c, true)).join('')}</div>`
       : (reseauAdding ? '' : `<div class="acc-info-card"><div class="empty-note">${t({fr:'Votre réseau est vide. Ajoutez les professionnels avec qui vous travaillez — traiteurs, lieux, décorateurs, stylistes — pour les retrouver dans vos futures collaborations.', en:'Your network is empty. Add the professionals you work with — caterers, venues, decorators, stylists — to find them in future collaborations.'})}</div></div>`)}
-    ${renderNetworkDirectory(ownNames)}`;
+`;
+  /* Annuaire du réseau : masqué tant que le réseau réel n'est pas constitué (aucune donnée fictive affichée). */
+  void ownNames;
 }
 
-/* Annuaire du réseau Bunkaio — DONNÉES FICTIVES (démo), à remplacer par
+/* NON AFFICHÉ (onglet « Mon réseau » en cours de réalisation, nov. 2026). Annuaire du réseau Bunkaio — DONNÉES FICTIVES (démo), à remplacer par
    les vrais partenaires consentants (une route Worker dédiée) avant
    publication. Les ids de type reprennent PARTNER_PROVIDER_TYPES. */
 const NETWORK_DIRECTORY_DEMO = [
@@ -6285,7 +6334,7 @@ function renderAccCollabs(){
     <div class="pt-promo">
       <div class="pt-promo-top">
         <div class="pt-promo-title">${escHtml(c.titre)}</div>
-        <span class="status-pill ${statusClass(c.statut)}">${escHtml(c.statut)}</span>
+        <span class="status-pill ${statusClass(c.statut)}">${escHtml(trStatut(c.statut))}</span>
       </div>
       ${c.description ? `<p class="pt-promo-text">${escHtml(c.description)}</p>` : ''}
       <div class="pt-promo-foot">
@@ -6851,6 +6900,7 @@ function addMbComment(){
 }
 
 function renderAccount(){
+  renderAccLang();
   if (!USER) return;
   document.getElementById('accBadge').textContent =
     I18N[LANG][USER.type === 'client' ? 'acc-client-badge' : 'acc-partner-badge'];
@@ -6872,17 +6922,17 @@ function renderAccount(){
   const ob = document.getElementById('ordersBody');
   const orders = USER.commandes || [];
   ob.innerHTML = orders.length
-    ? orders.map(o => `<tr><td>${o.date||'—'}</td><td>${o.prestation||'—'}</td><td>${o.montant||'—'}</td><td><span class="status-pill ${statusClass(o.statut)}">${o.statut||'—'}</span></td></tr>`).join('')
+    ? orders.map(o => `<tr><td>${o.date||'—'}</td><td>${o.prestation||'—'}</td><td>${o.montant||'—'}</td><td><span class="status-pill ${statusClass(o.statut)}">${trStatut(o.statut)||'—'}</span></td></tr>`).join('')
     : `<tr><td colspan="4"><div class="empty-note">${I18N[LANG]['empty-orders']}</div></td></tr>`;
   const pb = document.getElementById('paymentsBody');
   const payments = USER.paiements || [];
   pb.innerHTML = payments.length
-    ? payments.map(p => `<tr><td>${p.date||'—'}</td><td>${p.reference||'—'}</td><td>${p.methode||'—'}</td><td>${p.montant||'—'}</td><td><span class="status-pill ${statusClass(p.statut)}">${p.statut||'—'}</span></td><td>${p.factureUrl ? `<a href="${p.factureUrl}" target="_blank" rel="noopener">${I18N[LANG]['acc-invoice-view']}</a>` : '—'}</td></tr>`).join('')
+    ? payments.map(p => `<tr><td>${p.date||'—'}</td><td>${p.reference||'—'}</td><td>${p.methode||'—'}</td><td>${p.montant||'—'}</td><td><span class="status-pill ${statusClass(p.statut)}">${trStatut(p.statut)||'—'}</span></td><td>${p.factureUrl ? `<a href="${p.factureUrl}" target="_blank" rel="noopener">${I18N[LANG]['acc-invoice-view']}</a>` : '—'}</td></tr>`).join('')
     : `<tr><td colspan="6"><div class="empty-note">${I18N[LANG]['empty-payments']}</div></td></tr>`;
   const fb = document.getElementById('facturesBody');
   const factures = USER.factures || [];
   fb.innerHTML = factures.length
-    ? factures.map(f => `<tr><td>${f.numero||'—'}</td><td>${f.date||'—'}</td><td>${f.montant||'—'}</td><td><span class="status-pill ${statusClass(f.statut)}">${f.statut||'—'}</span></td><td>${f.url ? `<a href="${f.url}" target="_blank" rel="noopener">${I18N[LANG]['acc-invoice-view']}</a>` : '—'}</td></tr>`).join('')
+    ? factures.map(f => `<tr><td>${f.numero||'—'}</td><td>${f.date||'—'}</td><td>${f.montant||'—'}</td><td><span class="status-pill ${statusClass(f.statut)}">${trStatut(f.statut)||'—'}</span></td><td>${f.url ? `<a href="${f.url}" target="_blank" rel="noopener">${I18N[LANG]['acc-invoice-view']}</a>` : '—'}</td></tr>`).join('')
     : `<tr><td colspan="5"><div class="empty-note">${I18N[LANG]['empty-factures']}</div></td></tr>`;
   const lrBtn = document.getElementById('accLightroomBtn');
   if (lrBtn) {

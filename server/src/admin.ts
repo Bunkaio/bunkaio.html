@@ -242,10 +242,13 @@ export async function buildDashboard(env: Env, stripe: Stripe): Promise<Record<s
 
   // 3. Messages des formulaires du site.
   let messages: FormMessage[] = [];
+  const langFromForm = new Set<string>();
   try {
     messages = (await listMessages(env)).filter((m) => !isDemo(m.email));
     for (const m of messages) {
       const c = get(m.email);
+      /* Langue du formulaire (version FR/EN du site) : celle du contact tant qu'aucun espace ni devis ne la fixe. Messages du plus récent au plus ancien. */
+      if (!c.accounts.length && !c.lead && !langFromForm.has(c.email)) { langFromForm.add(c.email); if (m.lang === 'en' || m.lang === 'fr') c.lang = m.lang; }
       c.messages.push(m);
       c.name ||= m.name;
       if (m.details.telephone && !c.phone) c.phone = m.details.telephone;

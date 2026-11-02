@@ -258,7 +258,8 @@ function isValidAccountSelfUpdatePayload(body: unknown): body is AccountSelfUpda
     (b.moodboards === undefined || isValidMoodboardArray(b.moodboards)) &&
     (b.partenariat === undefined || isValidSelfPartenariat(b.partenariat)) &&
     (b.reseau === undefined || isValidSelfReseau(b.reseau)) &&
-    (b.collaborationReponses === undefined || isValidCollaborationReponses(b.collaborationReponses))
+    (b.collaborationReponses === undefined || isValidCollaborationReponses(b.collaborationReponses)) &&
+    (b.lang === undefined || b.lang === 'fr' || b.lang === 'en')
   );
 }
 
@@ -408,6 +409,7 @@ async function handleAccountUpdate(request: Request, env: Env, headers: Record<s
     facturation,
     adresse: body.facturation && facturation ? composeAddress(facturation) : body.adresse ?? account.adresse,
     moodboards: body.moodboards ?? account.moodboards,
+    lang: body.lang ?? account.lang,
   };
   const entries = diffAccountActivity(account, updated, new Date().toISOString());
   const withJournal = appendJournal(updated, entries);

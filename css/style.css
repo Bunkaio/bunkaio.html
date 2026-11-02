@@ -5679,3 +5679,15 @@ body:not([data-view="article"]) .art-progress { display: none; }
 /* À propos : bouton « Construire mon projet » entre la présentation et les spécialités */
 .about-mid-cta { display: flex; justify-content: center; max-width: 1100px; margin: 0 auto 24px; }
 @media (max-width: 760px) { .about-mid-cta .cta-primary { width: 100%; text-align: center; } }
+
+/* Espace partenaire, « Mon réseau » : en cours de réalisation (nov. 2026) */
+.pt-soon { margin-bottom: 22px; border: 1px dashed rgba(139,116,214,.55); }
+.pt-soon-badge { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #6e5aa8; background: #efe9f8; border-radius: 100px; padding: 4px 11px; margin-bottom: 10px; }
+.pt-soon-title { font-size: 17px; font-weight: 700; margin-bottom: 6px; }
+.pt-soon-text { margin: 0; line-height: 1.6; opacity: .85; }
+
+/* Espace client / partenaire : choix de la langue (nov. 2026) */
+.acc-lang { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+.acc-lang-label { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.62); margin-right: 4px; }
+.acc-lang-btn { font: inherit; font-size: 12.5px; font-weight: 600; padding: 5px 12px; border-radius: 100px; border: 1px solid rgba(255,255,255,.4); background: transparent; color: #fff; cursor: pointer; }
+.acc-lang-btn.on { background: #fff; color: #0a0a0c; border-color: #fff; }
