@@ -34,7 +34,7 @@
 <link rel="icon" type="image/png" sizes="64x64" href="/images/favicon-64.png">
 <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
 <link rel="preload" href="fonts/dm-sans-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/style.min.css?v=43e03bcf">
+<link rel="stylesheet" href="css/style.min.css?v=34f7323d">
 
 <script type="application/ld+json">
 {
@@ -479,6 +479,9 @@
       <button class="hero-access" onclick="openLogin('client')" data-lang="access-client">Client area</button>
       <button class="hero-access" onclick="openLogin('partner')" data-lang="access-partner">Partner area</button>
     </div>
+    <div class="hm-hud" aria-hidden="true"><span class="hm-c tl"></span><span class="hm-c tr"></span><span class="hm-c bl"></span><span class="hm-c br"></span>
+      <span class="hm-m tl">N° 00 — BUNKAIO <i>⊹</i> STUDIO</span><span class="hm-m tr" id="hmClock">PARIS --:--</span>
+      <span class="hm-m bl" id="hmPlace">OCCITANIE · FRANCE</span><span class="hm-m br"><span id="hmScrollLbl">DÉFILER</span> <b id="hmPct">00%</b></span></div>
     
   </section>
 
@@ -488,8 +491,22 @@
   </section>
 
   <div class="home-claim-trigger" id="homeClaimSection"></div>
+  <!-- Feuille « papier » (DA Grids × Almira Kho, nov. 2026) : glisse par-dessus la vidéo « Le studio » ; la réassurance en est le haut
+       (son entrée à l'écran termine la séquence vidéo, voir initHomeClaimVideo). -->
+  <div class="home-paper">
+  <div class="gx-cols" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
   <!-- Réassurance — bandeau compact -->
   <div class="reassure-section rv">
+    <header class="hm-head">
+      <div class="gx-top">
+        <div class="gx-mega" id="hmMega" data-fr="LE STUDIO" data-en="THE STUDIO" aria-hidden="true">LE STUDIO</div>
+        <div class="gx-count" aria-hidden="true"><b>200+</b><span id="hmCountLbl">projets réalisés</span></div>
+      </div>
+      <div class="hm-head-sub">
+        <p class="gx-kick" id="hmKick">Chapitre 00,</p>
+        <p class="hm-claim"><span class="bk-echo bk-scramble" data-lang="home-claim-text">BUNKAIO helps people who run a business build their professional image.</span></p>
+      </div>
+    </header>
     <div class="reassure-strip">
       <div class="reassure-item">
         <div class="reassure-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg></div>
@@ -517,6 +534,15 @@
       </div>
     </div>
   </div>
+
+  <!-- Prestations : défilé géant + index avec aperçu photo qui suit la souris (rendus par renderHomeIndex) -->
+  <section class="hm-svc" aria-labelledby="hmSvcT">
+    <div class="hm-marquee" aria-hidden="true"><div class="hm-marquee-in" id="hmMarquee"></div></div>
+    <div class="hm-sec-head"><p class="gx-kick" id="hmSvcK">Index,</p><h2 class="hm-sec-t" id="hmSvcT"><span class="bk-echo bk-scramble" data-lang="services">Services</span></h2><a class="hm-sec-link" href="/en/services/" onclick="return navLink(event,'services')" id="hmSvcAll">Toutes les prestations ↗</a></div>
+    <div class="hm-index" id="hmIndex"></div>
+    <div class="hm-preview" id="hmPreview" aria-hidden="true"><img alt=""><span></span></div>
+  </section>
+  <div class="gx-reel hm-reel"></div>
 
   <!-- Espace client & moodboard par commande -->
   <div class="cs-slot" id="csSlotHome" data-variant="full"><!--snap--><!--/snap--></div>
@@ -649,6 +675,7 @@
       <button class="hero-start cta-onlight" onclick="shareExperience()"><span data-lang="testi-share-btn">Share my experience</span></button>
       <p class="share-note" data-lang="share-note">Public Google review. If it is shared on this site, it may be anonymised.</p>
     </div>
+  </div>
   </div>
 </div>
 
@@ -1283,7 +1310,7 @@
       <button type="button" class="cs-acc-head" aria-expanded="true">
         <b class="disc-num">01</b>
         <span class="disc-name"><small class="disc-market">Entrepreneurs &amp; freelancers</small>Personal Branding — entrepreneurs</span>
-        <em class="disc-from">from 320 €<span class="usd-eq"> ≈ $350</span></em>
+        <em class="disc-from">from 320 €</em>
         <i class="cs-acc-chev" aria-hidden="true"></i>
       </button>
       <div class="cs-acc-panel"><div class="disc-panel">
@@ -1299,7 +1326,7 @@
       <button type="button" class="cs-acc-head" aria-expanded="false">
         <b class="disc-num">02</b>
         <span class="disc-name"><small class="disc-market">Brands, fashion &amp; models</small>Fashion, agencies &amp; models</span>
-        <em class="disc-from">from 490 €<span class="usd-eq"> ≈ $540</span></em>
+        <em class="disc-from">from 490 €</em>
         <i class="cs-acc-chev" aria-hidden="true"></i>
       </button>
       <div class="cs-acc-panel"><div class="disc-panel">
@@ -1315,7 +1342,7 @@
       <button type="button" class="cs-acc-head" aria-expanded="false">
         <b class="disc-num">03</b>
         <span class="disc-name"><small class="disc-market">Brands, fashion &amp; models</small>Commercial &amp; products</span>
-        <em class="disc-from">from 390 €<span class="usd-eq"> ≈ $430</span></em>
+        <em class="disc-from">from 390 €</em>
         <i class="cs-acc-chev" aria-hidden="true"></i>
       </button>
       <div class="cs-acc-panel"><div class="disc-panel">
@@ -1331,7 +1358,7 @@
       <button type="button" class="cs-acc-head" aria-expanded="false">
         <b class="disc-num">04</b>
         <span class="disc-name"><small class="disc-market">Companies &amp; events</small>Corporate — companies &amp; teams</span>
-        <em class="disc-from">from 250 €<span class="usd-eq"> ≈ $275</span></em>
+        <em class="disc-from">from 250 €</em>
         <i class="cs-acc-chev" aria-hidden="true"></i>
       </button>
       <div class="cs-acc-panel"><div class="disc-panel">
@@ -1347,7 +1374,7 @@
       <button type="button" class="cs-acc-head" aria-expanded="false">
         <b class="disc-num">05</b>
         <span class="disc-name"><small class="disc-market">Companies &amp; events</small>Events</span>
-        <em class="disc-from">from 420 €<span class="usd-eq"> ≈ $460</span></em>
+        <em class="disc-from">from 420 €</em>
         <i class="cs-acc-chev" aria-hidden="true"></i>
       </button>
       <div class="cs-acc-panel"><div class="disc-panel">
@@ -1363,7 +1390,7 @@
       <button type="button" class="cs-acc-head" aria-expanded="false">
         <b class="disc-num">06</b>
         <span class="disc-name"><small class="disc-market">Individuals</small>Portrait &amp; lifestyle — individuals</span>
-        <em class="disc-from">from 250 €<span class="usd-eq"> ≈ $275</span></em>
+        <em class="disc-from">from 250 €</em>
         <i class="cs-acc-chev" aria-hidden="true"></i>
       </button>
       <div class="cs-acc-panel"><div class="disc-panel">
@@ -1410,7 +1437,7 @@
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
       <div class="accordion-body ">
-        <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>Delivery between 3 and 10 working days after the shoot, depending on the service. Starting rates: Personal Branding — entrepreneurs from 320 €<span class="usd-eq"> ≈ $350</span> · Fashion, agencies &amp; models from 490 €<span class="usd-eq"> ≈ $540</span> · Commercial &amp; products from 390 €<span class="usd-eq"> ≈ $430</span> · Corporate &amp; Personal Branding from 250 €<span class="usd-eq"> ≈ $275</span> · Events from 420 €<span class="usd-eq"> ≈ $460</span> · Portrait &amp; lifestyle — individuals from 250 €<span class="usd-eq"> ≈ $275</span>. <a href="/en/services/" data-nav="services">See the packages</a>.</p></div>
+        <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>Delivery between 3 and 10 working days after the shoot, depending on the service. Starting rates: Personal Branding — entrepreneurs from 320 € · Fashion, agencies &amp; models from 490 € · Commercial &amp; products from 390 € · Corporate &amp; Personal Branding from 250 € · Events from 420 € · Portrait &amp; lifestyle — individuals from 250 €. <a href="/en/services/" data-nav="services">See the packages</a>.</p></div>
       </div>
     </div>
     <div class="accordion-item rv" style="--rv-d: 0.14s;">
@@ -1419,7 +1446,7 @@
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
       <div class="accordion-body ">
-        <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>BUNKAIO is based in Occitanie and travels anywhere in France. Travel is free within 30 km of Montpellier, of Toulouse and in western Hérault. Elsewhere it is charged at €0.60<span class="usd-eq"> ≈ $0.66</span> per km, round trip, on the distance exceeding those 30 km, rounded to the nearest €5<span class="usd-eq"> ≈ $5.50</span>, up to a long-distance flat rate capped at €350<span class="usd-eq"> ≈ $385</span> (estimates: Nîmes ≈ €35<span class="usd-eq"> ≈ $39</span>, Carcassonne ≈ €70<span class="usd-eq"> ≈ $77</span>, Perpignan ≈ €80<span class="usd-eq"> ≈ $88</span>, Paris €350<span class="usd-eq"> ≈ $385</span>). The online quote calculates the amount from the session city; it is confirmed on your quote, before you sign anything.</p></div>
+        <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>BUNKAIO is based in Occitanie and travels anywhere in France. Travel is free within 30 km of Montpellier, of Toulouse and in western Hérault. Elsewhere it is charged at €0.60 per km, round trip, on the distance exceeding those 30 km, rounded to the nearest €5, up to a long-distance flat rate capped at €350 (estimates: Nîmes ≈ €35, Carcassonne ≈ €70, Perpignan ≈ €80, Paris €350). The online quote calculates the amount from the session city; it is confirmed on your quote, before you sign anything.</p></div>
       </div>
     </div></div>
     </section>
@@ -2101,6 +2128,7 @@
            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
       <div class="ft-brand-logo" style="display:none">B ⊹</div>
       <div class="ft-brand-studio">studio</div>
+      <div class="ft-brand-name">BUNKAIO</div>
       <div class="ft-claim" data-lang="footer-claim">Photography studio for professionals, entrepreneurs and models — premium images for people, brands and companies.</div>
       <p class="loc-line ft-loc" data-lang="loc-line">Based in Occitanie, travelling across France on quote</p>
       <div class="ft-follow">
@@ -2155,6 +2183,6 @@
 <script src="config/articles.en.js?v=a5fd138b"></script>
 <script src="config/routes.js?v=f47dd51d"></script>
 <script src="config/media.js?v=3d72d6fd"></script>
-<script src="js/script.min.js?v=4221047e"></script>
+<script src="js/script.min.js?v=2ecc76f3"></script>
 </body>
 </html>
