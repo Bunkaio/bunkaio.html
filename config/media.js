@@ -350,5 +350,16 @@ const DRONE_MEDIA = {
   ],
 };
 
+/* ──────────────────────────────────────────────────────────────────
+   PORTFOLIO — SÉRIES (projets numérotés 01, 02…, nov. 2026)
+   Chaque série = un shooting présenté comme un projet : titre, client (facultatif), année, univers et les photos
+   choisies parmi celles déposées dans l'admin média (portfolio/<univers>/<numéro>.webp).
+   Tant que la liste est vide, le Portfolio présente un chapitre par univers (toutes ses photos).
+   Exemple :
+   { id:'lookbook-ete', title:{fr:'Lookbook été', en:'Summer lookbook'}, client:'Maison Sarima', year:2026,
+     cat:'mode', photos:[1, 2, 3, 5, 8], text:{fr:'Une phrase de contexte.', en:'One line of context.'} },
+   ────────────────────────────────────────────────────────────────── */
+const PF_SERIES = [];
+
 /* Lien « laisser un avis » de la fiche Google Business Profile (https://g.page/r/.../review). Vide = aucun bouton affiché. */
 const GOOGLE_REVIEW_URL = 'https://g.page/r/CaRPlLV6GmYlECE/review';

@@ -32,7 +32,7 @@ const ROUTES = vm.runInNewContext(fs.readFileSync(path.join(ROOT, 'config/articl
 const SNAPS_BY_VIEW = {
   home: ['missionServicesTrack', 'missionPreview', 'adviceTeaser', 'csSlotHome'],
   quiz: ['catList', 'csSlotQuiz'],
-  portfolio: ['pfTabs', 'pfLinks'],
+  portfolio: ['pfIndex', 'pfLinks'],
   services: ['servicesFilters', 'servicesGrid', 'svcLinks', 'processSteps', 'csSlotServices'],
   legal: ['faqAccordion', 'privacyAccordion', 'cgvAccordion', 'cookiesAccordion', 'imageAccordion'],
   partners: ['partnersPitch', 'partnersAccordion', 'applyBenefitsAccordion'],
@@ -350,7 +350,7 @@ function pinAssets(html) {
     await grab(['faqAccordion', 'privacyAccordion', 'cgvAccordion', 'cookiesAccordion', 'imageAccordion']);
     await page.evaluate(() => goView('portfolio', null, { initial: true }));
     await page.waitForTimeout(400);
-    await grab(['pfTabs', 'pfLinks']);
+    await grab(['pfIndex', 'pfLinks']);
     await page.evaluate(() => goView('quiz', null, { initial: true }));
     await grab(['catList']);
     await page.evaluate(() => { goView('partners', null, { initial: true }); renderApplyBenefits(); });

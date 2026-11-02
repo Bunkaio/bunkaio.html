@@ -1094,9 +1094,7 @@ function refreshDynamic(){
   if (document.getElementById('view-partners').classList.contains('active')) { renderPartnersAccordion(); renderApplyBenefits(); renderApplyTypePicker(); }
   if (document.getElementById('view-legal').classList.contains('active')) { renderFaqAccordion(); renderPrivacyAccordion(); renderCgvAccordion(); renderCookiesAccordion(); renderImageAccordion(); }
   if (document.getElementById('view-portfolio').classList.contains('active')) {
-    const curPfCat = document.querySelector('#pfTabs .pf-cat-tab.active')?.dataset.cat || PF_CATS[0].id;
-    renderPfTabs();
-    selectPfTab(curPfCat);
+    renderPortfolioV2();
   }
   if (document.getElementById('view-login').classList.contains('active')) setLoginType(loginType);
   if (USER && document.getElementById('view-account').classList.contains('active')) renderAccount();
@@ -2086,8 +2084,7 @@ function goView(v, subTab, opts){
     if (v === 'drone') { renderDroneCats(); renderDroneProjects(activeDroneCat); }
     if (v === 'portfolio') {
       /* Toujours re-rendre : la langue a pu changer depuis la dernière visite de cette vue */
-      const curPfCat = pfLoaded ? (document.querySelector('#pfTabs .pf-cat-tab.active')?.dataset.cat || PF_CATS[0].id) : PF_CATS[0].id;
-      renderPfTabs(); selectPfTab(curPfCat); pfLoaded = true;
+      renderPortfolioV2(); pfLoaded = true;
     }
     if (v === 'portfolio') renderPortfolioLinks();
     if (v === 'partners') {
@@ -5002,7 +4999,7 @@ function closePfImmersive(){
   PFI.el = null;
   document.documentElement.classList.remove('pfi-lock');
   /* La grille de la page suit la dernière catégorie vue en plein écran. */
-  if (currentView === 'portfolio') selectPfTab(PF_CATS[PFI.c].id);
+  if (currentView === 'portfolio') { const ch = PFX.chapters.find(c => c.cat === PF_CATS[PFI.c].id); const el = ch && document.getElementById('serie-' + ch.id); if (el) el.scrollIntoView({ block: 'start' }); }
 }
 window.addEventListener('resize', () => { if (PFI.open && window.innerWidth > 760) history.back(); });
 document.addEventListener('keydown', e => {
@@ -5082,6 +5079,157 @@ function selectPfTab(id){
     : `"${catLabel}" visuals coming soon — get in touch for examples.`;
   renderPfGalleryInto(grid, id, catLabel, 24, emptyText);
 }
+
+/* ═══════════════ PORTFOLIO ÉDITORIAL (nov. 2026, inspiration « Grids » d'Obys) ═══════════════
+   Séries numérotées (PF_SERIES dans config/media.js ; à défaut, un chapitre par univers), sommaire typographique avec
+   aperçu au survol, grille 12 colonnes au rythme asymétrique, interrupteur « Grille : on/off » qui révèle la construction,
+   visionneuse plein écran. Mêmes photos que l'admin média (portfolio/<univers>/<n>.webp). */
+Object.assign(I18N.fr, { 'pfx-index':'Sommaire', 'pfx-series':'Séries', 'pfx-images':'Images', 'pfx-since':'Expérience', 'pfx-years':'8+ ans' });
+Object.assign(I18N.en, { 'pfx-index':'Index', 'pfx-series':'Series', 'pfx-images':'Images', 'pfx-since':'Experience', 'pfx-years':'8+ years' });
+const PFX = { chapters: [], gen: 0, lb: null, grid: false };
+try { PFX.grid = localStorage.getItem('bunkaio_pf_grid') === '1'; } catch (e) {}
+const pfxNum = n => String(n).padStart(2, '0');
+const pfxSlug = s => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+/* Chapitres prévus (sans réseau) : séries déclarées, sinon un par univers. Sert au rendu immédiat du sommaire (et au pré-rendu SEO). */
+function pfxPlan(){
+  const series = (typeof PF_SERIES !== 'undefined' && Array.isArray(PF_SERIES)) ? PF_SERIES.filter(s => s && s.cat) : [];
+  if (series.length) return series.map(s => ({ id: s.id || pfxSlug(t(s.title || {})), title: s.title ? t(s.title) : '', client: s.client || '', year: s.year || '', cat: s.cat, nums: Array.isArray(s.photos) ? s.photos : null, text: s.text ? t(s.text) : '' }));
+  return PF_CATS.map(c => ({ id: c.id, title: t(c.label), client: '', year: '', cat: c.id, nums: null, text: '' }));
+}
+const pfxCatLabel = id => { const c = PF_CATS.find(x => x.id === id); return c ? t(c.label) : ''; };
+/* Rythme de la grille : chaque rangée totalise 12 colonnes ; les formats s'accordent pour que les images d'une rangée aient la même hauteur. */
+const PFX_ROWS = [['s7 r-tall', 's5 r-tall'], ['s4', 's4', 's4'], ['s5 r-tall', 's7 r-tall'], ['s12 r-wide'], ['s6', 's6']];
+function pfxLayout(n){
+  const out = []; let r = 0;
+  while (out.length < n) {
+    let row = PFX_ROWS[r % PFX_ROWS.length]; r++;
+    const left = n - out.length;
+    if (row.length > left) row = left === 1 ? ['s12 r-wide'] : left === 2 ? ['s6', 's6'] : ['s4', 's4', 's4'];
+    row.forEach(c => out.push(c));
+  }
+  return out.slice(0, n);
+}
+function pfxIndexHtml(chs, loading){
+  return `<div class="pfx-index-head"><span>${t({fr:'N°', en:'No.'})}</span><span>${t({fr:'Série', en:'Series'})}</span><span>${t({fr:'Univers', en:'Field'})}</span><span>${t({fr:'Année', en:'Year'})}</span><span>${t({fr:'Images', en:'Images'})}</span></div>` +
+    chs.map((c, i) => `<a class="pfx-row" href="#serie-${escHtml(c.id)}" data-i="${i}" onclick="return pfxGo(event,'${escHtml(c.id)}')">
+      <span class="pfx-row-n">${pfxNum(i + 1)}</span>
+      <span class="pfx-row-t">${escHtml(c.title)}${c.client ? `<em>${escHtml(c.client)}</em>` : ''}</span>
+      <span class="pfx-row-c">${escHtml(pfxCatLabel(c.cat))}</span>
+      <span class="pfx-row-y">${escHtml(String(c.year || '—'))}</span>
+      <span class="pfx-row-i">${loading ? '··' : pfxNum((c.photos || []).length)}<span class="pfx-row-arrow" aria-hidden="true">↘</span></span>
+    </a>`).join('');
+}
+function pfxAlt(c, src, i){
+  const num = parseInt((src.match(/\/(\d+)\.webp/) || [])[1], 10) || (i + 1);
+  const custom = IMG.portfolioAlt && IMG.portfolioAlt[c.cat] && IMG.portfolioAlt[c.cat][num - 1];
+  return custom || ((LANG === 'fr' ? 'Réalisation BUNKAIO — ' : 'BUNKAIO work — ') + (c.title || pfxCatLabel(c.cat)).toLowerCase() + ' (' + (i + 1) + '/' + c.photos.length + ')');
+}
+function pfxChapterHtml(c, ci){
+  const lay = pfxLayout(c.photos.length);
+  const meta = [pfxCatLabel(c.cat), c.client, c.year].filter(Boolean).map(escHtml).join(' · ');
+  return `<section class="pfx-ch" id="serie-${escHtml(c.id)}" aria-labelledby="pfx-t-${ci}">
+    <header class="pfx-ch-head">
+      <span class="pfx-ch-n">${pfxNum(ci + 1)}</span>
+      <h3 class="pfx-ch-t" id="pfx-t-${ci}">${escHtml(c.title)}</h3>
+      <p class="pfx-ch-meta">${meta}${meta ? ' · ' : ''}${c.photos.length} ${t({fr:'images', en:'images'})}</p>
+      ${c.text ? `<p class="pfx-ch-text">${escHtml(c.text)}</p>` : ''}
+    </header>
+    <div class="pfx-grid">${c.photos.map((src, i) => `<figure class="pfx-item ${lay[i]} rv" data-ch="${ci}" data-i="${i}">
+        <button type="button" class="pfx-open" onclick="pfxOpen(${ci},${i})" aria-label="${escHtml(t({fr:'Agrandir', en:'Enlarge'}))} ${i + 1}/${c.photos.length}"><img loading="lazy" decoding="async" src="${src}" alt="${escHtml(pfxAlt(c, src, i))}"></button>
+        <figcaption>${pfxNum(ci + 1)}.${pfxNum(i + 1)}</figcaption>
+      </figure>`).join('')}</div>
+  </section>`;
+}
+function pfxMeta(){
+  const el = document.getElementById('pfMeta'); if (!el) return;
+  const n = PFX.chapters.length, img = PFX.chapters.reduce((a, c) => a + c.photos.length, 0);
+  el.innerHTML = `<div><dt>${t({fr:'Séries', en:'Series'})}</dt><dd>${n ? pfxNum(n) : '—'}</dd></div><div><dt>${t({fr:'Images', en:'Images'})}</dt><dd>${img ? pfxNum(img) : '—'}</dd></div><div><dt>${t({fr:'Expérience', en:'Experience'})}</dt><dd>${t({fr:'8+ ans', en:'8+ yrs'})}</dd></div>`;
+}
+function renderPortfolioV2(){
+  const idx = document.getElementById('pfIndex'), wrap = document.getElementById('pfGrid');
+  if (!idx || !wrap) return;
+  const gen = ++PFX.gen, plan = pfxPlan();
+  idx.innerHTML = pfxIndexHtml(plan, true);
+  pfxApplyGrid(); pfxMeta();
+  Promise.all(plan.map(c => loadPortfolioPhotos(c.cat, 24).then(list => {
+    const photos = c.nums ? c.nums.map(n => MEDIA_BASE + '/portfolio/' + c.cat + '/' + n + '.webp').filter(u => list.includes(u)) : list;
+    return { ...c, photos };
+  }))).then(chs => {
+    if (gen !== PFX.gen || !wrap.isConnected) return;
+    PFX.chapters = chs.filter(c => c.photos.length);
+    idx.innerHTML = PFX.chapters.length ? pfxIndexHtml(PFX.chapters, false) : '';
+    wrap.innerHTML = PFX.chapters.length ? PFX.chapters.map(pfxChapterHtml).join('')
+      : `<div class="pf-empty">${t({fr:'Les premières séries arrivent très bientôt — contactez-moi pour voir des exemples adaptés à votre projet.', en:'The first series are coming very soon — get in touch to see examples suited to your project.'})}</div>`;
+    wrap.querySelectorAll('.rv').forEach(observe);
+    pfxMeta(); pfxBindPreview();
+  });
+}
+function pfxGo(e, id){
+  e.preventDefault();
+  const el = document.getElementById('serie-' + id); if (!el) return false;
+  const top = el.getBoundingClientRect().top + window.scrollY - ((parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) || 64) + 16);
+  window.scrollTo({ top, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+  return false;
+}
+/* Aperçu au survol du sommaire (souris uniquement) : la première image de la série suit le curseur. */
+function pfxBindPreview(){
+  const idx = document.getElementById('pfIndex'), pv = document.getElementById('pfPreview');
+  if (!idx || !pv || idx._pfx || !matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+  idx._pfx = true;
+  const img = pv.querySelector('img');
+  idx.addEventListener('pointermove', e => {
+    const row = e.target.closest('.pfx-row'); const c = row && PFX.chapters[+row.dataset.i];
+    if (!c || !c.photos.length) { pv.classList.remove('on'); return; }
+    if (img.dataset.src !== c.photos[0]) { img.src = c.photos[0]; img.dataset.src = c.photos[0]; }
+    pv.style.transform = `translate(${e.clientX + 24}px, ${e.clientY - 90}px)`;
+    pv.classList.add('on');
+  });
+  idx.addEventListener('pointerleave', () => pv.classList.remove('on'));
+}
+/* Interrupteur « Grille : on/off » : révèle les 12 colonnes de construction (mémorisé sur l'appareil). */
+function pfxApplyGrid(){
+  const page = document.querySelector('#view-portfolio .pfx'), b = document.getElementById('pfGridBtn'), l = document.getElementById('pfGridLbl');
+  if (page) page.classList.toggle('pfx-grid-on', PFX.grid);
+  if (b) b.setAttribute('aria-pressed', String(PFX.grid));
+  if (l) l.textContent = t({fr:'Grille : ', en:'Grid: '}) + (PFX.grid ? 'on' : 'off');
+}
+function togglePfGrid(){
+  PFX.grid = !PFX.grid;
+  try { localStorage.setItem('bunkaio_pf_grid', PFX.grid ? '1' : '0'); } catch (e) {}
+  pfxApplyGrid();
+  if (window.track) track('cta_click', 'portfolio_grille_' + (PFX.grid ? 'on' : 'off'));
+}
+/* Visionneuse : flèches, clavier, glisser, Échap. */
+function pfxOpen(ci, i){
+  const c = PFX.chapters[ci]; if (!c) return;
+  let lb = PFX.lb;
+  if (!lb) {
+    lb = document.createElement('div'); lb.className = 'pfx-lb'; lb.setAttribute('role', 'dialog'); lb.setAttribute('aria-modal', 'true');
+    lb.innerHTML = `<div class="pfx-lb-top"><span class="pfx-lb-t"></span><span class="pfx-lb-c"></span><button type="button" class="pfx-lb-x" aria-label="${escHtml(t({fr:'Fermer', en:'Close'}))}">×</button></div>
+      <button type="button" class="pfx-lb-nav prev" aria-label="${escHtml(t({fr:'Précédente', en:'Previous'}))}">←</button><figure class="pfx-lb-fig"><img alt=""></figure><button type="button" class="pfx-lb-nav next" aria-label="${escHtml(t({fr:'Suivante', en:'Next'}))}">→</button>`;
+    document.body.appendChild(lb); PFX.lb = lb;
+    lb.querySelector('.pfx-lb-x').onclick = pfxClose;
+    lb.querySelector('.prev').onclick = () => pfxStep(-1);
+    lb.querySelector('.next').onclick = () => pfxStep(1);
+    lb.addEventListener('click', e => { if (e.target === lb || e.target.classList.contains('pfx-lb-fig')) pfxClose(); });
+    let x0 = null;
+    lb.addEventListener('pointerdown', e => { x0 = e.clientX; });
+    lb.addEventListener('pointerup', e => { if (x0 !== null && Math.abs(e.clientX - x0) > 50) pfxStep(e.clientX < x0 ? 1 : -1); x0 = null; });
+    document.addEventListener('keydown', e => { if (!lb.classList.contains('on')) return; if (e.key === 'Escape') pfxClose(); if (e.key === 'ArrowRight') pfxStep(1); if (e.key === 'ArrowLeft') pfxStep(-1); });
+  }
+  lb._ci = ci; lb._i = i; pfxShow();
+  lb.classList.add('on'); document.documentElement.classList.add('pfx-lock');
+  lb.querySelector('.pfx-lb-x').focus({ preventScroll: true });
+}
+function pfxShow(){
+  const lb = PFX.lb, c = PFX.chapters[lb._ci]; if (!c) return;
+  const src = c.photos[lb._i], img = lb.querySelector('img');
+  img.src = src; img.alt = pfxAlt(c, src, lb._i);
+  lb.querySelector('.pfx-lb-t').textContent = pfxNum(lb._ci + 1) + ' — ' + c.title;
+  lb.querySelector('.pfx-lb-c').textContent = pfxNum(lb._i + 1) + ' / ' + pfxNum(c.photos.length);
+}
+function pfxStep(d){ const lb = PFX.lb, c = PFX.chapters[lb._ci]; if (!c) return; lb._i = (lb._i + d + c.photos.length) % c.photos.length; pfxShow(); }
+function pfxClose(){ if (!PFX.lb) return; PFX.lb.classList.remove('on'); document.documentElement.classList.remove('pfx-lock'); }
 
 /* ═══════════════ CONTACT ═══════════════ */
 function sendContact(e){
