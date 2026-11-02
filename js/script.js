@@ -4840,6 +4840,17 @@ function svxStageCine(){
   });
 }
 
+/* Pied de page : mot « BUNKAIO » géant sur toute la largeur, lettres qui montent quand il arrive à l'écran. */
+function bkFooter(){
+  const el = document.querySelector('.ft-mega'); if (!el) return;
+  if (el._ft) { gxFit(el); return; } el._ft = true; el.dataset.nocap = '1';
+  if (!REDUCED_MOTION && 'IntersectionObserver' in window) el.dataset.noin = '1';
+  gxMega(el, 'BUNKAIO'); if (!el.dataset.noin) el.classList.add('in');
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => gxFit(el));
+  if (REDUCED_MOTION || !('IntersectionObserver' in window)) return;
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { setTimeout(() => el.classList.add('in'), 60); io.disconnect(); } }), { threshold: 0.3 });
+  io.observe(el);
+}
 /* ═══ Outils communs du mélange Grids × Almira Kho ═══ */
 var BK_REELS = [];
 function bkReel(o){ BK_REELS.push(o); return BK_REELS.length - 1; }
@@ -4848,9 +4859,9 @@ function bkStripHtml(k, photos){
   return `<div class="pfx-strip bk-strip" aria-label="${escHtml(t({fr:'Planche-contact', en:'Contact sheet'}))}"><div class="pfx-strip-in">${photos.map((src, i) => `<button type="button" class="pfx-thumb" data-cursor="${pfxNum(i + 1)}" onclick="bkPlay(${k},${i})" aria-label="${escHtml(t({fr:'Agrandir', en:'Enlarge'}))} ${i + 1}/${photos.length}"><img loading="lazy" decoding="async" src="${src}" alt=""></button>`).join('')}</div></div>`;
 }
 /* Chapitres du site (kicker « Chapitre 0x, ») et page suivante en fin de page, comme « Série suivante » du Portfolio. */
-var BK_CHAPTER = { portfolio: 1, services: 2, partners: 3, contact: 4, legal: 5, drone: 6 };
-var BK_NEXT = { portfolio: 'services', services: 'partners', partners: 'contact', contact: 'legal', legal: 'portfolio', drone: 'portfolio' };
-var BK_VIEW_NAME = { portfolio: {fr:'Portfolio', en:'Portfolio'}, services: {fr:'Services', en:'Services'}, partners: {fr:'Collaboration', en:'Collaboration'}, contact: {fr:'Contact', en:'Contact'}, legal: {fr:'FAQ', en:'FAQ'} };
+var BK_CHAPTER = { portfolio: 1, services: 2, partners: 3, contact: 4, about: 5, legal: 6, drone: 7 };
+var BK_NEXT = { portfolio: 'services', services: 'partners', partners: 'contact', contact: 'about', about: 'legal', legal: 'portfolio', drone: 'portfolio' };
+var BK_VIEW_NAME = { portfolio: {fr:'Portfolio', en:'Portfolio'}, services: {fr:'Services', en:'Services'}, partners: {fr:'Collaboration', en:'Collaboration'}, contact: {fr:'Contact', en:'Contact'}, about: {fr:'À propos', en:'About'}, legal: {fr:'FAQ', en:'FAQ'} };
 function bkKick(root, v){
   const h = root.querySelector('.gx-main .page-title, .gx-main .ct-title, .gx-main .drone-placeholder-title, .svx-head-main .page-title'); if (!h) return;
   let k = h.previousElementSibling && h.previousElementSibling.classList.contains('gx-kick') ? h.previousElementSibling : null;
@@ -5522,7 +5533,7 @@ function pfxStrips(){
    touches « cinéma ». En-tête : mot géant ajusté à la largeur (lettres qui montent, graisse qui suit la souris), grand compteur à
    droite (heure de Paris, places restantes, REC, nombre de questions), scène photo (bannières de la page en noir et blanc sur rose
    poudré, volet), barres qui se tracent, boutons aimantés, étiquette curseur, formulaires avec jauge de complétion. */
-var GX_VIEWS = ['contact', 'partners', 'drone', 'legal'];
+var GX_VIEWS = ['contact', 'partners', 'drone', 'legal', 'about'];
 var GX = { timers: [], mag: false };
 var GX_LEGAL_MEGA = {
   faq: {fr:'FAQ', en:'FAQ'}, privacy: {fr:'CONFIDENTIALITÉ', en:'PRIVACY'}, cgv: {fr:'CGV', en:'TERMS'},
@@ -5530,6 +5541,7 @@ var GX_LEGAL_MEGA = {
 };
 function gxInit(v){
   GX.timers.forEach(clearInterval); GX.timers = [];
+  bkFooter();
   if (!GX_VIEWS.includes(v)) return;
   const root = document.getElementById('view-' + v); if (!root) return;
   const mega = root.querySelector('.gx-mega');
@@ -5538,6 +5550,7 @@ function gxInit(v){
   if (v === 'contact') { gxClock(); GX.timers.push(setInterval(gxClock, 15000)); }
   if (v === 'partners') { gxSpots(); gxMarquee(); }
   if (v === 'drone') gxDrone();
+  if (v === 'about') { const l = document.getElementById('gxAboutLbl'); if (l) l.textContent = t({fr:'ans d\'expérience', en:'years of experience'}); const f = root.querySelector('.gx-portrait'); if (f) f.dataset.cursor = 'Aya Nascimento'; }
   if (v === 'legal') { const s = document.getElementById('gxSearch'); if (s) { s.value = ''; s.placeholder = t({fr:'Rechercher une question…', en:'Search a question…'}); } }
   bkKick(root, v); bkMountNext(root, v);
   if (v === 'contact' || v === 'partners') bkPageReel(root, v);
@@ -5574,7 +5587,7 @@ function gxMega(el, text){
     el._txt = text; el.classList.remove('in');
     el.innerHTML = '<span class="gx-mega-in">' + [...text].map((ch, i) => `<span style="--i:${i}">${ch === ' ' ? '&nbsp;' : escHtml(ch)}</span>`).join('') + '</span>';
     gxFit(el);
-    requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('in')));
+    if (!el.dataset.noin) requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('in')));
   } else gxFit(el);
   if (el._wired || REDUCED_MOTION || !matchMedia('(hover: hover) and (pointer: fine)').matches) return;
   el._wired = true;
@@ -5587,10 +5600,10 @@ function gxFit(el){
   const avail = top.clientWidth - (count && getComputedStyle(count).position !== 'absolute' && innerWidth > 760 ? count.offsetWidth + 32 : 0);
   el.style.fontSize = '100px';
   const w = inner.scrollWidth || 1;
-  const cap = innerWidth > 760 ? Math.min(250, innerWidth * .2) : innerWidth * .3;
+  const cap = el.dataset.nocap ? 99999 : innerWidth > 760 ? Math.min(250, innerWidth * .2) : innerWidth * .3;
   el.style.fontSize = Math.max(28, Math.min(cap, 100 * avail * .97 / w)) + 'px';
 }
-if (!window._gxFitRs) { window._gxFitRs = true; let to; addEventListener('resize', () => { clearTimeout(to); to = setTimeout(() => { const r = document.querySelector('.view.gx.active .gx-mega'); if (r) gxFit(r); }, 120); }); }
+if (!window._gxFitRs) { window._gxFitRs = true; let to; addEventListener('resize', () => { clearTimeout(to); to = setTimeout(() => { const r = document.querySelector('.view.gx.active .gx-mega'); if (r) gxFit(r); const f = document.querySelector('.ft-mega'); if (f) gxFit(f); }, 120); }); }
 /* Scène : photos de la page (bannières de l'admin média) en noir et blanc sur rose poudré, dévoilées par un volet ; une photo absente est sautée. */
 function gxStage(st, v){
   if (!st) return;
