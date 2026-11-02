@@ -7186,3 +7186,12 @@ body[data-view="quiz"] .quiz-nav-btn svg { stroke: #111; }
 .hero-kicker .hk-w em::after { color: inherit !important; opacity: .65; font-weight: 700; }
 @keyframes hkFx { 0% { color: #0a0a0c; background-color: rgba(10,10,12,0); } 3%, 18% { color: #fff; background-color: rgba(10,10,12,.78); } 22%, 100% { color: #0a0a0c; background-color: rgba(10,10,12,0); } }
 @media (prefers-reduced-motion: reduce) { .hero-kicker .hk-b em { color: #0a0a0c; } }
+
+/* ═══ CTA « Construire mon projet » : violet pâle de la charte BUNKAIO, faible opacité (nov. 2026) ═══
+   Partout où le libellé existe (menu, accueil, pied de page, pages, devis…) : fond #d6c9f7 translucide + léger flou, texte noir. */
+:root { --bk-violet-fill: rgba(214,201,247,.6); --bk-violet-hover: rgba(214,201,247,.95); }
+:is(.nav-cta, .hero-start, .cta-primary, .partner-cta-btn, .mobile-cta, .btn-solid, button, a):is([data-lang="start"], :has(> [data-lang="start"])):not(#bkv) {
+  background: var(--bk-violet-fill) !important; color: #111 !important; border: 1px solid rgba(110,90,168,.38) !important; box-shadow: none !important;
+  -webkit-backdrop-filter: blur(10px) saturate(1.2) !important; backdrop-filter: blur(10px) saturate(1.2) !important; }
+:is(.nav-cta, .hero-start, .cta-primary, .partner-cta-btn, .mobile-cta, .btn-solid, button, a):is([data-lang="start"], :has(> [data-lang="start"])):not(#bkv):is(:hover, :focus-visible, :active) { background: var(--bk-violet-hover) !important; color: #111 !important; border-color: #6e5aa8 !important; }
+:is(.nav-cta, .hero-start, .cta-primary, .partner-cta-btn, .mobile-cta, button, a):is([data-lang="start"], :has(> [data-lang="start"])):not(#bkv) span { color: #111 !important; }
