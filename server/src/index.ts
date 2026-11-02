@@ -648,8 +648,9 @@ async function handleAdminDashboard(request: Request, env: Env, headers: Record<
     if (typeof body.id !== 'string' || (body.status !== undefined && body.status !== 'nouveau' && body.status !== 'traite') || (email !== undefined && (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 200))) {
       return jsonResponse({ ok: false, error: 'invalid_payload' }, 400, headers);
     }
-    const ok = await updateMessage(env, body.id, { status: body.status as 'nouveau' | 'traite' | undefined, remove: body.remove === true, email });
-    return jsonResponse({ ok }, ok ? 200 : 404, headers);
+    const r = await updateMessage(env, body.id, { status: body.status as 'nouveau' | 'traite' | undefined, remove: body.remove === true, email });
+    // `email` = adresse réellement enregistrée : l'admin la compare à celle demandée (un ancien Worker l'ignorerait sans erreur).
+    return jsonResponse({ ok: !!r, ...(r && r !== 'removed' ? { email: r.email } : {}) }, r ? 200 : 404, headers);
   }
   if (path === '/admin/delete' && request.method === 'POST') {
     const body = (await request.json().catch(() => ({}))) as { email?: unknown; type?: unknown; purge?: unknown };

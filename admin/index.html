@@ -2857,8 +2857,17 @@ async function fixMsgEmail(id, current) {
   const v = (prompt('Adresse email corrigée :', current) || '').trim().toLowerCase();
   if (!v || v === current) return;
   if (!MAIL_RE.test(v)) { toast('Adresse email invalide.'); return; }
-  try { const { res } = await api('/admin/message', { method: 'POST', body: JSON.stringify({ id, email: v }) }); if (!res.ok) { toast('Correction impossible (redéployez le Worker si besoin)'); return; } toast('Adresse corrigée : ' + v); if (drawer.email === current) drawer.email = v; await loadDashboard(); if (drawer.email) renderDrawer(); }
-  catch (e) {}
+  try {
+    const { res, data } = await api('/admin/message', { method: 'POST', body: JSON.stringify({ id, email: v }) });
+    if (!res.ok || !data.ok) { toast('Correction impossible (erreur ' + (data.error || res.status) + ')'); return; }
+    /* L'adresse enregistrée est renvoyée par le serveur : un ancien Worker répond « ok » sans avoir rien modifié. */
+    if (data.email !== v) { alert('L\'adresse n\'a PAS été modifiée : le serveur en ligne est une ancienne version qui ignore cette correction.\n\nRedéployez-le (PowerShell, dossier server : git pull puis npx wrangler deploy), puis recommencez.'); return; }
+    if (drawer.email === current) drawer.email = v;
+    await loadDashboard();
+    const ok = (DB.messages || []).some(m => m.id === id && m.email === v);
+    toast(ok ? 'Adresse corrigée : ' + v : 'Adresse enregistrée, rechargez la page si elle ne change pas à l\'écran');
+    if (drawer.email) renderDrawer();
+  } catch (e) {}
 }
 async function deleteMsg(id) {
   if (!confirm('Supprimer définitivement ce message ?')) return;

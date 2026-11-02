@@ -52,16 +52,16 @@ export async function listMessages(env: Env): Promise<FormMessage[]> {
   return all.filter((m): m is FormMessage => !!m).sort((a, b) => b.date.localeCompare(a.date));
 }
 
-export async function updateMessage(env: Env, id: string, change: { status?: FormMessage['status']; remove?: boolean; email?: string }): Promise<boolean> {
+export async function updateMessage(env: Env, id: string, change: { status?: FormMessage['status']; remove?: boolean; email?: string }): Promise<FormMessage | 'removed' | null> {
   const key = PREFIX + id;
   const raw = await env.ACCOUNTS_KV.get(key);
-  if (!raw) return false;
-  if (change.remove) { await env.ACCOUNTS_KV.delete(key); return true; }
+  if (!raw) return null;
+  if (change.remove) { await env.ACCOUNTS_KV.delete(key); return 'removed'; }
   const msg = JSON.parse(raw) as FormMessage;
   if (change.status) msg.status = change.status;
   if (change.email) msg.email = change.email; // correction d'une faute de frappe (admin)
   await env.ACCOUNTS_KV.put(key, JSON.stringify(msg), { expirationTtl: TTL });
-  return true;
+  return msg;
 }
 
 export async function deleteMessagesOf(env: Env, email: string): Promise<number> {
