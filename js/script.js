@@ -7398,10 +7398,12 @@ function renderPartnersPitch(){
 }
 
 /* Places restantes par univers : décompte automatique tenu par le Worker (/partner-spots) d'après les partenaires « Actif » ;
-   5 places affichées tant que la réponse n'est pas arrivée ou si le service est indisponible. */
+   Valeurs affichées tant que la réponse n'est pas arrivée ou si le service est indisponible (5 par univers moins les partenaires
+   déjà acceptés : Wolf Silveri en portrait, ÉCLAT en événementiel — à garder alignées avec FOUNDING_PARTNERS du Worker). */
 window._ppLeft = window._ppLeft || null;
+const PP_SPOTS_DEFAULT = { portrait:4, mode:5, commercial:5, evenementiel:4, mariage:5 };
 function ppSpotsText(id){
-  const n = window._ppLeft && typeof window._ppLeft[id] === 'number' ? window._ppLeft[id] : 5;
+  const n = window._ppLeft && typeof window._ppLeft[id] === 'number' ? window._ppLeft[id] : (PP_SPOTS_DEFAULT[id] ?? 5);
   if (n <= 0) return t({fr:'Complet · liste d\'attente', en:'Full · waiting list'});
   if (n === 1) return t({fr:'1 place disponible', en:'1 place available'});
   return t({fr:n + ' places disponibles', en:n + ' places available'});
