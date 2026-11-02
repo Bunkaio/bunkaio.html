@@ -7767,18 +7767,16 @@ function initAboutStats(){
 /* ═══════════════ LOGO CAROUSEL ═══════════════ */
 /* Marques avec lesquelles BUNKAIO a travaillé (noms en texte, aucun logo reproduit). */
 const PARTNER_LOGOS = [
-  { name:'Musardise Bijoux', style:'font-weight:300;letter-spacing:0.28em;text-transform:uppercase' },
+  { name:'Musardise Bijoux', url:'https://musardise.fr/', style:'font-weight:300;letter-spacing:0.28em;text-transform:uppercase' },
   { name:'Art Tea Shop', style:'font-family:Georgia,serif;font-weight:700;font-style:italic;letter-spacing:0' },
   { name:'Waxeba', style:'font-weight:800;letter-spacing:0.12em;text-transform:uppercase' },
   { name:'Ness Boutique', style:'font-family:Georgia,serif;font-weight:400;letter-spacing:0.08em;text-transform:uppercase' },
-  { name:'Hot Dog Street', style:'font-weight:600;letter-spacing:0.02em' },
-  { name:'Maison Sarima', style:'font-weight:300;letter-spacing:0.28em;text-transform:uppercase' },
-  { name:'Paname Lunetier', style:'font-family:Georgia,serif;font-weight:700;font-style:italic;letter-spacing:0' },
-  { name:'Royal R Cosmétique', style:'font-weight:800;letter-spacing:0.12em;text-transform:uppercase' },
-  { name:'Palmynala', style:'font-family:Georgia,serif;font-weight:400;letter-spacing:0.08em;text-transform:uppercase' },
-  { name:'Studio Doutor', style:'font-weight:600;letter-spacing:0.02em' },
-  { name:'ÉCLAT', url:'https://eclatevents.fr', style:'font-weight:300;letter-spacing:0.28em;text-transform:uppercase' },
-  { name:'Restaurant Trophies', style:'font-family:Georgia,serif;font-weight:700;font-style:italic;letter-spacing:0' }
+  { name:'Maison Sarima', url:'https://maket.store/items/01a0244e-a9c3-7884-b5d9-bd90a37eb213', style:'font-weight:300;letter-spacing:0.28em;text-transform:uppercase' },
+  { name:'Paname Lunetier', url:'https://paname-lunetier.fr', style:'font-family:Georgia,serif;font-weight:700;font-style:italic;letter-spacing:0' },
+  { name:'Royal R Cosmétique', url:'https://www.royalrcosmetique.com', style:'font-weight:800;letter-spacing:0.12em;text-transform:uppercase' },
+  { name:'Palmynala', url:'https://www.noixdarec.com/fr/brand/302-palmynala', style:'font-family:Georgia,serif;font-weight:400;letter-spacing:0.08em;text-transform:uppercase' },
+  { name:'Studio Doutor', url:'https://www.instagram.com/studio_doutor', style:'font-weight:600;letter-spacing:0.02em' },
+  { name:'ÉCLAT', url:'https://eclatevents.fr', style:'font-weight:300;letter-spacing:0.28em;text-transform:uppercase' }
 ];
 
 function renderLogoCarousel(){
