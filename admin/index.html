@@ -1320,7 +1320,7 @@ function renderActivity() {
 }
 
 /* ── Emails : libellés, étape du devis, emails envoyés / à venir ── */
-const TPL_LABEL = { facture_acompte: 'Facture d\'acompte', photos_pretes_solde: 'Photos prêtes + facture de solde', paiement_recu: 'Paiement reçu', rappel_impaye: 'Rappel de facture impayée', confirmation_devis_quiz: 'Confirmation de demande de devis', acces_espace: 'Vos accès à l\'espace', album_accessible: 'Album accessible + avis + remise', merci_seance: 'Merci + date de livraison', seance_confirmation: 'Confirmation de séance', seance_reminder: 'Rappel de séance J-2', seance_report: 'Report de séance', seance_cancel: 'Annulation de séance', accuse_contact: 'Accusé · contact', accuse_collab: 'Accusé · collaboration', accuse_partner: 'Accusé · candidature partenaire', accuse_account: 'Accusé · demande d\'espace', relance_devis_j2: 'Relance de devis J+2 (quiz)', relance_devis_quiz: 'Relance de devis J+7 (quiz)', rappel_moodboard: 'Rappel moodboard', devis_a_signer: 'Devis à signer', relance_devis_envoye: 'Relance du devis envoyé', devis_signe: 'Devis signé (confirmation)', sms_photos_pretes: 'SMS · photos disponibles', sms_acces_album: 'SMS · accès à l\'album', sms_rappel_seance: 'SMS · rappel de séance', sms_manuel: 'SMS', libre: 'Message libre', reponse: 'Réponse à un email reçu', demande_avis: 'Demande d\'avis' };
+const TPL_LABEL = { facture_acompte: 'Facture d\'acompte', photos_pretes_solde: 'Photos prêtes + facture de solde', paiement_recu: 'Paiement reçu', rappel_impaye: 'Rappel de facture impayée', confirmation_devis_quiz: 'Confirmation de demande de devis', acces_espace: 'Vos accès à l\'espace', album_accessible: 'Album accessible + avis + remise', merci_seance: 'Merci + date de livraison', seance_confirmation: 'Confirmation de séance', seance_reminder: 'Rappel de séance J-2', seance_report: 'Report de séance', seance_cancel: 'Annulation de séance', accuse_contact: 'Accusé · contact', accuse_collab: 'Accusé · collaboration', accuse_partner: 'Accusé · candidature partenaire', accuse_account: 'Accusé · demande d\'espace', relance_devis_j2: 'Relance de devis J+2 (quiz)', relance_devis_quiz: 'Relance de devis J+7 (quiz)', rappel_moodboard: 'Rappel moodboard', partenaire_reponse: 'Partenariat · réponse', partenaire_bienvenue: 'Partenariat · bienvenue', devis_a_signer: 'Devis à signer', relance_devis_envoye: 'Relance du devis envoyé', devis_signe: 'Devis signé (confirmation)', sms_photos_pretes: 'SMS · photos disponibles', sms_acces_album: 'SMS · accès à l\'album', sms_rappel_seance: 'SMS · rappel de séance', sms_manuel: 'SMS', libre: 'Message libre', reponse: 'Réponse à un email reçu', demande_avis: 'Demande d\'avis' };
 const tplName = t => { if (TPL_LABEL[t]) return TPL_LABEL[t]; if (!String(t).startsWith('reponse_devis_')) return t; let n = ''; try { n = (AR.cfg && (AR.cfg.templates.find(x => 'reponse_devis_' + x.id === t) || {}).name) || ''; } catch (e) {} return 'Réponse au devis · ' + (n || t.slice(14)); };
 function quoteSteps(c) {
   const qs = realQ(c).filter(q => q.status !== 'annule');
@@ -1815,6 +1815,8 @@ const MAIL_TPLS = [
   ['seance_confirmation', 'Confirmation de séance', 'Détails de la séance et rappel à venir (nécessite une séance planifiée).', false, 'Relation'],
   ['merci_seance', 'Merci après la séance', 'Remerciement, délai de livraison et fonctionnement de l\'album Lightroom.', false, 'Relation'],
   ['rappel_impaye', 'Rappel de facture impayée', 'Relance manuelle avec le lien de paiement (nécessite une facture en attente).', false, 'Relation'],
+  ['partenaire_reponse', 'Partenariat · réponse à la demande', 'Remercie pour la demande, présente le studio et demande quelles prestations le prestataire réalise exactement.', false, 'Partenaires'],
+  ['partenaire_bienvenue', 'Partenariat · bienvenue et espace', 'Annonce que son site a été parcouru, que Bunkaio est ravie de le compter parmi ses partenaires et que son espace partenaire est disponible.', false, 'Partenaires'],
   ['demande_avis', 'Demande d\'avis', 'Invitation à laisser un avis Google ; la remise de 15 % n\'est citée que si le client y a droit.', false, 'Relation'],
 ];
 const mailState = { tpl: 'libre', sel: new Set(), seg: 'all', q: '', p: { subject: '', heading: '', body: '', ctaLabel: '', ctaUrl: '', fromName: lsGet('bunkaio_mail_from_name', 'BUNKAIO'), fromEmail: lsGet('bunkaio_mail_from_email', 'contact@bunkaio.com'), replyTo: '' }, campaigns: null, extra: [] };
@@ -1832,6 +1834,8 @@ function mailApplicable(tplId, c) {
     case 'seance_reminder': case 'seance_confirmation': return acc && acc.seance && acc.seance.date && acc.seance.statut !== 'annulee' ? '' : 'pas de séance planifiée';
     case 'merci_seance': return acc ? '' : 'pas d\'espace';
     case 'rappel_impaye': return c.invoices.some(i => i.status === 'open' && i.url) ? '' : 'aucune facture en attente';
+    case 'partenaire_reponse': return c.roles.includes('partner') || c.messages.some(m => m.kind === 'partner') ? '' : 'pas une candidature partenaire';
+    case 'partenaire_bienvenue': return c.roles.includes('partner') || c.messages.some(m => m.kind === 'partner') ? '' : 'pas une candidature partenaire';
     case 'demande_avis': return c.stage === 'livre' || c.invoices.some(i => i.kind === 'solde' && i.status === 'paid') ? '' : 'projet non livré';
   }
   return '';

@@ -2,6 +2,8 @@ import {
   buildAfterSessionEmail,
   buildFreeEmail,
   buildMoodboardReminderEmail,
+  buildPartnerReplyEmail,
+  buildPartnerWelcomeEmail,
   buildOverdueReminderEmail,
   buildQuoteFollowUpEmail,
   buildReviewRequestEmail,
@@ -44,7 +46,7 @@ export interface MailingParams {
   replyTo?: string;
 }
 
-export const MANUAL_TEMPLATES = ['libre', 'relance_devis_quiz', 'rappel_moodboard', 'seance_reminder', 'seance_confirmation', 'merci_seance', 'rappel_impaye', 'demande_avis'] as const;
+export const MANUAL_TEMPLATES = ['libre', 'relance_devis_quiz', 'rappel_moodboard', 'seance_reminder', 'seance_confirmation', 'merci_seance', 'rappel_impaye', 'demande_avis', 'partenaire_reponse', 'partenaire_bienvenue'] as const;
 export type ManualTemplate = typeof MANUAL_TEMPLATES[number];
 /** Modèles « d'information » : soumis à la désinscription. Les autres sont liés à une relation en cours. */
 export const MARKETING: ManualTemplate[] = ['libre'];
@@ -86,6 +88,10 @@ export async function buildManualMail(env: Env, template: ManualTemplate, r: Rec
     case 'rappel_impaye':
       if (!r.invoice?.url) return { skip: 'aucune facture en attente' };
       return buildOverdueReminderEmail({ customerName: name, description: r.invoice.description, amountEur: r.invoice.amount, invoiceType: r.invoice.kind, hostedInvoiceUrl: r.invoice.url, lang, space });
+    case 'partenaire_reponse':
+      return buildPartnerReplyEmail({ customerName: name, lang });
+    case 'partenaire_bienvenue':
+      return buildPartnerWelcomeEmail({ customerName: name, lang });
     case 'demande_avis':
       return buildReviewRequestEmail({ customerName: name, reviewUrl: r.reviewUrl || env.GOOGLE_REVIEW_URL, discount: r.discount === true, space, lang });
   }

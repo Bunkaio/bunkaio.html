@@ -1211,3 +1211,59 @@ export function buildQuizAutoReplyEmail(params: {
   const text = `${greeting}\n\n${paras.join('\n\n')}${recapText}${stepsText}\n\n${spaceText(lang, params.space, 'quote')}`;
   return finalize(lang, { tpl: params.tpl, subject: params.subject, html, text });
 }
+
+/** Réponse à une candidature partenaire : remerciement, présentation du studio et question sur les prestations du prestataire. */
+export function buildPartnerReplyEmail(params: { customerName: string; lang?: Lang }): { subject: string; html: string; text: string } {
+  const lang = params.lang ?? 'fr';
+  const greeting = greet(lang, params.customerName);
+  const t = (fr: string, en: string): string => tr(lang, fr, en);
+  const paras = [
+    t("Merci pour l'intérêt que vous portez à BUNKAIO et pour votre demande de partenariat : elle me touche et je l'ai lue avec attention.",
+      'Thank you for your interest in BUNKAIO and for your partnership request: it means a lot to me and I have read it carefully.'),
+    t("Pour me présenter en quelques mots : BUNKAIO est un studio de photographie mode et portrait, basé en Occitanie et mobile dans toute la France. Je crée des images premium pour les personnes, les marques et les entreprises, avec une direction artistique soignée et un seul interlocuteur du début à la fin. Je travaille avec des mannequins, des créateurs, des marques et des professionnels de l'image, et le réseau de partenaires réunit les talents qui m'accompagnent sur les projets : stylisme, maquillage, coiffure, direction artistique, lieux, mariage…",
+      'To introduce myself in a few words: BUNKAIO is a fashion and portrait photography studio based in Occitanie and mobile across France. I create premium images for people, brands and companies, with careful art direction and a single point of contact from start to finish. I work with models, designers, brands and image professionals, and the partner network brings together the talents who support me on projects: styling, make-up, hair, art direction, venues, weddings…'),
+    t("Pour avancer, pouvez-vous me préciser quels types de prestations vous réalisez exactement ?",
+      'To move forward, could you tell me exactly which types of services you provide?'),
+  ];
+  const asks = [
+    t('Votre activité et les prestations que vous proposez', 'Your activity and the services you offer'),
+    t('Vos tarifs ou votre fourchette de prix, et vos zones d’intervention', 'Your rates or price range, and the areas you cover'),
+    t('Un lien vers votre site, votre portfolio ou vos réseaux', 'A link to your website, portfolio or social media'),
+    t('Le type de projets sur lesquels vous aimeriez travailler avec BUNKAIO', 'The kind of projects you would like to work on with BUNKAIO'),
+  ];
+  const html = emailShell(`
+    <h1 style="font-size:20px;margin:0 0 16px;">${t('Merci pour votre demande de partenariat', 'Thank you for your partnership request')}</h1>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">${greeting}</p>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 18px;">${paras[0]}</p>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 18px;">${paras[1]}</p>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 10px;">${paras[2]}</p>
+    <ul style="font-size:15px;line-height:1.6;margin:0 0 20px;padding-left:20px;">${asks.map((a) => `<li style="margin:0 0 4px;">${a}</li>`).join('')}</ul>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 8px;">${t('Il suffit de répondre directement à cet email. Je reviens vers vous dès que j’ai pris connaissance de votre réponse.', 'Simply reply to this email. I will get back to you as soon as I have read your answer.')}</p>
+  `, lang);
+  const text = `${greeting}\n\n${paras.join('\n\n')}\n${asks.map((a) => `- ${a}`).join('\n')}\n\n${t('Il suffit de répondre directement à cet email. Je reviens vers vous dès que j’ai pris connaissance de votre réponse.', 'Simply reply to this email. I will get back to you as soon as I have read your answer.')}`;
+  return finalize(lang, { tpl: `partenaire_reponse`, subject: t('Bunkaio — Votre demande de partenariat', 'Bunkaio — Your partnership request'), html, text });
+}
+
+/** Bienvenue dans le réseau : le site du prestataire a été parcouru, son espace partenaire est disponible. */
+export function buildPartnerWelcomeEmail(params: { customerName: string; lang?: Lang }): { subject: string; html: string; text: string } {
+  const lang = params.lang ?? 'fr';
+  const greeting = greet(lang, params.customerName);
+  const t = (fr: string, en: string): string => tr(lang, fr, en);
+  const paras = [
+    t("J'ai pris le temps de parcourir votre site et de découvrir votre univers : votre travail est en phase avec les valeurs de BUNKAIO, et je suis ravie de vous compter parmi mes partenaires.",
+      'I took the time to browse your website and discover your work: it is in line with the values of BUNKAIO, and I am delighted to count you among my partners.'),
+    t("Votre espace partenaire est désormais disponible. Vous y retrouvez votre tarif partenaire permanent (-20 %), le réseau, vos collaborations, vos moodboards et l'avancement de vos projets. Vos accès vous parviennent dans un email dédié : si vous ne le trouvez pas (pensez à vérifier vos courriers indésirables), répondez simplement à ce message et je vous les renvoie.",
+      'Your partner area is now available. You will find your permanent partner rate (-20%), the network, your collaborations, your moodboards and your projects’ progress. Your login details reach you in a dedicated email: if you cannot find it (please check your junk folder), simply reply to this message and I will resend them.'),
+    t("Au plaisir de construire de beaux projets ensemble.", 'Looking forward to building great projects together.'),
+  ];
+  const html = emailShell(`
+    <h1 style="font-size:20px;margin:0 0 16px;">${t('Bienvenue parmi les partenaires BUNKAIO', 'Welcome to the BUNKAIO partners')}</h1>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">${greeting}</p>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 18px;">${paras[0]}</p>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 8px;">${paras[1]}</p>
+    ${spaceBlock(lang, 'partner', 'access')}
+    <p style="font-size:15px;line-height:1.6;margin:0 0 8px;">${paras[2]}</p>
+  `, lang);
+  const text = `${greeting}\n\n${paras[0]}\n\n${paras[1]}\n\n${spaceText(lang, 'partner', 'access')}\n\n${paras[2]}`;
+  return finalize(lang, { tpl: `partenaire_bienvenue`, subject: t('Bunkaio — Bienvenue parmi les partenaires', 'Bunkaio — Welcome to the partners'), html, text });
+}
