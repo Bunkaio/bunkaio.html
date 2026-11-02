@@ -876,6 +876,17 @@ async function handleAdminDashboard(request: Request, env: Env, headers: Record<
     }
     return jsonResponse({ ok: false, error: 'unknown_action' }, 400, headers);
   }
+  if (path === '/admin/lead' && request.method === 'POST') {
+    // Lead ajouté à la main depuis l'admin (prospect rencontré, candidature reçue ailleurs…) : il entre dans la base comme un formulaire.
+    const body = (await request.json().catch(() => ({}))) as Record<string, unknown>;
+    const email = typeof body.email === 'string' ? body.email.trim().toLowerCase() : '';
+    const name = typeof body.name === 'string' ? body.name.trim().slice(0, 120) : '';
+    if (!name || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 200) return jsonResponse({ ok: false, error: 'invalid_payload' }, 400, headers);
+    const partner = body.type !== 'contact';
+    const details = cleanDetails({ source: 'Ajout manuel (admin)', telephone: body.phone, site: body.site, secteur: body.sector, projet: body.note });
+    await storeMessage(env, { kind: partner ? 'partner' : 'contact', name, email, lang: normalizeLang(body.lang), details });
+    return jsonResponse({ ok: true }, 200, headers);
+  }
   if (path === '/admin/golinks' && request.method === 'GET') {
     const days = Math.min(365, Math.max(1, parseInt(new URL(request.url).searchParams.get('days') ?? '30', 10) || 30));
     return jsonResponse({ ok: true, links: await listGoLinks(env), clicks: await goClicks(env, days) }, 200, headers);

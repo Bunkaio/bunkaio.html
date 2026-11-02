@@ -118,6 +118,7 @@ function computeStage(c: DashboardContact, now: string): string {
   if (real.some((q) => q.status === 'envoye')) return 'devis';
   if (c.lead) return 'lead';
   if (c.roles.includes('partner')) return 'partenaire';
+  if (c.roles.includes('candidat')) return 'candidat';
   return 'contact';
 }
 
@@ -249,6 +250,7 @@ export async function buildDashboard(env: Env, stripe: Stripe): Promise<Record<s
       c.name ||= m.name;
       if (m.details.telephone && !c.phone) c.phone = m.details.telephone;
       if (!c.roles.includes('message')) c.roles.push('message');
+      if (m.kind === 'partner' && !c.roles.includes('candidat')) c.roles.push('candidat');
       touch(c, m.date);
     }
   } catch (err) {
@@ -320,6 +322,7 @@ export async function buildDashboard(env: Env, stripe: Stripe): Promise<Record<s
   const today = new Date().toISOString().slice(0, 10);
   const list = [...contacts.values()];
   for (const c of list) {
+    if (c.roles.includes('partner')) c.roles = c.roles.filter((r) => r !== 'candidat'); // espace partenaire créé : plus un simple candidat
     c.invoices.sort((a, b) => b.created.localeCompare(a.created));
     c.stage = computeStage(c, today);
   }

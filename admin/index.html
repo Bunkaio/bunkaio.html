@@ -465,7 +465,17 @@
           <span class="muted small" id="contactCount"></span>
           <span class="grow"></span>
           <button class="btn ghost sm" onclick="exportCSV()">Exporter (CSV)</button>
+          <button class="btn soft sm" onclick="toggleLeadForm()">+ Ajouter un lead</button>
           <button class="btn sm" onclick="openNewContact()">+ Nouvel espace</button>
+        </div>
+        <div class="card" id="leadForm" hidden style="margin-bottom:16px">
+          <h3>Ajouter un lead</h3>
+          <p class="muted small" style="margin:4px 0 12px">Un prospect rencontré, reçu par un autre canal ou une candidature arrivée par email : il entre dans la base avec la catégorie choisie. Aucun email ne part automatiquement.</p>
+          <div class="frow"><div class="fg"><label>Nom *</label><input id="ldName" placeholder="Prénom Nom"></div><div class="fg"><label>Email *</label><input id="ldEmail" type="email" placeholder="adresse@exemple.com"></div><div class="fg"><label>Téléphone</label><input id="ldPhone" type="tel"></div></div>
+          <div class="frow" style="margin-top:10px"><div class="fg"><label>Catégorie</label><select id="ldType"><option value="partner" selected>Partenaire (candidat)</option><option value="contact">Prospect / client</option></select></div><div class="fg"><label>Univers</label><select id="ldSector"><option value="">—</option><option value="Portrait &amp; lifestyle">Portrait &amp; lifestyle</option><option value="Mode &amp; mannequins">Mode &amp; mannequins</option><option value="Commercial &amp; produits">Commercial &amp; produits</option><option value="Événementiel">Événementiel</option><option value="Mariage &amp; Lumen">Mariage &amp; Lumen</option></select></div><div class="fg"><label>Langue</label><select id="ldLang"><option value="fr">Français</option><option value="en">Anglais</option></select></div></div>
+          <div class="frow" style="margin-top:10px"><div class="fg"><label>Site / réseaux</label><input id="ldSite" placeholder="https://…"></div></div>
+          <div class="fg" style="margin-top:10px"><label>Note</label><textarea id="ldNote" rows="3" placeholder="Contexte, ce qui vous a plu dans son travail…"></textarea></div>
+          <div style="display:flex;gap:8px;margin-top:12px"><button class="btn" id="ldSave" onclick="saveLead()">Ajouter à la base</button><button class="btn ghost" onclick="toggleLeadForm(false)">Annuler</button></div>
         </div>
         <div id="contactsTable"></div>
         <div id="contactsKanban" hidden></div>
@@ -738,12 +748,13 @@ const STAGES = [
   ['livre', 'Livré', 'Solde payé, album ouvert'],
   ['annule', 'Annulé', 'Séance annulée'],
   ['partenaire', 'Partenaire', 'Espace partenaire'],
+  ['candidat', 'Candidat partenaire', 'A demandé à devenir partenaire, espace pas encore créé'],
   ['contact', 'Contact', 'Autre contact'],
 ];
 const STAGE = Object.fromEntries(STAGES.map(s => [s[0], s]));
 /* Devis réels d'un contact : les devis de test n'influencent ni son étape, ni les segments, ni les alertes. */
 const realQ = c => (c.quotes || []).filter(q => !q.test);
-const ROLE_LABEL = { message: ['Formulaire', 'line'], lead: ['Lead quiz', ''], client: ['Client', 'ok'], espace: ['Espace client', 'dark'], partner: ['Partenaire', 'dark'] };
+const ROLE_LABEL = { message: ['Formulaire', 'line'], lead: ['Lead quiz', ''], client: ['Client', 'ok'], espace: ['Espace client', 'dark'], partner: ['Partenaire', 'dark'], candidat: ['Candidat partenaire', 'warn'] };
 const TEMP = { chaud: ['Chaud', 'danger'], tiede: ['Tiède', 'warn'], froid: ['Froid', 'line'] };
 const INV_STATUS = { paid: ['Payée', 'ok'], open: ['En attente', 'warn'], uncollectible: ['Irrécouvrable', 'danger'], void: ['Annulée', 'line'], draft: ['Brouillon', 'line'] };
 const ACT_LABEL = { moodboard: 'Moodboard', infos: 'Coordonnées', collaboration: 'Collaboration', partenariat: 'Profil partenaire' };
@@ -1101,6 +1112,7 @@ const SEGMENTS = [
   ['client', 'Clients', c => c.roles.includes('client')],
   ['espace', 'Espaces clients', c => c.roles.includes('espace')],
   ['partner', 'Partenaires', c => c.roles.includes('partner')],
+  ['candidat', 'Candidats partenaires', c => c.roles.includes('candidat')],
   ['hot', 'Leads chauds', c => c.lead && c.lead.temperature === 'chaud' && c.stage === 'lead'],
   ['incomplete', 'Espaces non validés', c => c.accounts.length && c.accounts.some(a => !a.infosCompletes)],
   ['due', 'À encaisser', c => c.totalDue > 0],
@@ -1805,6 +1817,25 @@ async function lrSave(email, inputId) {
 }
 async function lrOpen(email) { if (!confirm('Ouvrir l\'accès aux photos et envoyer au client l\'email « Votre album est accessible » ?')) return; await lrApi(email, { sendPhotosMail: true }, 'Accès ouvert'); }
 async function lrRevoke(email) { if (!confirm('Retirer l\'accès aux photos ? Le lien disparaît de l\'espace du client. Pensez aussi à retirer le partage dans Lightroom.')) return; await lrApi(email, { revokePhotos: true }, 'Accès retiré'); }
+
+/* ── Ajout manuel d'un lead ── */
+function toggleLeadForm(show) { const f = $('leadForm'); f.hidden = show === undefined ? !f.hidden : !show; if (!f.hidden) { f.scrollIntoView({ behavior: 'smooth', block: 'center' }); $('ldName').focus(); } }
+async function saveLead() {
+  const v = id => $(id).value.trim();
+  const email = v('ldEmail').toLowerCase();
+  if (!v('ldName')) { toast('Indiquez un nom.'); return; }
+  if (!MAIL_RE.test(email)) { toast('Adresse email invalide.'); return; }
+  const b = $('ldSave'); b.disabled = true; b.textContent = 'Ajout…';
+  try {
+    const { res, data } = await api('/admin/lead', { method: 'POST', body: JSON.stringify({ name: v('ldName'), email, phone: v('ldPhone'), type: v('ldType'), sector: v('ldSector'), lang: v('ldLang'), site: v('ldSite'), note: v('ldNote') }) });
+    if (!res.ok || !data.ok) { toast('Ajout impossible (' + (data.error || res.status) + ')'); return; }
+    ['ldName', 'ldEmail', 'ldPhone', 'ldSite', 'ldNote'].forEach(id => { $(id).value = ''; });
+    toggleLeadForm(false);
+    toast('Lead ajouté à la base');
+    await loadDashboard(true);
+    state.seg = v('ldType') === 'partner' ? 'candidat' : 'all'; renderSegChips(); renderContacts();
+  } catch (e) { /* session expirée gérée par api() */ } finally { b.disabled = false; b.textContent = 'Ajouter à la base'; }
+}
 
 /* ── Mailing manuel ── */
 const MAIL_TPLS = [
@@ -2759,7 +2790,7 @@ function campSpendTable(spend, leads, signes, ca) {
 
 /* ── Messages ── */
 const MSG_KIND = { contact: 'Message de contact', collab: 'Proposition de collaboration', partner: 'Candidature partenaire', account: 'Demande d\'espace', share: 'Témoignage' };
-const MSG_FIELD = { telephone: 'Téléphone', message: 'Message', type: 'Type', site: 'Site / réseaux', projet: 'Projet', secteur: 'Secteur', espace: 'Espace demandé', activite: 'Activité', prestation: 'Prestation', temoignage: 'Témoignage' };
+const MSG_FIELD = { source: 'Origine', telephone: 'Téléphone', message: 'Message', type: 'Type', site: 'Site / réseaux', projet: 'Projet', secteur: 'Secteur', espace: 'Espace demandé', activite: 'Activité', prestation: 'Prestation', temoignage: 'Témoignage' };
 function msgCard(m, inDrawer) {
   const det = Object.entries(m.details || {});
   const actions = [];
