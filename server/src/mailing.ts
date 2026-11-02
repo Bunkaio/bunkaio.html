@@ -44,6 +44,8 @@ export interface MailingParams {
   fromEmail?: string;
   /** Adresse de réponse (n'importe quelle adresse valide). */
   replyTo?: string;
+  /** Langue imposée à l'email (textes, signature, « À très vite ») ; absente = langue de chaque destinataire. */
+  lang?: string;
 }
 
 export const MANUAL_TEMPLATES = ['libre', 'relance_devis_quiz', 'rappel_moodboard', 'seance_reminder', 'seance_confirmation', 'merci_seance', 'rappel_impaye', 'demande_avis', 'partenaire_reponse', 'partenaire_bienvenue'] as const;
@@ -66,7 +68,7 @@ export async function setUnsubscribed(env: Env, email: string, value: boolean): 
 
 /** Construit l'email d'un destinataire ; renvoie `{ skip }` si le modèle n'est pas applicable à ce contact. */
 export async function buildManualMail(env: Env, template: ManualTemplate, r: RecipientCtx, p: MailingParams): Promise<{ subject: string; html: string; text: string } | { skip: string }> {
-  const lang = normalizeLang(r.lang);
+  const lang = p.lang === 'fr' || p.lang === 'en' ? p.lang : normalizeLang(r.lang);
   const space = r.space === 'partner' ? 'partner' : 'client';
   const name = r.name ?? '';
   switch (template) {

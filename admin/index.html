@@ -1851,6 +1851,7 @@ const MAIL_TPLS = [
   ['demande_avis', 'Demande d\'avis', 'Invitation à laisser un avis Google ; la remise de 15 % n\'est citée que si le client y a droit.', false, 'Relation'],
 ];
 const mailState = { tpl: 'libre', sel: new Set(), seg: 'all', q: '', p: { subject: '', heading: '', body: '', ctaLabel: '', ctaUrl: '', fromName: lsGet('bunkaio_mail_from_name', 'BUNKAIO'), fromEmail: lsGet('bunkaio_mail_from_email', 'contact@bunkaio.com'), replyTo: '' }, campaigns: null, extra: [] };
+mailState.p.lang = '';
 /* Domaine vérifié chez Resend : seules ses adresses peuvent servir d'expéditeur (sinon refus ou spam). */
 const MAIL_DOMAIN = 'bunkaio.com';
 const MAIL_RE = /^[^\s@<>"(),;]+@[^\s@<>"(),;]+\.[^\s@<>"(),;]+$/;
@@ -1895,6 +1896,7 @@ function renderMailing() {
     <div class="lab" style="margin-bottom:6px">Expéditeur</div>
     <div class="frow"><div class="fg"><label>Nom affiché</label><input class="mi" id="mpFromName" value="${esc(P.fromName)}" placeholder="BUNKAIO" oninput="mailState.p.fromName=this.value;lsSet('bunkaio_mail_from_name',this.value)"></div>
     <div class="fg"><label>Adresse d'envoi</label><div style="display:flex;align-items:center;gap:6px"><input class="mi" id="mpFromLocal" value="${esc(local)}" placeholder="contact" style="flex:1;min-width:0" oninput="mailFromLocal(this.value)"><span class="small" style="white-space:nowrap">@${MAIL_DOMAIN}</span></div></div></div>
+    <div class="fg"><label>Langue de l'email et de la signature</label><div class="chips">${[['', 'Selon le destinataire'], ['fr', 'Signature française'], ['en', 'English signature']].map(([v, l]) => `<button type="button" class="chip${(P.lang || '') === v ? ' on' : ''}" aria-pressed="${(P.lang || '') === v}" onclick="mailState.p.lang='${v}';renderMailing()">${l}</button>`).join('')}</div><span class="small muted">Change la langue de la signature (titre, horaires, mentions légales), de « À très vite, » / « See you soon, » et de la salutation automatique. Le texte que vous rédigez reste tel quel.</span></div>
     <div class="fg"><label>Les réponses arrivent à (facultatif, n'importe quelle adresse)</label><input class="mi" id="mpReply" value="${esc(P.replyTo)}" placeholder="ex. aya.perso@gmail.com — vide : l'adresse d'envoi" oninput="mailState.p.replyTo=this.value.trim()"></div>
     <div class="hint small muted">L'adresse d'envoi doit finir par @${MAIL_DOMAIN}, le domaine vérifié pour l'envoi : une adresse d'un autre domaine serait refusée ou classée en spam. Pour qu'on vous réponde ailleurs, utilisez « Les réponses arrivent à ».</div>
   </div>`);
