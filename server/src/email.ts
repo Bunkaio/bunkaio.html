@@ -1001,6 +1001,8 @@ export function buildFreeEmail(params: { subject: string; heading?: string; body
   const fill = (s: string): string => s.replace(/\{prenom\}/gi, first).replace(/\{nom\}/gi, params.customerName || first);
   const greeting = first ? tr(lang, `Bonjour ${first},`, `Hello ${first},`) : tr(lang, 'Bonjour,', 'Hello,');
   const paragraphs = fill(params.body).split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
+  /* « Bonjour {prénom}, » est ajouté automatiquement, sauf si le message commence déjà par sa propre formule d'appel (Hello Wolf, Dear…, Bonjour…) : jamais de double salutation. */
+  const ownGreeting = /^\s*(hello|hi|hey|dear|good\s+(morning|afternoon|evening)|greetings|bonjour|bonsoir|salut|cher|chère|madame|monsieur)\b/i.test(paragraphs[0] ?? '');
   const bodyHtml = paragraphs.map((p) => `<p style="font-size:15px;line-height:1.65;margin:0 0 16px;">${escapeHtml(p).replace(/\n/g, '<br>')}</p>`).join('');
   const cta = params.ctaLabel && params.ctaUrl && /^https:\/\//.test(params.ctaUrl)
     ? `<p style="margin:24px 0 8px;"><a href="${escapeHtml(params.ctaUrl)}" style="${btnStyle}">${escapeHtml(fill(params.ctaLabel))}</a></p>` : '';
@@ -1008,10 +1010,10 @@ export function buildFreeEmail(params: { subject: string; heading?: string; body
     ? `<p style="font-size:11.5px;line-height:1.6;color:#9a95a6;margin:28px 0 0;">${tr(lang, "Vous recevez cet email car vous êtes en relation avec BUNKAIO. Pour ne plus recevoir nos emails d'information :", 'You are receiving this email because you are in contact with BUNKAIO. To stop receiving our information emails:')} <a href="${params.unsubscribeUrl}" style="color:#9a95a6;">${tr(lang, 'se désinscrire', 'unsubscribe')}</a></p>` : '';
   const html = emailShell(`
     ${params.heading ? `<h1 style="font-size:20px;margin:0 0 16px;">${escapeHtml(fill(params.heading))}</h1>` : ''}
-    <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">${greeting}</p>
+    ${ownGreeting ? '' : `<p style="font-size:15px;line-height:1.6;margin:0 0 20px;">${greeting}</p>`}
     ${bodyHtml}${cta}${unsub}
   `, lang);
-  const text = `${greeting}\n\n${paragraphs.join('\n\n')}${params.ctaLabel && params.ctaUrl ? `\n\n${fill(params.ctaLabel)} : ${params.ctaUrl}` : ''}${params.unsubscribeUrl ? `\n\n${tr(lang, 'Se désinscrire', 'Unsubscribe')} : ${params.unsubscribeUrl}` : ''}`;
+  const text = `${ownGreeting ? '' : greeting + '\n\n'}${paragraphs.join('\n\n')}${params.ctaLabel && params.ctaUrl ? `\n\n${fill(params.ctaLabel)} : ${params.ctaUrl}` : ''}${params.unsubscribeUrl ? `\n\n${tr(lang, 'Se désinscrire', 'Unsubscribe')} : ${params.unsubscribeUrl}` : ''}`;
   return finalize(lang, { tpl: 'libre', subject: fill(params.subject), html, text });
 }
 
