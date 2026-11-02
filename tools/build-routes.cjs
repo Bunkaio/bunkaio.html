@@ -481,5 +481,19 @@ function pinAssets(html) {
 h1{font-size:clamp(28px,6vw,44px);margin:0 0 12px}.g{display:block;width:54px;height:54px;margin:0 auto 18px;background:${GLYPH} center/contain no-repeat}p{color:rgba(255,255,255,.7);margin:0 0 24px}a{color:#fff;margin:0 10px;font-size:14px}</style></head>
 <body><main><span class="g" aria-hidden="true"></span><h1>Page introuvable <small>· Page not found</small></h1><p>Cette page n'existe pas ou a été déplacée.<br>This page does not exist or has been moved.</p>
 <a href="/">Accueil · Home</a><a href="/services/">Prestations · Services</a><a href="/portfolio/">Portfolio</a><a href="/devis/">Devis · Quote</a><a href="/contact/">Contact</a></main></body></html>\n`);
+  /* Version du Worker : empreinte des sources serveur. Écrite dans server/src/version.ts (embarquée au déploiement) et admin/worker-version.json
+     (la page admin compare avec ce que répond le Worker en ligne : /version). */
+  {
+    const dir = path.join(ROOT, 'server', 'src');
+    const h = crypto.createHash('sha1');
+    fs.readdirSync(dir).filter(f => f.endsWith('.ts') && f !== 'version.ts').sort().forEach(f => h.update(f).update(fs.readFileSync(path.join(dir, f))));
+    const v = h.digest('hex').slice(0, 10);
+    const ts = "/* Généré par tools/build-routes.cjs : empreinte des sources du Worker (ne pas modifier à la main). */\nexport const WORKER_VERSION = '" + v + "';\n";
+    const vf = path.join(dir, 'version.ts');
+    if (!fs.existsSync(vf) || fs.readFileSync(vf, 'utf8') !== ts) fs.writeFileSync(vf, ts);
+    const jf = path.join(ROOT, 'admin', 'worker-version.json');
+    const js = JSON.stringify({ version: v }) + '\n';
+    if (!fs.existsSync(jf) || fs.readFileSync(jf, 'utf8') !== js) fs.writeFileSync(jf, js);
+  }
   console.log('sitemap.xml et 404.html écrits');
 })();

@@ -438,6 +438,7 @@
         <input type="search" id="globalSearch" placeholder="Rechercher un contact, un email, une facture…" oninput="onGlobalSearch(this.value)">
       </label>
     </header>
+    <div class="msg warn" id="wkBanner" hidden style="margin:0 0 16px"></div>
 
     <main class="content">
       <!-- ═══ Tableau de bord ═══ -->
@@ -846,10 +847,23 @@ function logout(expired) {
 }
 function showApp() {
   loadSms();
+  checkWorkerVersion();
   $('login').hidden = true; $('app').hidden = false;
   renderNav();
   go((location.hash || '#overview').slice(1).split('/')[0] || 'overview', true);
   loadStats(STAT_DAYS);
+}
+
+/* ── Serveur à jour ? Compare la version attendue (admin/worker-version.json, générée avec chaque modification du serveur) à celle du Worker en ligne (/version). ── */
+async function checkWorkerVersion(manual) {
+  const box = $('wkBanner'); if (!box) return;
+  let want = '', have = '';
+  try { const r = await fetch('worker-version.json?t=' + Date.now(), { cache: 'no-store' }); if (r.ok) want = (await r.json()).version || ''; } catch (e) {}
+  try { const r = await fetch(WORKER + '/version?t=' + Date.now(), { cache: 'no-store' }); if (r.ok) { const d = await r.json(); have = d && d.version || ''; } } catch (e) {}
+  if (!want) return;
+  if (have === want) { box.hidden = true; if (manual) toast('Le serveur est à jour'); return; }
+  box.hidden = false;
+  box.innerHTML = '<b>Le serveur n\'est pas à jour.</b> ' + (have ? '' : 'Il ne répond pas à la vérification de version (ancienne version). ') + 'Certaines nouveautés (emails, signature, salutation, places partenaires…) ne fonctionneront qu\'après le redéploiement : dans PowerShell, <code>cd</code> vers le dossier <code>server</code> du projet, puis <code>git pull</code> et <code>npx wrangler deploy</code>. <button class="btn ghost sm" style="margin-left:8px" onclick="checkWorkerVersion(true)">Revérifier</button>';
 }
 
 /* ── Données ── */

@@ -1,4 +1,5 @@
 import { getPartnerSpots } from './partners';
+import { WORKER_VERSION } from './version';
 import { AR_OPTIONS, cleanConfig as cleanAutoReplyConfig, defaultConfig, getConfig as getAutoReplyConfig, getLog as getAutoReplyLog, pickTemplate, renderAutoReply, sampleFacts, saveConfig as saveAutoReplyConfig, sendManualAutoReply, sendQuizAutoReply } from './autoreply';
 import type { ARFacts } from './autoreply';
 import { goClicks, handleGo, listGoLinks, saveGoLink } from './golinks';
@@ -1807,6 +1808,9 @@ export default {
     }
     if (url.pathname === '/collect') {
       return handleCollect(request, env, headers);
+    }
+    if (url.pathname === '/version' && request.method === 'GET') {
+      return jsonResponse({ ok: true, version: WORKER_VERSION }, 200, headers);
     }
     if (url.pathname === '/partner-spots' && request.method === 'GET') {
       // Public : places restantes par univers (aucune donnée personnelle), mises en cache 1 minute côté navigateur.

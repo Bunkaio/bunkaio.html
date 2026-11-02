@@ -56,6 +56,9 @@ Premium accessible : direction artistique, accompagnement, interlocuteur unique,
 - Contrôle local complet : `NODE_PATH=/opt/node22/lib/node_modules node tools/veille.cjs --live` (toutes les pages FR/EN, prix en dollars, formules du devis). Routine Claude « Veille BUNKAIO » toutes les 12 h : contrôle, correction, mise à jour de `ops/veille.json`.
 - Version anglaise : `initUsdPrices()` ajoute « ≈ $ » après chaque prix en euros (taux `EUR_USD_RATE` dans `js/script.js`). Ne pas réécrire de prix en dollars à la main.
 
+## Version du Worker (nov. 2026)
+- `tools/build-routes.cjs` écrit l'empreinte des sources serveur dans `server/src/version.ts` (`WORKER_VERSION`, embarquée au déploiement, servie par GET `/version`) et `admin/worker-version.json` ; l'admin (`checkWorkerVersion`) compare les deux au chargement et affiche un bandeau « Le serveur n'est pas à jour » avec la procédure (`git pull` puis `npx wrangler deploy` dans `server`) tant qu'ils diffèrent (ancien Worker : pas de `/version`). Toujours relancer le build avant de committer une modification de `server/src`.
+
 ## Tests
 Banc local Miniflare avec faux Stripe/Resend et Playwright (scripts hors dépôt). Un test de régression doit couvrir : parcours devis, formulaires en échec, espace client, admin, crawl de toutes les pages.
 
