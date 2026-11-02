@@ -27,6 +27,20 @@ const norm = (email: string): string => email.trim().toLowerCase();
 export interface LeadMarker { name: string; lang: string; date: string }
 
 /** Prospect ayant rempli le quiz : sert à la relance de devis. */
+/** Copie de chaque demande de devis dans la base (KV `quizlead:<email>`, 3 ans) : le prospect apparaît dans le tableau de bord
+ *  même si Stripe est indisponible au moment de la demande. Même contenu que les métadonnées du client Stripe. */
+export interface QuizLeadRecord { name: string; phone: string; metadata: Record<string, string>; count: number; firstAt: string }
+export async function saveQuizLead(env: Env, email: string, name: string, phone: string, metadata: Record<string, string>): Promise<void> {
+  const key = `quizlead:${norm(email)}`;
+  let prev: QuizLeadRecord | null = null;
+  try { prev = JSON.parse((await env.ACCOUNTS_KV.get(key)) ?? 'null') as QuizLeadRecord | null; } catch { prev = null; }
+  const rec: QuizLeadRecord = { name, phone, metadata, count: (prev?.count ?? 0) + 1, firstAt: prev?.firstAt ?? new Date().toISOString() };
+  await env.ACCOUNTS_KV.put(key, JSON.stringify(rec), { expirationTtl: 3 * 365 * 24 * 3600 });
+}
+export async function getQuizLead(env: Env, email: string): Promise<QuizLeadRecord | null> {
+  try { return JSON.parse((await env.ACCOUNTS_KV.get(`quizlead:${norm(email)}`)) ?? 'null') as QuizLeadRecord | null; } catch { return null; }
+}
+
 export async function markLead(env: Env, email: string, name: string, lang: string): Promise<void> {
   const marker: LeadMarker = { name, lang, date: new Date().toISOString() };
   await env.ACCOUNTS_KV.put(`lead:${norm(email)}`, JSON.stringify(marker), { expirationTtl: 60 * DAY / 1000 });

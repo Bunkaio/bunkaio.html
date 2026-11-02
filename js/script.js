@@ -209,13 +209,12 @@ function sendQuizLeadToStripe(payload){
     return Promise.resolve(false);
   }
   /* La langue du site au moment de la demande détermine la langue des emails envoyés ensuite au client. */
-  return fetch(QUIZ_LEAD_WORKER_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(Object.assign({ lang: LANG }, payload))
-  })
+  /* Une seconde tentative 2,5 s plus tard si la première échoue (réseau coupé) : la demande doit arriver dans la base. */
+  const body = JSON.stringify(Object.assign({ lang: LANG }, payload));
+  const once = () => fetch(QUIZ_LEAD_WORKER_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: body, keepalive: true })
     .then(r => r.ok)
-    .catch(err => { console.warn('[quiz-lead] échec d\'envoi au Worker Stripe', err); return false; });
+    .catch(err => { console.warn('[quiz-lead] échec d\'envoi au Worker', err); return false; });
+  return once().then(ok => ok ? true : new Promise(res => setTimeout(() => once().then(res), 2500)));
 }
 
 /* IMG et DRONE_MEDIA sont définis dans config/media.js — chargé avant ce fichier */

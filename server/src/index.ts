@@ -24,7 +24,7 @@ import { cleanDetails, MESSAGE_KINDS, storeMessage, updateMessage } from './mess
 import type { MessageKind } from './messages';
 import { configureBusiness } from './config';
 import { listWatchRuns, runSiteWatch } from './watch';
-import { claimAckSlot, markBalanceInvoiced, markDepositPaid, markInvoiced, markLead, runDailyAutomations } from './automations';
+import { claimAckSlot, saveQuizLead, markBalanceInvoiced, markDepositPaid, markInvoiced, markLead, runDailyAutomations } from './automations';
 import {
   buildQuoteEmail,
   buildQuoteSignedEmail,
@@ -55,6 +55,7 @@ import {
   markInvoiceReminded,
   recordPaymentOnCustomer,
   upsertQuizCustomer,
+  buildMetadata,
   verifyWebhookEvent,
 } from './stripe';
 import type {
@@ -1172,20 +1173,30 @@ async function handleQuizLead(request: Request, env: Env, headers: Record<string
     formule: body.formule,
   });
 
-  // Toute erreur Stripe est interceptée ici : le front ignore déjà la
-  // réponse de cet appel (fetch fire-and-forget), donc une erreur ici
-  // n'impacte jamais l'expérience du visiteur — elle ne fait que manquer
-  // la synchronisation Stripe, visible dans les logs ci-dessous.
+  /* 1. La demande est d'abord enregistrée dans la base du Worker (KV `quizlead:`) : le prospect apparaît dans le tableau de bord
+     même si Stripe est indisponible. 2. Synchronisation Stripe (best-effort). 3. Réponse automatique au prospect. */
+  let saved = false;
+  try {
+    await saveQuizLead(env, body.email, body.name, body.phone ?? '', buildMetadata(body));
+    saved = true;
+  } catch (err) { console.error('[quiz-lead] enregistrement dans la base impossible', err); }
+  await markLead(env, body.email, body.name, normalizeLang(body.lang)).catch((err) => console.error('[quiz-lead] marqueur de relance', err));
+  await notifyAdmin(env, { title: 'Nouvelle demande de devis', body: `${body.name} · ${body.category}`, url: '/admin/#contacts' }).catch(() => undefined);
+
+  let result: { customerId?: string; created?: boolean } = {};
+  let stripeOk = false;
   try {
     const stripe = createStripeClient(env.STRIPE_SECRET_KEY);
-    const result = await upsertQuizCustomer(stripe, body);
-    await markLead(env, body.email, body.name, normalizeLang(body.lang)).catch((err) => console.error('[quiz-lead] marqueur de relance', err));
+    result = await upsertQuizCustomer(stripe, body);
+    stripeOk = true;
     console.log('[quiz-lead] client Stripe synchronisé', result);
+  } catch (err) {
+    console.error('[quiz-lead] échec de la synchronisation Stripe', err);
+  }
 
-    // Email de confirmation au prospect — best-effort, ne doit jamais faire
-    // échouer la synchronisation Stripe qui vient de réussir.
+  if (saved || stripeOk) {
+    // Email au prospect — best-effort. Un seul accusé par adresse et par heure : l'endpoint est public.
     try {
-      // Un seul accusé par adresse et par heure : l'endpoint est public, sans cette limite il pourrait servir à inonder une boîte mail.
       if (await claimAckSlot(env, 'quiz', body.email)) {
         // Message choisi selon les réponses du questionnaire (règles de l'admin « Réponses aux devis »).
         await sendQuizAutoReply(env, body, await detectSpace(env, body.email));
@@ -1193,12 +1204,9 @@ async function handleQuizLead(request: Request, env: Env, headers: Record<string
     } catch (emailErr) {
       console.error("[quiz-lead] échec de l'envoi de l'email de confirmation", emailErr);
     }
-
-    return jsonResponse({ ok: true, ...result }, 200, headers);
-  } catch (err) {
-    console.error('[quiz-lead] échec de la synchronisation Stripe', err);
-    return jsonResponse({ ok: false, error: 'stripe_error' }, 502, headers);
+    return jsonResponse({ ok: true, stripe: stripeOk, ...result }, 200, headers);
   }
+  return jsonResponse({ ok: false, error: 'storage_error' }, 502, headers);
 }
 
 async function handleCreateDepositInvoice(request: Request, env: Env, headers: Record<string, string>): Promise<Response> {

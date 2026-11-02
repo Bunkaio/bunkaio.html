@@ -60,7 +60,7 @@ function truncateForMetadata(value: string, maxLength = 490): string {
  * Construit l'objet metadata Stripe à partir des réponses du quiz.
  * `source: quiz_bunkaio` permet de filtrer ces prospects depuis le dashboard Stripe.
  */
-function buildMetadata(payload: QuizLeadPayload): Record<string, string> {
+export function buildMetadata(payload: QuizLeadPayload): Record<string, string> {
   const { score, temperature } = computeLeadScore(payload);
   const ville = (payload.villePrestation || '').trim().slice(0, 120);
   const travel: Record<string, string> = ville

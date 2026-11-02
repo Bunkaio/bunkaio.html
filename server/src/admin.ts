@@ -8,6 +8,7 @@ import type { InboxItem } from './inbox';
 import { listQuotes, putQuote } from './quotes';
 import type { Quote } from './quotes';
 import { deleteMessagesOf, listMessages } from './messages';
+import { getQuizLead } from './automations';
 import type { FormMessage } from './messages';
 import type { AccountRecord, AccountType, Env } from './types';
 
@@ -136,6 +137,28 @@ export async function buildDashboard(env: Env, stripe: Stripe): Promise<Record<s
     if (date && (!c.createdAt || date < c.createdAt)) c.createdAt = date;
   };
   const errors: string[] = [];
+  const applyQuizLead = (c: DashboardContact, m: Record<string, string>): void => {
+    if (m.source !== 'quiz_bunkaio') return;
+    if (!c.roles.includes('lead')) c.roles.push('lead');
+    c.lead = {
+      score: Number(m.lead_score ?? 0),
+      temperature: m.lead_temperature || 'froid',
+      category: m.type_projet ?? '',
+      profile: m.profil ?? '',
+      formule: m.formule_recommandee ?? '',
+      budget: m.budget_estime ?? '',
+      delai: m.delai_souhaite ?? '',
+      options: m.options_choisies ?? '',
+      origine: m.origine ?? '',
+      campagne: m.campagne ?? '',
+      ville: m.ville_prestation ?? '',
+      deplacement: m.frais_deplacement ? m.frais_deplacement + ' €' : (m.deplacement_type === 'free' ? 'offert' : (m.ville_prestation ? 'à chiffrer sur devis' : '')),
+      description: m.description_projet ?? '',
+      communication: m.interet_communication ?? '',
+      date: m.derniere_soumission_quiz ?? '',
+    };
+    touch(c, m.derniere_soumission_quiz);
+  };
 
   // 1. Clients Stripe (dont les leads du quiz) et factures.
   let customers: Stripe.Customer[] = [];
@@ -160,27 +183,27 @@ export async function buildDashboard(env: Env, stripe: Stripe): Promise<Record<s
     touch(c, iso(cu.created));
     if (cu.discount) c.markers.remise15 = 'oui';
     if (m.avis_clique === 'oui') c.markers.avisClique = m.avis_clique_le || 'oui';
-    if (m.source === 'quiz_bunkaio') {
-      if (!c.roles.includes('lead')) c.roles.push('lead');
-      c.lead = {
-        score: Number(m.lead_score ?? 0),
-        temperature: m.lead_temperature || 'froid',
-        category: m.type_projet ?? '',
-        profile: m.profil ?? '',
-        formule: m.formule_recommandee ?? '',
-        budget: m.budget_estime ?? '',
-        delai: m.delai_souhaite ?? '',
-        options: m.options_choisies ?? '',
-        origine: m.origine ?? '',
-        campagne: m.campagne ?? '',
-        ville: m.ville_prestation ?? '',
-        deplacement: m.frais_deplacement ? m.frais_deplacement + ' €' : (m.deplacement_type === 'free' ? 'offert' : (m.ville_prestation ? 'à chiffrer sur devis' : '')),
-        description: m.description_projet ?? '',
-        communication: m.interet_communication ?? '',
-        date: m.derniere_soumission_quiz ?? '',
-      };
-      touch(c, m.derniere_soumission_quiz);
+    applyQuizLead(c, m);
+  }
+  /* Demandes de devis enregistrées par le Worker lui-même (copie de chaque soumission) : le prospect figure dans la base
+     même si Stripe était indisponible au moment de la demande. Lues seulement quand Stripe ne les a pas déjà fournies. */
+  try {
+    for (const k of (await env.ACCOUNTS_KV.list({ prefix: 'quizlead:', limit: 1000 })).keys) {
+      const email = k.name.slice(9);
+      if (isDemo(email) || contacts.get(email)?.lead) continue;
+      const rec = await getQuizLead(env, email);
+      if (!rec) continue;
+      const c = get(email);
+      c.name ||= rec.name;
+      c.phone ||= rec.phone;
+      if (rec.metadata.langue) c.lang = rec.metadata.langue;
+      touch(c, rec.firstAt);
+      applyQuizLead(c, rec.metadata);
+      if (c.lead && !c.customerId) c.lead.stripe = 'non synchronisé';
     }
+  } catch (err) {
+    console.error('[admin] lecture des demandes de devis impossible', err);
+    errors.push('quizleads');
   }
   // Factures masquées à la demande de l'admin (une facture payée ne peut pas être supprimée chez Stripe).
   const hidden = new Set<string>();
@@ -345,7 +368,7 @@ export async function deleteContact(env: Env, stripe: Stripe, email: string, typ
   }
   summary.quotesDeleted = quotesDeleted;
   let markers = 0;
-  for (const p of ['lead:', 'inv:', 'dep:', 'bal:', 'fu1:', 'fu:', 'mbr:', 'replied:']) {
+  for (const p of ['lead:', 'quizlead:', 'inv:', 'dep:', 'bal:', 'fu1:', 'fu:', 'mbr:', 'replied:']) {
     if (await env.ACCOUNTS_KV.get(p + key)) { await env.ACCOUNTS_KV.delete(p + key); markers++; }
   }
   for (const p of [`rem:${key}:`, `thx:${key}:`, `alv:${key}:`, `adt:${key}:`, `ack:contact:${key}`, `ack:collab:${key}`, `ack:partner:${key}`, `ack:account:${key}`]) {
