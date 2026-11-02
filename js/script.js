@@ -7775,7 +7775,7 @@ const PARTNER_LOGOS = [
   { name:'Royal R Cosmétique', style:'font-weight:800;letter-spacing:0.12em;text-transform:uppercase' },
   { name:'Palmynala', style:'font-family:Georgia,serif;font-weight:400;letter-spacing:0.08em;text-transform:uppercase' },
   { name:'Studio Doutor', style:'font-weight:600;letter-spacing:0.02em' },
-  { name:'ÉCLAT', style:'font-weight:300;letter-spacing:0.28em;text-transform:uppercase' },
+  { name:'ÉCLAT', url:'https://eclatevents.fr', style:'font-weight:300;letter-spacing:0.28em;text-transform:uppercase' },
   { name:'Restaurant Trophies', style:'font-family:Georgia,serif;font-weight:700;font-style:italic;letter-spacing:0' },
   { name:'Wolf Silveri', url:'https://www.photography-was-dead.com', style:'font-weight:800;letter-spacing:0.12em;text-transform:uppercase' }
 ];
