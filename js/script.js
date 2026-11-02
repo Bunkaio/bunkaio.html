@@ -5126,13 +5126,16 @@ function pfxAlt(c, src, i){
 }
 function pfxChapterHtml(c, ci){
   const lay = pfxLayout(c.photos.length);
-  const meta = [pfxCatLabel(c.cat), c.client, c.year].filter(Boolean).map(escHtml).join(' · ');
+  const meta = [pfxCatLabel(c.cat) !== c.title ? pfxCatLabel(c.cat) : '', c.client, c.year].filter(Boolean).map(escHtml).join(' · ');
   return `<section class="pfx-ch" id="serie-${escHtml(c.id)}" aria-labelledby="pfx-t-${ci}">
     <header class="pfx-ch-head">
       <span class="pfx-ch-n">${pfxNum(ci + 1)}</span>
-      <h3 class="pfx-ch-t" id="pfx-t-${ci}">${escHtml(c.title)}</h3>
-      <p class="pfx-ch-meta">${meta}${meta ? ' · ' : ''}${c.photos.length} ${t({fr:'images', en:'images'})}</p>
-      ${c.text ? `<p class="pfx-ch-text">${escHtml(c.text)}</p>` : ''}
+      <div class="pfx-ch-body">
+        <h3 class="pfx-ch-t" id="pfx-t-${ci}">${escHtml(c.title)}</h3>
+        ${meta ? `<p class="pfx-ch-meta">${meta}</p>` : ''}
+        ${c.text ? `<p class="pfx-ch-text">${escHtml(c.text)}</p>` : ''}
+      </div>
+      <span class="pfx-ch-count">${pfxNum(c.photos.length)} ${t({fr:'img', en:'img'})}</span>
     </header>
     <div class="pfx-grid">${c.photos.map((src, i) => `<figure class="pfx-item ${lay[i]} rv" data-ch="${ci}" data-i="${i}">
         <button type="button" class="pfx-open" onclick="pfxOpen(${ci},${i})" aria-label="${escHtml(t({fr:'Agrandir', en:'Enlarge'}))} ${i + 1}/${c.photos.length}"><img loading="lazy" decoding="async" src="${src}" alt="${escHtml(pfxAlt(c, src, i))}"></button>
@@ -5143,7 +5146,7 @@ function pfxChapterHtml(c, ci){
 function pfxMeta(){
   const el = document.getElementById('pfMeta'); if (!el) return;
   const n = PFX.chapters.length, img = PFX.chapters.reduce((a, c) => a + c.photos.length, 0);
-  el.innerHTML = `<div><dt>${t({fr:'Séries', en:'Series'})}</dt><dd>${n ? pfxNum(n) : '—'}</dd></div><div><dt>${t({fr:'Images', en:'Images'})}</dt><dd>${img ? pfxNum(img) : '—'}</dd></div><div><dt>${t({fr:'Expérience', en:'Experience'})}</dt><dd>${t({fr:'8+ ans', en:'8+ yrs'})}</dd></div>`;
+  el.innerHTML = `<div class="pfx-big"><dt>${t({fr:'Séries', en:'Series'})}</dt><dd>S${n ? pfxNum(n) : '00'}</dd></div><div class="pfx-small"><dt>${t({fr:'Images', en:'Images'})}</dt><dd>${img ? pfxNum(img) : '—'}</dd></div><div class="pfx-small"><dt>${t({fr:'Expérience', en:'Experience'})}</dt><dd>${t({fr:'8+ ans', en:'8+ yrs'})}</dd></div>`;
 }
 function renderPortfolioV2(){
   const idx = document.getElementById('pfIndex'), wrap = document.getElementById('pfGrid');
