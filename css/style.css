@@ -6887,3 +6887,33 @@ footer .footer-cols-right { grid-column: 5 / span 8 !important; grid-template-co
   footer .footer-cols-right { grid-template-columns: 1fr !important; }
   footer .footer-cols-right > div:last-child .ft-list { columns: 2; }
 }
+
+/* ═══ Accueil : les deux constellations (5 publics + « L'exigence BUNKAIO ») restylées dans la DA Grids × Almira Kho (nov. 2026) ═══
+   Mécanique, positions et cycles inchangés : seulement typographie, numérotation, repères. */
+/* Constellation des 5 publics : libellés numérotés 01–05, capitales serrées Inter Tight, point carré cerné de rose au moment visé */
+.hero-kicker .hk-b { counter-reset: hkn; }
+.hero-kicker .hk-w { counter-increment: hkn; }
+.hero-kicker .hk-w em { font-family: 'Inter Tight', sans-serif !important; font-weight: 600 !important; letter-spacing: .03em !important; font-style: normal; }
+.hero-kicker .hk-w em::after { content: counter(hkn, decimal-leading-zero); position: absolute; left: 50%; translate: -50% 0; top: -1.15em; font-size: .78em; font-weight: 500; letter-spacing: 0; color: #e8c6c4; opacity: .9; }
+.hero-kicker .hk-w:nth-of-type(2) em::after, .hero-kicker .hk-w:nth-of-type(4) em::after { top: auto; bottom: -1.15em; }
+.hero-kicker .hk-w::before { border-radius: 1px !important; }
+.hero-kicker .hk-w::after { border-radius: 0 !important; border-color: #e8c6c4 !important; }
+.hero-kicker .hk-t { font-family: 'Inter Tight', sans-serif !important; font-weight: 600 !important; letter-spacing: -.01em !important; }
+
+/* Constellation « L'exigence BUNKAIO » : engagements numérotés, titre en capitales, filet au-dessus du texte, point carré */
+.mc-stage { counter-reset: mcn; }
+.mc-pt { counter-increment: mcn; }
+.mc-tx { font-family: 'Inter Tight', sans-serif; border-top: 1px solid rgba(255,255,255,.55); padding-top: 7px; }
+.mc-tx b { font-size: clamp(15px, 1.5vw, 21px) !important; font-weight: 600 !important; letter-spacing: -.03em !important; line-height: 1 !important; text-transform: uppercase; }
+.mc-tx b::before { content: counter(mcn, decimal-leading-zero) '  '; white-space: pre; font-size: .62em; font-weight: 500; letter-spacing: 0; color: #e8c6c4; vertical-align: .35em; }
+.mc-tx small { font-size: 12.5px !important; letter-spacing: 0; color: rgba(255,255,255,.82) !important; margin-top: 6px !important; }
+.mc-pt i { border-radius: 1px !important; background: #fff !important; box-shadow: 0 0 0 4px rgba(232,198,196,.28), 0 0 18px 3px rgba(255,255,255,.45) !important; }
+.mc-title { font-family: 'Inter Tight', sans-serif !important; font-size: clamp(16px, 2.2vw, 30px) !important; font-weight: 600 !important; letter-spacing: -.03em !important; text-transform: uppercase; }
+@media (max-width: 760px) {
+  .mc-tx b { font-size: 13.5px !important; }
+  .mc-tx small { font-size: 10.5px !important; }
+  .mc-title { font-size: 15px !important; }
+}
+/* Numéro au-dessus du libellé, dans le flux (ne chevauche plus le point) */
+.hero-kicker .hk-w em { display: inline-flex !important; flex-direction: column-reverse; align-items: center; }
+.hero-kicker .hk-w em::after, .hero-kicker .hk-w:nth-of-type(2) em::after, .hero-kicker .hk-w:nth-of-type(4) em::after { position: static !important; translate: none !important; top: auto !important; bottom: auto !important; margin-bottom: 2px; }
