@@ -7362,3 +7362,93 @@ html[lang="en"] :is(#view-home .credentials-strip, .art-cred) .cred-body::before
 /* « Partager mon expérience » (accueil) : le bouton était resté invisible (animation d'apparition coupée sans opacité) */
 #view-home .home-paper .testi-share-row .hero-start { opacity: 1 !important; transform: none; }
 #view-home .home-paper .testi-share-row { text-align: left; }
+
+
+/* ═══════════════ Mise en page éditoriale épurée (nov. 2026, demande de la propriétaire, inspiration Almada) ═══════════════
+   Menu inchangé. Pages : textes et titres plus petits, filets fins au lieu des barres noires épaisses, beaucoup plus d'air.
+   Toutes les tailles redéfinies ici (bloc final de la feuille de style). */
+#view-account .account-section,
+#view-account .account-tabs,
+#view-account .pt-status,
+#view-home .home-paper .advice-teaser,
+#view-home .home-paper .bk-next,
+#view-home .home-paper .credentials-strip,
+#view-home .home-paper .cs-spotlight,
+#view-home .home-paper .testi-heading,
+#view-portfolio .bk-next,
+.gx-reel-head,
+.gx-search,
+.hm-marquee,
+.pfx-ch-head,
+.pfx-head,
+.pfx-index,
+.svx #svcLinks .read-panel,
+.svx .bk-next,
+.svx .pt-card,
+.svx .svc-assure,
+.svx-head,
+.view.gx #partnersAccordion,
+.view.gx #psec-program .trust-section,
+.view.gx .about-card h2,
+.view.gx .bk-next,
+.view.gx .collab-title,
+.view.gx .ct-extra,
+.view.gx .pp-hero,
+.view.gx .trust-section,
+.view.gx [id$="Accordion"],
+.view.px .cs-acc-item:first-child,
+.view.px-quiz #qs-5,
+.view.px-quiz .quiz-wrap .qstep.active { border-top-width: 1px !important; }
+#view-home .reassure-section::before,
+.gx-head::before,
+.svx-item::before { height: 1px !important; }
+/* Échelle éditoriale : mots géants ramenés à un titre de rubrique, compteurs discrets */
+.gx-mega, .svx-mega { font-weight: 300 !important; letter-spacing: -.04em !important; }
+#view-portfolio .pfx .page-title { font-size: clamp(40px, 6vw, 88px) !important; font-weight: 300 !important; letter-spacing: -.04em !important; }
+.svx-mega { font-size: clamp(40px, 6.4vw, 96px) !important; }
+.gx-count b, .pfx-meta .pfx-big dd, .svx-stage-num { font-size: clamp(28px, 3vw, 44px) !important; font-weight: 300 !important; }
+.gx-count span, .pfx-meta dt { font-size: 10px !important; letter-spacing: .06em !important; text-transform: uppercase; }
+.gx-head { margin-bottom: clamp(80px, 10vh, 120px) !important; }
+.view.gx .gx-page, #view-services .services-page.svx, #view-portfolio .pf-page.pfx { padding-top: clamp(130px, 16vh, 170px) !important; padding-bottom: 140px !important; }
+/* Repères « Chapitre 0x, » : petites capitales espacées au-dessus du titre */
+.gx-kick, .svx-kick, .pfx-ch-kick, .hm-head-sub .gx-kick { font-size: 10px !important; font-weight: 500 !important; letter-spacing: .14em !important; line-height: 1.4 !important; color: rgba(17,17,17,.5) !important; margin: 0 0 14px !important; }
+.gx-kick::after { width: 9px !important; height: 9px !important; vertical-align: 0 !important; }
+/* Titres de page et de section : petits, fins, sans capitales forcées */
+.view.gx .gx-main :is(.page-title, .ct-title, .drone-placeholder-title), #view-services .svx .svx-head-main .page-title, .view.px .page-title, .view.px .ct-title, #view-account .account-name { font-size: clamp(20px, 2vw, 28px) !important; font-weight: 400 !important; line-height: 1.2 !important; letter-spacing: -.015em !important; text-transform: none !important; max-width: 30ch; }
+.view.px h2:not(.page-title):not(.ct-title), .view.gx .about-card h2, .view.gx .collab-title, .view.gx .ct-extra h2, .hm-sec-t, .view.gx .pp-title, .view.gx .partner-cta-title, #view-home .home-paper :is(.cs-title, .advice-teaser-title, .testimonials-label), .gx-reel-k, .svx-kick, .pfx-ch-t, .pfx-next-t, .hm-claim { font-size: clamp(17px, 1.6vw, 22px) !important; font-weight: 400 !important; line-height: 1.25 !important; letter-spacing: -.01em !important; text-transform: none !important; }
+.hm-claim { font-size: clamp(20px, 2vw, 28px) !important; }
+/* Texte courant : 13 px, interligne aéré, encre douce */
+.view.gx :is(p, li, .page-sub, .ct-sub, .svcp-text, .accordion-content, .ct-info-value, .pp-lead, .pp-benefit-text, .about-card p), .view.px :is(p, li), #view-home .home-paper :is(p, .cs-lead, .reassure-text, .testi-text), .svx-pitch, .svx-td-items li { font-size: 13px !important; line-height: 1.75 !important; }
+.view.gx .ct-info-value { font-size: 14px !important; }
+/* Listes, index et accordéons : lignes fines, libellés modestes */
+.view.gx .accordion-trigger { --tf: 15px; font-size: 15px !important; font-weight: 400 !important; letter-spacing: -.005em !important; text-transform: none !important; padding: 18px 0 !important; }
+#view-partners.gx #partnersAccordion .accordion-trigger { --tf: 15px; font-size: 15px !important; font-weight: 400 !important; text-transform: none !important; }
+.svx-row { --tf: 20px; padding: 18px 0 22px !important; }
+.svx-name-t { font-size: 20px !important; font-weight: 400 !important; text-transform: none !important; letter-spacing: -.01em !important; }
+.pfx-row-t { font-size: 18px !important; font-weight: 400 !important; text-transform: none !important; }
+.pfx-row-n, .pfx-row-c, .pfx-row-y, .pfx-row-i { padding-top: 3px !important; }
+.hm-row-t { font-size: 20px !important; font-weight: 400 !important; text-transform: none !important; letter-spacing: -.01em !important; }
+.hm-row-n, .hm-row-c, .hm-row-p { padding-top: 4px !important; }
+.hm-row-p { font-size: 13px !important; }
+.hm-marquee-in a { font-size: clamp(28px, 4vw, 56px) !important; font-weight: 300 !important; text-transform: none !important; }
+.hm-marquee-in i { font-size: 18px !important; }
+.svx-td-price { font-size: clamp(30px, 3vw, 44px) !important; font-weight: 300 !important; }
+.svx-td-name { font-size: 18px !important; font-weight: 400 !important; }
+.view.gx .logo-item span { font-size: clamp(24px, 3vw, 40px) !important; font-weight: 300 !important; text-transform: none !important; }
+.view.gx .pp-stat-num, .view.gx .about-stat-n, #view-home .reassure-num, #view-account .pt-adv-big, #view-account .pt-hero-big { font-size: clamp(30px, 3vw, 44px) !important; font-weight: 300 !important; }
+#view-home .reassure-title, .view.gx .pp-benefit-title, .view.gx .pp-universe-name, .gx-uni-t { font-size: 15px !important; font-weight: 500 !important; }
+.view.gx .fgroup input:not([type=hidden]), .view.gx .fgroup textarea { font-size: 15px !important; font-weight: 400 !important; }
+.view.px-quiz .qstep-title { font-size: clamp(20px, 2.2vw, 30px) !important; font-weight: 400 !important; text-transform: none !important; }
+.view.px-quiz .cat-name { font-size: 16px !important; font-weight: 400 !important; text-transform: none !important; }
+/* Plus d'air entre les blocs */
+#view-home .home-paper .cs-slot, #view-home .home-paper .credentials-strip, #view-home .home-paper .testimonials-section, .hm-svc, .view.gx .trust-section, .view.gx .pp-hero, .view.gx .partner-cta, .view.gx .ct-extra, .view.gx .about-card, .svx .svc-assure { margin-top: clamp(110px, 14vh, 170px) !important; }
+.view.gx .bk-next, .svx .bk-next, #view-portfolio .bk-next, #view-home .home-paper .bk-next { margin-top: clamp(120px, 16vh, 190px) !important; }
+.pfx-ch { margin-top: clamp(120px, 16vh, 180px) !important; }
+@media (max-width: 760px) {
+  .gx-mega, .svx-mega, #view-portfolio .pfx .page-title { font-size: clamp(34px, 11vw, 48px) !important; }
+  .view.gx .gx-page, #view-services .services-page.svx, #view-portfolio .pf-page.pfx { padding-top: 110px !important; }
+  .gx-head { margin-bottom: 64px !important; }
+  #view-home .home-paper .cs-slot, #view-home .home-paper .credentials-strip, #view-home .home-paper .testimonials-section, .hm-svc, .view.gx .trust-section, .view.gx .pp-hero, .view.gx .partner-cta, .view.gx .ct-extra, .view.gx .about-card, .svx .svc-assure { margin-top: 90px !important; }
+  .svx-name-t, .hm-row-t { font-size: 17px !important; }
+  .svx-row { --tf: 17px; }
+}

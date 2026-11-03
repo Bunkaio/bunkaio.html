@@ -5778,7 +5778,8 @@ function gxFit(el){
   const avail = top.clientWidth - (count && getComputedStyle(count).position !== 'absolute' && innerWidth > 760 ? count.offsetWidth + 32 : 0);
   el.style.fontSize = '100px';
   const w = inner.scrollWidth || 1;
-  const cap = el.dataset.nocap ? 99999 : innerWidth > 760 ? Math.min(250, innerWidth * .2) : innerWidth * .3;
+  /* Mise en page éditoriale épurée : le mot de rubrique reste un titre, pas une affiche (le pied de page, nocap, garde toute la largeur). */
+  const cap = el.dataset.nocap ? 99999 : innerWidth > 760 ? Math.min(96, innerWidth * .065) : Math.min(48, innerWidth * .12);
   el.style.fontSize = Math.max(28, Math.min(cap, 100 * avail * .97 / w)) + 'px';
 }
 if (!window._gxFitRs) { window._gxFitRs = true; let to; addEventListener('resize', () => { clearTimeout(to); to = setTimeout(() => { const r = document.querySelector('.view.gx.active .gx-mega, #view-home.active #hmMega'); if (r) gxFit(r); const f = document.querySelector('.ft-mega'); if (f) gxFit(f); }, 120); }); }
