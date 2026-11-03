@@ -7242,3 +7242,23 @@ body[data-view="quiz"] .quiz-nav-btn svg { stroke: #111; }
   #view-home .hero-title .word, #view-home .hero-loc, #view-home .hero-line, #view-home .hero > .hero-start, #view-home .hero-access { animation: none !important; opacity: 1 !important; clip-path: none !important; filter: none !important; transform: none !important; }
 }
 #view-home .hero-title .word { font-size: clamp(52px, min(9.2vw, 12svh), 156px) !important; }
+
+/* ═══ Accueil : bas du haut de page (lieu, trait, boutons) restylé dans la DA (nov. 2026) — mêmes éléments ═══ */
+/* Lieu : repère éditorial — filets fins de part et d'autre, capitales serrées, numéro */
+#view-home .hero-loc { display: inline-flex; align-items: center; gap: 14px; font-family: 'Inter Tight', sans-serif; font-size: 11px !important; font-weight: 500 !important; letter-spacing: .06em !important; text-transform: uppercase; line-height: 1.5; text-align: center; padding: 0 !important; max-width: min(88vw, 520px); }
+#view-home .hero-loc::before, #view-home .hero-loc::after { display: none !important; }
+#view-home .hero-loc { display: block !important; border-top: 1px solid rgba(255,255,255,.7); padding-top: 10px !important; }
+/* Trait : un fil blanc de 1 px qui se déroule, terminé par un carré (plus de halo) */
+#view-home .hero-line { width: 1px !important; height: clamp(44px, 7vh, 72px) !important; margin: clamp(22px, 4vh, 38px) 0 !important; border-radius: 0 !important; background: rgba(255,255,255,.85) !important; box-shadow: none !important; }
+#view-home .hero-line::after { width: 7px !important; height: 7px !important; margin-left: -3px !important; bottom: -4px !important; border-radius: 0 !important; background: #fff !important; box-shadow: 0 0 0 4px rgba(214,201,247,.35) !important; }
+/* Bouton principal : angle droit, flèche qui avance */
+#view-home .hero > .hero-start { padding: 19px 28px !important; font-size: 14px !important; font-weight: 600 !important; letter-spacing: -.01em !important; }
+#view-home .hero > .hero-start::after { content: '→' !important; transition: transform .35s cubic-bezier(.2,.8,.2,1); }
+#view-home .hero > .hero-start:hover::after { transform: translateX(6px); }
+/* Accès client / partenaire : cadres carrés numérotés, texte blanc ; au survol, plein blanc */
+#view-home .hero-access-row { gap: 12px !important; margin-top: clamp(16px, 3vh, 26px) !important; counter-reset: hac; }
+#view-home .hero-access { counter-increment: hac; display: inline-flex; align-items: baseline; gap: 10px; border-radius: 0 !important; background: rgba(10,10,12,.3) !important; -webkit-backdrop-filter: blur(12px) saturate(1.2) !important; backdrop-filter: blur(12px) saturate(1.2) !important; border: 1px solid rgba(255,255,255,.75) !important; color: #fff !important; font-family: 'Inter Tight', sans-serif !important; font-size: 11px !important; font-weight: 600 !important; letter-spacing: .05em !important; padding: 13px 18px !important; transition: background .3s, color .3s, border-color .3s, transform .35s cubic-bezier(.2,.8,.2,1) !important; }
+#view-home .hero-access::before { content: counter(hac, decimal-leading-zero); font-size: 9px; font-weight: 500; letter-spacing: 0; opacity: .7; }
+#view-home .hero-access:hover, #view-home .hero-access:focus-visible, #view-home .hero-access:active { background: #fff !important; color: #111 !important; border-color: #fff !important; transform: translateY(-2px); }
+#view-home .hero-access:hover::before { opacity: .6; }
+#view-home .hero-loc { max-width: min(78vw, 480px) !important; margin-left: auto !important; margin-right: auto !important; }
