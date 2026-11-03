@@ -7359,3 +7359,6 @@ html[lang="en"] :is(#view-home .credentials-strip, .art-cred) .cred-body::before
   :is(#view-home .credentials-strip, .art-cred).cred-anim :is(.cred-avatar img, .cred-cap, .cred-lead, .cred-mini > *, .cred-faq-link) { opacity: 1 !important; clip-path: none !important; filter: none !important; }
   :is(#view-home .credentials-strip, .art-cred).cred-anim .cred-mini::after { transform: none !important; }
 }
+/* « Partager mon expérience » (accueil) : le bouton était resté invisible (animation d'apparition coupée sans opacité) */
+#view-home .home-paper .testi-share-row .hero-start { opacity: 1 !important; transform: none; }
+#view-home .home-paper .testi-share-row { text-align: left; }
