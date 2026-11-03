@@ -7262,3 +7262,36 @@ body[data-view="quiz"] .quiz-nav-btn svg { stroke: #111; }
 #view-home .hero-access:hover, #view-home .hero-access:focus-visible, #view-home .hero-access:active { background: #fff !important; color: #111 !important; border-color: #fff !important; transform: translateY(-2px); }
 #view-home .hero-access:hover::before { opacity: .6; }
 #view-home .hero-loc { max-width: min(78vw, 480px) !important; margin-left: auto !important; margin-right: auto !important; }
+
+/* ═══ Constellation des 5 publics, refonte DA (nov. 2026) : style « viseur » épuré ═══
+   Plus de lueurs ni d'étoiles scintillantes : traits blancs d'1 px nets, losange en pointillés, points carrés cerclés de noir,
+   et à chaque tour de cycle (10 s, inchangé) une mise au point d'appareil photo : cadre d'angles qui se resserre sur le point
+   (« verrouillage »), libellé en pastille noire, numéro rose. Les traits se tracent à l'apparition. */
+.hero-kicker .hk-b::before, .hero-kicker .hk-b::after { display: none !important; }
+.hero-kicker .hk-lines { animation: none !important; filter: none !important; }
+.hero-kicker .hk-lines line.ln, .hero-kicker .hk-lines circle { display: none !important; }
+.hero-kicker .hk-lines polyline { filter: none !important; stroke-linecap: butt !important; }
+.hero-kicker .hk-lines polyline:not(.f):not(.pl) { stroke: #fff !important; stroke-width: 1 !important; vector-effect: non-scaling-stroke; animation: hkDraw 1.4s cubic-bezier(.7,0,.2,1) 1.1s both !important; }
+.hero-kicker .hk-lines polyline.f { stroke: rgba(255,255,255,.55) !important; stroke-width: 1 !important; vector-effect: non-scaling-stroke; stroke-dasharray: .012 .012 !important; stroke-dashoffset: 0 !important; opacity: 0; animation: hkFadeIn 1.2s ease 2.2s forwards !important; }
+@keyframes hkFadeIn { to { opacity: 1; } }
+.hero-kicker .hk-lines polyline.pl { stroke: #e8c6c4 !important; stroke-width: 2 !important; vector-effect: non-scaling-stroke; opacity: 1 !important; }
+/* Points : carrés blancs cerclés de noir, sans halo */
+.hero-kicker .hk-w::before { width: 8px !important; height: 8px !important; left: -4px !important; top: -4px !important; border-radius: 0 !important; background: #fff !important; box-shadow: 0 0 0 1px #111 !important; animation: hkPop .6s cubic-bezier(.2,.7,.2,1) 1.6s both !important; }
+/* Mise au point : quatre angles qui se resserrent sur le point visé */
+.hero-kicker .hk-w::after { --c: 6px; --s: 1.5px; left: -15px !important; top: -15px !important; width: 30px !important; height: 30px !important; border: 0 !important; border-radius: 0 !important; color: #fff;
+  background: linear-gradient(currentColor, currentColor) left top / var(--c) var(--s), linear-gradient(currentColor, currentColor) left top / var(--s) var(--c),
+    linear-gradient(currentColor, currentColor) right top / var(--c) var(--s), linear-gradient(currentColor, currentColor) right top / var(--s) var(--c),
+    linear-gradient(currentColor, currentColor) left bottom / var(--c) var(--s), linear-gradient(currentColor, currentColor) left bottom / var(--s) var(--c),
+    linear-gradient(currentColor, currentColor) right bottom / var(--c) var(--s), linear-gradient(currentColor, currentColor) right bottom / var(--s) var(--c) !important;
+  background-repeat: no-repeat !important; box-shadow: none !important; opacity: 0; animation: hkLock 10s cubic-bezier(.2,.8,.2,1) var(--d) infinite !important; }
+@keyframes hkLock { 0% { opacity: 0; transform: scale(2.6) rotate(45deg); color: #fff; } 4% { opacity: 1; transform: scale(1) rotate(0); color: #fff; } 6% { color: #e8c6c4; transform: scale(.82); } 8%, 17% { opacity: 1; transform: scale(.9); color: #e8c6c4; } 22%, 100% { opacity: 0; transform: scale(.9); color: #e8c6c4; } }
+/* Libellés : pastille noire carrée au moment visé, numéro rose ; collimateur du libellé retiré (la mise au point est sur le point) */
+.hero-kicker .hk-b em::before { display: none !important; }
+.hero-kicker .hk-w em { padding: 4px 8px !important; }
+@keyframes hkFx { 0% { color: #0a0a0c; background-color: rgba(10,10,12,0); } 3%, 18% { color: #fff; background-color: #111; } 22%, 100% { color: #0a0a0c; background-color: rgba(10,10,12,0); } }
+.hero-kicker .hk-w em::after { color: inherit !important; }
+@media (prefers-reduced-motion: reduce) {
+  .hero-kicker .hk-lines polyline, .hero-kicker .hk-lines polyline.f { animation: none !important; opacity: 1 !important; stroke-dashoffset: 0 !important; }
+  .hero-kicker .hk-w::before { animation: none !important; opacity: 1 !important; }
+  .hero-kicker .hk-w::after { animation: none !important; opacity: 0 !important; }
+}
