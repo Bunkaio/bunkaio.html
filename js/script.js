@@ -3936,7 +3936,7 @@ function renderBrandingPage(){
       <div class="pb-insitu" id="pbInsitu" hidden></div>
       <p class="svcp-note"><strong>${t({fr:'Exemples de mises en situation', en:'Examples of real-work set-ups'})}</strong> ${t({fr:'(cas d\'usage illustratifs) :', en:'(illustrative use cases):'})}</p>
       ${chips(situations)}
-      <div class="svcp-cta-row">${dispo(t({fr:'Préparer mon shooting', en:'Prepare my shoot'}))}</div>
+      <div class="svcp-cta-row"><a class="cta-primary" href="/conseils/" data-nav="advice" data-track="lancement">${t({fr:'Préparer mon shooting', en:'Prepare my shoot'})}</a></div>
     </section>
 
     <section class="read-panel svcp-panel" id="formule-lancement">
