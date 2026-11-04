@@ -4957,8 +4957,41 @@ function hkReveal(){
   const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { k.classList.add('hk-in'); io.disconnect(); } }), { threshold: .35 });
   io.observe(k);
 }
+/* Accueil plus court (5 nov. 2026, demande de la propriétaire) : le bloc sur Aya et le panneau « Conseils photo » sont repliés en accordéons ; l'en-tête reste
+   visible (portrait + nom / titre du panneau), le contenu s'ouvre au clic. Contenu et animations d'origine conservés (jouées à l'ouverture). */
+function homeAcc(){
+  const home = document.getElementById('view-home'); if (!home) return;
+  const wrap = (el, id, head) => {
+    if (!el) return;
+    let acc = el.closest('.hm-acc');
+    if (!acc) {
+      acc = document.createElement('div'); acc.className = 'hm-acc'; acc.id = id;
+      el.parentNode.insertBefore(acc, el);
+      acc.innerHTML = '<button type="button" class="hm-acc-h" aria-expanded="false"></button><div class="hm-acc-body"><div class="hm-acc-in" inert></div></div>';
+      acc.querySelector('.hm-acc-in').appendChild(el);
+      const btn = acc.querySelector('.hm-acc-h'), inner = acc.querySelector('.hm-acc-in');
+      btn.addEventListener('click', () => {
+        const on = !acc.classList.contains('open');
+        acc.classList.toggle('open', on); btn.setAttribute('aria-expanded', String(on)); inner.inert = !on;
+        if (on) {
+          inner.querySelectorAll('.hm-pre').forEach(x => x.classList.add('hm-in'));
+          inner.querySelectorAll('.rv').forEach(x => x.classList.add('in'));
+          const c = inner.querySelector('.credentials-strip'); if (c) c.classList.add('cred-live');
+          const a = inner.querySelector('.advice-teaser'); if (a) a.classList.add('adv-live');
+          if (window.track) track('cta_click', 'accueil_accordeon_' + id);
+        }
+      });
+    }
+    acc.querySelector('.hm-acc-h').innerHTML = head;
+  };
+  const strip = home.querySelector('.credentials-strip');
+  const av = strip && strip.querySelector('.cred-avatar img');
+  wrap(strip, 'hmAccAya', `${av ? `<img class="hm-acc-ph" data-aya src="${av.getAttribute('src')}" alt="">` : ''}<span class="hm-acc-t"><small>${t({fr:'Le studio · N° 01', en:'The studio · No. 01'})}</small><b>Aya Nascimento</b><em>${t({fr:'Photographe portraitiste · fondatrice de BUNKAIO', en:'Portrait photographer · founder of BUNKAIO'})}</em></span><span class="hm-acc-pm" aria-hidden="true"></span>`);
+  wrap(document.getElementById('adviceTeaser'), 'hmAccAdv', `<span class="hm-acc-t"><small>${t({fr:'Conseils photo', en:'Photo advice'})}</small><b>${t({fr:'Bien préparer votre séance ou votre shooting', en:'Prepare your session or shoot'})}</b><em>${t({fr:'3 guides · à lire en 15 minutes en tout', en:'3 guides · 15 minutes to read in total'})}</em></span><span class="hm-acc-pm" aria-hidden="true"></span>`);
+  if (typeof applyAyaPortrait === 'function') applyAyaPortrait();
+}
 function hmInit(){
-  hkReveal();
+  hkReveal(); homeAcc();
   const home = document.getElementById('view-home'); if (!home) return;
   const paper = home.querySelector('.home-paper');
   const mega = document.getElementById('hmMega'); if (mega) gxMega(mega, mega.dataset[LANG] || mega.dataset.fr);
