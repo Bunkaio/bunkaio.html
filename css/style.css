@@ -7749,3 +7749,13 @@ a.lk-reel-it { cursor: pointer; }
   .gx-top .gx-count { margin-left: auto; text-align: right; }
   .gx-kick { font-size: 22px !important; margin-bottom: 4px; }
 }
+
+/* Accueil, haut de page (demande de la propriétaire, nov. 2026) : « Imaginez votre projet » centré sur le premier écran ;
+   la constellation des 5 publics se découvre en défilant, puis lieu, « Construire mon projet » et accès client / partenaire. */
+#view-home .hero { padding-top: 0 !important; }
+#view-home .hero-title { display: flex !important; flex-direction: column; align-items: center; }
+#view-home .hero-title .hero-words { order: 1; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; align-content: center; column-gap: .22em; min-height: calc(100svh - var(--nav-h, 67px)); padding-top: var(--nav-h, 67px); box-sizing: border-box; width: 100%; }
+#view-home .hero-title .hero-kicker { order: 2; margin-top: clamp(40px, 8vh, 90px) !important; margin-bottom: clamp(40px, 7vh, 80px) !important; }
+@media (max-width: 760px) {
+  #view-home .hero-title .hero-words { min-height: 100svh; padding-top: 0; }
+}
