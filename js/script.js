@@ -9637,3 +9637,18 @@ function warmServicesVideo(){
   const start = () => { mo.observe(document.body, { childList: true, subtree: true }); scan(); };
   if (document.body) start(); else document.addEventListener('DOMContentLoaded', start);
 })();
+
+/* Onglet périmé (5 nov. 2026) : un onglet resté ouvert (surtout sur iPhone) gardait d'anciens scripts après une mise à jour du site (liens et affichages cassés). Au retour sur l'onglet, la page se recharge si une nouvelle version est en ligne. */
+(function(){
+  const cur = (document.querySelector('script[src*="script.min.js"]') || {}).src || '';
+  const m = cur.match(/script\.min\.js\?v=([0-9a-f]+)/); if (!m || !window.fetch) return;
+  let last = 0;
+  const check = () => {
+    if (document.visibilityState !== 'visible' || Date.now() - last < 60000) return; last = Date.now();
+    fetch(location.pathname + location.search, { cache: 'no-store' }).then(r => r.ok ? r.text() : '').then(h => {
+      const n = h.match(/script\.min\.js\?v=([0-9a-f]+)/); if (n && n[1] !== m[1]) location.reload();
+    }).catch(() => {});
+  };
+  document.addEventListener('visibilitychange', check);
+  addEventListener('pageshow', check);
+})();
