@@ -264,7 +264,7 @@
     const host = document.getElementById('sections'); if (!host || $('.ed-btn-card')) return;
     const st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
     const card = document.createElement('div'); card.className = 'ed-btn-card';
-    card.innerHTML = '<div><b>✨ Éditeur visuel — modifier les images directement sur le site</b><span>Ouvre le vrai site, clique une photo, dépose ton fichier : tu vois le rendu en direct (ordinateur ou mobile) avant de publier. Plusieurs images à la fois, collage direct, conversion automatique. La liste complète des emplacements reste disponible plus bas.</span></div><button type="button">Ouvrir l\'éditeur</button>';
+    card.innerHTML = '<div><b>✨ Éditeur visuel — modifier les images directement sur le site</b><span>Ouvre le vrai site, clique une photo, dépose ton fichier : tu vois le rendu en direct (ordinateur ou mobile) avant de publier. Plusieurs images à la fois, collage direct, conversion automatique.</span></div><button type="button">Ouvrir l\'éditeur</button>';
     card.querySelector('button').onclick = () => open();
     if (document.documentElement.classList.contains('embed')) { const b2 = document.createElement('button'); b2.type = 'button'; b2.textContent = 'Plein écran dans un onglet ↗'; b2.style.cssText = 'margin-left:0;background:#fff;color:#111;border:1px solid #111'; b2.onclick = () => window.open('media.html', '_blank'); card.appendChild(b2); }
     host.parentNode.insertBefore(card, host);

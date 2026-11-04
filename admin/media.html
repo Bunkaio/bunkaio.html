@@ -176,6 +176,8 @@
   .ser-ph-head { font-size: 12px; font-weight: 600; margin: 14px 0 8px; }
   .ser-ph-head small { font-weight: 400; color: var(--grey); }
   .ser-ph { display: flex; flex-wrap: wrap; gap: 6px; }
+  .ser-ph-cat { width: 100%; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; margin: 10px 0 4px; }
+  .ser-ph-row { width: 100%; display: flex; flex-wrap: wrap; gap: 6px; }
   .ser-th { position: relative; width: 64px; height: 84px; border: 2px solid transparent; padding: 0; cursor: pointer; background: #eee; opacity: .45; transition: opacity .2s; }
   .ser-th.on { border-color: var(--black); opacity: 1; }
   .ser-th img { width: 100%; height: 100%; object-fit: cover; display: block; }
@@ -283,9 +285,9 @@
 <div class="page">
   <h2 class="page-title">Gérer les médias</h2>
   <p class="page-sub">
-    Glisse-dépose tes photos (et vidéos, tout en haut de page) directement sur chaque emplacement, ou clique dessus pour ouvrir le sélecteur de fichiers.<br>
-    Tout est uploadé en direct sur le site — aucune manipulation de code nécessaire. Les paramètres d'export sont indiqués à chaque emplacement.<br>
-    <em>Exceptions — ces quelques fichiers sont gérés directement dans le code du site (pas via ce panel) : les vidéos de fond de l'accueil (qualité d'origine + version allégée pour connexions lentes), le logo et le favicon (images/), le portrait d'Aya (images/about/). Dis-le moi directement si tu veux les changer, je m'en occupe.</em>
+    Importe ici les photos du <b>Portfolio</b>, compose les <b>séries</b> (photos choisies librement parmi tous les univers) et dépose les vidéos des rubriques en pause (replié en bas de page).<br>
+    Les autres photos du site (bannières, prestations, articles, portrait…) se changent dans l'<b>éditeur visuel</b> ci-dessous : clique la photo sur le vrai site et dépose ton fichier.<br>
+    <em>Gérés dans le code du site (pas via ce panel) : les vidéos de fond de l'accueil, le logo et le favicon. Dis-le-moi si tu veux les changer.</em>
   </p>
   <div id="sections"></div>
 </div>
@@ -294,54 +296,6 @@
 <script>
 const WORKER_BASE = 'https://bunkaio-quiz-stripe.bunkaio.workers.dev';
 const MEDIA_BASE  = WORKER_BASE + '/media';
-
-// ── Vidéos de fond plein écran ────────────────────────────────────────────────
-// Catégorie distincte des bannières photo ci-dessous : une vidéo déposée ici
-// prend automatiquement le relais des photos de bannière de la même rubrique
-// (repli silencieux sur les photos tant qu'aucune vidéo n'existe à ce chemin).
-// Pour donner une vidéo de fond à une nouvelle rubrique plus tard, ajoute une
-// entrée ici avec le même id que sa clé dans IMG (ex. 'drone' -> IMG.droneVideo)
-// — le reste (repli photo, activation) fonctionne automatiquement, sans autre
-// changement de code.
-const VIDEO_SECTIONS = [
-  {
-    id: 'services-video',
-    view: 'services',
-    label: 'Services — fond plein écran',
-    path: 'services/bg-video.mp4',
-    params: [
-      'Format vidéo : .mp4 (H.264)',
-      'Cadrage : paysage 16:9, 1920 × 1080 px minimum',
-      'Boucle courte et fluide, SANS piste audio (lue automatiquement en muet, en boucle) — 8 à 20 secondes idéalement',
-      'Qualité d\'abord : 8 à 15 Mo conviennent (20 Mo maximum). IMPORTANT : le fichier doit être « faststart » (commande ffmpeg indiquée en haut de cette rubrique), sinon il ne démarre qu\'une fois entièrement téléchargé',
-    ],
-  },
-  {
-    id: 'portfolio-video',
-    view: 'portfolio',
-    label: 'Portfolio — fond plein écran',
-    path: 'portfolio/bg-video.mp4',
-    params: [
-      'Format vidéo : .mp4 (H.264)',
-      'Cadrage : paysage 16:9, 1920 × 1080 px minimum',
-      'Boucle courte et fluide, SANS piste audio (lue automatiquement en muet, en boucle) — 8 à 20 secondes idéalement',
-      'Qualité d\'abord : 8 à 15 Mo conviennent (20 Mo maximum). IMPORTANT : le fichier doit être « faststart » (commande ffmpeg indiquée en haut de cette rubrique), sinon il ne démarre qu\'une fois entièrement téléchargé',
-    ],
-  },
-  {
-    id: 'devis-video',
-    view: 'services',
-    label: 'Services — illustration "Devis & déroulé" (vidéo optionnelle)',
-    path: 'devis/illustration-video.mp4',
-    params: [
-      'Optionnelle : remplace automatiquement l\'illustration fixe du même onglet dès qu\'un fichier existe ici',
-      'Format vidéo : .mp4 (H.264)',
-      'Cadrage : paysage 9:7, même cadrage que l\'illustration fixe',
-      'Boucle courte et fluide, SANS piste audio — 8 à 15 secondes idéalement',
-      'Poids visé : 2 à 5 Mo (8 Mo maximum)',
-    ],
-  },
-];
 
 // ── Vidéos projets 4K Drone — rubrique en pause, repliée plus bas ──────────────
 // Une vidéo par projet, lancée en plein écran au clic sur sa vignette (voir
@@ -406,12 +360,6 @@ const SECTIONS = [
   // pas depuis ce panel. L'ancienne bande d'images défilante a été retirée.
 
   // ── Devis (questionnaire) ────────────────────────────────────────────────
-  {
-    id: 'quiz-hero',
-    title: '📝 Devis — bannière en haut de page',
-    desc: '2560 × 1440 px, paysage 16:9 (≤ 450 Ko). Depuis la refonte, le devis est sur fond papier, sans photo de fond : cet emplacement n\'est plus affiché (conservé pour plus tard).',
-    slots: [{ path: 'hero/quiz-1.webp', label: 'Photo bannière' }],
-  },
 
   // ── Parcours prestations (accueil) + filtre catégorie (Services) + formulaire ──
   {
@@ -611,15 +559,6 @@ const DISABLED_SECTIONS = [
       { path: 'services/cuisine.webp', label: 'Cuisines' },
       { path: 'services/piscine.webp', label: 'Piscines' },
       { path: 'services/artisan.webp', label: 'Artisanat' },
-    ],
-  },
-  {
-    id: 'drone-hero',
-    title: '🚁 4K Drone — bannière en haut de page',
-    desc: '2560 × 1440 px, paysage 16:9 (≤ 450 Ko). Rubrique « En cours de réalisation » : depuis la refonte, la page affiche un viseur animé (pas de photo). Pas urgent.',
-    slots: [
-      { path: 'hero/drone-1.webp', label: 'Photo 1' },
-      { path: 'hero/drone-2.webp', label: 'Photo 2' },
     ],
   },
   {
@@ -1228,34 +1167,45 @@ async function serRender() {
         <label>Titre (EN)<input data-k="title.en" value="${serEsc(s.title && s.title.en)}" maxlength="90" placeholder="Ex. : Autumn lookbook"></label>
         <label>Client (facultatif)<input data-k="client" value="${serEsc(s.client)}" maxlength="80"></label>
         <label>Année<input data-k="year" value="${serEsc(s.year)}" maxlength="9" placeholder="2026"></label>
-        <label>Univers (catégorie des photos)<select data-k="cat">${PF_CATS.map((c) => `<option value="${c.id}"${c.id === s.cat ? ' selected' : ''}>${serEsc(c.label)}</option>`).join('')}</select></label>
+        <label>Univers principal (classement de la série)<select data-k="cat">${PF_CATS.map((c) => `<option value="${c.id}"${c.id === s.cat ? ' selected' : ''}>${serEsc(c.label)}</option>`).join('')}</select></label>
         <label class="ser-chk"><input type="checkbox" data-k="hidden"${s.hidden ? ' checked' : ''}> Masquer sur le site</label>
         <label class="ser-wide">Texte (FR, facultatif)<textarea data-k="text.fr" maxlength="400" rows="2">${serEsc(s.text && s.text.fr)}</textarea></label>
         <label class="ser-wide">Texte (EN, facultatif)<textarea data-k="text.en" maxlength="400" rows="2">${serEsc(s.text && s.text.en)}</textarea></label>
       </div>
-      <div class="ser-ph-head">Photos de la série <small>(clic = ajouter / retirer ; le numéro rose = la place de la photo dans la série ; aucune photo choisie = toutes les photos de l'univers)</small></div>
+      <div class="ser-ph-head">Photos de la série <small>(clic = ajouter / retirer, dans n'importe quel univers ; le numéro rose = la place de la photo dans la série ; aucune photo choisie = toutes les photos de l'univers de la série)</small></div>
       <div class="ser-ph" data-ph="${i}"></div>
     </div>`).join('');
   box.querySelectorAll('.ser-card').forEach((card) => {
     const i = +card.dataset.i;
     card.querySelectorAll('[data-k]').forEach((el) => el.addEventListener(el.type === 'checkbox' || el.tagName === 'SELECT' ? 'change' : 'input', () => {
-      const s = SER.list[i], k = el.dataset.k, v = el.type === 'checkbox' ? el.checked : el.value;
+      const s = SER.list[i], k = el.dataset.k, v = el.type === 'checkbox' ? el.checked : el.value, prev = s.cat;
       if (k.includes('.')) { const [a, b] = k.split('.'); s[a] = s[a] || { fr: '', en: '' }; s[a][b] = v; } else s[k] = v;
-      if (k === 'cat') { s.photos = []; serPaintPhotos(i); }
+      if (k === 'cat') { s.photos = (s.photos || []).map((t) => { const r = serRef({ cat: prev }, t); return r ? serTok(s, r.cat, r.n) : t; }); serPaintPhotos(i); }
       if (k === 'hidden') card.classList.toggle('is-hidden', v);
       serDirty(true);
     }));
     serPaintPhotos(i);
   });
 }
+/* Choix libre des photos (nov. 2026) : toutes les photos du Portfolio, tous univers confondus ; une photo d'un autre univers que celui de la série est enregistrée « univers:numéro ». */
+const serTok = (s, cat, n) => (cat === s.cat ? n : cat + ':' + n);
+const serRef = (s, tok) => { const m = String(tok).match(/^(?:([a-z-]+):)?(\d+)$/); return m ? { cat: m[1] || s.cat, n: +m[2] } : null; };
 async function serPaintPhotos(i) {
   const s = SER.list[i], box = document.querySelector(`.ser-ph[data-ph="${i}"]`); if (!box) return;
-  const nums = await serPhotos(s.cat);
-  if (!nums.length) { box.innerHTML = '<p class="section-desc">Aucune photo dans cet univers : ajoute-les d\'abord dans « Portfolio — Réalisations ».</p>'; return; }
-  const sel = s.photos || [];
-  box.innerHTML = nums.map((n) => { const k = sel.indexOf(n); return `<button type="button" class="ser-th${k >= 0 ? ' on' : ''}" onclick="serToggle(${i},${n})"><img loading="lazy" src="${WORKER_BASE}/media/portfolio/${s.cat}/${n}.webp" alt="">${k >= 0 ? `<span>${k + 1}</span>` : ''}</button>`; }).join('');
+  const cats = PF_CATS.map((c) => c.id);
+  const lists = await Promise.all(cats.map((c) => serPhotos(c)));
+  const sel = (s.photos || []).map((t) => String(t));
+  const html = cats.map((cat, ci) => {
+    const nums = lists[ci]; if (!nums.length) return '';
+    const label = (PF_CATS.find((c) => c.id === cat) || {}).label || cat;
+    return `<div class="ser-ph-cat">${serEsc(label)}</div><div class="ser-ph-row">` + nums.map((n) => {
+      const tok = String(serTok(s, cat, n)), k = sel.indexOf(tok);
+      return `<button type="button" class="ser-th${k >= 0 ? ' on' : ''}" onclick="serToggle(${i},'${cat}',${n})"><img loading="lazy" src="${WORKER_BASE}/media/portfolio/${cat}/${n}.webp" alt="">${k >= 0 ? `<span>${k + 1}</span>` : ''}</button>`;
+    }).join('') + '</div>';
+  }).join('');
+  box.innerHTML = html || '<p class="section-desc">Aucune photo dans le Portfolio : ajoute-les d\'abord dans « Portfolio — Réalisations ».</p>';
 }
-function serToggle(i, n) { const s = SER.list[i]; s.photos = s.photos || []; const k = s.photos.indexOf(n); if (k >= 0) s.photos.splice(k, 1); else s.photos.push(n); serPaintPhotos(i); serDirty(true); }
+function serToggle(i, cat, n) { const s = SER.list[i]; s.photos = s.photos || []; const tok = serTok(s, cat, n), k = s.photos.map(String).indexOf(String(tok)); if (k >= 0) s.photos.splice(k, 1); else s.photos.push(tok); serPaintPhotos(i); serDirty(true); }
 function serMove(i, d) { const j = i + d; if (j < 0 || j >= SER.list.length) return; [SER.list[i], SER.list[j]] = [SER.list[j], SER.list[i]]; serRender(); serDirty(true); }
 function serDel(i) { if (!confirm('Supprimer cette série ? (les photos ne sont pas supprimées)')) return; SER.list.splice(i, 1); serRender(); serDirty(true); }
 function serAdd() { if (!SER.loaded) { alert('Entre ton token admin d\'abord.'); return; } SER.list.push({ title: { fr: '', en: '' }, client: '', year: String(new Date().getFullYear()), cat: 'photo-part', photos: [], text: { fr: '', en: '' } }); serRender(); serDirty(true); }
@@ -1285,15 +1235,7 @@ function buildSeriesSection() {
 function buildUI() {
   const container = document.getElementById('sections');
 
-  // Vidéos de fond plein écran — catégorie distincte, en tête de page
-  container.appendChild(buildVideoSection(
-    '🎬 Vidéos de fond plein écran',
-    'Une vidéo déposée ici remplace automatiquement les photos de bannière de la même rubrique, partout sur le site — respecte les paramètres indiqués sous chaque emplacement pour un rendu net et un chargement rapide.',
-    VIDEO_SECTIONS
-  ));
-
-  // Slots fixes actifs
-  SECTIONS.forEach((section) => container.appendChild(buildSlotSection(section)));
+  /* Réduit à l'essentiel (5 nov. 2026) : Portfolio, séries, vidéos des rubriques en pause. Les autres photos du site se changent dans l'éditeur visuel (en haut de page). */
 
   // Portfolio — catégories actives
   container.appendChild(buildPfSection(

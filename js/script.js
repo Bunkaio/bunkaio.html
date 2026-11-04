@@ -5124,7 +5124,7 @@ function lkWorks(){
   const gen = (box._gen = (box._gen || 0) + 1);
   const go = () => {
     const plan = pfxPlan();
-    Promise.all(plan.map(c => loadPortfolioPhotos(c.cat, 24).then(list => ({ ...c, photos: c.nums ? c.nums.map(n => MEDIA_BASE + '/portfolio/' + c.cat + '/' + n + '.webp').filter(u => list.includes(u)) : list })))).then(chs => {
+    Promise.all(plan.map(c => pfxSeriesPhotos(c).then(photos => ({ ...c, photos })))).then(chs => {
       if (gen !== box._gen) return;
       chs = chs.filter(c => c.photos.length);
       if (!chs.length) { box.hidden = true; box.innerHTML = ''; return; }
@@ -5878,6 +5878,14 @@ function pfxPlan(){
   if (series.length) return series.map(s => ({ id: s.id || pfxSlug(t(s.title || {})), title: s.title ? (t(s.title) || s.title.fr || s.title.en || '') : '', client: s.client || '', year: s.year || '', cat: s.cat, nums: Array.isArray(s.photos) && s.photos.length ? s.photos : null, text: s.text ? (t(s.text) || s.text.fr || s.text.en || '') : '' }));
   return PF_CATS.map(c => ({ id: c.id, title: t(c.label), client: '', year: '', cat: c.id, nums: null, text: '' }));
 }
+/* Photos d'une série : numéros de l'univers de la série, ou « univers:numéro » pour une photo d'un autre univers (choix libre dans l'admin). */
+function pfxSeriesPhotos(c){
+  if (!c.nums) return loadPortfolioPhotos(c.cat, 24);
+  const refs = c.nums.map(n => { const m = String(n).match(/^(?:([a-z-]+):)?(\d+)$/); return m ? { cat: m[1] || c.cat, n: m[2] } : null; }).filter(Boolean);
+  const cats = [...new Set(refs.map(r => r.cat))];
+  return Promise.all(cats.map(k => loadPortfolioPhotos(k, 24).then(list => [k, list])))
+    .then(pairs => { const L = Object.fromEntries(pairs); return refs.map(r => MEDIA_BASE + '/portfolio/' + r.cat + '/' + r.n + '.webp').filter(u => (L[u.split('/portfolio/')[1].split('/')[0]] || []).includes(u)); });
+}
 const pfxCatLabel = id => { const c = PF_CATS.find(x => x.id === id); return c ? t(c.label) : ''; };
 function pfxIndexHtml(chs, loading){
   const cv = PFX.view === 'tiles';
@@ -5908,7 +5916,8 @@ function pfxSetView(v){
 }
 function pfxAlt(c, src, i){
   const num = parseInt((src.match(/\/(\d+)\.webp/) || [])[1], 10) || (i + 1);
-  const custom = IMG.portfolioAlt && IMG.portfolioAlt[c.cat] && IMG.portfolioAlt[c.cat][num - 1];
+  const scat = (src.match(/\/portfolio\/([a-z-]+)\//) || [])[1] || c.cat;
+  const custom = IMG.portfolioAlt && IMG.portfolioAlt[scat] && IMG.portfolioAlt[scat][num - 1];
   return custom || ((LANG === 'fr' ? 'Réalisation BUNKAIO — ' : 'BUNKAIO work — ') + (c.title || pfxCatLabel(c.cat)).toLowerCase() + ' (' + (i + 1) + '/' + c.photos.length + ')');
 }
 /* Rythme « lookbook » (nov. 2026, mélange Almira Kho × BUNKAIO) : après la photo d'ouverture, double page décalée (4 + 7), plein cadre, trio décalé. */
@@ -5989,10 +5998,7 @@ function renderPortfolioV2(){
   const gen = ++PFX.gen, plan = pfxPlan();
   idx.innerHTML = pfxIndexHtml(plan, true);
   pfxApplyGrid(); pfxMeta();
-  Promise.all(plan.map(c => loadPortfolioPhotos(c.cat, 24).then(list => {
-    const photos = c.nums ? c.nums.map(n => MEDIA_BASE + '/portfolio/' + c.cat + '/' + n + '.webp').filter(u => list.includes(u)) : list;
-    return { ...c, photos };
-  }))).then(chs => {
+  Promise.all(plan.map(c => pfxSeriesPhotos(c).then(photos => ({ ...c, photos })))).then(chs => {
     if (gen !== PFX.gen || !wrap.isConnected) return;
     PFX.chapters = chs.filter(c => c.photos.length);
     idx.innerHTML = PFX.chapters.length ? pfxIndexHtml(PFX.chapters, false) : '';
