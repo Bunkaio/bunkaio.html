@@ -1033,9 +1033,16 @@ function updateHeroScrollFx(){
   const wrap = document.getElementById('pageHeroWrap');
   if (!wrap) return;
   const heroH = window.innerHeight;
-  const fadeStart = heroH * 0.7;
-  const fadeRange = heroH * 0.3 || 1;
-  const progress = Math.min(Math.max((window.scrollY - fadeStart) / fadeRange, 0), 1);
+  let fadeStart = heroH * 0.7;
+  let fadeRange = heroH * 0.3 || 1;
+  let progress = Math.min(Math.max((window.scrollY - fadeStart) / fadeRange, 0), 1);
+  /* Accueil : le haut de page (titre, constellation, boutons) fait plus d'un écran ; la vidéo du haut reste donc derrière jusqu'à ce que la
+     vidéo « Le studio » arrive (déclencheur visible), puis les deux se fondent — plus de fond blanc entre les deux (nov. 2026). */
+  const trig = currentView === 'home' ? document.getElementById('homeClaimSection') : null;
+  if (trig && trig.offsetHeight) {
+    const tTop = trig.getBoundingClientRect().top;
+    progress = Math.min(Math.max((heroH * 0.9 - tTop) / (heroH * 0.35), 0), 1);
+  }
   wrap.style.opacity = String(1 - progress);
   wrap.style.visibility = progress >= 1 ? 'hidden' : 'visible';
 
