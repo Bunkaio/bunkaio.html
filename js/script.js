@@ -4883,36 +4883,24 @@ function hmInit(){
    où les photos défilent verticalement au rythme du défilement de la page (le bloc reste à l'écran le temps du défilé). */
 function lkReelHtml(o){
   const n = o.items.length;
+  const one = (it, i, dup) => {
+    const extra = dup ? ' aria-hidden="true" tabindex="-1"' : '';
+    const img = `<img loading="lazy" decoding="async" src="${it.src}" alt="${dup ? '' : escHtml(it.alt || '')}"${it.aya ? ' data-aya' : ''}>${it.cap ? `<span class="lk-reel-cap">${escHtml(it.cap)}</span>` : ''}`;
+    return it.href
+      ? `<a class="lk-reel-it" href="${it.href}" onclick="${it.click}" data-cursor="${escHtml(it.cursor || t({fr:'Voir', en:'View'}))}"${extra}>${img}</a>`
+      : `<button type="button" class="lk-reel-it" onclick="${it.click}" data-cursor="${escHtml(it.cursor || t({fr:'Voir', en:'View'}))}"${extra}${dup ? '' : ` aria-label="${escHtml(t({fr:'Agrandir', en:'Enlarge'}))} ${i + 1}/${n}"`}>${img}</button>`;
+  };
+  /* Les photos défilent seules de haut en bas, en boucle (liste doublée pour un défilé sans coupure) ; le bloc, lui, ne bouge pas. */
   return `<section class="lk-reel${o.cls ? ' ' + o.cls : ''}"${o.id ? ` id="${o.id}"` : ''} style="--n:${n}"${o.label ? ` aria-labelledby="${o.label}"` : ''}>
     <div class="lk-reel-stick">
-      <div class="lk-reel-txt">${o.left}<span class="lk-reel-c" aria-hidden="true"><b>01</b> / ${pfxNum(n)}</span></div>
-      <div class="lk-reel-frame"><div class="lk-reel-track">${o.items.map((it, i) => it.href
-        ? `<a class="lk-reel-it" href="${it.href}" onclick="${it.click}" data-cursor="${escHtml(it.cursor || t({fr:'Voir', en:'View'}))}"><img loading="lazy" decoding="async" src="${it.src}" alt="${escHtml(it.alt || '')}"${it.aya ? ' data-aya' : ''}>${it.cap ? `<span class="lk-reel-cap">${escHtml(it.cap)}</span>` : ''}</a>`
-        : `<button type="button" class="lk-reel-it" onclick="${it.click}" data-cursor="${escHtml(it.cursor || t({fr:'Voir', en:'View'}))}" aria-label="${escHtml(t({fr:'Agrandir', en:'Enlarge'}))} ${i + 1}/${n}"><img loading="lazy" decoding="async" src="${it.src}" alt="${escHtml(it.alt || '')}">${it.cap ? `<span class="lk-reel-cap">${escHtml(it.cap)}</span>` : ''}</button>`).join('')}</div></div>
+      <div class="lk-reel-txt">${o.left}<span class="lk-reel-c" aria-hidden="true">${pfxNum(n)} ${t({fr:'images', en:'images'})}</span></div>
+      <div class="lk-reel-frame"><div class="lk-reel-track">${o.items.map((it, i) => one(it, i, false)).join('')}${n > 1 ? o.items.map((it, i) => one(it, i, true)).join('') : ''}</div></div>
     </div>
   </section>`;
 }
-function lkReelLoop(){
-  if (window._lkReel) { lkReelUpd(); return; } window._lkReel = true;
-  let tick = false;
-  addEventListener('scroll', () => { if (!tick) { tick = true; requestAnimationFrame(() => { tick = false; lkReelUpd(); }); } }, { passive: true });
-  addEventListener('resize', lkReelUpd); lkReelUpd();
-}
-function lkReelUpd(){
-  if (REDUCED_MOTION) return;
-  const navh = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) || 67;
-  document.querySelectorAll('.view.active .lk-reel').forEach(r => {
-    const st = r.firstElementChild, tr = r.querySelector('.lk-reel-track'), fr = r.querySelector('.lk-reel-frame'); if (!st || !tr || !fr) return;
-    const rc = r.getBoundingClientRect(); if (rc.bottom < -50 || rc.top > innerHeight + 50) return;
-    const travel = Math.max(0, r.offsetHeight - st.offsetHeight);
-    const y = Math.min(travel, Math.max(0, navh - rc.top));
-    st.style.transform = `translate3d(0,${y}px,0)`;
-    const n = tr.children.length, p = travel ? y / travel : 0;
-    tr.style.transform = `translate3d(0,${-p * (n - 1) * fr.clientHeight}px,0)`;
-    const c = r.querySelector('.lk-reel-c b'), k = Math.min(n, Math.round(p * (n - 1)) + 1);
-    if (c && c.textContent !== pfxNum(k)) c.textContent = pfxNum(k);
-  });
-}
+/* Plus de bloc épinglé au défilement (demande de la propriétaire) : le défilé des photos est une animation CSS. */
+function lkReelLoop(){}
+function lkReelUpd(){}
 function lkHome(chs){
   const box = document.getElementById('lkHome'); if (!box) return;
   const left = `<div class="lk-home-txt">
@@ -4950,7 +4938,7 @@ function lkWorks(){
       lkHome(chs);
       /* Photos plein écran avec petit texte (demande de la propriétaire, nov. 2026) : jusqu'à 3 séries, deux photos côte à côte quand c'est possible. */
       box._reels = chs.slice(0, 3).map((c, i) => ({ title: c.title, client: c.client, cat: c.cat, photos: c.photos, label: t({fr:'Série ', en:'Series '}) + pfxNum(i + 1) + ', ' }));
-      box.innerHTML = chs.slice(0, 3).map((c, i) => {
+      box.innerHTML = `<div class="lk-works-mh"><p class="lk-h">Works,<br>${t({fr:'Séries', en:'Series'})}</p><span>${t({fr:'Glisser', en:'Swipe'})} →</span></div><div class="lk-works-row">` + chs.slice(0, 3).map((c, i) => {
         const split = c.photos.length >= 2, cat = pfxCatLabel(c.cat);
         const meta = [cat !== c.title ? cat : '', c.client, c.year].filter(Boolean).map(escHtml).join(' · ');
         const ph = k => `<button type="button" class="lk-full-ph" data-cursor="${escHtml(t({fr:'Voir', en:'View'}))}" onclick="pfxOpen(document.getElementById('lkWorks')._reels[${i}],${k})"><img loading="lazy" decoding="async" src="${c.photos[k]}" alt="${escHtml(pfxAlt(c, c.photos[k], k))}"></button>`;
@@ -4959,7 +4947,7 @@ function lkWorks(){
             <p class="lk-cap-t">${escHtml(c.title)}</p>
             <a class="lk-cap-l" href="/portfolio/#serie-${escHtml(c.id)}" onclick="return navLink(event,'portfolio')">${t({fr:'Voir la série', en:'View the series'})}</a></div>
           <span class="lk-cap-n">${pfxNum(i + 1)} / ${pfxNum(Math.min(3, chs.length))}</span></div>`;
-      }).join('') + `<p class="lk-works-all"><a class="lk-cap-l" href="/portfolio/" onclick="return navLink(event,'portfolio')">${t({fr:'Toutes les séries', en:'All series'})} (${pfxNum(chs.length)})</a></p>`;
+      }).join('') + `</div><p class="lk-works-all"><a class="lk-cap-l" href="/portfolio/" onclick="return navLink(event,'portfolio')">${t({fr:'Toutes les séries', en:'All series'})} (${pfxNum(chs.length)})</a></p>`;
       box.hidden = false; bkScrambleWatch(box);
     });
   };

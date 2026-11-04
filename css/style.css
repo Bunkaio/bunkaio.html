@@ -7685,3 +7685,54 @@ a.lk-reel-it { cursor: pointer; }
   .view .pf-cta-left, .view .pf-cta-right { text-align: left !important; align-items: flex-start !important; }
   .view .pf-cta-btn { width: 100%; justify-content: center; }
 }
+
+/* Bobine v2 (demande de la propriétaire) : le bloc reste fixe dans la page, seules les photos défilent seules de haut en bas, en boucle */
+.lk-reel { height: auto !important; --fh: min(76svh, 760px); }
+.lk-reel-stick { height: auto !important; transform: none !important; }
+.lk-reel-frame { height: var(--fh); margin: 24px 24px 24px 0; }
+.lk-reel-track { position: static; display: flex; flex-direction: column; animation: lkReelDown calc(var(--n) * 4.2s) linear infinite; will-change: transform; }
+.lk-reel-frame:hover .lk-reel-track { animation-play-state: paused; }
+.lk-reel-it { height: var(--fh); flex: none; }
+@keyframes lkReelDown { from { transform: translate3d(0, -50%, 0); } to { transform: translate3d(0, 0, 0); } }
+.lk-reel-txt { padding-top: 24px; padding-bottom: 30px; }
+@media (max-width: 760px) {
+  .lk-reel { --fh: 62svh; }
+  .lk-reel-frame { margin: 0 14px 14px; }
+  .lk-reel-txt .lk-manifest { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lk-reel-track { animation: none; }
+  .lk-reel-frame { overflow-y: auto; }
+  .lk-reel-it[aria-hidden="true"] { display: none; }
+}
+
+/* Accueil « Works » : titre visible seulement sur mobile ; sur ordinateur, inchangé (photos plein écran) */
+.lk-works-mh { display: none; }
+.lk-works-row { display: flex; flex-direction: column; gap: 8px; }
+
+/* Mobile : plus de succession de photos plein écran ; cartes photo + légende lisible dessous */
+@media (max-width: 760px) {
+  .lk-works-mh { display: flex; justify-content: space-between; align-items: flex-end; padding-top: 10px; border-top: 10px solid #111; margin-bottom: 14px; }
+  .lk-works-mh .lk-h { font-size: 28px; }
+  .lk-works-mh span { font-size: 11px; color: rgba(17,17,17,.55); }
+  .lk-works-row { flex-direction: row; overflow-x: auto; scroll-snap-type: x mandatory; gap: 12px; margin: 0 -20px; padding: 0 20px 6px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .lk-works-row::-webkit-scrollbar { display: none; }
+  #view-home .home-paper > .lk-works .lk-full, .lk-works-row .lk-full { flex: 0 0 82%; scroll-snap-align: start; margin-left: 0 !important; }
+  :is(.lk-works-row, #view-portfolio .lk-ch) > .lk-full { width: auto; height: auto !important; min-height: 0; max-height: none; margin-left: 0; display: flex !important; flex-direction: column; background: transparent; color: #111; overflow: visible; }
+  :is(.lk-works-row, #view-portfolio .lk-ch) > .lk-full::after { display: none; }
+  :is(.lk-works-row, #view-portfolio .lk-ch) > .lk-full .lk-full-ph { aspect-ratio: 4 / 5; height: auto; }
+  :is(.lk-works-row, #view-portfolio .lk-ch) > .lk-full .lk-full-ph + .lk-full-ph { display: none; }
+  :is(.lk-works-row, #view-portfolio .lk-ch) > .lk-full .lk-cap-box { position: static; max-width: none; padding: 12px 0 0; color: #111; gap: 4px; }
+  :is(.lk-works-row, #view-portfolio .lk-ch) > .lk-full .lk-cap-k { color: rgba(17,17,17,.55); opacity: 1; }
+  :is(.lk-works-row, #view-portfolio .lk-ch) > .lk-full .lk-cap-t { color: #111; font-style: normal; font-size: 22px; font-weight: 600; letter-spacing: -.03em; text-transform: uppercase; line-height: 1; }
+  :is(.lk-works-row, #view-portfolio .lk-ch) > .lk-full .lk-cap-m { color: rgba(17,17,17,.7); opacity: 1; }
+  :is(.lk-works-row, #view-portfolio .lk-ch) > .lk-full .lk-cap-l { color: #111; margin-top: 4px; }
+  :is(.lk-works-row, #view-portfolio .lk-ch) > .lk-full .lk-cap-n { position: absolute; top: 10px; right: 10px; bottom: auto; color: #fff; background: rgba(17,17,17,.55); padding: 3px 6px; }
+  #view-portfolio .lk-ch > .lk-full { border-top: 10px solid #111; padding-top: 12px; position: relative; }
+  #view-portfolio .lk-ch > .lk-full .lk-cap-n { top: 22px; }
+  /* Grandes photos de la grille : à la largeur de la page, pas en plein écran */
+  #view-portfolio .pfx-item.lk-w { width: auto; margin-left: 0; }
+  #view-portfolio .pfx-item.lk-w .pfx-open { height: auto; aspect-ratio: 4 / 5; min-height: 0; }
+  #view-portfolio .pfx-item.lk-w figcaption { position: static; color: rgba(17,17,17,.55); margin-top: 9px; }
+}
+@media (max-width: 760px) { .lk-works-row { scroll-padding-left: 20px; scroll-padding-right: 20px; } }
