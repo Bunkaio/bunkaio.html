@@ -7963,3 +7963,73 @@ body[data-view="quiz"] .quiz-nav-btn:hover, body[data-view="quiz"] .quiz-nav-btn
   .hero-kicker .hk-cap { top: -22px; font-size: 9px; }
 }
 @media (prefers-reduced-motion: reduce) { .hero-kicker .hk-b::before { animation: none !important; } }
+
+/* ==========================================================================
+   Pages prestation — mise en page épurée (4 nov. 2026) : sections à filet d'1 px qui se trace, titres numérotés en capitales qui se brouillent
+   puis se stabilisent, accordéons pour les blocs de lecture, chiffres clés à plat, listes à filets.
+   ========================================================================== */
+#view-service #servicePageContent { counter-reset: svs; font-family: 'Inter Tight', sans-serif; }
+#view-service .svcp-panel { position: relative; background: none !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; padding: 0 !important; margin: 0 !important; }
+#view-service .svcp-panel:not(.svcp-two):not(.svcp-lead-panel)::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 1px; background: #111; transform-origin: left; transform: scaleX(0); transition: transform 1.1s cubic-bezier(.7,0,.2,1); }
+#view-service .svcp-panel.in:not(.svcp-two)::before, #view-service .svcp-panel:not(.rv):not(.svcp-two)::before { transform: scaleX(1); }
+#view-service .svcp-panel:not(.svcp-two) { padding-top: 22px !important; margin-top: 72px !important; }
+#view-service .svcp-panel.svcp-two { margin-top: 72px !important; display: grid; grid-template-columns: 1fr 1fr; gap: 0 40px; align-items: start; }
+#view-service .svcp-panel > h2, #view-service .svcp-two > div > h2 { margin: 0 0 16px !important; font: 600 clamp(24px, 3vw, 40px)/.98 'Inter Tight', sans-serif !important; letter-spacing: -.035em !important; text-transform: uppercase; color: #111 !important; counter-increment: svs; }
+#view-service .svcp-panel h2::after { display: none !important; }
+#view-service .svcp-panel > h2::before { content: counter(svs, decimal-leading-zero); display: inline-block; margin-right: 14px; font-size: 11px; font-weight: 500; letter-spacing: .04em; vertical-align: .95em; color: rgba(17,17,17,.5); }
+#view-service .svcp-text { font-size: 14px !important; line-height: 1.7 !important; color: rgba(17,17,17,.74) !important; max-width: 70ch; }
+#view-service .svcp-text a { color: #111; font-weight: 500; }
+
+/* Titre de la page, en capitales qui se brouillent à l'arrivée */
+#view-service .page-title { font-size: clamp(28px, 4.2vw, 56px) !important; font-weight: 600 !important; font-style: normal !important; letter-spacing: -.04em !important; line-height: .96 !important; text-transform: uppercase !important; color: #111 !important; margin: 18px 0 18px !important; }
+#view-service .page-sub { font-size: 15px; line-height: 1.6; color: rgba(17,17,17,.7); max-width: 62ch; }
+
+/* Accordéons */
+#view-service .svcp-acc { position: relative; border-top: 1px solid #111 !important; padding-top: 0 !important; }
+#view-service .svcp-two > .svcp-acc { margin-top: 0 !important; }
+#view-service .svcp-acc > h2 { margin: 0 !important; counter-increment: svs; }
+#view-service .svcp-acc > h2::before { display: none; }
+#view-service .svcp-panel.svcp-acc::before { display: none; }
+.svcp-acc-h { display: grid; grid-template-columns: 34px 1fr 26px; align-items: baseline; width: 100%; text-align: left; background: none; border: 0; padding: 18px 0 16px; cursor: pointer; font: inherit; color: inherit; text-transform: inherit; letter-spacing: inherit; }
+.svcp-acc-h::before { content: counter(svs, decimal-leading-zero); font-size: 11px; font-weight: 500; letter-spacing: .04em; color: rgba(17,17,17,.5); }
+.svcp-acc-h .bk-scramble { transition: transform .45s cubic-bezier(.2,.8,.2,1); display: inline-block; }
+.svcp-acc-h:hover .bk-scramble, .svcp-acc-h:focus-visible .bk-scramble { transform: translateX(8px); }
+.svcp-acc-h:focus-visible { outline: 2px solid #111; outline-offset: 4px; }
+.svcp-acc-pm { position: relative; width: 14px; height: 14px; justify-self: end; align-self: center; }
+.svcp-acc-pm::before, .svcp-acc-pm::after { content: ''; position: absolute; left: 0; top: 6.5px; width: 14px; height: 1px; background: #111; transition: transform .45s cubic-bezier(.2,.8,.2,1); }
+.svcp-acc-pm::after { transform: rotate(90deg); }
+.svcp-acc.open .svcp-acc-pm::after { transform: rotate(0); }
+.svcp-acc-body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .6s cubic-bezier(.2,.8,.2,1); }
+.svcp-acc.open .svcp-acc-body { grid-template-rows: 1fr; }
+.svcp-acc-in { overflow: hidden; min-height: 0; padding-left: 34px; opacity: 0; transform: translateY(10px); transition: opacity .5s ease .12s, transform .6s cubic-bezier(.2,.8,.2,1) .12s; }
+.svcp-acc.open .svcp-acc-in { opacity: 1; transform: none; padding-bottom: 22px; }
+
+/* Chiffres clés à plat */
+#view-service .pb-keys { gap: 0 28px; margin: 10px 0 0; }
+#view-service .pb-keys li { background: none !important; border: 0 !important; border-top: 1px solid #111 !important; border-radius: 0 !important; box-shadow: none !important; padding: 14px 0 12px !important; }
+#view-service .pb-keys .pb-ico { display: none !important; }
+#view-service .pb-keys b { font: 600 clamp(26px, 3.4vw, 44px)/1 'Inter Tight', sans-serif !important; letter-spacing: -.04em !important; }
+#view-service .pb-keys small { font-size: 10.5px; letter-spacing: .06em; color: rgba(17,17,17,.55); }
+
+/* Listes à filets */
+#view-service .value-grid { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 0 40px; counter-reset: vg; margin-top: 4px; }
+#view-service .value-grid li { counter-increment: vg; position: relative; border-top: 1px solid rgba(17,17,17,.2); padding: 14px 0 16px 34px; }
+#view-service .value-grid li::before { content: counter(vg, decimal-leading-zero); position: absolute; left: 0; top: 17px; font-size: 10px; color: rgba(17,17,17,.45); }
+#view-service .value-grid b { text-transform: uppercase; letter-spacing: -.01em; font-size: 13px; }
+#view-service .value-grid span { color: rgba(17,17,17,.7); }
+#view-service .svcp-two .about-steps { display: block; counter-reset: st; margin: 0; padding: 0; list-style: none; }
+#view-service .svcp-two .about-steps li { counter-increment: st; position: relative; display: block; background: none !important; border: 0 !important; border-top: 1px solid rgba(17,17,17,.2) !important; border-radius: 0 !important; padding: 12px 0 14px 34px !important; font-size: 13.5px; line-height: 1.55; color: rgba(17,17,17,.78); }
+#view-service .svcp-two .about-steps li::before { content: counter(st, decimal-leading-zero); position: absolute; left: 0; top: 14px; font-size: 10px; color: rgba(17,17,17,.45); width: auto; height: auto; background: none; }
+#view-service .svcp-two .about-steps li > * { max-width: none; }
+
+@media (max-width: 760px) {
+  #view-service .svcp-panel:not(.svcp-two) { margin-top: 52px !important; }
+  #view-service .svcp-panel.svcp-two { grid-template-columns: 1fr; margin-top: 52px !important; }
+  #view-service .svcp-two > .svcp-acc + .svcp-acc { border-top: 1px solid rgba(17,17,17,.2) !important; }
+  .svcp-acc-in { padding-left: 0; }
+  #view-service .pb-keys { grid-template-columns: 1fr 1fr; gap: 0 18px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .svcp-acc-body, .svcp-acc-in, .svcp-acc-pm::before, .svcp-acc-pm::after { transition: none !important; }
+  #view-service .svcp-panel::before { transition: none !important; transform: scaleX(1) !important; }
+}

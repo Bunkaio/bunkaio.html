@@ -3807,7 +3807,41 @@ function renderServicePage(catId){
   renderAccordionInto('servicePageFaq', faq.map(f => ({ title: f.q, body: f.a })), { exclusive: true, closed: true });
   renderClientSpotlights();
   liveOnView(el, '#pbKeys');
+  svcpEnhance(el, { accordions: true });
   serviceBgSync(catId);
+}
+
+/* Pages prestation « épurées » (4 nov. 2026, demande de la propriétaire) : titres animés (brouillage → net, écho au survol), sections numérotées
+   à filet qui se trace, et accordéons pour les blocs de lecture (Entrepreneurs, Ce que BUNKAIO apporte, Comment ça se passe, La photographe).
+   Le contenu reste dans la page (replié, pas retiré) ; formules, tarifs et FAQ restent ouverts. Appelée à la fin de chaque rendu. */
+function svcpEnhance(el, opt){
+  if (!el) return; opt = opt || {};
+  const scr = h => { if (!h || h.querySelector('.bk-scramble')) return; const txt = h.textContent.trim(); h.innerHTML = `<span class="bk-scramble bk-echo" data-text="${escHtml(txt)}">${escHtml(txt)}</span>`; };
+  scr(el.querySelector('h1.page-title'));
+  el.querySelectorAll('.svcp-panel h2').forEach(scr);
+  if (opt.accordions) {
+    el.querySelectorAll('.svcp-entrepreneurs, .value-panel, .svcp-two > div').forEach((box, i) => {
+      const h2 = box.querySelector(':scope > h2'); if (!h2 || box.classList.contains('svcp-acc')) return;
+      const id = 'svcpAcc' + i;
+      const open = i === 0;
+      box.classList.add('svcp-acc'); if (open) box.classList.add('open');
+      const rest = []; let n = h2.nextSibling; while (n) { rest.push(n); n = n.nextSibling; }
+      const body = document.createElement('div'); body.className = 'svcp-acc-body'; body.id = id;
+      const inner = document.createElement('div'); inner.className = 'svcp-acc-in'; rest.forEach(x => inner.appendChild(x));
+      if (!open) inner.inert = true;
+      body.appendChild(inner); box.appendChild(body);
+      const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'svcp-acc-h'; btn.setAttribute('aria-expanded', String(open)); btn.setAttribute('aria-controls', id);
+      while (h2.firstChild) btn.appendChild(h2.firstChild);
+      const pm = document.createElement('span'); pm.className = 'svcp-acc-pm'; pm.setAttribute('aria-hidden', 'true'); btn.appendChild(pm);
+      h2.appendChild(btn);
+      btn.addEventListener('click', () => {
+        const on = !box.classList.contains('open');
+        box.classList.toggle('open', on); btn.setAttribute('aria-expanded', String(on)); inner.inert = !on;
+        if (window.track) track('cta_click', 'prestation_accordeon_' + (i + 1));
+      });
+    });
+  }
+  if (typeof bkScrambleWatch === 'function') bkScrambleWatch(el);
 }
 
 /* Chiffres clés en tête de chaque page de prestation (même présentation que la page Personal Branding) :
@@ -4027,6 +4061,7 @@ function renderBrandingPage(){
     io.observe(box);
   });
   initReassureLoop();
+  svcpEnhance(el, { accordions: false });
   serviceBgSync('branding');
   /* Photos in situ (admin média) : seules celles qui existent sont affichées ; aucune → la rangée reste masquée. */
   const insitu = document.getElementById('pbInsitu');
