@@ -34,7 +34,7 @@
 <link rel="icon" type="image/png" sizes="64x64" href="/images/favicon-64.png">
 <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
 <link rel="preload" href="fonts/dm-sans-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/style.min.css?v=bf75ddcc">
+<link rel="stylesheet" href="css/style.min.css?v=01ae8c2d">
 
 <script type="application/ld+json">
 {
@@ -483,14 +483,10 @@
     </div>
   </div>
 
-  <!-- Lookbook × BUNKAIO (nov. 2026) : ouverture en double page (Aya + manifeste) puis la première série du Portfolio (rendus par lkHome / lkWorks) -->
-  <section class="lk-home" id="lkHome" aria-labelledby="lkHomeT"></section>
-  <section class="lk-works" id="lkWorks" aria-label="Portfolio" hidden></section>
-
   <!-- Prestations : défilé géant + index avec aperçu photo qui suit la souris (rendus par renderHomeIndex) -->
   <section class="hm-svc" aria-labelledby="hmSvcT">
     <div class="hm-marquee" aria-hidden="true"><div class="hm-marquee-in" id="hmMarquee"></div></div>
-    <div class="hm-sec-head"><p class="gx-kick" id="hmSvcK">Index,</p><h2 class="hm-sec-t" id="hmSvcT"><span class="bk-echo bk-scramble" data-lang="services">Services</span></h2><a class="hm-sec-link" href="/services/" onclick="return navLink(event,'services')" id="hmSvcAll">Toutes les prestations ↗</a></div>
+    <div class="hm-sec-head"><p class="gx-kick" id="hmSvcK">Index,</p><h2 class="hm-sec-t" id="hmSvcT"><span class="bk-echo bk-scramble" data-lang="services">Services</span></h2><a class="hm-sec-link" href="/services/" onclick="return navLink(event,'services')" id="hmSvcAll">Toutes les prestations ↗︎</a></div>
     <div class="hm-index" id="hmIndex"></div>
     <div class="hm-preview" id="hmPreview" aria-hidden="true"><img alt=""><span></span></div>
   </section>
@@ -527,6 +523,10 @@
     </div>
     </div>
   </div>
+
+  <!-- Portfolio et projets (nov. 2026, après Aya, demande de la propriétaire) : bobine de photos qui défilent + séries (rendus par lkHome / lkWorks) -->
+  <section class="lk-home" id="lkHome" aria-labelledby="lkHomeT"></section>
+  <section class="lk-works" id="lkWorks" aria-label="Portfolio" hidden></section>
 
   <div class="home-mid-cta"><a class="cta-primary" href="/devis/" data-quiz="" data-track="accueil_milieu"><span data-lang="start">Construire mon projet</span></a></div>
 
@@ -879,27 +879,27 @@
           <img id="svcCatPhotoImg" alt="">
         </div>
         <div class="services-grid" id="servicesGrid"><!--snap--><div class="pfx-view svx-view" role="group" aria-label="Affichage"><button type="button" class="on" aria-pressed="true" onclick="svxSetView('list')">Liste</button><button type="button" class="" aria-pressed="false" onclick="svxSetView('tiles')">Planches</button></div><div class="svx-tiles"><button type="button" class="pfx-tile svx-tile" onclick="svxFromTile('photo-part')">
-      <img loading="lazy" decoding="async" src="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/services/photo-part.webp" alt="" onerror="this.remove()">
+      
       <span class="pfx-tile-n">01</span>
       <span class="pfx-tile-t"><span class="bk-echo" data-text="Séance photo — particuliers">Séance photo — particuliers</span></span>
       <span class="pfx-tile-c">dès 250 €</span></button><button type="button" class="pfx-tile svx-tile" onclick="svxFromTile('corporate')">
-      <img loading="lazy" decoding="async" src="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/services/corporate.webp" alt="" onerror="this.remove()">
+      
       <span class="pfx-tile-n">02</span>
       <span class="pfx-tile-t"><span class="bk-echo" data-text="Corporate &amp; Personal Branding">Corporate &amp; Personal Branding</span></span>
       <span class="pfx-tile-c">dès 250 €</span></button><button type="button" class="pfx-tile svx-tile" onclick="svxFromTile('mode')">
-      <img loading="lazy" decoding="async" src="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/services/mode.webp" alt="" onerror="this.remove()">
+      
       <span class="pfx-tile-n">03</span>
       <span class="pfx-tile-t"><span class="bk-echo" data-text="Mode, agence et mannequins">Mode, agence et mannequins</span></span>
       <span class="pfx-tile-c">dès 490 €</span></button><button type="button" class="pfx-tile svx-tile" onclick="svxFromTile('commercial')">
-      <img loading="lazy" decoding="async" src="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/services/commercial.webp" alt="" onerror="this.remove()">
+      
       <span class="pfx-tile-n">04</span>
       <span class="pfx-tile-t"><span class="bk-echo" data-text="Commercial &amp; produits">Commercial &amp; produits</span></span>
       <span class="pfx-tile-c">dès 390 €</span></button><button type="button" class="pfx-tile svx-tile" onclick="svxFromTile('event')">
-      <img loading="lazy" decoding="async" src="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/services/event.webp" alt="" onerror="this.remove()">
+      
       <span class="pfx-tile-n">05</span>
       <span class="pfx-tile-t"><span class="bk-echo" data-text="Événementiel">Événementiel</span></span>
       <span class="pfx-tile-c">dès 420 €</span></button><button type="button" class="pfx-tile svx-tile" onclick="svxFromTile('lumen')">
-      <img loading="lazy" decoding="async" src="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/services/lumen.webp" alt="" onerror="this.remove()">
+      
       <span class="pfx-tile-n">06</span>
       <span class="pfx-tile-t"><span class="bk-echo" data-text="Lumen — Photobooth IA (location)">Lumen — Photobooth IA (location)</span></span>
       <span class="pfx-tile-c">Sur demande</span></button></div><div class="svx-index-head"><span>N°</span><span>Prestation</span><span>Formules</span><span>Livraison</span><span>À partir de</span></div><article class="svx-item" data-cat="photo-part" data-i="0" style="--d: 0s;">
@@ -914,7 +914,7 @@
       <div class="svx-pitch">
         <p>Pas besoin d'être à l'aise devant l'objectif : c'est notre rôle de vous mettre en confiance. Résultat, des photos qui vous ressemblent vraiment — livrées en 5 à 10 jours ouvrés selon la formule.</p>
         <p class="svx-for"><span>Pour qui</span>Extérieur · studio · solo · couple · groupe · book grossesse</p>
-        <a class="svx-more" href="/services/seance-photo-particuliers/" onclick="return navLink(event,'service','photo-part')">Détails et tarifs — Séance photo — particuliers <i>↗</i></a>
+        <a class="svx-more" href="/services/seance-photo-particuliers/" onclick="return navLink(event,'service','photo-part')">Détails et tarifs — Séance photo — particuliers <i>↗︎</i></a>
       </div>
       <div class="svx-tiers">
         <div class="svx-tabs" role="tablist" aria-label="Formules"><button type="button" role="tab" class="svx-tab" aria-selected="false" onclick="svxPickTier('photo-part','deco')"><span>Découverte</span><b>250€</b></button><button type="button" role="tab" class="svx-tab on" aria-selected="true" onclick="svxPickTier('photo-part','sig')"><span>Signature</span><b>420€</b></button><button type="button" role="tab" class="svx-tab" aria-selected="false" onclick="svxPickTier('photo-part','prem')"><span>Premium</span><b>650€</b></button><button type="button" role="tab" class="svx-tab" aria-selected="false" onclick="svxPickTier('photo-part','edit')"><span>Éditorial Bunkaio</span><b>1 090€</b></button></div>
@@ -937,7 +937,7 @@
     <button type="button" class="pfx-next svx-next" onclick="svxFromTile('corporate')">
     <span class="pfx-next-k">Prestation suivante</span>
     <span class="pfx-next-t"><span class="bk-echo" data-text="Corporate &amp; Personal Branding">Corporate &amp; Personal Branding</span></span>
-    <span class="pfx-next-img"><img loading="lazy" decoding="async" src="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/services/corporate.webp" alt="" onerror="this.parentNode.remove()"></span></button></div></div>
+    </button></div></div>
       </article><article class="svx-item" data-cat="corporate" data-i="1" style="--d: 0.06s;">
         <button type="button" class="svx-row" aria-expanded="false" aria-controls="svx-p-corporate" onclick="svxToggle('corporate')">
           <span class="svx-n">02</span>
@@ -950,7 +950,7 @@
       <div class="svx-pitch">
         <p>Une image professionnelle qui inspire confiance dès le premier regard. Le shooting peut se faire directement dans votre environnement de travail : vos locaux deviennent votre décor.</p>
         <p class="svx-for"><span>Pour qui</span>Entrepreneurs · indépendants · dirigeants · équipes</p>
-        <a class="svx-more" href="/services/portrait-professionnel-corporate/" onclick="return navLink(event,'service','corporate')">Détails et tarifs — Corporate — entreprises &amp; équipes <i>↗</i></a>
+        <a class="svx-more" href="/services/portrait-professionnel-corporate/" onclick="return navLink(event,'service','corporate')">Détails et tarifs — Corporate — entreprises &amp; équipes <i>↗︎</i></a>
       </div>
       <div class="svx-tiers">
         <div class="svx-tabs" role="tablist" aria-label="Formules"><button type="button" role="tab" class="svx-tab" aria-selected="false" onclick="svxPickTier('corporate','deco')"><span>Découverte</span><b>250€</b></button><button type="button" role="tab" class="svx-tab" aria-selected="false" onclick="svxPickTier('corporate','lanc')"><span>Lancement</span><b>320€</b></button><button type="button" role="tab" class="svx-tab on" aria-selected="true" onclick="svxPickTier('corporate','sig')"><span>Signature</span><b>450€</b></button><button type="button" role="tab" class="svx-tab" aria-selected="false" onclick="svxPickTier('corporate','prem')"><span>Premium</span><b>690€</b></button><button type="button" role="tab" class="svx-tab" aria-selected="false" onclick="svxPickTier('corporate','edit')"><span>Éditorial Bunkaio</span><b>1 090€</b></button></div>
@@ -973,7 +973,7 @@
     <button type="button" class="pfx-next svx-next" onclick="svxFromTile('mode')">
     <span class="pfx-next-k">Prestation suivante</span>
     <span class="pfx-next-t"><span class="bk-echo" data-text="Mode, agence et mannequins">Mode, agence et mannequins</span></span>
-    <span class="pfx-next-img"><img loading="lazy" decoding="async" src="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/services/mode.webp" alt="" onerror="this.parentNode.remove()"></span></button></div></div>
+    </button></div></div>
       </article><article class="svx-item" data-cat="mode" data-i="2" style="--d: 0.12s;">
         <button type="button" class="svx-row" aria-expanded="false" aria-controls="svx-p-mode" onclick="svxToggle('mode')">
           <span class="svx-n">03</span>
@@ -986,7 +986,7 @@
       <div class="svx-pitch">
         <p>Des visuels qui vendent, pas seulement qui plaisent. Chaque lookbook est pensé pour votre stratégie de marque, du shooting jusqu'à la publication.</p>
         <p class="svx-for"><span>Pour qui</span>Marques · agences · e-commerce · lookbook</p>
-        <a class="svx-more" href="/services/photographe-mode-mannequins/" onclick="return navLink(event,'service','mode')">Détails et tarifs — Mode, agence et mannequins <i>↗</i></a>
+        <a class="svx-more" href="/services/photographe-mode-mannequins/" onclick="return navLink(event,'service','mode')">Détails et tarifs — Mode, agence et mannequins <i>↗︎</i></a>
       </div>
       <div class="svx-tiers">
         <div class="svx-tabs" role="tablist" aria-label="Formules"><button type="button" role="tab" class="svx-tab" aria-selected="false" onclick="svxPickTier('mode','deco')"><span>Découverte</span><b>490€</b></button><button type="button" role="tab" class="svx-tab on" aria-selected="true" onclick="svxPickTier('mode','sig')"><span>Signature</span><b>990€</b></button><button type="button" role="tab" class="svx-tab" aria-selected="false" onclick="svxPickTier('mode','prem')"><span>Premium</span><b>1 690€</b></button><button type="button" role="tab" class="svx-tab" aria-selected="false" onclick="svxPickTier('mode','edit')"><span>Éditorial Bunkaio</span><b>2 490€</b></button></div>
@@ -1009,7 +1009,7 @@
     <button type="button" class="pfx-next svx-next" onclick="svxFromTile('commercial')">
     <span class="pfx-next-k">Prestation suivante</span>
     <span class="pfx-next-t"><span class="bk-echo" data-text="Commercial &amp; produits">Commercial &amp; produits</span></span>
-    <span class="pfx-next-img"><img loading="lazy" decoding="async" src="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/services/commercial.webp" alt="" onerror="this.parentNode.remove()"></span></button></div></div>
+    </button></div></div>
       </article><article class="svx-item" data-cat="commercial" data-i="3" style="--d: 0.18s;">
         <button type="button" class="svx-row" aria-expanded="false" aria-controls="svx-p-commercial" onclick="svxToggle('commercial')">
           <span class="svx-n">04</span>
@@ -1022,7 +1022,7 @@
       <div class="svx-pitch">
         <p>Des packshots nets et lumineux, prêts à convertir — sur votre site comme sur vos réseaux. La même exigence qu'une campagne, quel que soit le nombre de produits.</p>
         <p class="svx-for"><span>Pour qui</span>Packshots · produits · marques · entreprises</p>
-        <a class="svx-more" href="/services/photo-produits-packshots/" onclick="return navLink(event,'service','commercial')">Détails et tarifs — Commercial &amp; produits <i>↗</i></a>
+        <a class="svx-more" href="/services/photo-produits-packshots/" onclick="return navLink(event,'service','commercial')">Détails et tarifs — Commercial &amp; produits <i>↗︎</i></a>
       </div>
       <div class="svx-tiers">
         <div class="svx-tabs" role="tablist" aria-label="Formules"><button type="button" role="tab" class="svx-tab" aria-selected="false" onclick="svxPickTier('commercial','deco')"><span>Découverte</span><b>390€</b></button><button type="button" role="tab" class="svx-tab on" aria-selected="true" onclick="svxPickTier('commercial','sig')"><span>Signature</span><b>750€</b></button><button type="button" role="tab" class="svx-tab" aria-selected="false" onclick="svxPickTier('commercial','prem')"><span>Premium</span><b>1 390€</b></button><button type="button" role="tab" class="svx-tab" aria-selected="false" onclick="svxPickTier('commercial','edit')"><span>Éditorial Bunkaio</span><b>2 390€</b></button></div>
@@ -1045,7 +1045,7 @@
     <button type="button" class="pfx-next svx-next" onclick="svxFromTile('event')">
     <span class="pfx-next-k">Prestation suivante</span>
     <span class="pfx-next-t"><span class="bk-echo" data-text="Événementiel">Événementiel</span></span>
-    <span class="pfx-next-img"><img loading="lazy" decoding="async" src="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/services/event.webp" alt="" onerror="this.parentNode.remove()"></span></button></div></div>
+    </button></div></div>
       </article><article class="svx-item" data-cat="event" data-i="4" style="--d: 0.24s;">
         <button type="button" class="svx-row" aria-expanded="false" aria-controls="svx-p-event" onclick="svxToggle('event')">
           <span class="svx-n">05</span>
@@ -1058,7 +1058,7 @@
       <div class="svx-pitch">
         <p>Votre journée ne se rejoue pas deux fois. Nous restons discrets pour que vous puissiez la vivre pleinement, pendant que nous en capturons chaque instant.</p>
         <p class="svx-for"><span>Pour qui</span>Domaines · entreprises · réceptions</p>
-        <a class="svx-more" href="/services/photographe-evenementiel/" onclick="return navLink(event,'service','event')">Détails et tarifs — Événementiel <i>↗</i></a>
+        <a class="svx-more" href="/services/photographe-evenementiel/" onclick="return navLink(event,'service','event')">Détails et tarifs — Événementiel <i>↗︎</i></a>
       </div>
       <div class="svx-tiers">
         <div class="svx-tabs" role="tablist" aria-label="Formules"><button type="button" role="tab" class="svx-tab" aria-selected="false" onclick="svxPickTier('event','deco')"><span>Découverte</span><b>420€</b></button><button type="button" role="tab" class="svx-tab on" aria-selected="true" onclick="svxPickTier('event','sig')"><span>Signature</span><b>750€</b></button><button type="button" role="tab" class="svx-tab" aria-selected="false" onclick="svxPickTier('event','prem')"><span>Premium</span><b>1 290€</b></button><button type="button" role="tab" class="svx-tab" aria-selected="false" onclick="svxPickTier('event','edit')"><span>Éditorial Bunkaio</span><b>2 190€</b></button></div>
@@ -1081,7 +1081,7 @@
     <button type="button" class="pfx-next svx-next" onclick="svxFromTile('lumen')">
     <span class="pfx-next-k">Prestation suivante</span>
     <span class="pfx-next-t"><span class="bk-echo" data-text="Lumen — Photobooth IA (location)">Lumen — Photobooth IA (location)</span></span>
-    <span class="pfx-next-img"><img loading="lazy" decoding="async" src="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/services/lumen.webp" alt="" onerror="this.parentNode.remove()"></span></button></div></div>
+    </button></div></div>
       </article><article class="svx-item" data-cat="lumen" data-i="5" style="--d: 0.3s;">
         <button type="button" class="svx-row" aria-expanded="false" aria-controls="svx-p-lumen" onclick="svxToggle('lumen')">
           <span class="svx-n">06</span>
@@ -1094,7 +1094,7 @@
       <div class="svx-actions"><button type="button" class="svx-cta" onclick="svxQuiz('lumen')">Nous contacter <i>→</i></button></div><button type="button" class="pfx-next svx-next" onclick="svxFromTile('photo-part')">
     <span class="pfx-next-k">Prestation suivante</span>
     <span class="pfx-next-t"><span class="bk-echo" data-text="Séance photo — particuliers">Séance photo — particuliers</span></span>
-    <span class="pfx-next-img"><img loading="lazy" decoding="async" src="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/services/photo-part.webp" alt="" onerror="this.parentNode.remove()"></span></button></div></div>
+    </button></div></div>
       </article><!--/snap--></div>
       </div>
       <!-- Garanties : puces compactes, détail dépliable — le catalogue reste à portée de scroll -->
@@ -2358,6 +2358,6 @@
 <script src="config/articles.en.js?v=a5fd138b"></script>
 <script src="config/routes.js?v=f47dd51d"></script>
 <script src="config/media.js?v=3d72d6fd"></script>
-<script src="js/script.min.js?v=fc01f3e9"></script>
+<script src="js/script.min.js?v=e045a715"></script>
 </body>
 </html>

@@ -4688,7 +4688,7 @@ function svxPanelCore(c){
       <div class="svx-pitch">
         ${c.pitch ? `<p>${t(c.pitch)}</p>` : ''}
         <p class="svx-for"><span>${t({fr:'Pour qui', en:'For whom'})}</span>${t(c.tag)}</p>
-        <a class="svx-more" href="${servicePath(c.id)}" onclick="return navLink(event,'service','${c.id}')">${t({fr:'Détails et tarifs', en:'Details and rates'})} — ${navName(c)} <i>↗</i></a>
+        <a class="svx-more" href="${servicePath(c.id)}" onclick="return navLink(event,'service','${c.id}')">${t({fr:'Détails et tarifs', en:'Details and rates'})} — ${navName(c)} <i>↗︎</i></a>
       </div>
       <div class="svx-tiers">
         <div class="svx-tabs" role="tablist" aria-label="${escHtml(t({fr:'Formules', en:'Packages'}))}">${tiers.map(tr => `<button type="button" role="tab" class="svx-tab${tr.id === cur ? ' on' : ''}" aria-selected="${tr.id === cur}" onclick="svxPickTier('${c.id}','${tr.id}')"><span>${t(tr.name)}</span><b>${c.tiers[tr.id].price.toLocaleString('fr-FR')}€</b></button>`).join('')}</div>
@@ -4855,7 +4855,7 @@ function svxReel(it){
   loadPortfolioPhotos(c.id, 24).then(list => {
     if (!list.length || !box.isConnected) return;
     const k = bkReel({ title: t(c.name), cat: c.id, photos: list.slice(), label: t({fr:'Prestation ', en:'Service '}) + svxNum(CATS.indexOf(c) + 1) + ', ' });
-    box.insertAdjacentHTML('beforeend', `<p class="svx-reel-meta">${t({fr:'Planche-contact', en:'Contact sheet'})} · ${pfxNum(list.length)} ${t({fr:'images', en:'images'})} · <a href="${(seoRouteFor('portfolio') && routePath(seoRouteFor('portfolio'), LANG)) || '/portfolio/'}" onclick="return navLink(event,'portfolio')">${t({fr:'Voir le portfolio', en:'View the portfolio'})} ↗</a></p>` + bkStripHtml(k, list));
+    box.insertAdjacentHTML('beforeend', `<p class="svx-reel-meta">${t({fr:'Planche-contact', en:'Contact sheet'})} · ${pfxNum(list.length)} ${t({fr:'images', en:'images'})} · <a href="${(seoRouteFor('portfolio') && routePath(seoRouteFor('portfolio'), LANG)) || '/portfolio/'}" onclick="return navLink(event,'portfolio')">${t({fr:'Voir le portfolio', en:'View the portfolio'})} ↗︎</a></p>` + bkStripHtml(k, list));
     pfxStrips();
   });
 }
@@ -4903,7 +4903,7 @@ function hmInit(){
   const lbl = document.getElementById('hmCountLbl'); if (lbl) lbl.textContent = t({fr:'projets réalisés', en:'projects completed'});
   const k = document.getElementById('hmKick'); if (k) k.textContent = t({fr:'Chapitre 00,', en:'Chapter 00,'});
   const sk = document.getElementById('hmSvcK'); if (sk) sk.textContent = t({fr:'Index,', en:'Index,'});
-  const sa = document.getElementById('hmSvcAll'); if (sa) sa.textContent = t({fr:'Toutes les prestations ↗', en:'All services ↗'});
+  const sa = document.getElementById('hmSvcAll'); if (sa) sa.textContent = t({fr:'Toutes les prestations ↗︎', en:'All services ↗︎'});
   const sl = document.getElementById('hmScrollLbl'); if (sl) sl.textContent = t({fr:'DÉFILER', en:'SCROLL'});
   home.querySelectorAll('.hm-claim .bk-echo, #hmSvcT .bk-echo').forEach(e => { e.dataset.text = e.textContent.trim(); });
   renderHomeIndex(); lkHome(); lkWorks();
@@ -4939,24 +4939,22 @@ function lkReelUpd(){}
 function lkHome(chs){
   const box = document.getElementById('lkHome'); if (!box) return;
   const left = `<div class="lk-home-txt">
-      <span class="lk-vert" aria-hidden="true">N° 00 — BUNKAIO ⊹ ${new Date().getFullYear()}</span>
-      <div><h2 class="lk-h" id="lkHomeT"><span class="bk-scramble bk-echo" data-text="BUNKAIO,">BUNKAIO,</span><br>${t({fr:'Studio mobile', en:'Mobile studio'})}</h2>
+      <div><p class="lk-kick">Portfolio, <span aria-hidden="true">⊹</span> ${t({fr:'Projets', en:'Projects'})}</p><h2 class="lk-h" id="lkHomeT"><span class="bk-scramble bk-echo" data-text="WORKS,">WORKS,</span><br>${t({fr:'Séries', en:'Series'})}</h2>
       <p class="lk-meta"><span aria-hidden="true">⊹</span> ${t({fr:'Photographie · Occitanie · France', en:'Photography · Occitanie · France'})}</p></div>
       <div class="lk-home-bot">
-        <p class="lk-manifest">${t({fr:'Votre image, à la hauteur de vos ambitions. ', en:'Your image, as ambitious as you are. '})}${t({fr:'Un studio de photographie mobile pour les professionnels, les entrepreneurs et les mannequins : direction artistique, lumière de studio et retouche, là où vous travaillez.', en:'A mobile photography studio for professionals, entrepreneurs and models: art direction, studio lighting and retouching, wherever you work.'})}</p>
+        <p class="lk-manifest">${t({fr:'Des séries réalisées pour des marques, des entrepreneurs et des modèles : direction artistique, lumière de studio et retouche. Cliquez sur une image pour la projeter en grand.', en:'Series created for brands, entrepreneurs and models: art direction, studio lighting and retouching. Click an image to project it full size.'})}</p>
         <div class="lk-ctas"><a class="cta-primary" href="/devis/" onclick="goView('quiz');return false;" data-track="lookbook_accueil"><span data-lang="start">${t({fr:'Construire mon projet', en:'Build my project'})}</span></a><a class="lk-ghost" href="/portfolio/" onclick="return navLink(event,'portfolio')">${t({fr:'Voir le portfolio', en:'View the portfolio'})}</a></div>
       </div>
     </div>`;
-  /* Bobine : portrait d'Aya (→ À propos) puis les premières photos de chaque série du Portfolio. */
+  /* Bobine : les premières photos de chaque série du Portfolio, qui défilent dans le cadre. */
   const pics = [];
-  (chs || []).forEach(c => c.photos.slice(0, 2).forEach((src, k) => pics.push({ c, src, k })));
-  const sel = pics.slice(0, 7);
-  box._reel = { title: 'Portfolio', cat: '', photos: sel.map(x => x.src), label: 'BUNKAIO, ' };
-  const items = [{ href: '/a-propos/', click: "return navLink(event,'about')", src: '/images/about/aya-nascimento-photographe-en-studio.webp', aya: true, cursor: t({fr:'À propos', en:'About'}), alt: t({fr:'Aya Nascimento, photographe et fondatrice de BUNKAIO, en studio', en:'Aya Nascimento, photographer and founder of BUNKAIO, in the studio'}), cap: 'Aya Nascimento · ' + t({fr:'photographe, fondatrice', en:'photographer, founder'}) }]
-    .concat(sel.map((x, i) => ({ src: x.src, alt: pfxAlt(x.c, x.src, x.k), click: `pfxOpen(document.getElementById('lkHome')._reel,${i})`, cap: x.c.title })));
+  (chs || []).forEach(c => c.photos.slice(0, 3).forEach((src, k) => pics.push({ c, src, k })));
+  const sel = pics.slice(0, 8);
+  box._reel = { title: 'Portfolio', cat: '', photos: sel.map(x => x.src), label: 'Portfolio, ' };
+  if (sel.length < 2) { box.hidden = true; return; }
+  const items = sel.map((x, i) => ({ src: x.src, alt: pfxAlt(x.c, x.src, x.k), click: `pfxOpen(document.getElementById('lkHome')._reel,${i})`, cap: x.c.title }));
   box.outerHTML = lkReelHtml({ id: 'lkHome', cls: 'lk-reel-home', label: 'lkHomeT', left, items });
   const nb = document.getElementById('lkHome'); if (nb) nb._reel = box._reel;
-  if (typeof applyAyaPortrait === 'function') applyAyaPortrait();
   if (nb && typeof bkScrambleWatch === 'function') bkScrambleWatch(nb);
   lkReelLoop();
 }
@@ -4973,7 +4971,7 @@ function lkWorks(){
       lkHome(chs);
       /* Photos plein écran avec petit texte (demande de la propriétaire, nov. 2026) : jusqu'à 3 séries, deux photos côte à côte quand c'est possible. */
       box._reels = chs.slice(0, 3).map((c, i) => ({ title: c.title, client: c.client, cat: c.cat, photos: c.photos, label: t({fr:'Série ', en:'Series '}) + pfxNum(i + 1) + ', ' }));
-      box.innerHTML = `<div class="lk-works-mh"><p class="lk-h">Works,<br>${t({fr:'Séries', en:'Series'})}</p><span>${t({fr:'Glisser', en:'Swipe'})} →</span></div><div class="lk-works-row">` + chs.slice(0, 3).map((c, i) => {
+      box.innerHTML = `<div class="lk-works-mh"><span>${t({fr:'Les séries', en:'The series'})} (${pfxNum(Math.min(3, chs.length))})</span><span>${t({fr:'Glisser', en:'Swipe'})} →</span></div><div class="lk-works-row">` + chs.slice(0, 3).map((c, i) => {
         const split = c.photos.length >= 2, cat = pfxCatLabel(c.cat);
         const meta = [cat !== c.title ? cat : '', c.client, c.year].filter(Boolean).map(escHtml).join(' · ');
         const ph = k => `<button type="button" class="lk-full-ph" data-cursor="${escHtml(t({fr:'Voir', en:'View'}))}" onclick="pfxOpen(document.getElementById('lkWorks')._reels[${i}],${k})"><img loading="lazy" decoding="async" src="${c.photos[k]}" alt="${escHtml(pfxAlt(c, c.photos[k], k))}"></button>`;
@@ -4998,7 +4996,7 @@ function renderHomeIndex(){
       <span class="hm-row-n">${svxNum(i + 1)}</span>
       <span class="hm-row-t"><span class="bk-echo" data-text="${escHtml(t(c.name))}">${t(c.name)}</span></span>
       <span class="hm-row-c">${escHtml(t(c.tag))}</span>
-      <span class="hm-row-p">${from}<i>↗</i></span></a>`;
+      <span class="hm-row-p">${from}<i>↗︎</i></span></a>`;
   }).join('');
   if (mq) { const one = list.map(c => `<a href="${servicePath(c.id)}" onclick="return navLink(event,'service','${c.id}')" tabindex="-1">${escHtml(t(c.name))}</a><i>⊹</i>`).join(''); mq.innerHTML = one + one; }
   if (!('IntersectionObserver' in window) || REDUCED_MOTION) { box.querySelectorAll('.hm-row').forEach(r => r.classList.add('in')); return; }
@@ -5644,7 +5642,7 @@ function pfxIndexHtml(chs, loading){
       <span class="pfx-row-t"><span class="bk-echo" data-text="${escHtml(c.title)}">${escHtml(c.title)}</span>${c.client ? `<em>${escHtml(c.client)}</em>` : ''}</span>
       <span class="pfx-row-c">${escHtml(pfxCatLabel(c.cat))}</span>
       <span class="pfx-row-y">${escHtml(String(c.year || '—'))}</span>
-      <span class="pfx-row-i">${loading ? '··' : pfxNum((c.photos || []).length)}<span class="pfx-row-arrow" aria-hidden="true">↘</span></span>
+      <span class="pfx-row-i">${loading ? '··' : pfxNum((c.photos || []).length)}<span class="pfx-row-arrow" aria-hidden="true">↘︎</span></span>
     </a>`).join('') + `</div>`;
   const tiles = loading ? '' : `<div class="pfx-tiles">${chs.map((c, i) => `<a class="pfx-tile" href="#serie-${escHtml(c.id)}" data-cursor="${escHtml(t({fr:'Voir', en:'View'}))}" onclick="return pfxGo(event,'${escHtml(c.id)}')">
       <img loading="lazy" decoding="async" src="${c.photos[0]}" alt="">
@@ -5899,7 +5897,7 @@ function gxInit(v){
 /* Ce qui doit être refait après chaque rendu (onglets, accordéons) : numéros, étiquettes curseur, barres, titres brouillés. */
 function gxDecorate(root){
   root.querySelectorAll('.accordion-trigger').forEach(b => { b.dataset.cursor = b.getAttribute('aria-expanded') === 'true' ? t({fr:'Fermer', en:'Close'}) : t({fr:'Ouvrir', en:'Open'}); });
-  root.querySelectorAll('a.logo-link').forEach(a => { a.dataset.cursor = t({fr:'Visiter ↗', en:'Visit ↗'}); });
+  root.querySelectorAll('a.logo-link').forEach(a => { a.dataset.cursor = t({fr:'Visiter ↗︎', en:'Visit ↗︎'}); });
   root.querySelectorAll('.accordion-trigger > span:first-child').forEach(sp => { sp.classList.add('bk-echo'); sp.dataset.text = sp.dataset.raw != null ? sp.dataset.raw : sp.textContent; });
   root.querySelectorAll('button[type="submit"], .partner-cta-btn, .hero-start').forEach(b => b.classList.add('gx-mag'));
   root.querySelectorAll('.gx-copy').forEach(b => { b.dataset.cursor = t({fr:'Copier', en:'Copy'}); b.textContent = t({fr:'Copier', en:'Copy'}); b.onclick = gxCopy; });
@@ -6768,7 +6766,7 @@ function renderAccSeances(){
       <h3 class="ses-title">${escHtml(s.prestation || t({fr:'Séance photo BUNKAIO', en:'BUNKAIO photo session'}))}</h3>
       <dl class="ses-grid">
         ${row(t({fr:'Heure', en:'Time'}), s.heure ? escHtml(s.heure) + (s.duree ? ' · ' + t({fr:'durée ', en:'duration '}) + escHtml(s.duree) : '') : '')}
-        ${row(t({fr:'Lieu', en:'Location'}), s.lieu ? escHtml(s.lieu) + ` <a class="ses-link" href="${maps}" target="_blank" rel="noopener">${t({fr:'Itinéraire ↗', en:'Directions ↗'})}</a>` : '')}
+        ${row(t({fr:'Lieu', en:'Location'}), s.lieu ? escHtml(s.lieu) + ` <a class="ses-link" href="${maps}" target="_blank" rel="noopener">${t({fr:'Itinéraire ↗︎', en:'Directions ↗︎'})}</a>` : '')}
         ${past ? '' : row(t({fr:'À prévoir', en:'To bring'}), s.aPrevoir ? nl(s.aPrevoir) : '')}
         ${past ? '' : row(t({fr:'Accès et infos pratiques', en:'Access and practical info'}), s.acces ? nl(s.acces) : '')}
         ${row(t({fr:'Livraison estimée des photos', en:'Estimated photo delivery'}), delivery)}

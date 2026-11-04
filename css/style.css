@@ -7775,3 +7775,25 @@ a.lk-reel-it { cursor: pointer; }
 .cp-link:hover { color: #6e5aa8; }
 .cp-note { margin: 22px 0 0; padding: 12px 14px; font-size: 12px; line-height: 1.5; color: rgba(17,17,17,.7); border: 1px solid rgba(17,17,17,.2); }
 @media (max-width: 760px) { .cp-cols { grid-template-columns: 1fr; gap: 18px; } .cp-diff { margin-bottom: 40px; } }
+
+/* Accueil, ordre des blocs (nov. 2026) : réassurance → index des services → Votre projet centralisé → Aya → portfolio (bobine + séries) */
+#view-home .home-paper > .lk-reel-home { margin-top: 90px; }
+.lk-reel-home .lk-reel-txt { padding-left: 28px; }
+.lk-reel-home .lk-home-txt { padding-left: 0; }
+.lk-works-mh span:first-child { color: #111; font-weight: 600; }
+@media (max-width: 760px) {
+  #view-home .home-paper > .lk-reel-home { margin-top: 56px; }
+  .lk-reel-home .lk-reel-txt { padding-left: 14px; }
+  .lk-reel-home .lk-home-txt { gap: 0; }
+  #view-home .home-paper > .lk-works { margin-top: 28px; }
+}
+/* Écrans tactiles : le survol noir de l'index des services ne reste pas « collé » après un défilement ou un toucher */
+@media (hover: none) {
+  .hm-row:hover::after { transform: scaleY(0); }
+  .hm-row:hover, .hm-row:hover .hm-row-c, .hm-row:hover .hm-row-n { color: #111; }
+  .hm-row:hover .hm-row-n, .hm-row:hover .hm-row-c { color: var(--mute); }
+  .hm-row:hover .hm-row-p { color: #111; }
+  .hm-row:hover .hm-row-t { transform: none; }
+  .hm-row:hover .hm-row-p i { transform: none; }
+  .hm-row .bk-echo::after, .hm-row:hover .bk-echo::after { display: none !important; }
+}
