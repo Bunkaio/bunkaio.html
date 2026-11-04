@@ -4784,6 +4784,17 @@ function initSvxMega(){
   const el = document.getElementById('svxMega'); if (!el || el._ok) return; el._ok = true;
   el.innerHTML = [...el.textContent.trim()].map((ch, i) => `<span style="--i:${i}">${ch}</span>`).join('');
   requestAnimationFrame(() => el.classList.add('in'));
+  /* Taille calculée sur la largeur réelle de la colonne, lettres mesurées en gras (la graisse suit la souris) : le « S » final n'est plus coupé. */
+  const fit = () => {
+    const sp = [...el.children]; if (!el.clientWidth) return;
+    const keep = sp.map(x => x.style.fontWeight);
+    sp.forEach(x => { x.style.fontWeight = '900'; }); el.style.fontSize = '100px';
+    const w = sp.reduce((a, x) => a + x.getBoundingClientRect().width, 0) || 1;
+    sp.forEach((x, i) => { x.style.fontWeight = keep[i]; });
+    el.style.fontSize = Math.max(40, Math.min(innerWidth > 760 ? 196 : 110, 100 * el.clientWidth * .96 / w)) + 'px';
+  };
+  fit(); if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+  let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(fit, 120); });
   if (REDUCED_MOTION || !matchMedia('(hover: hover) and (pointer: fine)').matches) return;
   const spans = [...el.children];
   el.addEventListener('pointermove', e => { spans.forEach(s => { const r = s.getBoundingClientRect(); const d = Math.abs(e.clientX - (r.left + r.width / 2)); s.style.fontWeight = Math.round(300 + 600 * Math.max(0, 1 - d / 260)); }); });

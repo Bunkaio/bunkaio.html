@@ -7736,3 +7736,16 @@ a.lk-reel-it { cursor: pointer; }
   #view-portfolio .pfx-item.lk-w figcaption { position: static; color: rgba(17,17,17,.55); margin-top: 9px; }
 }
 @media (max-width: 760px) { .lk-works-row { scroll-padding-left: 20px; scroll-padding-right: 20px; } }
+
+/* Corrections d'affichage (captures du 4 nov. 2026) */
+/* Un seul ⊹ : celui du kicker « Chapitre 0x, » ; plus de second glyphe après le titre */
+.gx-kick + .page-title::after, .gx-kick + h1::after, .gx-kick + h2.page-title::after { display: none !important; }
+.gx-kick::after { vertical-align: .62em; margin-left: .18em; }
+/* Scène Services : rien ne dépasse du cadre */
+#svxStage { overflow: hidden; }
+/* Mobile : mot géant et compteur sur la même ligne quand ils tiennent, kicker plus petit que le titre */
+@media (max-width: 760px) {
+  .gx-top { flex-direction: row !important; flex-wrap: wrap; align-items: flex-end !important; justify-content: space-between; gap: 6px 16px !important; }
+  .gx-top .gx-count { margin-left: auto; text-align: right; }
+  .gx-kick { font-size: 22px !important; margin-bottom: 4px; }
+}
