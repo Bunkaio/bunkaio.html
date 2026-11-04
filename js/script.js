@@ -9585,3 +9585,14 @@ function warmServicesVideo(){
   const start = () => { mo.observe(document.body, { childList: true, subtree: true }); scan(); };
   if (document.body) start(); else document.addEventListener('DOMContentLoaded', start);
 })();
+
+/* Apparition des photos plein écran (`.lk-full`, 5 nov. 2026) : la photo se dévoile de bas en haut en se posant (zoom arrière lent), le petit texte monte ensuite. */
+(function(){
+  if (typeof IntersectionObserver === 'undefined' || (typeof REDUCED_MOTION !== 'undefined' && REDUCED_MOTION)) return;
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('fl-in'); io.unobserve(e.target); } }), { threshold: .12 });
+  let raf = 0;
+  const scan = () => { raf = 0; document.querySelectorAll('.lk-full:not([data-fl])').forEach(el => { el.dataset.fl = '1'; el.classList.add('fl-pre'); io.observe(el); }); };
+  const mo = new MutationObserver(() => { if (!raf) raf = requestAnimationFrame(scan); });
+  const start = () => { mo.observe(document.body, { childList: true, subtree: true }); scan(); };
+  if (document.body) start(); else document.addEventListener('DOMContentLoaded', start);
+})();
