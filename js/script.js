@@ -3565,7 +3565,7 @@ function renderDiscoverPage(){
       <span>${t({fr:'Découvrir chaque prestation', en:'Explore each service'})}</span>
     </div>
     <h1 data-pageh1 class="page-title">${t({fr:'Découvrir chaque prestation', en:'Explore each service'})}</h1>
-    <p class="page-sub" data-tw data-tw-delay="200">${t({fr:'BUNKAIO crée des images premium pour les personnes, les marques et les entreprises, à Montpellier et Toulouse. Entrepreneurs, marques, entreprises ou particuliers : ouvrez la prestation qui vous correspond.', en:'BUNKAIO creates premium images for people, brands and companies, in Montpellier and Toulouse. Entrepreneurs, brands, companies or individuals: open the service that suits you.'})}</p>
+    <p class="page-sub" data-tw data-tw-delay="200">${t({fr:'Des images d\'exception pour les personnes, les marques et les entreprises. Direction artistique, prise de vue et retouche signées, avec déplacement partout en France sur devis. Choisissez la prestation qui vous ressemble.', en:'Exceptional images for people, brands and companies. Art direction, shooting and retouching, with travel anywhere in France on quote. Choose the service that suits you.'})}</p>
     <div class="svcp-cta-row">
       ${quizLink('', t({fr:'Construire mon projet', en:'Build my project'}))}
       <a class="btn btn-ghost" href="/services/" data-nav="services"><span>${t({fr:'Voir les tarifs détaillés', en:'See detailed rates'})}</span></a>
