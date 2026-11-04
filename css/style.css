@@ -8388,3 +8388,6 @@ body[data-view="home"] #pageHeroWrap, .hero-video-wrap[data-view="home"] { backg
 .tx-pre { opacity: 0; transform: translateY(16px); filter: blur(3px); transition: opacity .8s ease, transform .9s cubic-bezier(.2,.8,.2,1), filter .8s ease; }
 .tx-pre.tx-in { opacity: 1; transform: none; filter: none; }
 @media (prefers-reduced-motion: reduce) { .tx-pre { opacity: 1; transform: none; filter: none; } }
+
+/* Trait vertical de l'accueil : le petit carré blanc au bout est retiré (5 nov. 2026) ; l'impulsion lumineuse qui descend reste */
+#view-home .hero-line::after { display: none !important; }
