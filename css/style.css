@@ -8416,3 +8416,6 @@ body[data-view="home"] #pageHeroWrap, .hero-video-wrap[data-view="home"] { backg
 /* Slogan de la séquence « Le studio » : plus petit, aspect éditorial mode — capitales légères très espacées (5 nov. 2026) */
 #missionVideoWrap .mission-text { font-size: clamp(20px, min(2.6vw, 4svh), 38px) !important; font-weight: 300 !important; letter-spacing: .14em !important; line-height: 1.5 !important; max-width: 22ch !important; text-wrap: balance; }
 @media (max-width: 760px) { #missionVideoWrap .mission-text { font-size: clamp(17px, 5.2vw, 24px) !important; letter-spacing: .12em !important; max-width: 20ch !important; } }
+/* CTA du haut de l'accueil : violet de la charte (#6e5aa8, halo #d6c9f7), écriture blanche */
+#view-home .hero > .hero-start:not(#bkv) { background: rgba(110,90,168,.88) !important; border: 1px solid #d6c9f7 !important; box-shadow: 0 0 20px 2px rgba(214,201,247,.4), inset 0 0 14px rgba(214,201,247,.16) !important; }
+#view-home .hero > .hero-start:not(#bkv):is(:hover, :focus-visible, :active) { background: #6e5aa8 !important; box-shadow: 0 0 28px 4px rgba(214,201,247,.6), inset 0 0 14px rgba(214,201,247,.22) !important; }
