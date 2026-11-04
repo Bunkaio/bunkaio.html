@@ -9652,3 +9652,19 @@ function warmServicesVideo(){
   document.addEventListener('visibilitychange', check);
   addEventListener('pageshow', check);
 })();
+
+/* Filet de sécurité des apparitions (5 nov. 2026) : si, pour une raison propre à l'appareil, un observateur ne signale pas un élément visible (photos, planches, textes), il est révélé après 1,2 s à l'écran ; rien ne reste masqué. */
+(function(){
+  const SEL = '.fl-pre:not(.fl-in), .tl-pre:not(.tl-in), .tx-pre:not(.tx-in), .fxl:not(.fxl-in), #view-portfolio .rv:not(.in)';
+  const FIX = { 'rv': 'in', 'fl-pre': 'fl-in', 'tl-pre': 'tl-in', 'tx-pre': 'tx-in', 'fxl': 'fxl-in' };
+  setInterval(() => {
+    if (document.visibilityState !== 'visible') return;
+    const vh = window.innerHeight || 800;
+    document.querySelectorAll(SEL).forEach(el => {
+      const r = el.getBoundingClientRect(), vis = r.height > 0 && r.bottom > vh * .1 && r.top < vh * .9;
+      if (!vis) { el.removeAttribute('data-seen'); return; }
+      if (el.dataset.seen) { for (const k in FIX) if (el.classList.contains(k)) el.classList.add(FIX[k]); }
+      else el.dataset.seen = '1';
+    });
+  }, 1200);
+})();
