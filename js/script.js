@@ -9596,3 +9596,17 @@ function warmServicesVideo(){
   const start = () => { mo.observe(document.body, { childList: true, subtree: true }); scan(); };
   if (document.body) start(); else document.addEventListener('DOMContentLoaded', start);
 })();
+
+/* Caractéristiques des formules (`.fx .svcp-list`, 5 nov. 2026) : chaque ligne apparaît en cascade (montée, flou qui se précise, écartement des lettres qui se resserre) à chaque ouverture de la formule. */
+(function(){
+  if (typeof IntersectionObserver === 'undefined' || (typeof REDUCED_MOTION !== 'undefined' && REDUCED_MOTION)) return;
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('fxl-in'); }
+    else e.target.classList.remove('fxl-in');
+  }), { threshold: .15 });
+  let raf = 0;
+  const scan = () => { raf = 0; document.querySelectorAll('.fx .svcp-list:not([data-fxl])').forEach(ul => { ul.dataset.fxl = '1'; ul.classList.add('fxl'); ul.querySelectorAll('li').forEach((li, k) => li.style.setProperty('--k', Math.min(k, 14))); io.observe(ul); }); };
+  const mo = new MutationObserver(() => { if (!raf) raf = requestAnimationFrame(scan); });
+  const start = () => { mo.observe(document.body, { childList: true, subtree: true }); scan(); };
+  if (document.body) start(); else document.addEventListener('DOMContentLoaded', start);
+})();

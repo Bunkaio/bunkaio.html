@@ -8373,3 +8373,10 @@ body[data-view="home"] #pageHeroWrap, .hero-video-wrap[data-view="home"] { backg
 .lk-full.fl-in .lk-cap-box > *, .lk-full.fl-in .lk-cap-n { opacity: 1; transform: none; transition-delay: calc(.75s + var(--fi, 0) * .12s); }
 .lk-full.fl-in .lk-cap-box > :nth-child(2) { --fi: 1; } .lk-full.fl-in .lk-cap-box > :nth-child(3) { --fi: 2; } .lk-full.fl-in .lk-cap-box > :nth-child(4) { --fi: 3; }
 @media (prefers-reduced-motion: reduce) { .lk-full.fl-pre .lk-full-ph { clip-path: none; } .lk-full.fl-pre .lk-full-ph img { transform: none; } .lk-full.fl-pre::after, .lk-full.fl-pre .lk-cap-box > *, .lk-full.fl-pre .lk-cap-n { opacity: 1; transform: none; } }
+
+/* Caractéristiques des formules : apparition en cascade (5 nov. 2026) */
+.fxl li { opacity: 0; transform: translateY(14px); filter: blur(4px); letter-spacing: .05em; transition: opacity .6s ease, transform .75s cubic-bezier(.2,.8,.2,1), filter .6s ease, letter-spacing .9s cubic-bezier(.2,.8,.2,1); transition-delay: calc(var(--k, 0) * 70ms + 120ms); }
+.fxl.fxl-in li { opacity: 1; transform: none; filter: none; letter-spacing: normal; }
+.fxl li::before { transition: opacity .5s ease calc(var(--k, 0) * 70ms + 300ms); }
+.fxl:not(.fxl-in) li::before { opacity: 0; }
+@media (prefers-reduced-motion: reduce) { .fxl li { opacity: 1; transform: none; filter: none; letter-spacing: normal; transition: none; } }
