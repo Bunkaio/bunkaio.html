@@ -8179,3 +8179,52 @@ body[data-view="quiz"] .quiz-nav-btn:hover, body[data-view="quiz"] .quiz-nav-btn
 #view-discover .disc-banner { margin: 56px 0; }
 #view-discover .disc-banner .lk-full { margin-left: calc(50% - 50vw); }
 @media (max-width: 760px) { #view-discover .disc-banner { margin: 40px 0; } }
+
+/* Liste des formules (pages prestation) : lignes éditoriales numérotées, plus-moins, photo carrée, texte à filets (5 nov. 2026) */
+#view-service .fx-list { gap: 0; counter-reset: fxn; margin-top: 8px; }
+#view-service .fx { counter-increment: fxn; position: relative; padding: 0 !important; border: 0 !important; border-top: 1px solid rgba(17,17,17,.25) !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; overflow: visible; }
+#view-service .fx:first-child { border-top-color: #111 !important; }
+#view-service .fx:last-child { border-bottom: 1px solid rgba(17,17,17,.25) !important; }
+#view-service .fx::before { content: ''; position: absolute; left: 0; right: 0; top: -1px; height: 1px; background: #111; transform: scaleX(0); transform-origin: left; transition: transform .8s cubic-bezier(.7,0,.2,1); }
+#view-service .fx.open::before, #view-service .fx:hover::before { transform: scaleX(1); }
+#view-service .fx-head { display: grid; grid-template-columns: 30px 60px minmax(0, 1fr) auto 18px; gap: 0 14px; align-items: center; padding: 16px 0 !important; }
+#view-service .fx-head::before { content: counter(fxn, decimal-leading-zero); font-size: 11px; font-weight: 500; color: rgba(17,17,17,.5); font-variant-numeric: tabular-nums; }
+#view-service .fx-thumb { width: 60px !important; height: 60px !important; flex: none; border-radius: 0 !important; filter: grayscale(1) contrast(1.05); transition: filter .5s ease; }
+#view-service .fx:hover .fx-thumb, #view-service .fx.open .fx-thumb { filter: none; }
+#view-service .fx-head:not(:has(.fx-thumb)) { grid-template-columns: 30px minmax(0, 1fr) auto 18px; }
+#view-service .fx-title { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; min-width: 0; }
+#view-service .fx-title b { font: 600 clamp(18px, 2.2vw, 28px)/1 'Inter Tight', sans-serif !important; letter-spacing: -.035em !important; text-transform: uppercase; color: #111; transition: transform .45s cubic-bezier(.2,.8,.2,1); }
+#view-service .fx-head:hover .fx-title b, #view-service .fx.open .fx-title b { transform: translateX(6px); }
+#view-service .fx-title em { background: none !important; border-radius: 0 !important; padding: 0 0 1px !important; font: 500 10px/1.2 'Inter Tight', sans-serif; letter-spacing: .08em; color: #111; text-transform: uppercase; border-bottom: 2px solid var(--rose, #e8c6c4); }
+#view-service .fx-title small { flex-basis: auto; font-size: 12px; color: rgba(17,17,17,.55); }
+#view-service .fx-price { font: 600 clamp(17px, 2vw, 24px)/1 'Inter Tight', sans-serif; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+#view-service .fx-chev { width: 14px; height: 14px; border: 0 !important; transform: none !important; margin: 0 !important; position: relative; }
+#view-service .fx-chev::before, #view-service .fx-chev::after { content: ''; position: absolute; left: 0; top: 6.5px; width: 14px; height: 1px; background: #111; transition: transform .45s cubic-bezier(.2,.8,.2,1); }
+#view-service .fx-chev::after { transform: rotate(90deg); }
+#view-service .fx.open .fx-chev::after { transform: rotate(0); }
+#view-service .fx-body { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 0 32px; padding: 0 0 0 44px !important; align-items: start; }
+#view-service .fx.open .fx-body { padding-bottom: 26px !important; }
+#view-service .fx-body > .fp { aspect-ratio: 4 / 5; max-height: 420px; width: 100%; border-radius: 0 !important; overflow: hidden; }
+#view-service .fx-body > .fp img { border-radius: 0 !important; width: 100%; height: 100%; object-fit: cover; display: block; }
+#view-service .fx-line { font-size: 15px; line-height: 1.55; font-weight: 500; letter-spacing: -.01em; color: #111; margin: 0 0 14px; }
+#view-service .fx-hint { margin: 0 0 16px; padding: 10px 0 0; border-top: 1px solid rgba(17,17,17,.2); font-size: 13.5px; line-height: 1.6; color: rgba(17,17,17,.72); }
+#view-service .fx-hint strong { display: block; margin-bottom: 4px; font: 500 10.5px/1.2 'Inter Tight', sans-serif; letter-spacing: .08em; text-transform: uppercase; color: rgba(17,17,17,.5); }
+#view-service .fx-info .svcp-list { list-style: none; padding: 0; margin: 0 0 20px; counter-reset: fxi; }
+#view-service .fx-info .svcp-list li { counter-increment: fxi; position: relative; padding: 9px 0 10px 32px; border-top: 1px solid rgba(17,17,17,.14); font-size: 13.5px; line-height: 1.5; color: rgba(17,17,17,.8); }
+#view-service .fx-info .svcp-list li::before { content: counter(fxi, decimal-leading-zero); position: absolute; left: 0; top: 11px; font-size: 10px; color: rgba(17,17,17,.45); background: none; width: auto; height: auto; }
+#view-service .fx-info .svcp-list li:last-child { border-bottom: 1px solid rgba(17,17,17,.14); }
+#view-service .fx-actions .cta-primary, #view-service .fx-actions .btn { border-radius: 0; }
+#view-service .fx-special { background: none !important; }
+#view-service .fx-special .fx-title b::after { content: ' ⊹'; color: #6e5aa8; }
+@media (max-width: 760px) {
+  #view-service .fx-head { grid-template-columns: 24px 48px minmax(0, 1fr) auto 14px; gap: 0 10px; }
+  #view-service .fx-head:not(:has(.fx-thumb)) { grid-template-columns: 24px minmax(0, 1fr) auto 14px; }
+  #view-service .fx-thumb { width: 48px !important; height: 48px !important; }
+  #view-service .fx-title b { font-size: 17px !important; }
+  #view-service .fx-price { font-size: 16px; }
+  #view-service .fx-body { grid-template-columns: 1fr; padding-left: 0 !important; gap: 14px 0; }
+  #view-service .fx-body > .fp { aspect-ratio: 4 / 3; max-height: 280px; }
+  #view-service .fx-actions .cta-primary { width: 100%; justify-content: center; }
+}
+@media (prefers-reduced-motion: reduce) { #view-service .fx::before, #view-service .fx-chev::before, #view-service .fx-chev::after, #view-service .fx-title b, #view-service .fx-thumb { transition: none !important; } }
+#view-service .fx-line, #view-service .fx-hint, #view-service .fx-info .svcp-list li { text-align: left; hyphens: manual; }
