@@ -9573,3 +9573,15 @@ function warmServicesVideo(){
     if (labels.length === 1 && ctl.length === 1 && ctl[0].id && !labels[0].htmlFor) labels[0].htmlFor = ctl[0].id;
   });
 })();
+
+/* Apparition des planches (Services et Portfolio, 5 nov. 2026) : voile papier qui se retire de haut en bas, photo qui se pose (zoom + luminosité), numéro, titre et légende qui montent en décalé.
+   Les planches ajoutées à la page sont repérées automatiquement ; rien si animations réduites. */
+(function(){
+  if (typeof IntersectionObserver === 'undefined' || (typeof REDUCED_MOTION !== 'undefined' && REDUCED_MOTION)) return;
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('tl-in'); io.unobserve(e.target); } }), { threshold: .18 });
+  let n = 0, raf = 0;
+  const scan = () => { raf = 0; document.querySelectorAll('.pfx-tile:not([data-tl])').forEach(el => { el.dataset.tl = '1'; el.style.setProperty('--tl', (n++ % 3)); el.classList.add('tl-pre'); io.observe(el); }); };
+  const mo = new MutationObserver(() => { if (!raf) raf = requestAnimationFrame(scan); });
+  const start = () => { mo.observe(document.body, { childList: true, subtree: true }); scan(); };
+  if (document.body) start(); else document.addEventListener('DOMContentLoaded', start);
+})();
