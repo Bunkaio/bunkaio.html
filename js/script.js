@@ -9655,8 +9655,8 @@ function warmServicesVideo(){
 
 /* Filet de sécurité des apparitions (5 nov. 2026) : si, pour une raison propre à l'appareil, un observateur ne signale pas un élément visible (photos, planches, textes), il est révélé après 1,2 s à l'écran ; rien ne reste masqué. */
 (function(){
-  const SEL = '.fl-pre:not(.fl-in), .tl-pre:not(.tl-in), .tx-pre:not(.tx-in), .fxl:not(.fxl-in), #view-portfolio .rv:not(.in)';
-  const FIX = { 'rv': 'in', 'fl-pre': 'fl-in', 'tl-pre': 'tl-in', 'tx-pre': 'tx-in', 'fxl': 'fxl-in' };
+  const SEL = '.csp-pre:not(.csp-in), .fl-pre:not(.fl-in), .tl-pre:not(.tl-in), .tx-pre:not(.tx-in), .fxl:not(.fxl-in), #view-portfolio .rv:not(.in)';
+  const FIX = { 'csp-pre': 'csp-in', 'rv': 'in', 'fl-pre': 'fl-in', 'tl-pre': 'tl-in', 'tx-pre': 'tx-in', 'fxl': 'fxl-in' };
   setInterval(() => {
     if (document.visibilityState !== 'visible') return;
     const vh = window.innerHeight || 800;
@@ -9667,4 +9667,15 @@ function warmServicesVideo(){
       else el.dataset.seen = '1';
     });
   }, 1200);
+})();
+
+/* Points « Votre projet, centralisé » (`.cs-points`, 5 nov. 2026) : les points se succèdent en cascade à l'arrivée à l'écran, et le texte d'un point s'écrit en douceur à chaque ouverture. */
+(function(){
+  if (typeof IntersectionObserver === 'undefined' || (typeof REDUCED_MOTION !== 'undefined' && REDUCED_MOTION)) return;
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('csp-in'); io.unobserve(e.target); } }), { threshold: .15 });
+  let raf = 0;
+  const scan = () => { raf = 0; document.querySelectorAll('.cs-points:not([data-csp])').forEach(ul => { ul.dataset.csp = '1'; ul.classList.add('csp-pre'); ul.querySelectorAll(':scope > li').forEach((li, k) => li.style.setProperty('--k', k)); io.observe(ul); }); };
+  const mo = new MutationObserver(() => { if (!raf) raf = requestAnimationFrame(scan); });
+  const start = () => { mo.observe(document.body, { childList: true, subtree: true }); scan(); };
+  if (document.body) start(); else document.addEventListener('DOMContentLoaded', start);
 })();

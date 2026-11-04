@@ -8402,3 +8402,13 @@ body[data-view="home"] #pageHeroWrap, .hero-video-wrap[data-view="home"] { backg
 #view-home .hero > .hero-start:not(#bkv) span { color: #fff !important; }
 #view-home .hero > .hero-start:not(#bkv)::after { content: none !important; display: none !important; }
 #view-home .hero > .hero-start:not(#bkv):is(:hover, :focus-visible, :active) { background: rgba(140,108,230,.8) !important; color: #fff !important; box-shadow: 0 0 30px 4px rgba(150,120,235,.65), inset 0 0 18px rgba(214,201,247,.25) !important; }
+
+/* « Votre projet, centralisé » : points en cascade + texte qui s'écrit à l'ouverture (5 nov. 2026) */
+.cs-points.csp-pre > li { opacity: 0; transform: translateY(18px); filter: blur(4px); transition: opacity .7s ease, transform .85s cubic-bezier(.2,.8,.2,1), filter .7s ease; transition-delay: calc(var(--k, 0) * 130ms); }
+.cs-points.csp-pre.csp-in > li { opacity: 1; transform: none; filter: none; }
+.cs-points.csp-pre > li .cs-acc-head > span { display: inline-block; letter-spacing: .06em; transition: letter-spacing 1s cubic-bezier(.2,.8,.2,1); transition-delay: calc(var(--k, 0) * 130ms + 200ms); }
+.cs-points.csp-pre.csp-in > li .cs-acc-head > span { letter-spacing: normal; }
+@keyframes cspText { from { opacity: 0; transform: translateY(14px); filter: blur(4px); letter-spacing: .04em; } to { opacity: 1; transform: none; filter: none; letter-spacing: normal; } }
+.cs-points .cs-acc-item.open .cs-acc-panel p { animation: cspText .8s cubic-bezier(.2,.8,.2,1) .15s both; }
+.cs-points .cs-acc-panel p { text-align: left !important; hyphens: none; }
+@media (prefers-reduced-motion: reduce) { .cs-points.csp-pre > li, .cs-points .cs-acc-item.open .cs-acc-panel p { opacity: 1; transform: none; filter: none; animation: none; } }
