@@ -4879,9 +4879,43 @@ function hmInit(){
   hmHud(); hmMarqueeLoop(); hmParallax(); hmPreview();
 }
 /* Lookbook × BUNKAIO (accueil) : double page « BUNKAIO, STUDIO MOBILE » — manifeste en capitales grasses à gauche, portrait d'Aya plein cadre à droite. */
-function lkHome(){
+/* Cadre « bobine » (nov. 2026, demande de la propriétaire, inspiration page projet Almira Kho) : texte à gauche, cadre à droite
+   où les photos défilent verticalement au rythme du défilement de la page (le bloc reste à l'écran le temps du défilé). */
+function lkReelHtml(o){
+  const n = o.items.length;
+  return `<section class="lk-reel${o.cls ? ' ' + o.cls : ''}"${o.id ? ` id="${o.id}"` : ''} style="--n:${n}"${o.label ? ` aria-labelledby="${o.label}"` : ''}>
+    <div class="lk-reel-stick">
+      <div class="lk-reel-txt">${o.left}<span class="lk-reel-c" aria-hidden="true"><b>01</b> / ${pfxNum(n)}</span></div>
+      <div class="lk-reel-frame"><div class="lk-reel-track">${o.items.map((it, i) => it.href
+        ? `<a class="lk-reel-it" href="${it.href}" onclick="${it.click}" data-cursor="${escHtml(it.cursor || t({fr:'Voir', en:'View'}))}"><img loading="lazy" decoding="async" src="${it.src}" alt="${escHtml(it.alt || '')}"${it.aya ? ' data-aya' : ''}>${it.cap ? `<span class="lk-reel-cap">${escHtml(it.cap)}</span>` : ''}</a>`
+        : `<button type="button" class="lk-reel-it" onclick="${it.click}" data-cursor="${escHtml(it.cursor || t({fr:'Voir', en:'View'}))}" aria-label="${escHtml(t({fr:'Agrandir', en:'Enlarge'}))} ${i + 1}/${n}"><img loading="lazy" decoding="async" src="${it.src}" alt="${escHtml(it.alt || '')}">${it.cap ? `<span class="lk-reel-cap">${escHtml(it.cap)}</span>` : ''}</button>`).join('')}</div></div>
+    </div>
+  </section>`;
+}
+function lkReelLoop(){
+  if (window._lkReel) { lkReelUpd(); return; } window._lkReel = true;
+  let tick = false;
+  addEventListener('scroll', () => { if (!tick) { tick = true; requestAnimationFrame(() => { tick = false; lkReelUpd(); }); } }, { passive: true });
+  addEventListener('resize', lkReelUpd); lkReelUpd();
+}
+function lkReelUpd(){
+  if (REDUCED_MOTION) return;
+  const navh = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) || 67;
+  document.querySelectorAll('.view.active .lk-reel').forEach(r => {
+    const st = r.firstElementChild, tr = r.querySelector('.lk-reel-track'), fr = r.querySelector('.lk-reel-frame'); if (!st || !tr || !fr) return;
+    const rc = r.getBoundingClientRect(); if (rc.bottom < -50 || rc.top > innerHeight + 50) return;
+    const travel = Math.max(0, r.offsetHeight - st.offsetHeight);
+    const y = Math.min(travel, Math.max(0, navh - rc.top));
+    st.style.transform = `translate3d(0,${y}px,0)`;
+    const n = tr.children.length, p = travel ? y / travel : 0;
+    tr.style.transform = `translate3d(0,${-p * (n - 1) * fr.clientHeight}px,0)`;
+    const c = r.querySelector('.lk-reel-c b'), k = Math.min(n, Math.round(p * (n - 1)) + 1);
+    if (c && c.textContent !== pfxNum(k)) c.textContent = pfxNum(k);
+  });
+}
+function lkHome(chs){
   const box = document.getElementById('lkHome'); if (!box) return;
-  box.innerHTML = `<div class="lk-home-txt">
+  const left = `<div class="lk-home-txt">
       <span class="lk-vert" aria-hidden="true">N° 00 — BUNKAIO ⊹ ${new Date().getFullYear()}</span>
       <div><h2 class="lk-h" id="lkHomeT"><span class="bk-scramble bk-echo" data-text="BUNKAIO,">BUNKAIO,</span><br>${t({fr:'Studio mobile', en:'Mobile studio'})}</h2>
       <p class="lk-meta"><span aria-hidden="true">⊹</span> ${t({fr:'Photographie · Occitanie · France', en:'Photography · Occitanie · France'})}</p></div>
@@ -4889,13 +4923,19 @@ function lkHome(){
         <p class="lk-manifest">${t({fr:'Votre image, à la hauteur de vos ambitions. ', en:'Your image, as ambitious as you are. '})}${t({fr:'Un studio de photographie mobile pour les professionnels, les entrepreneurs et les mannequins : direction artistique, lumière de studio et retouche, là où vous travaillez.', en:'A mobile photography studio for professionals, entrepreneurs and models: art direction, studio lighting and retouching, wherever you work.'})}</p>
         <div class="lk-ctas"><a class="cta-primary" href="/devis/" onclick="goView('quiz');return false;" data-track="lookbook_accueil"><span data-lang="start">${t({fr:'Construire mon projet', en:'Build my project'})}</span></a><a class="lk-ghost" href="/portfolio/" onclick="return navLink(event,'portfolio')">${t({fr:'Voir le portfolio', en:'View the portfolio'})}</a></div>
       </div>
-    </div>
-    <a class="lk-home-img" href="/a-propos/" onclick="return navLink(event,'about')" data-cursor="${escHtml(t({fr:'À propos', en:'About'}))}">
-      <img src="/images/about/aya-nascimento-photographe-en-studio.webp" data-aya loading="lazy" decoding="async" alt="${escHtml(t({fr:'Aya Nascimento, photographe et fondatrice de BUNKAIO, en studio', en:'Aya Nascimento, photographer and founder of BUNKAIO, in the studio'}))}">
-      <span class="lk-about">${t({fr:'À PROPOS', en:'ABOUT'})} <span aria-hidden="true">⊹</span></span>
-      <span class="lk-who">Aya Nascimento · ${t({fr:'photographe, fondatrice', en:'photographer, founder'})}</span>
-    </a>`;
+    </div>`;
+  /* Bobine : portrait d'Aya (→ À propos) puis les premières photos de chaque série du Portfolio. */
+  const pics = [];
+  (chs || []).forEach(c => c.photos.slice(0, 2).forEach((src, k) => pics.push({ c, src, k })));
+  const sel = pics.slice(0, 7);
+  box._reel = { title: 'Portfolio', cat: '', photos: sel.map(x => x.src), label: 'BUNKAIO, ' };
+  const items = [{ href: '/a-propos/', click: "return navLink(event,'about')", src: '/images/about/aya-nascimento-photographe-en-studio.webp', aya: true, cursor: t({fr:'À propos', en:'About'}), alt: t({fr:'Aya Nascimento, photographe et fondatrice de BUNKAIO, en studio', en:'Aya Nascimento, photographer and founder of BUNKAIO, in the studio'}), cap: 'Aya Nascimento · ' + t({fr:'photographe, fondatrice', en:'photographer, founder'}) }]
+    .concat(sel.map((x, i) => ({ src: x.src, alt: pfxAlt(x.c, x.src, x.k), click: `pfxOpen(document.getElementById('lkHome')._reel,${i})`, cap: x.c.title })));
+  box.outerHTML = lkReelHtml({ id: 'lkHome', cls: 'lk-reel-home', label: 'lkHomeT', left, items });
+  const nb = document.getElementById('lkHome'); if (nb) nb._reel = box._reel;
   if (typeof applyAyaPortrait === 'function') applyAyaPortrait();
+  if (nb && typeof bkScrambleWatch === 'function') bkScrambleWatch(nb);
+  lkReelLoop();
 }
 /* « Works, séries » : la première série du Portfolio (séries de l'admin, sinon un univers) en double page ; rien s'il n'y a pas de photo. */
 function lkWorks(){
@@ -4907,6 +4947,7 @@ function lkWorks(){
       if (gen !== box._gen) return;
       chs = chs.filter(c => c.photos.length);
       if (!chs.length) { box.hidden = true; box.innerHTML = ''; return; }
+      lkHome(chs);
       /* Photos plein écran avec petit texte (demande de la propriétaire, nov. 2026) : jusqu'à 3 séries, deux photos côte à côte quand c'est possible. */
       box._reels = chs.slice(0, 3).map((c, i) => ({ title: c.title, client: c.client, cat: c.cat, photos: c.photos, label: t({fr:'Série ', en:'Series '}) + pfxNum(i + 1) + ', ' }));
       box.innerHTML = chs.slice(0, 3).map((c, i) => {
@@ -5099,7 +5140,16 @@ function lkFiche(head, spec){
         ${tiers.length ? `<div class="lk-tiers" id="lkTiers">${tiers.map((tr, i) => quizLink(cid, `<span class="lk-tier-n">${pfxNum(i + 1)}</span><span class="lk-tier-t">${escHtml(t(tr.name))}</span><span class="lk-tier-p">${eur(c.tiers[tr.id].price)}</span>`, 'lk-tier' + ((brand ? tr.id === 'lanc' : i === 0) ? ' on' : ''), tr.id, tr.id === 'lanc' ? 'lancement' : '')).join('')}</div>` : ''}
         <p class="lk-note">${t({fr:'Prix nets, TVA non applicable. Paiement en 3 fois sans frais avec Klarna ou Scalapay, sous réserve d\'éligibilité.', en:'Net prices, VAT not applicable. Pay in 3 interest-free instalments with Klarna or Scalapay, subject to eligibility.'})}</p>
       </div>
-    </div>`;
+    </div>`;  /* Bobine des réalisations de la prestation (photos du Portfolio de la même catégorie, 3 minimum). */
+  const gen = (box._g = (box._g || 0) + 1);
+  if (!c.lumen && typeof loadPortfolioPhotos === 'function') loadPortfolioPhotos(cid, 24).then(list => {
+    if (gen !== box._g || !box.isConnected || !list || list.length < 3) return;
+    const ph = list.slice(0, 8), cat = { title: t(c.name), cat: cid, photos: ph };
+    box._reel = { title: t(c.name), cat: cid, photos: ph, label: t({fr:'Prestation, ', en:'Service, '}) };
+    const old = box.querySelector('.lk-reel'); if (old) old.remove();
+    box.insertAdjacentHTML('beforeend', lkReelHtml({ cls: 'lk-reel-svc', left: `<div><p class="lk-kick">${t({fr:'Prestation', en:'Service'})} ${pfxNum(idx + 1)}, <span aria-hidden="true">⊹</span> Portfolio</p><p class="lk-h" aria-hidden="true">${escHtml(brand ? 'Personal Branding' : t(c.name))},<br>${t({fr:'En images', en:'In pictures'})}</p></div><div class="lk-reel-bot"><p class="lk-manifest">${t({fr:'Des réalisations BUNKAIO pour cette prestation. Cliquez sur une image pour la projeter en grand.', en:'BUNKAIO work for this service. Click an image to project it full size.'})}</p><a class="lk-cap-l lk-dark" href="/portfolio/" onclick="return navLink(event,'portfolio')">${t({fr:'Voir tout le portfolio', en:'See the whole portfolio'})}</a></div>`, items: ph.map((src, k) => ({ src, alt: pfxAlt(cat, src, k), click: `pfxOpen(this.closest('.lk-fiche')._reel,${k})`, cap: pfxNum(idx + 1) + '.' + pfxNum(k + 1) })) }));
+    lkReelLoop();
+  });
 }
 /* Scène à partir d'une liste d'adresses (prestation, ville). */
 function pxStage(st, list, key){ gxStage(st, key, list); }
@@ -5611,7 +5661,10 @@ function pfxTc(n){ return '00:' + String(n).padStart(2, '0'); }
    (deux photos côte à côte s'il y en a au moins deux) avec un petit texte posé dessus, puis la grille ; plus de planche-contact ni de « Série suivante ». */
 function pfxChapterHtml(c, ci){
   const split = c.photos.length >= 3;
-  const rest = c.photos.slice(split ? 2 : 1), off = split ? 2 : 1, lay = pfxLook(rest.length);
+  const off0 = split ? 2 : 1, rl = c.photos.length - off0 >= 3 ? Math.min(8, c.photos.length - off0) : 0;
+  const rest = c.photos.slice(off0 + rl), off = off0 + rl, lay = pfxLook(rest.length);
+  /* Bobine de la série : texte à gauche, photos qui défilent dans le cadre à droite (jusqu'à 8), le reste en grille. */
+  const reel = rl ? lkReelHtml({ cls: 'lk-reel-pf', left: `<div><p class="lk-kick">${t({fr:'Série', en:'Series'})} ${pfxNum(ci + 1)}, <span aria-hidden="true">⊹</span> Portfolio</p><p class="lk-h" aria-hidden="true">${escHtml(c.title)},<br>${escHtml(c.client || (pfxCatLabel(c.cat) !== c.title ? pfxCatLabel(c.cat) : t({fr:'Série', en:'Series'}) + ' ' + pfxNum(ci + 1)))}</p></div><p class="lk-manifest">${escHtml(c.text || t({fr:'Une série BUNKAIO : direction artistique, lumière et retouche. Cliquez sur une image pour la projeter en grand.', en:'A BUNKAIO series: art direction, lighting and retouching. Click an image to project it full size.'}))}</p>`, items: c.photos.slice(off0, off0 + rl).map((src, k) => ({ src, alt: pfxAlt(c, src, off0 + k), click: `pfxOpen(${ci},${off0 + k})`, cap: pfxNum(ci + 1) + '.' + pfxNum(off0 + k + 1) })) }) : '';
   const cat = pfxCatLabel(c.cat);
   const meta = [cat !== c.title ? cat : '', c.client, c.year].filter(Boolean).map(escHtml).join(' · ');
   const last = ci === PFX.chapters.length - 1;
@@ -5631,6 +5684,7 @@ function pfxChapterHtml(c, ci){
       </div>
       <span class="lk-cap-n">${pfxNum(ci + 1)} / ${pfxNum(PFX.chapters.length)}</span>
     </div>
+    ${reel}
     ${rest.length ? `<div class="pfx-grid lk-grid">${rest.map((src, k) => item(src, k + off, lay[k])).join('')}</div>` : ''}
     ${last ? `<a class="lk-top" href="#pfIndex" onclick="return pfxTop(event)">${t({fr:'Retour au sommaire', en:'Back to index'})} ↑</a>` : ''}
   </section>`;
@@ -5659,7 +5713,7 @@ function renderPortfolioV2(){
       : `<div class="pf-empty">${t({fr:'Les premières séries arrivent très bientôt — contactez-moi pour voir des exemples adaptés à votre projet.', en:'The first series are coming very soon — get in touch to see examples suited to your project.'})}</div>`;
     wrap.querySelectorAll('.rv').forEach(observe);
     idx.classList.toggle('is-tiles', PFX.view === 'tiles');
-    pfxMeta(); pfxBindPreview(); bkScrambleWatch(wrap); pfxStrips();
+    pfxMeta(); pfxBindPreview(); bkScrambleWatch(wrap); pfxStrips(); lkReelLoop();
   });
 }
 function pfxGo(e, id){
