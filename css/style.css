@@ -8327,3 +8327,9 @@ body[data-view="home"] #pageHeroWrap, .hero-video-wrap[data-view="home"] { backg
 @media (min-width: 761px) { .lk-gal { display: grid; grid-template-columns: minmax(0, 1fr) 96px; gap: 12px; align-items: start; } .lk-gal-main { aspect-ratio: 3 / 2; max-height: 82svh; } .lk-gal-th { flex-direction: column; overflow-x: visible; overflow-y: auto; max-height: min(82svh, 100%); } .lk-gal-t { width: 96px; height: 120px; } }
 @media (prefers-reduced-motion: reduce) { .lk-gal-main img { transition: none; } }
 @media (min-width: 761px) { .lk-gal { display: flex; flex-direction: column; } .lk-gal-main { aspect-ratio: 16 / 9; max-height: 80svh; } .lk-gal-th { flex-direction: row; overflow-x: auto; overflow-y: hidden; max-height: none; } .lk-gal-t { width: 84px; height: 105px; } }
+
+/* Galerie de série robuste (5 nov. 2026) : image entière sans recadrage, numéro sous l'image, pas de rangée de vignettes pour une seule photo */
+.lk-gal-main { aspect-ratio: auto !important; max-height: none !important; background: transparent; }
+.lk-gal-main img { height: auto !important; max-height: 82svh; object-fit: contain !important; margin: 0 auto; }
+.lk-gal-n { position: static !important; display: block; margin-top: 8px; text-align: left; color: rgba(17,17,17,.55) !important; mix-blend-mode: normal !important; font-size: 11px; }
+.lk-gal.is-single .lk-gal-th { display: none; }

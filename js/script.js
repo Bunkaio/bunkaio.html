@@ -5928,7 +5928,7 @@ function pfxTc(n){ return '00:' + String(n).padStart(2, '0'); }
    (fondu), un clic sur la grande image ouvre la visionneuse. Remplace la grille de petites vignettes. */
 function pfxGalleryHtml(c, ci, off){
   const list = c.photos.slice(off); if (!list.length) return '';
-  return `<div class="lk-gal" data-ch="${ci}" data-off="${off}" data-cur="${off}">
+  return `<div class="lk-gal${list.length < 2 ? ' is-single' : ''}" data-ch="${ci}" data-off="${off}" data-cur="${off}">
     <button type="button" class="lk-gal-main" data-cursor="${escHtml(t({fr:'Voir', en:'View'}))}" onclick="pfxOpen(${ci},+this.parentNode.dataset.cur)" aria-label="${escHtml(t({fr:'Agrandir', en:'Enlarge'}))}"><img decoding="async" loading="lazy" src="${list[0]}" alt="${escHtml(pfxAlt(c, list[0], off))}"><span class="lk-gal-n">${pfxNum(ci + 1)}.${pfxNum(off + 1)}</span></button>
     <div class="lk-gal-th" role="tablist">${list.map((src, k) => `<button type="button" class="lk-gal-t${k ? '' : ' on'}" role="tab" aria-selected="${k ? 'false' : 'true'}" aria-label="${pfxNum(ci + 1)}.${pfxNum(off + k + 1)}" onclick="pfxGal(this,${off + k})"><img loading="lazy" decoding="async" src="${src}" alt=""></button>`).join('')}</div>
   </div>`;
