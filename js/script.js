@@ -567,6 +567,18 @@ const I18N = {
     'footer-claim2':'Studio de photographie mobile · Montpellier · Toulouse',
     'stab-catalogue':'Catalogue & prix','stab-devis':'Devis & déroulé',
     'p-trust':'Ils ont collaboré avec BUNKAIO',
+    'cp-title':'Collaboration ou partenariat ?',
+    'cp-intro':'Deux façons de travailler avec BUNKAIO, à ne pas confondre.',
+    'cp-c-k':'01 · Collaboration',
+    'cp-c-t':'Un projet ponctuel',
+    'cp-c-text':'Une marque, un lieu, un média ou un·e autre créateur·rice propose à BUNKAIO un projet précis : un shooting, un contenu, un événement. La proposition est étudiée au cas par cas, le projet est réalisé, et la collaboration s\'arrête là. Pas de candidature au programme, pas de place limitée, pas d\'engagement dans la durée.',
+    'cp-c-link':'Proposer une collaboration →',
+    'cp-p-k':'02 · Partenariat',
+    'cp-p-t':'Un programme dans la durée',
+    'cp-p-text':'Le programme Partenaires Fondateurs s\'adresse aux professionnels qui veulent avancer avec BUNKAIO sur le long terme. L\'entrée se fait sur candidature et les places sont limitées : 5 par univers, 25 au total. Le partenaire sélectionné bénéficie d\'un tarif partenaire permanent (−20 %), d\'une mise en lumière éditoriale, d\'un espace partenaire et d\'un accès prioritaire aux disponibilités.',
+    'cp-p-link':'Candidater au programme →',
+    'cp-note':'Les places affichées en haut de page concernent uniquement le programme Partenaires Fondateurs. Les marques du défilé « Ils ont collaboré avec BUNKAIO » sont des collaborations : des projets réalisés ensemble.',
+    'gx-uni-cap':'Places de partenariat disponibles, par univers',
     'process-payment-info':'<strong>Modalités de paiement :</strong> 30 % à la commande à la signature du devis, solde à la livraison des livrables. Chaque versement est réglable par carte bancaire en une fois, ou en 3 fois sans frais avec Klarna ou Scalapay (sous réserve d\'éligibilité).',
     'process-cancel-info':'<strong>Annulation :</strong> une fois le devis validé, l\'acompte de 30 % versé à la commande reste acquis à BUNKAIO et n\'est pas remboursé en cas d\'annulation de votre part.',
     'process-delay-info':'Les délais indiqués sur chaque formule démarrent à la date du shooting.',
@@ -926,6 +938,18 @@ const I18N = {
     'footer-claim2':'Mobile photography studio · Montpellier · Toulouse',
     'stab-catalogue':'Catalogue & rates','stab-devis':'Quote & process',
     'p-trust':'They collaborated with BUNKAIO',
+    'cp-title':'Collaboration or partnership?',
+    'cp-intro':'Two ways of working with BUNKAIO, not to be confused.',
+    'cp-c-k':'01 · Collaboration',
+    'cp-c-t':'A one-off project',
+    'cp-c-text':'A brand, a venue, a media outlet or another creator offers BUNKAIO a specific project: a shoot, a piece of content, an event. The proposal is reviewed case by case, the project is carried out, and the collaboration ends there. No application to the programme, no limited places, no long-term commitment.',
+    'cp-c-link':'Propose a collaboration →',
+    'cp-p-k':'02 · Partnership',
+    'cp-p-t':'A long-term programme',
+    'cp-p-text':'The Founding Partners programme is for professionals who want to grow with BUNKAIO over the long term. Entry is by application and places are limited: 5 per universe, 25 in total. Selected partners enjoy a permanent partner rate (−20%), an editorial spotlight, a partner area and priority access to availability.',
+    'cp-p-link':'Apply to the programme →',
+    'cp-note':'The places shown at the top of the page concern the Founding Partners programme only. The brands in the "They collaborated with BUNKAIO" ribbon are collaborations: projects carried out together.',
+    'gx-uni-cap':'Partnership places available, by universe',
     'process-payment-info':'<strong>Payment terms:</strong> 30% deposit upon signing the quote, balance due on delivery of your deliverables. Each payment can be made by credit card in one go, or in 3 interest-free instalments with Klarna or Scalapay (subject to eligibility).',
     'process-cancel-info':'<strong>Cancellation:</strong> once the quote is accepted, the 30% deposit paid at booking is retained by BUNKAIO and is non-refundable if you cancel.',
     'process-delay-info':'The delivery timelines indicated on each package begin on the day of the shoot.',
@@ -6007,7 +6031,7 @@ function gxLeft(id){ const n = window._ppLeft && typeof window._ppLeft[id] === '
 function gxSpots(){
   const tot = GX_UNI.reduce((s, [id]) => s + gxLeft(id), 0);
   gxRoll(document.getElementById('gxSpots'), String(tot));
-  const l = document.getElementById('gxSpotsLbl'); if (l) l.textContent = t({fr:'places libres sur 25', en:'places left of 25'});
+  const l = document.getElementById('gxSpotsLbl'); if (l) l.textContent = t({fr:'places de partenariat disponibles sur 25', en:'partnership places available out of 25'});
   const u = document.getElementById('gxUni'); if (!u) return;
   u.innerHTML = GX_UNI.map(([id, name], k) => { const left = gxLeft(id); return `<button type="button" class="gx-uni-row" data-cursor="${escHtml(t({fr:'Candidater', en:'Apply'}))}" onclick="goView('partners','apply')" style="--k:${k}">
     <span class="gx-uni-n">${pfxNum(k + 1)}</span><span class="gx-uni-t">${t(name)}</span>

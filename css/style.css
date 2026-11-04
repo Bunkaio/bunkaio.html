@@ -7759,3 +7759,19 @@ a.lk-reel-it { cursor: pointer; }
 @media (max-width: 760px) {
   #view-home .hero-title .hero-words { min-height: 100svh; padding-top: 0; }
 }
+
+/* Collaboration ou partenariat (page Collaboration) */
+.gx-uni-cap { margin: 22px 0 6px; font-size: 11px; font-weight: 500; letter-spacing: .03em; text-transform: uppercase; color: rgba(17,17,17,.55); }
+.cp-diff { margin: 10px 0 56px; padding-top: 12px; border-top: 10px solid #111; font-family: 'Inter Tight', sans-serif; color: #111; }
+.cp-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 8px 24px; margin-bottom: 22px; }
+.cp-title { margin: 0; font-size: clamp(26px, 3.2vw, 44px); font-weight: 600; letter-spacing: -.035em; line-height: .98; text-transform: uppercase; }
+.cp-intro { margin: 0; font-size: 14px; color: rgba(17,17,17,.6); }
+.cp-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.cp-col { display: flex; flex-direction: column; gap: 10px; padding-top: 14px; border-top: 1px solid #111; }
+.cp-k { margin: 0; font-size: 11px; font-weight: 500; letter-spacing: .03em; text-transform: uppercase; color: rgba(17,17,17,.55); }
+.cp-t { margin: 0; font-size: 20px; font-weight: 600; letter-spacing: -.02em; text-transform: uppercase; }
+.cp-text { margin: 0; font-size: 14px; line-height: 1.6; color: rgba(17,17,17,.75); }
+.cp-link { align-self: flex-start; margin-top: 4px; font-size: 12px; font-weight: 500; color: #111; text-decoration: underline; text-underline-offset: 4px; }
+.cp-link:hover { color: #6e5aa8; }
+.cp-note { margin: 22px 0 0; padding: 12px 14px; font-size: 12px; line-height: 1.5; color: rgba(17,17,17,.7); border: 1px solid rgba(17,17,17,.2); }
+@media (max-width: 760px) { .cp-cols { grid-template-columns: 1fr; gap: 18px; } .cp-diff { margin-bottom: 40px; } }

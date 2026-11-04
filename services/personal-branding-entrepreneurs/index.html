@@ -34,7 +34,7 @@
 <link rel="icon" type="image/png" sizes="64x64" href="/images/favicon-64.png">
 <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
 <link rel="preload" href="fonts/dm-sans-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/style.min.css?v=5e637a0b">
+<link rel="stylesheet" href="css/style.min.css?v=bf75ddcc">
 
 <script type="application/ld+json">
 {
@@ -1601,16 +1601,37 @@
   <header class="gx-head">
     <div class="gx-top">
       <div class="gx-mega" data-fr="COLLABORATION" data-en="COLLABORATION" aria-hidden="true">COLLABORATION</div>
-      <div class="gx-count" aria-hidden="true"><b id="gxSpots">23</b><span id="gxSpotsLbl">places sur 25</span></div>
+      <div class="gx-count" aria-hidden="true"><b id="gxSpots">23</b><span id="gxSpotsLbl">places de partenariat disponibles sur 25</span></div>
     </div>
     <div class="gx-sub">
       <div class="gx-main">
         <h2 data-pageh1 class="page-title" data-lang="partners-title">Partenariat et collaboration</h2>
+        <p class="gx-uni-cap" data-lang="gx-uni-cap">Places de partenariat disponibles, par univers</p>
         <div class="gx-uni" id="gxUni"></div>
       </div>
       <div class="gx-stage" data-stage="partners" aria-hidden="true"><div class="gx-stage-ph"><img class="gx-ph-a" alt=""><img class="gx-ph-b" alt=""></div><div class="gx-stage-cap"></div></div>
     </div>
   </header>
+
+    <!-- Collaboration ou partenariat : deux façons de travailler avec BUNKAIO (demande de la propriétaire, nov. 2026) -->
+    <section class="cp-diff" aria-labelledby="cpTitle">
+      <div class="cp-head"><h3 class="cp-title" id="cpTitle" data-lang="cp-title">Collaboration ou partenariat ?</h3><p class="cp-intro" data-lang="cp-intro">Deux façons de travailler avec BUNKAIO, à ne pas confondre.</p></div>
+      <div class="cp-cols">
+        <div class="cp-col">
+          <p class="cp-k" data-lang="cp-c-k">01 · Collaboration</p>
+          <p class="cp-t" data-lang="cp-c-t">Un projet ponctuel</p>
+          <p class="cp-text" data-lang="cp-c-text">Une marque, un lieu, un média ou un·e autre créateur·rice propose à BUNKAIO un projet précis : un shooting, un contenu, un événement. La proposition est étudiée au cas par cas, le projet est réalisé, et la collaboration s'arrête là. Pas de candidature au programme, pas de place limitée, pas d'engagement dans la durée.</p>
+          <a class="cp-link" href="/collaboration/" onclick="setPartnersTab('collab');document.querySelector('#view-partners .svc-tabs').scrollIntoView({behavior:'smooth'});return false" data-lang="cp-c-link">Proposer une collaboration →</a>
+        </div>
+        <div class="cp-col">
+          <p class="cp-k" data-lang="cp-p-k">02 · Partenariat</p>
+          <p class="cp-t" data-lang="cp-p-t">Un programme dans la durée</p>
+          <p class="cp-text" data-lang="cp-p-text">Le programme Partenaires Fondateurs s'adresse aux professionnels qui veulent avancer avec BUNKAIO sur le long terme. L'entrée se fait sur candidature et les places sont limitées : 5 par univers, 25 au total. Le partenaire sélectionné bénéficie d'un tarif partenaire permanent (−20 %), d'une mise en lumière éditoriale, d'un espace partenaire et d'un accès prioritaire aux disponibilités.</p>
+          <a class="cp-link" href="/collaboration/" onclick="setPartnersTab('apply');document.querySelector('#view-partners .svc-tabs').scrollIntoView({behavior:'smooth'});return false" data-lang="cp-p-link">Candidater au programme →</a>
+        </div>
+      </div>
+      <p class="cp-note" data-lang="cp-note">Les places affichées en haut de page concernent uniquement le programme Partenaires Fondateurs. Les marques du défilé « Ils ont collaboré avec BUNKAIO » sont des collaborations : des projets réalisés ensemble.</p>
+    </section>
 
     <div class="svc-tabs">
       <button class="svc-tab active" id="ptab-program" onclick="setPartnersTab('program')" data-lang="ptab-program">Programme Partenaires</button>
@@ -2214,6 +2235,6 @@
 <script src="config/articles.en.js?v=a5fd138b"></script>
 <script src="config/routes.js?v=f47dd51d"></script>
 <script src="config/media.js?v=3d72d6fd"></script>
-<script src="js/script.min.js?v=0a93e7c4"></script>
+<script src="js/script.min.js?v=fc01f3e9"></script>
 </body>
 </html>
