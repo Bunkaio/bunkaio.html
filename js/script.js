@@ -3882,7 +3882,7 @@ function svcpEnhance(el, opt){
   scr(el.querySelector('h1.page-title'));
   el.querySelectorAll('.svcp-panel h2').forEach(scr);
   if (opt.accordions) {
-    el.querySelectorAll('.svcp-entrepreneurs, .value-panel, .svcp-two > div, .svcp-advice, .svcp-others').forEach((box, i) => {
+    el.querySelectorAll('.svcp-entrepreneurs, .value-panel, .svcp-two > div, .svcp-advice, .svcp-others, .pb-decor').forEach((box, i) => {
       const h2 = box.querySelector(':scope > h2'); if (!h2 || box.classList.contains('svcp-acc')) return;
       const id = 'svcpAcc' + i;
       const open = i === 0;
@@ -4072,6 +4072,7 @@ function renderBrandingPage(){
       <div class="svcp-cta-row"><a class="cta-primary" href="/conseils/" data-nav="advice" data-track="lancement">${t({fr:'Préparer mon shooting', en:'Prepare my shoot'})}</a></div>
     </section>
 
+    <div class="svcp-ban" id="svcB1"></div>
     <section class="read-panel svcp-panel" id="formule-lancement">
       <h2>${t({fr:'Ce que vous recevez', en:'What you receive'})}</h2>
       <p class="svcp-text svcp-why">${t({fr:'Lancement est la formule BUNKAIO pensée pour les entrepreneurs qui lancent, repositionnent ou professionnalisent leur activité : pas une séance simplifiée, une première vraie production d\'image.', en:'Launch is the BUNKAIO package designed for entrepreneurs launching, repositioning or professionalising their business: not a simplified session, a first real image production.'})}</p>
@@ -4080,6 +4081,7 @@ function renderBrandingPage(){
       <div class="fx-list">${lancFx}</div>
     </section>
 
+    <div class="svcp-ban" id="svcB2"></div>
     <section class="read-panel svcp-panel">
       <h2>${t({fr:'Tout comprendre en 7 points', en:'Everything in 7 points'})}</h2>
       <p class="svcp-text">${t({fr:'Ouvrez le point qui vous intéresse.', en:'Open the point that interests you.'})}</p>
@@ -4096,6 +4098,7 @@ function renderBrandingPage(){
       </ul>
     </section>
 
+    <div class="svcp-ban" id="svcB3"></div>
     <section class="read-panel svcp-panel">
       <h2>${t({fr:'Questions fréquentes', en:'Frequently asked questions'})}</h2>
       <div id="servicePageFaq"></div>
@@ -4123,7 +4126,12 @@ function renderBrandingPage(){
     io.observe(box);
   });
   initReassureLoop();
-  svcpEnhance(el, { accordions: false });
+  svcpEnhance(el, { accordions: true });
+  /* Photos plein écran entre les sections (5 nov. 2026) : photos du Portfolio, texte posé dessus. */
+  const bcats = ['corporate', 'photo-part', 'commercial', 'mode', 'event'];
+  lkPhotoBanner('svcB1', bcats, { index: 1, kick: { fr: 'Personal Branding · Occitanie', en: 'Personal Branding · Occitanie' }, title: { fr: 'Votre activité, votre décor, votre image.', en: 'Your business, your set, your image.' } });
+  lkPhotoBanner('svcB2', bcats, { index: 3, kick: { fr: 'Un interlocuteur unique', en: 'One point of contact' }, title: { fr: 'Un shooting pensé pour votre métier.', en: 'A shoot designed around your trade.' } });
+  lkPhotoBanner('svcB3', bcats, { index: 5, kick: { fr: 'Livraison en HD', en: 'HD delivery' }, title: { fr: 'Des images prêtes à l\'emploi, partout.', en: 'Images ready to use, everywhere.' } });
   serviceBgSync('branding');
   /* Photos in situ (admin média) : seules celles qui existent sont affichées ; aucune → la rangée reste masquée. */
   const insitu = document.getElementById('pbInsitu');
