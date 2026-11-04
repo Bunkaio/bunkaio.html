@@ -2353,7 +2353,7 @@ function goToQuizCategory(catId, tierId){
     S.prof = (CAT_PROFILES[catId] || [])[0] || null; S.tier = tierId;
     renderProfiles(); renderTiers(); renderRecap(); renderOptions(); quizStep(3);
     const card = document.querySelector('#tierList .tier-card[data-tier="' + tierId + '"]');
-    if (card) { card.classList.add('selected', 'open'); setTimeout(() => card.scrollIntoView({ block: 'center', behavior: 'smooth' }), 450); }
+    if (card) { card.classList.add('selected', 'open'); card.style.scrollMarginTop = ((parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) || 74) + 28) + 'px'; setTimeout(() => card.scrollIntoView({ block: 'start', behavior: 'smooth' }), 900); }
     return;
   }
   quizStep(2);
@@ -4595,7 +4595,10 @@ document.addEventListener('click', (e) => {
   e.preventDefault();
   closeMobileMenu();
   const cat = a.dataset.quiz;
-  if (cat && isComingSoon(cat)) goToComingSoon(cat); else if (cat) goToQuizCategory(cat, a.dataset.tier); else goView('quiz');
+  /* Filet de sécurité : si l'ouverture du devis échoue pour une raison quelconque, on suit le lien normal (/devis/ ou /en/devis/) plutôt que de laisser un bouton sans effet. */
+  try {
+    if (cat && isComingSoon(cat)) goToComingSoon(cat); else if (cat) goToQuizCategory(cat, a.dataset.tier); else goView('quiz');
+  } catch (err) { window.location.href = a.getAttribute('href') || '/devis/'; }
 });
 document.addEventListener('click', (e) => {
   const a = e.target.closest ? e.target.closest('a[data-nav]') : null;
