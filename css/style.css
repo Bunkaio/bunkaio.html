@@ -7916,3 +7916,8 @@ body[data-view="quiz"] .quiz-nav-btn:hover, body[data-view="quiz"] .quiz-nav-btn
 @media (max-width: 760px) {
   :is(#view-home .credentials-strip, .art-cred) .cred-lead { text-align: justify; font-size: 14px !important; line-height: 1.65 !important; }
 }
+
+/* Photo plein écran avant l'index des services (accueil) */
+#view-home .home-paper > .lk-banner { max-width: none; margin-top: 80px; margin-bottom: 70px; }
+#view-home .home-paper > .lk-banner .lk-full { margin-left: calc(50% - 50vw); }
+@media (max-width: 760px) { #view-home .home-paper > .lk-banner { margin-top: 56px; margin-bottom: 48px; } }

@@ -4973,6 +4973,20 @@ function lkHome(chs){
   if (nb && typeof bkScrambleWatch === 'function') bkScrambleWatch(nb);
   lkReelLoop();
 }
+/* Photo plein écran avant la bande défilante des prestations : une photo du Portfolio (2e série, sinon la 1re), petit texte dessus, clic = visionneuse. */
+function lkBanner(chs){
+  const box = document.getElementById('lkBanner'); if (!box) return;
+  const c = chs[Math.min(1, chs.length - 1)]; if (!c || !c.photos.length) { box.hidden = true; return; }
+  const k = Math.min(3, c.photos.length - 1);
+  box._reel = { title: c.title, client: c.client, cat: c.cat, photos: c.photos, label: t({fr:'Série ', en:'Series '}) + pfxNum(chs.indexOf(c) + 1) + ', ' };
+  box.innerHTML = `<div class="lk-full">
+      <button type="button" class="lk-full-ph" data-cursor="${escHtml(t({fr:'Voir', en:'View'}))}" onclick="pfxOpen(document.getElementById('lkBanner')._reel,${k})" aria-label="${escHtml(t({fr:'Agrandir la photo', en:'Enlarge the photo'}))}"><img loading="lazy" decoding="async" src="${c.photos[k]}" alt="${escHtml(pfxAlt(c, c.photos[k], k))}"></button>
+      <div class="lk-cap-box"><span class="lk-cap-k">${t({fr:'Studio mobile · Occitanie', en:'Mobile studio · Occitanie'})}</span>
+        <p class="lk-cap-t">${t({fr:'Votre image, à la hauteur de vos ambitions.', en:'Your image, as ambitious as you are.'})}</p>
+        <a class="lk-cap-l" href="/portfolio/" onclick="return navLink(event,'portfolio')">${t({fr:'Voir le portfolio', en:'View the portfolio'})}</a></div>
+    </div>`;
+  box.hidden = false;
+}
 /* « Works, séries » : la première série du Portfolio (séries de l'admin, sinon un univers) en double page ; rien s'il n'y a pas de photo. */
 function lkWorks(){
   const box = document.getElementById('lkWorks'); if (!box || typeof pfxPlan !== 'function') return;
@@ -4983,7 +4997,7 @@ function lkWorks(){
       if (gen !== box._gen) return;
       chs = chs.filter(c => c.photos.length);
       if (!chs.length) { box.hidden = true; box.innerHTML = ''; return; }
-      lkHome(chs);
+      lkHome(chs); lkBanner(chs);
       /* Photos plein écran avec petit texte (demande de la propriétaire, nov. 2026) : jusqu'à 3 séries, deux photos côte à côte quand c'est possible. */
       box._reels = chs.slice(0, 3).map((c, i) => ({ title: c.title, client: c.client, cat: c.cat, photos: c.photos, label: t({fr:'Série ', en:'Series '}) + pfxNum(i + 1) + ', ' }));
       box.innerHTML = `<div class="lk-works-mh"><span>${t({fr:'Les séries', en:'The series'})} (${pfxNum(Math.min(3, chs.length))})</span><span>${t({fr:'Glisser', en:'Swipe'})} →</span></div><div class="lk-works-row">` + chs.slice(0, 3).map((c, i) => {
