@@ -7927,3 +7927,39 @@ body[data-view="quiz"] .quiz-nav-btn:hover, body[data-view="quiz"] .quiz-nav-btn
 .partners-page .pbanner .lk-full { margin-left: calc(50% - 50vw); }
 .partners-page .pbanner .lk-full-ph { cursor: default; }
 @media (max-width: 760px) { .partners-page .pbanner { margin-bottom: 36px; } }
+
+/* ==========================================================================
+   Constellation des 5 publics — version « lumineuse » (4 nov. 2026, remplace le panneau papier) :
+   fond transparent, traits blancs lumineux d'1 px, points carrés blancs à halo, libellés blancs ; un voile sombre très doux (sans bord)
+   garde la lisibilité sur la vidéo. Apparition au défilement (.hk-in) conservée.
+   ========================================================================== */
+.hero-kicker .hk-b { width: min(86vw, 860px); margin: 34px auto 26px; }
+.hero-kicker .hk-b::before { content: '' !important; display: block !important; position: absolute; inset: -34% -22%; z-index: -1; background: radial-gradient(ellipse 50% 50% at 50% 50%, rgba(8,6,14,.5), rgba(8,6,14,.24) 52%, rgba(8,6,14,0) 76%); box-shadow: none; clip-path: none; animation: hkFadeIn 1.4s ease .1s both !important; }
+.hero-kicker .hk-b::after { display: none !important; }
+.hero-kicker .hk-cap { left: 50%; translate: -50% 0; top: -26px; color: rgba(255,255,255,.8); text-shadow: 0 1px 10px rgba(0,0,0,.45); letter-spacing: .16em; font-weight: 400; }
+
+/* Traits lumineux */
+.hero-kicker .hk-lines polyline:not(.f):not(.pl) { stroke: #fff !important; filter: drop-shadow(0 0 2px rgba(255,255,255,.95)) drop-shadow(0 0 7px rgba(214,201,247,.65)) !important; }
+.hero-kicker .hk-lines polyline.f { stroke: rgba(255,255,255,.55) !important; filter: drop-shadow(0 0 4px rgba(255,255,255,.4)) !important; }
+.hero-kicker .hk-lines polyline.pl { stroke: #e8c6c4 !important; stroke-width: 2 !important; filter: drop-shadow(0 0 5px rgba(232,198,196,.9)) !important; }
+
+/* Points : carrés blancs à halo */
+.hero-kicker .hk-w::before { background: #fff !important; box-shadow: 0 0 0 4px rgba(255,255,255,.16), 0 0 14px 3px rgba(255,255,255,.7) !important; }
+.hero-kicker .hk-w::after { color: #fff !important; animation: hkLock 10s cubic-bezier(.2,.8,.2,1) calc(3.4s + var(--d)) infinite !important; }
+
+/* Libellés blancs, numéros roses ; pastille sombre au moment visé */
+.hero-kicker .hk-w em { color: #fff !important; text-shadow: 0 1px 12px rgba(0,0,0,.55) !important; font-weight: 400 !important; }
+.hero-kicker .hk-w em::after { color: #e8c6c4 !important; opacity: .95; }
+.hero-kicker .hk-w:nth-of-type(1) em { animation: hkRise .7s cubic-bezier(.2,.7,.2,1) 1.55s both, hkFx3 10s ease-in-out calc(3.4s + var(--d)) infinite !important; }
+.hero-kicker .hk-w:nth-of-type(2) em { animation: hkRise .7s cubic-bezier(.2,.7,.2,1) 1.7s both, hkFx3 10s ease-in-out calc(3.4s + var(--d)) infinite !important; }
+.hero-kicker .hk-w:nth-of-type(3) em { animation: hkRise .7s cubic-bezier(.2,.7,.2,1) 1.85s both, hkFx3 10s ease-in-out calc(3.4s + var(--d)) infinite !important; }
+.hero-kicker .hk-w:nth-of-type(4) em { animation: hkRise .7s cubic-bezier(.2,.7,.2,1) 2s both, hkFx3 10s ease-in-out calc(3.4s + var(--d)) infinite !important; }
+.hero-kicker .hk-w:nth-of-type(5) em { animation: hkRise .7s cubic-bezier(.2,.7,.2,1) 2.15s both, hkFx3 10s ease-in-out calc(3.4s + var(--d)) infinite !important; }
+@keyframes hkFx3 { 0% { background-color: rgba(10,10,12,0); } 3%, 18% { background-color: rgba(10,10,12,.82); } 22%, 100% { background-color: rgba(10,10,12,0); } }
+
+@media (max-width: 760px) {
+  .hero-kicker .hk-b { width: 90vw; margin: 30px auto 22px; }
+  .hero-kicker .hk-b::before { inset: -26% -12%; }
+  .hero-kicker .hk-cap { top: -22px; font-size: 9px; }
+}
+@media (prefers-reduced-motion: reduce) { .hero-kicker .hk-b::before { animation: none !important; } }
