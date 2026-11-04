@@ -8412,3 +8412,7 @@ body[data-view="home"] #pageHeroWrap, .hero-video-wrap[data-view="home"] { backg
 .cs-points .cs-acc-item.open .cs-acc-panel p { animation: cspText .8s cubic-bezier(.2,.8,.2,1) .15s both; }
 .cs-points .cs-acc-panel p { text-align: left !important; hyphens: none; }
 @media (prefers-reduced-motion: reduce) { .cs-points.csp-pre > li, .cs-points .cs-acc-item.open .cs-acc-panel p { opacity: 1; transform: none; filter: none; animation: none; } }
+
+/* Slogan de la séquence « Le studio » : plus petit, aspect éditorial mode — capitales légères très espacées (5 nov. 2026) */
+#missionVideoWrap .mission-text { font-size: clamp(20px, min(2.6vw, 4svh), 38px) !important; font-weight: 300 !important; letter-spacing: .14em !important; line-height: 1.5 !important; max-width: 22ch !important; text-wrap: balance; }
+@media (max-width: 760px) { #missionVideoWrap .mission-text { font-size: clamp(17px, 5.2vw, 24px) !important; letter-spacing: .12em !important; max-width: 20ch !important; } }
