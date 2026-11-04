@@ -8280,3 +8280,7 @@ body[data-view="home"] #pageHeroWrap, .hero-video-wrap[data-view="home"] { backg
   #homeClaimVideoBg, .mission-video-bg { background-image: url('/images/posters/mission-m.webp'); }
 }
 .hero-video-wrap video, #homeClaimVideoBg video { background: transparent; }
+
+/* Accordéons de la page Collaboration : les grilles de cartes (avantages, univers, étapes) occupent toute la largeur, centrées — plus de retrait à gauche (5 nov. 2026) */
+.view.gx .accordion-content:has(.pp-benefits, .pp-universes, .pp-steps) { padding-left: 0 !important; padding-right: 0 !important; max-width: none; }
+@media (max-width: 760px) { .view.gx .accordion-content:has(.pp-benefits, .pp-universes, .pp-steps) { padding-left: 0 !important; padding-right: 0 !important; } }
