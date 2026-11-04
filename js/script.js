@@ -4537,7 +4537,7 @@ function renderArticlePage(slug){
         const ic = artIconFor(sec.h, String(sec.html).replace(/<[^>]+>/g, ' ').slice(0, 200), a.cat, used);
         return `<section class="cs-acc-item art-item${k === 0 || openAll ? ' open' : ''}" id="art-s${k + 1}">
           <h2 class="art-h2"><button type="button" class="cs-acc-head art-head" aria-expanded="${k === 0 || openAll}"><span class="art-n">${String(k + 1).padStart(2, '0')}</span>${artIllus(ic, false)}<span class="art-t">${sec.h}</span><i class="cs-acc-chev" aria-hidden="true"></i></button></h2>
-          <div class="cs-acc-panel"><div class="art-body">${artIllus(ic, true)}<div class="art-text">${sec.html}</div></div></div>
+          <div class="cs-acc-panel"><div class="art-body"><div class="art-text">${sec.html}</div></div></div>
         </section>`;
       }).join(''); })()}</div>
       <h2>${t({fr:'Questions fréquentes', en:'Frequently asked questions'})}</h2>
