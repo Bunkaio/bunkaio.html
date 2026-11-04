@@ -8396,3 +8396,9 @@ body[data-view="home"] #pageHeroWrap, .hero-video-wrap[data-view="home"] { backg
 .hero-kicker .hk-w::before { width: 8px !important; height: 8px !important; left: -4px !important; top: -4px !important; border-radius: 50% !important; background: radial-gradient(circle, #fff 0 38%, rgba(255,255,255,.9) 60%, rgba(255,255,255,.55) 100%) !important; box-shadow: 0 0 6px 2px rgba(255,255,255,.95), 0 0 16px 5px rgba(214,201,247,.65), 0 0 30px 10px rgba(214,201,247,.3) !important; animation: hkPop .6s cubic-bezier(.2,.7,.2,1) both, hkGlow 3.4s ease-in-out 1.2s infinite !important; }
 @keyframes hkGlow { 0%, 100% { box-shadow: 0 0 6px 2px rgba(255,255,255,.95), 0 0 16px 5px rgba(214,201,247,.6), 0 0 30px 10px rgba(214,201,247,.28); } 50% { box-shadow: 0 0 9px 3px #fff, 0 0 24px 8px rgba(214,201,247,.85), 0 0 44px 16px rgba(214,201,247,.42); } }
 @media (prefers-reduced-motion: reduce) { .hero-kicker .hk-w::before { animation: none !important; } }
+
+/* CTA « Construire mon projet » du haut de l'accueil (5 nov. 2026, demande de la propriétaire) : écriture blanche, surbrillance violette, sans flèche */
+#view-home .hero > .hero-start:not(#bkv) { background: rgba(124,92,214,.55) !important; color: #fff !important; border: 1px solid rgba(214,201,247,.75) !important; box-shadow: 0 0 22px 2px rgba(150,120,235,.45), inset 0 0 18px rgba(214,201,247,.18) !important; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+#view-home .hero > .hero-start:not(#bkv) span { color: #fff !important; }
+#view-home .hero > .hero-start:not(#bkv)::after { content: none !important; display: none !important; }
+#view-home .hero > .hero-start:not(#bkv):is(:hover, :focus-visible, :active) { background: rgba(140,108,230,.8) !important; color: #fff !important; box-shadow: 0 0 30px 4px rgba(150,120,235,.65), inset 0 0 18px rgba(214,201,247,.25) !important; }
