@@ -5685,9 +5685,15 @@ function lkPhotoBanner(boxId, cats, o){
           <a class="lk-cap-l" href="/portfolio/" onclick="return navLink(event,'portfolio')">${t({fr:'Voir le portfolio', en:'View the portfolio'})}</a></div>
       </div>`;
       box.hidden = false;
+      if (o.bleed) lkBleed(box);
     });
   };
   next(0);
+}
+/* Pleine largeur d'écran à l'intérieur d'une colonne : décale l'élément jusqu'au bord gauche de la fenêtre (recalculé au redimensionnement). */
+function lkBleed(box){
+  const fit = () => { const f = box.querySelector('.lk-full'); if (!f || !box.isConnected) return; f.style.marginLeft = '0'; const r = box.getBoundingClientRect(); f.style.marginLeft = (-r.left) + 'px'; f.style.width = document.documentElement.clientWidth + 'px'; };
+  fit(); if (!box._bl) { box._bl = true; addEventListener('resize', fit); }
 }
 function svcBanner(){
   const box = document.getElementById('svcBanner'); if (!box) return;
@@ -6801,6 +6807,7 @@ function renderClientSpotlights(){
         <div class="cs-main">
           <div class="cs-kicker">${t({fr:'Votre espace client', en:'Your client area'})}</div>
           <h2 class="cs-title" data-tw data-tw-delay="150">${t({fr:'Votre projet, centralisé', en:'Your project, centralised'})}</h2>
+          ${el.id === 'csSlotServices' ? '<div class="lk-banner cs-bleed" id="csBanner" hidden></div>' : ''}
           <p class="cs-lead" data-tw data-tw-delay="900">${t({fr:'Votre projet ne repose pas sur une succession d\'emails et de fichiers dispersés. Tout est centralisé dans votre espace client BUNKAIO, dès votre devis confirmé.', en:'Your project does not rest on a string of emails and scattered files. Everything is centralised in your BUNKAIO client area, as soon as your quote is confirmed.'})}</p>
           ${compact ? '' : `<ul class="cs-points cs-acc">${points.map((x, k) => `<li class="cs-acc-item${k === 0 ? ' open' : ''}"><button type="button" class="cs-acc-head" aria-expanded="${k === 0}">${check}<span>${x.head}</span><i class="cs-acc-chev" aria-hidden="true"></i></button><div class="cs-acc-panel"><p>${x.body}</p></div></li>`).join('')}</ul>`}
           <div class="cs-actions">${act}${compact || open ? '' : `<button type="button" class="cta-primary" onclick="goView('quiz')">${t({fr:'Construire mon projet', en:'Build my project'})}</button>`}</div>
@@ -6826,6 +6833,7 @@ function renderClientSpotlights(){
         </div>`}
       </section>`;
   });
+  if (document.getElementById('csBanner')) lkPhotoBanner('csBanner', ['commercial', 'mode', 'corporate', 'photo-part'], { index: 2, bleed: true, kick: {fr:'Votre espace client · Occitanie', en:'Your client area · Occitanie'}, title: {fr:'Un projet suivi, de la première idée aux photos HD.', en:'A project followed from first idea to HD photos.'} });
   /* Animations déclenchées quand la section entre à l'écran (et rejouées si la langue change). */
   if (window.IntersectionObserver) {
     const io = new IntersectionObserver((entries) => entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('cs-live'); io.unobserve(e.target); } }), { threshold: 0.18 });

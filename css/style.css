@@ -8228,3 +8228,8 @@ body[data-view="quiz"] .quiz-nav-btn:hover, body[data-view="quiz"] .quiz-nav-btn
 }
 @media (prefers-reduced-motion: reduce) { #view-service .fx::before, #view-service .fx-chev::before, #view-service .fx-chev::after, #view-service .fx-title b, #view-service .fx-thumb { transition: none !important; } }
 #view-service .fx-line, #view-service .fx-hint, #view-service .fx-info .svcp-list li { text-align: left; hyphens: manual; }
+
+/* Services : photo plein écran entre le titre et le texte de « Votre projet, centralisé » */
+.cs-slot .cs-bleed { margin: 22px 0 26px; max-width: none; }
+.cs-slot .cs-bleed .lk-full { margin-left: 0; max-width: none; }
+.cs-slot .cs-bleed .lk-cap-t { font-size: 15px; }
