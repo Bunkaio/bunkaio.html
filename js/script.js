@@ -4907,20 +4907,18 @@ function lkWorks(){
       if (gen !== box._gen) return;
       chs = chs.filter(c => c.photos.length);
       if (!chs.length) { box.hidden = true; box.innerHTML = ''; return; }
-      const c = chs[0], n = chs.length, cat = pfxCatLabel(c.cat);
-      const meta = [cat !== c.title ? cat : '', c.client, c.year, pfxNum(c.photos.length) + ' ' + t({fr:'images', en:'images'})].filter(Boolean).map(escHtml).join(' · ');
-      const reel = { title: c.title, client: c.client, cat: c.cat, photos: c.photos, label: t({fr:'Série 01, ', en:'Series 01, '}) };
-      box._reel = reel;
-      box.innerHTML = `<div class="lk-works-head"><h2 class="lk-h"><span class="bk-scramble bk-echo" data-text="WORKS,">WORKS,</span><br>${t({fr:'Séries', en:'Series'})}</h2><a class="lk-ghost" href="/portfolio/" onclick="return navLink(event,'portfolio')">${t({fr:'Toutes les séries', en:'All series'})} (${pfxNum(n)}) →</a></div>
-        <div class="lk-works-sp">
-          <button type="button" class="lk-works-img" data-cursor="${escHtml(t({fr:'Projeter', en:'Play'}))}" onclick="pfxOpen(document.getElementById('lkWorks')._reel,0)"><img loading="lazy" decoding="async" src="${c.photos[0]}" alt="${escHtml(pfxAlt(c, c.photos[0], 0))}"><span class="lk-cap">01.01</span></button>
-          <div class="lk-works-txt">
-            <div><p class="lk-kick">${t({fr:'Série', en:'Series'})} 01, <span aria-hidden="true">⊹</span> Portfolio</p><p class="lk-h lk-h-s"><span class="bk-echo" data-text="${escHtml(c.title)}">${escHtml(c.title)}</span></p><p class="lk-meta">${meta}</p></div>
-            <div class="lk-works-bot">${c.photos[1] ? `<button type="button" class="lk-works-sm" data-cursor="02" onclick="pfxOpen(document.getElementById('lkWorks')._reel,1)"><img loading="lazy" decoding="async" src="${c.photos[1]}" alt=""></button>` : ''}
-              ${c.text ? `<p class="lk-manifest">${escHtml(c.text)}</p>` : ''}
-              <a class="lk-play" href="/portfolio/#serie-${escHtml(c.id)}" onclick="return navLink(event,'portfolio')"><span aria-hidden="true">▸</span> ${t({fr:'Voir la série', en:'View the series'})} <span class="lk-tc">${pfxNum(c.photos.length)} ${t({fr:'images', en:'images'})}</span></a></div>
-          </div>
-        </div>`;
+      /* Photos plein écran avec petit texte (demande de la propriétaire, nov. 2026) : jusqu'à 3 séries, deux photos côte à côte quand c'est possible. */
+      box._reels = chs.slice(0, 3).map((c, i) => ({ title: c.title, client: c.client, cat: c.cat, photos: c.photos, label: t({fr:'Série ', en:'Series '}) + pfxNum(i + 1) + ', ' }));
+      box.innerHTML = chs.slice(0, 3).map((c, i) => {
+        const split = c.photos.length >= 2, cat = pfxCatLabel(c.cat);
+        const meta = [cat !== c.title ? cat : '', c.client, c.year].filter(Boolean).map(escHtml).join(' · ');
+        const ph = k => `<button type="button" class="lk-full-ph" data-cursor="${escHtml(t({fr:'Voir', en:'View'}))}" onclick="pfxOpen(document.getElementById('lkWorks')._reels[${i}],${k})"><img loading="lazy" decoding="async" src="${c.photos[k]}" alt="${escHtml(pfxAlt(c, c.photos[k], k))}"></button>`;
+        return `<div class="lk-full${split ? ' is-split' : ''}">${ph(0)}${split ? ph(1) : ''}
+          <div class="lk-cap-box"><span class="lk-cap-k">${t({fr:'Portfolio · Série', en:'Portfolio · Series'})} ${pfxNum(i + 1)}${meta ? ' · ' + meta : ''}</span>
+            <p class="lk-cap-t">${escHtml(c.title)}</p>
+            <a class="lk-cap-l" href="/portfolio/#serie-${escHtml(c.id)}" onclick="return navLink(event,'portfolio')">${t({fr:'Voir la série', en:'View the series'})}</a></div>
+          <span class="lk-cap-n">${pfxNum(i + 1)} / ${pfxNum(Math.min(3, chs.length))}</span></div>`;
+      }).join('') + `<p class="lk-works-all"><a class="lk-cap-l" href="/portfolio/" onclick="return navLink(event,'portfolio')">${t({fr:'Toutes les séries', en:'All series'})} (${pfxNum(chs.length)})</a></p>`;
       box.hidden = false; bkScrambleWatch(box);
     });
   };
@@ -5062,7 +5060,7 @@ function pxInit(v){
       let k = h.previousElementSibling && h.previousElementSibling.classList.contains('gx-kick') ? h.previousElementSibling : null;
       if (!k) { k = document.createElement('p'); k.className = 'gx-kick'; k.setAttribute('aria-hidden', 'true'); h.before(k); }
       k.textContent = t(spec.kick);
-      if (!h.querySelector('.bk-echo')) { const txt = h.textContent.trim(); h.innerHTML = `<span class="bk-echo bk-scramble" data-text="${escHtml(txt)}">${escHtml(txt)}</span>`; }
+      if (!h.querySelector('.bk-echo') && v !== 'service') { const txt = h.textContent.trim(); h.innerHTML = `<span class="bk-echo bk-scramble" data-text="${escHtml(txt)}">${escHtml(txt)}</span>`; }
     }
   }
   if (spec.next) { BK_NEXT[v] = spec.next; bkMountNext(root, v); }
@@ -5082,19 +5080,23 @@ function lkFiche(head, spec){
   const eur = n => n.toLocaleString('fr-FR') + ' €';
   const idx = Math.max(0, ['photo-part', 'branding', 'corporate', 'mode', 'commercial', 'event'].indexOf(sub));
   const photos = Array.isArray(spec.stage) ? spec.stage : [];
-  const mega = PX_SVC_MEGA[sub], w1 = mega ? t(mega) : t(c.name);
-  const t1 = brand ? t({fr:'Lancement,', en:'Launch,'}) : w1.charAt(0) + w1.slice(1).toLowerCase() + ',';
-  const t2 = brand ? 'Personal Branding' : t({fr:'Formules', en:'Packages'});
   const price = brand && lancP ? eur(lancP) : (spec.count ? t({fr:'dès ', en:'from '}) + spec.count.replace('€', ' €') : t({fr:'Sur demande', en:'On request'}));
-  box.innerHTML = `<figure class="lk-fiche-img">${photos.length ? `<img src="${photos[0]}" alt="" loading="eager" decoding="async" data-alt="${escHtml(photos.slice(1).join('|'))}" onerror="const n=(this.dataset.alt||'').split('|').filter(Boolean);if(n.length){this.dataset.alt=n.slice(1).join('|');this.src=n[0];}else{this.closest('figure').classList.add('is-empty');}">` : ''}<figcaption>${pfxNum(idx + 1)}.01</figcaption></figure>
-    <div class="lk-fiche-txt">
-      <div><p class="lk-kick">${t({fr:'Prestation', en:'Service'})} ${pfxNum(idx + 1)}, <span aria-hidden="true">⊹</span> ${escHtml(t(c.name))}</p>
-        <p class="lk-h" aria-hidden="true"><span class="bk-scramble bk-echo" data-text="${escHtml(t1)}">${escHtml(t1)}</span><br>${escHtml(t2)}</p>
-        <p class="lk-price">${escHtml(price)}</p></div>
-      <div class="lk-fiche-bot">
-        ${desc ? `<p class="lk-manifest">${escHtml(desc)}</p>` : ''}
-        ${tiers.length ? `<div class="lk-tiers">${tiers.map((tr, i) => quizLink(cid, `<span class="lk-tier-n">${pfxNum(i + 1)}</span><span class="lk-tier-t">${escHtml(t(tr.name))}</span><span class="lk-tier-p">${eur(c.tiers[tr.id].price)}</span>`, 'lk-tier' + ((brand ? tr.id === 'lanc' : i === 0) ? ' on' : ''), tr.id, tr.id === 'lanc' ? 'lancement' : '')).join('')}</div>` : ''}
-        <div class="lk-ctas">${quizLink(cid, `<span data-lang="start">${t({fr:'Construire mon projet', en:'Build my project'})}</span>`, 'cta-primary', brand ? 'lanc' : '', brand ? 'lancement' : '')}<a class="lk-ghost" href="/portfolio/" onclick="return navLink(event,'portfolio')">${t({fr:'Voir le portfolio', en:'View the portfolio'})}</a></div>
+  const title = brand ? t({fr:'Lancement — Personal Branding', en:'Launch — Personal Branding'}) : t(c.name);
+  /* Photo plein écran + petit texte (demande de la propriétaire, nov. 2026, inspiration Almada), puis formules en panneau discret. */
+  box.innerHTML = `<div class="lk-full lk-fiche-hero">
+      <span class="lk-full-ph">${photos.length ? `<img src="${photos[0]}" alt="" loading="eager" decoding="async" data-alt="${escHtml(photos.slice(1).join('|'))}" onerror="const n=(this.dataset.alt||'').split('|').filter(Boolean);if(n.length){this.dataset.alt=n.slice(1).join('|');this.src=n[0];}else{this.remove();}">` : ''}</span>
+      <div class="lk-cap-box">
+        <span class="lk-cap-k">${t({fr:'Prestation', en:'Service'})} ${pfxNum(idx + 1)} · ${escHtml(t(c.name))}</span>
+        <p class="lk-cap-t" aria-hidden="true">${escHtml(title)}</p>
+        <span class="lk-cap-m">${escHtml(price)}</span>
+        <span class="lk-cap-links">${quizLink(cid, `<span data-lang="start">${t({fr:'Construire mon projet', en:'Build my project'})}</span>`, 'lk-cap-cta', brand ? 'lanc' : '', brand ? 'lancement' : '')}${tiers.length ? `<a class="lk-cap-l" href="#lkTiers" onclick="document.getElementById('lkTiers').scrollIntoView({behavior:'smooth',block:'center'});return false">${t({fr:'Voir les formules', en:'See the packages'})}</a>` : ''}</span>
+      </div>
+      <span class="lk-cap-n">${pfxNum(idx + 1)}.01</span>
+    </div>
+    <div class="lk-fiche-panel">
+      ${desc ? `<p class="lk-fiche-desc">${escHtml(desc)}</p>` : '<span></span>'}
+      <div class="lk-fiche-side">
+        ${tiers.length ? `<div class="lk-tiers" id="lkTiers">${tiers.map((tr, i) => quizLink(cid, `<span class="lk-tier-n">${pfxNum(i + 1)}</span><span class="lk-tier-t">${escHtml(t(tr.name))}</span><span class="lk-tier-p">${eur(c.tiers[tr.id].price)}</span>`, 'lk-tier' + ((brand ? tr.id === 'lanc' : i === 0) ? ' on' : ''), tr.id, tr.id === 'lanc' ? 'lancement' : '')).join('')}</div>` : ''}
         <p class="lk-note">${t({fr:'Prix nets, TVA non applicable. Paiement en 3 fois sans frais avec Klarna ou Scalapay, sous réserve d\'éligibilité.', en:'Net prices, VAT not applicable. Pay in 3 interest-free instalments with Klarna or Scalapay, subject to eligibility.'})}</p>
       </div>
     </div>`;
@@ -5605,40 +5607,32 @@ function pfxLook(n){
   return out.slice(0, n);
 }
 function pfxTc(n){ return '00:' + String(n).padStart(2, '0'); }
+/* Série (nov. 2026, demande de la propriétaire : moins redondant, plus de photos plein écran) : ouverture en photo plein écran
+   (deux photos côte à côte s'il y en a au moins deux) avec un petit texte posé dessus, puis la grille ; plus de planche-contact ni de « Série suivante ». */
 function pfxChapterHtml(c, ci){
-  const rest = c.photos.slice(1), lay = pfxLook(rest.length);
+  const split = c.photos.length >= 3;
+  const rest = c.photos.slice(split ? 2 : 1), off = split ? 2 : 1, lay = pfxLook(rest.length);
   const cat = pfxCatLabel(c.cat);
-  const meta = [cat !== c.title ? cat : '', c.client, c.year, pfxNum(c.photos.length) + ' ' + t({fr:'images', en:'images'})].filter(Boolean).map(escHtml).join(' · ');
-  const next = PFX.chapters[ci + 1];
+  const meta = [cat !== c.title ? cat : '', c.client, c.year].filter(Boolean).map(escHtml).join(' · ');
+  const last = ci === PFX.chapters.length - 1;
+  const ph = i => `<button type="button" class="lk-full-ph" data-cursor="${escHtml(t({fr:'Voir', en:'View'}))}" onclick="pfxOpen(${ci},${i})" aria-label="${escHtml(t({fr:'Agrandir', en:'Enlarge'}))} ${i + 1}/${c.photos.length}"><img loading="lazy" decoding="async" src="${c.photos[i]}" alt="${escHtml(pfxAlt(c, c.photos[i], i))}"></button>`;
   const item = (src, i, cls) => `<figure class="pfx-item ${cls} rv" data-ch="${ci}" data-i="${i}">
         <button type="button" class="pfx-open" data-cursor="${escHtml(t({fr:'Voir', en:'View'}))}" onclick="pfxOpen(${ci},${i})" aria-label="${escHtml(t({fr:'Agrandir', en:'Enlarge'}))} ${i + 1}/${c.photos.length}"><img loading="lazy" decoding="async" src="${src}" alt="${escHtml(pfxAlt(c, src, i))}"></button>
         <figcaption>${pfxNum(ci + 1)}.${pfxNum(i + 1)}</figcaption>
       </figure>`;
   return `<section class="pfx-ch lk-ch" id="serie-${escHtml(c.id)}" aria-labelledby="pfx-t-${ci}">
-    <div class="lk-open">
-      <header class="lk-open-txt pfx-ch-head">
-        <div class="lk-open-top">
-          <p class="lk-kick">${t({fr:'Série', en:'Series'})} ${pfxNum(ci + 1)}, <span aria-hidden="true">⊹</span> Portfolio</p>
-          <h3 class="lk-t" id="pfx-t-${ci}"><span class="bk-scramble bk-echo" data-text="${escHtml(c.title)}">${escHtml(c.title)}</span></h3>
-          <p class="lk-meta">${meta}</p>
-        </div>
-        <div class="lk-open-bot">
-          ${c.text ? `<p class="lk-manifest">${escHtml(c.text)}</p>` : ''}
-          <dl class="lk-facts">${c.client ? `<div><dt>${t({fr:'Client', en:'Client'})}</dt><dd>${escHtml(c.client)}</dd></div>` : ''}<div><dt>${t({fr:'Univers', en:'Field'})}</dt><dd>${escHtml(cat)}</dd></div>${c.year ? `<div><dt>${t({fr:'Année', en:'Year'})}</dt><dd>${escHtml(String(c.year))}</dd></div>` : ''}</dl>
-          <button type="button" class="lk-play" data-cursor="${escHtml(t({fr:'Projeter', en:'Play'}))}" onclick="pfxOpen(${ci},0)"><span aria-hidden="true">▸</span> ${t({fr:'Projeter la série', en:'Play the series'})} <span class="lk-tc">00:00 / ${pfxTc(c.photos.length)}</span></button>
-        </div>
-      </header>
-      ${item(c.photos[0], 0, 'lk-cover')}
+    <div class="lk-full${split ? ' is-split' : ''}">
+      ${ph(0)}${split ? ph(1) : ''}
+      <div class="lk-cap-box">
+        <span class="lk-cap-k">${t({fr:'Série', en:'Series'})} ${pfxNum(ci + 1)}${meta ? ' · ' + meta : ''}</span>
+        <h3 class="lk-cap-t" id="pfx-t-${ci}">${escHtml(c.title)}</h3>
+        ${c.text ? `<span class="lk-cap-m">${escHtml(c.text)}</span>` : ''}
+        <button type="button" class="lk-cap-l" onclick="pfxOpen(${ci},0)">${t({fr:'Projeter la série', en:'Play the series'})} · ${pfxNum(c.photos.length)} ${t({fr:'images', en:'images'})}</button>
+      </div>
+      <span class="lk-cap-n">${pfxNum(ci + 1)} / ${pfxNum(PFX.chapters.length)}</span>
     </div>
-    ${rest.length ? `<div class="pfx-grid lk-grid">${rest.map((src, k) => item(src, k + 1, lay[k])).join('')}</div>` : ''}
-    <div class="lk-sheet-h"><span>${t({fr:'Planche-contact', en:'Contact sheet'})} · ${pfxNum(c.photos.length)} ${t({fr:'images', en:'images'})}</span></div>
-    <div class="pfx-strip" aria-label="${escHtml(t({fr:'Planche-contact', en:'Contact sheet'}))}"><div class="pfx-strip-in">${c.photos.map((src, i) => `<button type="button" class="pfx-thumb" data-cursor="${pfxNum(i + 1)}" onclick="pfxOpen(${ci},${i})" aria-label="${escHtml(t({fr:'Agrandir', en:'Enlarge'}))} ${i + 1}/${c.photos.length}"><img loading="lazy" decoding="async" src="${src}" alt=""></button>`).join('')}</div></div>
-    ${next ? `<a class="pfx-next lk-next" href="#serie-${escHtml(next.id)}" data-cursor="${escHtml(t({fr:'Voir', en:'View'}))}" onclick="return pfxGo(event,'${escHtml(next.id)}')">
-      <span class="lk-next-txt"><span class="pfx-next-k">${t({fr:'Série suivante', en:'Next series'})} <span aria-hidden="true">⊹</span></span>
-      <span class="pfx-next-t">${t({fr:'Série', en:'Series'})} ${pfxNum(ci + 2)},<br><span class="bk-echo" data-text="${escHtml(next.title)}">${escHtml(next.title)}</span></span>
-      <span class="lk-next-m">${escHtml([pfxCatLabel(next.cat), next.year, pfxNum(next.photos.length) + ' ' + t({fr:'images', en:'images'})].filter(Boolean).join(' · '))} →</span></span>
-      <span class="pfx-next-img"><img loading="lazy" decoding="async" src="${next.photos[0]}" alt=""></span>
-    </a>` : `<a class="pfx-next is-top" href="#pfIndex" onclick="return pfxTop(event)"><span class="pfx-next-k">${t({fr:'Fin du portfolio', en:'End of portfolio'})}</span><span class="pfx-next-t"><span class="bk-echo" data-text="${escHtml(t({fr:'Retour au sommaire', en:'Back to index'}))}">${t({fr:'Retour au sommaire', en:'Back to index'})}</span></span></a>`}
+    ${rest.length ? `<div class="pfx-grid lk-grid">${rest.map((src, k) => item(src, k + off, lay[k])).join('')}</div>` : ''}
+    ${last ? `<a class="lk-top" href="#pfIndex" onclick="return pfxTop(event)">${t({fr:'Retour au sommaire', en:'Back to index'})} ↑</a>` : ''}
   </section>`;
 }
 function pfxTop(e){ e.preventDefault(); const el = document.getElementById('pfIndex'); if (el) el.scrollIntoView({ block: 'start', behavior: REDUCED_MOTION ? 'auto' : 'smooth' }); return false; }
