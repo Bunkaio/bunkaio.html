@@ -8033,3 +8033,31 @@ body[data-view="quiz"] .quiz-nav-btn:hover, body[data-view="quiz"] .quiz-nav-btn
   .svcp-acc-body, .svcp-acc-in, .svcp-acc-pm::before, .svcp-acc-pm::after { transition: none !important; }
   #view-service .svcp-panel::before { transition: none !important; transform: scaleX(1) !important; }
 }
+
+/* Portfolio mobile (5 nov. 2026, demande de la propriétaire) : même parti que le bureau — séries en photos plein écran avec petit texte dessus
+   (deux photos empilées quand la série en a au moins trois), grandes photos de la grille plein écran. */
+@media (max-width: 760px) {
+  #view-portfolio .lk-ch > .lk-full { position: relative; display: block !important; width: 100vw; margin-left: calc(50% - 50vw) !important; height: 88svh !important; min-height: 480px !important; max-height: none; background: #2b2a29; color: #fff; overflow: hidden; border-top: 0 !important; padding-top: 0 !important; }
+  #view-portfolio .lk-ch > .lk-full.is-split { display: grid !important; grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; height: 104svh !important; }
+  #view-portfolio .lk-ch > .lk-full::after { display: block !important; }
+  #view-portfolio .lk-ch > .lk-full .lk-full-ph { aspect-ratio: auto !important; height: 100% !important; width: 100%; }
+  #view-portfolio .lk-ch > .lk-full .lk-full-ph + .lk-full-ph { display: block !important; }
+  #view-portfolio .lk-ch > .lk-full .lk-cap-box { position: absolute !important; left: 16px; right: 16px; bottom: 22px; max-width: none; padding: 0; color: #fff; gap: 5px; }
+  #view-portfolio .lk-ch > .lk-full .lk-cap-k { color: rgba(255,255,255,.85); }
+  #view-portfolio .lk-ch > .lk-full .lk-cap-t { color: #fff; font-style: italic; font-size: 17px; font-weight: 400; text-transform: none; letter-spacing: 0; line-height: 1.25; }
+  #view-portfolio .lk-ch > .lk-full .lk-cap-m { color: rgba(255,255,255,.85); }
+  #view-portfolio .lk-ch > .lk-full .lk-cap-l { color: #fff; }
+  #view-portfolio .lk-ch > .lk-full .lk-cap-n { position: absolute; top: auto; bottom: 22px; right: 16px; background: none; padding: 0; color: #fff; }
+  #view-portfolio .pfx-ch.lk-ch { padding-top: 10px; }
+  #view-portfolio .pfx-item.lk-w { width: 100vw; margin-left: calc(50% - 50vw); position: relative; }
+  #view-portfolio .pfx-item.lk-w .pfx-open { height: 86svh; aspect-ratio: auto; }
+  #view-portfolio .pfx-item.lk-w figcaption { position: absolute; left: 16px; bottom: 16px; margin: 0; color: #fff; }
+  #view-portfolio .pfx-item.lk-b .pfx-open { aspect-ratio: 3 / 4; }
+  #view-portfolio .pfx-grid.lk-grid { gap: 14px 10px; margin-top: 14px; }
+  #view-portfolio .lk-reel-pf { margin-top: 14px; }
+}
+
+/* Texte justifié sur tout le site (5 nov. 2026, demande de la propriétaire) : paragraphes et listes alignés des deux côtés, césures automatiques.
+   :where() = spécificité nulle : tout texte centré, aligné à droite ou court (légendes, boutons, étiquettes) garde son alignement propre. */
+:where(main p, main li, main dd, footer p):not(:where([class*="cap"], [class*="kick"], [class*="meta"], [class*="note"], [class*="label"], [class*="tag"], [class*="btn"], [class*="chip"], .hk-w, .word)) { text-align: justify; text-justify: inter-word; -webkit-hyphens: auto; hyphens: auto; hyphenate-limit-chars: 6 3 3; text-wrap: pretty; }
+:where(main) :where(.gx-count, .gx-kick, .cp-k, .lk-h, .lk-meta, h1, h2, h3, h4, nav, button, a.btn, a.cta-primary) { text-align: revert-layer; }
