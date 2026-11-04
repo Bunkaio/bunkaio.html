@@ -7907,3 +7907,12 @@ body[data-view="quiz"] .quiz-nav-btn:hover, body[data-view="quiz"] .quiz-nav-btn
 }
 .hero-kicker .hk-b b.hk-cap { font-weight: 500; }
 .hero-kicker .hk-b::before, .hero-kicker .hk-b::after { opacity: 1 !important; visibility: visible !important; }
+
+/* Bloc « Le studio · N° 01 » (accueil et fin d'articles) : texte éditorial en bloc carré, bords gauche et droit alignés (4 nov. 2026) */
+:is(#view-home .credentials-strip, .art-cred) .cred-lead { text-align: justify; text-justify: inter-word; -webkit-hyphens: auto; hyphens: auto; hyphenate-limit-chars: 6 3 3; text-wrap: pretty; max-width: none !important; }
+:is(#view-home .credentials-strip, .art-cred) .cred-lead strong { font-weight: 600; color: #111; }
+:is(#view-home .credentials-strip, .art-cred) .cred-body { display: flex; flex-direction: column; }
+:is(#view-home .credentials-strip, .art-cred) .cred-minis, :is(#view-home .credentials-strip, .art-cred) .cred-links { width: 100%; }
+@media (max-width: 760px) {
+  :is(#view-home .credentials-strip, .art-cred) .cred-lead { text-align: justify; font-size: 14px !important; line-height: 1.65 !important; }
+}
