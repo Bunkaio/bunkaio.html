@@ -567,6 +567,9 @@ const I18N = {
     'footer-claim2':'Studio de photographie mobile · Montpellier · Toulouse',
     'stab-catalogue':'Catalogue & prix','stab-devis':'Devis & déroulé',
     'p-trust':'Ils ont collaboré avec BUNKAIO',
+    'pb-k':'BUNKAIO · Collaboration',
+    'pb-t':'Des projets réalisés ensemble.',
+    'pb-l':'Proposer une collaboration',
     'cp-title':'Collaboration ou partenariat ?',
     'cp-intro':'Deux façons de travailler avec BUNKAIO, à ne pas confondre.',
     'cp-c-k':'01 · Collaboration',
@@ -938,6 +941,9 @@ const I18N = {
     'footer-claim2':'Mobile photography studio · Montpellier · Toulouse',
     'stab-catalogue':'Catalogue & rates','stab-devis':'Quote & process',
     'p-trust':'They collaborated with BUNKAIO',
+    'pb-k':'BUNKAIO · Collaboration',
+    'pb-t':'Projects created together.',
+    'pb-l':'Propose a collaboration',
     'cp-title':'Collaboration or partnership?',
     'cp-intro':'Two ways of working with BUNKAIO, not to be confused.',
     'cp-c-k':'01 · Collaboration',
@@ -5914,7 +5920,7 @@ function gxInit(v){
   if (mega && v !== 'legal') gxMega(mega, mega.dataset[LANG] || mega.dataset.fr);
   gxStage(root.querySelector('.gx-stage'), v);
   if (v === 'contact') { gxClock(); GX.timers.push(setInterval(gxClock, 15000)); }
-  if (v === 'partners') { gxSpots(); gxMarquee(); }
+  if (v === 'partners') { gxSpots(); gxMarquee(); partnersBanner(); }
   if (v === 'drone') gxDrone();
   if (v === 'about') { const l = document.getElementById('gxAboutLbl'); if (l) l.textContent = t({fr:'ans d\'expérience', en:'years of experience'}); const f = root.querySelector('.gx-portrait'); if (f) f.dataset.cursor = 'Aya Nascimento'; }
   if (v === 'legal') { const s = document.getElementById('gxSearch'); if (s) { s.value = ''; s.placeholder = t({fr:'Rechercher une question…', en:'Search a question…'}); } }
@@ -6055,6 +6061,21 @@ function gxClock(){
 /* Collaboration : places restantes (même source que les univers : Worker /partner-spots, sinon PP_SPOTS_DEFAULT) + mini-tableau des univers. */
 var GX_UNI = [['portrait', {fr:'Portrait', en:'Portrait'}], ['mode', {fr:'Mode', en:'Fashion'}], ['commercial', {fr:'Commercial', en:'Commercial'}], ['evenementiel', {fr:'Événementiel', en:'Events'}], ['mariage', {fr:'Mariage', en:'Weddings'}]];
 function gxLeft(id){ const n = window._ppLeft && typeof window._ppLeft[id] === 'number' ? window._ppLeft[id] : (PP_SPOTS_DEFAULT[id] ?? 5); return Math.max(0, Math.min(5, n)); }
+/* Photo plein écran de la page Collaboration (entre l'encart et les onglets) : une photo des bannières Collaboration, la première qui existe. */
+function partnersBanner(){
+  const box = document.getElementById('pBanner'); if (!box) return;
+  const img = box.querySelector('img'); if (!img || img._ok) { return; }
+  const list = [].concat((IMG.heroImages && IMG.heroImages.partners) || []).filter(Boolean);
+  const order = [2, 3, 4, 1, 0].map(i => list[i]).filter(Boolean);
+  const tryNext = k => {
+    if (k >= order.length) return;
+    const probe = new Image();
+    probe.onload = () => { img.src = order[k]; img._ok = true; box.hidden = false; };
+    probe.onerror = () => tryNext(k + 1);
+    probe.src = order[k];
+  };
+  tryNext(0);
+}
 function gxSpots(){
   const tot = GX_UNI.reduce((s, [id]) => s + gxLeft(id), 0);
   gxRoll(document.getElementById('gxSpots'), String(tot));

@@ -7921,3 +7921,9 @@ body[data-view="quiz"] .quiz-nav-btn:hover, body[data-view="quiz"] .quiz-nav-btn
 #view-home .home-paper > .lk-banner { max-width: none; margin-top: 80px; margin-bottom: 70px; }
 #view-home .home-paper > .lk-banner .lk-full { margin-left: calc(50% - 50vw); }
 @media (max-width: 760px) { #view-home .home-paper > .lk-banner { margin-top: 56px; margin-bottom: 48px; } }
+
+/* Collaboration : photo plein écran entre l'encart et les onglets */
+.partners-page .pbanner { margin: 10px 0 56px; }
+.partners-page .pbanner .lk-full { margin-left: calc(50% - 50vw); }
+.partners-page .pbanner .lk-full-ph { cursor: default; }
+@media (max-width: 760px) { .partners-page .pbanner { margin-bottom: 36px; } }
