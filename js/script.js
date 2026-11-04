@@ -4871,12 +4871,60 @@ function hmInit(){
   const sa = document.getElementById('hmSvcAll'); if (sa) sa.textContent = t({fr:'Toutes les prestations ↗', en:'All services ↗'});
   const sl = document.getElementById('hmScrollLbl'); if (sl) sl.textContent = t({fr:'DÉFILER', en:'SCROLL'});
   home.querySelectorAll('.hm-claim .bk-echo, #hmSvcT .bk-echo').forEach(e => { e.dataset.text = e.textContent.trim(); });
-  renderHomeIndex();
+  renderHomeIndex(); lkHome(); lkWorks();
   if (paper) { bkPageReel(paper, 'contact'); bkMountNext(home, 'home'); bkScrambleWatch(paper); hmReveal(paper); }
   home.querySelectorAll('.hero-start, .cta-primary').forEach(b => b.classList.add('gx-mag'));
   bkFooter(); initCursorTag(); gxMagnet(); pfxStrips();
   if (HM.ok) return; HM.ok = true;
   hmHud(); hmMarqueeLoop(); hmParallax(); hmPreview();
+}
+/* Lookbook × BUNKAIO (accueil) : double page « BUNKAIO, STUDIO MOBILE » — manifeste en capitales grasses à gauche, portrait d'Aya plein cadre à droite. */
+function lkHome(){
+  const box = document.getElementById('lkHome'); if (!box) return;
+  box.innerHTML = `<div class="lk-home-txt">
+      <span class="lk-vert" aria-hidden="true">N° 00 — BUNKAIO ⊹ ${new Date().getFullYear()}</span>
+      <div><h2 class="lk-h" id="lkHomeT"><span class="bk-scramble bk-echo" data-text="BUNKAIO,">BUNKAIO,</span><br>${t({fr:'Studio mobile', en:'Mobile studio'})}</h2>
+      <p class="lk-meta"><span aria-hidden="true">⊹</span> ${t({fr:'Photographie · Occitanie · France', en:'Photography · Occitanie · France'})}</p></div>
+      <div class="lk-home-bot">
+        <p class="lk-manifest">${t({fr:'Votre image, à la hauteur de vos ambitions. ', en:'Your image, as ambitious as you are. '})}${t({fr:'Un studio de photographie mobile pour les professionnels, les entrepreneurs et les mannequins : direction artistique, lumière de studio et retouche, là où vous travaillez.', en:'A mobile photography studio for professionals, entrepreneurs and models: art direction, studio lighting and retouching, wherever you work.'})}</p>
+        <div class="lk-ctas"><a class="cta-primary" href="/devis/" onclick="goView('quiz');return false;" data-track="lookbook_accueil"><span data-lang="start">${t({fr:'Construire mon projet', en:'Build my project'})}</span></a><a class="lk-ghost" href="/portfolio/" onclick="return navLink(event,'portfolio')">${t({fr:'Voir le portfolio', en:'View the portfolio'})}</a></div>
+      </div>
+    </div>
+    <a class="lk-home-img" href="/a-propos/" onclick="return navLink(event,'about')" data-cursor="${escHtml(t({fr:'À propos', en:'About'}))}">
+      <img src="/images/about/aya-nascimento-photographe-en-studio.webp" data-aya loading="lazy" decoding="async" alt="${escHtml(t({fr:'Aya Nascimento, photographe et fondatrice de BUNKAIO, en studio', en:'Aya Nascimento, photographer and founder of BUNKAIO, in the studio'}))}">
+      <span class="lk-about">${t({fr:'À PROPOS', en:'ABOUT'})} <span aria-hidden="true">⊹</span></span>
+      <span class="lk-who">Aya Nascimento · ${t({fr:'photographe, fondatrice', en:'photographer, founder'})}</span>
+    </a>`;
+  if (typeof applyAyaPortrait === 'function') applyAyaPortrait();
+}
+/* « Works, séries » : la première série du Portfolio (séries de l'admin, sinon un univers) en double page ; rien s'il n'y a pas de photo. */
+function lkWorks(){
+  const box = document.getElementById('lkWorks'); if (!box || typeof pfxPlan !== 'function') return;
+  const gen = (box._gen = (box._gen || 0) + 1);
+  const go = () => {
+    const plan = pfxPlan();
+    Promise.all(plan.map(c => loadPortfolioPhotos(c.cat, 24).then(list => ({ ...c, photos: c.nums ? c.nums.map(n => MEDIA_BASE + '/portfolio/' + c.cat + '/' + n + '.webp').filter(u => list.includes(u)) : list })))).then(chs => {
+      if (gen !== box._gen) return;
+      chs = chs.filter(c => c.photos.length);
+      if (!chs.length) { box.hidden = true; box.innerHTML = ''; return; }
+      const c = chs[0], n = chs.length, cat = pfxCatLabel(c.cat);
+      const meta = [cat !== c.title ? cat : '', c.client, c.year, pfxNum(c.photos.length) + ' ' + t({fr:'images', en:'images'})].filter(Boolean).map(escHtml).join(' · ');
+      const reel = { title: c.title, client: c.client, cat: c.cat, photos: c.photos, label: t({fr:'Série 01, ', en:'Series 01, '}) };
+      box._reel = reel;
+      box.innerHTML = `<div class="lk-works-head"><h2 class="lk-h"><span class="bk-scramble bk-echo" data-text="WORKS,">WORKS,</span><br>${t({fr:'Séries', en:'Series'})}</h2><a class="lk-ghost" href="/portfolio/" onclick="return navLink(event,'portfolio')">${t({fr:'Toutes les séries', en:'All series'})} (${pfxNum(n)}) →</a></div>
+        <div class="lk-works-sp">
+          <button type="button" class="lk-works-img" data-cursor="${escHtml(t({fr:'Projeter', en:'Play'}))}" onclick="pfxOpen(document.getElementById('lkWorks')._reel,0)"><img loading="lazy" decoding="async" src="${c.photos[0]}" alt="${escHtml(pfxAlt(c, c.photos[0], 0))}"><span class="lk-cap">01.01</span></button>
+          <div class="lk-works-txt">
+            <div><p class="lk-kick">${t({fr:'Série', en:'Series'})} 01, <span aria-hidden="true">⊹</span> Portfolio</p><p class="lk-h lk-h-s"><span class="bk-echo" data-text="${escHtml(c.title)}">${escHtml(c.title)}</span></p><p class="lk-meta">${meta}</p></div>
+            <div class="lk-works-bot">${c.photos[1] ? `<button type="button" class="lk-works-sm" data-cursor="02" onclick="pfxOpen(document.getElementById('lkWorks')._reel,1)"><img loading="lazy" decoding="async" src="${c.photos[1]}" alt=""></button>` : ''}
+              ${c.text ? `<p class="lk-manifest">${escHtml(c.text)}</p>` : ''}
+              <a class="lk-play" href="/portfolio/#serie-${escHtml(c.id)}" onclick="return navLink(event,'portfolio')"><span aria-hidden="true">▸</span> ${t({fr:'Voir la série', en:'View the series'})} <span class="lk-tc">${pfxNum(c.photos.length)} ${t({fr:'images', en:'images'})}</span></a></div>
+          </div>
+        </div>`;
+      box.hidden = false; bkScrambleWatch(box);
+    });
+  };
+  if (window._pfSeries === undefined && typeof pfxLoadSeries === 'function') pfxLoadSeries().then(go); else go();
 }
 function renderHomeIndex(){
   const box = document.getElementById('hmIndex'), mq = document.getElementById('hmMarquee'); if (!box) return;
@@ -4897,7 +4945,7 @@ function renderHomeIndex(){
 }
 /* Apparition des blocs de la feuille papier (barres qui se tracent, montée douce). */
 function hmReveal(paper){
-  const els = paper.querySelectorAll('.hm-sec-head, .cs-spotlight, .credentials-strip, .advice-teaser, .testi-heading, .hm-reel, .reassure-item');
+  const els = paper.querySelectorAll('.lk-home, .lk-works, .hm-sec-head, .cs-spotlight, .credentials-strip, .advice-teaser, .testi-heading, .hm-reel, .reassure-item');
   if (REDUCED_MOTION || !('IntersectionObserver' in window)) { els.forEach(e => e.classList.add('hm-in')); return; }
   const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('hm-in'); io.unobserve(e.target); } }), { threshold: .12 });
   els.forEach((e, i) => { if (!e.classList.contains('hm-in')) { e.classList.add('hm-pre'); e.style.setProperty('--hd', (e.classList.contains('reassure-item') ? [...e.parentElement.children].indexOf(e) * 90 : 0) + 'ms'); io.observe(e); } });
@@ -5007,6 +5055,7 @@ function pxInit(v){
     if (Array.isArray(spec.stage)) { pxStage(st, spec.stage, v + (currentSub || '')); }
     else gxStage(st, spec.stage);
   }
+  if (v === 'service') lkFiche(head, spec);
   if (spec.kick) {
     const h = root.querySelector('h1.page-title, h2.page-title, h2.ct-title, h1.ct-title');
     if (h && !h.closest('.px-head')) {
@@ -5018,6 +5067,37 @@ function pxInit(v){
   }
   if (spec.next) { BK_NEXT[v] = spec.next; bkMountNext(root, v); }
   gxDecorate(root); initCursorTag(); gxMagnet(); bkFooter();
+}
+/* Lookbook × BUNKAIO, page prestation : photo plein cadre sur 7 colonnes + fiche courte (titre « MOT, MOT », prix, formules, CTA). */
+function lkFiche(head, spec){
+  const sub = currentSub, brand = sub === 'branding', cid = brand ? 'corporate' : sub;
+  const c = CATS.find(x => x.id === cid); let box = head.querySelector('.lk-fiche');
+  if (!c) { if (box) box.remove(); head.classList.remove('lk-svc'); return; }
+  if (!box) { box = document.createElement('div'); box.className = 'lk-fiche'; head.appendChild(box); }
+  head.classList.add('lk-svc');
+  const route = seoRouteFor('service', sub) || {};
+  const desc = (LANG === 'en' && route.descriptionEn) || route.description || '';
+  const lancP = c.tiers.lanc ? c.tiers.lanc.price : 0;
+  const tiers = c.lumen ? [] : catTiers(c).filter(tr => brand ? c.tiers[tr.id].price >= lancP : tr.id !== 'lanc');
+  const eur = n => n.toLocaleString('fr-FR') + ' €';
+  const idx = Math.max(0, ['photo-part', 'branding', 'corporate', 'mode', 'commercial', 'event'].indexOf(sub));
+  const photos = Array.isArray(spec.stage) ? spec.stage : [];
+  const mega = PX_SVC_MEGA[sub], w1 = mega ? t(mega) : t(c.name);
+  const t1 = brand ? t({fr:'Lancement,', en:'Launch,'}) : w1.charAt(0) + w1.slice(1).toLowerCase() + ',';
+  const t2 = brand ? 'Personal Branding' : t({fr:'Formules', en:'Packages'});
+  const price = brand && lancP ? eur(lancP) : (spec.count ? t({fr:'dès ', en:'from '}) + spec.count.replace('€', ' €') : t({fr:'Sur demande', en:'On request'}));
+  box.innerHTML = `<figure class="lk-fiche-img">${photos.length ? `<img src="${photos[0]}" alt="" loading="eager" decoding="async" data-alt="${escHtml(photos.slice(1).join('|'))}" onerror="const n=(this.dataset.alt||'').split('|').filter(Boolean);if(n.length){this.dataset.alt=n.slice(1).join('|');this.src=n[0];}else{this.closest('figure').classList.add('is-empty');}">` : ''}<figcaption>${pfxNum(idx + 1)}.01</figcaption></figure>
+    <div class="lk-fiche-txt">
+      <div><p class="lk-kick">${t({fr:'Prestation', en:'Service'})} ${pfxNum(idx + 1)}, <span aria-hidden="true">⊹</span> ${escHtml(t(c.name))}</p>
+        <p class="lk-h" aria-hidden="true"><span class="bk-scramble bk-echo" data-text="${escHtml(t1)}">${escHtml(t1)}</span><br>${escHtml(t2)}</p>
+        <p class="lk-price">${escHtml(price)}</p></div>
+      <div class="lk-fiche-bot">
+        ${desc ? `<p class="lk-manifest">${escHtml(desc)}</p>` : ''}
+        ${tiers.length ? `<div class="lk-tiers">${tiers.map((tr, i) => quizLink(cid, `<span class="lk-tier-n">${pfxNum(i + 1)}</span><span class="lk-tier-t">${escHtml(t(tr.name))}</span><span class="lk-tier-p">${eur(c.tiers[tr.id].price)}</span>`, 'lk-tier' + ((brand ? tr.id === 'lanc' : i === 0) ? ' on' : ''), tr.id, tr.id === 'lanc' ? 'lancement' : '')).join('')}</div>` : ''}
+        <div class="lk-ctas">${quizLink(cid, `<span data-lang="start">${t({fr:'Construire mon projet', en:'Build my project'})}</span>`, 'cta-primary', brand ? 'lanc' : '', brand ? 'lancement' : '')}<a class="lk-ghost" href="/portfolio/" onclick="return navLink(event,'portfolio')">${t({fr:'Voir le portfolio', en:'View the portfolio'})}</a></div>
+        <p class="lk-note">${t({fr:'Prix nets, TVA non applicable. Paiement en 3 fois sans frais avec Klarna ou Scalapay, sous réserve d\'éligibilité.', en:'Net prices, VAT not applicable. Pay in 3 interest-free instalments with Klarna or Scalapay, subject to eligibility.'})}</p>
+      </div>
+    </div>`;
 }
 /* Scène à partir d'une liste d'adresses (prestation, ville). */
 function pxStage(st, list, key){ gxStage(st, key, list); }
@@ -5480,18 +5560,6 @@ function pfxPlan(){
   return PF_CATS.map(c => ({ id: c.id, title: t(c.label), client: '', year: '', cat: c.id, nums: null, text: '' }));
 }
 const pfxCatLabel = id => { const c = PF_CATS.find(x => x.id === id); return c ? t(c.label) : ''; };
-/* Rythme de la grille : chaque rangée totalise 12 colonnes ; les formats s'accordent pour que les images d'une rangée aient la même hauteur. */
-const PFX_ROWS = [['s7 r-tall', 's5 r-tall'], ['s4', 's4', 's4'], ['s5 r-tall', 's7 r-tall'], ['s12 r-wide'], ['s6', 's6']];
-function pfxLayout(n){
-  const out = []; let r = 0;
-  while (out.length < n) {
-    let row = PFX_ROWS[r % PFX_ROWS.length]; r++;
-    const left = n - out.length;
-    if (row.length > left) row = left === 1 ? ['s12 r-wide'] : left === 2 ? ['s6', 's6'] : ['s4', 's4', 's4'];
-    row.forEach(c => out.push(c));
-  }
-  return out.slice(0, n);
-}
 function pfxIndexHtml(chs, loading){
   const cv = PFX.view === 'tiles';
   const tog = `<div class="pfx-view" role="group" aria-label="${escHtml(t({fr:'Affichage du sommaire', en:'Index view'}))}"><button type="button" class="${cv ? '' : 'on'}" aria-pressed="${!cv}" onclick="pfxSetView('list')">${t({fr:'Liste', en:'List'})}</button><button type="button" class="${cv ? 'on' : ''}" aria-pressed="${cv}" onclick="pfxSetView('tiles')">${t({fr:'Planches', en:'Boards'})}</button></div>`;
@@ -5524,29 +5592,51 @@ function pfxAlt(c, src, i){
   const custom = IMG.portfolioAlt && IMG.portfolioAlt[c.cat] && IMG.portfolioAlt[c.cat][num - 1];
   return custom || ((LANG === 'fr' ? 'Réalisation BUNKAIO — ' : 'BUNKAIO work — ') + (c.title || pfxCatLabel(c.cat)).toLowerCase() + ' (' + (i + 1) + '/' + c.photos.length + ')');
 }
+/* Rythme « lookbook » (nov. 2026, mélange Almira Kho × BUNKAIO) : après la photo d'ouverture, double page décalée (4 + 7), plein cadre, trio décalé. */
+const PFX_LOOK = [['lk-a', 'lk-b'], ['lk-w'], ['lk-t', 'lk-t lk-m', 'lk-t']];
+function pfxLook(n){
+  const out = []; let r = 0;
+  while (out.length < n) {
+    let g = PFX_LOOK[r % PFX_LOOK.length]; r++;
+    const left = n - out.length;
+    if (g.length > left) g = left === 1 ? (out[out.length - 1] === 'lk-w' ? ['lk-b'] : ['lk-w']) : ['lk-a', 'lk-b'];
+    g.forEach(c => out.push(c));
+  }
+  return out.slice(0, n);
+}
+function pfxTc(n){ return '00:' + String(n).padStart(2, '0'); }
 function pfxChapterHtml(c, ci){
-  const lay = pfxLayout(c.photos.length);
-  const meta = [pfxCatLabel(c.cat) !== c.title ? pfxCatLabel(c.cat) : '', c.client, c.year].filter(Boolean).map(escHtml).join(' · ');
+  const rest = c.photos.slice(1), lay = pfxLook(rest.length);
+  const cat = pfxCatLabel(c.cat);
+  const meta = [cat !== c.title ? cat : '', c.client, c.year, pfxNum(c.photos.length) + ' ' + t({fr:'images', en:'images'})].filter(Boolean).map(escHtml).join(' · ');
   const next = PFX.chapters[ci + 1];
-  return `<section class="pfx-ch" id="serie-${escHtml(c.id)}" aria-labelledby="pfx-t-${ci}">
-    <header class="pfx-ch-head">
-      <span class="pfx-ch-n">${pfxNum(ci + 1)}</span>
-      <div class="pfx-ch-body">
-        <p class="pfx-ch-kick">${t({fr:'Série', en:'Series'})} ${pfxNum(ci + 1)},</p>
-        <h3 class="pfx-ch-t" id="pfx-t-${ci}"><span class="bk-scramble bk-echo" data-text="${escHtml(c.title)}">${escHtml(c.title)}</span></h3>
-        ${meta ? `<p class="pfx-ch-meta">${meta}</p>` : ''}
-        ${c.text ? `<p class="pfx-ch-text">${escHtml(c.text)}</p>` : ''}
-      </div>
-      <span class="pfx-ch-count">${pfxNum(c.photos.length)} ${t({fr:'img', en:'img'})}</span>
-    </header>
-    <div class="pfx-strip" aria-label="${escHtml(t({fr:'Planche-contact', en:'Contact sheet'}))}"><div class="pfx-strip-in">${c.photos.map((src, i) => `<button type="button" class="pfx-thumb" data-cursor="${pfxNum(i + 1)}" onclick="pfxOpen(${ci},${i})" aria-label="${escHtml(t({fr:'Agrandir', en:'Enlarge'}))} ${i + 1}/${c.photos.length}"><img loading="lazy" decoding="async" src="${src}" alt=""></button>`).join('')}</div></div>
-    <div class="pfx-grid">${c.photos.map((src, i) => `<figure class="pfx-item ${lay[i]} rv" data-ch="${ci}" data-i="${i}">
+  const item = (src, i, cls) => `<figure class="pfx-item ${cls} rv" data-ch="${ci}" data-i="${i}">
         <button type="button" class="pfx-open" data-cursor="${escHtml(t({fr:'Voir', en:'View'}))}" onclick="pfxOpen(${ci},${i})" aria-label="${escHtml(t({fr:'Agrandir', en:'Enlarge'}))} ${i + 1}/${c.photos.length}"><img loading="lazy" decoding="async" src="${src}" alt="${escHtml(pfxAlt(c, src, i))}"></button>
         <figcaption>${pfxNum(ci + 1)}.${pfxNum(i + 1)}</figcaption>
-      </figure>`).join('')}</div>
-    ${next ? `<a class="pfx-next" href="#serie-${escHtml(next.id)}" data-cursor="${escHtml(t({fr:'Voir', en:'View'}))}" onclick="return pfxGo(event,'${escHtml(next.id)}')">
-      <span class="pfx-next-k">${t({fr:'Série suivante', en:'Next series'})}</span>
-      <span class="pfx-next-t"><span class="bk-echo" data-text="${escHtml(next.title)}">${escHtml(next.title)}</span></span>
+      </figure>`;
+  return `<section class="pfx-ch lk-ch" id="serie-${escHtml(c.id)}" aria-labelledby="pfx-t-${ci}">
+    <div class="lk-open">
+      <header class="lk-open-txt pfx-ch-head">
+        <div class="lk-open-top">
+          <p class="lk-kick">${t({fr:'Série', en:'Series'})} ${pfxNum(ci + 1)}, <span aria-hidden="true">⊹</span> Portfolio</p>
+          <h3 class="lk-t" id="pfx-t-${ci}"><span class="bk-scramble bk-echo" data-text="${escHtml(c.title)}">${escHtml(c.title)}</span></h3>
+          <p class="lk-meta">${meta}</p>
+        </div>
+        <div class="lk-open-bot">
+          ${c.text ? `<p class="lk-manifest">${escHtml(c.text)}</p>` : ''}
+          <dl class="lk-facts">${c.client ? `<div><dt>${t({fr:'Client', en:'Client'})}</dt><dd>${escHtml(c.client)}</dd></div>` : ''}<div><dt>${t({fr:'Univers', en:'Field'})}</dt><dd>${escHtml(cat)}</dd></div>${c.year ? `<div><dt>${t({fr:'Année', en:'Year'})}</dt><dd>${escHtml(String(c.year))}</dd></div>` : ''}</dl>
+          <button type="button" class="lk-play" data-cursor="${escHtml(t({fr:'Projeter', en:'Play'}))}" onclick="pfxOpen(${ci},0)"><span aria-hidden="true">▸</span> ${t({fr:'Projeter la série', en:'Play the series'})} <span class="lk-tc">00:00 / ${pfxTc(c.photos.length)}</span></button>
+        </div>
+      </header>
+      ${item(c.photos[0], 0, 'lk-cover')}
+    </div>
+    ${rest.length ? `<div class="pfx-grid lk-grid">${rest.map((src, k) => item(src, k + 1, lay[k])).join('')}</div>` : ''}
+    <div class="lk-sheet-h"><span>${t({fr:'Planche-contact', en:'Contact sheet'})} · ${pfxNum(c.photos.length)} ${t({fr:'images', en:'images'})}</span></div>
+    <div class="pfx-strip" aria-label="${escHtml(t({fr:'Planche-contact', en:'Contact sheet'}))}"><div class="pfx-strip-in">${c.photos.map((src, i) => `<button type="button" class="pfx-thumb" data-cursor="${pfxNum(i + 1)}" onclick="pfxOpen(${ci},${i})" aria-label="${escHtml(t({fr:'Agrandir', en:'Enlarge'}))} ${i + 1}/${c.photos.length}"><img loading="lazy" decoding="async" src="${src}" alt=""></button>`).join('')}</div></div>
+    ${next ? `<a class="pfx-next lk-next" href="#serie-${escHtml(next.id)}" data-cursor="${escHtml(t({fr:'Voir', en:'View'}))}" onclick="return pfxGo(event,'${escHtml(next.id)}')">
+      <span class="lk-next-txt"><span class="pfx-next-k">${t({fr:'Série suivante', en:'Next series'})} <span aria-hidden="true">⊹</span></span>
+      <span class="pfx-next-t">${t({fr:'Série', en:'Series'})} ${pfxNum(ci + 2)},<br><span class="bk-echo" data-text="${escHtml(next.title)}">${escHtml(next.title)}</span></span>
+      <span class="lk-next-m">${escHtml([pfxCatLabel(next.cat), next.year, pfxNum(next.photos.length) + ' ' + t({fr:'images', en:'images'})].filter(Boolean).join(' · '))} →</span></span>
       <span class="pfx-next-img"><img loading="lazy" decoding="async" src="${next.photos[0]}" alt=""></span>
     </a>` : `<a class="pfx-next is-top" href="#pfIndex" onclick="return pfxTop(event)"><span class="pfx-next-k">${t({fr:'Fin du portfolio', en:'End of portfolio'})}</span><span class="pfx-next-t"><span class="bk-echo" data-text="${escHtml(t({fr:'Retour au sommaire', en:'Back to index'}))}">${t({fr:'Retour au sommaire', en:'Back to index'})}</span></span></a>`}
   </section>`;
