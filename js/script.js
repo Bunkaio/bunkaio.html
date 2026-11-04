@@ -33,14 +33,14 @@ const TRAVEL_PER_KM = '0,60';
 const TRAVEL_CAP = 350;   /* forfait longue distance : plafond du déplacement facturé */
 const TRAVEL_TXT = {
   fr: {
-    list: 'Déplacements offerts jusqu\'à ' + TRAVEL_FREE_KM + ' km autour de Montpellier, de Toulouse et dans l\'ouest de l\'Hérault',
-    note: 'Déplacements offerts jusqu\'à ' + TRAVEL_FREE_KM + ' km autour de Montpellier, de Toulouse et dans l\'ouest de l\'Hérault ; ailleurs, ' + TRAVEL_PER_KM + ' € par km (aller-retour) au-delà de ' + TRAVEL_FREE_KM + ' km, plafonné à ' + TRAVEL_CAP + ' € (forfait longue distance). Calculé automatiquement dans votre devis en ligne.',
-    full: 'Les déplacements sont offerts dans un rayon de ' + TRAVEL_FREE_KM + ' km autour de Montpellier, de Toulouse et dans l\'ouest de l\'Hérault. Ailleurs, ils sont facturés ' + TRAVEL_PER_KM + ' € par km, aller-retour, sur la distance qui dépasse ces ' + TRAVEL_FREE_KM + ' km, arrondie aux 5 € près, dans la limite d\'un forfait longue distance plafonné à ' + TRAVEL_CAP + ' € (estimations : Nîmes ≈ 35 €, Carcassonne ≈ 70 €, Perpignan ≈ 80 €, Paris ' + TRAVEL_CAP + ' €). Le devis en ligne calcule le montant à partir de la ville de la prestation ; il est confirmé sur votre devis, avant toute signature.'
+    list: 'Un tarif forfaitaire de déplacement existe pour les villes éloignées',
+    note: 'Un tarif forfaitaire existe pour les villes éloignées ; les frais de déplacement sont calculés automatiquement dans votre devis en ligne.',
+    full: 'Un tarif forfaitaire de déplacement existe pour les villes éloignées. Les frais de déplacement sont calculés automatiquement dans votre devis en ligne.'
   },
   en: {
-    list: 'Free travel within ' + TRAVEL_FREE_KM + ' km of Montpellier, of Toulouse and in western Hérault',
-    note: 'Free travel within ' + TRAVEL_FREE_KM + ' km of Montpellier, of Toulouse and in western Hérault; elsewhere, €' + TRAVEL_PER_KM.replace(',', '.') + ' per km (round trip) beyond ' + TRAVEL_FREE_KM + ' km, capped at €' + TRAVEL_CAP + ' (long-distance flat rate). Calculated automatically in your online quote.',
-    full: 'Travel is free within ' + TRAVEL_FREE_KM + ' km of Montpellier, of Toulouse and in western Hérault. Elsewhere it is charged at €' + TRAVEL_PER_KM.replace(',', '.') + ' per km, round trip, on the distance exceeding those ' + TRAVEL_FREE_KM + ' km, rounded to the nearest €5, up to a long-distance flat rate capped at €' + TRAVEL_CAP + ' (estimates: Nîmes ≈ €35, Carcassonne ≈ €70, Perpignan ≈ €80, Paris €' + TRAVEL_CAP + '). The online quote calculates the amount from the session city; it is confirmed on your quote, before you sign anything.'
+    list: 'A flat travel rate applies to distant cities',
+    note: 'A flat rate applies to distant cities; travel costs are calculated automatically in your online quote.',
+    full: 'A flat travel rate applies to distant cities. Travel costs are calculated automatically in your online quote.'
   }
 };
 
