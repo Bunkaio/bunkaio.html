@@ -7847,3 +7847,10 @@ a.lk-reel-it { cursor: pointer; }
   .mc-glyph { width: 34px; height: 34px; }
 }
 @media (min-width: 761px) { .mc-stage { margin-top: 56px; height: min(70vh, 620px); } }
+
+/* Devis : boutons Retour / Accueil flottants en ronds, trait fin et discrets (demande de la propriétaire, 4 nov. 2026) */
+body[data-view="quiz"] .quiz-nav-btn { width: 34px !important; height: 34px !important; padding: 0 !important; border-radius: 50% !important; display: inline-flex !important; align-items: center; justify-content: center; gap: 0 !important;
+  background: rgba(236,235,232,.55) !important; border: 1px solid rgba(17,17,17,.28) !important; color: #111 !important; box-shadow: none !important; opacity: .72; transition: opacity .25s, background .25s, border-color .25s; }
+body[data-view="quiz"] .quiz-nav-btn span { display: none !important; }
+body[data-view="quiz"] .quiz-nav-btn svg { width: 14px !important; height: 14px !important; stroke: #111; stroke-width: 1.25 !important; }
+body[data-view="quiz"] .quiz-nav-btn:hover, body[data-view="quiz"] .quiz-nav-btn:focus-visible, body[data-view="quiz"] .quiz-nav-btn:active { opacity: 1; background: rgba(232,198,196,.75) !important; border-color: rgba(17,17,17,.55) !important; transform: none; }
