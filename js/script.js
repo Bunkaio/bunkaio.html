@@ -2392,6 +2392,8 @@ function scrollToContactForm(){
 function goToQuizCategory(catId, tierId){
   if (isComingSoon(catId)) { goToComingSoon(catId); return; }
   goView('quiz');
+  /* Remonter tout de suite en haut, sans animation : sinon, depuis le bas d'une page longue, l'écran reste sur une zone vide (page blanche) le temps du défilement. */
+  try { window.scrollTo(0, 0); document.documentElement.scrollTop = 0; document.body.scrollTop = 0; } catch (e) {}
   S.cat = catId; S.tier = null; S.prof = null;
   const box = document.getElementById('profQBox');
   if (box) box.style.display = 'none';
@@ -2402,7 +2404,7 @@ function goToQuizCategory(catId, tierId){
     S.prof = (CAT_PROFILES[catId] || [])[0] || null; S.tier = tierId;
     renderProfiles(); renderTiers(); renderRecap(); renderOptions(); quizStep(3);
     const card = document.querySelector('#tierList .tier-card[data-tier="' + tierId + '"]');
-    if (card) { card.classList.add('selected', 'open'); card.style.scrollMarginTop = ((parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) || 74) + 28) + 'px'; setTimeout(() => card.scrollIntoView({ block: 'start', behavior: 'smooth' }), 900); }
+    if (card) { card.classList.add('selected', 'open'); card.style.scrollMarginTop = ((parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) || 74) + 28) + 'px'; const go = () => { try { card.scrollIntoView({ block: 'start', behavior: 'auto' }); } catch (e) {} }; requestAnimationFrame(go); setTimeout(go, 950); }
     return;
   }
   quizStep(2);
