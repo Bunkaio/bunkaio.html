@@ -1971,6 +1971,7 @@ function initHeroCarousel(viewKey){
       gvw = document.createElement('div');
       gvw.className = 'hero-video-wrap';
       gvw.dataset.view = viewKey;
+      { const hp = [].concat((IMG.heroImages && IMG.heroImages[viewKey]) || IMG[viewKey] || []).filter(Boolean)[0]; if (hp) { gvw.style.backgroundImage = 'url("' + hp + '")'; gvw.style.backgroundSize = 'cover'; gvw.style.backgroundPosition = 'center'; } }
       const vid = createBgVideo(genericVideoSrc);
       vid.addEventListener('error', () => {
         gvw.style.display = 'none';
@@ -5428,6 +5429,7 @@ function renderProcessSteps(){
     };
     if (IMG.devisVideo && !sideImgBox.querySelector('video')) {
       const vid = createBgVideo(IMG.devisVideo);
+      if (IMG.devis) { sideImgBox.style.backgroundImage = 'url("' + IMG.devis + '")'; sideImgBox.style.backgroundSize = 'cover'; sideImgBox.style.backgroundPosition = 'center'; }
       vid.addEventListener('error', showImg, { once: true });
       sideImgBox.innerHTML = '';
       sideImgBox.appendChild(vid);

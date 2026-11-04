@@ -85,6 +85,8 @@ const IMG = {
   homeVideoMobile: 'videos/home-bg-m.mp4?v=2',        // Même vidéo allégée (1280 px, haute qualité) servie sur petit écran (≤ 820 px)
   missionVideo: 'videos/mission-bg.mp4?v=3',          // Vidéo de fond de la section « Pourquoi Bunkaio existe » (accueil, qualité d'origine ≈ 13 Mo) — chargée seulement quand la section approche
   missionVideoMobile: 'videos/mission-bg-m.mp4?v=2',  // Version allégée (1280 px, haute qualité) sur petit écran
+  /* Images de remplacement (première image des vidéos ci-dessus) : affichées en plein écran derrière la vidéo pendant son chargement, jamais de fond uni. À régénérer si la vidéo change : ffmpeg -ss 1 -i videos/<fichier>.mp4 -frames:v 1 -vf scale=1920:-2 -c:v libwebp -quality 80 images/posters/<nom>.webp (voir css/style.css « Images de remplacement des vidéos »). */
+  homePoster: 'images/posters/home.webp', homePosterMobile: 'images/posters/home-m.webp', missionPoster: 'images/posters/mission.webp', missionPosterMobile: 'images/posters/mission-m.webp',
   quiz:      MEDIA_BASE + '/hero/quiz-1.webp',       // Fond page Questionnaire devis
   services:  MEDIA_BASE + '/hero/services-1.webp',   // Fond page Services
   /* Vidéo de fond plein écran optionnelle de la page Services — remplace

@@ -8269,3 +8269,14 @@ body[data-view="quiz"] .quiz-nav-btn:hover, body[data-view="quiz"] .quiz-nav-btn
 .hm-acc-in .credentials-strip::before, .hm-acc-in .advice-teaser::before { display: none !important; }
 #view-home .home-paper .hm-acc-in .credentials-strip, #view-home .home-paper .hm-acc-in .advice-teaser { border-top: 0 !important; padding-top: 0 !important; margin-top: 0 !important; }
 #view-home .home-paper .hm-acc-in .credentials-strip::before, #view-home .home-paper .hm-acc-in .advice-teaser::before, #view-home .home-paper .hm-acc-in .credentials-strip::after, #view-home .home-paper .hm-acc-in .advice-teaser::after { display: none !important; }
+
+/* Images de remplacement des vidéos (5 nov. 2026, demande de la propriétaire) : une vraie image plein écran (1re image de la vidéo) est posée derrière chaque vidéo de
+   fond, pour ne jamais voir une couleur unie pendant le chargement ; la vidéo la recouvre dès qu'elle joue. Accueil + séquence « Le studio » ici ; pages
+   Services / Portfolio / devis : image de bannière posée en JS (hero-video-wrap, côté devis). Aucun attribut poster (bouton « play » sur mobile). */
+body[data-view="home"] #pageHeroWrap, .hero-video-wrap[data-view="home"] { background: #111 url('/images/posters/home.webp') center / cover no-repeat; }
+#homeClaimVideoBg, .mission-video-bg { background: #111 url('/images/posters/mission.webp') center / cover no-repeat; }
+@media (max-width: 820px) {
+  body[data-view="home"] #pageHeroWrap, .hero-video-wrap[data-view="home"] { background-image: url('/images/posters/home-m.webp'); }
+  #homeClaimVideoBg, .mission-video-bg { background-image: url('/images/posters/mission-m.webp'); }
+}
+.hero-video-wrap video, #homeClaimVideoBg video { background: transparent; }
