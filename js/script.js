@@ -1112,7 +1112,7 @@ function refreshDynamic(){
   if (currentView === 'service') renderServicePage(currentSub);
   if (currentView === 'article') renderArticlePage(currentSub);
   if (currentView === 'city') renderCityPage(currentSub);
-  if (typeof initCstDecor === 'function') setTimeout(() => initCstDecor(), 0);
+  if (typeof initCstDecor === 'function') setTimeout(() => { initCstDecor(); ctaBandLive(); }, 0);
   if (currentView === 'advice') renderAdvicePage();
   if (currentView === 'discover') renderDiscoverPage();
   renderAdviceTeaser();
@@ -9055,6 +9055,25 @@ function cstDecoSvg(){
   return o + '</svg>';
 }
 let _cstIO = null;
+/* Bandeau d'appel sombre « Travaillons ensemble » : animation de texte à l'arrivée à l'écran (kicker qui se resserre, titre mot à mot en montée
+   masquée avec flou, sous-titre, bouton en rideau, flèche qui avance). Relancée à chaque changement de langue (le texte est reconstruit). */
+function ctaBandLive(root){
+  (root || document).querySelectorAll('.pf-cta-band').forEach(box => {
+    const title = box.querySelector('.pf-cta-title'); if (!title) return;
+    const txt = title.textContent.replace(/ /g, ' ').trim();
+    if (title.dataset.cbText !== txt) {
+      title.dataset.cbText = txt;
+      let words = txt.split(/\s+/); if (words.length > 1 && words[words.length - 1] === '?') { words.pop(); words[words.length - 1] += ' ?'; }
+      title.setAttribute('aria-label', txt);
+      title.innerHTML = words.map((w, i) => `<span class="cb-w" aria-hidden="true" style="--i:${i}"><span>${escHtml(w)}</span></span>`).join(' ');
+    }
+    box.classList.add('cb-pre');
+    if (box._cbIo) return;
+    if (REDUCED_MOTION || !window.IntersectionObserver) { box.classList.add('cb-in'); return; }
+    const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { box.classList.add('cb-in'); io.disconnect(); } }), { threshold: .35 });
+    box._cbIo = io; io.observe(box);
+  });
+}
 function initCstDecor(root){
   if (!_cstIO && window.IntersectionObserver) _cstIO = new IntersectionObserver(es => es.forEach(e => e.target.classList.toggle('is-on', e.isIntersecting)), { threshold: 0.15 });
   /* Bandeaux sombres (traits blancs) et panneaux clairs d'appel à l'action (variante violette). */
@@ -9314,7 +9333,7 @@ if (_footerCtaInit) _footerCtaInit.style.display = 'none';
 syncNavHeight();
 window.addEventListener('resize', () => { syncNavHeight(); if (window.innerWidth > 1180) closeMobileMenu(); });
 initHeroScrollFx();
-initCstDecor();
+initCstDecor(); ctaBandLive();
 initNavScrollState();
 
 /* Route d'entrée : la page statique servie correspond déjà à la vue ; on
