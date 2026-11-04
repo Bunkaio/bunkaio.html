@@ -5176,7 +5176,7 @@ function lkFiche(head, spec){
   const route = seoRouteFor('service', sub) || {};
   const desc = (LANG === 'en' && route.descriptionEn) || route.description || '';
   const lancP = c.tiers.lanc ? c.tiers.lanc.price : 0;
-  const tiers = c.lumen ? [] : catTiers(c).filter(tr => brand ? c.tiers[tr.id].price >= lancP : tr.id !== 'lanc');
+  const tiers = c.lumen ? [] : catTiers(c).filter(tr => brand ? c.tiers[tr.id].price >= lancP : true);
   const eur = n => n.toLocaleString('fr-FR') + ' €';
   const idx = Math.max(0, ['photo-part', 'branding', 'corporate', 'mode', 'commercial', 'event'].indexOf(sub));
   const photos = Array.isArray(spec.stage) ? spec.stage : [];
