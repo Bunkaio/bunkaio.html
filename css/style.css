@@ -8061,3 +8061,6 @@ body[data-view="quiz"] .quiz-nav-btn:hover, body[data-view="quiz"] .quiz-nav-btn
    :where() = spécificité nulle : tout texte centré, aligné à droite ou court (légendes, boutons, étiquettes) garde son alignement propre. */
 :where(main p, main li, main dd, footer p):not(:where([class*="cap"], [class*="kick"], [class*="meta"], [class*="note"], [class*="label"], [class*="tag"], [class*="btn"], [class*="chip"], .hk-w, .word)) { text-align: justify; text-justify: inter-word; -webkit-hyphens: auto; hyphens: auto; hyphenate-limit-chars: 6 3 3; text-wrap: pretty; }
 :where(main) :where(.gx-count, .gx-kick, .cp-k, .lk-h, .lk-meta, h1, h2, h3, h4, nav, button, a.btn, a.cta-primary) { text-align: revert-layer; }
+
+/* Constellation des 5 publics : plus de losange en pointillés, seule la croix « ⊹ » (quatre bras autour du centre) reste (5 nov. 2026) */
+.hero-kicker .hk-lines polyline.f { display: none !important; }
