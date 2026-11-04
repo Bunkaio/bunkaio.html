@@ -8064,3 +8064,8 @@ body[data-view="quiz"] .quiz-nav-btn:hover, body[data-view="quiz"] .quiz-nav-btn
 
 /* Constellation des 5 publics : plus de losange en pointillés, seule la croix « ⊹ » (quatre bras autour du centre) reste (5 nov. 2026) */
 .hero-kicker .hk-lines polyline.f { display: none !important; }
+
+/* Services : photo plein écran avant « Découvrir chaque prestation » */
+#view-services .svc-banner { margin: 64px 0 64px; }
+#view-services .svc-banner .lk-full { margin-left: calc(50% - 50vw); }
+@media (max-width: 760px) { #view-services .svc-banner { margin: 44px 0; } }

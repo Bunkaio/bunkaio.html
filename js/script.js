@@ -5636,9 +5636,33 @@ function renderPortfolioLinks(){
   if (!el) return;
   el.innerHTML = discoverPanel(t({fr:'Vous aimez ce que vous voyez ? Découvrez pour qui est conçue chaque prestation, ce qu\'elle comprend, à partir de quel prix et sous quel délai : portrait, corporate, mode, produits, événementiel et photobooth Lumen.', en:'Like what you see? Find out who each service is designed for, what it includes, from what price and in what time: portrait, corporate, fashion, products, events and the Lumen photobooth.'}));
 }
+/* Photo plein écran de la page Services (avant « Découvrir chaque prestation ») : une photo du Portfolio (Mode, sinon Commercial, Corporate, Particuliers), petit texte dessus. */
+function svcBanner(){
+  const box = document.getElementById('svcBanner'); if (!box) return;
+  const gen = (box._g = (box._g || 0) + 1);
+  const order = ['mode', 'commercial', 'corporate', 'photo-part'];
+  const next = k => {
+    if (k >= order.length) { box.hidden = true; return; }
+    loadPortfolioPhotos(order[k], 24).then(list => {
+      if (gen !== box._g) return;
+      if (!list || list.length < 2) { next(k + 1); return; }
+      const j = Math.min(2, list.length - 1), cat = order[k];
+      box._reel = { title: t({fr:'Portfolio', en:'Portfolio'}), cat, photos: list, label: '' };
+      box.innerHTML = `<div class="lk-full">
+        <button type="button" class="lk-full-ph" data-cursor="${escHtml(t({fr:'Voir', en:'View'}))}" onclick="pfxOpen(document.getElementById('svcBanner')._reel,${j})" aria-label="${escHtml(t({fr:'Agrandir la photo', en:'Enlarge the photo'}))}"><img loading="lazy" decoding="async" src="${list[j]}" alt="${escHtml(t({fr:'Réalisation BUNKAIO — ', en:'BUNKAIO work — '}) + pfxCatLabel(cat).toLowerCase())}"></button>
+        <div class="lk-cap-box"><span class="lk-cap-k">${t({fr:'Prestations & tarifs · Occitanie', en:'Services & rates · Occitanie'})}</span>
+          <p class="lk-cap-t">${t({fr:'Des images soignées, livrées en HD.', en:'Refined images, delivered in HD.'})}</p>
+          <a class="lk-cap-l" href="/portfolio/" onclick="return navLink(event,'portfolio')">${t({fr:'Voir le portfolio', en:'View the portfolio'})}</a></div>
+      </div>`;
+      box.hidden = false;
+    });
+  };
+  next(0);
+}
 function renderServiceLinks(){
   const el = document.getElementById('svcLinks');
   if (!el) return;
+  svcBanner();
   el.innerHTML = discoverPanel(t({fr:'Pas sûr de la prestation qui vous convient ? Parcourez chacune d\'elles : pour qui, ce qu\'elle apporte, ses tarifs de départ et ses délais, avec des conseils pour bien choisir.', en:'Not sure which service suits you? Browse each one: who it is for, what it brings, starting rates and delivery times, with tips to choose well.'}));
 }
 /* Avis Google : le lien (config/media.js → GOOGLE_REVIEW_URL) est renseigné une fois la fiche Google Business Profile créée.
