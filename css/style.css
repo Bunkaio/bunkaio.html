@@ -8174,3 +8174,8 @@ body[data-view="quiz"] .quiz-nav-btn:hover, body[data-view="quiz"] .quiz-nav-btn
 #view-services .svx .svx-head .svx-head-main { max-width: min(620px, 90vw); }
 #view-services .svx .svx-head .gx-kick { margin-bottom: 4px !important; }
 @media (max-width: 760px) { #view-services .svx .svx-head .svx-head-main .page-title { font-size: clamp(28px, 9.2vw, 40px) !important; } }
+
+/* Découvrir chaque prestation : photo plein écran entre la liste des prestations et « Comment ça se passe » */
+#view-discover .disc-banner { margin: 56px 0; }
+#view-discover .disc-banner .lk-full { margin-left: calc(50% - 50vw); }
+@media (max-width: 760px) { #view-discover .disc-banner { margin: 40px 0; } }

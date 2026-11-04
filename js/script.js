@@ -3466,6 +3466,7 @@ function discoverBgSync(){
 }
 
 function renderDiscoverPage(){
+  setTimeout(() => lkPhotoBanner('discBanner', ['corporate', 'photo-part', 'mode', 'commercial'], { kick: {fr:'Chaque prestation · Occitanie', en:'Every service · Occitanie'}, title: {fr:'Chaque projet, une direction artistique.', en:'Every project, an art direction.'} }), 0);
   const el = document.getElementById('discoverPageContent');
   if (!el) return;
   const en = LANG === 'en';
@@ -3523,6 +3524,8 @@ function renderDiscoverPage(){
       <h2>${t({fr:'Quelle prestation pour quel besoin ?', en:'Which service for which need?'})}</h2>
       <ul class="cs-acc disc-acc">${rows}</ul>
     </section>
+
+    <section class="lk-banner disc-banner" id="discBanner" aria-label="Portfolio" hidden></section>
 
     <section class="read-panel svcp-panel">
       <h2>${t({fr:'Comment ça se passe', en:'How it works'})}</h2>
@@ -5664,6 +5667,28 @@ function renderPortfolioLinks(){
   el.innerHTML = discoverPanel(t({fr:'Vous aimez ce que vous voyez ? Découvrez pour qui est conçue chaque prestation, ce qu\'elle comprend, à partir de quel prix et sous quel délai : portrait, corporate, mode, produits, événementiel et photobooth Lumen.', en:'Like what you see? Find out who each service is designed for, what it includes, from what price and in what time: portrait, corporate, fashion, products, events and the Lumen photobooth.'}));
 }
 /* Photo plein écran de la page Services (avant « Découvrir chaque prestation ») : une photo du Portfolio (Mode, sinon Commercial, Corporate, Particuliers), petit texte dessus. */
+/* Photo plein écran générique (Portfolio) : cherche dans les catégories données la première qui a au moins 2 photos, petit texte dessus, clic = visionneuse. */
+function lkPhotoBanner(boxId, cats, o){
+  const box = document.getElementById(boxId); if (!box) return;
+  const gen = (box._g = (box._g || 0) + 1);
+  const next = k => {
+    if (k >= cats.length) { box.hidden = true; return; }
+    loadPortfolioPhotos(cats[k], 24).then(list => {
+      if (gen !== box._g) return;
+      if (!list || list.length < 2) { next(k + 1); return; }
+      const j = Math.min(o.index == null ? 1 : o.index, list.length - 1), cat = cats[k];
+      box._reel = { title: t({fr:'Portfolio', en:'Portfolio'}), cat, photos: list, label: '' };
+      box.innerHTML = `<div class="lk-full">
+        <button type="button" class="lk-full-ph" data-cursor="${escHtml(t({fr:'Voir', en:'View'}))}" onclick="pfxOpen(document.getElementById('${boxId}')._reel,${j})" aria-label="${escHtml(t({fr:'Agrandir la photo', en:'Enlarge the photo'}))}"><img loading="lazy" decoding="async" src="${list[j]}" alt="${escHtml(t({fr:'Réalisation BUNKAIO — ', en:'BUNKAIO work — '}) + pfxCatLabel(cat).toLowerCase())}"></button>
+        <div class="lk-cap-box"><span class="lk-cap-k">${t(o.kick)}</span>
+          <p class="lk-cap-t">${t(o.title)}</p>
+          <a class="lk-cap-l" href="/portfolio/" onclick="return navLink(event,'portfolio')">${t({fr:'Voir le portfolio', en:'View the portfolio'})}</a></div>
+      </div>`;
+      box.hidden = false;
+    });
+  };
+  next(0);
+}
 function svcBanner(){
   const box = document.getElementById('svcBanner'); if (!box) return;
   const gen = (box._g = (box._g || 0) + 1);
