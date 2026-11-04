@@ -3821,8 +3821,10 @@ function renderServicePage(catId){
       ${sub ? `<p class="svcp-note">${t({fr:'Besoin régulier ? ', en:'Regular need? '})}<strong>${t(sub.name)}</strong> — ${sub.price.toLocaleString(en ? 'en-GB' : 'fr-FR')} € ${t({fr:'/ mois', en:'/ month'})}.</p>` : ''}
     </section>
 
+    <div class="svcp-ban" id="svcB1"></div>
     ${valueStripHTML(catId, tiers)}
     <div class="cs-slot" data-variant="compact"></div>
+    <div class="svcp-ban" id="svcB2"></div>
 
     ${chooseHtml}
 
@@ -3838,6 +3840,7 @@ function renderServicePage(catId){
       </div>
     </section>
 
+    <div class="svcp-ban" id="svcB3"></div>
     <section class="read-panel svcp-panel">
       <h2>${t({fr:'Questions fréquentes', en:'Frequently asked questions'})}</h2>
       <div id="servicePageFaq"></div>
@@ -3845,7 +3848,7 @@ function renderServicePage(catId){
     </section>
 
     ${(typeof ARTICLES !== 'undefined' && ARTICLES.some(a => a.cat === catId)) ? `
-    <section class="read-panel svcp-panel">
+    <section class="read-panel svcp-panel svcp-advice">
       <h2>${t({fr:'Nos conseils pour bien préparer', en:'Our tips to prepare'})}</h2>
       <div class="advice-grid adv-row">${ARTICLES.filter(a => a.cat === catId).map(a => adviceCard(a)).join('')}</div>
     </section>` : ''}
@@ -3862,6 +3865,11 @@ function renderServicePage(catId){
   renderClientSpotlights();
   liveOnView(el, '#pbKeys');
   svcpEnhance(el, { accordions: true });
+  /* Photos plein écran entre les sections (5 nov. 2026) : photos du Portfolio de la prestation, texte posé dessus. */
+  const bcats = [catId, 'photo-part', 'mode', 'commercial', 'corporate', 'event'].filter((x, i, a) => a.indexOf(x) === i);
+  lkPhotoBanner('svcB1', bcats, { index: 1, kick: { fr: t(c.name) + ' · Occitanie', en: t(c.name) + ' · Occitanie' }, title: { fr: 'Une direction artistique, du premier échange à la livraison.', en: 'Art direction, from the first conversation to delivery.' } });
+  lkPhotoBanner('svcB2', bcats, { index: 3, kick: { fr: 'Un interlocuteur unique', en: 'One point of contact' }, title: { fr: 'Votre projet suivi de A à Z, sans friction.', en: 'Your project followed from A to Z, effortlessly.' } });
+  lkPhotoBanner('svcB3', bcats, { index: 5, kick: { fr: 'Livraison en HD', en: 'HD delivery' }, title: { fr: 'Des images prêtes à l\'emploi, partout.', en: 'Images ready to use, everywhere.' } });
   serviceBgSync(catId);
 }
 
@@ -3874,7 +3882,7 @@ function svcpEnhance(el, opt){
   scr(el.querySelector('h1.page-title'));
   el.querySelectorAll('.svcp-panel h2').forEach(scr);
   if (opt.accordions) {
-    el.querySelectorAll('.svcp-entrepreneurs, .value-panel, .svcp-two > div').forEach((box, i) => {
+    el.querySelectorAll('.svcp-entrepreneurs, .value-panel, .svcp-two > div, .svcp-advice, .svcp-others').forEach((box, i) => {
       const h2 = box.querySelector(':scope > h2'); if (!h2 || box.classList.contains('svcp-acc')) return;
       const id = 'svcpAcc' + i;
       const open = i === 0;
@@ -9606,6 +9614,17 @@ function warmServicesVideo(){
   }), { threshold: .15 });
   let raf = 0;
   const scan = () => { raf = 0; document.querySelectorAll('.fx .svcp-list:not([data-fxl])').forEach(ul => { ul.dataset.fxl = '1'; ul.classList.add('fxl'); ul.querySelectorAll('li').forEach((li, k) => li.style.setProperty('--k', Math.min(k, 14))); io.observe(ul); }); };
+  const mo = new MutationObserver(() => { if (!raf) raf = requestAnimationFrame(scan); });
+  const start = () => { mo.observe(document.body, { childList: true, subtree: true }); scan(); };
+  if (document.body) start(); else document.addEventListener('DOMContentLoaded', start);
+})();
+
+/* Lecture plus fluide des pages prestation (5 nov. 2026) : les paragraphes d'une page prestation apparaissent en douceur (montée, flou qui se précise) quand ils arrivent à l'écran. */
+(function(){
+  if (typeof IntersectionObserver === 'undefined' || (typeof REDUCED_MOTION !== 'undefined' && REDUCED_MOTION)) return;
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('tx-in'); io.unobserve(e.target); } }), { threshold: .2 });
+  let raf = 0;
+  const scan = () => { raf = 0; document.querySelectorAll('#view-service .svcp-text:not([data-tx]), #view-service .page-sub:not([data-tx]), #view-service .svcp-note:not([data-tx]), #view-service .fx-line:not([data-tx])').forEach(el => { el.dataset.tx = '1'; el.classList.add('tx-pre'); io.observe(el); }); };
   const mo = new MutationObserver(() => { if (!raf) raf = requestAnimationFrame(scan); });
   const start = () => { mo.observe(document.body, { childList: true, subtree: true }); scan(); };
   if (document.body) start(); else document.addEventListener('DOMContentLoaded', start);

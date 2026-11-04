@@ -8380,3 +8380,11 @@ body[data-view="home"] #pageHeroWrap, .hero-video-wrap[data-view="home"] { backg
 .fxl li::before { transition: opacity .5s ease calc(var(--k, 0) * 70ms + 300ms); }
 .fxl:not(.fxl-in) li::before { opacity: 0; }
 @media (prefers-reduced-motion: reduce) { .fxl li { opacity: 1; transform: none; filter: none; letter-spacing: normal; transition: none; } }
+
+/* Pages prestation : photos plein écran entre les sections + apparition des paragraphes (5 nov. 2026) */
+#view-service .svcp-ban { margin: 34px 0; }
+#view-service .svcp-ban .lk-full { margin-left: calc(50% - 50vw); }
+#view-service .svcp-ban[hidden] { display: none; }
+.tx-pre { opacity: 0; transform: translateY(16px); filter: blur(3px); transition: opacity .8s ease, transform .9s cubic-bezier(.2,.8,.2,1), filter .8s ease; }
+.tx-pre.tx-in { opacity: 1; transform: none; filter: none; }
+@media (prefers-reduced-motion: reduce) { .tx-pre { opacity: 1; transform: none; filter: none; } }
