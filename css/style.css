@@ -8333,3 +8333,6 @@ body[data-view="home"] #pageHeroWrap, .hero-video-wrap[data-view="home"] { backg
 .lk-gal-main img { height: auto !important; max-height: 82svh; object-fit: contain !important; margin: 0 auto; }
 .lk-gal-n { position: static !important; display: block; margin-top: 8px; text-align: left; color: rgba(17,17,17,.55) !important; mix-blend-mode: normal !important; font-size: 11px; }
 .lk-gal.is-single .lk-gal-th { display: none; }
+
+/* Titres des photos plein écran : plus d'italique, texte éditorial « magazine » en capitales serrées (5 nov. 2026) */
+.lk-cap-t, #view-portfolio .lk-ch > .lk-full .lk-cap-t, .cs-slot .cs-bleed .lk-cap-t { font-style: normal; font-weight: 500; text-transform: uppercase; letter-spacing: -.035em; line-height: 1.02; font-size: clamp(20px, 5.4vw, 34px); }
