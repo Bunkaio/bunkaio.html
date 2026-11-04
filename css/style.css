@@ -7831,3 +7831,19 @@ a.lk-reel-it { cursor: pointer; }
 #view-services .svx .svx-head .svc-cta-row .btn-ghost span { border: 0 !important; padding: 0 !important; }
 #view-services .svx .svx-head .svc-cta-row .btn-ghost:hover, #view-services .svx .svx-head .svc-cta-row .btn-ghost:hover span { color: #e8c6c4 !important; border-color: #e8c6c4; background: transparent !important; }
 @media (max-width: 760px) { #view-services .svx .svx-head .svc-cta-row { flex-direction: column; align-items: flex-start; } #view-services .svx .svx-head .svc-cta-row .cta-primary { width: auto; } }
+
+/* « L'exigence BUNKAIO » : sur ordinateur, même structure d'animation que sur mobile (demande de la propriétaire, 4 nov. 2026) —
+   titre en haut, puis les six engagements en zigzag vertical (gauche / droite) qui s'allument un à un, reliés par un trait.
+   Plus d'hexagone autour du ⊹. */
+@media (min-width: 761px) {
+  .mc-stage { width: min(78vw, 840px); height: min(74vh, 640px); }
+  .mc-lines.mc-d { display: none; } .mc-lines.mc-m { display: block; }
+  .mc-pt { left: var(--mx); top: var(--my); }
+  .mc-tx { max-width: 340px; }
+  .mc-pt .mc-tx { top: 0; bottom: auto; translate: 0 -50%; }
+  .mc-pt.mm-r .mc-tx { left: 20px; right: auto; text-align: left; }
+  .mc-pt.mm-l .mc-tx { right: 20px; left: auto; text-align: right; }
+  .mc-center { top: -8%; translate: -50% -50%; flex-direction: row; gap: 12px; }
+  .mc-glyph { width: 34px; height: 34px; }
+}
+@media (min-width: 761px) { .mc-stage { margin-top: 56px; height: min(70vh, 620px); } }
