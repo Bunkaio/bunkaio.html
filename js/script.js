@@ -5314,6 +5314,31 @@ const PROCESS_STEPS = {
   ]
 };
 
+/* Mots importants surlignés (marqueur qui se trace quand l'étape devient active) */
+const PT_KEYS = {
+  fr: ['48h ouvrées', 'devis détaillé', 'Bon pour accord', 'quatre réponses sont obligatoires', '30%', '70%', 'moodboard', 'espace client', 'dès le règlement', 'valide la réservation de votre date', 'à régler à réception de la commande'],
+  en: ['48 working hours', 'detailed quote', 'Bon pour accord', 'all four answers are required', '30%', '70%', 'moodboard', 'client area', 'as soon as payment is received', 'secures the booking of your session date', 'due on delivery of your order']
+};
+function ptMark(str){
+  let out = escHtml(str);
+  (PT_KEYS[LANG] || []).slice().sort((a, b) => b.length - a.length).forEach(k => { const ek = escHtml(k); if (out.includes(ek) && !out.includes('<mark class="pt-key">' + ek)) out = out.split(ek).join('<mark class="pt-key">' + ek + '</mark>'); });
+  return out;
+}
+/* Déroulé animé : chaque étape apparaît en montant quand elle entre à l'écran ; l'étape qui passe au centre de l'écran s'allume (numéro encre, mots
+   importants surlignés au marqueur rose, les autres s'atténuent) ; une jauge suit l'avancement. Sans animation si mouvement réduit. */
+function ptLive(root){
+  const steps = [...root.querySelectorAll('.pt-step')]; if (!steps.length) return;
+  if (typeof bkScrambleWatch === 'function') bkScrambleWatch(root);
+  if (REDUCED_MOTION || !window.IntersectionObserver) { steps.forEach(x => x.classList.add('is-in', 'is-on')); return; }
+  const inIo = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('is-in'); inIo.unobserve(e.target); } }), { threshold: .15 });
+  steps.forEach((x, i) => { x.style.setProperty('--k', i % 3); inIo.observe(x); });
+  const onIo = new IntersectionObserver(es => es.forEach(e => e.target.classList.toggle('is-on', e.isIntersecting)), { rootMargin: '-38% 0px -38% 0px', threshold: 0 });
+  steps.forEach(x => onIo.observe(x));
+  const bar = root.querySelector('.pt-prog i'), list = root.querySelector('.pt-list');
+  const upd = () => { if (!bar || !list || !root.isConnected) return; const r = list.getBoundingClientRect(), vh = innerHeight || 800; const p = Math.max(0, Math.min(1, (vh * .62 - r.top) / (r.height || 1))); bar.style.transform = 'scaleX(' + p.toFixed(3) + ')'; };
+  if (!root._ptScroll) { root._ptScroll = true; let tk = false; addEventListener('scroll', () => { if (!tk) { tk = true; requestAnimationFrame(() => { tk = false; upd(); }); } }, { passive: true }); }
+  upd();
+}
 function renderProcessSteps(){
   const el = document.getElementById('processSteps');
   if (!el) return;
@@ -5324,8 +5349,9 @@ function renderProcessSteps(){
     : 'Here\'s how your project will be handled, step by step.';
   el.innerHTML = `
     <div class="pt-card rv">
-      <div class="pt-kicker">${kicker}</div>
+      <div class="pt-kicker"><span class="bk-scramble bk-echo" data-text="${escHtml(kicker)}">${kicker}</span></div>
       <div class="pt-sub">${sub}</div>
+      <div class="pt-prog" aria-hidden="true"><i></i></div>
       <div class="pt-list">
         ${steps.map((s, i) => `
           <div class="pt-step">
@@ -5338,12 +5364,13 @@ function renderProcessSteps(){
                 <span class="pt-title">${s.title}</span>
                 ${s.badge ? `<span class="pt-badge">${s.badge}</span>` : ''}
               </div>
-              <div class="pt-text">${s.text}</div>
+              <div class="pt-text">${ptMark(s.text)}</div>
             </div>
           </div>`).join('')}
       </div>
     </div>`;
   el.querySelectorAll('.rv').forEach(observe);
+  ptLive(el);
   /* Illustration latérale : vidéo si IMG.devisVideo pointe vers un
      fichier existant (voir config/media.js — chemin pré-câblé vers R2,
      déposé via admin/media.html), sinon l'image fixe habituelle. Le

@@ -8069,3 +8069,25 @@ body[data-view="quiz"] .quiz-nav-btn:hover, body[data-view="quiz"] .quiz-nav-btn
 #view-services .svc-banner { margin: 64px 0 64px; }
 #view-services .svc-banner .lk-full { margin-left: calc(50% - 50vw); }
 @media (max-width: 760px) { #view-services .svc-banner { margin: 44px 0; } }
+
+/* « Les prochaines étapes » animées (5 nov. 2026) : apparition en montée, étape active mise en avant, mots importants surlignés au marqueur */
+.pt-prog { height: 2px; background: rgba(17,17,17,.12); margin: 0 0 6px; overflow: hidden; }
+.pt-prog i { display: block; height: 100%; background: #111; transform-origin: left; transform: scaleX(0); transition: transform .25s linear; }
+.svx .pt-step { position: relative; opacity: 0; transform: translateY(22px); transition: opacity .8s cubic-bezier(.2,.8,.2,1) calc(var(--k, 0) * 90ms), transform .9s cubic-bezier(.2,.8,.2,1) calc(var(--k, 0) * 90ms); }
+.svx .pt-step.is-in { opacity: .38; transform: none; }
+.svx .pt-step.is-in.is-on { opacity: 1; }
+.svx .pt-step::before { content: ''; position: absolute; left: 0; right: 0; top: -1px; height: 1px; background: #111; transform-origin: left; transform: scaleX(0); transition: transform 1.1s cubic-bezier(.7,0,.2,1); }
+.svx .pt-step.is-in::before { transform: scaleX(1); }
+.svx .pt-num { transition: transform .6s cubic-bezier(.2,.8,.2,1), color .3s; display: inline-block; transform-origin: left bottom; }
+.svx .pt-step.is-on .pt-num { transform: scale(1.18); }
+.svx .pt-body { padding-bottom: 34px; }
+.svx .pt-text { font-size: 14px; line-height: 1.65; max-width: none; text-align: left; }
+.svx .pt-key { background: linear-gradient(var(--rose, #e8c6c4), var(--rose, #e8c6c4)) 0 88% / 0% 62% no-repeat; color: #111 !important; padding: 0 .12em; margin: 0 -.12em; font-weight: 500; transition: background-size .9s cubic-bezier(.7,0,.2,1) .25s; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.svx .pt-step.is-on .pt-key { background-size: 100% 62%; }
+.svx .pt-step .pt-title { transition: transform .5s cubic-bezier(.2,.8,.2,1); display: inline-block; }
+.svx .pt-step.is-on .pt-title { transform: translateX(6px); }
+@media (prefers-reduced-motion: reduce) {
+  .svx .pt-step { opacity: 1 !important; transform: none !important; transition: none !important; }
+  .svx .pt-step::before { transform: scaleX(1) !important; transition: none !important; }
+  .svx .pt-key { background-size: 100% 62% !important; transition: none !important; }
+}

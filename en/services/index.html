@@ -34,7 +34,7 @@
 <link rel="icon" type="image/png" sizes="64x64" href="/images/favicon-64.png">
 <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
 <link rel="preload" href="fonts/dm-sans-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/style.min.css?v=48a409c8">
+<link rel="stylesheet" href="css/style.min.css?v=704e357a">
 
 <script type="application/ld+json">
 {
@@ -884,11 +884,11 @@
           <img id="svcCatPhotoImg" alt="">
         </div>
         <div class="services-grid" id="servicesGrid"><!--snap--><div class="pfx-view svx-view" role="group" aria-label="View"><button type="button" class="on" aria-pressed="true" onclick="svxSetView('list')">List</button><button type="button" class="" aria-pressed="false" onclick="svxSetView('tiles')">Boards</button></div><div class="svx-tiles"><button type="button" class="pfx-tile svx-tile" onclick="svxFromTile('photo-part')">
-      
+      <img loading="lazy" decoding="async" src="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/services/photo-part.webp" alt="" onerror="this.remove()">
       <span class="pfx-tile-n">01</span>
       <span class="pfx-tile-t"><span class="bk-echo" data-text="Portrait &amp; lifestyle — individuals">Portrait &amp; lifestyle — individuals</span></span>
       <span class="pfx-tile-c">from 250 €<span class="usd-eq"> ≈ $275</span></span></button><button type="button" class="pfx-tile svx-tile" onclick="svxFromTile('corporate')">
-      
+      <img loading="lazy" decoding="async" src="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/services/corporate.webp" alt="" onerror="this.remove()">
       <span class="pfx-tile-n">02</span>
       <span class="pfx-tile-t"><span class="bk-echo" data-text="Corporate &amp; Personal Branding">Corporate &amp; Personal Branding</span></span>
       <span class="pfx-tile-c">from 250 €<span class="usd-eq"> ≈ $275</span></span></button><button type="button" class="pfx-tile svx-tile" onclick="svxFromTile('mode')">
@@ -942,7 +942,7 @@
     <button type="button" class="pfx-next svx-next" onclick="svxFromTile('corporate')">
     <span class="pfx-next-k">Next service</span>
     <span class="pfx-next-t"><span class="bk-echo" data-text="Corporate &amp; Personal Branding">Corporate &amp; Personal Branding</span></span>
-    </button></div></div>
+    <span class="pfx-next-img"><img loading="lazy" decoding="async" src="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/services/corporate.webp" alt="" onerror="this.parentNode.remove()"></span></button></div></div>
       </article><article class="svx-item" data-cat="corporate" data-i="1" style="--d: 0.06s;">
         <button type="button" class="svx-row" aria-expanded="false" aria-controls="svx-p-corporate" onclick="svxToggle('corporate')">
           <span class="svx-n">02</span>
@@ -1099,7 +1099,7 @@
       <div class="svx-actions"><button type="button" class="svx-cta" onclick="svxQuiz('lumen')">Contact us <i>→</i></button></div><button type="button" class="pfx-next svx-next" onclick="svxFromTile('photo-part')">
     <span class="pfx-next-k">Next service</span>
     <span class="pfx-next-t"><span class="bk-echo" data-text="Portrait &amp; lifestyle — individuals">Portrait &amp; lifestyle — individuals</span></span>
-    </button></div></div>
+    <span class="pfx-next-img"><img loading="lazy" decoding="async" src="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/services/photo-part.webp" alt="" onerror="this.parentNode.remove()"></span></button></div></div>
       </article><!--/snap--></div>
       </div>
       <!-- Garanties : puces compactes, détail dépliable — le catalogue reste à portée de scroll -->
@@ -1174,11 +1174,12 @@
       <div class="process-grid">
         <div class="process-steps" id="processSteps"><!--snap-->
     <div class="pt-card rv">
-      <div class="pt-kicker">What happens next</div>
+      <div class="pt-kicker"><span class="bk-scramble bk-echo" data-text="What happens next" data-sc="1">What happens next</span></div>
       <div class="pt-sub">Here's how your project will be handled, step by step.</div>
+      <div class="pt-prog" aria-hidden="true"><i style="transform: scaleX(0);"></i></div>
       <div class="pt-list">
         
-          <div class="pt-step">
+          <div class="pt-step" style="--k: 0;">
             <div class="pt-num-col">
               <div class="pt-num">1</div>
               <div class="pt-line"></div>
@@ -1191,7 +1192,7 @@
               <div class="pt-text">We review the information submitted in your questionnaire.</div>
             </div>
           </div>
-          <div class="pt-step">
+          <div class="pt-step" style="--k: 1;">
             <div class="pt-num-col">
               <div class="pt-num">2</div>
               <div class="pt-line"></div>
@@ -1204,7 +1205,7 @@
               <div class="pt-text">We look at your needs, your goals and any specific constraints.</div>
             </div>
           </div>
-          <div class="pt-step">
+          <div class="pt-step" style="--k: 2;">
             <div class="pt-num-col">
               <div class="pt-num">3</div>
               <div class="pt-line"></div>
@@ -1214,10 +1215,10 @@
                 <span class="pt-title">Getting in touch</span>
                 <span class="pt-badge">Within 48h</span>
               </div>
-              <div class="pt-text">We get back to you within 48 working hours to discuss your project.</div>
+              <div class="pt-text">We get back to you within <mark class="pt-key">48 working hours</mark> to discuss your project.</div>
             </div>
           </div>
-          <div class="pt-step">
+          <div class="pt-step" style="--k: 0;">
             <div class="pt-num-col">
               <div class="pt-num">4</div>
               <div class="pt-line"></div>
@@ -1227,10 +1228,10 @@
                 <span class="pt-title">Personalised proposal</span>
                 <span class="pt-badge">Quote by email</span>
               </div>
-              <div class="pt-text">We email you a detailed quote tailored to your needs and budget: service, price, usage rights and terms.</div>
+              <div class="pt-text">We email you a <mark class="pt-key">detailed quote</mark> tailored to your needs and budget: service, price, usage rights and terms.</div>
             </div>
           </div>
-          <div class="pt-step">
+          <div class="pt-step" style="--k: 1;">
             <div class="pt-num-col">
               <div class="pt-num">5</div>
               <div class="pt-line"></div>
@@ -1240,10 +1241,10 @@
                 <span class="pt-title">Quote signature &amp; image authorisations</span>
                 <span class="pt-badge">Online · 5 min</span>
               </div>
-              <div class="pt-text">You sign the quote online from the link you received: "Bon pour accord", then your choices on how BUNKAIO may use your images (website, social media, materials, advertising), accepted or refused one by one: all four answers are required to sign, but the choice itself is free, with no effect on the service or the price, and can be changed at any time. You immediately receive a signed PDF copy.</div>
+              <div class="pt-text">You sign the quote online from the link you received: "<mark class="pt-key">Bon pour accord</mark>", then your choices on how BUNKAIO may use your images (website, social media, materials, advertising), accepted or refused one by one: <mark class="pt-key">all four answers are required</mark> to sign, but the choice itself is free, with no effect on the service or the price, and can be changed at any time. You immediately receive a signed PDF copy.</div>
             </div>
           </div>
-          <div class="pt-step">
+          <div class="pt-step" style="--k: 2;">
             <div class="pt-num-col">
               <div class="pt-num">6</div>
               <div class="pt-line"></div>
@@ -1253,10 +1254,10 @@
                 <span class="pt-title">Deposit &amp; booking confirmed</span>
                 <span class="pt-badge">30% deposit</span>
               </div>
-              <div class="pt-text">Right after you sign, you receive the deposit invoice: 30% of the total, which secures the booking of your session date.</div>
+              <div class="pt-text">Right after you sign, you receive the deposit invoice: <mark class="pt-key">30%</mark> of the total, which <mark class="pt-key">secures the booking of your session date</mark>.</div>
             </div>
           </div>
-          <div class="pt-step">
+          <div class="pt-step" style="--k: 0;">
             <div class="pt-num-col">
               <div class="pt-num">7</div>
               <div class="pt-line"></div>
@@ -1266,10 +1267,10 @@
                 <span class="pt-title">Your moodboard</span>
                 <span class="pt-badge">Optional</span>
               </div>
-              <div class="pt-text">In your client area, you share your vision — art direction, mood, inspirations — so we arrive on the day perfectly aligned with your project.</div>
+              <div class="pt-text">In your <mark class="pt-key">client area</mark>, you share your vision — art direction, mood, inspirations — so we arrive on the day perfectly aligned with your project.</div>
             </div>
           </div>
-          <div class="pt-step">
+          <div class="pt-step" style="--k: 1;">
             <div class="pt-num-col">
               <div class="pt-num">8</div>
               <div class="pt-line"></div>
@@ -1279,7 +1280,7 @@
                 <span class="pt-title">Session &amp; delivery</span>
                 <span class="pt-badge">70% balance</span>
               </div>
-              <div class="pt-text">After the shoot, the remaining 70% is due on delivery of your order. File access opens as soon as payment is received.</div>
+              <div class="pt-text">After the shoot, the remaining <mark class="pt-key">70%</mark> is <mark class="pt-key">due on delivery of your order</mark>. File access opens <mark class="pt-key">as soon as payment is received</mark>.</div>
             </div>
           </div>
       </div>
@@ -2375,6 +2376,6 @@
 <script src="config/articles.en.js?v=d5061d9b"></script>
 <script src="config/routes.js?v=f47dd51d"></script>
 <script src="config/media.js?v=3d72d6fd"></script>
-<script src="js/script.min.js?v=74dcd4bc"></script>
+<script src="js/script.min.js?v=71c0286c"></script>
 </body>
 </html>
