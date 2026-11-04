@@ -6000,6 +6000,53 @@ var GX_LEGAL_MEGA = {
   faq: {fr:'FAQ', en:'FAQ'}, privacy: {fr:'CONFIDENTIALITÉ', en:'PRIVACY'}, cgv: {fr:'CGV', en:'TERMS'},
   cookies: {fr:'COOKIES', en:'COOKIES'}, image: {fr:'DROITS À L\'IMAGE', en:'IMAGE RIGHTS'}
 };
+/* À propos : « Spécialités » et « Comment ça se passe » en accordéons animés (5 nov. 2026, demande de la propriétaire). Les spécialités déplient la présentation
+   de la prestation (texte et tarif d'entrée tirés de CATS) avec le lien vers sa page ; les étapes déplient une précision (mêmes faits que le déroulé du devis).
+   Reconstruit à chaque appel (changement de langue) : le libellé garde son data-lang, le contenu replié est recalculé. */
+const ABOUT_SPEC_CATS = ['photo-part', 'mode', 'commercial', 'corporate', 'event'];
+const ABOUT_STEP_MORE = {
+  fr: ['Après votre demande, vous recevez une proposition personnalisée sous 48 h ouvrées : prestation, prix, droits d\'utilisation et conditions. Le devis se signe en ligne.',
+       'Le shooting a lieu à la date convenue, dans vos locaux, en extérieur ou en studio (option à 60 €), avec une direction de pose pour des images naturelles et cohérentes.',
+       'Une retouche professionnelle, homogène sur toute la série : vos images HD sont prêtes à être utilisées selon les droits définis dans votre devis.',
+       'Vos fichiers HD sont livrés dans une galerie privée de téléchargement, accessible depuis votre espace client dès le règlement effectué.'],
+  en: ['After your request, you receive a personalised proposal within 48 working hours: service, price, usage rights and terms. The quote is signed online.',
+       'The shoot takes place on the agreed date, at your premises, outdoors or in the studio (€60 option), with posing direction for natural, consistent images.',
+       'Professional retouching, consistent across the whole series: your HD images are ready to use under the rights set out in your quote.',
+       'Your HD files are delivered in a private download gallery, available from your client area as soon as payment is received.']
+};
+function aboutAcc(root){
+  const card = root.querySelector('.about-two'); if (!card) return;
+  const mk = (li, i, label, labelKey, bodyHtml) => {
+    li.className = 'ab-acc'; li.style.setProperty('--i', i);
+    li.innerHTML = `<button type="button" class="ab-acc-h" aria-expanded="false"><span class="ab-acc-n">${svxNum(i + 1)}</span><span class="ab-acc-l" ${labelKey ? `data-lang="${labelKey}"` : ''}>${label}</span><span class="ab-acc-pm" aria-hidden="true"></span></button>
+      <div class="ab-acc-body"><div class="ab-acc-in" inert>${bodyHtml}</div></div>`;
+    const btn = li.querySelector('.ab-acc-h'), inner = li.querySelector('.ab-acc-in');
+    btn.addEventListener('click', () => {
+      const on = !li.classList.contains('open');
+      li.parentElement.querySelectorAll('.ab-acc.open').forEach(o => { if (o !== li) { o.classList.remove('open'); o.querySelector('.ab-acc-h').setAttribute('aria-expanded', 'false'); o.querySelector('.ab-acc-in').inert = true; } });
+      li.classList.toggle('open', on); btn.setAttribute('aria-expanded', String(on)); inner.inert = !on;
+      if (window.track) track('cta_click', 'apropos_accordeon_' + labelKey);
+    });
+  };
+  const specs = card.querySelectorAll(':scope > div:first-child > ul > li');
+  specs.forEach((li, i) => {
+    const c = CATS.find(x => x.id === ABOUT_SPEC_CATS[i]); if (!c) return;
+    const lab = li.querySelector('.ab-acc-l'), a = lab ? null : li.querySelector('a'), key = li.dataset.k || (lab ? lab.dataset.lang : a && a.getAttribute('data-lang')); li.dataset.k = key;
+    const href = servicePath(c.id);
+    const from = c.lumen ? '' : `<span class="ab-acc-from">${t({fr:'dès ', en:'from '})}${catFacts(c).from.toLocaleString(LANG === 'en' ? 'en-GB' : 'fr-FR')} €</span>`;
+    mk(li, i, I18N[LANG][key] || '', key, `<p>${t(c.pitch)}</p><p class="ab-acc-meta">${from}<a href="${href}" onclick="return navLink(event,'service','${c.id}')">${t({fr:'Découvrir la prestation →', en:'Discover the service →'})}</a></p>`);
+  });
+  const steps = card.querySelectorAll(':scope > div:nth-child(2) .about-steps > li');
+  steps.forEach((li, i) => {
+    const lab = li.querySelector('.ab-acc-l'), key = li.dataset.k || li.getAttribute('data-lang') || (lab && lab.dataset.lang); li.dataset.k = key;
+    mk(li, i, I18N[LANG][key] || '', key, `<p>${ABOUT_STEP_MORE[LANG][i] || ''}</p>`);
+  });
+  if (typeof bkScrambleWatch === 'function') card.querySelectorAll(':scope > div > h2').forEach(h => { if (!h.querySelector('.bk-scramble')) { const txt = h.textContent.trim(); h.innerHTML = `<span class="bk-scramble bk-echo" data-text="${escHtml(txt)}">${escHtml(txt)}</span>`; } });
+  if (typeof bkScrambleWatch === 'function') bkScrambleWatch(card);
+  /* Apparition en cascade à l'entrée à l'écran */
+  if (!card._abIo && window.IntersectionObserver && !REDUCED_MOTION) { card.classList.add('ab-pre'); card._abIo = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { card.classList.add('ab-in'); card._abIo.disconnect(); } }), { threshold: .15 }); card._abIo.observe(card); }
+  else if (!card._abIo) card.classList.add('ab-in');
+}
 function gxInit(v){
   GX.timers.forEach(clearInterval); GX.timers = [];
   bkFooter();
@@ -6011,6 +6058,7 @@ function gxInit(v){
   if (v === 'contact') { gxClock(); GX.timers.push(setInterval(gxClock, 15000)); }
   if (v === 'partners') { gxSpots(); gxMarquee(); partnersBanner(); }
   if (v === 'drone') gxDrone();
+  if (v === 'about') aboutAcc(root);
   if (v === 'about') { const l = document.getElementById('gxAboutLbl'); if (l) l.textContent = t({fr:'ans d\'expérience', en:'years of experience'}); const f = root.querySelector('.gx-portrait'); if (f) f.dataset.cursor = 'Aya Nascimento'; }
   if (v === 'legal') { const s = document.getElementById('gxSearch'); if (s) { s.value = ''; s.placeholder = t({fr:'Rechercher une question…', en:'Search a question…'}); } }
   bkKick(root, v); bkMountNext(root, v);
