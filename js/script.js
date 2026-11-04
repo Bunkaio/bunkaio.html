@@ -3517,7 +3517,7 @@ function discoverBgSync(){
 }
 
 function renderDiscoverPage(){
-  setTimeout(() => lkPhotoBanner('discBanner', ['corporate', 'photo-part', 'mode', 'commercial'], { kick: {fr:'Chaque prestation · Occitanie', en:'Every service · Occitanie'}, title: {fr:'Chaque projet, une direction artistique.', en:'Every project, an art direction.'} }), 0);
+  setTimeout(() => lkPhotoBanner('discBanner', ['corporate', 'photo-part', 'mode', 'commercial'], { kick: {fr:'Chaque prestation · France', en:'Every service · France'}, title: {fr:'Chaque projet, une direction artistique.', en:'Every project, an art direction.'} }), 0);
   const el = document.getElementById('discoverPageContent');
   if (!el) return;
   const en = LANG === 'en';
@@ -3867,7 +3867,7 @@ function renderServicePage(catId){
   svcpEnhance(el, { accordions: true });
   /* Photos plein écran entre les sections (5 nov. 2026) : photos du Portfolio de la prestation, texte posé dessus. */
   const bcats = [catId, 'photo-part', 'mode', 'commercial', 'corporate', 'event'].filter((x, i, a) => a.indexOf(x) === i);
-  lkPhotoBanner('svcB1', bcats, { index: 1, kick: { fr: t(c.name) + ' · Occitanie', en: t(c.name) + ' · Occitanie' }, title: { fr: 'Une direction artistique, du premier échange à la livraison.', en: 'Art direction, from the first conversation to delivery.' } });
+  lkPhotoBanner('svcB1', bcats, { index: 1, kick: { fr: t(c.name) + ' · France', en: t(c.name) + ' · France' }, title: { fr: 'Une direction artistique, du premier échange à la livraison.', en: 'Art direction, from the first conversation to delivery.' } });
   lkPhotoBanner('svcB2', bcats, { index: 3, kick: { fr: 'Un interlocuteur unique', en: 'One point of contact' }, title: { fr: 'Votre projet suivi de A à Z, sans friction.', en: 'Your project followed from A to Z, effortlessly.' } });
   lkPhotoBanner('svcB3', bcats, { index: 5, kick: { fr: 'Livraison en HD', en: 'HD delivery' }, title: { fr: 'Des images prêtes à l\'emploi, partout.', en: 'Images ready to use, everywhere.' } });
   serviceBgSync(catId);
@@ -4129,7 +4129,7 @@ function renderBrandingPage(){
   svcpEnhance(el, { accordions: true });
   /* Photos plein écran entre les sections (5 nov. 2026) : photos du Portfolio, texte posé dessus. */
   const bcats = ['corporate', 'photo-part', 'commercial', 'mode', 'event'];
-  lkPhotoBanner('svcB1', bcats, { index: 1, kick: { fr: 'Personal Branding · Occitanie', en: 'Personal Branding · Occitanie' }, title: { fr: 'Votre activité, votre décor, votre image.', en: 'Your business, your set, your image.' } });
+  lkPhotoBanner('svcB1', bcats, { index: 1, kick: { fr: 'Personal Branding · France', en: 'Personal Branding · France' }, title: { fr: 'Votre activité, votre décor, votre image.', en: 'Your business, your set, your image.' } });
   lkPhotoBanner('svcB2', bcats, { index: 3, kick: { fr: 'Un interlocuteur unique', en: 'One point of contact' }, title: { fr: 'Un shooting pensé pour votre métier.', en: 'A shoot designed around your trade.' } });
   lkPhotoBanner('svcB3', bcats, { index: 5, kick: { fr: 'Livraison en HD', en: 'HD delivery' }, title: { fr: 'Des images prêtes à l\'emploi, partout.', en: 'Images ready to use, everywhere.' } });
   serviceBgSync('branding');
@@ -5102,7 +5102,7 @@ function lkHome(chs){
   const box = document.getElementById('lkHome'); if (!box) return;
   const left = `<div class="lk-home-txt">
       <div><p class="lk-kick">Portfolio, <span aria-hidden="true">⊹</span> ${t({fr:'Projets', en:'Projects'})}</p><h2 class="lk-h" id="lkHomeT"><span class="bk-scramble bk-echo" data-text="WORKS,">WORKS,</span><br>${t({fr:'Séries', en:'Series'})}</h2>
-      <p class="lk-meta"><span aria-hidden="true">⊹</span> ${t({fr:'Photographie · Occitanie · France', en:'Photography · Occitanie · France'})}</p></div>
+      <p class="lk-meta"><span aria-hidden="true">⊹</span> ${t({fr:'Photographie · France', en:'Photography · France'})}</p></div>
       <div class="lk-home-bot">
         <p class="lk-manifest">${t({fr:'Des séries réalisées pour des marques, des entrepreneurs et des modèles : direction artistique, lumière de studio et retouche. Cliquez sur une image pour la projeter en grand.', en:'Series created for brands, entrepreneurs and models: art direction, studio lighting and retouching. Click an image to project it full size.'})}</p>
         <div class="lk-ctas"><a class="cta-primary" href="/devis/" onclick="goView('quiz');return false;" data-track="lookbook_accueil"><span data-lang="start">${t({fr:'Construire mon projet', en:'Build my project'})}</span></a><a class="lk-ghost" href="/portfolio/" onclick="return navLink(event,'portfolio')">${t({fr:'Voir le portfolio', en:'View the portfolio'})}</a></div>
@@ -5128,7 +5128,7 @@ function lkBanner(chs){
   box._reel = { title: c.title, client: c.client, cat: c.cat, photos: c.photos, label: t({fr:'Série ', en:'Series '}) + pfxNum(chs.indexOf(c) + 1) + ', ' };
   box.innerHTML = `<div class="lk-full">
       <button type="button" class="lk-full-ph" data-cursor="${escHtml(t({fr:'Voir', en:'View'}))}" onclick="pfxOpen(document.getElementById('lkBanner')._reel,${k})" aria-label="${escHtml(t({fr:'Agrandir la photo', en:'Enlarge the photo'}))}"><img loading="lazy" decoding="async" src="${c.photos[k]}" alt="${escHtml(pfxAlt(c, c.photos[k], k))}"></button>
-      <div class="lk-cap-box"><span class="lk-cap-k">${t({fr:'Studio mobile · Occitanie', en:'Mobile studio · Occitanie'})}</span>
+      <div class="lk-cap-box"><span class="lk-cap-k">${t({fr:'Studio mobile · France', en:'Mobile studio · France'})}</span>
         <p class="lk-cap-t">${t({fr:'Des images d\'exception pour des ambitions singulières.', en:'Exceptional images for singular ambitions.'})}</p>
         <a class="lk-cap-l" href="/portfolio/" onclick="return navLink(event,'portfolio')">${t({fr:'Voir le portfolio', en:'View the portfolio'})}</a></div>
     </div>`;
@@ -5815,7 +5815,7 @@ function svcBanner(){
       box._reel = { title: t({fr:'Portfolio', en:'Portfolio'}), cat, photos: list, label: '' };
       box.innerHTML = `<div class="lk-full">
         <button type="button" class="lk-full-ph" data-cursor="${escHtml(t({fr:'Voir', en:'View'}))}" onclick="pfxOpen(document.getElementById('svcBanner')._reel,${j})" aria-label="${escHtml(t({fr:'Agrandir la photo', en:'Enlarge the photo'}))}"><img loading="lazy" decoding="async" src="${list[j]}" alt="${escHtml(t({fr:'Réalisation BUNKAIO — ', en:'BUNKAIO work — '}) + pfxCatLabel(cat).toLowerCase())}"></button>
-        <div class="lk-cap-box"><span class="lk-cap-k">${t({fr:'Prestations & tarifs · Occitanie', en:'Services & rates · Occitanie'})}</span>
+        <div class="lk-cap-box"><span class="lk-cap-k">${t({fr:'Prestations & tarifs · France', en:'Services & rates · France'})}</span>
           <p class="lk-cap-t">${t({fr:'Des images soignées, livrées en HD.', en:'Refined images, delivered in HD.'})}</p>
           <a class="lk-cap-l" href="/portfolio/" onclick="return navLink(event,'portfolio')">${t({fr:'Voir le portfolio', en:'View the portfolio'})}</a></div>
       </div>`;
@@ -6966,7 +6966,7 @@ function renderClientSpotlights(){
         </div>`}
       </section>`;
   });
-  if (document.getElementById('csBanner')) lkPhotoBanner('csBanner', ['commercial', 'mode', 'corporate', 'photo-part'], { index: 2, bleed: true, kick: {fr:'Votre espace client · Occitanie', en:'Your client area · Occitanie'}, title: {fr:'Un projet suivi, de la première idée aux photos HD.', en:'A project followed from first idea to HD photos.'} });
+  if (document.getElementById('csBanner')) lkPhotoBanner('csBanner', ['commercial', 'mode', 'corporate', 'photo-part'], { index: 2, bleed: true, kick: {fr:'Votre espace client · France', en:'Your client area · France'}, title: {fr:'Un projet suivi, de la première idée aux photos HD.', en:'A project followed from first idea to HD photos.'} });
   /* Animations déclenchées quand la section entre à l'écran (et rejouées si la langue change). */
   if (window.IntersectionObserver) {
     const io = new IntersectionObserver((entries) => entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('cs-live'); io.unobserve(e.target); } }), { threshold: 0.18 });
