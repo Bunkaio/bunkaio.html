@@ -8091,3 +8091,19 @@ body[data-view="quiz"] .quiz-nav-btn:hover, body[data-view="quiz"] .quiz-nav-btn
   .svx .pt-step::before { transform: scaleX(1) !important; transition: none !important; }
   .svx .pt-key { background-size: 100% 62% !important; transition: none !important; }
 }
+
+/* Services, vue « Planches » : photos en plein écran, une par prestation, assombries pour garder le texte lisible (ordinateur et mobile) — 5 nov. 2026 */
+#servicesGrid.is-tiles .svx-tiles { display: flex; flex-direction: column; gap: 6px; width: 100vw; margin: 0 0 40px calc(50% - 50vw); }
+#servicesGrid .svx-tile { position: relative; width: 100%; height: calc(100svh - var(--nav-h, 67px)); min-height: 460px; max-height: 1000px; color: #fff; overflow: hidden; background: #1a1a1a; text-align: left; }
+#servicesGrid .svx-tile img { filter: brightness(.6) saturate(1.05) !important; transition: transform 1.4s cubic-bezier(.2,.8,.2,1), filter .6s ease; }
+#servicesGrid .svx-tile:hover img, #servicesGrid .svx-tile:focus-visible img { filter: brightness(.74) saturate(1.05) !important; transform: scale(1.03); }
+#servicesGrid .svx-tile::before { background: linear-gradient(to top, rgba(0,0,0,.62), rgba(0,0,0,.18) 48%, rgba(0,0,0,.34)); }
+#servicesGrid .svx-tile .pfx-tile-n { top: clamp(16px, 3vh, 28px); left: clamp(16px, 2.4vw, 32px); font-size: 12px; text-shadow: 0 1px 8px rgba(0,0,0,.5); }
+#servicesGrid .svx-tile .pfx-tile-t { left: clamp(16px, 2.4vw, 32px); right: auto; top: auto; bottom: clamp(48px, 8vh, 84px); transform: none; text-align: left; max-width: min(820px, 86vw); padding: 0; font-size: clamp(32px, 5.6vw, 84px); line-height: .94; text-shadow: 0 2px 24px rgba(0,0,0,.45); }
+#servicesGrid .svx-tile .pfx-tile-c { left: clamp(16px, 2.4vw, 32px); right: auto; bottom: clamp(18px, 3.4vh, 30px); font-size: 12px; font-weight: 500; letter-spacing: .06em; text-shadow: 0 1px 8px rgba(0,0,0,.5); }
+#servicesGrid .svx-tile .pfx-tile-c::after { content: '  →'; }
+@media (max-width: 760px) {
+  #servicesGrid .svx-tile { height: 84svh; min-height: 440px; }
+  #servicesGrid .svx-tile .pfx-tile-t { font-size: clamp(30px, 9.4vw, 46px); bottom: 56px; }
+}
+@media (prefers-reduced-motion: reduce) { #servicesGrid .svx-tile img { transition: none; } }
