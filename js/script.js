@@ -1051,6 +1051,9 @@ function updateHeroScrollFx(){
   }
   wrap.style.opacity = String(1 - progress);
   wrap.style.visibility = progress >= 1 ? 'hidden' : 'visible';
+  /* Calque vidéo entièrement fondu (hors écran) : la lecture est suspendue (décodage, batterie), reprise dès qu'il redevient visible. */
+  const off = progress >= 1;
+  if (wrap._vidOff !== off) { wrap._vidOff = off; wrap.querySelectorAll('video').forEach(v => { if (v.dataset.fallback) return; if (off) v.pause(); else { const q = v.play(); if (q && q.catch) q.catch(() => {}); } }); }
 
   /* Disparaît dès le premier geste de scroll — inutile de le garder */
   const hint = document.getElementById('scrollHint');
@@ -1768,7 +1771,7 @@ const _bgVideos = [];
    vidéo (déjà en cache) puis on relance la lecture. */
 function resumeAllBgVideos(){
   _bgVideos.forEach(vid => {
-    if (!vid.isConnected) return;
+    if (!vid.isConnected || vid.dataset.fallback) return;
     /* Une vidéo masquée reste en pause (économie de batterie, et elle repart
        d'un état propre quand on la ré-affiche). */
     if (vid.getClientRects().length === 0) return;
@@ -1795,20 +1798,58 @@ document.addEventListener('visibilitychange', () => {
 window.addEventListener('pageshow', resumeAllBgVideos);
 window.addEventListener('focus', resumeAllBgVideos);
 
-/* Pas de vidéo de fond en mode économie de données ou sur connexion très lente
-   (le fond noir du hero reste lisible) : évite plusieurs dizaines de Mo inutiles. */
-function bgVideoAllowed(){
-  const c = navigator.connection;
-  return !(c && (c.saveData || /(^|-)2g$/.test(c.effectiveType || '')));
-}
+/* ═══ Vidéo de fond ou image de remplacement : UNE décision, au même endroit (5 nov. 2026) ═══
+   La vidéo ne se lance que si les conditions sont favorables ; sinon l'image de remplacement (déjà affichée en fond de chaque calque vidéo, voir CSS
+   « Images de remplacement des vidéos ») reste seule, sans téléchargement vidéo. Critères, tous optionnels (aucune API n'est requise : sans elles
+   la vidéo se lance normalement) :
+   – réseau : Save-Data, 2G / 3G (effectiveType), débit estimé < 1,5 Mb/s, latence > 800 ms (Network Information, Chrome / Android) ;
+   – appareil : mémoire ≤ 2 Go, ou ≤ 2 cœurs avec ≤ 4 Go (deviceMemory + hardwareConcurrency, jamais « mobile = faible » : un iPhone récent reste en vidéo) ;
+   – préférences : prefers-reduced-motion, prefers-reduced-data.
+   Forçage pour les tests : ?media=image ou ?media=video dans l'adresse. window.BK_MEDIA expose la décision (pour la console). */
+const BK_MEDIA = window.BK_MEDIA = { video: true, reason: 'ok' };
+(function decide(){
+  const why = (() => {
+    try {
+      const q = /[?&]media=(image|video)/.exec(location.search); if (q) return q[1] === 'image' ? 'forced-image' : '';
+      const c = navigator.connection || navigator.mozConnection || navigator.webkitConnection || {};
+      if (c.saveData) return 'save-data';
+      if (/(^|-)(2g|3g)$/.test(c.effectiveType || '')) return 'slow-network-' + c.effectiveType;
+      if (c.downlink && c.downlink < 1.5) return 'low-bandwidth';
+      if (c.rtt && c.rtt > 800) return 'high-latency';
+      const mm = q => window.matchMedia && matchMedia(q).matches;
+      if (mm('(prefers-reduced-motion: reduce)')) return 'reduced-motion';
+      if (mm('(prefers-reduced-data: reduce)')) return 'reduced-data';
+      const mem = navigator.deviceMemory, cores = navigator.hardwareConcurrency;
+      if (mem && mem <= 2) return 'low-memory';
+      if (mem && mem <= 4 && cores && cores <= 2) return 'low-cpu';
+    } catch (e) {}
+    return '';
+  })();
+  BK_MEDIA.video = !why; BK_MEDIA.reason = why || 'ok';
+})();
+function bgVideoAllowed(){ return BK_MEDIA.video; }
 
-/* Qualité d'origine pour tout le monde ; la version allégée (1280 px) n'est servie qu'en économie de données
-   ou sur connexion lente (3G) — là où la vidéo d'origine retarderait l'affichage de la page. */
-function pickBgVideo(desktop, mobile){
-  const c = navigator.connection;
-  const slow = c && (c.saveData || /(^|-)3g$/.test(c.effectiveType || ''));
-  return (mobile && slow) ? mobile : desktop;
+/* Qualité d'origine pour tout le monde (aucune version dégradée n'est servie : si les conditions ne permettent pas la vidéo d'origine,
+   c'est l'image de remplacement qui s'affiche). */
+function pickBgVideo(desktop, mobile){ return desktop; }
+
+/* Bascule d'une vidéo vers l'image de remplacement : arrêt de la lecture ET du téléchargement (src retiré + load()), vidéo masquée, plus jamais relancée. */
+function bgVideoFallback(vid, reason){
+  if (!vid || vid.dataset.fallback) return;
+  vid.dataset.fallback = reason || 'fallback';
+  try { vid.pause(); vid.removeAttribute('src'); vid.load(); } catch (e) {}
+  vid.style.display = 'none';
+  const box = vid.parentElement; if (box) box.classList.add('is-poster');
 }
+/* Les conditions changent en cours de visite (réseau qui se dégrade, économie de données activée) : on passe toutes les vidéos à l'image. */
+(function watchConnection(){
+  const c = navigator.connection; if (!c || !c.addEventListener) return;
+  c.addEventListener('change', () => {
+    const was = BK_MEDIA.video;
+    if (c.saveData || /(^|-)(2g|3g)$/.test(c.effectiveType || '')) { BK_MEDIA.video = false; BK_MEDIA.reason = c.saveData ? 'save-data' : 'slow-network-' + c.effectiveType; }
+    if (was && !BK_MEDIA.video) _bgVideos.forEach(v => bgVideoFallback(v, BK_MEDIA.reason));
+  });
+})();
 
 function createBgVideo(src){
   const vid = document.createElement('video');
@@ -1832,8 +1873,15 @@ function createBgVideo(src){
      commencé. Sans poster, rien à afficher -> rien à cliquer. */
   vid.src = src;
 
-  vid.addEventListener('playing', () => vid.classList.add('is-playing'));
+  /* Démarrage trop long (réseau lent non détecté, décodeur saturé) : on libère la vidéo et l'image de remplacement reste. */
+  const startTimer = setTimeout(() => { if (!vid.classList.contains('is-playing')) bgVideoFallback(vid, 'start-timeout'); }, 9000);
+  vid.addEventListener('playing', () => { vid.classList.add('is-playing'); clearTimeout(startTimer); });
+  vid.addEventListener('error', () => { clearTimeout(startTimer); if (!vid.dataset.fallback && vid.getAttribute('src')) bgVideoFallback(vid, 'error'); });
+  /* Saccades répétées (tampon vide ≥ 4 fois en 15 s) : l'image prend le relais. */
+  let stalls = [];
+  vid.addEventListener('waiting', () => { const n = Date.now(); stalls = stalls.filter(x => n - x < 15000); stalls.push(n); if (stalls.length >= 4 && vid.classList.contains('is-playing')) bgVideoFallback(vid, 'stalls'); });
   const tryPlay = () => {
+    if (vid.dataset.fallback) return;
     const p = vid.play();
     if (p && p.catch) p.catch(() => {});
   };
@@ -1961,7 +2009,7 @@ function initHeroCarousel(viewKey){
      qu'aucun fichier n'existe à ce chemin (404), repli silencieux sur
      les photos de bannière habituelles — aucune régression possible en
      attendant l'upload. */
-  const genericVideoSrc = IMG[viewKey + 'Video'];
+  const genericVideoSrc = bgVideoAllowed() ? IMG[viewKey + 'Video'] : null;
   if (genericVideoSrc) {
     wrap.classList.add('is-dark');
     if (viewEl) viewEl.classList.add('has-bg-video');
@@ -5133,7 +5181,13 @@ function hmMarqueeLoop(){
   const tr = document.getElementById('hmMarquee'); if (!tr || REDUCED_MOTION) return;
   let x = 0, vel = 0, lastY = scrollY, hover = false, last = performance.now();
   tr.parentElement.addEventListener('pointerenter', () => { hover = true; }); tr.parentElement.addEventListener('pointerleave', () => { hover = false; });
+  /* La boucle ne tourne que lorsque le défilé est à l'écran, sur l'accueil et onglet visible (plus de getBoundingClientRect à chaque image pour rien). */
+  let vis = false, running = false;
+  const kick = () => { if (!running && vis && !document.hidden && currentView === 'home') { running = true; last = performance.now(); requestAnimationFrame(loop); } };
+  if (window.IntersectionObserver) new IntersectionObserver(es => { vis = es.some(e => e.isIntersecting); kick(); }, { rootMargin: '120px 0px' }).observe(tr.parentElement); else vis = true;
+  document.addEventListener('visibilitychange', kick);
   const loop = now => {
+    if (!vis || document.hidden || currentView !== 'home') { running = false; return; }
     const dt = Math.min(50, now - last); last = now;
     if (currentView === 'home') {
       const r = tr.getBoundingClientRect();
@@ -5147,7 +5201,7 @@ function hmMarqueeLoop(){
     }
     requestAnimationFrame(loop);
   };
-  requestAnimationFrame(loop);
+  kick();
 }
 /* Titre du haut : légère parallaxe à la souris (ordinateur). */
 function hmParallax(){
@@ -5427,13 +5481,13 @@ function renderProcessSteps(){
       }
       if (!img.src) img.src = IMG.devis;
     };
-    if (IMG.devisVideo && !sideImgBox.querySelector('video')) {
+    if (IMG.devisVideo && bgVideoAllowed() && !sideImgBox.querySelector('video')) {
       const vid = createBgVideo(IMG.devisVideo);
       if (IMG.devis) { sideImgBox.style.backgroundImage = 'url("' + IMG.devis + '")'; sideImgBox.style.backgroundSize = 'cover'; sideImgBox.style.backgroundPosition = 'center'; }
       vid.addEventListener('error', showImg, { once: true });
       sideImgBox.innerHTML = '';
       sideImgBox.appendChild(vid);
-    } else if (!IMG.devisVideo) {
+    } else if (!IMG.devisVideo || !bgVideoAllowed()) {
       showImg();
     }
   }
@@ -8534,6 +8588,8 @@ function initHomeClaimVideo(){
   let reassureVisible = false;
   const updateMissionWrap = () => {
     wrap.classList.toggle('active', triggerVisible && !reassureVisible);
+    /* Séquence vidéo « Le studio » : lue seulement quand elle est à l'écran. */
+    if (missionVid && !missionVid.dataset.fallback) { const on = triggerVisible && !reassureVisible; if (on && missionVid.paused) { const q = missionVid.play(); if (q && q.catch) q.catch(() => {}); } else if (!on && !missionVid.paused) missionVid.pause(); }
   };
   const missionIO = new IntersectionObserver(entries => {
     entries.forEach(e => { triggerVisible = e.isIntersecting; });
