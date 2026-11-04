@@ -8168,3 +8168,9 @@ body[data-view="quiz"] .quiz-nav-btn:hover, body[data-view="quiz"] .quiz-nav-btn
 #view-about .about-two li.ab-acc a { font-size: 13px; text-decoration: underline; text-underline-offset: 4px; transform: none; }
 #view-about .about-two li.ab-acc:hover a { transform: none; }
 #view-about .about-two li.ab-acc .ab-acc-in p { text-align: left; max-width: 60ch; }
+
+/* Services, bannière : titre en texte éditorial « magazine » (capitales serrées, pas d'italique) — 5 nov. 2026 */
+#view-services .svx .svx-head .svx-head-main .page-title { font-family: 'Inter Tight', sans-serif !important; font-style: normal !important; font-weight: 500 !important; font-size: clamp(30px, 4.2vw, 60px) !important; line-height: .96 !important; letter-spacing: -.045em !important; text-transform: uppercase !important; margin: 6px 0 10px !important; color: #fff !important; }
+#view-services .svx .svx-head .svx-head-main { max-width: min(620px, 90vw); }
+#view-services .svx .svx-head .gx-kick { margin-bottom: 4px !important; }
+@media (max-width: 760px) { #view-services .svx .svx-head .svx-head-main .page-title { font-size: clamp(28px, 9.2vw, 40px) !important; } }
