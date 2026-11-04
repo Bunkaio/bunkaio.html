@@ -290,7 +290,7 @@ const I18N = {
     'p-why-1':'Nous vivons dans un monde où les contenus se multiplient, mais où les histoires se raréfient. Chaque jour, des milliers d\'images sont publiées puis oubliées.',
     'p-why-2':'Pourtant, derrière chaque lieu, chaque objet et chaque réalisation se cache une histoire qui mérite d\'être racontée.',
     'p-why-3':'Chez Bunkaio, nous croyons que la valeur d\'un projet ne réside pas uniquement dans son résultat final, mais également dans la vision, les défis et le savoir-faire qui ont permis son existence.',
-    'p-mission':'Votre image, à la hauteur de vos ambitions.',
+    'p-mission':'Des images d\'exception pour des ambitions singulières.',
     'reassure1-title':'Devis gratuit sous 48h',
     'reassure1-text':'Aucun engagement, aucune carte bancaire. Vous recevez une proposition claire et chiffrée en moins de 48 heures.',
     'reassure2-title':'Créneaux limités chaque mois',
@@ -562,7 +562,7 @@ const I18N = {
     'comm-redirect-text':'Vous avez exprimé un intérêt pour des services de communication complémentaires. Agency Nascimento, partenaire de BUNKAIO, accompagne nos clients sur la création de site, le SEO, la publicité en ligne et les réseaux sociaux. Découvrez leur approche.',
     'comm-redirect-btn':'Découvrir Agency Nascimento',
     'home-claim-kicker':'Le studio',
-    'home-claim-text':'Votre image, à la hauteur de vos ambitions.',
+    'home-claim-text':'Des images d\'exception pour des ambitions singulières.',
     'ft-services':'Services','ft-studio':'Le studio',
     'footer-claim2':'Studio de photographie mobile · Montpellier · Toulouse',
     'stab-catalogue':'Catalogue & prix','stab-devis':'Devis & déroulé',
@@ -664,7 +664,7 @@ const I18N = {
     'p-why-1':'We live in a world where content keeps multiplying, yet stories are becoming rare. Every day, thousands of images are published and then forgotten.',
     'p-why-2':'And yet, behind every place, every object and every achievement lies a story that deserves to be told.',
     'p-why-3':'At Bunkaio, we believe the value of a project lies not only in its final result, but also in the vision, the challenges and the craftsmanship that brought it to life.',
-    'p-mission':'Your image, as ambitious as you are.',
+    'p-mission':'Exceptional images for singular ambitions.',
     'reassure1-title':'Free quote within 48h',
     'reassure1-text':'No commitment, no credit card. You receive a clear, priced proposal in under 48 hours.',
     'reassure2-title':'Limited slots every month',
@@ -936,7 +936,7 @@ const I18N = {
     'comm-redirect-text':'You expressed an interest in complementary communication services. Agency Nascimento, a BUNKAIO partner, supports our clients with website creation, SEO, online advertising and social media. Discover their approach.',
     'comm-redirect-btn':'Discover Agency Nascimento',
     'home-claim-kicker':'The studio',
-    'home-claim-text':'Your image, as ambitious as you are.',
+    'home-claim-text':'Exceptional images for singular ambitions.',
     'ft-services':'Services','ft-studio':'The studio',
     'footer-claim2':'Mobile photography studio · Montpellier · Toulouse',
     'stab-catalogue':'Catalogue & rates','stab-devis':'Quote & process',
@@ -5113,7 +5113,7 @@ function lkBanner(chs){
   box.innerHTML = `<div class="lk-full">
       <button type="button" class="lk-full-ph" data-cursor="${escHtml(t({fr:'Voir', en:'View'}))}" onclick="pfxOpen(document.getElementById('lkBanner')._reel,${k})" aria-label="${escHtml(t({fr:'Agrandir la photo', en:'Enlarge the photo'}))}"><img loading="lazy" decoding="async" src="${c.photos[k]}" alt="${escHtml(pfxAlt(c, c.photos[k], k))}"></button>
       <div class="lk-cap-box"><span class="lk-cap-k">${t({fr:'Studio mobile · Occitanie', en:'Mobile studio · Occitanie'})}</span>
-        <p class="lk-cap-t">${t({fr:'Votre image, à la hauteur de vos ambitions.', en:'Your image, as ambitious as you are.'})}</p>
+        <p class="lk-cap-t">${t({fr:'Des images d\'exception pour des ambitions singulières.', en:'Exceptional images for singular ambitions.'})}</p>
         <a class="lk-cap-l" href="/portfolio/" onclick="return navLink(event,'portfolio')">${t({fr:'Voir le portfolio', en:'View the portfolio'})}</a></div>
     </div>`;
   box.hidden = false;
