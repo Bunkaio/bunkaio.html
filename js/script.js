@@ -6200,13 +6200,24 @@ function bkScramble(el){
   if (!el.dataset.text) el.dataset.text = el.textContent;
   const final = el.dataset.text; if (!final || REDUCED_MOTION) return;
   const n = final.length, stops = [...final].map((ch, i) => 180 + Math.random() * 520 + i * 18), t0 = performance.now();
+  /* La boîte du texte est figée pendant le brouillage : les lettres aléatoires n'ont pas la largeur des vraies, ce qui faisait bouger toute la page (retours à la ligne, hauteur). */
+  if (el._unlock) el._unlock();
+  const cs = getComputedStyle(el), r0 = el.getBoundingClientRect(), saved = el.getAttribute('style');
+  const lh = parseFloat(cs.lineHeight) || parseFloat(cs.fontSize) * 1.2, single = r0.height <= lh * 1.6;
+  if (r0.width > 0 && r0.height > 0) {
+    if (cs.display === 'inline') el.style.display = 'inline-block';
+    el.style.width = r0.width + 'px'; el.style.height = r0.height + 'px'; el.style.overflow = 'hidden'; el.style.verticalAlign = 'top';
+    if (single) el.style.whiteSpace = 'nowrap';
+  }
+  const unlock = () => { el._unlock = null; if (saved === null) el.removeAttribute('style'); else el.setAttribute('style', saved); };
+  el._unlock = unlock;
   const step = now => {
     const dt = now - t0; let done = true, out = '';
     for (let i = 0; i < n; i++) { const ch = final[i]; if (dt >= stops[i] || ch === ' ' || /[^\p{L}\p{N}]/u.test(ch)) out += ch; else { done = false; out += BK_GLYPHS[(Math.random() * BK_GLYPHS.length) | 0]; } }
-    el.textContent = out; if (!done) requestAnimationFrame(step); else el.textContent = final;
+    el.textContent = out; if (!done) requestAnimationFrame(step); else { el.textContent = final; unlock(); }
   };
   requestAnimationFrame(step);
-  clearTimeout(el._scT); el._scT = setTimeout(() => { el.textContent = final; }, 1600);   /* filet : texte exact garanti même si l'animation est suspendue */
+  clearTimeout(el._scT); el._scT = setTimeout(() => { el.textContent = final; unlock(); }, 1600);   /* filet : texte exact garanti même si l'animation est suspendue */
 }
 function bkScrambleWatch(root){
   const els = (root || document).querySelectorAll('.bk-scramble:not([data-sc])'); if (!els.length) return;

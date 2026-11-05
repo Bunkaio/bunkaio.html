@@ -8743,3 +8743,9 @@ html.pfi-lock .bk-back,body.menu-open .bk-back{display:none}
 .qp-m { grid-column: 3; grid-row: 2 / 4; align-self: center; border: 0; background: none; padding: 0; font: 600 12px/1 'Inter Tight', sans-serif; letter-spacing: .04em; text-decoration: underline; text-underline-offset: 4px; color: #111; cursor: pointer; }
 .qp-m:hover { color: #6e5aa8; }
 @media (max-width: 600px) { .q-preset { grid-template-columns: 1fr auto; padding: 12px 14px 12px 16px; } .qp-m { grid-column: 2; grid-row: 2 / 4; } .qp-t { grid-column: 1; } }
+
+/* Bouton du menu « Construire mon projet » : même style que les CTA des photos — rose dépoli, encadrement fin, pilule, sans flèche (6 nov. 2026, demande de la propriétaire) */
+html body .nav-cta.nav-cta[data-lang]:not(#bkv) { background: rgba(232,198,196,.62) !important; color: #111 !important; border: 1px solid rgba(255,255,255,.6) !important; border-radius: 999px !important; box-shadow: 0 0 0 1px rgba(17,17,17,.07), 0 6px 22px rgba(0,0,0,.08), inset 0 1px 0 rgba(255,255,255,.4) !important; -webkit-backdrop-filter: blur(14px) saturate(1.2) !important; backdrop-filter: blur(14px) saturate(1.2) !important; }
+html body .nav-cta.nav-cta[data-lang]:not(#bkv):is(:hover, :focus-visible, :active) { background: rgba(232,198,196,.88) !important; color: #111 !important; border-color: rgba(255,255,255,.85) !important; box-shadow: 0 0 0 1px rgba(17,17,17,.1), 0 8px 28px rgba(232,198,196,.55), inset 0 1px 0 rgba(255,255,255,.5) !important; }
+html body nav .nav-cta::after, html body .nav-cta::after { content: none !important; display: none !important; }
+html body .nav-cta :is(span, *) { color: #111 !important; }
