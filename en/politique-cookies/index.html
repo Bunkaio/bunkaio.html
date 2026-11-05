@@ -35,7 +35,7 @@
 <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
 <link rel="preload" href="fonts/inter-tight-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <script>/* Image d'attente des vidéos de l'accueil : une vraie photo HD du Portfolio BUNKAIO (et non une capture de la vidéo), posée derrière chaque vidéo via --vid-a / --vid-b ; accueil seulement. */(function(){var p=location.pathname;if(p!=="/"&&p!=="/en/"&&p!=="/index.html")return;var B="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/portfolio/",C=["mode/1","photo-part/1","corporate/1","commercial/1","event/1","mode/2","photo-part/2","corporate/2","commercial/2","event/2"],got=[],k=0,r=document.documentElement;function next(){if(k>=C.length||got.length>=2)return;var u=B+C[k++]+".webp",i=new Image();i.onload=function(){got.push(u);r.style.setProperty(got.length===1?"--vid-a":"--vid-b","url("+u+")");next();};i.onerror=next;i.src=u;}next();})();</script>
-<link rel="stylesheet" href="css/style.min.css?v=3ad69a23">
+<link rel="stylesheet" href="css/style.min.css?v=070d3aa9">
 
 <script type="application/ld+json">
 {
@@ -1698,7 +1698,7 @@
         <span class="bk-echo" data-text="What is a cookie or tracker?">What is a cookie or tracker?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
-      <div class="accordion-body ">
+      <div class="accordion-body " inert="">
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>A cookie is a small file saved on your device by a website. “Tracker” more broadly means any way of reading or writing information on your device (cookies, local storage, technical identifiers). Some are essential for a site to work; others measure audience or serve advertising and require your consent.</p></div>
       </div>
     </div>
@@ -1707,7 +1707,7 @@
         <span class="bk-echo" data-text="What BUNKAIO uses today">What BUNKAIO uses today</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
-      <div class="accordion-body ">
+      <div class="accordion-body " inert="">
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p><strong>This site sets no cookies</strong>, and no third-party advertising or measurement service is loaded. Only the following are used:</p><ul><li><strong>Client or partner area sign-in</strong> (local storage, <em>necessary</em>): keeps your session, created only after you sign in, kept until you sign out.</li><li><strong>Opt-out from audience measurement</strong> (local storage, <em>user choice</em>): remembers that you refuse measurement, created only if you make that choice, kept until you clear it.</li><li><strong>Your cookie choice</strong> (local storage): saved only if you confirm a choice in “Manage my cookies”, for 6 months.</li></ul></div>
       </div>
     </div>
@@ -1716,7 +1716,7 @@
         <span class="bk-echo" data-text="BUNKAIO anonymous audience measurement">BUNKAIO anonymous audience measurement</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
-      <div class="accordion-body ">
+      <div class="accordion-body " inert="">
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>BUNKAIO measures traffic with an in-house tool, <strong>without cookies</strong>, hosted on its own Cloudflare account: page views, referring domain, campaign label of the landing link (“utm” parameters), device type, clicks on main buttons. Your IP address and browser are not stored; they are used to compute a code that changes every day and cannot follow you from one day to the next. Data is deleted after 400 days (about 13 months). Nothing is shared with third parties. Your browser's “Do Not Track” setting and GPC signal are honoured, and you can opt out at any time in “Manage my cookies”.</p></div>
       </div>
     </div>
@@ -1725,7 +1725,7 @@
         <span class="bk-echo" data-text="Services requiring your consent">Services requiring your consent</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
-      <div class="accordion-body ">
+      <div class="accordion-body " inert="">
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>None to date. If BUNKAIO ever uses a service that requires consent (for example third-party audience measurement or online advertising), a banner will ask for your agreement <strong>before</strong> any tracker is set or read, and this page will be updated.</p></div>
       </div>
     </div>
@@ -1734,7 +1734,7 @@
         <span class="bk-echo" data-text="External content">External content</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
-      <div class="accordion-body ">
+      <div class="accordion-body " inert="">
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>This site embeds no video, map, form or widget from a third-party service. Links to other sites (for example Instagram) load nothing until you click.</p></div>
       </div>
     </div>
@@ -1743,7 +1743,7 @@
         <span class="bk-echo" data-text="Manage or withdraw your consent">Manage or withdraw your consent</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
-      <div class="accordion-body ">
+      <div class="accordion-body " inert="">
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>You can view, change or withdraw your choices at any time, as easily as you gave them: <button type="button" class="pt-link" onclick="BKConsent.open()">Manage my cookies</button>. The link stays available at the bottom of every page. You can also delete the site's data in your browser settings.</p></div>
       </div>
     </div>
@@ -1752,7 +1752,7 @@
         <span class="bk-echo" data-text="Technical providers and transfers">Technical providers and transfers</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
-      <div class="accordion-body ">
+      <div class="accordion-body " inert="">
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>The site is hosted on GitHub Pages (GitHub, Inc.); images, videos and application services are hosted by Cloudflare. These providers technically receive your IP address when you visit, as on any website. Some are based in the United States, which may involve a transfer outside the European Union; see the <a href="/confidentialite/" data-nav="legal:privacy">privacy policy</a>.</p></div>
       </div>
     </div>
@@ -1761,7 +1761,7 @@
         <span class="bk-echo" data-text="Contact us">Contact us</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
-      <div class="accordion-body ">
+      <div class="accordion-body " inert="">
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>For any question: <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a>. You can also lodge a complaint with the CNIL (<a href="https://www.cnil.fr" target="_blank" rel="noopener">www.cnil.fr</a>).</p></div>
       </div>
     </div><!--/snap--></div>
@@ -2158,6 +2158,6 @@
 <script src="config/articles.en.js?v=8f46268f"></script>
 <script src="config/routes.js?v=09d40cd4"></script>
 <script src="config/media.js?v=c88496e4"></script>
-<script src="js/script.min.js?v=0dfbb20a"></script>
+<script src="js/script.min.js?v=9a0d4a6d"></script>
 </body>
 </html>

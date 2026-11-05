@@ -9128,3 +9128,143 @@ html[data-acct="partner"] body[data-view="account"] .bk-back * { color: #f3eee2 
 .form-head { border-top: 2px solid #111; padding-top: 14px; margin: 0 0 22px; }
 .form-head-k { display: block; font-size: 11px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: rgba(17,17,17,.55); margin-bottom: 6px; }
 .view .form-head-t { margin: 0; font-family: 'Inter Tight', sans-serif; font-size: clamp(26px, 4vw, 40px); font-weight: 600; line-height: 1; letter-spacing: -.04em; text-transform: uppercase; color: #111; }
+
+/* ═══════════════ Animations économes (6 nov. 2026) ═══════════════
+   Audit de performance : les animations qui font recalculer la mise en page ou repeindre (flou de filtre, espacement des lettres, clip-path, largeur, position, ombres, dégradés qui glissent)
+   sont remplacées par des équivalents sur opacité / déplacement (transform), traités par la carte graphique. Look conservé ; ne plus ajouter d'animation sur filter, letter-spacing,
+   clip-path, width/height, top/left, box-shadow ni background-position. Fichier généré en partie par un script hors dépôt (gen_eco.py). */
+@keyframes wordUp { to { opacity: 1; transform: translateY(0); } }
+@keyframes missionTextReveal { to { opacity: 1; transform: translateY(0); } }
+@keyframes reassureTextReveal { to { opacity: 1; transform: translateY(0); } }
+@keyframes reassureWrite { from { opacity: 0; } to { opacity: 1; } }
+@keyframes csCard { from { opacity: 0; transform: translateY(40px) scale(0.98); } to { opacity: 1; transform: none; } }
+@keyframes hkFocus { to { opacity: 1; transform: none; } }
+@keyframes hkFade { to { opacity: 1; } }
+@keyframes accessIn { from { opacity: 0; transform: translateY(18px) scale(0.94); } to { opacity: 1; transform: none; } }
+@keyframes pfxProj { from { opacity: 0; transform: scale(1.025); } to { opacity: 1; transform: none; } }
+@keyframes hmWordIn { 0% { opacity: 0; transform: translateY(62%) skewY(5deg); } 55% { opacity: 1; } 100% { opacity: 1; transform: none; } }
+@keyframes hmFade { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes hmCurtain { from { opacity: 0; transform: translateY(18px); } 40% { opacity: 1; } to { opacity: 1; transform: none; } }
+@keyframes hmRiseIn { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: none; } }
+@keyframes credPortrait { from { transform: scale(1.12); } to { transform: none; } }
+@keyframes credSweep { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes hkPanel { from { opacity: 0; } to { opacity: 1; } }
+@keyframes cbWord { from { transform: translateY(105%); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes cbKick { from { opacity: 0; } to { opacity: 1; } }
+@keyframes cbCurtain { from { opacity: 0; } to { opacity: 1; } }
+@keyframes cspText { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes msFill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.ms-pill i, .ms-pill.on i { width: 100% !important; transform: scaleX(0); transform-origin: left center; }
+.ms-pill.on i { animation: msFill 5.5s linear forwards; }
+@keyframes subShine { 0%, 55% { transform: translateX(0); } 100% { transform: translateX(440%); } }
+@keyframes shimmer { from { transform: translateX(0); } to { transform: translateX(433%); } }
+@keyframes scrollHintLine { 0% { transform: translateY(0); opacity: 0; } 25% { opacity: 1; } 100% { transform: translateY(350%); opacity: 0; } }
+.scroll-hint-line::after { top: -40% !important; }
+.cs-points.csp-pre > li,
+.fxl li,
+.hero-kicker .hk-t,
+.hero-title .word,
+.mc-stage,
+.mission-kicker,
+.mission-services,
+.mission-text,
+.partner-cta.cb-pre:not(.cb-in) .cb-w > span,
+.pf-cta-band.cb-pre:not(.cb-in) .cb-w > span,
+.reassure-icon, .reassure-num, .reassure-text,
+.testimonials-label,
+.tx-pre,
+.vgl > li > b { filter: none !important; }
+nav { transition: background 0.5s var(--ease), border-color 0.5s var(--ease), box-shadow 0.5s var(--ease) !important; }
+.nav-inner { transition: none !important; }
+.nav-link::after { transition: none !important; }
+.lang-toggle { transition: opacity, transform, background-color, color, border-color 0.35s var(--ease) !important; }
+.nav-cta::before, .hero-start::before { transition: none !important; }
+.svc-tab { transition: opacity, transform, background-color, color, border-color 0.35s var(--ease) !important; }
+.ps-num { transition: opacity, transform, background-color, color, border-color 0.4s var(--ease) !important; }
+.photo-pack { transition: opacity, transform, background-color, color, border-color 0.3s var(--ease) !important; }
+.login-tab { transition: opacity, transform, background-color, color, border-color 0.35s var(--ease) !important; }
+.account-logout { transition: opacity, transform, background-color, color, border-color 0.35s var(--ease) !important; }
+.ss-dot { transition: opacity, transform, background-color, color, border-color 0.35s var(--ease) !important; }
+.acc-sub-usage-fill { transition: none !important; }
+.mb-chip { transition: opacity, transform, background-color, color, border-color 0.25s var(--ease) !important; }
+.comm-check { transition: opacity, transform, background-color, color, border-color 0.35s var(--ease) !important; }
+.progress-fill { transition: none !important; }
+.cat-item { transition: none !important; }
+.prof-card { transition: opacity, transform, background-color, color, border-color 0.45s var(--ease) !important; }
+.tier-card::after { transition: none !important; }
+.opt-check { transition: opacity, transform, background-color, color, border-color 0.35s var(--ease) !important; }
+.filter-btn { transition: opacity, transform, background-color, color, border-color 0.35s var(--ease) !important; }
+.service-card { transition: opacity, transform, background-color, color, border-color 0.45s var(--ease) !important; }
+.cred-card { transition: opacity, transform, background-color, color, border-color 0.45s var(--ease) !important; }
+.gear-pill { transition: opacity, transform, background-color, color, border-color 0.35s var(--ease) !important; }
+.drone-cat-card { transition: opacity, transform, background-color, color, border-color 0.45s var(--ease) !important; }
+.drone-project { transition: opacity, transform, background-color, color, border-color 0.45s var(--ease) !important; }
+.drone-project-thumb img { transition: transform 0.8s var(--ease-luxe) !important; }
+.dpc-btn { transition: opacity, transform, background-color, color, border-color 0.25s var(--ease) !important; }
+.drone-jump-btn { transition: opacity, transform, background-color, color, border-color 0.25s var(--ease) !important; }
+.pf-cat-tab::after { transition: none !important; }
+.ph img { transition: transform 1.1s var(--ease-luxe) !important; }
+.ft-list button::after, .ft-list a::after { transition: none !important; }
+.svc-assure-panel-inner { transition: opacity 0.4s var(--ease), border-color 0.4s var(--ease) !important; }
+.skip-link { transition: none !important; }
+.reassure-item .reassure-num { transition: color 0.5s ease !important; }
+.disc-step b { transition: color 0.4s ease !important; }
+.brief-use { transition: opacity, transform, background-color, color, border-color 0.3s var(--ease) !important; }
+html.photo-shield img, html.photo-shield video, html.photo-shield .hero-slide, html.photo-shield .ms-im { transition: none !important; }
+.pfi-dots i { transition: background .3s !important; }
+.pfx-row { transition: background .3s ease !important; }
+.pfx-open img { transition: transform 1.1s cubic-bezier(.2,.7,.2,1) !important; }
+.svx-stage-ph img { transition: transform .01s linear .85s !important; }
+.svx-stage.has-ph:not(.show-b) .svx-ph-a, .svx-stage.has-ph.show-b .svx-ph-b { transition: transform 1.4s cubic-bezier(.2,.7,.2,1) !important; }
+.pfx-tile img { transition: transform 1.2s cubic-bezier(.2,.8,.2,1) !important; }
+.gx-stage-ph img { transition: transform .01s linear .9s !important; }
+.gx-stage.has-ph:not(.show-b) .gx-ph-a, .gx-stage.has-ph.show-b .gx-ph-b { transition: transform 1.6s cubic-bezier(.2,.7,.2,1) !important; }
+.gx-stage:hover .gx-stage-ph img { transition: transform 1.6s cubic-bezier(.2,.7,.2,1) !important; }
+.view.gx .collab-img img { transition: transform 1.4s cubic-bezier(.2,.8,.2,1) !important; }
+.gx-vf-x { transition: none !important; }
+.view.gx .gx-portrait img { transition: transform 1.6s cubic-bezier(.2,.8,.2,1), mix-blend-mode .8s !important; }
+#view-home .home-paper .cred-avatar img { transition: none !important; }
+#view-home .home-paper .advice-teaser-photo img { transition: transform 1.4s cubic-bezier(.2,.8,.2,1) !important; }
+.ms-im { transition: none !important; }
+.view.px .advice-card img { transition: transform 1.2s cubic-bezier(.2,.8,.2,1) !important; }
+.view.px-quiz .cat-item { transition: none !important; }
+#view-account .pf-cat-tab { transition: color .3s !important; }
+.lk-home-img img { transition: transform 1.4s cubic-bezier(.2,.7,.2,1) !important; }
+.lk-tier { transition: background .25s, color .25s !important; }
+.view .svcp-others-row .svcp-chip { transition: background .25s !important; }
+#servicesGrid .svx-tile img { transition: transform 1.4s cubic-bezier(.2,.8,.2,1) !important; }
+#view-service .fx-thumb { transition: none !important; }
+.pfx-tile.tl-pre img { transition: transform 1.7s cubic-bezier(.2,.8,.2,1) calc(var(--tl, 0) * .12s) !important; }
+.lk-full.fl-pre .lk-full-ph { transition: none !important; }
+.fxl li { transition: opacity .6s ease, transform .75s cubic-bezier(.2,.8,.2,1) !important; }
+.tx-pre { transition: opacity .8s ease, transform .9s cubic-bezier(.2,.8,.2,1) !important; }
+.cs-points.csp-pre > li { transition: opacity .7s ease, transform .85s cubic-bezier(.2,.8,.2,1) !important; }
+.svx-td { transition: background .35s !important; }
+.vgl > li > b { transition: none !important; }
+@media (prefers-reduced-motion: no-preference) {
+.advice-teaser.adv-live .advice-teaser-photo { transition: none !important; }
+}
+.mc-stage { filter: none !important; }
+/* Sur écran tactile seulement : lueurs et balayages en boucle (ombres, dégradés qui glissent) figés, car ils repeignent l'écran en permanence ; inchangés sur ordinateur. */
+@media (hover: none) {
+  @keyframes ctaGlow { }
+  @keyframes csChip { }
+  @keyframes csShimmer { }
+  @keyframes hkGlow { }
+  @keyframes hkBreathe { }
+  @keyframes mcPulse { }
+  @keyframes ftGlow { }
+  @keyframes gxPulse { }
+  @keyframes hmHalo { }
+  @keyframes hmSqGlow { }
+  @keyframes phShimmer { }
+  @keyframes ftSweep { }
+}
+
+/* Rendu différé des blocs hors écran (6 nov. 2026, rapidité mobile) : le navigateur ne calcule ni styles ni dessin des sections encore loin de l'écran
+   (accueil après la réassurance, sections des pages prestation, témoignages, pied de page). Mesuré : −29 % de travail du fil principal au défilement sur mobile.
+   Ne jamais l'appliquer à la séquence vidéo « Le studio », au Portfolio ou à un bloc dont la hauteur sert à un calcul de position. */
+footer, #view-home .home-paper > *:not(.reassure-section), #view-service .svcp-panel, #view-service .svcp-ban, #view-service .lk-reel, .testimonials-section { content-visibility: auto; contain-intrinsic-size: auto 900px; }
+
+/* Panneau « Conseils photo » : la photo zoomée à l’apparition ne dépasse plus de son cadre (débordement horizontal mesuré sur mobile, audit 6 nov. 2026). */
+#adviceTeaser .advice-teaser-photo { overflow: hidden; }

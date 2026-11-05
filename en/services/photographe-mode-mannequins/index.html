@@ -35,7 +35,7 @@
 <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
 <link rel="preload" href="fonts/inter-tight-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <script>/* Image d'attente des vidéos de l'accueil : une vraie photo HD du Portfolio BUNKAIO (et non une capture de la vidéo), posée derrière chaque vidéo via --vid-a / --vid-b ; accueil seulement. */(function(){var p=location.pathname;if(p!=="/"&&p!=="/en/"&&p!=="/index.html")return;var B="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/portfolio/",C=["mode/1","photo-part/1","corporate/1","commercial/1","event/1","mode/2","photo-part/2","corporate/2","commercial/2","event/2"],got=[],k=0,r=document.documentElement;function next(){if(k>=C.length||got.length>=2)return;var u=B+C[k++]+".webp",i=new Image();i.onload=function(){got.push(u);r.style.setProperty(got.length===1?"--vid-a":"--vid-b","url("+u+")");next();};i.onerror=next;i.src=u;}next();})();</script>
-<link rel="stylesheet" href="css/style.min.css?v=3ad69a23">
+<link rel="stylesheet" href="css/style.min.css?v=070d3aa9">
 
 <script type="application/ld+json">
 {
@@ -1515,7 +1515,7 @@
         <span class="bk-echo" data-text="What are the rates?">What are the rates?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
-      <div class="accordion-body ">
+      <div class="accordion-body " inert="">
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><ul class="svcp-list"><li><strong>Discovery</strong> — 490 €<span class="usd-eq"> ≈ $540</span></li><li><strong>Signature</strong> — 990 €<span class="usd-eq"> ≈ $1,090</span></li><li><strong>Premium</strong> — 1,690 €<span class="usd-eq"> ≈ $1,860</span></li><li><strong>Bunkaio editorial</strong> — 2,490 €<span class="usd-eq"> ≈ $2,740</span></li></ul><p>Subscription Studio Continu — Models : 790 €<span class="usd-eq"> ≈ $870</span> per month.</p></div>
       </div>
     </div>
@@ -1524,7 +1524,7 @@
         <span class="bk-echo" data-text="How soon are the photos delivered?">How soon are the photos delivered?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
-      <div class="accordion-body ">
+      <div class="accordion-body " inert="">
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><ul class="svcp-list"><li><strong>Discovery</strong> — 5 working days</li><li><strong>Signature</strong> — 7 working days</li><li><strong>Premium</strong> — 7 working days</li><li><strong>Bunkaio editorial</strong> — 10 working days</li></ul><p>Timelines start on the shoot date, excluding additional retouching requests.</p></div>
       </div>
     </div>
@@ -1533,7 +1533,7 @@
         <span class="bk-echo" data-text="How many photos are delivered?">How many photos are delivered?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
-      <div class="accordion-body ">
+      <div class="accordion-body " inert="">
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><ul class="svcp-list"><li><strong>Discovery</strong> — Mini series — 8 retouched HD photos</li><li><strong>Signature</strong> — Lookbook — 20 retouched HD photos</li><li><strong>Premium</strong> — Lookbook — 30 retouched HD photos</li><li><strong>Bunkaio editorial</strong> — Campaign — 35 retouched HD photos</li></ul></div>
       </div>
     </div>
@@ -1542,7 +1542,7 @@
         <span class="bk-echo" data-text="Which packages include video?">Which packages include video?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
-      <div class="accordion-body ">
+      <div class="accordion-body " inert="">
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><ul class="svcp-list"><li><strong>Signature</strong> — 1 vertical Reel for social media</li><li><strong>Premium</strong> — 1 main film</li><li><strong>Bunkaio editorial</strong> — 1 commercial film (2 minutes)</li></ul></div>
       </div>
     </div>
@@ -1551,7 +1551,7 @@
         <span class="bk-echo" data-text="What is the Polas package?">What is the Polas package?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
-      <div class="accordion-body ">
+      <div class="accordion-body " inert="">
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>Raw, unretouched photos made for model agencies: 20-minute studio session on a white background, 6 raw photos (face, profiles, three-quarter and full-body shots), HD files delivered within 24 hours. Rate: 90 €<span class="usd-eq"> ≈ $99</span>, studio included, paid by bank card in one go.</p><p><a href="/en/conseils/polas-mannequin-digitals-agence/" data-nav="article:polas-mannequin-digitals-agence">Polas and model digitals: what are they for?</a></p></div>
       </div>
     </div></div>
@@ -2345,6 +2345,6 @@
 <script src="config/articles.en.js?v=8f46268f"></script>
 <script src="config/routes.js?v=09d40cd4"></script>
 <script src="config/media.js?v=c88496e4"></script>
-<script src="js/script.min.js?v=0dfbb20a"></script>
+<script src="js/script.min.js?v=9a0d4a6d"></script>
 </body>
 </html>

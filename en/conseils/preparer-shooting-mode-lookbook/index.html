@@ -36,7 +36,7 @@
 <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
 <link rel="preload" href="fonts/inter-tight-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <script>/* Image d'attente des vidéos de l'accueil : une vraie photo HD du Portfolio BUNKAIO (et non une capture de la vidéo), posée derrière chaque vidéo via --vid-a / --vid-b ; accueil seulement. */(function(){var p=location.pathname;if(p!=="/"&&p!=="/en/"&&p!=="/index.html")return;var B="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/portfolio/",C=["mode/1","photo-part/1","corporate/1","commercial/1","event/1","mode/2","photo-part/2","corporate/2","commercial/2","event/2"],got=[],k=0,r=document.documentElement;function next(){if(k>=C.length||got.length>=2)return;var u=B+C[k++]+".webp",i=new Image();i.onload=function(){got.push(u);r.style.setProperty(got.length===1?"--vid-a":"--vid-b","url("+u+")");next();};i.onerror=next;i.src=u;}next();})();</script>
-<link rel="stylesheet" href="css/style.min.css?v=3ad69a23">
+<link rel="stylesheet" href="css/style.min.css?v=070d3aa9">
 
 <script type="application/ld+json">
 {
@@ -1463,7 +1463,7 @@
         <span class="bk-echo" data-text="Do I need to provide the models?">Do I need to provide the models?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
-      <div class="accordion-body ">
+      <div class="accordion-body " inert="">
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>Specify it in your request: casting is part of the brief and can be organised with you depending on your project.</p></div>
       </div>
     </div>
@@ -1472,7 +1472,7 @@
         <span class="bk-echo" data-text="How can I get consistent visuals for an online shop?">How can I get consistent visuals for an online shop?</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
       </button>
-      <div class="accordion-body ">
+      <div class="accordion-body " inert="">
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544"><p>Fix the backdrop, framing and lighting from the start, then keep them identical across the whole series.</p></div>
       </div>
     </div></div>
@@ -2284,6 +2284,6 @@
 <script src="config/articles.en.js?v=8f46268f"></script>
 <script src="config/routes.js?v=09d40cd4"></script>
 <script src="config/media.js?v=c88496e4"></script>
-<script src="js/script.min.js?v=0dfbb20a"></script>
+<script src="js/script.min.js?v=9a0d4a6d"></script>
 </body>
 </html>

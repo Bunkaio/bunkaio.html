@@ -149,13 +149,30 @@ function renderTravelField(){
 /* Envoi fiable d'un formulaire : deux canaux indépendants, Formspree (email) et Worker /ack (boîte admin).
    Chaque canal répond true/false sans jamais lever d'erreur ; la page n'annonce le succès que si l'un des deux a abouti,
    sinon elle affiche une erreur et laisse le visiteur réessayer (voir finishForm). */
+/* Champ piège anti-robot (audit avant lancement, 6 nov. 2026) : invisible pour les personnes et les lecteurs d'écran,
+   les robots le remplissent ; si c'est le cas, l'envoi est simulé (le robot croit avoir réussi) et rien ne part. */
+function bkIsBot(){ try { return [...document.querySelectorAll('.hp-field input')].some(i => i.value.trim() !== ''); } catch (e) { return false; } }
+function bkHoneypots(){
+  ['ctForm', 'applyForm', 'collabForm'].forEach(id => {
+    const f = document.getElementById(id);
+    if (!f || f.querySelector('.hp-field')) return;
+    const d = document.createElement('div');
+    d.className = 'hp-field'; d.setAttribute('aria-hidden', 'true');
+    d.style.cssText = 'position:absolute!important;left:-10000px!important;top:auto!important;width:1px!important;height:1px!important;overflow:hidden!important;';
+    d.innerHTML = '<label>Site web<input type="text" name="site_web_2" tabindex="-1" autocomplete="off"></label>';
+    f.insertBefore(d, f.firstChild);
+  });
+}
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bkHoneypots); else bkHoneypots();
 function postFormspree(payload){
+  if (bkIsBot()) return Promise.resolve(true);
   try {
     return fetch(FORMSPREE_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(payload) })
       .then(r => r.ok).catch(() => false);
   } catch (e) { return Promise.resolve(false); }
 }
 function sendAck(kind, name, email, space, details){
+  if (bkIsBot()) return Promise.resolve(true);
   try {
     return fetch('https://bunkaio-quiz-stripe.bunkaio.workers.dev/ack', {
       method: 'POST',
@@ -9187,6 +9204,7 @@ function setAccordionOpen(trigger, body, open){
   trigger.setAttribute('aria-expanded', String(open));
   if (trigger.dataset.cursor) { trigger.dataset.cursor = open ? t({fr:'Fermer', en:'Close'}) : t({fr:'Ouvrir', en:'Open'}); if (window._bkTag && window._bkTag.classList.contains('on')) window._bkTag.textContent = trigger.dataset.cursor; }
   if (open) {
+    body.inert = false;
     body.classList.add('open');
     body.style.maxHeight = body.scrollHeight + 'px';
     setTimeout(() => { if (body.classList.contains('open')) body.style.maxHeight = ''; }, 760);
@@ -9195,6 +9213,7 @@ function setAccordionOpen(trigger, body, open){
     void body.offsetHeight;
     body.classList.remove('open');
     body.style.maxHeight = '';
+    body.inert = true;
   }
 }
 
@@ -9257,7 +9276,7 @@ function renderAccordionInto(elId, sections, opts){
         <span>${s.title}</span>
         <span class="accordion-chevron"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></span>
       </button>
-      <div class="accordion-body ${i === 0 && openFirst ? 'open' : ''}">
+      <div class="accordion-body ${i === 0 && openFirst ? 'open' : ''}"${i === 0 && openFirst ? '' : ' inert'}>
         <div class="accordion-content" style="font-size:14px;line-height:1.9;color:#3a3544">${s.body}</div>
       </div>
     </div>`).join('');
@@ -9305,7 +9324,7 @@ function renderPrivacyAccordion(){
     { title:'Données collectées et finalités', body:`<p>Nous collectons uniquement les données que vous nous transmettez volontairement : nom, email, téléphone et informations relatives à votre projet via le formulaire de contact, le questionnaire de devis ou votre espace client/partenaire.</p><p>Ces données sont utilisées exclusivement pour répondre à vos demandes, établir vos devis et gérer votre compte. Votre numéro de téléphone peut servir à vous prévenir par SMS de l'avancement de votre commande (photos disponibles, accès à l'album, rappel de séance) ; vous pouvez refuser ces SMS à tout moment en nous écrivant. Elles ne sont ni vendues, ni cédées, ni partagées avec des tiers à des fins commerciales.</p>` },
     { title:'Base légale et durée de conservation', body:`<p>Le traitement repose sur l'exécution de la relation commerciale ou précontractuelle (devis, prestation), sur notre intérêt légitime à répondre à vos demandes et, pour la facturation, sur nos obligations légales et comptables.</p><p>Durées de conservation :</p><ul><li><strong>Prospects</strong> (messages des formulaires, devis sans suite) : 3 ans après le dernier contact.</li><li><strong>Clients</strong> (compte, échanges, devis acceptés) : pendant la relation commerciale, puis 5 ans en archivage, délai de prescription de droit commun (art. 2224 du Code civil et L110-4 du Code de commerce).</li><li><strong>Factures et pièces comptables</strong> : 10 ans à compter de la clôture de l'exercice (art. L123-22 du Code de commerce).</li></ul><p>À l'issue de ces durées, les données sont supprimées ou anonymisées.</p>` },
     { title:'Cookies et mesure d\'audience', body:`<p>Ce site ne dépose <strong>aucun cookie</strong> et n'utilise aucun traceur publicitaire ou tiers. Nous mesurons l'audience de façon <strong>anonyme et sans cookie</strong>, avec un outil développé et hébergé par nos soins (sur notre compte Cloudflare) : pages vues, domaine de provenance, étiquette de campagne du lien d'arrivée (paramètres « utm », par exemple pour savoir quelle publication a amené la visite), type d'appareil et clics sur les boutons principaux. Votre adresse IP et votre navigateur ne sont pas conservés : ils servent uniquement, au moment de la visite, à calculer un code qui change chaque jour et ne permet pas de vous reconnaître d'un jour à l'autre ; ce code pseudonymisé est enregistré avec l'événement. Les données sont supprimées au bout de 400 jours (environ 13 mois) et ne sont transmises à aucun service de mesure tiers.</p><p>Cette mesure respecte l'option « Ne pas me suivre » et le signal GPC de votre navigateur. Vous pouvez aussi vous y opposer sur cet appareil : <button type="button" class="pt-link" onclick="toggleTracking()">Activer / désactiver la mesure</button> <span id="trackToggleState" style="font-size:12px;color:var(--grey)"></span></p><p>Le site utilise aussi le stockage local de votre appareil, sans suivi : le maintien de votre connexion à l'espace client ou partenaire (jusqu'à votre déconnexion) et la mémoire de votre opposition à la mesure. Le détail figure dans la <a href="/politique-cookies/" data-nav="legal:cookies">politique des cookies</a>.</p>` },
-    { title:'Destinataires, prestataires et transferts', body:`<p>Pour fournir le service, nous faisons appel à des prestataires techniques qui traitent des données pour notre compte : GitHub (hébergement du site), Cloudflare (hébergement des images, des vidéos, de la base de données et du service applicatif), Stripe (paiement en ligne des acomptes et factures), Resend (envoi des emails liés à vos demandes, devis et factures). Le paiement en plusieurs fois proposé lors du règlement passe par Klarna (via Stripe) ou Scalapay. Chacun ne reçoit que les données nécessaires à sa mission.</p><p>Certains de ces prestataires sont établis aux États-Unis : vos données peuvent donc être traitées en dehors de l'Union européenne. Pour connaître les garanties applicables, écrivez-nous à <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a>.</p>` },
+    { title:'Destinataires, prestataires et transferts', body:`<p>Pour fournir le service, nous faisons appel à des prestataires techniques qui traitent des données pour notre compte : GitHub (hébergement du site), Cloudflare (hébergement des images, des vidéos, de la base de données et du service applicatif), Stripe (paiement en ligne des acomptes et factures), Resend (envoi des emails liés à vos demandes, devis et factures), Formspree (réception des messages envoyés par les formulaires du site : contact, collaboration, candidature partenaire, témoignage). Le paiement en plusieurs fois proposé lors du règlement passe par Klarna (via Stripe) ou Scalapay. Chacun ne reçoit que les données nécessaires à sa mission.</p><p>Certains de ces prestataires sont établis aux États-Unis : vos données peuvent donc être traitées en dehors de l'Union européenne. Pour connaître les garanties applicables, écrivez-nous à <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a>.</p>` },
     { title:'Droit à l\'image et preuve de votre accord', body:`<p>Avant d'utiliser une photographie sur laquelle vous apparaissez pour sa propre promotion, BUNKAIO demande votre <strong>autorisation expresse et séparée</strong> pour chacun de quatre usages : site internet et portfolio, réseaux sociaux, supports commerciaux et de communication, campagnes publicitaires numériques. Aucune case n'est pré-cochée ; refuser n'a aucune conséquence sur la prestation ni sur le prix. L'autorisation est donnée pour 5 ans à compter de la livraison des photographies, ou jusqu'à son retrait. Pour les mineurs, elle est donnée par un titulaire de l'autorité parentale ; pour les autres personnes photographiées (équipe, famille, modèles), chacune donne son propre choix par un lien individuel.</p><p><strong>Preuve conservée :</strong> nom du signataire, email, date et heure, devis et version des clauses acceptées, choix par usage, adresse IP, navigateur et empreinte numérique du document, ainsi qu'un exemplaire PDF figé du devis signé. Base légale : intérêt légitime de BUNKAIO à pouvoir prouver ce qui a été accepté (l'utilisation promotionnelle repose sur votre consentement). Durée : 5 ans après la fin de la relation (les factures : 10 ans). Ces données ne sont jamais revendues.</p><p><strong>Retrait :</strong> vous pouvez retirer une autorisation à tout moment, sans motif, sur <a href="/retrait-autorisation/">bunkaio.com/retrait-autorisation/</a> ou à <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a>. BUNKAIO cesse toute nouvelle utilisation et retire les publications en ligne sous 30 jours ; les supports déjà imprimés ou diffusés ne peuvent pas être rappelés, et les utilisations antérieures restent valables. Vous pouvez aussi saisir la CNIL (cnil.fr).</p>` },
     { title:'Vos droits', body:`<p>Conformément au RGPD et à la loi Informatique et Libertés, vous disposez d'un droit d'accès, de rectification, d'effacement, de limitation, d'opposition et de portabilité sur vos données.</p><p>Vous pouvez exercer ces droits à tout moment en écrivant à <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a>. Vous disposez également du droit d'introduire une réclamation auprès de la CNIL (<a href="https://www.cnil.fr" target="_blank" rel="noopener">www.cnil.fr</a>).</p>` },
     { title:'Hébergement et sécurité des données', body:`<p>Ce site est hébergé par GitHub Pages (GitHub, Inc.) ; les images, vidéos et services applicatifs (devis, comptes, mesure d'audience) sont hébergés par Cloudflare. Les échanges sont sécurisés (HTTPS). Aucune base de données client n'est publiquement accessible : les informations transmises via nos formulaires sont traitées de façon confidentielle par BUNKAIO.</p>` },
@@ -9318,7 +9337,7 @@ function renderPrivacyAccordion(){
     { title:'Data collected and purposes', body:`<p>We only collect the data you voluntarily provide: name, email, phone number and project details, via the contact form, the quote questionnaire, or your client/partner area.</p><p>This data is used exclusively to respond to your enquiries, prepare your quotes and manage your account. Your phone number may be used to notify you by SMS about your order (photos available, album access, session reminder); you can opt out at any time by writing to us. It is never sold, transferred or shared with third parties for commercial purposes.</p>` },
     { title:'Legal basis and retention period', body:`<p>Processing is based on the performance of the (pre-)contractual relationship (quote, service), on our legitimate interest in responding to your requests and, for invoicing, on our legal and accounting obligations.</p><p>Retention periods:</p><ul><li><strong>Prospects</strong> (form messages, quotes with no follow-up): 3 years after the last contact.</li><li><strong>Clients</strong> (account, exchanges, accepted quotes): for the duration of the business relationship, then 5 years in archive, the general limitation period under French law (art. 2224 of the Civil Code and L110-4 of the Commercial Code).</li><li><strong>Invoices and accounting records</strong>: 10 years from the close of the financial year (art. L123-22 of the Commercial Code).</li></ul><p>After these periods, data is deleted or anonymised.</p>` },
     { title:'Cookies and audience measurement', body:`<p>This site sets <strong>no cookies</strong> and uses no advertising or third-party trackers. We measure audience <strong>anonymously and without cookies</strong>, with a tool built and hosted by us (on our own Cloudflare account): page views, referring domain, campaign label of the landing link (“utm” parameters, e.g. to know which post brought the visit), device type and clicks on the main buttons. Your IP address and browser are not stored: at the time of the visit they are only used to compute a code that changes every day and cannot recognise you from one day to the next; this pseudonymised code is saved with the event. Data is deleted after 400 days (about 13 months) and is not sent to any third-party measurement service.</p><p>This measurement honours your browser's "Do Not Track" setting and the GPC signal. You can also opt out on this device: <button type="button" class="pt-link" onclick="toggleTracking()">Turn measurement on / off</button> <span id="trackToggleState" style="font-size:12px;color:var(--grey)"></span></p><p>The site also uses your device's local storage, without tracking: keeping you signed in to your client or partner area (until you sign out) and remembering your opt-out from measurement. Details are in the <a href="/politique-cookies/" data-nav="legal:cookies">cookie policy</a>.</p>` },
-    { title:'Recipients, processors and transfers', body:`<p>To provide the service we use technical providers that process data on our behalf: GitHub (site hosting), Cloudflare (hosting of images, videos, the database and the application service), Stripe (online payment of deposits and invoices), Resend (sending emails about your requests, quotes and invoices). Payment in instalments offered at checkout goes through Klarna (via Stripe) or Scalapay. Each receives only the data needed for its task.</p><p>Some of these providers are based in the United States, so your data may be processed outside the European Union. To learn about the safeguards that apply, write to us at <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a>.</p>` },
+    { title:'Recipients, processors and transfers', body:`<p>To provide the service we use technical providers that process data on our behalf: GitHub (site hosting), Cloudflare (hosting of images, videos, the database and the application service), Stripe (online payment of deposits and invoices), Resend (sending emails about your requests, quotes and invoices), Formspree (receiving messages sent through the site's forms: contact, collaboration, partner application, testimonial). Payment in instalments offered at checkout goes through Klarna (via Stripe) or Scalapay. Each receives only the data needed for its task.</p><p>Some of these providers are based in the United States, so your data may be processed outside the European Union. To learn about the safeguards that apply, write to us at <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a>.</p>` },
     { title:'Image rights and proof of your consent', body:`<p>Before using a photograph in which you appear for its own promotion, BUNKAIO asks for your <strong>express, separate authorisation</strong> for each of four uses: website and portfolio, social media, commercial and communication materials, digital advertising campaigns. Nothing is pre-ticked; refusing has no effect on the service or the price. The authorisation lasts 5 years from delivery of the photographs, or until withdrawn. For minors it is given by a holder of parental authority; other people photographed (team, family, models) each give their own choice through an individual link.</p><p><strong>Proof kept:</strong> signatory name, email, date and time, quote and version of the clauses accepted, choice for each use, IP address, browser and a digital fingerprint of the document, plus a frozen PDF copy of the signed quote. Legal basis: BUNKAIO's legitimate interest in proving what was accepted (promotional use relies on your consent). Retention: 5 years after the end of the relationship (invoices: 10 years). This data is never sold.</p><p><strong>Withdrawal:</strong> you may withdraw an authorisation at any time, without giving a reason, at <a href="/retrait-autorisation/">bunkaio.com/retrait-autorisation/</a> or at <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a>. BUNKAIO stops any new use and removes online publications within 30 days; materials already printed or distributed cannot be recalled, and earlier uses remain valid. You may also contact the CNIL (cnil.fr).</p>` },
     { title:'Your rights', body:`<p>In accordance with the GDPR and French data protection law, you have the right to access, rectify, erase, restrict, object to, and port your data.</p><p>You may exercise these rights at any time by writing to <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a>. You also have the right to lodge a complaint with the CNIL (<a href="https://www.cnil.fr" target="_blank" rel="noopener">www.cnil.fr</a>).</p>` },
     { title:'Hosting and data security', body:`<p>This site is hosted on GitHub Pages (GitHub, Inc.); images, videos and application services (quotes, accounts, audience measurement) are hosted by Cloudflare. All exchanges are secured (HTTPS). No client database is publicly accessible: information submitted via our forms is handled confidentially by BUNKAIO.</p>` },
@@ -9635,6 +9654,12 @@ function cstDrawField(ctx, pts, W, H, c, frame, still){
    Champ d'étoiles qui dérivent lentement et se relient par des traits fins quand elles se rapprochent ; quelques étoiles prennent la forme
    de la signature ⊹. Couleurs de chaque espace conservées : client = blanc + violet pâle, partenaire = blanc + champagne, connexion = violet.
    Le canevas couvre l'écran visible (suivi du défilement) ; pause hors de ces vues, onglet caché ou animations réduites (image fixe). */
+/* Constellations sur écran tactile (6 nov. 2026, rapidité mobile) : dessin à 30 images/s au lieu de 60, aucun dessin pendant le défilement
+   (le fond reste affiché et suit la page, il reprend 180 ms après), définition plafonnée à 1,5. Mouvement identique (le temps avance toujours). */
+const BK_TOUCH = typeof matchMedia === 'function' && matchMedia('(hover: none)').matches;
+let _bkLastScroll = 0;
+document.addEventListener('scroll', () => { _bkLastScroll = performance.now(); }, { passive: true, capture: true });
+const bkSkipDraw = f => BK_TOUCH && ((f & 1) === 1 || performance.now() - _bkLastScroll < 180);
 const CstField = (() => {
   let raf = 0, wrap = null, cv = null, ctx = null, pts = [], W = 0, H = 0, view = null, frame = 0;
   const VIEWS = ['login', 'account', 'portfolio', 'services', 'advice', 'article', 'contact', 'about', 'quiz'];
@@ -9655,7 +9680,7 @@ const CstField = (() => {
     return { line: '110,90,168', dot: '110,90,168', cross: '110,90,168', a: 0.8 };
   }
   function size(){
-    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    const dpr = Math.min(BK_TOUCH ? 1.5 : 2, window.devicePixelRatio || 1);
     W = wrap.clientWidth; H = window.innerHeight;
     cv.style.height = H + 'px';
     cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
@@ -9669,7 +9694,7 @@ const CstField = (() => {
     cv.style.transform = 'translateY(' + off + 'px)';
   }
   function draw(still){ cstDrawField(ctx, pts, W, H, palette(), frame, still); }
-  function loop(){ frame++; place(); draw(false); raf = requestAnimationFrame(loop); }
+  function loop(){ frame++; place(); if (!bkSkipDraw(frame)) draw(false); raf = requestAnimationFrame(loop); }
   function stop(){ cancelAnimationFrame(raf); raf = 0; }
   function start(){
     stop();
@@ -9697,14 +9722,14 @@ const FooterField = (() => {
   const c = { line: '255,255,255', dot: '255,255,255', cross: '214,201,247', a: 0.7 };
   let pts = [], W = 0, H = 0, raf = 0, frame = 0, visible = false;
   function size(){
-    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    const dpr = Math.min(BK_TOUCH ? 1.5 : 2, window.devicePixelRatio || 1);
     W = foot.clientWidth; H = foot.clientHeight;
     cv.style.height = H + 'px';
     cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     const n = Math.max(22, Math.min(70, Math.round(W * H / 21000)));
     pts = Array.from({ length: n }, (_, i) => ({ x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - 0.5) * 0.24, vy: (Math.random() - 0.5) * 0.24, r: 0.7 + Math.random() * 1.2, ph: Math.random() * 6.28, cross: i % 9 === 0 }));
   }
-  function loop(){ frame++; cstDrawField(ctx, pts, W, H, c, frame, false); raf = requestAnimationFrame(loop); }
+  function loop(){ frame++; if (!bkSkipDraw(frame)) cstDrawField(ctx, pts, W, H, c, frame, false); raf = requestAnimationFrame(loop); }
   function run(){ cancelAnimationFrame(raf); raf = 0; if (!visible || document.hidden) return; if (REDUCED_MOTION) { cstDrawField(ctx, pts, W, H, c, frame, true); return; } loop(); }
   size();
   if (window.IntersectionObserver) new IntersectionObserver(es => { visible = es.some(e => e.isIntersecting); run(); }, { rootMargin: '100px 0px' }).observe(foot);
@@ -9724,14 +9749,14 @@ const MenuField = (() => {
   const c = { line: '110,90,168', dot: '110,90,168', cross: '110,90,168', a: 0.55 };
   let pts = [], W = 0, H = 0, raf = 0, frame = 0;
   function size(){
-    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    const dpr = Math.min(BK_TOUCH ? 1.5 : 2, window.devicePixelRatio || 1);
     W = window.innerWidth; H = window.innerHeight;
     cv.style.height = H + 'px';
     cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     const n = Math.max(22, Math.min(60, Math.round(W * H / 16000)));
     pts = Array.from({ length: n }, (_, i) => ({ x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - 0.5) * 0.24, vy: (Math.random() - 0.5) * 0.24, r: 0.7 + Math.random() * 1.2, ph: Math.random() * 6.28, cross: i % 8 === 0 }));
   }
-  function loop(){ frame++; cstDrawField(ctx, pts, W, H, c, frame, false); raf = requestAnimationFrame(loop); }
+  function loop(){ frame++; if (!bkSkipDraw(frame)) cstDrawField(ctx, pts, W, H, c, frame, false); raf = requestAnimationFrame(loop); }
   function run(){
     cancelAnimationFrame(raf); raf = 0;
     if (!document.body.classList.contains('menu-open') || document.hidden) return;
@@ -9751,14 +9776,14 @@ function makeBoxField(c){
   const cv = wrap.querySelector('canvas'), ctx = cv.getContext('2d');
   let pts = [], W = 0, H = 0, raf = 0, frame = 0, visible = false, box = null, io = null;
   function size(){
-    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    const dpr = Math.min(BK_TOUCH ? 1.5 : 2, window.devicePixelRatio || 1);
     W = box.clientWidth; H = box.clientHeight;
     cv.style.height = H + 'px';
     cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     const n = Math.max(16, Math.min(60, Math.round(W * H / 18000)));
     pts = Array.from({ length: n }, (_, i) => ({ x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - 0.5) * 0.22, vy: (Math.random() - 0.5) * 0.22, r: 0.7 + Math.random() * 1.1, ph: Math.random() * 6.28, cross: i % 8 === 0 }));
   }
-  function loop(){ frame++; cstDrawField(ctx, pts, W, H, c, frame, false); raf = requestAnimationFrame(loop); }
+  function loop(){ frame++; if (!bkSkipDraw(frame)) cstDrawField(ctx, pts, W, H, c, frame, false); raf = requestAnimationFrame(loop); }
   function run(){
     cancelAnimationFrame(raf); raf = 0;
     if (!box || !visible || document.hidden || !document.body.contains(box)) return;
