@@ -8902,7 +8902,7 @@ mark.bk-key { -webkit-box-decoration-break: slice; box-decoration-break: slice; 
 }
 @media (min-width: 761px) and (max-height: 960px) {
   #missionVideoWrap .ms-prev, #missionVideoWrap .ms-im { min-height: 0 !important; }
-  #missionVideoWrap .ms-im { height: clamp(110px, 15svh, 160px); }
+  #missionVideoWrap .ms-prev .ms-im { height: auto !important; min-height: 0 !important; align-self: stretch; }   /* la photo remplit toute la hauteur de la carte (avant : bande courte + vide dessous) */
   #missionVideoWrap .mission-text { font-size: clamp(26px, min(5vw, 4.2svh), 76px) !important; }
   #missionVideoWrap .mission-kicker { margin-bottom: 8px !important; }
   #missionVideoWrap .mission-services { margin-top: 12px !important; }
