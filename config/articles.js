@@ -28,7 +28,7 @@ const ARTICLES_ALL = [
     ],
     faq: [
       { q: 'Le studio est-il en supplément ?', a: 'Sur toutes les formules, la séance se fait en extérieur ou en studio, le studio n\'étant jamais inclus : il s\'ajoute en option, pour 60 €.' },
-      { q: 'Peut-on payer en plusieurs fois ?', a: 'Oui, en 3 fois sans frais avec Klarna ou Scalapay (sous réserve d\'éligibilité). Par carte bancaire, le paiement se fait en une fois.' },
+      { q: 'Peut-on payer en plusieurs fois ?', a: 'Oui, en 3 fois sans frais avec Klarna ou Scalapay (sous réserve d\'éligibilité). Par carte bancaire, le paiement se fait en une fois. Le format Polas se règle uniquement par carte bancaire, en une fois.' },
       { q: 'Les photos sont-elles utilisables à titre commercial ?', a: 'Oui : les droits d\'utilisation commerciale vous sont cédés sans limite de durée.' },
     ],
   },
@@ -211,7 +211,7 @@ const ARTICLES_ALL = [
     faq: [
       { q: 'Les polas sont-elles retouchées ?', a: 'Non : ce sont des photos brutes, sans retouche ni mise en scène.' },
       { q: 'Sous quel délai reçoit-on les polas ?', a: 'Les fichiers HD sont livrés sous 24 h.' },
-      { q: 'Le studio est-il inclus ?', a: 'Oui : la séance Polas se fait en studio, sur fond blanc, et le studio est inclus dans le tarif de 90 €.' },
+      { q: 'Le studio est-il inclus ?', a: 'Oui : la séance Polas se fait en studio, sur fond blanc, et le studio est inclus dans le tarif de 90 €. Le règlement se fait par carte bancaire, en une fois (pas de paiement en 3 fois pour les Polas).' },
     ],
   },
   {

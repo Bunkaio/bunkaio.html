@@ -146,7 +146,10 @@ const deliveryNote = (lang: Lang): string => tr(lang,
   'Délai de livraison : celui indiqué sur votre formule (de 3 à 10 jours ouvrés selon la formule), à compter de la date du shooting.',
   'Delivery time: the one stated on your package (3 to 10 working days depending on the package), counted from the shoot date.');
 const greet = (lang: Lang, name: string): string => (name ? tr(lang, `Bonjour ${name},`, `Hello ${name},`) : tr(lang, 'Bonjour,', 'Hello,'));
-const payLineFor = (lang: Lang, amount: number): string => {
+/** Les Polas se règlent par carte bancaire en une fois : jamais de paiement en 3 fois (Klarna / Scalapay) proposé pour cette formule. */
+export const isPolasText = (text: string | undefined): boolean => /polas/i.test(text ?? '');
+const payLineFor = (lang: Lang, amount: number, description?: string): string => {
+  if (isPolasText(description)) return tr(lang, 'Règlement par carte bancaire, en une fois.', 'Payment by bank card, in one go.');
   const threeX = (amount / 3).toFixed(2);
   const threeXFr = threeX.replace('.', ',');
   return tr(lang,
@@ -188,7 +191,7 @@ export function buildDepositInvoiceEmail(params: {
 }): { subject: string; html: string; text: string } {
   const lang = params.lang ?? 'fr';
   const greeting = greet(lang, params.customerName);
-  const payLine = payLineFor(lang, params.depositAmountEur);
+  const payLine = payLineFor(lang, params.depositAmountEur, params.description);
   const amount = eur(lang, params.depositAmountEur);
   const cancelFr = "<strong>Conditions d'annulation :</strong> cet acompte réserve votre date et votre créneau. Une fois le devis validé, il reste acquis à BUNKAIO et n'est pas remboursé en cas d'annulation de votre part.";
   const cancelEn = '<strong>Cancellation terms:</strong> this deposit secures your date and slot. Once the quote is validated, it is retained by BUNKAIO and is non-refundable if you cancel.';
@@ -251,7 +254,7 @@ export function buildBalanceInvoiceEmail(params: {
 }): { subject: string; html: string; text: string } {
   const lang = params.lang ?? 'fr';
   const greeting = greet(lang, params.customerName);
-  const payLine = payLineFor(lang, params.balanceAmountEur);
+  const payLine = payLineFor(lang, params.balanceAmountEur, params.description);
   const amount = eur(lang, params.balanceAmountEur);
   const t = (fr: string, en: string): string => tr(lang, fr, en);
   const intro = t(`Bonne nouvelle : la post-production de votre projet <strong>${params.description}</strong> est terminée et vos photos sont prêtes.`,
@@ -382,7 +385,9 @@ export function buildOverdueReminderEmail(params: {
   const label = tr(lang, isDeposit ? "d'acompte (30 %)" : 'de solde (70 %)', isDeposit ? 'deposit (30%)' : 'balance (70%)');
   const amount = eur(lang, params.amountEur);
   const threeX = (params.amountEur / 3).toFixed(2);
-  const payLine = tr(lang,
+  const payLine = isPolasText(params.description)
+    ? tr(lang, 'Rappel : règlement par carte bancaire, en une fois.', 'Reminder: payment by bank card, in one go.')
+    : tr(lang,
     `Rappel : soit 3 × ${threeX.replace('.', ',')} € sans frais avec Klarna ou Scalapay (sous réserve d'éligibilité), ou par carte bancaire en une fois.`,
     `Reminder: that is 3 × €${threeX} interest-free with Klarna or Scalapay (subject to eligibility), or by bank card in one go.`);
   const html = emailShell(`

@@ -208,6 +208,8 @@ async function createFractionalInvoice(
     customer: customer.id,
     collection_method: 'send_invoice',
     days_until_due: 7,
+    /* Polas : carte bancaire uniquement (pas de paiement en 3 fois Klarna / Scalapay). */
+    ...(/polas/i.test(input.description) ? { payment_settings: { payment_method_types: ['card' as const] } } : {}),
     auto_advance: true,
     // Sans ce paramètre, Stripe exclut par défaut la ligne qu'on vient de
     // créer ci-dessus : la facture se finalise alors vide (0€) et est

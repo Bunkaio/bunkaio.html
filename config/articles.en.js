@@ -22,7 +22,7 @@ const ARTICLES_EN = {
     ],
     faq: [
       { q: 'Is the studio an extra cost?', a: 'On every package, the session takes place outdoors or in the studio, the studio is never included and is added as a €60 option.' },
-      { q: 'Can I pay in instalments?', a: 'Yes, in 3 interest-free instalments with Klarna or Scalapay (subject to eligibility). By bank card, payment is made in one go.' },
+      { q: 'Can I pay in instalments?', a: 'Yes, in 3 interest-free instalments with Klarna or Scalapay (subject to eligibility). By bank card, payment is made in one go. The Polas format is paid by bank card only, in one go.' },
       { q: 'Can the photos be used commercially?', a: 'Yes: commercial usage rights are transferred to you with no time limit.' }
     ]
   },
@@ -176,7 +176,7 @@ const ARTICLES_EN = {
     faq: [
       { q: 'Are polas retouched?', a: 'No: they are raw photos, with no retouching or styling.' },
       { q: 'How soon are polas delivered?', a: 'The HD files are delivered within 24 hours.' },
-      { q: 'Is the studio included?', a: 'Yes: the Polas session takes place in the studio, on a white backdrop, and the studio is included in the €90 price.' }
+      { q: 'Is the studio included?', a: 'Yes: the Polas session takes place in the studio, on a white backdrop, and the studio is included in the €90 price. Payment is by bank card, in one go (no instalments for Polas).' }
     ]
   },
   'packshot-ou-mise-en-scene-photo-produit': {
