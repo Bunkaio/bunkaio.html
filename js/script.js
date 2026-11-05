@@ -5895,14 +5895,11 @@ function pfxLoadSeries(){
 function pfxPlan(){
   const srv = Array.isArray(window._pfSeries) ? window._pfSeries.filter(s => s && s.cat && !s.hidden) : [];
   const series = srv.length ? srv : (typeof PF_SERIES !== 'undefined' && Array.isArray(PF_SERIES)) ? PF_SERIES.filter(s => s && s.cat) : [];
-  if (series.length) { const plan = series.map(s => ({ id: s.id || pfxSlug(t(s.title || {})), title: s.title ? (t(s.title) || s.title.fr || s.title.en || '') : '', client: s.client || '', year: s.year || '', cat: s.cat, nums: Array.isArray(s.photos) && s.photos.length ? s.photos : null, text: s.text ? (t(s.text) || s.text.fr || s.text.en || '') : '' }))
-    /* Le Portfolio ne se réduit pas aux séries : les photos de chaque univers qui ne sont dans aucune série suivent, un chapitre par univers. */
-    const used = new Set();
-    plan.forEach(c => (c.nums || []).forEach(n => { const m = String(n).match(/^(?:([a-z-]+):)?(\d+)$/); if (m) used.add(MEDIA_BASE + '/portfolio/' + (m[1] || c.cat) + '/' + m[2] + '.webp'); }));
-    const hasAll = new Set(plan.filter(c => !c.nums).map(c => c.cat));
-    PF_CATS.forEach(c => { if (!hasAll.has(c.id)) plan.push({ id: 'univers-' + c.id, title: t(c.label), client: '', year: '', cat: c.id, nums: null, text: '', rest: true, used }); });
-    return plan; }
-  return PF_CATS.map(c => ({ id: c.id, title: t(c.label), client: '', year: '', cat: c.id, nums: null, text: '' }));
+  if (series.length) { const sp = series.map(s => ({ id: s.id || pfxSlug(t(s.title || {})), title: s.title ? (t(s.title) || s.title.fr || s.title.en || '') : '', client: s.client || '', year: s.year || '', cat: s.cat, nums: Array.isArray(s.photos) && s.photos.length ? s.photos : null, kind: 'serie', text: s.text ? (t(s.text) || s.text.fr || s.text.en || '') : '' }))
+    /* Le Portfolio présente d'abord les univers ; les séries forment une section à part, après. */
+    const uni = PF_CATS.map(c => ({ id: 'univers-' + c.id, title: t(c.label), client: '', year: '', cat: c.id, nums: null, text: '', kind: 'univers' }));
+    return uni.concat(sp); }
+  return PF_CATS.map(c => ({ id: c.id, title: t(c.label), client: '', year: '', cat: c.id, nums: null, text: '', kind: 'univers' }));
 }
 /* Photos d'une série : numéros de l'univers de la série, ou « univers:numéro » pour une photo d'un autre univers (choix libre dans l'admin). */
 function pfxSeriesPhotos(c){
@@ -5912,19 +5909,27 @@ function pfxSeriesPhotos(c){
   return Promise.all(cats.map(k => loadPortfolioPhotos(k, 24).then(list => [k, list])))
     .then(pairs => { const L = Object.fromEntries(pairs); return refs.map(r => MEDIA_BASE + '/portfolio/' + r.cat + '/' + r.n + '.webp').filter(u => (L[u.split('/portfolio/')[1].split('/')[0]] || []).includes(u)); });
 }
+/* Intitulé de section quand le Portfolio mêle univers et séries : « Portfolio » avant le premier univers, « Séries » avant la première série. */
+function pfxSecHead(chs, i, cls){
+  const c = chs[i]; if (!c || !chs.some(x => x.kind === 'serie')) return '';
+  const first = !chs.slice(0, i).some(x => x.kind === c.kind); if (!first) return '';
+  const label = c.kind === 'serie' ? t({fr:'Séries', en:'Series'}) : t({fr:'Portfolio', en:'Portfolio'});
+  const n = chs.filter(x => x.kind === c.kind).length;
+  return `<div class="${cls || 'pfx-sec'}" id="${c.kind === 'serie' ? 'pfSeries' : 'pfUnivers'}"><span>${label}</span><i>${pfxNum(n)}</i></div>`;
+}
 const pfxCatLabel = id => { const c = PF_CATS.find(x => x.id === id); return c ? t(c.label) : ''; };
 function pfxIndexHtml(chs, loading){
   const cv = PFX.view === 'tiles';
   const tog = `<div class="pfx-view" role="group" aria-label="${escHtml(t({fr:'Affichage du sommaire', en:'Index view'}))}"><button type="button" class="${cv ? '' : 'on'}" aria-pressed="${!cv}" onclick="pfxSetView('list')">${t({fr:'Liste', en:'List'})}</button><button type="button" class="${cv ? 'on' : ''}" aria-pressed="${cv}" onclick="pfxSetView('tiles')">${t({fr:'Planches', en:'Boards'})}</button></div>`;
   const list = `<div class="pfx-list"><div class="pfx-index-head"><span>${t({fr:'N°', en:'No.'})}</span><span>${t({fr:'Série', en:'Series'})}</span><span>${t({fr:'Univers', en:'Field'})}</span><span>${t({fr:'Année', en:'Year'})}</span><span>${t({fr:'Images', en:'Images'})}</span></div>` +
-    chs.map((c, i) => `<a class="pfx-row" href="#serie-${escHtml(c.id)}" data-i="${i}" data-cursor="${escHtml(t({fr:'Voir la série', en:'View series'}))}" onclick="return pfxGo(event,'${escHtml(c.id)}')">
+    chs.map((c, i) => `${pfxSecHead(chs, i)}<a class="pfx-row" href="#serie-${escHtml(c.id)}" data-i="${i}" data-cursor="${escHtml(t({fr:'Voir la série', en:'View series'}))}" onclick="return pfxGo(event,'${escHtml(c.id)}')">
       <span class="pfx-row-n">${pfxNum(i + 1)}</span>
       <span class="pfx-row-t"><span class="bk-echo" data-text="${escHtml(c.title)}">${escHtml(c.title)}</span>${c.client ? `<em>${escHtml(c.client)}</em>` : ''}</span>
       <span class="pfx-row-c">${escHtml(pfxCatLabel(c.cat))}</span>
       <span class="pfx-row-y">${escHtml(String(c.year || '—'))}</span>
       <span class="pfx-row-i">${loading ? '··' : pfxNum((c.photos || []).length)}<span class="pfx-row-arrow" aria-hidden="true">↘︎</span></span>
     </a>`).join('') + `</div>`;
-  const tiles = loading ? '' : `<div class="pfx-tiles">${chs.map((c, i) => `<a class="pfx-tile" href="#serie-${escHtml(c.id)}" data-cursor="${escHtml(t({fr:'Voir', en:'View'}))}" onclick="return pfxGo(event,'${escHtml(c.id)}')">
+  const tiles = loading ? '' : `<div class="pfx-tiles">${chs.map((c, i) => `${pfxSecHead(chs, i, 'pfx-sec pfx-sec-t')}<a class="pfx-tile" href="#serie-${escHtml(c.id)}" data-cursor="${escHtml(t({fr:'Voir', en:'View'}))}" onclick="return pfxGo(event,'${escHtml(c.id)}')">
       <img loading="lazy" decoding="async" src="${c.photos[0]}" alt="">
       <span class="pfx-tile-n">${pfxNum(i + 1)}</span>
       <span class="pfx-tile-t"><span class="bk-echo" data-text="${escHtml(c.title)}">${escHtml(c.title)}</span></span>
@@ -5986,7 +5991,7 @@ function pfxChapterHtml(c, ci){
   const off0 = split ? 2 : 1, rl = c.photos.length - off0 >= 3 ? Math.min(8, c.photos.length - off0) : 0;
   const rest = c.photos.slice(off0 + rl), off = off0 + rl, lay = pfxLook(rest.length);
   /* Bobine de la série : texte à gauche, photos qui défilent dans le cadre à droite (jusqu'à 8), le reste en grille. */
-  const reel = rl ? lkReelHtml({ cls: 'lk-reel-pf', left: `<div><p class="lk-kick">${t({fr:'Série', en:'Series'})} ${pfxNum(ci + 1)}, <span aria-hidden="true">⊹</span> Portfolio</p><p class="lk-h" aria-hidden="true">${escHtml(c.title)},<br>${escHtml(c.client || (pfxCatLabel(c.cat) !== c.title ? pfxCatLabel(c.cat) : t({fr:'Série', en:'Series'}) + ' ' + pfxNum(ci + 1)))}</p></div><p class="lk-manifest">${escHtml(c.text || t({fr:'Une série BUNKAIO : direction artistique, lumière et retouche. Cliquez sur une image pour la projeter en grand.', en:'A BUNKAIO series: art direction, lighting and retouching. Click an image to project it full size.'}))}</p>`, items: c.photos.slice(off0, off0 + rl).map((src, k) => ({ src, alt: pfxAlt(c, src, off0 + k), click: `pfxOpen(${ci},${off0 + k})`, cap: pfxNum(ci + 1) + '.' + pfxNum(off0 + k + 1) })) }) : '';
+  const reel = rl ? lkReelHtml({ cls: 'lk-reel-pf', left: `<div><p class="lk-kick">${c.kind === 'serie' ? t({fr:'Série', en:'Series'}) : t({fr:'Univers', en:'Field'})} ${pfxNum(ci + 1)}, <span aria-hidden="true">⊹</span> Portfolio</p><p class="lk-h" aria-hidden="true">${escHtml(c.title)},<br>${escHtml(c.client || (pfxCatLabel(c.cat) !== c.title ? pfxCatLabel(c.cat) : t({fr:'Série', en:'Series'}) + ' ' + pfxNum(ci + 1)))}</p></div><p class="lk-manifest">${escHtml(c.text || t({fr:'Une série BUNKAIO : direction artistique, lumière et retouche. Cliquez sur une image pour la projeter en grand.', en:'A BUNKAIO series: art direction, lighting and retouching. Click an image to project it full size.'}))}</p>`, items: c.photos.slice(off0, off0 + rl).map((src, k) => ({ src, alt: pfxAlt(c, src, off0 + k), click: `pfxOpen(${ci},${off0 + k})`, cap: pfxNum(ci + 1) + '.' + pfxNum(off0 + k + 1) })) }) : '';
   const cat = pfxCatLabel(c.cat);
   const meta = [cat !== c.title ? cat : '', c.client, c.year].filter(Boolean).map(escHtml).join(' · ');
   const last = ci === PFX.chapters.length - 1;
@@ -5999,7 +6004,7 @@ function pfxChapterHtml(c, ci){
     <div class="lk-full${split ? ' is-split' : ''}">
       ${ph(0)}${split ? ph(1) : ''}
       <div class="lk-cap-box">
-        <span class="lk-cap-k">${t({fr:'Série', en:'Series'})} ${pfxNum(ci + 1)}${meta ? ' · ' + meta : ''}</span>
+        <span class="lk-cap-k">${c.kind === 'serie' ? t({fr:'Série', en:'Series'}) : t({fr:'Univers', en:'Field'})} ${pfxNum(ci + 1)}${meta ? ' · ' + meta : ''}</span>
         <h3 class="lk-cap-t" id="pfx-t-${ci}">${escHtml(c.title)}</h3>
         ${c.text ? `<span class="lk-cap-m">${escHtml(c.text)}</span>` : ''}
         <button type="button" class="lk-cap-l" onclick="pfxOpen(${ci},0)">${t({fr:'Projeter la série', en:'Play the series'})} · ${pfxNum(c.photos.length)} ${t({fr:'images', en:'images'})}</button>
@@ -6014,7 +6019,7 @@ function pfxChapterHtml(c, ci){
 function pfxTop(e){ e.preventDefault(); const el = document.getElementById('pfIndex'); if (el) el.scrollIntoView({ block: 'start', behavior: REDUCED_MOTION ? 'auto' : 'smooth' }); return false; }
 function pfxMeta(){
   const el = document.getElementById('pfMeta'); if (!el) return;
-  const n = PFX.chapters.length, img = PFX.chapters.reduce((a, c) => a + c.photos.length, 0);
+  const n = PFX.chapters.filter(c => c.kind === 'serie').length || (PFX.chapters.some(c => c.kind === 'serie') ? 0 : PFX.chapters.length), img = new Set(PFX.chapters.flatMap(c => c.photos)).size;
   el.innerHTML = `<div class="pfx-big"><dt>${t({fr:'Séries', en:'Series'})}</dt><dd>S${n ? pfxNum(n) : '00'}</dd></div><div class="pfx-small"><dt>${t({fr:'Images', en:'Images'})}</dt><dd>${img ? pfxNum(img) : '—'}</dd></div><div class="pfx-small"><dt>${t({fr:'Expérience', en:'Experience'})}</dt><dd>${t({fr:'8+ ans', en:'8+ yrs'})}</dd></div>`;
 }
 function renderPortfolioV2(){
@@ -6028,7 +6033,7 @@ function renderPortfolioV2(){
     if (gen !== PFX.gen || !wrap.isConnected) return;
     PFX.chapters = chs.filter(c => c.photos.length);
     idx.innerHTML = PFX.chapters.length ? pfxIndexHtml(PFX.chapters, false) : '';
-    wrap.innerHTML = PFX.chapters.length ? PFX.chapters.map(pfxChapterHtml).join('')
+    wrap.innerHTML = PFX.chapters.length ? PFX.chapters.map((c, i) => pfxSecHead(PFX.chapters, i, 'pfx-sec pfx-sec-ch') + pfxChapterHtml(c, i)).join('')
       : `<div class="pf-empty">${t({fr:'Les premières séries arrivent très bientôt — contactez-moi pour voir des exemples adaptés à votre projet.', en:'The first series are coming very soon — get in touch to see examples suited to your project.'})}</div>`;
     wrap.querySelectorAll('.rv').forEach(observe);
     idx.classList.toggle('is-tiles', PFX.view === 'tiles');

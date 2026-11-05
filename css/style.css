@@ -8441,3 +8441,18 @@ html body .view.gx #applyTypePicker button { border-color: rgba(17,17,17,.18) !i
 /* CTA du haut de l'accueil : rose dépoli (verre), encadrement fin et léger, arrondi (5 nov. 2026, demande de la propriétaire) */
 #view-home .hero > .hero-start:not(#bkv) { background: rgba(232,198,196,.55) !important; -webkit-backdrop-filter: blur(14px) saturate(1.2) !important; backdrop-filter: blur(14px) saturate(1.2) !important; border: 1px solid rgba(255,255,255,.45) !important; border-radius: 999px !important; box-shadow: 0 6px 24px rgba(0,0,0,.08), inset 0 1px 0 rgba(255,255,255,.35) !important; overflow: hidden; }
 #view-home .hero > .hero-start:not(#bkv):is(:hover, :focus-visible, :active) { background: rgba(232,198,196,.78) !important; border-color: rgba(255,255,255,.7) !important; box-shadow: 0 8px 30px rgba(232,198,196,.45), inset 0 1px 0 rgba(255,255,255,.5) !important; }
+
+/* Fond d'attente des photos plein écran : plus de noir pendant le chargement, un dégradé doux rose-gris légèrement animé (5 nov. 2026) */
+@keyframes phShimmer { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
+#view-services .svx .svx-head, #view-services .svx .svx-stage, #view-services .svx .svx-stage-ph,
+.lk-full, .lk-full-ph, .lk-gal-main, .lk-gal-t, .pfx-tile, #servicesGrid .svx-tile, .lk-reel-frame, .lk-fiche-hero .lk-full-ph {
+  background: linear-gradient(120deg, #d9d1cd 0%, #c9bebb 45%, #d9d1cd 100%) !important; background-size: 200% 100% !important; animation: phShimmer 2.4s ease-in-out infinite alternate;
+}
+.lk-full.fl-pre { background: transparent !important; animation: none; }
+@media (prefers-reduced-motion: reduce) { #view-services .svx .svx-head, .lk-full, .lk-full-ph, .pfx-tile { animation: none; } }
+
+/* Portfolio : section « Séries » à part, après les univers (5 nov. 2026) */
+.pfx-sec { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin: 36px 0 6px; padding-top: 12px; border-top: 10px solid #111; font: 600 clamp(22px, 5.6vw, 40px)/1 'Inter Tight', sans-serif; letter-spacing: -.04em; text-transform: uppercase; color: #111; }
+.pfx-sec i { font-style: normal; font-size: 12px; font-weight: 500; letter-spacing: .04em; color: rgba(17,17,17,.55); }
+.pfx-tiles .pfx-sec-t { grid-column: 1 / -1; }
+.pfx-sec.pfx-sec-ch { margin: 56px 0 0; }
