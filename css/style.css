@@ -8934,3 +8934,132 @@ mark.bk-key { -webkit-box-decoration-break: slice; box-decoration-break: slice; 
   .bkc-panel .bkc-row { gap: 8px; }
   .bkc-panel .bkc-row .bkc-btn { flex: 1 1 100%; padding: 10px 12px; }
 }
+/* ═══ Espace partenaire sombre : règles dérivées automatiquement des règles claires de #view-account (encre ↔ ivoire), 6 nov. 2026 ═══ */
+#view-account.acc-is-partner .account-tabs { border-top:10px solid var(--pk-ink) !important; border-bottom:0 !important }
+#view-account.acc-is-partner .account-section { border-top:10px solid var(--pk-ink) !important }
+#view-account.acc-is-partner .account-head { border:0 !important; border-top:1px solid var(--pk-ink) !important }
+#view-account.acc-is-partner .account-type-badge { border:0 !important; color:rgba(243,238,226,.55) !important }
+#view-account.acc-is-partner .account-type-badge::before { color:var(--pk-ink) !important }
+#view-account.acc-is-partner .account-name { color:var(--pk-ink) !important }
+#view-account.acc-is-partner .acc-lang-label { color:rgba(243,238,226,.55) !important }
+#view-account.acc-is-partner .acc-lang-btn { border:1px solid var(--pk-ink) !important; background:transparent !important; color:var(--pk-ink) !important }
+#view-account.acc-is-partner .acc-lang-btn.on { background:var(--pk-ink) !important; color:#111 !important }
+#view-account.acc-is-partner .account-logout { border:1px solid var(--pk-ink) !important; color:var(--pk-ink) !important; background:transparent !important }
+#view-account.acc-is-partner .account-logout:hover { background:var(--pk-ink) !important; color:#111 !important }
+#view-account.acc-is-partner .pf-cat-tab { border:0 !important; border-bottom:1px solid rgba(243,238,226,.16) !important; background:transparent !important; color:rgba(243,238,226,.55) !important }
+#view-account.acc-is-partner .pf-cat-tab::before { color:rgba(243,238,226,.45) !important }
+#view-account.acc-is-partner .pf-cat-tab:hover { color:var(--pk-ink) !important }
+#view-account.acc-is-partner .pf-cat-tab.active { color:var(--pk-ink) !important; background:transparent !important; border-color:var(--pk-ink) !important }
+#view-account.acc-is-partner :is(.table-wrap,  .lr-box,  .acc-help-card,  .acc-info-card,  .acc-seance,  .status-stepper,  .acc-subs-empty) { background:transparent !important; border:0 !important; border-top:1px solid var(--pk-ink) !important; color:var(--pk-ink) !important }
+#view-account.acc-is-partner .acc-seance { border:1px solid var(--pk-ink) !important; background:transparent !important }
+#view-account.acc-is-partner .acc-seance-title { color:rgba(243,238,226,.6) !important }
+#view-account.acc-is-partner .data-table th { color:rgba(243,238,226,.55) !important; border-bottom:1px solid var(--pk-ink) !important }
+#view-account.acc-is-partner .data-table td { border-bottom:1px solid rgba(243,238,226,.14) !important; color:var(--pk-ink) !important }
+#view-account.acc-is-partner .status-pill { background:transparent !important; border:1px solid var(--pk-ink) !important; color:var(--pk-ink) !important }
+#view-account.acc-is-partner .status-pill.st-done { background:var(--pk-ink) !important; color:#111 !important }
+#view-account.acc-is-partner :is(h3,  h4) { color:var(--pk-ink) !important }
+#view-account.acc-is-partner .btn-solid, #view-account.acc-is-partner .cta-primary, #view-account.acc-is-partner .cs-btn { background:var(--pk-ink) !important; color:#111 !important; border:0 !important }
+#view-account.acc-is-partner .btn-solid:hover, #view-account.acc-is-partner .cta-primary:hover, #view-account.acc-is-partner .cs-btn:hover { background:var(--rose) !important; color:var(--pk-ink) !important }
+#view-account.acc-is-partner .btn-ghost { background:transparent !important; border:1px solid var(--pk-ink) !important; color:var(--pk-ink) !important }
+#view-account.acc-is-partner .pt-chip, #view-account.acc-is-partner .pt-chips > * { border:1px solid var(--pk-ink) !important; background:transparent !important; color:var(--pk-ink) !important }
+#view-account.acc-is-partner :is(.pt-chip,  .pt-chips > *).selected, #view-account.acc-is-partner :is(.pt-chip,  .pt-chips > *).active { background:var(--pk-ink) !important; color:#111 !important }
+#view-account.acc-is-partner .acc-help-title, #view-account.acc-is-partner .acc-help-sub { color:var(--pk-ink) !important }
+#view-account.acc-is-partner .acc-help-sub { color:rgba(243,238,226,.62) !important }
+#view-account.acc-is-partner .acc-info-label { color:rgba(243,238,226,.55) !important }
+@media (max-width: 920px) {
+#view-account.acc-is-partner .pf-cat-tab.active { border-bottom:3px solid var(--pk-ink) !important }
+}
+#view-account.acc-is-partner .acc-seance [class*="date"], #view-account.acc-is-partner .acc-seance-date { background:var(--pk-ink) !important; color:#111 !important }
+#view-account.acc-is-partner .ses-card { background:transparent !important; border:1px solid var(--pk-ink) !important }
+#view-account.acc-is-partner .ses-date { background:var(--pk-ink) !important; color:#111 !important }
+#view-account.acc-is-partner .ses-date .ses-chip, #view-account.acc-is-partner .ses-date [class*="chip"] { background:var(--rose) !important; color:var(--pk-ink) !important }
+#view-account.acc-is-partner .pt-section-label { color:rgba(243,238,226,.55) !important }
+#view-account.acc-is-partner .pt-foot-note { color:rgba(243,238,226,.6) !important }
+#view-account.acc-is-partner .pt-status { background:transparent !important; border:0 !important; border-top:10px solid var(--pk-ink) !important; border-left:0 !important; color:var(--pk-ink) !important }
+#view-account.acc-is-partner .pt-status-label { color:rgba(243,238,226,.55) !important }
+#view-account.acc-is-partner .pt-status-value { color:var(--pk-ink) !important }
+#view-account.acc-is-partner .pt-link { color:var(--pk-ink) !important; border-bottom:1px solid var(--pk-ink) !important }
+#view-account.acc-is-partner .pt-adv { background:transparent !important; border:0 !important; border-top:1px solid var(--pk-ink) !important }
+#view-account.acc-is-partner .pt-adv-big, #view-account.acc-is-partner .pt-hero-big { color:var(--pk-ink) !important }
+#view-account.acc-is-partner .pt-adv-icon { color:var(--pk-ink) !important }
+#view-account.acc-is-partner .pt-adv-text, #view-account.acc-is-partner .pt-promo-text, #view-account.acc-is-partner .pt-contact-line { color:rgba(243,238,226,.7) !important }
+#view-account.acc-is-partner .pt-adv-title, #view-account.acc-is-partner .pt-promo-title, #view-account.acc-is-partner .pt-contact-name, #view-account.acc-is-partner .pt-hero-title { color:var(--pk-ink) !important }
+#view-account.acc-is-partner .pt-code { background:var(--rose) !important; border:1px solid var(--pk-ink) !important; color:var(--pk-ink) !important }
+#view-account.acc-is-partner .pt-quiz-notice { background:var(--rose) !important; border:0 !important; border-left:3px solid var(--pk-ink) !important; color:var(--pk-ink) !important }
+#view-account.acc-is-partner .pt-demo-flag { color:var(--pk-ink) !important; border:1px solid var(--pk-ink) !important; background:transparent !important }
+#view-account.acc-is-partner .pt-promo, #view-account.acc-is-partner .pt-promo-list > *, #view-account.acc-is-partner .pt-contact { background:transparent !important; border-color:var(--pk-ink) !important }
+/* ═══════════════ Espaces client et partenaire — deux univers (6 nov. 2026, demande de la propriétaire) ═══════════════
+   Client : papier clair, constellation encre/violet très légère, accent rose poudré.
+   Partenaire : fond sombre (noir chaud) + constellation champagne, texte ivoire, accent champagne. Même structure, mêmes fonctions. */
+#view-account { --pk-ink: #f3eee2; }
+#view-account.px-account > .cst-field { display: block !important; z-index: 0; }
+#view-account .account-page { position: relative; z-index: 1; }
+/* Tête de compte : filet, mention d'accès, nom, langue et déconnexion sur une même grille */
+#view-account .acc-mega-head { margin-bottom: 18px; }
+#view-account .account-head { display: grid !important; grid-template-columns: 1fr auto; align-items: end; column-gap: 20px; row-gap: 8px; padding: 18px 0 22px !important; margin-bottom: 22px !important; }
+#view-account .account-head > div { display: contents; }
+#view-account .account-type-badge { display: block !important; grid-column: 1 / -1; grid-row: 1; font-size: 11px !important; letter-spacing: .14em !important; text-transform: uppercase; }
+#view-account .account-type-badge::before { content: '⊹  ' !important; letter-spacing: 0; }
+#view-account .account-name { grid-column: 1 / -1; grid-row: 2; font-size: clamp(28px, 4vw, 54px) !important; margin: 0 !important; }
+#view-account .acc-lang { grid-column: 1; grid-row: 3; align-self: center; margin: 4px 0 0 !important; }
+#view-account .account-logout { grid-column: 2; grid-row: 3; align-self: center; padding: 10px 16px !important; font-size: 12px !important; letter-spacing: .08em !important; white-space: nowrap; }
+#view-account .account-tabs { border-top-width: 1px !important; }
+#view-account .account-section { border-top-width: 1px !important; padding-top: 28px; }
+@media (max-width: 920px) {
+  #view-account .acc-mega-head { margin-bottom: 10px; }
+  #view-account .account-head { padding: 14px 0 16px !important; margin-bottom: 14px !important; }
+  #view-account .account-tabs { border-top-width: 1px !important; }
+}
+/* Client : constellation encre / violet très légère, en filigrane */
+#view-account:not(.acc-is-partner) .cst-field { opacity: .95; }
+
+/* ── Partenaire : univers sombre ── */
+html:has(body[data-view="account"] #view-account.acc-is-partner)::before { background: #0f0e13 !important; background-image: none !important; }
+#view-account.px-account.acc-is-partner { background: radial-gradient(120% 70% at 85% -10%, #1d1a26 0%, #0f0e13 55%) !important; color: var(--pk-ink); --rose: #dfcfa6; }
+#view-account.acc-is-partner .gx-cols span { border-color: rgba(243,238,226,.06) !important; background: none !important; }
+#view-account.acc-is-partner .gx-cols { opacity: .6; }
+#view-account.acc-is-partner .gx-mega, #view-account.acc-is-partner .gx-count b { color: var(--pk-ink) !important; }
+#view-account.acc-is-partner .gx-count span { color: rgba(243,238,226,.6) !important; }
+#view-account.acc-is-partner .gx-top { border-color: rgba(243,238,226,.35) !important; }
+#view-account.acc-is-partner .gx-head::before, #view-account.acc-is-partner .acc-mega-head::before { background: #dfcfa6 !important; }
+#view-account.acc-is-partner .account-name { background: linear-gradient(100deg, #f3eee2 20%, #dfcfa6 60%, #f3eee2 90%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent !important; }
+#view-account.acc-is-partner .account-type-badge { color: #dfcfa6 !important; }
+#view-account.acc-is-partner .account-type-badge::before { color: #dfcfa6 !important; }
+body[data-view="account"]:has(#view-account.acc-is-partner) nav { background: rgba(15,14,19,.88) !important; border-bottom: 1px solid rgba(223,207,166,.55) !important; }
+body[data-view="account"]:has(#view-account.acc-is-partner) .nav-logo-img { filter: none; }
+body[data-view="account"]:has(#view-account.acc-is-partner) nav :is(.nav-studio, .nav-logo-fallback) { color: #f3eee2 !important; }
+body[data-view="account"]:has(#view-account.acc-is-partner) .nav-center .nav-link { color: rgba(243,238,226,.6); }
+body[data-view="account"]:has(#view-account.acc-is-partner) .nav-center .nav-link:is(:hover, .active) { color: #f3eee2; }
+body[data-view="account"]:has(#view-account.acc-is-partner) nav :is(.lang-toggle, .nav-connect) { border-color: rgba(243,238,226,.6) !important; color: #f3eee2 !important; }
+body[data-view="account"]:has(#view-account.acc-is-partner) nav .nav-cta { background: #dfcfa6 !important; color: #111 !important; }
+body[data-view="account"]:has(#view-account.acc-is-partner) .nav-burger { border-color: rgba(243,238,226,.6) !important; }
+body[data-view="account"]:has(#view-account.acc-is-partner) .nav-burger-glyph { color: #f3eee2 !important; }
+/* Base de texte clair pour tout ce que les règles dérivées ne couvrent pas (spécificité nulle : les règles propres à un composant gardent la main) */
+#view-account.acc-is-partner :where(p, span, li, td, th, label, h1, h2, h3, h4, h5, h6, small, b, strong, em, dt, dd, legend, summary, div) { color: inherit; }
+#view-account.acc-is-partner :where(input, select, textarea) { background: rgba(243,238,226,.06); color: var(--pk-ink); border-color: rgba(243,238,226,.35); }
+#view-account.acc-is-partner :where(input, textarea)::placeholder { color: rgba(243,238,226,.45); }
+#view-account.acc-is-partner :where(a) { color: #dfcfa6; }
+/* Partenaire : finitions (filets fins champagne, onglet actif discret) */
+#view-account.acc-is-partner .account-tabs, #view-account.acc-is-partner .account-section { border-top: 1px solid rgba(223,207,166,.55) !important; }
+#view-account.acc-is-partner .pf-cat-tab::after { background: linear-gradient(90deg, rgba(223,207,166,.22), transparent 85%) !important; }
+#view-account.acc-is-partner .pf-cat-tab.active { border-color: #dfcfa6 !important; color: #f3eee2 !important; }
+#view-account.acc-is-partner .pf-cat-tab::before { color: rgba(223,207,166,.7) !important; }
+#view-account.acc-is-partner .acc-mega-head::before, #view-account.acc-is-partner .gx-head::before { height: 3px !important; }
+@media (max-width: 920px) { #view-account.acc-is-partner .pf-cat-tab.active { border-bottom: 2px solid #dfcfa6 !important; } }
+#view-account.acc-is-partner .ct-follow { color: #dfcfa6 !important; border-color: rgba(223,207,166,.6) !important; }
+#view-account.acc-is-partner .pt-soon-badge { background: transparent !important; color: #dfcfa6 !important; border: 1px solid rgba(223,207,166,.6); }
+#view-account.acc-is-partner .cred-num { color: #dfcfa6 !important; }
+#view-account.acc-is-partner .cred-title { color: var(--pk-ink) !important; }
+#view-account.acc-is-partner .cred-text { color: rgba(243,238,226,.72) !important; }
+#view-account .acc-lang { flex-wrap: nowrap; gap: 6px; }
+#view-account .acc-lang-label { white-space: nowrap; font-size: 10.5px; margin-right: 2px; }
+#view-account .acc-lang-btn { white-space: nowrap; padding: 6px 12px; }
+@media (max-width: 520px) { #view-account .acc-lang-label { display: none; } }
+body[data-view="account"]:has(#view-account.acc-is-partner) .bk-back { background: rgba(15,14,19,.82) !important; border-color: rgba(243,238,226,.45) !important; color: #f3eee2 !important; }
+body[data-view="account"]:has(#view-account.acc-is-partner) .bk-back svg { stroke: #f3eee2; }
+body[data-view="account"]:has(#view-account.acc-is-partner) .bk-back * { color: #f3eee2 !important; }
+#view-account.acc-is-partner .cred-card { background: rgba(243,238,226,.05) !important; border: 1px solid rgba(223,207,166,.25) !important; }
+#view-account.acc-is-partner .ct-follow, #view-account.acc-is-partner .ct-follow * { color: #dfcfa6 !important; }
+#view-account.acc-is-partner .mb-card { background: rgba(243,238,226,.05) !important; border: 1px solid rgba(223,207,166,.3) !important; color: var(--pk-ink) !important; }
+#view-account.acc-is-partner .mb-card * { color: inherit; }
+#view-account.acc-is-partner .mb-card :is(.mb-tag, .mb-chip, [class*="tag"]) { background: transparent !important; border: 1px solid rgba(243,238,226,.4) !important; color: var(--pk-ink) !important; }

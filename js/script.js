@@ -9569,7 +9569,8 @@ const CstField = (() => {
   function palette(){
     if (currentView === 'account') {
       const partner = view && view.dataset.acct === 'partner';
-      return { line: '255,255,255', dot: '255,255,255', cross: partner ? '217,196,154' : '214,201,247', a: 1 };
+      /* Client : papier clair, constellation encre/violet très légère. Partenaire : fond sombre, constellation champagne. */
+      return partner ? { line: '223,207,166', dot: '243,238,226', cross: '223,207,166', a: 0.75 } : { line: '110,90,168', dot: '110,90,168', cross: '110,90,168', a: 0.55 };
     }
     /* Portfolio : par-dessus la vidéo / les photos de fond, à faible opacité (les photos restent la vedette). */
     /* Conseils et articles : violet pâle, lisible sur la bannière photo comme sur les fonds clairs. */
