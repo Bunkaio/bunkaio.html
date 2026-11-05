@@ -4713,9 +4713,17 @@ document.addEventListener('click', (e) => {
     if (cat && isComingSoon(cat)) goToComingSoon(cat); else if (cat) goToQuizCategory(cat, a.dataset.tier); else goView('quiz');
   } catch (err) {
     /* Si le devis est déjà affiché (seule la présélection a échoué), on reste dessus au lieu de recharger la page. */
+    try { if (window.track) track('cta_click', 'devis_erreur_' + String((err && err.message) || err).slice(0, 60)); } catch (e3) {}
     if (typeof currentView !== 'undefined' && currentView === 'quiz') { try { quizStep(2); } catch (e2) {} }
-    else window.location.href = a.getAttribute('href') || '/devis/';
+    else { try { goView('quiz'); quizStep(2); } catch (e4) { window.location.href = a.getAttribute('href') || '/devis/'; } }
   }
+  window.__bkQuizClick = Date.now();
+});
+/* Filet de sécurité du devis (5 nov. 2026) : une erreur de script survenue dans les 4 s qui suivent un clic sur une formule ne doit jamais laisser une page blanche ou un lien cassé : le devis s'affiche au premier choix. */
+window.addEventListener('error', (ev) => {
+  if (!window.__bkQuizClick || Date.now() - window.__bkQuizClick > 4000) return;
+  try { if (window.track) track('cta_click', 'devis_erreur_' + String(ev && ev.message).slice(0, 60)); } catch (e) {}
+  try { if (currentView !== 'quiz') goView('quiz'); quizStep(2); } catch (e) {}
 });
 document.addEventListener('click', (e) => {
   const a = e.target.closest ? e.target.closest('a[data-nav]') : null;
