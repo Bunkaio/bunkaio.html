@@ -8767,3 +8767,14 @@ html body #view-home .hero-access { border-radius: 999px !important; padding-lef
 /* Devis : titres d'étape toujours visibles (6 nov. 2026, bug iPhone : le titre et le sous-titre de l'étape restaient invisibles, un grand vide apparaissait au-dessus des cartes). Les textes partent de « invisible » seulement PENDANT l'animation (fill-mode backwards) : si Safari ne la lance pas, ils restent affichés. */
 .qstep.active .stagger { opacity: 1; transform: none; animation: stagIn .8s var(--ease-luxe) backwards; }
 @keyframes stagIn { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
+
+/* Services, onglets de formules sur mobile : toutes les formules visibles (Éditorial était coupée hors de l'écran) — grille 2 colonnes, la dernière pleine largeur si le nombre est impair (6 nov. 2026, demande de la propriétaire) */
+@media (max-width: 760px) {
+  .svx-tabs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); overflow: visible; }
+  .svx-tab { min-width: 0; border-right: 0; border-bottom: 1px solid #111; }
+  .svx-tab:nth-child(odd) { border-right: 1px solid #111; }
+  .svx-tab:nth-last-child(-n+2):nth-child(odd), .svx-tab:last-child { border-bottom: 0; }
+  .svx-tab:last-child:nth-child(odd) { grid-column: 1 / -1; border-right: 0; }
+  .svx-tab:nth-last-child(2):nth-child(odd) { border-bottom: 1px solid #111; }
+  .svx-tab:nth-last-child(2):nth-child(odd):nth-child(even) { border-bottom: 0; }
+}

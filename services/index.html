@@ -35,7 +35,7 @@
 <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
 <link rel="preload" href="fonts/inter-tight-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <script>/* Image d'attente des vidéos de l'accueil : une vraie photo HD du Portfolio BUNKAIO (et non une capture de la vidéo), posée derrière chaque vidéo via --vid-a / --vid-b ; accueil seulement. */(function(){var p=location.pathname;if(p!=="/"&&p!=="/en/"&&p!=="/index.html")return;var B="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/portfolio/",C=["mode/1","photo-part/1","corporate/1","commercial/1","event/1","mode/2","photo-part/2","corporate/2","commercial/2","event/2"],got=[],k=0,r=document.documentElement;function next(){if(k>=C.length||got.length>=2)return;var u=B+C[k++]+".webp",i=new Image();i.onload=function(){got.push(u);r.style.setProperty(got.length===1?"--vid-a":"--vid-b","url("+u+")");next();};i.onerror=next;i.src=u;}next();})();</script>
-<link rel="stylesheet" href="css/style.min.css?v=23fc61ea">
+<link rel="stylesheet" href="css/style.min.css?v=3d4f52a9">
 
 <script type="application/ld+json">
 {
@@ -927,7 +927,7 @@
           <img id="svcCatPhotoImg" alt="">
         </div>
         <div class="services-grid" id="servicesGrid"><!--snap--><div class="pfx-view svx-view" role="group" aria-label="Affichage"><button type="button" class="on" aria-pressed="true" onclick="svxSetView('list')">Liste</button><button type="button" class="" aria-pressed="false" onclick="svxSetView('tiles')">Planches</button></div><div class="svx-tiles"><button type="button" class="pfx-tile svx-tile tl-pre" onclick="svxFromTile('photo-part')" data-tl="1" style="--tl: 0;">
-      <img loading="lazy" decoding="async" src="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/services/photo-part.webp" alt="" onerror="this.remove()">
+      
       <span class="pfx-tile-n">01</span>
       <span class="pfx-tile-t"><span class="bk-echo" data-text="Séance photo — particuliers">Séance photo — particuliers</span></span>
       <span class="pfx-tile-c">dès 250 €</span></button><button type="button" class="pfx-tile svx-tile tl-pre" onclick="svxFromTile('corporate')" data-tl="1" style="--tl: 1;">
@@ -1142,7 +1142,7 @@
       <div class="svx-actions"><button type="button" class="svx-cta" onclick="svxQuiz('lumen')">Nous contacter <i>→</i></button></div><button type="button" class="pfx-next svx-next" onclick="svxFromTile('photo-part')">
     <span class="pfx-next-k">Prestation suivante</span>
     <span class="pfx-next-t"><span class="bk-echo" data-text="Séance photo — particuliers">Séance photo — particuliers</span></span>
-    <span class="pfx-next-img"><img loading="lazy" decoding="async" src="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/services/photo-part.webp" alt="" onerror="this.parentNode.remove()"></span></button></div></div>
+    </button></div></div>
       </article><!--/snap--></div>
       </div>
       <!-- Garanties : puces compactes, détail dépliable — le catalogue reste à portée de scroll -->
