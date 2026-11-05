@@ -8749,3 +8749,9 @@ html body .nav-cta.nav-cta[data-lang]:not(#bkv) { background: rgba(232,198,196,.
 html body .nav-cta.nav-cta[data-lang]:not(#bkv):is(:hover, :focus-visible, :active) { background: rgba(232,198,196,.88) !important; color: #111 !important; border-color: rgba(255,255,255,.85) !important; box-shadow: 0 0 0 1px rgba(17,17,17,.1), 0 8px 28px rgba(232,198,196,.55), inset 0 1px 0 rgba(255,255,255,.5) !important; }
 html body nav .nav-cta::after, html body .nav-cta::after { content: none !important; display: none !important; }
 html body .nav-cta :is(span, *) { color: #111 !important; }
+
+/* Calendrier du devis : rappel de la prestation + liens pour la changer (6 nov. 2026) */
+.bkc-embed-info{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 16px;margin:0 0 14px;font:500 13px/1.4 'Inter Tight',sans-serif;color:rgba(17,17,17,.7)}
+.bkc-embed-info b{color:#111;font-weight:600}
+.bkc-embed-info button{border:0;background:none;padding:0;font:600 12px/1 'Inter Tight',sans-serif;letter-spacing:.03em;text-decoration:underline;text-underline-offset:4px;color:#111;cursor:pointer}
+.bkc-embed-info button:hover{color:#6e5aa8}

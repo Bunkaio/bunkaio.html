@@ -9881,7 +9881,7 @@ function renderAvailCal(host, opts){
   const months = []; for (let i = 0; i < 15; i++) { const d = new Date(today.getFullYear(), today.getMonth() + i, 1); if (bkcIso(d) > BKC_END) break; months.push(d); }
   const monthRatio = d => { const n = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate(); let ok = 0, tot = 0; for (let i = 1; i <= n; i++) { const dd = new Date(d.getFullYear(), d.getMonth(), i); if (dd < today) continue; tot++; const iso = bkcIso(dd); if (st.cat ? avail(iso, st.cat) : cats.some(c => avail(iso, c))) ok++; } return tot ? ok / tot : 0; };
   const yearStrip = `<div class="bkc-year" role="tablist">${months.map(d => { const on = d.getFullYear() === st.y && d.getMonth() === st.m; const r = monthRatio(d); return `<button type="button" class="bkc-ym${on ? ' on' : ''}" onclick="bkcGo(this,${d.getFullYear()},${d.getMonth()})"><span>${d.toLocaleDateString(LANG === 'en' ? 'en-GB' : 'fr-FR', { month: 'short' }).replace('.', '')}</span><em>${String(d.getFullYear()).slice(2)}</em><i style="--r:${r.toFixed(2)};--c:${st.cat ? BKC_COLORS[st.cat] : '#111'}"></i></button>`; }).join('')}</div>`;
-  const chips = embed ? '' : `<div class="bkc-cats">${[`<button type="button" class="bkc-cat${!st.cat ? ' on' : ''}" onclick="bkcCat(this,'')"><i class="bkc-all"></i>${t({fr:'Toutes les séances', en:'All sessions'})}</button>`].concat(cats.map(c => `<button type="button" class="bkc-cat${st.cat === c ? ' on' : ''}" style="--c:${BKC_COLORS[c]}" onclick="bkcCat(this,'${c}')"><i></i>${escHtml(bkcCatName(c))}</button>`)).join('')}</div>`;
+  const chips = embed ? `<p class="bkc-embed-info"><span>${t({fr:'Prestation', en:'Service'})} <b>${escHtml(bkcCatName(st.cat))}</b>${st.tier ? ' · ' + t({fr:'formule', en:'package'}) + ' <b>' + escHtml((bkcTiers(st.cat).find(x => x.id === st.tier) || {}).name || '') + '</b>' : ''}</span><button type="button" onclick="quizStep(1)">${t({fr:'Changer de prestation', en:'Change service'})}</button><button type="button" onclick="quizStep(3)">${t({fr:'Changer de formule', en:'Change package'})}</button></p>` : `<div class="bkc-cats">${[`<button type="button" class="bkc-cat${!st.cat ? ' on' : ''}" onclick="bkcCat(this,'')"><i class="bkc-all"></i>${t({fr:'Toutes les séances', en:'All sessions'})}</button>`].concat(cats.map(c => `<button type="button" class="bkc-cat${st.cat === c ? ' on' : ''}" style="--c:${BKC_COLORS[c]}" onclick="bkcCat(this,'${c}')"><i></i>${escHtml(bkcCatName(c))}</button>`)).join('')}</div>`;
   const tiers = embed ? '' : st.cat ? `<div class="bkc-tiers">${bkcTiers(st.cat).map(x => `<button type="button" class="bkc-tier${st.tier === x.id ? ' on' : ''}" style="--c:${BKC_COLORS[st.cat]}" onclick="bkcTier(this,'${x.id}')">${escHtml(x.name)}<small>${bkcHuman(bkcDur(st.cat, x.id))}</small></button>`).join('')}</div>` : `<p class="bkc-hint">${t({fr:'Choisissez une séance pour voir ses horaires libres. Chaque point de couleur indique une prestation réservable ce jour-là.', en:'Choose a session to see its free times. Each coloured dot shows a service that can be booked that day.'})}</p>`;
   let cells = '';
   for (let i = 0; i < startPad; i++) cells += '<span class="bkc-d bkc-pad"></span>';
@@ -9927,6 +9927,7 @@ function bkcPickCatDay(el, iso){ const st = bkcState(bkcHost(el)); const ok = BK
 function bkcSlot(el, s){
   const h = bkcHost(el), st = bkcState(h), dur = bkcDur(st.cat, st.tier);
   st.slot = { date: st.sel, start: bkcHm(s), end: bkcHm(s + dur), cat: st.cat, tier: st.tier };
+  if (h._opts) h._opts.slot = st.slot;   /* sinon le rendu suivant réappliquait l'ancienne valeur (null) : l'horaire n'était jamais retenu dans le devis */
   renderAvailCal(h, h._opts);
   if (h._opts && h._opts.onPick) h._opts.onPick(st.slot);
   if (window.track) track('cta_click', 'calendrier_creneau_' + st.cat);
@@ -9934,11 +9935,12 @@ function bkcSlot(el, s){
 function bkcAnyTime(el){
   const h = bkcHost(el), st = bkcState(h);
   st.slot = { date: st.sel, start: '', end: '', cat: st.cat, tier: st.tier, anyTime: true };
+  if (h._opts) h._opts.slot = st.slot;
   renderAvailCal(h, h._opts);
   if (h._opts && h._opts.onPick) h._opts.onPick(st.slot);
   if (window.track) track('cta_click', 'calendrier_jour_sans_heure_' + st.cat);
 }
-function bkcClear(el){ const h = bkcHost(el), st = bkcState(h); st.slot = null; renderAvailCal(h, h._opts); if (h._opts && h._opts.onPick) h._opts.onPick(null); }
+function bkcClear(el){ const h = bkcHost(el), st = bkcState(h); st.slot = null; if (h._opts) h._opts.slot = null; renderAvailCal(h, h._opts); if (h._opts && h._opts.onPick) h._opts.onPick(null); }
 function bkcContinue(el){
   const host = bkcHost(el), st = bkcState(host); if (!st.slot) return;
   const slot = st.slot;
