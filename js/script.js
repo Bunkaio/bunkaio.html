@@ -1252,8 +1252,8 @@ const CATS = [
         en:['Half-day (4h) — up to 4 moods or real-work set-ups','25 retouched HD photos','Up to 4 outfits','Full art direction','Private download gallery'] } },
       edit:{ price:1090, delay:{fr:'10 jours ouvrés',en:'10 working days'},
         line:{fr:'Une production éditoriale complète, avec un univers visuel poussé.', en:'A complete editorial production, with a fully developed visual world.'}, items:{
-        fr:['Journée complète — 4 lieux différents','4 tenues différentes','30 photos HD retouchées','1 film court (30 secondes)','Direction artistique & stylisme','Publication sur les supports Bunkaio'],
-        en:['Full day — 4 different locations','4 different outfits','30 retouched HD photos','1 short film (30 seconds)','Art direction & styling','Featured on Bunkaio channels'] } }
+        fr:['Journée complète — 4 lieux différents','4 tenues différentes','30 photos HD retouchées','1 film court (30 secondes)','Direction artistique & stylisme','Post-production premium — rendu artistique','Publication sur les supports Bunkaio'],
+        en:['Full day — 4 different locations','4 different outfits','30 retouched HD photos','1 short film (30 seconds)','Art direction & styling','Premium post-production — artistic finish','Featured on Bunkaio channels'] } }
     }},
   { id:'mode',
     name:{fr:'Mode, agence et mannequins', en:'Fashion, agencies & models'},
