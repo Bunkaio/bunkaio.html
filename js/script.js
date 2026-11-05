@@ -2504,6 +2504,12 @@ function missionSelect(i, fromAuto){
   [...sel.children].forEach((b, k) => { b.classList.remove('on'); b.setAttribute('aria-selected', String(k === msIndex)); if (k === msIndex) { void b.offsetWidth; b.classList.add('on'); } });
   const onB = sel.children[msIndex];
   if (onB && sel.scrollWidth > sel.clientWidth + 2) sel.scrollTo({ left: onB.offsetLeft - (sel.clientWidth - onB.offsetWidth) / 2, behavior: REDUCED_MOTION ? 'auto' : 'smooth' });
+  /* Hauteur de la carte figée sur la plus haute des prestations : sinon le lien « Parcourir… » et tout ce qui est dessous saute à chaque diapositive. */
+  if (!prev.dataset.eq && prev.offsetHeight > 0 && innerHeight >= 700) {
+    prev.dataset.eq = '1'; prev.style.minHeight = '0'; let mx = 0;
+    CATS.forEach(k => { prev.innerHTML = missionPreviewHTML(k); mx = Math.max(mx, prev.offsetHeight); });
+    prev.style.minHeight = mx + 'px';
+  }
   prev.classList.remove('swap'); void prev.offsetWidth; prev.classList.add('swap');
   prev.innerHTML = missionPreviewHTML(c);
   missionShowBg(c.id);
@@ -2518,6 +2524,7 @@ function missionTick(){
 function renderMissionServices(){
   const sel = document.getElementById('missionServicesTrack');
   if (!sel || !CATS.length) return;
+  { const pv = document.getElementById('missionPreview'); if (pv) { delete pv.dataset.eq; pv.style.minHeight = ''; } }
   sel.innerHTML = CATS.map((c, i) => `<button type="button" class="ms-pill" role="tab" data-i="${i}" data-cat="${c.id}">${missionPillName(c)}<i></i></button>`).join('');
   const bgs = document.getElementById('missionTileBgs');
   if (bgs && !bgs.children.length) bgs.innerHTML = CATS.map(c => { const u = IMG.servicePhotos && IMG.servicePhotos[c.id]; return `<div class="mt-bg" data-cat="${c.id}"${u ? ` style="background-image:url('${u}')"` : ''}></div>`; }).join('');
@@ -10197,3 +10204,5 @@ function bkHighlightAll(){
   const start = () => { mo.observe(document.body, { childList: true, subtree: true }); scan(); };
   if (document.body) start(); else document.addEventListener('DOMContentLoaded', start);
 })();
+
+window.addEventListener('resize', () => { const pv = document.getElementById('missionPreview'); if (pv && pv.dataset.eq) { delete pv.dataset.eq; pv.style.minHeight = ''; } });
