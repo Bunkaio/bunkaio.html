@@ -25,14 +25,14 @@ export function cleanSeries(input: unknown): Series[] {
     const photos: (number | string)[] = [];
     for (const n of (Array.isArray(r.photos) ? r.photos : [])) {
       const m = String(n).match(/^(?:([a-z-]+):)?(\d+)$/); if (!m || !m[2]) continue;
-      const num = parseInt(m[2], 10); if (num < 1 || num > 60) continue;
+      const num = parseInt(m[2], 10); if (num < 1 || num > 9999) continue;
       const pc = m[1] || cat; if (!CATS.includes(pc)) continue;
       photos.push(pc === cat ? num : pc + ':' + num);
     }
     let id = slug(str(r.id, 60) || title.fr || title.en) || 'serie';
     while (ids.has(id)) id += '-2';
     ids.add(id);
-    out.push({ id, title, client: str(r.client, 80), year: str(r.year, 9), cat, photos: [...new Set(photos)].slice(0, 60), text: { fr: str(x.fr, 400), en: str(x.en, 400) }, hidden: r.hidden === true });
+    out.push({ id, title, client: str(r.client, 80), year: str(r.year, 9), cat, photos: [...new Set(photos)].slice(0, 500), text: { fr: str(x.fr, 400), en: str(x.en, 400) }, hidden: r.hidden === true });
   }
   return out;
 }

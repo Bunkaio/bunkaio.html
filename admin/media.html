@@ -298,12 +298,14 @@
   <p class="page-sub">
     Importe ici les photos du <b>Portfolio</b>, compose les <b>séries</b> (photos choisies librement parmi tous les univers) et dépose les vidéos des rubriques en pause (replié en bas de page).<br>
     Les autres photos du site (bannières, prestations, articles, portrait…) se changent dans l'<b>éditeur visuel</b> ci-dessous : clique la photo sur le vrai site et dépose ton fichier.<br>
-    <em>Gérés dans le code du site (pas via ce panel) : les vidéos de fond de l'accueil, le logo et le favicon. Dis-le-moi si tu veux les changer.</em>
+    <b>Vidéos du site</b> : toutes les vidéos sont regroupées plus bas ; dépose n'importe quel fichier vidéo, il est compressé automatiquement au format de la rubrique.<br>
+    <em>Gérés dans le code du site (pas via ce panel) : le logo et le favicon.</em>
   </p>
   <div id="sections"></div>
 </div>
 
 <script src="../config/articles.js"></script>
+<script src="media-video.js"></script>
 <script>
 const WORKER_BASE = 'https://bunkaio-quiz-stripe.bunkaio.workers.dev';
 const MEDIA_BASE  = WORKER_BASE + '/media';
@@ -675,29 +677,50 @@ function slug(path) {
 // Les images « fond d'écran » sont affichées en plein écran sur ordinateur : on exporte en grand (2560 px) puis on
 // compresse en WebP. Au-delà, le gain visuel est nul et le site devient plus lent.
 const IMAGE_SPECS = {
-  hero:     { label: '2560 × 1440 px · paysage 16:9 · ≤ 450 Ko',   maxSide: 2560, quality: 0.80, minW: 1920, maxKo: 450 },
-  discover: { label: '2560 × 1440 px · paysage 16:9 · ≤ 450 Ko',   maxSide: 2560, quality: 0.80, minW: 1920, maxKo: 450 },
-  services: { label: '2000 × 2500 px · portrait 4:5 · ≤ 450 Ko',   maxSide: 2500, quality: 0.80, minW: 1600, maxKo: 450 },
-  formulas: { label: '2000 × 2500 px · portrait 4:5 · ≤ 400 Ko',   maxSide: 2500, quality: 0.78, minW: 1400, maxKo: 400 },
-  portfolio:{ label: '1200 × 1600 px · portrait 3:4 · ≤ 300 Ko',   maxSide: 1600, quality: 0.82, minW: 800,  maxKo: 300 },
-  devis:    { label: '1400 × 1100 px · 9:7 · ≤ 200 Ko',          maxSide: 1400, quality: 0.80, minW: 900,  maxKo: 200 },
-  drone:    { label: '1000 × 625 px · 16:10 · ≤ 120 Ko',         maxSide: 1000, quality: 0.80, minW: 640,  maxKo: 120 },
-  partners: { label: '1200 × 1500 px · portrait · ≤ 200 Ko',        maxSide: 1500, quality: 0.82, minW: 700,  maxKo: 200 },
-  _default: { label: '≤ 2400 px · ≤ 350 Ko',                       maxSide: 2400, quality: 0.82, minW: 600,  maxKo: 350 },
+  hero:     { label: '2560 × 1440 px · paysage 16:9 · ≤ 450 Ko',   maxSide: 2560, quality: 0.86, minW: 1920, maxKo: 900 },
+  discover: { label: '2560 × 1440 px · paysage 16:9 · ≤ 450 Ko',   maxSide: 2560, quality: 0.86, minW: 1920, maxKo: 900 },
+  services: { label: '2000 × 2500 px · portrait 4:5 · ≤ 450 Ko',   maxSide: 2500, quality: 0.86, minW: 1600, maxKo: 900 },
+  formulas: { label: '2000 × 2500 px · portrait 4:5 · ≤ 400 Ko',   maxSide: 2500, quality: 0.86, minW: 1400, maxKo: 800 },
+  portfolio:{ label: '1200 × 1600 px · portrait 3:4 · ≤ 300 Ko',   maxSide: 1600, quality: 0.86, minW: 800,  maxKo: 600 },
+  devis:    { label: '1400 × 1100 px · 9:7 · ≤ 200 Ko',          maxSide: 1400, quality: 0.86, minW: 900,  maxKo: 400 },
+  drone:    { label: '1000 × 625 px · 16:10 · ≤ 120 Ko',         maxSide: 1000, quality: 0.86, minW: 640,  maxKo: 240 },
+  partners: { label: '1200 × 1500 px · portrait · ≤ 200 Ko',        maxSide: 1500, quality: 0.86, minW: 700,  maxKo: 400 },
+  _default: { label: '≤ 2400 px · ≤ 350 Ko',                       maxSide: 2400, quality: 0.86, minW: 600,  maxKo: 700 },
 };
 function specFor(path) { return IMAGE_SPECS[(path || '').split('/')[0]] || IMAGE_SPECS._default; }
 
-async function toWebP(file, maxSide = 2400, quality = 0.82) {
-  if (!file.type || !file.type.startsWith('image/') || file.type === 'image/gif') return file;
+/* Compression automatique, sans perte visible (6 nov. 2026) : n'importe quel format lisible (JPEG, PNG, WebP, AVIF, BMP, HEIC/HEIF…) est converti en WebP
+   à la taille de l'emplacement (jamais agrandi, rééchantillonnage haute qualité). Qualité : on part de 0,92 et on ne descend (0,90 → 0,88 → `quality`,
+   plancher 0,86) que si le fichier dépasse le poids cible ; au plancher, la différence avec l'original n'est pas visible à l'œil. Un WebP déjà plus
+   léger que sa version recompressée est gardé tel quel (aucune seconde compression). Métadonnées (GPS) retirées. */
+let _heicLoading = null;
+function loadHeic() {
+  if (window.heic2any) return Promise.resolve();
+  if (!_heicLoading) _heicLoading = new Promise((ok, ko) => { const s = document.createElement('script'); s.src = 'vendor/heic2any.min.js'; s.onload = ok; s.onerror = () => ko(new Error('heic')); document.head.appendChild(s); });
+  return _heicLoading;
+}
+async function toWebP(file, maxSide = 2400, quality = 0.86, maxBytes = 600 * 1024) {
+  const isHeic = /image\/hei[cf]/i.test(file.type || '') || /\.hei[cf]$/i.test(file.name || '');
+  if (!isHeic && (!file.type || !file.type.startsWith('image/') || file.type === 'image/gif')) return file;
   try {
-    const bmp = await createImageBitmap(file);
+    let src = file;
+    if (isHeic) { await loadHeic(); const out = await window.heic2any({ blob: file, toType: 'image/png' }); src = Array.isArray(out) ? out[0] : out; }
+    const bmp = await createImageBitmap(src);
     const scale = Math.min(1, maxSide / Math.max(bmp.width, bmp.height));
     const w = Math.round(bmp.width * scale), h = Math.round(bmp.height * scale);
     const canvas = document.createElement('canvas');
     canvas.width = w; canvas.height = h;
-    canvas.getContext('2d').drawImage(bmp, 0, 0, w, h);
-    const blob = await new Promise((r) => canvas.toBlob(r, 'image/webp', quality));
-    if (!blob || blob.type !== 'image/webp') return file;
+    const ctx = canvas.getContext('2d');
+    ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(bmp, 0, 0, w, h);
+    const floor = Math.min(0.92, Math.max(0.8, quality));
+    const steps = [...new Set([0.92, 0.90, 0.88, floor])].filter((q) => q >= floor).sort((x, y) => y - x);
+    let blob = null;
+    for (const q of steps) {
+      blob = await new Promise((r) => canvas.toBlob(r, 'image/webp', q));
+      if (!blob || blob.type !== 'image/webp') return isHeic ? src : file;
+      if (blob.size <= maxBytes) break;
+    }
     if (file.type === 'image/webp' && scale === 1 && file.size <= blob.size) return file;
     return new File([blob], 'image.webp', { type: 'image/webp' });
   } catch (e) {
@@ -725,7 +748,7 @@ async function uploadFile(file, path, card) {
 
   const original = file;
   const spec = specFor(path);
-  file = await toWebP(file, spec.maxSide, spec.quality);
+  file = await toWebP(file, spec.maxSide, spec.quality, spec.maxKo * 1024 * 0.9);
   let dimTxt = '';
   try { const bm = await createImageBitmap(file); dimTxt = bm.width + '×' + bm.height + ' px'; if (bm.width < spec.minW) dimTxt += ' ⚠ largeur trop faible (' + spec.minW + ' px conseillés)'; } catch (e) {}
   const formData = new FormData();
@@ -905,10 +928,9 @@ function makeSlotCard(slot) {
 }
 
 // ── Portfolio ────────────────────────────────────────────────────────
-// La galerie du site cherche les fichiers 1.webp à 24.webp de chaque catégorie : un numéro libre
-// suffit (les « trous » après une suppression ne posent aucun problème). 24 photos maximum par catégorie.
-const PF_MAX = 24;
-const PF_HEAVY = 400 * 1024; // au-delà : avertissement de poids
+// Aucune limite de nombre de photos par catégorie (6 nov. 2026) : le site lit la liste des fichiers présents
+// (Worker /portfolio-index) ; un numéro libre suffit (les « trous » après une suppression ne posent aucun problème).
+const PF_HEAVY = 900 * 1024; // au-delà : avertissement de poids
 
 function pfNum(key) { const m = key.match(/\/(\d+)\.webp$/i); return m ? parseInt(m[1], 10) : null; }
 
@@ -925,7 +947,7 @@ function makePfImgCard(key, size, onChange) {
       <input type="file" accept="image/*" style="display:none">
     </label>
     <div class="pf-img-foot">
-      <div class="pf-img-label${heavy ? ' heavy' : ''}" title="${heavy ? 'Fichier lourd : vise moins de 400 Ko' : ''}">${name}${size ? ' · ' + kb(size) : ''}</div>
+      <div class="pf-img-label${heavy ? ' heavy' : ''}" title="${heavy ? 'Fichier lourd : plus de 900 Ko' : ''}">${name}${size ? ' · ' + kb(size) : ''}</div>
       <button type="button" class="pf-del" title="Supprimer cette photo" aria-label="Supprimer ${name}">×</button>
     </div>
   `;
@@ -936,7 +958,7 @@ function makePfImgCard(key, size, onChange) {
     if (!f) return;
     const label = card.querySelector('.pf-img-label');
     label.textContent = 'Envoi…';
-    const w = await toWebP(f);
+    const w = await toWebP(f, 2400, 0.86, 700 * 1024);
     const fd = new FormData(); fd.append('file', w); fd.append('path', key);
     try {
       const res = await fetch(WORKER_BASE + '/upload-image', { method: 'POST', headers: { 'Authorization': 'Bearer ' + getToken() }, body: fd });
@@ -1000,12 +1022,11 @@ function makePfCategory(cat) {
   const usedNums = () => new Set([...grid.querySelectorAll('.pf-img-card[data-key]')].map((c) => pfNum(c.dataset.key)).filter(Boolean));
   const updateCount = () => {
     const all = grid.querySelectorAll('.pf-img-card[data-key]');
-    /* Pastille = rang d'affichage sur le site (le site lit les fichiers 1 à PF_MAX, dans l'ordre des numéros) ; rouge = numéro hors plage, non affiché. */
+    /* Pastille = rang d'affichage sur le site (dans l'ordre des numéros de fichier). */
     let rank = 0;
-    all.forEach((c) => { const num = pfNum(c.dataset.key); const off = !(num >= 1 && num <= PF_MAX); c.classList.toggle('pf-off', off); c.title = off ? 'Non affichée sur le site : seuls les fichiers 1 à ' + PF_MAX + ' sont lus' : ''; c.dataset.pos = off ? '!' : String(++rank); });
-    const n = all.length;
-    titleEl.querySelector('.pf-count').textContent = '— ' + n + ' / ' + PF_MAX + ' photos';
-    addBtn.style.display = n >= PF_MAX ? 'none' : '';
+    all.forEach((c) => { c.classList.remove('pf-off'); c.title = ''; c.dataset.pos = String(++rank); });
+    titleEl.querySelector('.pf-count').textContent = '— ' + all.length + ' photo' + (all.length > 1 ? 's' : '');
+    addBtn.style.display = '';
   };
 
   async function refresh() {
@@ -1028,15 +1049,14 @@ function makePfCategory(cat) {
     if (!getToken()) { alert('Entre ton token admin d\'abord.'); return; }
     for (const f of files) {
       const used = usedNums();
-      let idx = 1; while (used.has(idx) && idx <= PF_MAX) idx++;
-      if (idx > PF_MAX) { alert('24 photos maximum par catégorie : supprime-en une avant d\'en ajouter.'); break; }
+      let idx = 1; while (used.has(idx)) idx++;
       const path = `portfolio/${cat.id}/${idx}.webp`;
       const card = document.createElement('div');
       card.className = 'pf-img-card';
       card.dataset.key = path; // réserve le numéro pendant l'envoi
       card.innerHTML = `<div class="pf-img-label" style="padding:6px 8px;color:#999;">Envoi ${idx}.webp…</div>`;
       grid.insertBefore(card, addBtn);
-      const w = await toWebP(f);
+      const w = await toWebP(f, 2400, 0.86, 700 * 1024);
       const fd = new FormData(); fd.append('file', w); fd.append('path', path);
       try {
         const res = await fetch(WORKER_BASE + '/upload-image', { method: 'POST', headers: { 'Authorization': 'Bearer ' + getToken() }, body: fd });
@@ -1297,10 +1317,11 @@ function buildUI() {
   // Portfolio — catégories actives
   container.appendChild(buildPfSection(
     'Portfolio — Réalisations',
-    'Les photos existantes s\'affichent dès que le token est renseigné. « + Ajouter » (plusieurs fichiers possibles, ou glisser-déposer les fichiers sur la catégorie) prend le premier numéro libre ; glisser une vignette sur une autre change l\'ordre d\'affichage ; clic sur une photo = la remplacer ; × = la supprimer. 24 photos max par catégorie, environ 900 × 1200 px, idéalement 300 Ko maximum chacune.',
+    'Les photos existantes s\'affichent dès que le token est renseigné. « + Ajouter » (plusieurs fichiers possibles, ou glisser-déposer les fichiers sur la catégorie) prend le premier numéro libre ; glisser une vignette sur une autre change l\'ordre d\'affichage ; clic sur une photo = la remplacer ; × = la supprimer. Aucune limite de nombre de photos par catégorie. Peu importe le format ou le poids du fichier importé (JPEG, PNG, HEIC…) : il est converti automatiquement en WebP (jusqu\'à 2400 px, sans perte visible).',
     PF_CATS
   ));
   container.appendChild(buildSeriesSection());
+  if (window.buildVideoCenter) container.appendChild(window.buildVideoCenter());
 
   // ── Catégories & rubriques désactivées — accordéon replié, grisé ──────────
   const accordion = document.createElement('div');

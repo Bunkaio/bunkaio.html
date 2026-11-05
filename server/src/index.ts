@@ -1738,11 +1738,31 @@ async function handleListMedia(request: Request, env: Env, headers: Record<strin
     return jsonResponse({ ok: false, error: 'unauthorized' }, 401, headers);
   }
   const prefix = new URL(request.url).searchParams.get('prefix') ?? '';
-  const listed = await env.MEDIA_BUCKET.list({ prefix, limit: 500 });
+  const listed = await env.MEDIA_BUCKET.list({ prefix, limit: 1000 });
   const keys = listed.objects.map((obj) => obj.key);
   /* `objects` : taille (octets) et date d'envoi de chaque fichier, pour repérer les images trop lourdes dans l'admin. */
   const objects = listed.objects.map((obj) => ({ key: obj.key, size: obj.size, uploaded: obj.uploaded }));
   return jsonResponse({ ok: true, keys, objects, hidden: [...(await getHiddenMedia(env))].filter((p) => p.startsWith(prefix)) }, 200, headers);
+}
+
+/* Photos du Portfolio : liste publique des numéros réellement présents (sans limite), hors images masquées.
+   Remplace la recherche à l'aveugle des fichiers 1 à 24 : le site lit autant de photos que l'admin en a importé. */
+async function handlePortfolioIndex(env: Env, headers: Record<string, string>): Promise<Response> {
+  const hidden = await getHiddenMedia(env);
+  const cats: Record<string, number[]> = {};
+  let cursor: string | undefined;
+  for (let page = 0; page < 20; page++) {
+    const listed = await env.MEDIA_BUCKET.list({ prefix: 'portfolio/', limit: 1000, cursor });
+    for (const o of listed.objects) {
+      const m = o.key.match(/^portfolio\/([\w-]+)\/(\d+)\.webp$/);
+      if (!m || hidden.has(o.key)) continue;
+      (cats[m[1]!] ||= []).push(parseInt(m[2]!, 10));
+    }
+    if (!listed.truncated) break;
+    cursor = listed.cursor;
+  }
+  for (const k of Object.keys(cats)) cats[k]!.sort((a, b) => a - b);
+  return jsonResponse({ ok: true, cats }, 200, { ...headers, 'Cache-Control': 'public, max-age=30' });
 }
 
 /* Suppression d'un média (admin/media.html). POST { path } — protégé par ADMIN_TOKEN, chemin validé comme à l'upload. */
@@ -1858,6 +1878,7 @@ export default {
     if (url.pathname === '/version' && request.method === 'GET') {
       return jsonResponse({ ok: true, version: WORKER_VERSION }, 200, headers);
     }
+    if (url.pathname === '/portfolio-index' && request.method === 'GET') return handlePortfolioIndex(env, headers);
     if (url.pathname === '/portfolio-series' && request.method === 'GET') {
       // Public : séries du Portfolio (titres, univers, numéros de photos — aucune donnée personnelle), cache navigateur 1 minute.
       const series = (await getSeries(env)).filter(x => !x.hidden);

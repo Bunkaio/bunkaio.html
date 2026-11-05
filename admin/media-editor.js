@@ -69,7 +69,7 @@
   function buildLabels() {
     const push = (path, label, ctx) => { if (path && !E.labels.has(path)) { E.labels.set(path, { label, ctx }); E.all.push({ path, label, ctx }); } };
     try { (SECTIONS || []).concat(DISABLED_SECTIONS || []).forEach(s => (s.slots || []).forEach(sl => push(sl.path, sl.label, s.title.replace(/^[^\wÀ-ÿ]+/, '')))); } catch (e) {}
-    try { (PF_CATS || []).forEach(c => { for (let i = 1; i <= 24; i++) push('portfolio/' + c.id + '/' + i + '.webp', (c.label && (c.label.fr || c.label)) + ' · photo ' + i, 'Portfolio'); }); } catch (e) {}
+    try { (PF_CATS || []).forEach(c => { for (let i = 1; i <= 200; i++) push('portfolio/' + c.id + '/' + i + '.webp', (c.label && (c.label.fr || c.label)) + ' · photo ' + i, 'Portfolio'); }); } catch (e) {}
     for (let i = 1; i <= 5; i++) push('hero/partners-' + i + '.webp', 'Bannière Collaboration ' + i, 'Collaboration');
   }
   function pathOfUrl(u) {
@@ -153,7 +153,7 @@
   async function stage(path, file) {
     if (!file || !/^image\//.test(file.type)) { toast('Ce fichier n\'est pas une image.', 'err'); return; }
     const spec = specFor(path);
-    let out = await toWebP(file, spec.maxSide, spec.quality), w = 0, h = 0;
+    let out = await toWebP(file, spec.maxSide, spec.quality, spec.maxKo * 1024 * 0.9), w = 0, h = 0;
     try { const bm = await createImageBitmap(out); w = bm.width; h = bm.height; } catch (e) {}
     const old = E.pending.get(path); if (old) URL.revokeObjectURL(old.url);
     E.pending.set(path, { file: out, url: URL.createObjectURL(out), orig: file.size, w, h, spec, name: file.name });

@@ -1832,6 +1832,16 @@ function bgVideoAllowed(){ return BK_MEDIA.video; }
 /* Qualité d'origine pour tout le monde (aucune version dégradée n'est servie : si les conditions ne permettent pas la vidéo d'origine,
    c'est l'image de remplacement qui s'affiche). */
 function pickBgVideo(desktop, mobile){ return desktop; }
+/* Vidéos d'accueil remplaçables depuis l'admin (Vidéos du site) : si le fichier existe dans le stockage média (videos/home-bg.mp4, videos/mission-bg.mp4),
+   il remplace celui du dépôt ; sinon repli sur le fichier d'origine. Une seule requête HEAD par vidéo. */
+const _bkVidOv = {};
+function bkVideoSrc(name, fallback){
+  if (!_bkVidOv[name]) {
+    const u = MEDIA_BASE + '/videos/' + name;
+    _bkVidOv[name] = fetch(u, { method: 'HEAD', mode: 'cors', credentials: 'omit' }).then(r => r.ok ? u : fallback).catch(() => fallback);
+  }
+  return _bkVidOv[name];
+}
 
 /* Bascule d'une vidéo vers l'image de remplacement : arrêt de la lecture ET du téléchargement (src retiré + load()), vidéo masquée, plus jamais relancée. */
 function bgVideoFallback(vid, reason){
@@ -1991,8 +2001,7 @@ function initHeroCarousel(viewKey){
       vw = document.createElement('div');
       vw.className = 'hero-video-wrap';
       vw.dataset.view = 'home';
-      const vid = createBgVideo(pickBgVideo(IMG.homeVideo, IMG.homeVideoMobile));
-      vw.appendChild(vid);
+      bkVideoSrc('home-bg.mp4', pickBgVideo(IMG.homeVideo, IMG.homeVideoMobile)).then(src => { if (!vw.querySelector('video')) vw.appendChild(createBgVideo(src)); resumeAllBgVideos(); });
       const overlay = wrap.querySelector('.page-hero-overlay');
       wrap.insertBefore(vw, overlay || null);
     }
@@ -5719,11 +5728,25 @@ function probeImageExists(src){
       img.src = src;
     }));
 }
+/* Photos du Portfolio : sans limite de nombre. Le Worker (/portfolio-index) liste les numéros présents ; ancien Worker ou
+   service indisponible : recherche des fichiers 1 à `max` comme avant. */
+let _pfIndexP = null;
+function loadPortfolioIndex(){
+  if (!_pfIndexP) _pfIndexP = fetch(MEDIA_BASE.replace(/\/media$/, '') + '/portfolio-index', { mode: 'cors', credentials: 'omit' })
+    .then(r => r.ok ? r.json() : null).then(d => (d && d.ok && d.cats) ? d.cats : null).catch(() => null);
+  return _pfIndexP;
+}
 async function loadPortfolioPhotos(catId, max){
   if (_pfGalleryCache[catId]) return _pfGalleryCache[catId];
-  const candidates = Array.from({ length: max }, (_, i) => MEDIA_BASE + '/portfolio/' + catId + '/' + (i + 1) + '.webp');
-  const found = await Promise.all(candidates.map(probeImageExists));
-  const photos = candidates.filter((_, i) => found[i]);
+  const idx = await loadPortfolioIndex();
+  let photos;
+  if (idx) {
+    photos = (idx[catId] || []).map(n => MEDIA_BASE + '/portfolio/' + catId + '/' + n + '.webp');
+  } else {
+    const candidates = Array.from({ length: Math.max(max || 24, 24) }, (_, i) => MEDIA_BASE + '/portfolio/' + catId + '/' + (i + 1) + '.webp');
+    const found = await Promise.all(candidates.map(probeImageExists));
+    photos = candidates.filter((_, i) => found[i]);
+  }
   _pfGalleryCache[catId] = photos;
   return photos;
 }
@@ -8794,8 +8817,9 @@ function initHomeClaimVideo(){
   let missionVid = null;
   const ensureMissionVideo = () => {
     if (missionVid || !bgVideoAllowed()) return;
-    missionVid = createBgVideo(pickBgVideo(IMG.missionVideo, IMG.missionVideoMobile));
-    box.appendChild(missionVid);
+    const fb = pickBgVideo(IMG.missionVideo, IMG.missionVideoMobile);
+    missionVid = true; /* évite un double lancement pendant la recherche de la source */
+    bkVideoSrc('mission-bg.mp4', fb).then(src => { if (!bgVideoAllowed()) { missionVid = null; return; } missionVid = createBgVideo(src); box.appendChild(missionVid); updateMissionWrap(); });
   };
   new IntersectionObserver((entries, io) => {
     if (entries.some(e => e.isIntersecting)) { ensureMissionVideo(); io.disconnect(); }
@@ -8810,7 +8834,7 @@ function initHomeClaimVideo(){
   const updateMissionWrap = () => {
     wrap.classList.toggle('active', triggerVisible && !reassureVisible);
     /* Séquence vidéo « Le studio » : lue seulement quand elle est à l'écran. */
-    if (missionVid && !missionVid.dataset.fallback) { const on = triggerVisible && !reassureVisible; if (on && missionVid.paused) { const q = missionVid.play(); if (q && q.catch) q.catch(() => {}); } else if (!on && !missionVid.paused) missionVid.pause(); }
+    if (missionVid && missionVid.tagName && !missionVid.dataset.fallback) { const on = triggerVisible && !reassureVisible; if (on && missionVid.paused) { const q = missionVid.play(); if (q && q.catch) q.catch(() => {}); } else if (!on && !missionVid.paused) missionVid.pause(); }
   };
   const missionIO = new IntersectionObserver(entries => {
     entries.forEach(e => { triggerVisible = e.isIntersecting; });
