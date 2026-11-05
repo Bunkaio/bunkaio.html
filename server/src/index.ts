@@ -4,7 +4,7 @@ import { AR_OPTIONS, cleanConfig as cleanAutoReplyConfig, defaultConfig, getConf
 import type { ARFacts } from './autoreply';
 import { goClicks, handleGo, listGoLinks, saveGoLink } from './golinks';
 import { getSeries, saveSeries } from './series';
-import { computeBusy, createHold, getCalConfig, getHolds, saveCalConfig, setHoldStatus, testIcal } from './availability';
+import { computeBusy, createHold, addManualHold, getCalConfig, getHolds, saveCalConfig, setHoldStatus, testIcal } from './availability';
 import type Stripe from 'stripe';
 import { adminAccountView, getAccount, listAccounts, putAccount, sanitizeAccount, upsertAccountFromAdmin, verifyLogin, LoginThrottled } from './accounts';
 import { handleCollect, handleStats, purgeOldAnalytics } from './analytics';
@@ -902,6 +902,7 @@ async function handleAdminDashboard(request: Request, env: Env, headers: Record<
     // Calendrier des disponibilités : réglages (liens iCal, blocages, règles), test d'un lien iCal, confirmation / libération d'une option.
     const body = (await request.json().catch(() => ({}))) as Record<string, unknown>;
     if (body.action === 'save') return jsonResponse({ ok: true, config: await saveCalConfig(env, body.config) }, 200, headers);
+    if (body.action === 'add') { const r = await addManualHold(env, body); return jsonResponse(r, r.ok ? 200 : 400, headers); }
     if (body.action === 'test') return jsonResponse(await testIcal(typeof body.url === 'string' ? body.url : ''), 200, headers);
     if (body.action === 'hold') {
       const st = body.status === 'confirmed' || body.status === 'released' || body.status === 'option' ? body.status : null;

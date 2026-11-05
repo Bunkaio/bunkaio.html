@@ -1,2 +1,2 @@
 /* Généré par tools/build-routes.cjs : empreinte des sources du Worker (ne pas modifier à la main). */
-export const WORKER_VERSION = '91640458d2';
+export const WORKER_VERSION = 'b3f96327e5';

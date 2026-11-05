@@ -284,6 +284,24 @@ export async function createHold(env: Env, input: Record<string, unknown>): Prom
   return { ok: true, hold };
 }
 
+/** Ajout manuel depuis l'admin (séance, rendez-vous, indisponibilité nommée) : créneau confirmé, sans contrôle de règles (la propriétaire décide). */
+export async function addManualHold(env: Env, input: Record<string, unknown>): Promise<{ ok: true; hold: CalHold } | { ok: false; error: string }> {
+  const date = str(input.date, 10), cat = CATS.includes(str(input.cat, 20)) ? str(input.cat, 20) : 'photo-part', anyTime = input.anyTime === true;
+  let start = str(input.start, 5), end = str(input.end, 5);
+  if (!DATE_RE.test(date) || date > '2027-12-31') return { ok: false, error: 'invalid_payload' };
+  const cfg = await getCalConfig(env);
+  if (anyTime) { start = cfg.rules.open; end = cat === 'event' ? cfg.rules.eventClose : cfg.rules.close; }
+  if (!TIME_RE.test(start) || !TIME_RE.test(end) || toMin(end) <= toMin(start)) return { ok: false, error: 'creneau_invalide' };
+  const now = new Date();
+  const hold: CalHold = {
+    id: crypto.randomUUID().slice(0, 12), date, start, end, cat, label: str(input.label, 120) || undefined,
+    name: str(input.name, 120) || 'Rendez-vous', email: str(input.email, 200).toLowerCase(), lang: 'fr',
+    createdAt: now.toISOString(), expiresAt: new Date(now.getTime() + 365 * 86400000).toISOString(), status: 'confirmed', ...(anyTime ? { anyTime: true } : {}),
+  };
+  const holds = await getHolds(env); holds.push(hold); await putHolds(env, holds);
+  return { ok: true, hold };
+}
+
 export async function setHoldStatus(env: Env, id: string, status: 'option' | 'confirmed' | 'released', hours?: number): Promise<CalHold | null> {
   const holds = await getHolds(env);
   const h = holds.find((x) => x.id === id); if (!h) return null;
