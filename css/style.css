@@ -5480,7 +5480,7 @@ footer .footer-cta-row .hero-start:hover, footer .footer-cta-row .hero-start:foc
    Base lavande lumineuse avec trois halos violets qui dérivent lentement (aurore), constellation dynamique par-dessus (CstField),
    textes d'en-tête passés en encre foncée pour rester lisibles sur le fond clair. */
 body[data-view="article"] #pageHeroWrap { display: none !important; }
-html:has(body[data-view="article"])::before { background-image: none; }
+html[data-view="article"]::before { background-image: none; }
 /* Fond des articles (oct. 2026) : papier doux et professionnel — ivoire très clair, un seul voile lavande discret en haut,
    aucun mouvement ; la constellation reste en filigrane (signature), sans prendre le dessus sur la lecture. */
 #view-article { isolation: isolate; min-height: 100vh;
@@ -5817,7 +5817,7 @@ html.pfx-lock, html.pfx-lock body { overflow: hidden; }
 @font-face { font-family: 'Inter Tight'; font-style: normal; font-display: swap; font-weight: 100 900; src: url(../fonts/inter-tight-latin-ext-wght-normal.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
 @font-face { font-family: 'Inter Tight'; font-style: normal; font-display: swap; font-weight: 100 900; src: url(../fonts/inter-tight-latin-wght-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
 body[data-view="portfolio"] #pageHeroWrap { display: none !important; }
-html:has(body[data-view="portfolio"])::before { background-image: none; }
+html[data-view="portfolio"]::before { background-image: none; }
 #view-portfolio { background: #ecebe8; isolation: isolate; min-height: 100vh; }
 #view-portfolio > .cst-field { display: none !important; }
 #view-portfolio .pf-page.pfx { --pfx-ink: #111; --pfx-mute: rgba(17,17,17,.55); --pfx-line: rgba(17,17,17,.14); --pfx-rose: #e8c6c4; font-family: 'Inter Tight', 'Helvetica Neue', Arial, sans-serif; color: #111; }
@@ -5894,7 +5894,7 @@ html:has(body[data-view="portfolio"])::before { background-image: none; }
 
 /* ═══════════════ Services — maison éditoriale (nov. 2026, DA « Grids » comme le Portfolio) ═══════════════ */
 body[data-view="services"] #pageHeroWrap { display: none !important; }
-html:has(body[data-view="services"])::before { background-image: none; }
+html[data-view="services"]::before { background-image: none; }
 #view-services { background: #ecebe8; isolation: isolate; min-height: 100vh; }
 #view-services > .cst-field { display: none !important; }
 #view-services .services-page.svx { max-width: 1240px; padding-left: 32px; padding-right: 32px; font-family: 'Inter Tight', 'Helvetica Neue', Arial, sans-serif; color: #111; --g: 24px; --mute: rgba(17,17,17,.55); --line: rgba(17,17,17,.14); --rose: #e8c6c4; }
@@ -6159,7 +6159,7 @@ html:has(body[data-view="services"])::before { background-image: none; }
 
 /* ═══════════════ Pages éditoriales « GX » (nov. 2026) : Contact, Collaboration, 4K Drone, FAQ — DA « Grids » + touches cinéma ═══════════════ */
 body[data-view="contact"] #pageHeroWrap, body[data-view="partners"] #pageHeroWrap, body[data-view="drone"] #pageHeroWrap, body[data-view="legal"] #pageHeroWrap { display: none !important; }
-html:has(body[data-view="contact"])::before, html:has(body[data-view="partners"])::before, html:has(body[data-view="drone"])::before, html:has(body[data-view="legal"])::before { background-image: none; }
+html[data-view="contact"]::before, html[data-view="partners"]::before, html[data-view="drone"]::before, html[data-view="legal"]::before { background-image: none; }
 .view.gx { background: #ecebe8; isolation: isolate; min-height: 100vh; color: #111; }
 .view.gx > .cst-field { display: none !important; }
 .view.gx .gx-page { position: relative; z-index: 0; max-width: 1240px !important; margin: 0 auto !important; padding: 120px 32px 96px !important; font-family: 'Inter Tight', 'Helvetica Neue', Arial, sans-serif; color: #111; --g: 24px; --mute: rgba(17,17,17,.55); --line: rgba(17,17,17,.14); --rose: #e8c6c4; }
@@ -6649,7 +6649,7 @@ footer .ft-tag { color: rgba(255,255,255,.5) !important; font-size: 11px !import
 
 /* ── À propos (vue GX) ── */
 body[data-view="about"] #pageHeroWrap { display: none !important; }
-html:has(body[data-view="about"])::before { background-image: none; }
+html[data-view="about"]::before { background-image: none; }
 .view.gx .gx-portrait { grid-column: 8 / span 5; margin: 0 !important; position: relative; aspect-ratio: 4 / 5; overflow: hidden; background: var(--rose); border-radius: 0 !important; box-shadow: none !important; cursor: default; }
 .view.gx .gx-portrait img { width: 100% !important; height: 100% !important; object-fit: cover; filter: grayscale(1) contrast(1.06) !important; mix-blend-mode: multiply; transform: scale(1.06); transition: filter .8s ease, transform 1.6s cubic-bezier(.2,.8,.2,1), mix-blend-mode .8s; border-radius: 0 !important; aspect-ratio: auto !important; }
 .view.gx .gx-portrait:hover img { filter: none !important; mix-blend-mode: normal; transform: scale(1); }
@@ -6954,7 +6954,7 @@ footer .footer-cols-right { grid-column: 5 / span 8 !important; grid-template-co
 
 /* ═══════════════ Pages éditoriales « PX » (nov. 2026) : prestation, Découvrir, Conseils, article, villes, avis, devis, connexion ═══════════════ */
 body[data-view="service"] #pageHeroWrap, body[data-view="discover"] #pageHeroWrap, body[data-view="advice"] #pageHeroWrap, body[data-view="article"] #pageHeroWrap, body[data-view="city"] #pageHeroWrap, body[data-view="share"] #pageHeroWrap, body[data-view="quiz"] #pageHeroWrap, body[data-view="login"] #pageHeroWrap, body[data-view="avail"] #pageHeroWrap { display: none !important; }
-html:has(body[data-view="service"])::before, html:has(body[data-view="discover"])::before, html:has(body[data-view="advice"])::before, html:has(body[data-view="article"])::before, html:has(body[data-view="city"])::before, html:has(body[data-view="share"])::before, html:has(body[data-view="quiz"])::before, html:has(body[data-view="login"], body[data-view="avail"])::before, html:has(body[data-view="avail"])::before { background-image: none !important; background: #ecebe8 !important; }
+html[data-view="service"]::before, html[data-view="discover"]::before, html[data-view="advice"]::before, html[data-view="article"]::before, html[data-view="city"]::before, html[data-view="share"]::before, html[data-view="quiz"]::before, html[data-view="login"]::before, html[data-view="avail"]::before, html[data-view="avail"]::before { background-image: none !important; background: #ecebe8 !important; }
 :is(body[data-view="service"], body[data-view="discover"], body[data-view="advice"], body[data-view="article"], body[data-view="city"], body[data-view="share"], body[data-view="quiz"], body[data-view="login"], body[data-view="avail"]) nav { background: rgba(236,235,232,.9) !important; border-bottom: 1px solid #111 !important; }
 :is(body[data-view="service"], body[data-view="discover"], body[data-view="advice"], body[data-view="article"], body[data-view="city"], body[data-view="share"], body[data-view="quiz"], body[data-view="login"], body[data-view="avail"]) .nav-logo-img { filter: invert(1) grayscale(1) contrast(1.2); }
 :is(body[data-view="service"], body[data-view="discover"], body[data-view="advice"], body[data-view="article"], body[data-view="city"], body[data-view="share"], body[data-view="quiz"], body[data-view="login"], body[data-view="avail"]) nav :is(.nav-studio, .nav-logo-fallback) { color: #111 !important; }
@@ -7057,7 +7057,7 @@ body[data-view="quiz"] .quiz-nav-btn { border-radius: 0 !important; background: 
    Papier, grand mot « ESPACE CLIENT / PARTENAIRE », rubriques en index numéroté à gauche (sticky), contenu à droite en blocs plats à filets noirs.
    Client : accent rose poudré. Partenaire : accent champagne (même signature qu'avant). Fonctionnement inchangé. */
 body[data-view="account"] #pageHeroWrap { display: none !important; }
-html:has(body[data-view="account"])::before { background-image: none !important; background: #ecebe8 !important; }
+html[data-view="account"]::before { background-image: none !important; background: #ecebe8 !important; }
 #view-account.px-account, #view-account.px-account[data-acct="partner"] { background: #ecebe8 !important; background-image: none !important; color: #111; --rose: #e8c6c4; }
 #view-account.px-account.acc-is-partner, #view-account.px-account[data-acct="partner"] { --rose: #dfcfa6; }
 #view-account.px-account > .cst-field { display: none !important; }
@@ -7190,11 +7190,11 @@ body[data-view="quiz"] .quiz-nav-btn svg { stroke: #111; }
 /* ═══ CTA « Construire mon projet » : violet pâle de la charte BUNKAIO, faible opacité (nov. 2026) ═══
    Partout où le libellé existe (menu, accueil, pied de page, pages, devis…) : fond #d6c9f7 translucide + léger flou, texte noir. */
 :root { --bk-violet-fill: rgba(214,201,247,.6); --bk-violet-hover: rgba(214,201,247,.95); }
-:is(.nav-cta, .hero-start, .cta-primary, .partner-cta-btn, .mobile-cta, .btn-solid, button, a):is([data-lang="start"], :has(> [data-lang="start"])):not(#bkv) {
+:is(.nav-cta, .hero-start, .cta-primary, .partner-cta-btn, .mobile-cta, .btn-solid, button, a):is([data-lang="start"], .bk-start):not(#bkv) {
   background: var(--bk-violet-fill) !important; color: #111 !important; border: 1px solid rgba(110,90,168,.38) !important; box-shadow: none !important;
   -webkit-backdrop-filter: blur(10px) saturate(1.2) !important; backdrop-filter: blur(10px) saturate(1.2) !important; }
-:is(.nav-cta, .hero-start, .cta-primary, .partner-cta-btn, .mobile-cta, .btn-solid, button, a):is([data-lang="start"], :has(> [data-lang="start"])):not(#bkv):is(:hover, :focus-visible, :active) { background: var(--bk-violet-hover) !important; color: #111 !important; border-color: #6e5aa8 !important; }
-:is(.nav-cta, .hero-start, .cta-primary, .partner-cta-btn, .mobile-cta, button, a):is([data-lang="start"], :has(> [data-lang="start"])):not(#bkv) span { color: #111 !important; }
+:is(.nav-cta, .hero-start, .cta-primary, .partner-cta-btn, .mobile-cta, .btn-solid, button, a):is([data-lang="start"], .bk-start):not(#bkv):is(:hover, :focus-visible, :active) { background: var(--bk-violet-hover) !important; color: #111 !important; border-color: #6e5aa8 !important; }
+:is(.nav-cta, .hero-start, .cta-primary, .partner-cta-btn, .mobile-cta, button, a):is([data-lang="start"], .bk-start):not(#bkv) span { color: #111 !important; }
 
 /* Espace partenaire : blocs bleu nuit / dorés d'origine remis dans la DA (papier, encre noire, rose/champagne en accent) */
 #view-account .pt-status { background: transparent !important; border: 0 !important; border-top: 10px solid #111 !important; border-left: 0 !important; padding: 16px 0 18px !important; color: #111 !important; }
@@ -8460,13 +8460,13 @@ html body .view.gx #applyTypePicker button { border-color: rgba(17,17,17,.18) !i
 .view.gx .ct-hours { margin-top: 2px !important; }
 
 /* Tous les « Construire mon projet » (hors menu) : rose dépoli (verre), encadrement fin, bouton arrondi, sans flèche — comme celui de l'accueil (5 nov. 2026, demande de la propriétaire) */
-html body :is(.hero-start, .cta-primary, .partner-cta-btn, .btn-solid, button, a):is([data-lang="start"], :has(> [data-lang="start"])):not(#bkv):not(.nav-cta):not(.mobile-cta) {
+html body :is(.hero-start, .cta-primary, .partner-cta-btn, .btn-solid, button, a):is([data-lang="start"], .bk-start):not(#bkv):not(.nav-cta):not(.mobile-cta) {
   background: rgba(232,198,196,.62) !important; color: #111 !important; border: 1px solid rgba(255,255,255,.6) !important; border-radius: 999px !important;
   box-shadow: 0 0 0 1px rgba(17,17,17,.07), 0 6px 22px rgba(0,0,0,.08), inset 0 1px 0 rgba(255,255,255,.4) !important;
   -webkit-backdrop-filter: blur(14px) saturate(1.2) !important; backdrop-filter: blur(14px) saturate(1.2) !important; }
-html body :is(.hero-start, .cta-primary, .partner-cta-btn, .btn-solid, button, a):is([data-lang="start"], :has(> [data-lang="start"])):not(#bkv):not(.nav-cta):not(.mobile-cta):is(:hover, :focus-visible, :active) {
+html body :is(.hero-start, .cta-primary, .partner-cta-btn, .btn-solid, button, a):is([data-lang="start"], .bk-start):not(#bkv):not(.nav-cta):not(.mobile-cta):is(:hover, :focus-visible, :active) {
   background: rgba(232,198,196,.88) !important; color: #111 !important; border-color: rgba(255,255,255,.85) !important; box-shadow: 0 0 0 1px rgba(17,17,17,.1), 0 8px 28px rgba(232,198,196,.55), inset 0 1px 0 rgba(255,255,255,.5) !important; }
-html body :is(.hero-start, .cta-primary, .partner-cta-btn, .btn-solid, button, a):is([data-lang="start"], :has(> [data-lang="start"])):not(#bkv):not(.nav-cta):not(.mobile-cta)::after { content: none !important; display: none !important; }
+html body :is(.hero-start, .cta-primary, .partner-cta-btn, .btn-solid, button, a):is([data-lang="start"], .bk-start):not(#bkv):not(.nav-cta):not(.mobile-cta)::after { content: none !important; display: none !important; }
 
 /* Moodboard : textes des choix (direction, ambiance, palette…) en encre, plus de bleu par défaut des boutons (5 nov. 2026) */
 .mb-wizard :is(.mb-direction-card, .mb-palette-card, .mb-chip, .mb-direction-name, .mb-direction-desc, .mb-palette-name) { color: #111 !important; font-family: inherit; }
@@ -8890,7 +8890,6 @@ html body .footer-cta-row .hero-start { justify-content: center !important; }
 /* Surlignage dans les listes de formules (6 nov. 2026, capture iPhone : texte éclaté autour du marqueur) : le marqueur reste un simple fond en ligne (pas de découpe de boîte
    ni de marge négative) et les lignes qui en portent ne passent plus par le flou animé, source d'erreurs de rendu sur Safari. */
 mark.bk-key { -webkit-box-decoration-break: slice; box-decoration-break: slice; margin: 0; display: inline; position: static; }
-.fxl li:has(mark.bk-key) { filter: none !important; transform: none; }
 .svcp-list li mark.bk-key, .fx-info li mark.bk-key { white-space: normal; }
 
 /* Séquence « Le studio » : bloc centré dans la hauteur visible, sous le menu (6 nov. 2026, demande de la propriétaire) — les marges haute et basse sont équilibrées (avant : le haut touchait le menu et un grand vide restait en bas), le slogan s'adapte à la hauteur d'écran pour que tout tienne, sur ordinateur comme sur téléphone. */
@@ -9014,7 +9013,7 @@ mark.bk-key { -webkit-box-decoration-break: slice; box-decoration-break: slice; 
 #view-account:not(.acc-is-partner) .cst-field { opacity: .95; }
 
 /* ── Partenaire : univers sombre ── */
-html:has(body[data-view="account"] #view-account.acc-is-partner)::before { background: #0f0e13 !important; background-image: none !important; }
+html[data-acct="partner"][data-view="account"]::before { background: #0f0e13 !important; background-image: none !important; }
 #view-account.px-account.acc-is-partner { background: radial-gradient(120% 70% at 85% -10%, #1d1a26 0%, #0f0e13 55%) !important; color: var(--pk-ink); --rose: #dfcfa6; }
 #view-account.acc-is-partner .gx-cols span { border-color: rgba(243,238,226,.06) !important; background: none !important; }
 #view-account.acc-is-partner .gx-cols { opacity: .6; }
@@ -9025,15 +9024,15 @@ html:has(body[data-view="account"] #view-account.acc-is-partner)::before { backg
 #view-account.acc-is-partner .account-name { background: linear-gradient(100deg, #f3eee2 20%, #dfcfa6 60%, #f3eee2 90%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent !important; }
 #view-account.acc-is-partner .account-type-badge { color: #dfcfa6 !important; }
 #view-account.acc-is-partner .account-type-badge::before { color: #dfcfa6 !important; }
-body[data-view="account"]:has(#view-account.acc-is-partner) nav { background: rgba(15,14,19,.88) !important; border-bottom: 1px solid rgba(223,207,166,.55) !important; }
-body[data-view="account"]:has(#view-account.acc-is-partner) .nav-logo-img { filter: none; }
-body[data-view="account"]:has(#view-account.acc-is-partner) nav :is(.nav-studio, .nav-logo-fallback) { color: #f3eee2 !important; }
-body[data-view="account"]:has(#view-account.acc-is-partner) .nav-center .nav-link { color: rgba(243,238,226,.6); }
-body[data-view="account"]:has(#view-account.acc-is-partner) .nav-center .nav-link:is(:hover, .active) { color: #f3eee2; }
-body[data-view="account"]:has(#view-account.acc-is-partner) nav :is(.lang-toggle, .nav-connect) { border-color: rgba(243,238,226,.6) !important; color: #f3eee2 !important; }
-body[data-view="account"]:has(#view-account.acc-is-partner) nav .nav-cta { background: #dfcfa6 !important; color: #111 !important; }
-body[data-view="account"]:has(#view-account.acc-is-partner) .nav-burger { border-color: rgba(243,238,226,.6) !important; }
-body[data-view="account"]:has(#view-account.acc-is-partner) .nav-burger-glyph { color: #f3eee2 !important; }
+html[data-acct="partner"] body[data-view="account"] nav { background: rgba(15,14,19,.88) !important; border-bottom: 1px solid rgba(223,207,166,.55) !important; }
+html[data-acct="partner"] body[data-view="account"] .nav-logo-img { filter: none; }
+html[data-acct="partner"] body[data-view="account"] nav :is(.nav-studio, .nav-logo-fallback) { color: #f3eee2 !important; }
+html[data-acct="partner"] body[data-view="account"] .nav-center .nav-link { color: rgba(243,238,226,.6); }
+html[data-acct="partner"] body[data-view="account"] .nav-center .nav-link:is(:hover, .active) { color: #f3eee2; }
+html[data-acct="partner"] body[data-view="account"] nav :is(.lang-toggle, .nav-connect) { border-color: rgba(243,238,226,.6) !important; color: #f3eee2 !important; }
+html[data-acct="partner"] body[data-view="account"] nav .nav-cta { background: #dfcfa6 !important; color: #111 !important; }
+html[data-acct="partner"] body[data-view="account"] .nav-burger { border-color: rgba(243,238,226,.6) !important; }
+html[data-acct="partner"] body[data-view="account"] .nav-burger-glyph { color: #f3eee2 !important; }
 /* Base de texte clair pour tout ce que les règles dérivées ne couvrent pas (spécificité nulle : les règles propres à un composant gardent la main) */
 #view-account.acc-is-partner :where(p, span, li, td, th, label, h1, h2, h3, h4, h5, h6, small, b, strong, em, dt, dd, legend, summary, div) { color: inherit; }
 #view-account.acc-is-partner :where(input, select, textarea) { background: rgba(243,238,226,.06); color: var(--pk-ink); border-color: rgba(243,238,226,.35); }
@@ -9055,9 +9054,9 @@ body[data-view="account"]:has(#view-account.acc-is-partner) .nav-burger-glyph { 
 #view-account .acc-lang-label { white-space: nowrap; font-size: 10.5px; margin-right: 2px; }
 #view-account .acc-lang-btn { white-space: nowrap; padding: 6px 12px; }
 @media (max-width: 520px) { #view-account .acc-lang-label { display: none; } }
-body[data-view="account"]:has(#view-account.acc-is-partner) .bk-back { background: rgba(15,14,19,.82) !important; border-color: rgba(243,238,226,.45) !important; color: #f3eee2 !important; }
-body[data-view="account"]:has(#view-account.acc-is-partner) .bk-back svg { stroke: #f3eee2; }
-body[data-view="account"]:has(#view-account.acc-is-partner) .bk-back * { color: #f3eee2 !important; }
+html[data-acct="partner"] body[data-view="account"] .bk-back { background: rgba(15,14,19,.82) !important; border-color: rgba(243,238,226,.45) !important; color: #f3eee2 !important; }
+html[data-acct="partner"] body[data-view="account"] .bk-back svg { stroke: #f3eee2; }
+html[data-acct="partner"] body[data-view="account"] .bk-back * { color: #f3eee2 !important; }
 #view-account.acc-is-partner .cred-card { background: rgba(243,238,226,.05) !important; border: 1px solid rgba(223,207,166,.25) !important; }
 #view-account.acc-is-partner .ct-follow, #view-account.acc-is-partner .ct-follow * { color: #dfcfa6 !important; }
 #view-account.acc-is-partner .mb-card { background: rgba(243,238,226,.05) !important; border: 1px solid rgba(223,207,166,.3) !important; color: var(--pk-ink) !important; }

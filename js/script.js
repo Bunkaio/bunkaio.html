@@ -2177,7 +2177,7 @@ function goView(v, subTab, opts){
   const run = () => {
     document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
     document.getElementById('view-' + v).classList.add('active');
-    document.body.dataset.view = v;
+    document.body.dataset.view = v; document.documentElement.dataset.view = v; try { bkMarkStart(); } catch (e) {}   /* l'attribut est lu par le CSS (remplace des sélecteurs :has() très coûteux) */
     document.querySelectorAll('.nav-link').forEach(l => l.classList.toggle('active', l.dataset.view === ((v === 'service' || v === 'discover') ? 'services' : v === 'about' ? 'contact' : v)));
     window.scrollTo({ top:0, behavior:'instant' });
     updateHeroScrollFx();
@@ -8517,6 +8517,7 @@ function accHead(){
   if (partner) { c.textContent = '-' + PARTNER_DISCOUNT + '%'; l.textContent = t({fr:'tarif partenaire', en:'partner rate'}); }
   else { c.textContent = pfxNum((USER.commandes || []).length); l.textContent = t({fr:'commandes', en:'orders'}); }
   const root = document.getElementById('view-account'); root.classList.toggle('acc-is-partner', partner);
+  document.documentElement.dataset.acct = partner ? 'partner' : 'client';
   root.querySelectorAll('.pf-cat-tab').forEach(b => { b.dataset.cursor = t({fr:'Ouvrir', en:'Open'}); });
   initCursorTag(); gxMagnet();
   gxFit(m);
@@ -9797,7 +9798,7 @@ initNavScrollState();
   const r = seoRouteForPath(location.pathname);
   const v = r ? r.view : 'home';
   const _qs0 = location.search; window.__bootQs = _qs0;
-  document.body.dataset.view = v;
+  document.body.dataset.view = v; document.documentElement.dataset.view = v; try { bkMarkStart(); } catch (e) {}
   history.replaceState({ v, i: 0 }, '', location.pathname + location.hash);
   NAV_I = 0;
   if (window.track) track('pageview');
@@ -10264,10 +10265,12 @@ function bkHighlightTitles(){
     setTimeout(() => li.classList.remove('hl-pre'), 6000);
   });
 }
+/* Boutons / liens qui contiennent un libellé [data-lang="start"] : classe .bk-start (remplace :has(> [data-lang="start"]), très coûteux à chaque changement de la page). */
+function bkMarkStart(){ document.querySelectorAll('[data-lang="start"]').forEach(e => { const p = e.parentElement; if (p && !p.classList.contains('bk-start') && p.matches('a, button')) p.classList.add('bk-start'); }); }
 (function initBkHighlight(){
   const main = document.getElementById('main') || document.body; let t = null;
-  new MutationObserver(() => { clearTimeout(t); t = setTimeout(() => { try { bkHighlightAll(); bkHighlightTitles(); } catch (e) {} }, 220); }).observe(main, { childList: true, subtree: true, characterData: false });
-  setTimeout(() => { try { bkHighlightAll(); bkHighlightTitles(); } catch (e) {} }, 900);
+  new MutationObserver(() => { clearTimeout(t); t = setTimeout(() => { try { bkHighlightAll(); bkHighlightTitles(); bkMarkStart(); } catch (e) {} }, 220); }).observe(main, { childList: true, subtree: true, characterData: false });
+  setTimeout(() => { try { bkHighlightAll(); bkHighlightTitles(); bkMarkStart(); } catch (e) {} }, 900);
 })();
 
 
