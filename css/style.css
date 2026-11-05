@@ -8621,3 +8621,6 @@ body[data-view="home"] #pageHeroWrap, .hero-video-wrap[data-view="home"] { backg
 .bkc-anytime{display:flex;flex-direction:column;gap:3px;width:100%;box-sizing:border-box;margin-top:10px;padding:13px 14px;text-align:left;background:transparent;border:1px dashed rgba(17,17,17,.4);border-radius:0;color:#111;cursor:pointer;transition:background .2s,border-color .2s}
 .bkc-anytime b{font-weight:600;font-size:14px}.bkc-anytime small{font-size:12.5px;line-height:1.45;color:rgba(17,17,17,.62)}
 .bkc-anytime:hover,.bkc-anytime.on{background:rgba(232,198,196,.4);border:1px solid #111}
+
+/* Plus de carré rose derrière les photos (6 nov. 2026, demande de la propriétaire) : la galerie des séries affiche l'image entière ; le fond d'attente rose-gris apparaissait autour de la photo. Fond transparent, sans animation. */
+.lk-gal-main, .lk-gal-main.swap, .lk-gal-t { background: transparent !important; animation: none !important; }
