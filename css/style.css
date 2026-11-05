@@ -8731,7 +8731,7 @@ html.pfi-lock .bk-back,body.menu-open .bk-back{display:none}
 
 /* Devis arrivé depuis l'agenda : pas de flash de l'étape 1, rappel de la séance choisie en haut de chaque étape (6 nov. 2026, demande de la propriétaire) */
 #view-quiz.q-booting .qstep, #view-quiz.q-booting .q-choice { opacity: 0 !important; }
-#view-quiz .qstep.active { animation: qpIn .5s cubic-bezier(.2,.8,.2,1) both; }
+#view-quiz .qstep.active { animation: qpIn .5s cubic-bezier(.2,.8,.2,1); }
 @keyframes qpIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 .q-preset { display: grid; grid-template-columns: auto 1fr auto; gap: 4px 14px; align-items: baseline; box-sizing: border-box; margin: 0 0 22px; padding: 14px 18px 14px 20px; border: 1px solid rgba(17,17,17,.16); border-left: 5px solid var(--c, #111); background: rgba(255,255,255,.5); font-family: 'Inter Tight', sans-serif; color: #111; }
 .q-preset[hidden] { display: none; }
@@ -8763,3 +8763,7 @@ html body .nav-cta :is(span, *) { color: #111 !important; }
 
 /* Accès client / partenaire du haut de l'accueil : arrondis (pilules) comme « Construire mon projet » (6 nov. 2026, demande de la propriétaire) */
 html body #view-home .hero-access { border-radius: 999px !important; padding-left: 20px !important; padding-right: 22px !important; overflow: hidden; }
+
+/* Devis : titres d'étape toujours visibles (6 nov. 2026, bug iPhone : le titre et le sous-titre de l'étape restaient invisibles, un grand vide apparaissait au-dessus des cartes). Les textes partent de « invisible » seulement PENDANT l'animation (fill-mode backwards) : si Safari ne la lance pas, ils restent affichés. */
+.qstep.active .stagger { opacity: 1; transform: none; animation: stagIn .8s var(--ease-luxe) backwards; }
+@keyframes stagIn { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
