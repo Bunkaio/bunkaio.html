@@ -9268,3 +9268,7 @@ footer, #view-home .home-paper > *:not(.reassure-section), #view-service .svcp-p
 
 /* Panneau « Conseils photo » : la photo zoomée à l’apparition ne dépasse plus de son cadre (débordement horizontal mesuré sur mobile, audit 6 nov. 2026). */
 #adviceTeaser .advice-teaser-photo { overflow: hidden; }
+
+/* Anti-robot Turnstile : cadre affiché seulement si Cloudflare doit poser une question (sinon vide et invisible). */
+.bk-ts { position: fixed; left: 50%; bottom: calc(16px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 2147483000; }
+.bk-ts:empty { display: none; }

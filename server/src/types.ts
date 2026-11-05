@@ -22,6 +22,8 @@ export interface Env {
   TWILIO_FROM?: string;
   MEDIA_BUCKET: R2Bucket;
   ACCOUNTS_KV: KVNamespace;
+  /** Anti-robot Cloudflare Turnstile (secret du widget) : si présent, /ack et /quiz-lead exigent un jeton valide. */
+  TURNSTILE_SECRET?: string;
   ANALYTICS_DB?: D1Database; // mesure d'audience — optionnelle (voir migrations/0001_analytics.sql)
 }
 

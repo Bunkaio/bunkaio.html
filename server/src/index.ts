@@ -102,7 +102,7 @@ function corsHeaders(origin: string): Record<string, string> {
   return {
     'Access-Control-Allow-Origin': origin,
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Turnstile-Token',
     'Access-Control-Max-Age': '86400',
     'Vary': 'Origin',
   };
@@ -1804,8 +1804,60 @@ async function handleDeleteMedia(request: Request, env: Env, headers: Record<str
   return jsonResponse({ ok: true, path }, 200, headers);
 }
 
+/* ── Protection des formulaires publics (6 nov. 2026) ───────────────────────────────────────────────────────
+   1) Limite d'envois par adresse IP (KV `rl:`), active sans réglage. 2) Cloudflare Turnstile si le secret TURNSTILE_SECRET
+   est défini : jeton (en-tête X-Turnstile-Token) vérifié auprès de Cloudflare avant tout traitement. */
+const FORM_LIMITS: Record<string, [number, number]> = { '/ack': [8, 600], '/quiz-lead': [6, 600], '/availability/hold': [10, 600] };
+async function formGuard(request: Request, env: Env, path: string, headers: Record<string, string>): Promise<Response | null> {
+  const lim = FORM_LIMITS[path];
+  if (!lim || request.method !== 'POST') return null;
+  const ip = request.headers.get('CF-Connecting-IP') ?? '';
+  if (ip) {
+    const key = `rl:${path}:${ip}`;
+    const n = Number((await env.ACCOUNTS_KV.get(key)) ?? '0');
+    if (n >= lim[0]) return jsonResponse({ ok: false, error: 'trop_de_demandes' }, 429, headers);
+    await env.ACCOUNTS_KV.put(key, String(n + 1), { expirationTtl: lim[1] });
+  }
+  if (env.TURNSTILE_SECRET && path !== '/availability/hold') {
+    const token = request.headers.get('X-Turnstile-Token') ?? '';
+    if (!token) return jsonResponse({ ok: false, error: 'robot_check_required' }, 403, headers);
+    try {
+      const form = new FormData(); form.append('secret', env.TURNSTILE_SECRET); form.append('response', token); if (ip) form.append('remoteip', ip);
+      const r = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', { method: 'POST', body: form });
+      const v = (await r.json()) as { success?: boolean };
+      if (!v.success) return jsonResponse({ ok: false, error: 'robot_check_failed' }, 403, headers);
+    } catch (err) {
+      console.error('[turnstile] vérification impossible', err);   // Cloudflare injoignable : on laisse passer plutôt que perdre une demande réelle.
+    }
+  }
+  return null;
+}
+
+/* En-têtes de sécurité HTTP ajoutés à toutes les réponses du Worker (6 nov. 2026). */
+function withSecurityHeaders(res: Response): Response {
+  if (res.status === 101) return res;
+  const out = new Response(res.body, res);
+  const h = out.headers;
+  h.set('X-Content-Type-Options', 'nosniff');
+  h.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+  if (!h.has('Referrer-Policy')) h.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+  h.set('X-Frame-Options', 'DENY');
+  h.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=(), usb=()');
+  h.set('Cross-Origin-Resource-Policy', 'cross-origin');
+  if ((h.get('Content-Type') ?? '').includes('text/html') && !h.has('Content-Security-Policy')) {
+    h.set('Content-Security-Policy', "default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'");
+  }
+  return out;
+}
+
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+    return withSecurityHeaders(await route(request, env, ctx));
+  },
+  scheduled: (event: ScheduledEvent, env: Env): Promise<void> => scheduledHandler.scheduled(event, env),
+};
+
+async function route(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     configureBusiness(env);
     const headers = corsHeaders(resolveAllowedOrigin(request.headers.get('Origin'), env.ALLOWED_ORIGINS));
 
@@ -1815,6 +1867,8 @@ export default {
     }
 
     const url = new URL(request.url);
+    const blocked = await formGuard(request, env, url.pathname, headers);
+    if (blocked) return blocked;
     if (url.pathname === '/unsubscribe') {
       const email = (url.searchParams.get('e') ?? '').trim().toLowerCase();
       const valid = email.includes('@') && url.searchParams.get('s') === (await unsubscribeToken(env, email));
@@ -1918,8 +1972,9 @@ export default {
       return handleMediaServe(request, env, mediaPath);
     }
     return jsonResponse({ ok: false, error: 'not_found' }, 404, headers);
-  },
+}
 
+const scheduledHandler = {
   async scheduled(event: ScheduledEvent, env: Env): Promise<void> {
     configureBusiness(env);
     // Cron "*/5" : envoi des récapitulatifs d'activité clients. Cron quotidien : relances de factures.

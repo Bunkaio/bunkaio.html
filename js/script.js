@@ -10,6 +10,10 @@
 
 /* ═══════════════ FORMSPREE → contact@bunkaio.com ═══════════════ */
 const FORMSPREE_URL = 'https://formspree.io/f/mnjybndv';
+/* Anti-robot Cloudflare Turnstile (6 nov. 2026) : clé de site PUBLIQUE du widget créé dans Cloudflare (Turnstile → Ajouter un site,
+   mode « Géré », domaines bunkaio.com). Vide = désactivé (seuls le champ piège et la limite d'envois du Worker protègent).
+   À remplir EN MÊME TEMPS que le secret du Worker : npx wrangler secret put TURNSTILE_SECRET (sinon le Worker n'exige rien). */
+const TURNSTILE_SITEKEY = '';
 
 /* Origine d'une demande : liste fermée (champ « Comment nous avez-vous connus ? ») + paramètres UTM du lien d'arrivée,
    mémorisés pour la session afin de savoir quel message de la campagne (ex. utm_content=segment-a) a amené la demande. */
@@ -164,8 +168,45 @@ function bkHoneypots(){
   });
 }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bkHoneypots); else bkHoneypots();
+/* Turnstile : jeton à usage unique demandé à chaque envoi ; le widget reste invisible sauf si Cloudflare doit poser une question
+   (case à cocher dans un petit cadre en bas de l'écran). Sans clé de site : jeton vide, rien n'est chargé. */
+let _bkTs = null, _bkTsId = null, _bkTsWait = [];
+function bkTsLoad(){
+  if (_bkTs) return _bkTs;
+  _bkTs = new Promise((res, rej) => {
+    const sc = document.createElement('script');
+    sc.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit'; sc.async = true;
+    sc.onload = () => res(window.turnstile); sc.onerror = () => { _bkTs = null; rej(new Error('turnstile')); };
+    document.head.appendChild(sc);
+  });
+  return _bkTs;
+}
+function bkTurnstileToken(){
+  if (!TURNSTILE_SITEKEY) return Promise.resolve('');
+  return new Promise(resolve => {
+    let done = false; const finish = v => { if (!done) { done = true; resolve(v || ''); } };
+    setTimeout(() => finish(''), 20000);
+    bkTsLoad().then(ts => {
+      let box = document.getElementById('bkTs');
+      if (!box) { box = document.createElement('div'); box.id = 'bkTs'; box.className = 'bk-ts'; document.body.appendChild(box); }
+      _bkTsWait.push(finish);
+      const cb = tok => { const w = _bkTsWait.splice(0); w.forEach(f => f(tok)); try { ts.reset(_bkTsId); } catch (e) {} };
+      if (_bkTsId === null) {
+        _bkTsId = ts.render(box, { sitekey: TURNSTILE_SITEKEY, appearance: 'interaction-only', execution: 'execute', language: LANG === 'en' ? 'en' : 'fr',
+          callback: cb, 'error-callback': () => { const w = _bkTsWait.splice(0); w.forEach(f => f('')); }, 'expired-callback': () => {} });
+      }
+      try { ts.execute(box); } catch (e) { finish(''); }
+    }).catch(() => finish(''));
+  });
+}
+/* Avec Turnstile actif, l'email Formspree ne part qu'après validation du Worker (jeton vérifié) : un robot ne peut plus passer par ce canal. */
+let _bkAckGate = null;
 function postFormspree(payload){
   if (bkIsBot()) return Promise.resolve(true);
+  if (TURNSTILE_SITEKEY && _bkAckGate) { const g = _bkAckGate; _bkAckGate = null; return g.then(ok => ok ? postFormspreeNow(payload) : false); }
+  return postFormspreeNow(payload);
+}
+function postFormspreeNow(payload){
   try {
     return fetch(FORMSPREE_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(payload) })
       .then(r => r.ok).catch(() => false);
@@ -173,10 +214,15 @@ function postFormspree(payload){
 }
 function sendAck(kind, name, email, space, details){
   if (bkIsBot()) return Promise.resolve(true);
+  const p = bkTurnstileToken().then(tok => sendAckNow(kind, name, email, space, details, tok));
+  _bkAckGate = p;
+  return p;
+}
+function sendAckNow(kind, name, email, space, details, tok){
   try {
     return fetch('https://bunkaio-quiz-stripe.bunkaio.workers.dev/ack', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: Object.assign({ 'Content-Type': 'application/json' }, tok ? { 'X-Turnstile-Token': tok } : {}),
       body: JSON.stringify({ kind: kind, name: name, email: email, space: space || 'client', lang: (typeof LANG !== 'undefined' ? LANG : 'fr'), details: details || {} }),
       keepalive: true
     }).then(r => r.ok || r.status === 502).catch(() => false);   /* 502 = message enregistré mais accusé non envoyé */
@@ -228,10 +274,12 @@ function sendQuizLeadToStripe(payload){
   /* La langue du site au moment de la demande détermine la langue des emails envoyés ensuite au client. */
   /* Une seconde tentative 2,5 s plus tard si la première échoue (réseau coupé) : la demande doit arriver dans la base. */
   const body = JSON.stringify(Object.assign({ lang: LANG }, payload));
-  const once = () => fetch(QUIZ_LEAD_WORKER_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: body, keepalive: true })
+  const once = () => bkTurnstileToken().then(tok => fetch(QUIZ_LEAD_WORKER_URL, { method: 'POST', headers: Object.assign({ 'Content-Type': 'application/json' }, tok ? { 'X-Turnstile-Token': tok } : {}), body: body, keepalive: true }))
     .then(r => r.ok)
     .catch(err => { console.warn('[quiz-lead] échec d\'envoi au Worker', err); return false; });
-  return once().then(ok => ok ? true : new Promise(res => setTimeout(() => once().then(res), 2500)));
+  const p = once().then(ok => ok ? true : new Promise(res => setTimeout(() => once().then(res), 2500)));
+  _bkAckGate = p;
+  return p;
 }
 
 /* IMG et DRONE_MEDIA sont définis dans config/media.js — chargé avant ce fichier */
@@ -9325,7 +9373,7 @@ function renderPrivacyAccordion(){
     { title:'Données collectées et finalités', body:`<p>Nous collectons uniquement les données que vous nous transmettez volontairement : nom, email, téléphone et informations relatives à votre projet via le formulaire de contact, le questionnaire de devis ou votre espace client/partenaire.</p><p>Ces données sont utilisées exclusivement pour répondre à vos demandes, établir vos devis et gérer votre compte. Votre numéro de téléphone peut servir à vous prévenir par SMS de l'avancement de votre commande (photos disponibles, accès à l'album, rappel de séance) ; vous pouvez refuser ces SMS à tout moment en nous écrivant. Elles ne sont ni vendues, ni cédées, ni partagées avec des tiers à des fins commerciales.</p>` },
     { title:'Base légale et durée de conservation', body:`<p>Le traitement repose sur l'exécution de la relation commerciale ou précontractuelle (devis, prestation), sur notre intérêt légitime à répondre à vos demandes et, pour la facturation, sur nos obligations légales et comptables.</p><p>Durées de conservation :</p><ul><li><strong>Prospects</strong> (messages des formulaires, devis sans suite) : 3 ans après le dernier contact.</li><li><strong>Clients</strong> (compte, échanges, devis acceptés) : pendant la relation commerciale, puis 5 ans en archivage, délai de prescription de droit commun (art. 2224 du Code civil et L110-4 du Code de commerce).</li><li><strong>Factures et pièces comptables</strong> : 10 ans à compter de la clôture de l'exercice (art. L123-22 du Code de commerce).</li></ul><p>À l'issue de ces durées, les données sont supprimées ou anonymisées.</p>` },
     { title:'Cookies et mesure d\'audience', body:`<p>Ce site ne dépose <strong>aucun cookie</strong> et n'utilise aucun traceur publicitaire ou tiers. Nous mesurons l'audience de façon <strong>anonyme et sans cookie</strong>, avec un outil développé et hébergé par nos soins (sur notre compte Cloudflare) : pages vues, domaine de provenance, étiquette de campagne du lien d'arrivée (paramètres « utm », par exemple pour savoir quelle publication a amené la visite), type d'appareil et clics sur les boutons principaux. Votre adresse IP et votre navigateur ne sont pas conservés : ils servent uniquement, au moment de la visite, à calculer un code qui change chaque jour et ne permet pas de vous reconnaître d'un jour à l'autre ; ce code pseudonymisé est enregistré avec l'événement. Les données sont supprimées au bout de 400 jours (environ 13 mois) et ne sont transmises à aucun service de mesure tiers.</p><p>Cette mesure respecte l'option « Ne pas me suivre » et le signal GPC de votre navigateur. Vous pouvez aussi vous y opposer sur cet appareil : <button type="button" class="pt-link" onclick="toggleTracking()">Activer / désactiver la mesure</button> <span id="trackToggleState" style="font-size:12px;color:var(--grey)"></span></p><p>Le site utilise aussi le stockage local de votre appareil, sans suivi : le maintien de votre connexion à l'espace client ou partenaire (jusqu'à votre déconnexion) et la mémoire de votre opposition à la mesure. Le détail figure dans la <a href="/politique-cookies/" data-nav="legal:cookies">politique des cookies</a>.</p>` },
-    { title:'Destinataires, prestataires et transferts', body:`<p>Pour fournir le service, nous faisons appel à des prestataires techniques qui traitent des données pour notre compte : GitHub (hébergement du site), Cloudflare (hébergement des images, des vidéos, de la base de données et du service applicatif), Stripe (paiement en ligne des acomptes et factures), Resend (envoi des emails liés à vos demandes, devis et factures), Formspree (réception des messages envoyés par les formulaires du site : contact, collaboration, candidature partenaire, témoignage). Le paiement en plusieurs fois proposé lors du règlement passe par Klarna (via Stripe) ou Scalapay. Chacun ne reçoit que les données nécessaires à sa mission.</p><p>Certains de ces prestataires sont établis aux États-Unis : vos données peuvent donc être traitées en dehors de l'Union européenne. Pour connaître les garanties applicables, écrivez-nous à <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a>.</p>` },
+    { title:'Destinataires, prestataires et transferts', body:`<p>Pour fournir le service, nous faisons appel à des prestataires techniques qui traitent des données pour notre compte : GitHub (hébergement du site), Cloudflare (hébergement des images, des vidéos, de la base de données et du service applicatif), Stripe (paiement en ligne des acomptes et factures), Resend (envoi des emails liés à vos demandes, devis et factures), Formspree (réception des messages envoyés par les formulaires du site : contact, collaboration, candidature partenaire, témoignage)${TURNSTILE_SITEKEY ? ', Cloudflare Turnstile (vérification anti-robot à l\'envoi des formulaires : données techniques du navigateur et adresse IP, sans cookie publicitaire)' : ''}. Le paiement en plusieurs fois proposé lors du règlement passe par Klarna (via Stripe) ou Scalapay. Chacun ne reçoit que les données nécessaires à sa mission.</p><p>Certains de ces prestataires sont établis aux États-Unis : vos données peuvent donc être traitées en dehors de l'Union européenne. Pour connaître les garanties applicables, écrivez-nous à <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a>.</p>` },
     { title:'Droit à l\'image et preuve de votre accord', body:`<p>Avant d'utiliser une photographie sur laquelle vous apparaissez pour sa propre promotion, BUNKAIO demande votre <strong>autorisation expresse et séparée</strong> pour chacun de quatre usages : site internet et portfolio, réseaux sociaux, supports commerciaux et de communication, campagnes publicitaires numériques. Aucune case n'est pré-cochée ; refuser n'a aucune conséquence sur la prestation ni sur le prix. L'autorisation est donnée pour 5 ans à compter de la livraison des photographies, ou jusqu'à son retrait. Pour les mineurs, elle est donnée par un titulaire de l'autorité parentale ; pour les autres personnes photographiées (équipe, famille, modèles), chacune donne son propre choix par un lien individuel.</p><p><strong>Preuve conservée :</strong> nom du signataire, email, date et heure, devis et version des clauses acceptées, choix par usage, adresse IP, navigateur et empreinte numérique du document, ainsi qu'un exemplaire PDF figé du devis signé. Base légale : intérêt légitime de BUNKAIO à pouvoir prouver ce qui a été accepté (l'utilisation promotionnelle repose sur votre consentement). Durée : 5 ans après la fin de la relation (les factures : 10 ans). Ces données ne sont jamais revendues.</p><p><strong>Retrait :</strong> vous pouvez retirer une autorisation à tout moment, sans motif, sur <a href="/retrait-autorisation/">bunkaio.com/retrait-autorisation/</a> ou à <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a>. BUNKAIO cesse toute nouvelle utilisation et retire les publications en ligne sous 30 jours ; les supports déjà imprimés ou diffusés ne peuvent pas être rappelés, et les utilisations antérieures restent valables. Vous pouvez aussi saisir la CNIL (cnil.fr).</p>` },
     { title:'Vos droits', body:`<p>Conformément au RGPD et à la loi Informatique et Libertés, vous disposez d'un droit d'accès, de rectification, d'effacement, de limitation, d'opposition et de portabilité sur vos données.</p><p>Vous pouvez exercer ces droits à tout moment en écrivant à <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a>. Vous disposez également du droit d'introduire une réclamation auprès de la CNIL (<a href="https://www.cnil.fr" target="_blank" rel="noopener">www.cnil.fr</a>).</p>` },
     { title:'Hébergement et sécurité des données', body:`<p>Ce site est hébergé par GitHub Pages (GitHub, Inc.) ; les images, vidéos et services applicatifs (devis, comptes, mesure d'audience) sont hébergés par Cloudflare. Les échanges sont sécurisés (HTTPS). Aucune base de données client n'est publiquement accessible : les informations transmises via nos formulaires sont traitées de façon confidentielle par BUNKAIO.</p>` },
@@ -9338,7 +9386,7 @@ function renderPrivacyAccordion(){
     { title:'Data collected and purposes', body:`<p>We only collect the data you voluntarily provide: name, email, phone number and project details, via the contact form, the quote questionnaire, or your client/partner area.</p><p>This data is used exclusively to respond to your enquiries, prepare your quotes and manage your account. Your phone number may be used to notify you by SMS about your order (photos available, album access, session reminder); you can opt out at any time by writing to us. It is never sold, transferred or shared with third parties for commercial purposes.</p>` },
     { title:'Legal basis and retention period', body:`<p>Processing is based on the performance of the (pre-)contractual relationship (quote, service), on our legitimate interest in responding to your requests and, for invoicing, on our legal and accounting obligations.</p><p>Retention periods:</p><ul><li><strong>Prospects</strong> (form messages, quotes with no follow-up): 3 years after the last contact.</li><li><strong>Clients</strong> (account, exchanges, accepted quotes): for the duration of the business relationship, then 5 years in archive, the general limitation period under French law (art. 2224 of the Civil Code and L110-4 of the Commercial Code).</li><li><strong>Invoices and accounting records</strong>: 10 years from the close of the financial year (art. L123-22 of the Commercial Code).</li></ul><p>After these periods, data is deleted or anonymised.</p>` },
     { title:'Cookies and audience measurement', body:`<p>This site sets <strong>no cookies</strong> and uses no advertising or third-party trackers. We measure audience <strong>anonymously and without cookies</strong>, with a tool built and hosted by us (on our own Cloudflare account): page views, referring domain, campaign label of the landing link (“utm” parameters, e.g. to know which post brought the visit), device type and clicks on the main buttons. Your IP address and browser are not stored: at the time of the visit they are only used to compute a code that changes every day and cannot recognise you from one day to the next; this pseudonymised code is saved with the event. Data is deleted after 400 days (about 13 months) and is not sent to any third-party measurement service.</p><p>This measurement honours your browser's "Do Not Track" setting and the GPC signal. You can also opt out on this device: <button type="button" class="pt-link" onclick="toggleTracking()">Turn measurement on / off</button> <span id="trackToggleState" style="font-size:12px;color:var(--grey)"></span></p><p>The site also uses your device's local storage, without tracking: keeping you signed in to your client or partner area (until you sign out) and remembering your opt-out from measurement. Details are in the <a href="/politique-cookies/" data-nav="legal:cookies">cookie policy</a>.</p>` },
-    { title:'Recipients, processors and transfers', body:`<p>To provide the service we use technical providers that process data on our behalf: GitHub (site hosting), Cloudflare (hosting of images, videos, the database and the application service), Stripe (online payment of deposits and invoices), Resend (sending emails about your requests, quotes and invoices), Formspree (receiving messages sent through the site's forms: contact, collaboration, partner application, testimonial). Payment in instalments offered at checkout goes through Klarna (via Stripe) or Scalapay. Each receives only the data needed for its task.</p><p>Some of these providers are based in the United States, so your data may be processed outside the European Union. To learn about the safeguards that apply, write to us at <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a>.</p>` },
+    { title:'Recipients, processors and transfers', body:`<p>To provide the service we use technical providers that process data on our behalf: GitHub (site hosting), Cloudflare (hosting of images, videos, the database and the application service), Stripe (online payment of deposits and invoices), Resend (sending emails about your requests, quotes and invoices), Formspree (receiving messages sent through the site's forms: contact, collaboration, partner application, testimonial)${TURNSTILE_SITEKEY ? ', Cloudflare Turnstile (anti-bot check when forms are sent: technical browser data and IP address, no advertising cookie)' : ''}. Payment in instalments offered at checkout goes through Klarna (via Stripe) or Scalapay. Each receives only the data needed for its task.</p><p>Some of these providers are based in the United States, so your data may be processed outside the European Union. To learn about the safeguards that apply, write to us at <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a>.</p>` },
     { title:'Image rights and proof of your consent', body:`<p>Before using a photograph in which you appear for its own promotion, BUNKAIO asks for your <strong>express, separate authorisation</strong> for each of four uses: website and portfolio, social media, commercial and communication materials, digital advertising campaigns. Nothing is pre-ticked; refusing has no effect on the service or the price. The authorisation lasts 5 years from delivery of the photographs, or until withdrawn. For minors it is given by a holder of parental authority; other people photographed (team, family, models) each give their own choice through an individual link.</p><p><strong>Proof kept:</strong> signatory name, email, date and time, quote and version of the clauses accepted, choice for each use, IP address, browser and a digital fingerprint of the document, plus a frozen PDF copy of the signed quote. Legal basis: BUNKAIO's legitimate interest in proving what was accepted (promotional use relies on your consent). Retention: 5 years after the end of the relationship (invoices: 10 years). This data is never sold.</p><p><strong>Withdrawal:</strong> you may withdraw an authorisation at any time, without giving a reason, at <a href="/retrait-autorisation/">bunkaio.com/retrait-autorisation/</a> or at <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a>. BUNKAIO stops any new use and removes online publications within 30 days; materials already printed or distributed cannot be recalled, and earlier uses remain valid. You may also contact the CNIL (cnil.fr).</p>` },
     { title:'Your rights', body:`<p>In accordance with the GDPR and French data protection law, you have the right to access, rectify, erase, restrict, object to, and port your data.</p><p>You may exercise these rights at any time by writing to <a href="mailto:contact@bunkaio.com">contact@bunkaio.com</a>. You also have the right to lodge a complaint with the CNIL (<a href="https://www.cnil.fr" target="_blank" rel="noopener">www.cnil.fr</a>).</p>` },
     { title:'Hosting and data security', body:`<p>This site is hosted on GitHub Pages (GitHub, Inc.); images, videos and application services (quotes, accounts, audience measurement) are hosted by Cloudflare. All exchanges are secured (HTTPS). No client database is publicly accessible: information submitted via our forms is handled confidentially by BUNKAIO.</p>` },
