@@ -8892,3 +8892,19 @@ html body .footer-cta-row .hero-start { justify-content: center !important; }
 mark.bk-key { -webkit-box-decoration-break: slice; box-decoration-break: slice; margin: 0; display: inline; position: static; }
 .fxl li:has(mark.bk-key) { filter: none !important; transform: none; }
 .svcp-list li mark.bk-key, .fx-info li mark.bk-key { white-space: normal; }
+
+/* Séquence « Le studio » : bloc centré dans la hauteur visible, sous le menu (6 nov. 2026, demande de la propriétaire) — les marges haute et basse sont équilibrées (avant : le haut touchait le menu et un grand vide restait en bas), le slogan s'adapte à la hauteur d'écran pour que tout tienne, sur ordinateur comme sur téléphone. */
+#missionVideoWrap .mission-video-content { padding-top: calc(var(--nav-h, 73px) + 18px) !important; padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 20px) !important; justify-content: safe center !important; }
+#missionVideoWrap .mission-text { font-size: clamp(26px, min(5vw, 5svh), 76px) !important; }
+@media (max-width: 760px) {
+  #missionVideoWrap .mission-text { font-size: clamp(24px, min(9.4vw, 4.4svh), 42px) !important; line-height: 1.02 !important; }
+  #missionVideoWrap .mission-kicker { margin-bottom: clamp(8px, 1.8svh, 16px) !important; }
+  #missionVideoWrap .mission-services { margin-top: clamp(10px, 2svh, 18px) !important; }
+}
+@media (min-width: 761px) and (max-height: 960px) {
+  #missionVideoWrap .ms-prev, #missionVideoWrap .ms-im { min-height: 0 !important; }
+  #missionVideoWrap .ms-im { height: clamp(110px, 15svh, 160px); }
+  #missionVideoWrap .mission-text { font-size: clamp(26px, min(5vw, 4.2svh), 76px) !important; }
+  #missionVideoWrap .mission-kicker { margin-bottom: 8px !important; }
+  #missionVideoWrap .mission-services { margin-top: 12px !important; }
+}

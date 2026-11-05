@@ -2514,7 +2514,7 @@ function missionSelect(i, fromAuto){
   const onB = sel.children[msIndex];
   if (onB && sel.scrollWidth > sel.clientWidth + 2) sel.scrollTo({ left: onB.offsetLeft - (sel.clientWidth - onB.offsetWidth) / 2, behavior: REDUCED_MOTION ? 'auto' : 'smooth' });
   /* Hauteur de la carte figée sur la plus haute des prestations : sinon le lien « Parcourir… » et tout ce qui est dessous saute à chaque diapositive. */
-  if (!prev.dataset.eq && prev.offsetHeight > 0 && innerHeight >= 700) {
+  if (!prev.dataset.eq && prev.offsetHeight > 0 && innerHeight >= 800) {
     prev.dataset.eq = '1'; prev.style.minHeight = '0'; let mx = 0;
     CATS.forEach(k => { prev.innerHTML = missionPreviewHTML(k); mx = Math.max(mx, prev.offsetHeight); });
     prev.style.minHeight = mx + 'px';
