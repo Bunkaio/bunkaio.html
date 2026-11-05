@@ -7938,9 +7938,16 @@ function renderAccMoodboards(){
   else renderMbList(el);
 }
 
-function openMbWizard(editId){ mbActiveId = editId || null; mbView = 'wizard'; renderAccMoodboards(); }
-function openMbDetail(id){ mbActiveId = id; mbView = 'detail'; renderAccMoodboards(); }
-function backToMbList(){ mbView = 'list'; mbActiveId = null; renderAccMoodboards(); }
+/* Après chaque changement d'écran du moodboard (formulaire, fiche, liste), on ramène le haut de la zone sous le menu : sinon, après « Enregistrer » tout en bas d'un long formulaire, la page restait au bas de l'écran et le moodboard enregistré n'était pas visible. */
+let mbFlashMsg = '';
+function mbFocus(){
+  const el = document.getElementById('accMoodboardsContent'); if (!el) return;
+  const go = () => { const navH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) || 74; bkSetScroll(el.getBoundingClientRect().top + bkScrollY() - navH - 90); };
+  go(); requestAnimationFrame(go); setTimeout(go, 250);
+}
+function openMbWizard(editId){ mbActiveId = editId || null; mbView = 'wizard'; renderAccMoodboards(); mbFocus(); }
+function openMbDetail(id){ mbActiveId = id; mbView = 'detail'; renderAccMoodboards(); mbFocus(); }
+function backToMbList(){ mbView = 'list'; mbActiveId = null; renderAccMoodboards(); mbFocus(); }
 
 /* Écrit le tableau complet des moodboards via /account-update, même
    ré-authentification par USER_CODE que saveAccInfo(). Le front garde
@@ -8254,7 +8261,9 @@ function saveMbDraft(){
   saveMoodboards(list, () => {
     mbActiveId = board.id;
     mbView = 'detail';
+    mbFlashMsg = editing ? t({fr:'Moodboard modifié et enregistré dans votre espace.', en:'Moodboard updated and saved in your space.'}) : t({fr:'Moodboard enregistré dans votre espace. BUNKAIO le retrouve directement : vous pouvez le modifier à tout moment.', en:'Moodboard saved in your space. BUNKAIO sees it right away: you can edit it at any time.'});
     renderAccMoodboards();
+    mbFocus();
   }, () => {
     if (btn) btn.disabled = false;
     err.textContent = I18N[LANG]['mb-save-error'];
@@ -8264,7 +8273,8 @@ function saveMbDraft(){
 
 function renderMbDetail(el){
   const mb = (USER.moodboards || []).find(m => m.id === mbActiveId);
-  if (!mb) { mbView = 'list'; renderMbList(el); return; }
+  if (!mb) { mbView = 'list'; mbFlashMsg = ''; renderMbList(el); return; }
+  const flash = mbFlashMsg; mbFlashMsg = '';
 
   const direction = MB_DIRECTIONS.find(d => d.id === mb.direction);
   const palette = MB_PALETTES.find(p => p.id === mb.palette);
@@ -8308,6 +8318,7 @@ function renderMbDetail(el){
   el.innerHTML = `
     <div class="acc-info-card">
       <button type="button" class="mb-back-link" onclick="backToMbList()">${I18N[LANG]['mb-back']}</button>
+      ${flash ? `<div class="mb-flash" role="status">${escHtml(flash)}</div>` : ''}
       <div class="mb-detail-head">
         <div>
           <div class="mb-detail-title">${escHtml(mb.titre)}</div>
@@ -8615,6 +8626,9 @@ function saveAccInfo(){
     renderAccInfoView();
     toggleAccInfoEdit(false);
     document.getElementById('accInfoSuccess').style.display = 'block';
+    /* Le bouton « Enregistrer » est en bas du formulaire : on ramène la confirmation à l'écran (sinon la page restait en bas, sur une zone vide). */
+    const focus = () => { const e = document.getElementById('accInfoSuccess'); if (!e) return; const navH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) || 74; bkSetScroll(e.getBoundingClientRect().top + bkScrollY() - navH - 90); };
+    focus(); requestAnimationFrame(focus); setTimeout(focus, 250);
   }).catch(() => {
     if (btn) btn.disabled = false;
     err.textContent = 'Erreur réseau. Écrivez à contact@bunkaio.com';
