@@ -6108,8 +6108,17 @@ function renderPortfolioV2(){
 function pfxGo(e, id){
   e.preventDefault();
   const el = document.getElementById('serie-' + id); if (!el) return false;
-  const top = el.getBoundingClientRect().top + window.scrollY - ((parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) || 64) + 16);
-  window.scrollTo({ top, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+  /* Les photos des séries au-dessus se chargent en différé : leur hauteur change pendant le défilement et la page atterrissait dans un vide avant la série visée. On charge d'abord ces photos, on saute directement (sans défilement animé) puis on recale la position tant que la page bouge. */
+  try { document.querySelectorAll('#pfxChapters img[loading="lazy"], .pfx-chapters img[loading="lazy"]').forEach(im => { if (im.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING || el.contains(im)) im.loading = 'eager'; }); } catch (x) {}
+  const off = () => (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) || 64) + 16;
+  const target = () => el.getBoundingClientRect().top + bkScrollY() - off();
+  bkSetScroll(target());
+  let touched = false; const stop = () => { touched = true; };
+  ['wheel', 'touchstart', 'keydown'].forEach(ev => addEventListener(ev, stop, { once: true, passive: true }));
+  const t0 = Date.now();
+  const fix = () => { if (touched || Date.now() - t0 > 3500 || currentView !== 'portfolio') return; const d = target() - bkScrollY(); if (Math.abs(d) > 4) bkSetScroll(target()); setTimeout(fix, 150); };
+  setTimeout(fix, 120);
+  if (window.track) track('cta_click', 'portfolio_serie_' + id);
   return false;
 }
 /* Aperçu au survol du sommaire (souris uniquement) : la première image de la série suit le curseur. */
