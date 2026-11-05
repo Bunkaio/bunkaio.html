@@ -9114,3 +9114,12 @@ html[data-acct="partner"] body[data-view="account"] .bk-back * { color: #f3eee2 
 @keyframes lkCarBar { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 .lk-car:hover .lk-car-bar i { animation-play-state: paused; }
 @media (prefers-reduced-motion: reduce) { .lk-car .lk-full-ph img { transition: none; } .lk-car-bar { display: none; } }
+
+/* Articles de conseils : une seule taille de texte de lecture partout (6 nov. 2026, demande de la propriétaire) — paragraphes, listes et réponses de la FAQ
+   avaient 13, 15 ou 16 px selon le bloc. Mobile 15 px, ordinateur 16 px ; listes alignées à gauche (la justification creusait de grands espaces autour des mots en gras). */
+#view-article :is(.art-text, .art-body) :is(p, li, dd), #view-article .accordion-content :is(p, li) { font-size: 15px !important; line-height: 1.75 !important; }
+#view-article :is(.art-text, .art-body) :is(p, li) :is(strong, b, a, mark, em), #view-article .accordion-content :is(p, li) :is(strong, b, a, mark, em) { font-size: inherit !important; line-height: inherit !important; }
+#view-article :is(.art-text, .art-body, .accordion-content) li { text-align: left !important; hyphens: manual !important; }
+@media (min-width: 761px) {
+  #view-article :is(.art-text, .art-body) :is(p, li, dd), #view-article .accordion-content :is(p, li) { font-size: 16px !important; line-height: 1.85 !important; }
+}
