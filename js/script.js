@@ -3989,7 +3989,7 @@ function renderServicePage(catId){
   /* Photos plein écran entre les sections (5 nov. 2026) : photos du Portfolio de la prestation, texte posé dessus. */
   const bcats = [catId, 'photo-part', 'mode', 'commercial', 'corporate', 'event'].filter((x, i, a) => a.indexOf(x) === i);
   lkPhotoBanner('svcB1', bcats, { index: 1, kick: { fr: t(c.name) + ' · France', en: t(c.name) + ' · France' }, title: { fr: 'Une direction artistique, du premier échange à la livraison.', en: 'Art direction, from the first conversation to delivery.' } });
-  lkPhotoBanner('svcB2', bcats, { index: 3, kick: { fr: 'Un interlocuteur unique', en: 'One point of contact' }, title: { fr: 'Votre projet suivi de A à Z, sans friction.', en: 'Your project followed from A to Z, effortlessly.' } });
+  lkSeriesCarousel('svcB2', catId, bcats, { index: 3, kick: { fr: 'Un interlocuteur unique', en: 'One point of contact' }, title: { fr: 'Votre projet suivi de A à Z, sans friction.', en: 'Your project followed from A to Z, effortlessly.' } });
   lkPhotoBanner('svcB3', bcats, { index: 5, kick: { fr: 'Livraison en HD', en: 'HD delivery' }, title: { fr: 'Des images prêtes à l\'emploi, partout.', en: 'Images ready to use, everywhere.' } });
   serviceBgSync(catId);
 }
@@ -4251,7 +4251,7 @@ function renderBrandingPage(){
   /* Photos plein écran entre les sections (5 nov. 2026) : photos du Portfolio, texte posé dessus. */
   const bcats = ['corporate', 'photo-part', 'commercial', 'mode', 'event'];
   lkPhotoBanner('svcB1', bcats, { index: 1, kick: { fr: 'Personal Branding · France', en: 'Personal Branding · France' }, title: { fr: 'Votre activité, votre décor, votre image.', en: 'Your business, your set, your image.' } });
-  lkPhotoBanner('svcB2', bcats, { index: 3, kick: { fr: 'Un interlocuteur unique', en: 'One point of contact' }, title: { fr: 'Un shooting pensé pour votre métier.', en: 'A shoot designed around your trade.' } });
+  lkSeriesCarousel('svcB2', 'corporate', bcats, { index: 3, kick: { fr: 'Un interlocuteur unique', en: 'One point of contact' }, title: { fr: 'Un shooting pensé pour votre métier.', en: 'A shoot designed around your trade.' } });
   lkPhotoBanner('svcB3', bcats, { index: 5, kick: { fr: 'Livraison en HD', en: 'HD delivery' }, title: { fr: 'Des images prêtes à l\'emploi, partout.', en: 'Images ready to use, everywhere.' } });
   serviceBgSync('branding');
   /* Photos in situ (admin média) : seules celles qui existent sont affichées ; aucune → la rangée reste masquée. */
@@ -5961,6 +5961,66 @@ function lkPhotoBanner(boxId, cats, o){
     });
   };
   next(0);
+}
+/* Carrousel d'une série du Portfolio (6 nov. 2026, demande de la propriétaire) — remplace la photo fixe « Un interlocuteur unique » des pages prestation.
+   Série choisie : la première série publiée (admin > Portfolio — Séries, dans l'ordre de la liste) de l'univers de la page, sinon la première série
+   qui contient des photos de cet univers, sinon les photos du Portfolio de la prestation (comme avant). Fondu enchaîné (opacité seule), lecture auto
+   toutes les 4,5 s à l'écran, pause au survol / hors écran / onglet caché, glisser sur mobile, flèches, compteur, clic = visionneuse. */
+function lkSeriesCarousel(boxId, catId, cats, o){
+  const box = document.getElementById(boxId); if (!box) return;
+  const gen = (box._g = (box._g || 0) + 1);
+  pfxLoadSeries().then(() => {
+    if (gen !== box._g) return;
+    const plan = pfxPlan().filter(c => c.kind === 'serie');
+    const s = plan.find(c => c.cat === catId) || plan.find(c => (c.nums || []).some(n => String(n).startsWith(catId + ':')));
+    if (!s) { lkPhotoBanner(boxId, cats, o); return; }
+    pfxSeriesPhotos(s).then(list => {
+      if (gen !== box._g) return;
+      if (!list || list.length < 2) { lkPhotoBanner(boxId, cats, o); return; }
+      const photos = list.slice(0, 12), n = photos.length;
+      box._reel = { title: s.title, cat: s.cat, photos, label: s.client || '' };
+      const two = k => String(k + 1).padStart(2, '0');
+      box.innerHTML = `<div class="lk-full lk-car" data-i="0">
+        <button type="button" class="lk-full-ph" data-cursor="${escHtml(t({fr:'Voir', en:'View'}))}" onclick="pfxOpen(document.getElementById('${boxId}')._reel, +this.parentNode.dataset.i)" aria-label="${escHtml(t({fr:'Agrandir la photo', en:'Enlarge the photo'}))}">
+          ${photos.map((u, k) => `<img ${k ? 'loading="lazy" ' : ''}decoding="async" src="${u}" alt="${escHtml(s.title + ' — ' + (k + 1) + '/' + n)}" class="${k ? '' : 'on'}">`).join('')}
+        </button>
+        <div class="lk-car-ui"><button type="button" class="lk-car-b" aria-label="${escHtml(t({fr:'Photo précédente', en:'Previous photo'}))}" onclick="lkCarGo('${boxId}',-1)">‹</button><span class="lk-car-n"><b>01</b> / ${two(n - 1)}</span><button type="button" class="lk-car-b" aria-label="${escHtml(t({fr:'Photo suivante', en:'Next photo'}))}" onclick="lkCarGo('${boxId}',1)">›</button></div>
+        <div class="lk-car-bar"><i></i></div>
+        <div class="lk-cap-box"><span class="lk-cap-k">${t(o.kick)} · ${escHtml(s.title)}</span>
+          <p class="lk-cap-t">${t(o.title)}</p>
+          <a class="lk-cap-l" href="/portfolio/#serie-${escHtml(s.id)}" onclick="return lkGoSerie(event,'${escHtml(s.id)}')">${t({fr:'Voir la série', en:'View the series'})}</a></div>
+      </div>`;
+      box.hidden = false;
+      const car = box.querySelector('.lk-car');
+      let timer = 0, vis = false, hover = false, sx = null;
+      const play = () => { clearTimeout(timer); if (REDUCED_MOTION || !vis || hover || document.hidden || !car.isConnected) return; timer = setTimeout(() => { lkCarGo(boxId, 1, true); play(); }, 4500); };
+      box._play = play;
+      if ('IntersectionObserver' in window) new IntersectionObserver(es => { vis = es[0].isIntersecting; play(); }, { threshold: .35 }).observe(car);
+      car.addEventListener('mouseenter', () => { hover = true; clearTimeout(timer); });
+      car.addEventListener('mouseleave', () => { hover = false; play(); });
+      document.addEventListener('visibilitychange', play);
+      car.addEventListener('touchstart', e => { sx = e.touches[0].clientX; }, { passive: true });
+      car.addEventListener('touchend', e => { if (sx === null) return; const dx = e.changedTouches[0].clientX - sx; sx = null; if (Math.abs(dx) > 40) { lkCarGo(boxId, dx < 0 ? 1 : -1); } }, { passive: true });
+    });
+  });
+}
+function lkCarGo(boxId, d, auto){
+  const box = document.getElementById(boxId), car = box && box.querySelector('.lk-car'); if (!car) return;
+  const ims = car.querySelectorAll('.lk-full-ph img'), n = ims.length; if (!n) return;
+  const i = ((+car.dataset.i || 0) + d + n) % n;
+  car.dataset.i = i;
+  ims.forEach((im, k) => im.classList.toggle('on', k === i));
+  const nx = ims[(i + 1) % n]; if (nx && nx.loading === 'lazy') nx.loading = 'eager';   /* précharge la suivante */
+  const c = car.querySelector('.lk-car-n b'); if (c) c.textContent = String(i + 1).padStart(2, '0');
+  const bar = car.querySelector('.lk-car-bar i'); if (bar) { bar.style.animation = 'none'; void bar.offsetWidth; bar.style.animation = ''; }
+  if (!auto && box._play) box._play();
+}
+function lkGoSerie(e, id){
+  if (e) e.preventDefault();
+  goView('portfolio');
+  let k = 0; const tryGo = () => { if (document.getElementById('serie-' + id)) pfxGo({ preventDefault(){} }, id); else if (++k < 20) setTimeout(tryGo, 250); };
+  setTimeout(tryGo, 400);
+  return false;
 }
 /* Pleine largeur d'écran à l'intérieur d'une colonne : décale l'élément jusqu'au bord gauche de la fenêtre (recalculé au redimensionnement). */
 function lkBleed(box){
