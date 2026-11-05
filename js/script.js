@@ -2293,6 +2293,8 @@ function quizNext(){
 }
 function pickTier(id, card){
   S.tier = id;
+  /* Le créneau choisi dans l'agenda vaut pour une prestation et une formule précises : si le client en change, il n'est plus valable (sinon il restait envoyé avec une autre formule, ou avec un abonnement). */
+  if (S.slot && (S.slot.cat !== S.cat || (S.slot.tier && S.slot.tier !== id) || id === 'sub' || isSpecialTier())) { S.slot = null; try { quizPresetBar(); quizSlotNote(); } catch (e) {} }
   document.querySelectorAll('#tierList .tier-card').forEach(x => { x.classList.toggle('selected', x === card); x.classList.toggle('open', x === card); });
   renderRecap(); renderOptions(); updateQuizNext();
   quizBgPhoto();
@@ -3363,6 +3365,8 @@ function submitQuiz(e){
   });
 
   try { sendSlotHold(); } catch (e) {}
+  /* La demande est partie : le créneau et la case « flexible » ne doivent pas suivre une éventuelle nouvelle demande. */
+  setTimeout(() => { S.slot = null; S.flex = false; try { quizPresetBar(); const cb = document.getElementById('quizFlexCb'); if (cb) cb.checked = false; } catch (e) {} }, 300);
   if (window.track) track('quiz_submit', cat.name.fr + (S.tier === 'lanc' ? ' · Lancement' : ''));
   const mailP = postFormspree({
       _subject: 'DEMANDE DE DEVIS CLIENT — ' + S.name,
@@ -9989,7 +9993,7 @@ function renderQuizCal(){
   const box = document.getElementById('quizCalBox'), host = document.getElementById('quizCal');
   if (!box || !host) return;
   const ok = S.cat && BKC_DUR[S.cat] && S.tier && S.tier !== 'sub';
-  box.hidden = !ok; if (!ok) return;
+  box.hidden = !ok; if (!ok) { if (S.slot) { S.slot = null; quizPresetBar(); } return; }
   { const cb = document.getElementById('quizFlexCb'); if (cb) cb.checked = !!S.flex && !S.slot; box.classList.toggle('is-flex', !!S.flex && !S.slot); }
   if (S.slot && (S.slot.cat !== S.cat || S.slot.tier !== S.tier)) S.slot = null;
   renderAvailCal(host, { embed: true, cat: S.cat, tier: S.tier, slot: S.slot || null, onPick: slot => { S.slot = slot; if (S.flex) quizFlexToggle(false); quizSlotNote(); } });
@@ -10007,7 +10011,7 @@ function quizFlexToggle(on){
 function quizPresetBar(){
   const b = document.getElementById('quizPreset'); if (!b) return;
   const sl = S.slot;
-  if (!sl || !sl.cat) { b.hidden = true; b.innerHTML = ''; return; }
+  if (!sl || !sl.cat || currentStep === 1 || currentStep === 6 || (S.cat && sl.cat !== S.cat)) { b.hidden = true; b.innerHTML = ''; return; }
   const tn = sl.tier ? ((bkcTiers(sl.cat).find(x => x.id === sl.tier) || {}).name || '') : '';
   b.style.setProperty('--c', BKC_COLORS[sl.cat] || '#111');
   b.innerHTML = `<span class="qp-k">${t({fr:'Votre séance', en:'Your session'})}</span>
