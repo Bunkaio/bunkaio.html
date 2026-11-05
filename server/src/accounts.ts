@@ -48,6 +48,8 @@ export async function putAccount(env: Env, record: AccountRecord): Promise<void>
   await env.ACCOUNTS_KV.put(accountKey(record.type, record.email), JSON.stringify(record), {
     metadata: { type: record.type, email: record.email, nom: record.nom ?? '', derniereActivite: record.derniereActivite ?? '' },
   });
+  // Le calendrier des disponibilités (séances) se recalcule à la prochaine visite.
+  await env.ACCOUNTS_KV.delete('cal:busy:v1');
   // Les places du programme partenaires se recalculent à la prochaine visite.
   if (record.type === 'partner') await invalidatePartnerSpots(env);
 }

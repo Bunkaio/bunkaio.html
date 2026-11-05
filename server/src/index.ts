@@ -4,6 +4,7 @@ import { AR_OPTIONS, cleanConfig as cleanAutoReplyConfig, defaultConfig, getConf
 import type { ARFacts } from './autoreply';
 import { goClicks, handleGo, listGoLinks, saveGoLink } from './golinks';
 import { getSeries, saveSeries } from './series';
+import { computeBusy, createHold, getCalConfig, getHolds, saveCalConfig, setHoldStatus, testIcal } from './availability';
 import type Stripe from 'stripe';
 import { adminAccountView, getAccount, listAccounts, putAccount, sanitizeAccount, upsertAccountFromAdmin, verifyLogin, LoginThrottled } from './accounts';
 import { handleCollect, handleStats, purgeOldAnalytics } from './analytics';
@@ -891,6 +892,23 @@ async function handleAdminDashboard(request: Request, env: Env, headers: Record<
     const details = cleanDetails({ source: 'Ajout manuel (admin)', telephone: body.phone, site: body.site, secteur: body.sector, projet: body.note });
     await storeMessage(env, { kind: partner ? 'partner' : 'contact', name, email, lang: normalizeLang(body.lang), details });
     return jsonResponse({ ok: true }, 200, headers);
+  }
+  if (path === '/admin/calendar' && request.method === 'GET') {
+    const today = new Date().toISOString().slice(0, 10);
+    const busy = await computeBusy(env, today, '2027-12-31');
+    return jsonResponse({ ok: true, config: await getCalConfig(env), holds: await getHolds(env), icsErrors: busy.icsErrors }, 200, headers);
+  }
+  if (path === '/admin/calendar' && request.method === 'POST') {
+    // Calendrier des disponibilités : réglages (liens iCal, blocages, règles), test d'un lien iCal, confirmation / libération d'une option.
+    const body = (await request.json().catch(() => ({}))) as Record<string, unknown>;
+    if (body.action === 'save') return jsonResponse({ ok: true, config: await saveCalConfig(env, body.config) }, 200, headers);
+    if (body.action === 'test') return jsonResponse(await testIcal(typeof body.url === 'string' ? body.url : ''), 200, headers);
+    if (body.action === 'hold') {
+      const st = body.status === 'confirmed' || body.status === 'released' || body.status === 'option' ? body.status : null;
+      const h = st && typeof body.id === 'string' ? await setHoldStatus(env, body.id, st, typeof body.hours === 'number' ? body.hours : undefined) : null;
+      return h ? jsonResponse({ ok: true, hold: h }, 200, headers) : jsonResponse({ ok: false, error: 'option_introuvable' }, 404, headers);
+    }
+    return jsonResponse({ ok: false, error: 'unknown_action' }, 400, headers);
   }
   if (path === '/admin/series' && request.method === 'GET') {
     return jsonResponse({ ok: true, series: await getSeries(env) }, 200, headers);
@@ -1824,6 +1842,21 @@ export default {
       // Public : séries du Portfolio (titres, univers, numéros de photos — aucune donnée personnelle), cache navigateur 1 minute.
       const series = (await getSeries(env)).filter(x => !x.hidden);
       return new Response(JSON.stringify({ ok: true, series }), { status: 200, headers: { ...headers, 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=60' } });
+    }
+    if (url.pathname === '/availability' && request.method === 'GET') {
+      // Public : plages occupées anonymes par jour (aucun nom ni titre) + règles de réservation, cache 1 minute.
+      const q = url.searchParams, re = /^\d{4}-\d{2}-\d{2}$/;
+      const from = re.test(q.get('from') ?? '') ? q.get('from')! : new Date().toISOString().slice(0, 10);
+      const to = re.test(q.get('to') ?? '') ? q.get('to')! : '2027-12-31';
+      const { days, rules } = await computeBusy(env, from, to);
+      return new Response(JSON.stringify({ ok: true, days, rules }), { status: 200, headers: { ...headers, 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=60' } });
+    }
+    if (url.pathname === '/availability/hold' && request.method === 'POST') {
+      // Pré-réservation d'un créneau par un prospect (option de 48 h, à confirmer dans l'admin).
+      const body = (await request.json().catch(() => ({}))) as Record<string, unknown>;
+      const r = await createHold(env, body);
+      if (r.ok) ctx.waitUntil(notifyAdmin(env, { title: 'Créneau pré-réservé', body: `${r.hold.name} · ${r.hold.date} ${r.hold.start}–${r.hold.end} · ${r.hold.label ?? r.hold.cat}`, url: '/admin/#agenda' }).catch(() => {}));
+      return jsonResponse(r, r.ok ? 200 : 409, headers);
     }
     if (url.pathname === '/partner-spots' && request.method === 'GET') {
       // Public : places restantes par univers (aucune donnée personnelle), mises en cache 1 minute côté navigateur.

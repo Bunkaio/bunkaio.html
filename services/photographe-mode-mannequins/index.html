@@ -35,7 +35,7 @@
 <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
 <link rel="preload" href="fonts/inter-tight-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <script>/* Image d'attente des vidéos de l'accueil : une vraie photo HD du Portfolio BUNKAIO (et non une capture de la vidéo), posée derrière chaque vidéo via --vid-a / --vid-b ; accueil seulement. */(function(){var p=location.pathname;if(p!=="/"&&p!=="/en/"&&p!=="/index.html")return;var B="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/portfolio/",C=["mode/1","photo-part/1","corporate/1","commercial/1","event/1","mode/2","photo-part/2","corporate/2","commercial/2","event/2"],got=[],k=0,r=document.documentElement;function next(){if(k>=C.length||got.length>=2)return;var u=B+C[k++]+".webp",i=new Image();i.onload=function(){got.push(u);r.style.setProperty(got.length===1?"--vid-a":"--vid-b","url("+u+")");next();};i.onerror=next;i.src=u;}next();})();</script>
-<link rel="stylesheet" href="css/style.min.css?v=cff66f60">
+<link rel="stylesheet" href="css/style.min.css?v=030f5ec2">
 
 <script type="application/ld+json">
 {
@@ -750,6 +750,11 @@
       <div class="opt-section-label stagger" style="animation-delay:0.36s" id="optLabel" data-lang="options">Options supplémentaires</div>
       <div class="opt-list" id="optList"></div>
       <div id="commBox"></div>
+      <div class="q-cal-box" id="quizCalBox" hidden>
+        <div class="opt-section-label" data-lang="q-cal-label">Votre date</div>
+        <p class="q-cal-sub" data-lang="q-cal-sub">Facultatif : choisissez un créneau libre, il vous sera réservé 48 h à l'envoi de votre demande.</p>
+        <div id="quizCal"></div>
+      </div>
       <div class="btn-row stagger" style="animation-delay:0.6s">
         <button class="btn btn-ghost" onclick="quizStep(3)"><span data-lang="back">← Retour</span></button>
         <button class="btn btn-ghost" onclick="goView('home')"><span data-lang="quiz-home">Accueil</span></button>
@@ -775,6 +780,7 @@
       </div>
       <div class="fgroup stagger" style="animation-delay:0.44s">
         <label data-lang="delay-label">Délai souhaité *</label>
+        <p class="q-slot-note" id="quizSlotNote" hidden></p>
         <select id="qDelay" onchange="checkQuizForm()">
           <option value="" data-lang="delay-opt-select">Sélectionnez…</option>
           <option value="urgent" data-lang="delay-opt-urgent">Urgent (moins de 2 semaines)</option>
@@ -1306,6 +1312,13 @@
 <!-- CONSEILS PHOTO : hub et articles (contenu rendu par renderAdvicePage / renderArticlePage) -->
 <div class="view" id="view-advice">
   <div class="services-page service-page"><div id="advicePageContent"><!--snap--><!--/snap--></div></div>
+</div>
+<div class="view" id="view-avail">
+  <div class="services-page service-page avail-page">
+    <h2 data-pageh1 class="page-title" data-lang="avail-title">Disponibilités</h2>
+    <p class="page-sub" data-lang="avail-sub">Choisissez votre séance : les jours et horaires libres s'affichent en un coup d'œil, dans la couleur de la prestation. Le créneau choisi vous est réservé 48 h, le temps de valider votre devis.</p>
+    <div id="availCal" class="bkc-host"></div>
+  </div>
 </div>
 <div class="view" id="view-discover">
   <div class="services-page service-page"><div id="discoverPageContent"><!--snap--><!--/snap--></div></div>
@@ -2288,8 +2301,8 @@
 <script src="js/analytics.js?v=c27a86ca"></script>
 <script src="config/articles.js?v=09d246a9"></script>
 <script src="config/articles.en.js?v=d5061d9b"></script>
-<script src="config/routes.js?v=f47dd51d"></script>
+<script src="config/routes.js?v=09d40cd4"></script>
 <script src="config/media.js?v=c88496e4"></script>
-<script src="js/script.min.js?v=cf355d57"></script>
+<script src="js/script.min.js?v=609575ea"></script>
 </body>
 </html>

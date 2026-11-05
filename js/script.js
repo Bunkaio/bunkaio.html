@@ -257,7 +257,7 @@ const I18N = {
     'home-btn':'Retour à l\'accueil','see-portfolio':'Voir tout le portfolio',
     'pf-cta-title':'Prêt à donner vie à votre projet&nbsp;?','pf-cta-sub':'Chaque projet commence par une proposition personnalisée — simple, rapide, sans engagement.','pf-cta-btn':'Recevoir mon devis personnalisé','footer-cta-headline':'Un projet en tête&nbsp;?',
     'aria-next':'Suivant','aria-prev':'Précédent','aria-back':'Retour','aria-menu':'Menu','aria-home':'Accueil',
-    'ms-all':'Parcourir toutes les prestations','svc-reserve':'Je réserve ma séance','studio-reserve':'Je réserve ma séance en ligne','svc-discover':'Découvrir chaque prestation','ft-discover':'Découvrir chaque prestation','scroll-hint':'Scroll','services-title':'Prestations & tarifs photo','services-sub':'Photographe professionnel à Montpellier et Toulouse : des images haut de gamme, en HD, pour mettre en valeur votre projet. Nos prestations et leurs tarifs, par univers. Déplacement partout en France sur devis.',
+    'ms-all':'Parcourir toutes les prestations','avail-title':'Disponibilités','avail-sub':'Choisissez votre séance : les jours et horaires libres s\'affichent en un coup d\'œil, dans la couleur de la prestation. Le créneau choisi vous est réservé 48 h, le temps de valider votre devis.','q-cal-label':'Votre date','q-cal-sub':'Facultatif : choisissez un créneau libre, il vous sera réservé 48 h à l\'envoi de votre demande.','svc-reserve':'Je réserve ma séance','studio-reserve':'Je réserve ma séance en ligne','svc-discover':'Découvrir chaque prestation','ft-discover':'Découvrir chaque prestation','scroll-hint':'Scroll','services-title':'Prestations & tarifs photo','services-sub':'Photographe professionnel à Montpellier et Toulouse : des images haut de gamme, en HD, pour mettre en valeur votre projet. Nos prestations et leurs tarifs, par univers. Déplacement partout en France sur devis.',
     'svc-all':'Tous','svc-cta':'Construire ce projet','svc-sub-label':'Abonnement mensuel',
     'svc-trust1-title':'Réponse sous 48h','svc-trust1-text':'Chaque demande est étudiée puis traitée personnellement — jamais de réponse automatique.',
     'svc-trust2-title':'Un parcours accompagné','svc-trust2-text':'De la demande à la livraison, 8 étapes claires — dont la création de votre moodboard pour partager votre vision — <span class="svc-trust-link" onclick="goToProcess()">voir le déroulé complet</span>.',
@@ -631,7 +631,7 @@ const I18N = {
     'home-btn':'Back to home','see-portfolio':'View the full portfolio',
     'pf-cta-title':'Ready to bring your project to life?','pf-cta-sub':'Every project starts with a personalised proposal — simple, quick, no commitment.','pf-cta-btn':'Get my personalised quote','footer-cta-headline':'Got a project in mind?',
     'aria-next':'Next','aria-prev':'Previous','aria-back':'Back','aria-menu':'Menu','aria-home':'Home',
-    'ms-all':'Browse all services','svc-reserve':'Book my session','studio-reserve':'Book my session online','svc-discover':'Explore each service','ft-discover':'Explore each service','scroll-hint':'Scroll','services-title':'Photography services & rates','services-sub':'Professional photographer in Montpellier and Toulouse: premium, high-definition images that showcase your project. Our services and rates, by universe. Travel anywhere in France on quote.',
+    'ms-all':'Browse all services','avail-title':'Availability','avail-sub':'Choose your session: free days and times appear at a glance, in the colour of the service. The slot you pick is held for 48 hours while you confirm your quote.','q-cal-label':'Your date','q-cal-sub':'Optional: pick a free slot, it will be held for 48 hours once you send your request.','svc-reserve':'Book my session','studio-reserve':'Book my session online','svc-discover':'Explore each service','ft-discover':'Explore each service','scroll-hint':'Scroll','services-title':'Photography services & rates','services-sub':'Professional photographer in Montpellier and Toulouse: premium, high-definition images that showcase your project. Our services and rates, by universe. Travel anywhere in France on quote.',
     'svc-all':'All','svc-cta':'Build this project','svc-sub-label':'Monthly plan',
     'svc-trust1-title':'Reply within 48h','svc-trust1-text':'Every request is reviewed and handled personally — never an automated reply.',
     'svc-trust2-title':'A guided journey','svc-trust2-text':'From request to delivery, 8 clear steps — including building your moodboard to share your vision — <span class="svc-trust-link" onclick="goToProcess()">see the full process</span>.',
@@ -2188,6 +2188,7 @@ function goView(v, subTab, opts){
     if (v === 'article') applyAyaPortrait();
     if (v === 'advice') renderAdvicePage();
     if (v === 'discover') renderDiscoverPage();
+    if (v === 'avail') setTimeout(() => renderAvailPage(), 0);
     if (v === 'legal') { renderFaqAccordion(); renderPrivacyAccordion(); renderCgvAccordion(); renderCookiesAccordion(); renderImageAccordion(); setLegalTab(subTab === 'privacy' || subTab === 'cgv' || subTab === 'cookies' || subTab === 'image' ? subTab : 'faq', true); }
     if (v === 'about') initAboutStats();
     if (v === 'home') hmInit();
@@ -2250,6 +2251,7 @@ function quizStep(n){
   document.querySelectorAll('.qstep').forEach(s => s.classList.remove('active'));
   document.getElementById('qs-' + n).classList.add('active');
   setProgress(n / 6 * 100);
+  try { if (n === 4) renderQuizCal(); if (n === 5) quizSlotNote(); } catch (e) {}
   /* Scroll instantané (pas 'smooth') : l'apparition en fondu du contenu
      de l'étape démarre au même instant que le changement de classe
      .active — avec un scroll animé, si l'utilisateur était loin en bas
@@ -3256,7 +3258,8 @@ function submitQuiz(e){
   S.phone   = document.getElementById('qPhone').value.trim();
   S.project = document.getElementById('qProject').value.trim();
   const brief = brandBriefText();
-  const projectOut = brief ? S.project + '\n\n' + brief : S.project;
+  const projectBase = brief ? S.project + '\n\n' + brief : S.project;
+  const projectOut = S.slot ? projectBase + '\n\nCréneau souhaité (pré-réservé 48 h) : ' + bkcSlotText(S.slot, 'fr') : projectBase;
   const cat  = CATS.find(c => c.id === S.cat);
   const prof = S.cat === 'lumen'
     ? (LUMEN_PROFILES.find(p => p.id === S.prof) || { name:{fr:S.prof,en:S.prof} })
@@ -3333,6 +3336,7 @@ function submitQuiz(e){
     delayId: S.delay || undefined
   });
 
+  try { sendSlotHold(); } catch (e) {}
   if (window.track) track('quiz_submit', cat.name.fr + (S.tier === 'lanc' ? ' · Lancement' : ''));
   const mailP = postFormspree({
       _subject: 'DEMANDE DE DEVIS CLIENT — ' + S.name,
@@ -3554,7 +3558,7 @@ function renderDiscoverPage(){
         <ul class="disc-chips"><li>${dly(f)}</li>${phs(f) ? `<li>${phs(f)}</li>` : ''}${f.hasVideo ? `<li>${t({fr:'Vidéo / Reels', en:'Video / Reels'})}</li>` : ''}</ul>
         <div class="discover-actions">
           <a class="btn btn-ghost" href="${servicePath(c.id)}" data-nav="service:${c.id}"><span>${t({fr:'Voir la prestation', en:'See the service'})}</span></a>
-          ${c.id === 'branding' ? quizLink('corporate', t({fr:'Vérifier les disponibilités', en:'Check availability'}), '', 'lanc', 'lancement') : quizLink(c.id, ctaLabel(c.id))}
+          ${c.id === 'branding' ? availLink('corporate', 'lanc', t({fr:'Vérifier les disponibilités', en:'Check availability'}), '', 'lancement') : quizLink(c.id, ctaLabel(c.id))}
         </div>
       </div></div>
     </li>`;
@@ -4058,7 +4062,7 @@ function renderBrandingPage(){
     <p class="page-sub">${t({fr:'Votre activité mérite une image à sa hauteur. Formule Lancement : ', en:'Your business deserves an image to match. Launch package: '})}<strong>${price(L.price)}</strong>. ${t({fr:'Shooting en studio ou directement dans votre environnement professionnel.', en:'Shoot in the studio or right where you work.'})}<span class="loc-inline">${t({fr:'Basé en Occitanie, déplacement partout en France sur devis', en:'Based in Occitanie, travelling across France on quote'})}</span></p>
     <div class="svcp-cta-row">
       <a class="cta-primary" href="#formule-lancement" data-track="lancement" onclick="document.getElementById('formule-lancement').scrollIntoView({behavior:'smooth'});return false">${t({fr:'Découvrir la formule', en:'See the package'})}</a>
-      ${dispo(t({fr:'Vérifier les disponibilités', en:'Check availability'}), 'btn btn-ghost')}
+      ${availLink('corporate', 'lanc', '<span>' + t({fr:'Vérifier les disponibilités', en:'Check availability'}) + '</span>', 'btn btn-ghost', 'lancement')}
     </div>
 
     <ul class="pb-keys" id="pbKeys">
@@ -4116,7 +4120,7 @@ function renderBrandingPage(){
     <section class="read-panel svcp-panel article-cta">
       <h2>${t({fr:'Vous avez lancé votre activité. Il est temps de lancer votre image.', en:'You\'ve launched your business. Now launch your image.'})}</h2>
       <p class="svcp-text">${t({fr:'Dites-nous ce que vous faites et où vous travaillez : vous recevez une proposition personnalisée sous 48 h, sans engagement.', en:'Tell us what you do and where you work: you receive a personalised proposal within 48 hours, with no commitment.'})}</p>
-      <div class="svcp-cta-row" style="margin:0">${dispo(t({fr:'Vérifier les disponibilités', en:'Check availability'}))}</div>
+      <div class="svcp-cta-row" style="margin:0">${availLink('corporate', 'lanc', t({fr:'Vérifier les disponibilités', en:'Check availability'}), '', 'lancement')}</div>
     </section>
     <section class="read-panel svcp-panel svcp-others">
       <h2>${t({fr:'Autres prestations', en:'Other services'})}</h2>
@@ -5269,7 +5273,7 @@ function hmPreview(){
 /* ═══ Pages éditoriales « PX » (nov. 2026) : prestation, Découvrir, Conseils, article, villes, avis, devis, connexion passent dans la
    DA Grids × Almira Kho (classe .gx + .px ajoutée à la vue) : mot géant + compteur, kicker « Prestation, / Guide, / Ville, … » + titre en
    capitales, scène photo (bannières de l'admin), composants restylés, chapitre suivant. Aucun texte ni prix modifié. */
-var PX_VIEWS = ['service', 'discover', 'advice', 'article', 'city', 'share', 'quiz', 'login'];
+var PX_VIEWS = ['service', 'discover', 'advice', 'article', 'city', 'share', 'quiz', 'login', 'avail'];
 var PX_SVC_MEGA = { 'photo-part': {fr:'PORTRAIT', en:'PORTRAIT'}, corporate: {fr:'CORPORATE', en:'CORPORATE'}, mode: {fr:'MODE', en:'FASHION'}, commercial: {fr:'PRODUITS', en:'PRODUCTS'}, event: {fr:'ÉVÉNEMENTS', en:'EVENTS'}, branding: {fr:'BRANDING', en:'BRANDING'} };
 function pxSpec(v){
   const sub = currentSub;
@@ -5290,6 +5294,7 @@ function pxSpec(v){
   }
   if (v === 'share') return { mega: {fr:'AVIS', en:'REVIEWS'}, count: '★', lbl: {fr:'avis Google', en:'Google review'}, kick: {fr:'Partager,', en:'Share,'}, stage: 'share', next: 'portfolio' };
   if (v === 'quiz') return { mega: {fr:'DEVIS', en:'QUOTE'}, count: '48 h', lbl: {fr:'réponse sous 48 h ouvrées', en:'reply within 48 working hours'} };
+  if (v === 'avail') return { mega: {fr:'AGENDA', en:'AGENDA'}, count: '26—27', lbl: {fr:'calendrier des séances', en:'session calendar'}, kick: {fr:'Calendrier 2026 — 2027,', en:'Calendar 2026 — 2027,'}, next: 'services' };
   if (v === 'login') return { mega: {fr:'ESPACE', en:'SPACE'}, count: '⊹', lbl: {fr:'client · partenaire', en:'client · partner'}, kick: {fr:'Connexion,', en:'Sign in,'} };
   return null;
 }
@@ -9604,7 +9609,7 @@ initNavScrollState();
 (function initRoute(){
   const r = seoRouteForPath(location.pathname);
   const v = r ? r.view : 'home';
-  const _qs0 = location.search;
+  const _qs0 = location.search; window.__bootQs = _qs0;
   document.body.dataset.view = v;
   history.replaceState({ v }, '', location.pathname + location.hash);
   if (window.track) track('pageview');
@@ -9729,3 +9734,197 @@ function warmServicesVideo(){
   const start = () => { mo.observe(document.body, { childList: true, subtree: true }); scan(); };
   if (document.body) start(); else document.addEventListener('DOMContentLoaded', start);
 })();
+
+/* ═══════════════ CALENDRIER DES DISPONIBILITÉS 2026–2027 (nov. 2026) ═══════════════
+   Page /disponibilites/ (vue « avail ») et étape 04 du devis. Les plages occupées viennent du Worker (GET /availability :
+   séances des comptes, blocages et fermetures de l'admin, options de 48 h, agenda iCal de la propriétaire) ; les créneaux
+   sont calculés ici selon la durée de la formule et les règles (délai minimum, 1 séance par jour, dimanche réservé à
+   l'événementiel, horaires). Code couleur par prestation. Le créneau choisi est pré-réservé 48 h à l'envoi du devis. */
+const BKC_COLORS = { 'photo-part': '#d98f86', corporate: '#8a74d4', mode: '#1b1b1b', commercial: '#c39a4f', event: '#4f8f78' };
+const BKC_CATS = ['photo-part', 'corporate', 'mode', 'commercial', 'event'];
+/* Durée de séance (minutes) par formule ; journée = 9 h → 18 h. */
+const BKC_DUR = {
+  'photo-part': { deco: 60, sig: 120, prem: 240, edit: 540, grossesse: 90 },
+  corporate: { deco: 60, lanc: 90, sig: 120, prem: 240, edit: 540 },
+  mode: { deco: 120, sig: 240, prem: 360, edit: 540, polas: 30, sub: 240 },
+  commercial: { deco: 120, sig: 240, prem: 360, edit: 540 },
+  event: { deco: 120, sig: 240, prem: 360, edit: 480 }
+};
+const BKC_END = '2027-12-31';
+const BKC = { data: null, p: null, err: false };
+const bkcPad = n => String(n).padStart(2, '0');
+const bkcIso = d => d.getFullYear() + '-' + bkcPad(d.getMonth() + 1) + '-' + bkcPad(d.getDate());
+const bkcMin = hm => { const [h, m] = String(hm || '0:0').split(':').map(Number); return (h || 0) * 60 + (m || 0); };
+const bkcHm = m => bkcPad(Math.floor(m / 60)) + ':' + bkcPad(m % 60);
+const bkcHuman = m => { const h = Math.floor(m / 60), r = m % 60; return h ? h + ' h' + (r ? ' ' + bkcPad(r) : '') : r + ' min'; };
+function bkcLoad(force){
+  if (BKC.p && !force) return BKC.p;
+  const from = bkcIso(new Date());
+  BKC.p = fetch(ACCOUNTS_API_BASE + '/availability?from=' + from + '&to=' + BKC_END).then(r => r.ok ? r.json() : null)
+    .then(d => { BKC.data = d && d.ok ? d : { days: {}, rules: null }; BKC.err = !(d && d.ok); return BKC.data; })
+    .catch(() => { BKC.data = { days: {}, rules: null }; BKC.err = true; return BKC.data; });
+  return BKC.p;
+}
+function bkcRules(){
+  const r = (BKC.data && BKC.data.rules) || {};
+  return { minNoticeH: r.minNoticeH ?? 72, onePerDay: r.onePerDay ?? true, sundayEvent: r.sundayEvent ?? true, open: r.open || '09:00', close: r.close || '18:00', eventClose: r.eventClose || '23:00', bufferMin: r.bufferMin ?? 60, holdHours: r.holdHours ?? 48 };
+}
+function bkcTiers(cat){
+  const c = CATS.find(x => x.id === cat); if (!c) return [];
+  const list = catTiers(c).map(tr => ({ id: tr.id, name: t(tr.name) }));
+  if (POLAS[cat]) list.push({ id: POLAS[cat].id, name: t(POLAS[cat].name) });
+  return list.filter(x => (BKC_DUR[cat] || {})[x.id]);
+}
+function bkcDur(cat, tier){ const d = BKC_DUR[cat] || {}; return d[tier] || Math.min(...Object.values(d).concat([120])); }
+/** Créneaux libres d'un jour pour une prestation/durée, en minutes de début. */
+function bkcSlots(date, cat, dur){
+  const R = bkcRules(), info = (BKC.data && BKC.data.days || {})[date];
+  if (date > BKC_END) return [];
+  const d = new Date(date + 'T12:00:00');
+  if (d.getDay() === 0 && !(R.sundayEvent && cat === 'event')) return [];
+  if (info && (info.full || (R.onePerDay && info.taken))) return [];
+  const open = bkcMin(R.open), close = bkcMin(cat === 'event' ? R.eventClose : R.close);
+  const step = dur >= 120 ? 60 : 30, out = [];
+  const minStart = Date.now() + R.minNoticeH * 3600000;
+  for (let s = open; s + dur <= close; s += step) {
+    if (dur >= 540 && s !== open) break;
+    const st = new Date(date + 'T' + bkcHm(s) + ':00');
+    if (st.getTime() < minStart) continue;
+    if (info && info.busy.some(([a, b]) => s < b + R.bufferMin && s + dur + R.bufferMin > a)) continue;
+    out.push(s);
+  }
+  return out;
+}
+function bkcCatName(cat){ const c = CATS.find(x => x.id === cat); return c ? t(c.name) : cat; }
+function bkcState(host){ return host._bkc || (host._bkc = { cat: null, tier: null, y: 0, m: 0, sel: null, slot: null }); }
+/** Rend le calendrier dans `host`. opts : { cat, tier, embed (devis), onPick(slot) }. */
+function renderAvailCal(host, opts){
+  if (typeof host === 'string') host = document.querySelector(host);
+  if (!host) return; opts = opts || {};
+  const st = bkcState(host);
+  if (opts.cat !== undefined && opts.cat !== st._optCat) { st.cat = opts.cat; st._optCat = opts.cat; st.sel = null; }
+  if (opts.tier !== undefined && opts.tier !== st._optTier) { st.tier = opts.tier; st._optTier = opts.tier; st.sel = null; }
+  if (opts.slot !== undefined) st.slot = opts.slot;
+  host._opts = opts;
+  if (!st.y) { const n = new Date(); st.y = n.getFullYear(); st.m = n.getMonth(); }
+  if (!BKC.data) { host.innerHTML = `<div class="bkc bkc-loading"><p>${t({fr:'Chargement du calendrier…', en:'Loading the calendar…'})}</p></div>`; bkcLoad().then(() => renderAvailCal(host, host._opts)); return; }
+  const embed = !!opts.embed, cats = BKC_CATS.filter(c => CATS.some(x => x.id === c));
+  if (st.cat && !st.tier) { const tl = bkcTiers(st.cat); st.tier = tl.length ? tl[0].id : null; }
+  const dur = st.cat ? bkcDur(st.cat, st.tier) : 0;
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const first = new Date(st.y, st.m, 1), monthName = first.toLocaleDateString(LANG === 'en' ? 'en-GB' : 'fr-FR', { month: 'long', year: 'numeric' });
+  const startPad = (first.getDay() + 6) % 7, nDays = new Date(st.y, st.m + 1, 0).getDate();
+  const avail = (iso, cat) => bkcSlots(iso, cat, bkcDur(cat, cat === st.cat ? st.tier : null)).length;
+  /* Bandeau de l'année : 14 mois, barre = part des jours libres pour la sélection. */
+  const months = []; for (let i = 0; i < 15; i++) { const d = new Date(today.getFullYear(), today.getMonth() + i, 1); if (bkcIso(d) > BKC_END) break; months.push(d); }
+  const monthRatio = d => { const n = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate(); let ok = 0, tot = 0; for (let i = 1; i <= n; i++) { const dd = new Date(d.getFullYear(), d.getMonth(), i); if (dd < today) continue; tot++; const iso = bkcIso(dd); if (st.cat ? avail(iso, st.cat) : cats.some(c => avail(iso, c))) ok++; } return tot ? ok / tot : 0; };
+  const yearStrip = `<div class="bkc-year" role="tablist">${months.map(d => { const on = d.getFullYear() === st.y && d.getMonth() === st.m; const r = monthRatio(d); return `<button type="button" class="bkc-ym${on ? ' on' : ''}" onclick="bkcGo(this,${d.getFullYear()},${d.getMonth()})"><span>${d.toLocaleDateString(LANG === 'en' ? 'en-GB' : 'fr-FR', { month: 'short' }).replace('.', '')}</span><em>${String(d.getFullYear()).slice(2)}</em><i style="--r:${r.toFixed(2)};--c:${st.cat ? BKC_COLORS[st.cat] : '#111'}"></i></button>`; }).join('')}</div>`;
+  const chips = embed ? '' : `<div class="bkc-cats">${[`<button type="button" class="bkc-cat${!st.cat ? ' on' : ''}" onclick="bkcCat(this,'')"><i class="bkc-all"></i>${t({fr:'Toutes les séances', en:'All sessions'})}</button>`].concat(cats.map(c => `<button type="button" class="bkc-cat${st.cat === c ? ' on' : ''}" style="--c:${BKC_COLORS[c]}" onclick="bkcCat(this,'${c}')"><i></i>${escHtml(bkcCatName(c))}</button>`)).join('')}</div>`;
+  const tiers = st.cat ? `<div class="bkc-tiers">${bkcTiers(st.cat).map(x => `<button type="button" class="bkc-tier${st.tier === x.id ? ' on' : ''}" style="--c:${BKC_COLORS[st.cat]}" onclick="bkcTier(this,'${x.id}')">${escHtml(x.name)}<small>${bkcHuman(bkcDur(st.cat, x.id))}</small></button>`).join('')}</div>` : `<p class="bkc-hint">${t({fr:'Choisissez une séance pour voir ses horaires libres. Chaque point de couleur indique une prestation réservable ce jour-là.', en:'Choose a session to see its free times. Each coloured dot shows a service that can be booked that day.'})}</p>`;
+  let cells = '';
+  for (let i = 0; i < startPad; i++) cells += '<span class="bkc-d bkc-pad"></span>';
+  for (let i = 1; i <= nDays; i++) {
+    const dd = new Date(st.y, st.m, i), iso = bkcIso(dd), past = dd < today || iso > BKC_END;
+    if (past) { cells += `<span class="bkc-d bkc-past"><b>${i}</b></span>`; continue; }
+    if (st.cat) {
+      const n = avail(iso, st.cat);
+      cells += `<button type="button" class="bkc-d${n ? ' ok' : ' no'}${st.sel === iso ? ' sel' : ''}" style="--c:${BKC_COLORS[st.cat]}" ${n ? `onclick="bkcDay(this,'${iso}')"` : 'disabled'} aria-label="${escHtml(dd.toLocaleDateString(LANG === 'en' ? 'en-GB' : 'fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }))}${n ? ' — ' + n + ' ' + t({fr:'créneau(x)', en:'slot(s)'}) : ' — ' + t({fr:'complet', en:'full'})}"><b>${i}</b>${n ? `<em>${n}</em>` : ''}</button>`;
+    } else {
+      const ok = cats.filter(c => avail(iso, c));
+      cells += `<button type="button" class="bkc-d${ok.length ? ' ok' : ' no'}" ${ok.length ? `onclick="bkcPickCatDay(this,'${iso}')"` : 'disabled'}><b>${i}</b><span class="bkc-dots">${ok.map(c => `<i style="--c:${BKC_COLORS[c]}"></i>`).join('')}</span></button>`;
+    }
+  }
+  const wk = (LANG === 'en' ? ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] : ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']).map(x => `<span>${x}</span>`).join('');
+  const prevOk = new Date(st.y, st.m, 1) > new Date(today.getFullYear(), today.getMonth(), 1), nextOk = bkcIso(new Date(st.y, st.m + 1, 1)) <= BKC_END;
+  /* Panneau du jour : horaires libres. */
+  let side = '';
+  if (st.cat && st.sel) {
+    const sl = bkcSlots(st.sel, st.cat, dur), dl = new Date(st.sel + 'T12:00:00').toLocaleDateString(LANG === 'en' ? 'en-GB' : 'fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    side = `<p class="bkc-side-k">${escHtml(bkcCatName(st.cat))} · ${bkcHuman(dur)}</p><h3 class="bkc-side-t">${escHtml(dl)}</h3>` +
+      (sl.length ? `<div class="bkc-slots">${sl.map(s => { const on = st.slot && st.slot.date === st.sel && st.slot.start === bkcHm(s); return `<button type="button" class="bkc-slot${on ? ' on' : ''}" style="--c:${BKC_COLORS[st.cat]}" onclick="bkcSlot(this,${s})">${dur >= 540 ? t({fr:'Journée', en:'Full day'}) + ' · ' : ''}${bkcHm(s)} – ${bkcHm(s + dur)}</button>`; }).join('')}</div>` : `<p class="bkc-hint">${t({fr:'Plus de créneau ce jour-là.', en:'No slot left that day.'})}</p>`);
+  } else side = `<p class="bkc-side-k">${t({fr:'Votre créneau', en:'Your slot'})}</p><p class="bkc-hint">${st.cat ? t({fr:'Touchez un jour coloré pour voir ses horaires libres.', en:'Tap a coloured day to see its free times.'}) : t({fr:'Choisissez d\'abord une séance ci-dessus.', en:'First choose a session above.'})}</p>`;
+  if (st.slot) {
+    const sd = new Date(st.slot.date + 'T12:00:00').toLocaleDateString(LANG === 'en' ? 'en-GB' : 'fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+    side += `<div class="bkc-pick" style="--c:${BKC_COLORS[st.slot.cat] || '#111'}"><p><b>${t({fr:'Créneau retenu', en:'Selected slot'})}</b> ${escHtml(sd)}, ${st.slot.start} – ${st.slot.end}</p><p class="bkc-note">${t({fr:'Il vous est réservé ' + bkcRules().holdHours + ' h à l\'envoi de votre demande de devis, le temps de le valider.', en:'It is held for you for ' + bkcRules().holdHours + ' hours once you send your quote request, while you confirm it.'})}</p>` +
+      (embed ? `<button type="button" class="bkc-clear" onclick="bkcClear(this)">${t({fr:'Retirer ce créneau', en:'Remove this slot'})}</button>` : `<button type="button" class="bkc-go" onclick="bkcContinue(this)">${t({fr:'Continuer ma demande de devis', en:'Continue my quote request'})} →</button>`) + `</div>`;
+  }
+  const legend = `<div class="bkc-legend">${cats.map(c => `<span><i style="--c:${BKC_COLORS[c]}"></i>${escHtml(bkcCatName(c))}</span>`).join('')}<span class="bkc-lg-no"><i></i>${t({fr:'Complet / fermé', en:'Full / closed'})}</span></div>`;
+  const warn = BKC.err ? `<p class="bkc-warn">${t({fr:'Calendrier momentanément indisponible : les créneaux affichés sont indicatifs, ils seront confirmés avec votre devis.', en:'Calendar temporarily unavailable: the slots shown are indicative and will be confirmed with your quote.'})}</p>` : '';
+  host.innerHTML = `<div class="bkc${embed ? ' bkc-embed' : ''}">${chips}${tiers}${yearStrip}${warn}
+    <div class="bkc-main"><div class="bkc-month"><div class="bkc-mh"><button type="button" class="bkc-nav" ${prevOk ? '' : 'disabled'} onclick="bkcStep(this,-1)" aria-label="${t({fr:'Mois précédent', en:'Previous month'})}">←</button><h3>${escHtml(monthName)}</h3><button type="button" class="bkc-nav" ${nextOk ? '' : 'disabled'} onclick="bkcStep(this,1)" aria-label="${t({fr:'Mois suivant', en:'Next month'})}">→</button></div>
+    <div class="bkc-wk">${wk}</div><div class="bkc-grid">${cells}</div></div><aside class="bkc-side">${side}</aside></div>${legend}</div>`;
+}
+const bkcHost = el => el.closest('.bkc-host, #quizCal');
+function bkcRe(el){ const h = bkcHost(el); renderAvailCal(h, h._opts); return h; }
+function bkcGo(el, y, m){ const st = bkcState(bkcHost(el)); st.y = y; st.m = m; bkcRe(el); }
+function bkcStep(el, n){ const st = bkcState(bkcHost(el)); const d = new Date(st.y, st.m + n, 1); st.y = d.getFullYear(); st.m = d.getMonth(); bkcRe(el); }
+function bkcCat(el, c){ const st = bkcState(bkcHost(el)); st.cat = c || null; st.tier = null; st.sel = null; bkcRe(el); }
+function bkcTier(el, id){ const st = bkcState(bkcHost(el)); st.tier = id; st.sel = null; if (st.slot) st.slot = null; const h = bkcRe(el); if (h._opts && h._opts.onPick) h._opts.onPick(null); }
+function bkcDay(el, iso){ const st = bkcState(bkcHost(el)); st.sel = iso; const h = bkcRe(el); const side = h.querySelector('.bkc-side'); if (side && window.innerWidth < 900) side.scrollIntoView({ block: 'nearest', behavior: REDUCED_MOTION ? 'auto' : 'smooth' }); }
+function bkcPickCatDay(el, iso){ const st = bkcState(bkcHost(el)); const ok = BKC_CATS.filter(c => bkcSlots(iso, c, bkcDur(c)).length); st.cat = ok[0] || null; st.tier = null; st.sel = iso; bkcRe(el); }
+function bkcSlot(el, s){
+  const h = bkcHost(el), st = bkcState(h), dur = bkcDur(st.cat, st.tier);
+  st.slot = { date: st.sel, start: bkcHm(s), end: bkcHm(s + dur), cat: st.cat, tier: st.tier };
+  renderAvailCal(h, h._opts);
+  if (h._opts && h._opts.onPick) h._opts.onPick(st.slot);
+  if (window.track) track('cta_click', 'calendrier_creneau_' + st.cat);
+}
+function bkcClear(el){ const h = bkcHost(el), st = bkcState(h); st.slot = null; renderAvailCal(h, h._opts); if (h._opts && h._opts.onPick) h._opts.onPick(null); }
+function bkcContinue(el){
+  const st = bkcState(bkcHost(el)); if (!st.slot) return;
+  const slot = st.slot;
+  goToQuizCategory(slot.cat, slot.tier);
+  S.slot = slot;
+  setTimeout(() => { try { renderQuizCal(); } catch (e) {} }, 60);
+}
+function bkcSlotText(slot, lang){
+  if (!slot) return '';
+  const d = new Date(slot.date + 'T12:00:00').toLocaleDateString(lang === 'en' ? 'en-GB' : 'fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  return d + ', ' + slot.start + ' – ' + slot.end;
+}
+/* Page /disponibilites/ : préselection depuis l'adresse (?cat=…&tier=…) ou un lien « Vérifier les disponibilités ». */
+var _availPre = null;
+function renderAvailPage(){
+  const host = document.getElementById('availCal'); if (!host) return;
+  let pre = _availPre; _availPre = null;
+  if (!pre) { const q = new URLSearchParams(window.__bootQs || location.search); window.__bootQs = ''; if (q.get('cat')) pre = { cat: q.get('cat'), tier: q.get('tier') || null }; }
+  if (pre && CATS.some(c => c.id === pre.cat)) { const st = bkcState(host); st.cat = pre.cat; st.tier = pre.tier || null; st.sel = null; }
+  bkcLoad(true).then(() => renderAvailCal(host, {}));
+  renderAvailCal(host, {});
+}
+/** Lien « Vérifier les disponibilités » : vers le calendrier, prestation et formule présélectionnées. */
+function availLink(cat, tier, label, cls, trackId){
+  return `<a class="${cls || 'cta-primary'}" href="/disponibilites/${cat ? '?cat=' + cat + (tier ? '&tier=' + tier : '') : ''}" data-avail="${cat || ''}"${tier ? ` data-tier="${tier}"` : ''}${trackId ? ` data-track="${trackId}"` : ''}>${label}</a>`;
+}
+document.addEventListener('click', (e) => {
+  const a = e.target.closest ? e.target.closest('a[data-avail]') : null;
+  if (!a || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button === 1) return;
+  e.preventDefault();
+  try { _availPre = a.dataset.avail ? { cat: a.dataset.avail, tier: a.dataset.tier || null } : null; closeMobileMenu(); goView('avail'); window.scrollTo({ top: 0, behavior: 'instant' }); }
+  catch (err) { location.href = a.getAttribute('href'); }
+});
+/* Devis, étape 04 : le calendrier de la prestation choisie, créneau facultatif. */
+function renderQuizCal(){
+  const box = document.getElementById('quizCalBox'), host = document.getElementById('quizCal');
+  if (!box || !host) return;
+  const ok = S.cat && BKC_DUR[S.cat] && S.tier && S.tier !== 'sub';
+  box.hidden = !ok; if (!ok) return;
+  if (S.slot && (S.slot.cat !== S.cat || S.slot.tier !== S.tier)) S.slot = null;
+  renderAvailCal(host, { embed: true, cat: S.cat, tier: S.tier, slot: S.slot || null, onPick: slot => { S.slot = slot; quizSlotNote(); } });
+  if (S.slot) { const st = bkcState(host); const d = new Date(S.slot.date + 'T12:00:00'); st.y = d.getFullYear(); st.m = d.getMonth(); st.sel = S.slot.date; renderAvailCal(host, host._opts); }
+  quizSlotNote();
+}
+function quizSlotNote(){
+  const n = document.getElementById('quizSlotNote'); if (!n) return;
+  n.hidden = !S.slot;
+  n.innerHTML = S.slot ? `<b>${t({fr:'Créneau souhaité', en:'Preferred slot'})}</b> ${escHtml(bkcSlotText(S.slot, LANG))} <button type="button" onclick="quizStep(4)">${t({fr:'Modifier', en:'Change'})}</button>` : '';
+  /* Délai souhaité déduit du créneau si rien n'est encore choisi. */
+  const sel = document.getElementById('qDelay');
+  if (S.slot && sel && !sel.value) { const days = (new Date(S.slot.date) - new Date()) / 86400000; sel.value = days < 14 ? 'urgent' : days < 31 ? '1_mois' : days < 95 ? '2_3_mois' : 'flexible'; try { checkQuizForm(); } catch (e) {} }
+}
+/** Pré-réservation à l'envoi du devis (option de 48 h dans l'agenda admin). */
+function sendSlotHold(){
+  if (!S.slot) return;
+  const body = { date: S.slot.date, start: S.slot.start, end: S.slot.end, cat: S.slot.cat, tier: S.slot.tier, label: bkcCatName(S.slot.cat) + (S.slot.tier ? ' · ' + ((bkcTiers(S.slot.cat).find(x => x.id === S.slot.tier) || {}).name || S.slot.tier) : ''), name: S.name, email: S.email, phone: S.phone || undefined, lang: LANG };
+  fetch(ACCOUNTS_API_BASE + '/availability/hold', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body), keepalive: true }).then(() => bkcLoad(true)).catch(() => {});
+}

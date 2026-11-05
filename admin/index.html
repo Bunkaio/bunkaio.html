@@ -279,7 +279,7 @@
   .cal .dn { font-size: 12px; font-weight: 700; width: 24px; height: 24px; display: grid; place-items: center; border-radius: 50%; }
   .cal .ev { font-size: 11px; font-weight: 600; color: #fff; border-radius: 5px; padding: 1px 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .cal .more { font-size: 10.5px; color: var(--grey); }
-  .ev-seance { background: var(--ink); } .ev-livraison { background: var(--lb-vert); } .ev-facture { background: var(--lb-orange); } .ev-devis { background: var(--lb-violet); }
+  .ev-seance { background: var(--ink); } .ev-option { background: #d98f86; } .ev-reserve { background: #8a74d4; } .ev-ferme { background: var(--lb-gris); } .ev-livraison { background: var(--lb-vert); } .ev-facture { background: var(--lb-orange); } .ev-devis { background: var(--lb-violet); }
   .cal .dots { display: none; gap: 3px; flex-wrap: wrap; }
   .cal .dots i { width: 7px; height: 7px; border-radius: 50%; display: block; }
   .tagrow { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 5px; }
@@ -597,9 +597,11 @@
           <span class="grow"></span>
           <button class="btn ghost sm" onclick="exportICS()">📅 Exporter (.ics)</button>
         </div>
-        <div class="legend" style="margin:0 0 12px;flex-wrap:wrap"><span><i style="background:var(--ink)"></i>Séance</span><span><i style="background:var(--lb-vert)"></i>Livraison estimée</span><span><i style="background:var(--lb-orange)"></i>Échéance de facture</span><span><i style="background:var(--lb-violet)"></i>Fin de validité d'un devis</span></div>
+        <div class="legend" style="margin:0 0 12px;flex-wrap:wrap"><span><i style="background:var(--ink)"></i>Séance</span><span><i style="background:var(--lb-vert)"></i>Livraison estimée</span><span><i style="background:var(--lb-orange)"></i>Échéance de facture</span><span><i style="background:var(--lb-violet)"></i>Fin de validité d'un devis</span><span><i style="background:#d98f86"></i>Option (pré-réservation 48 h)</span><span><i style="background:#8a74d4"></i>Créneau confirmé</span><span><i style="background:var(--lb-gris)"></i>Fermé</span></div>
         <div id="agMonth"></div>
         <div class="card" style="margin-top:16px" id="agDay"></div>
+        <div id="agDayCal"></div>
+        <div class="card" style="margin-top:16px" id="calCfg"><h3>Calendrier public des disponibilités</h3><div class="empty">Chargement…</div></div>
       </section>
 
       <!-- ═══ Boîte de réception ═══ -->
@@ -1621,15 +1623,25 @@ function agendaEvents() {
     c.invoices.filter(i => i.status === 'open' && i.dueDate).forEach(i => out.push({ date: i.dueDate.slice(0, 10), kind: 'facture', t: eur(i.amountRemaining) + ' · ' + name, d: (i.kind === 'solde' ? 'Solde' : 'Acompte') + ' à payer', email: c.email }));
     realQ(c).filter(q => q.status === 'envoye' && q.validUntil).forEach(q => out.push({ date: q.validUntil, kind: 'devis', t: 'Devis n° ' + q.number + ' · ' + name, d: 'Dernier jour de validité', email: c.email, quote: q.id }));
   });
+  /* Calendrier public : options (pré-réservations 48 h), créneaux confirmés et fermetures. */
+  const now = Date.now();
+  (CAL.holds || []).forEach(h => {
+    if (h.status === 'released' || (h.status === 'option' && Date.parse(h.expiresAt) < now)) return;
+    out.push({ date: h.date, kind: h.status === 'confirmed' ? 'reserve' : 'option', t: h.start + '–' + h.end + ' · ' + (h.name || h.email), d: (h.status === 'confirmed' ? 'Créneau confirmé' : 'Option jusqu\'au ' + new Date(h.expiresAt).toLocaleString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })) + ' — ' + (h.label || h.cat), email: h.email, time: h.start, hold: h.id });
+  });
+  ((CAL.config && CAL.config.blocks) || []).forEach(b => {
+    for (let d = b.from, i = 0; d <= b.to && i < 400; d = calAdd(d, 1), i++) out.push({ date: d, kind: 'ferme', t: b.start ? b.start + '–' + b.end + ' · Indisponible' : 'Fermé', d: b.note || 'Blocage du calendrier public', time: b.start || '', block: b.id });
+  });
   return out.sort((a, b) => a.date.localeCompare(b.date) || (a.time || '').localeCompare(b.time || ''));
 }
 function agendaView(v) { agenda.view = v; document.querySelectorAll('[data-av]').forEach(b => b.classList.toggle('on', b.dataset.av === v)); renderAgenda(); }
 function agendaMove(n) { if (n === 0) { const t = new Date(); agenda.y = t.getFullYear(); agenda.m = t.getMonth(); agenda.sel = today(); } else { agenda.m += n; if (agenda.m < 0) { agenda.m = 11; agenda.y--; } if (agenda.m > 11) { agenda.m = 0; agenda.y++; } } renderAgenda(); }
 function agendaPick(d) { agenda.sel = d; renderAgenda(); }
-function evClick(ev) { return ev.quote ? `openQuote('${esc(ev.quote)}')` : `openDrawer('${esc(ev.email)}')`; }
-function evLi(ev) { return `<div class="li click" onclick="${evClick(ev)}"><div class="ic ev-${ev.kind}" style="color:#fff">${{ seance: '📸', livraison: '📦', facture: '€', devis: '⌛' }[ev.kind]}</div><div class="tx"><b>${esc(ev.t)}</b><div class="d">${esc(ev.d || '')}</div></div></div>`; }
+function evClick(ev) { return ev.hold || ev.block ? `agendaPick('${esc(ev.date)}')` : ev.quote ? `openQuote('${esc(ev.quote)}')` : `openDrawer('${esc(ev.email)}')`; }
+function evLi(ev) { return `<div class="li click" onclick="${evClick(ev)}"><div class="ic ev-${ev.kind}" style="color:#fff">${{ seance: '📸', livraison: '📦', facture: '€', devis: '⌛', option: '⏳', reserve: '✓', ferme: '⛔' }[ev.kind]}</div><div class="tx"><b>${esc(ev.t)}</b><div class="d">${esc(ev.d || '')}</div></div></div>`; }
 function renderAgenda() {
   if (!$('agMonth')) return;
+  if (!CAL.loaded && !CAL.loading) calLoad();
   const evs = agendaEvents(); const by = {}; evs.forEach(e => (by[e.date] = by[e.date] || []).push(e));
   const first = new Date(agenda.y, agenda.m, 1);
   $('agTitle').textContent = agenda.view === 'month' ? first.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }) : 'Prochains 60 jours';
@@ -1651,7 +1663,88 @@ function renderAgenda() {
   }
   $('agMonth').innerHTML = `<div class="cal">${cells.join('')}</div>`;
   const dayEvs = by[agenda.sel] || [];
+  setTimeout(calDayExtras, 0);
   $('agDay').innerHTML = `<h3>${fdate(agenda.sel, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</h3>${dayEvs.length ? `<div class="list">${dayEvs.map(evLi).join('')}</div>` : '<div class="empty">Rien de prévu ce jour-là.</div>'}`;
+}
+/* ── Calendrier public des disponibilités (page /disponibilites/ et étape 04 du devis) ──
+   Options de 48 h posées par les prospects (à confirmer ou libérer), fermetures / blocages, liens iCal (Google Agenda, iCloud) et règles. */
+const CAL = { config: null, holds: [], icsErrors: [], loaded: false, loading: false };
+function calAdd(d, n) { const x = new Date(d + 'T12:00:00'); x.setDate(x.getDate() + n); return x.toISOString().slice(0, 10); }
+async function calLoad() {
+  CAL.loading = true;
+  try {
+    const { res, data } = await api('/admin/calendar');
+    if (res.status === 404) { $('calCfg').innerHTML = '<h3>Calendrier public des disponibilités</h3><div class="empty">Le serveur n\'est pas à jour : redéployez le Worker (cd server && npx wrangler deploy) pour activer le calendrier.</div>'; return; }
+    if (data.ok) { CAL.config = data.config; CAL.holds = data.holds || []; CAL.icsErrors = data.icsErrors || []; CAL.loaded = true; renderAgenda(); }
+  } catch (e) { /* hors ligne */ } finally { CAL.loading = false; renderCalCfg(); }
+}
+function calDayExtras() {
+  const box = $('agDayCal'); if (!box) return;
+  const holds = (CAL.holds || []).filter(h => h.date === agenda.sel && h.status !== 'released');
+  box.innerHTML = holds.length ? `<div class="card" style="margin-top:12px"><h3>Créneaux du calendrier public</h3>${holds.map(h => { const exp = h.status === 'option' && Date.parse(h.expiresAt) < Date.now(); return `<div class="li"><div class="ic ev-${h.status === 'confirmed' ? 'reserve' : 'option'}" style="color:#fff">${h.status === 'confirmed' ? '✓' : '⏳'}</div><div class="tx"><b>${esc(h.start)}–${esc(h.end)} · ${esc(h.name)}</b><span>${esc(h.label || h.cat)} · <a href="mailto:${esc(h.email)}">${esc(h.email)}</a>${h.phone ? ' · ' + esc(h.phone) : ''} · ${h.status === 'confirmed' ? 'confirmé' : exp ? 'option expirée' : 'option jusqu\'au ' + new Date(h.expiresAt).toLocaleString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</span></div><div style="display:flex;gap:6px;flex-wrap:wrap">${h.status !== 'confirmed' ? `<button class="btn sm" onclick="calHold('${h.id}','confirmed')">Confirmer</button><button class="btn ghost sm" onclick="calHold('${h.id}','option',48)">+48 h</button>` : ''}<button class="btn ghost sm" onclick="calHold('${h.id}','released')">Libérer</button></div></div>`; }).join('')}</div>` : '';
+}
+async function calHold(id, status, hours) {
+  if (status === 'released' && !confirm('Libérer ce créneau ? Il redeviendra disponible sur le site.')) return;
+  const { data } = await api('/admin/calendar', { method: 'POST', body: JSON.stringify({ action: 'hold', id, status, hours }) });
+  if (!data.ok) { toast('Action impossible'); return; }
+  const i = CAL.holds.findIndex(h => h.id === id); if (i >= 0) CAL.holds[i] = data.hold;
+  toast(status === 'confirmed' ? 'Créneau confirmé' : status === 'released' ? 'Créneau libéré' : 'Option prolongée');
+  renderAgenda();
+}
+function renderCalCfg() {
+  const box = $('calCfg'); if (!box || !CAL.config) return;
+  const c = CAL.config, r = c.rules;
+  const up = (CAL.holds || []).filter(h => h.status !== 'released' && h.date >= today()).sort((a, b) => (a.date + a.start).localeCompare(b.date + b.start));
+  box.innerHTML = `<h3>Calendrier public des disponibilités</h3>
+    <p class="hint" style="margin:0 0 12px">Ce que voient les prospects sur <a href="/disponibilites/" target="_blank">/disponibilites/</a> et dans l'étape 04 du devis : les séances des fiches clients, les options ci-dessous, vos fermetures et votre agenda personnel (lien iCal) bloquent les créneaux. Aucun nom n'est affiché au public.</p>
+    <h4 style="margin:14px 0 6px">Options et créneaux réservés à venir (${up.length})</h4>
+    ${up.length ? `<div class="list">${up.map(h => `<div class="li click" onclick="agenda.sel='${h.date}';agenda.y=${+h.date.slice(0, 4)};agenda.m=${+h.date.slice(5, 7) - 1};renderAgenda()"><div class="ic ev-${h.status === 'confirmed' ? 'reserve' : 'option'}" style="color:#fff">${h.status === 'confirmed' ? '✓' : '⏳'}</div><div class="tx"><b>${fdate(h.date, { weekday: 'short', day: 'numeric', month: 'short' })} · ${esc(h.start)}–${esc(h.end)} · ${esc(h.name)}</b><span>${esc(h.label || h.cat)} · ${h.status === 'confirmed' ? 'confirmé' : 'option'}</span></div></div>`).join('')}</div>` : '<div class="empty">Aucune option en cours.</div>'}
+    <h4 style="margin:18px 0 6px">Agenda personnel (Google Agenda, iCloud)</h4>
+    <p class="hint" style="margin:0 0 6px">Collez l'« adresse secrète au format iCal » (Google Agenda : Paramètres de l'agenda → Intégrer l'agenda) ou le lien de partage public d'un calendrier iCloud. Un lien par ligne. Chaque événement bloque le créneau correspondant (jamais affiché au public).</p>
+    <textarea id="calIcs" rows="3" style="width:100%">${esc((c.icalUrls || []).join('\n'))}</textarea>
+    <div style="display:flex;gap:8px;margin:6px 0 0;flex-wrap:wrap"><button class="btn ghost sm" onclick="calTestIcs()">Tester les liens</button><span id="calIcsRes" class="hint">${CAL.icsErrors.length ? '⚠️ Lecture en échec : ' + esc(CAL.icsErrors.join(', ')) : ''}</span></div>
+    <h4 style="margin:18px 0 6px">Fermetures et indisponibilités</h4>
+    <div class="list" id="calBlocks">${(c.blocks || []).length ? c.blocks.map(b => `<div class="li"><div class="ic ev-ferme" style="color:#fff">⛔</div><div class="tx"><b>${fdate(b.from, { day: 'numeric', month: 'short', year: 'numeric' })}${b.to !== b.from ? ' → ' + fdate(b.to, { day: 'numeric', month: 'short', year: 'numeric' }) : ''}${b.start ? ' · ' + esc(b.start) + '–' + esc(b.end) : ' · journée entière'}</b><span>${esc(b.note || '')}</span></div><button class="btn ghost sm" onclick="calDelBlock('${b.id}')">Supprimer</button></div>`).join('') : '<div class="empty">Aucune fermeture.</div>'}</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-top:8px;align-items:end">
+      <label class="hint">Du<input type="date" id="calBFrom"></label><label class="hint">Au<input type="date" id="calBTo"></label>
+      <label class="hint">De (facultatif)<input type="time" id="calBStart"></label><label class="hint">À<input type="time" id="calBEnd"></label>
+      <label class="hint" style="grid-column:span 2">Note (privée)<input type="text" id="calBNote" placeholder="Vacances, salon…"></label>
+      <button class="btn sm" onclick="calAddBlock()">+ Ajouter la fermeture</button>
+    </div>
+    <h4 style="margin:18px 0 6px">Règles de réservation</h4>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px">
+      <label class="hint">Délai minimum (heures)<input type="number" id="calRNotice" min="0" value="${r.minNoticeH}"></label>
+      <label class="hint">Durée d'une option (heures)<input type="number" id="calRHold" min="1" value="${r.holdHours}"></label>
+      <label class="hint">Marge entre deux rendez-vous (min)<input type="number" id="calRBuf" min="0" value="${r.bufferMin}"></label>
+      <label class="hint">Ouverture<input type="time" id="calROpen" value="${r.open}"></label>
+      <label class="hint">Fermeture<input type="time" id="calRClose" value="${r.close}"></label>
+      <label class="hint">Fin des événements<input type="time" id="calREvent" value="${r.eventClose}"></label>
+      <label class="hint" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="calROne" ${r.onePerDay ? 'checked' : ''}> 1 séance maximum par jour</label>
+      <label class="hint" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="calRSun" ${r.sundayEvent ? 'checked' : ''}> Dimanche ouvert à l'événementiel seulement</label>
+    </div>
+    <div style="margin-top:12px"><button class="btn" onclick="calSave()">Enregistrer le calendrier</button></div>`;
+}
+function calCollect() {
+  const c = JSON.parse(JSON.stringify(CAL.config));
+  c.icalUrls = ($('calIcs').value || '').split(/\s+/).map(x => x.trim()).filter(Boolean);
+  c.rules = { minNoticeH: +$('calRNotice').value, holdHours: +$('calRHold').value, bufferMin: +$('calRBuf').value, open: $('calROpen').value, close: $('calRClose').value, eventClose: $('calREvent').value, onePerDay: $('calROne').checked, sundayEvent: $('calRSun').checked };
+  return c;
+}
+async function calSave(cfg) {
+  const { data } = await api('/admin/calendar', { method: 'POST', body: JSON.stringify({ action: 'save', config: cfg || calCollect() }) });
+  if (!data.ok) { toast('Enregistrement impossible'); return; }
+  CAL.config = data.config; toast('Calendrier enregistré'); renderAgenda(); renderCalCfg();
+}
+function calAddBlock() {
+  const from = $('calBFrom').value, to = $('calBTo').value || from; if (!from) { toast('Choisissez au moins une date'); return; }
+  const c = calCollect(); c.blocks = (c.blocks || []).concat([{ id: Math.random().toString(36).slice(2, 10), from, to, start: $('calBStart').value || undefined, end: $('calBEnd').value || undefined, note: $('calBNote').value }]);
+  calSave(c);
+}
+function calDelBlock(id) { const c = calCollect(); c.blocks = (c.blocks || []).filter(b => b.id !== id); calSave(c); }
+async function calTestIcs() {
+  const urls = ($('calIcs').value || '').split(/\s+/).filter(Boolean); const out = [];
+  for (const u of urls) { const { data } = await api('/admin/calendar', { method: 'POST', body: JSON.stringify({ action: 'test', url: u }) }); out.push(data.ok ? '✓ ' + data.events + ' événements' : '✗ ' + (data.error || 'erreur')); }
+  $('calIcsRes').textContent = out.join(' · ') || 'Aucun lien';
 }
 /* Export iCalendar : séances et livraisons, à importer dans le calendrier du téléphone ou de l'ordinateur. */
 function exportICS() {

@@ -295,6 +295,20 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://bunkaio.com/droits-a-l-image/"/>
   </url>
   <url>
+    <loc>https://bunkaio.com/disponibilites/</loc>
+    <lastmod>2026-11-05</lastmod>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://bunkaio.com/disponibilites/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bunkaio.com/en/availability/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bunkaio.com/disponibilites/"/>
+  </url>
+  <url>
+    <loc>https://bunkaio.com/en/availability/</loc>
+    <lastmod>2026-11-05</lastmod>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://bunkaio.com/disponibilites/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bunkaio.com/en/availability/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bunkaio.com/disponibilites/"/>
+  </url>
+  <url>
     <loc>https://bunkaio.com/conseils/</loc>
     <lastmod>2026-11-05</lastmod>
     <xhtml:link rel="alternate" hreflang="fr" href="https://bunkaio.com/conseils/"/>
