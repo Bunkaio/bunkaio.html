@@ -9285,3 +9285,16 @@ footer, #view-home .home-paper > *:not(.reassure-section), #view-service .svcp-p
   #view-home .home-paper .testi-share-row .hero-start.cta-onlight:hover { background: #2a2a2e !important; color: #fff !important; border-color: #2a2a2e !important; }
 }
 #view-home .home-paper .testi-share-row .hero-start.cta-onlight:active { background: #2a2a2e !important; color: #fff !important; }
+
+/* Services, bannière : « Je réserve ma séance » en verre dépoli arrondi (6 nov. 2026, demande de la propriétaire). Tous les états fixés. */
+html body #view-services .svx .svx-head .svc-cta-row .cta-primary {
+  background: rgba(255,255,255,.16) !important; color: #fff !important; border: 1px solid rgba(255,255,255,.55) !important; border-radius: 999px !important;
+  backdrop-filter: blur(14px) saturate(140%) !important; -webkit-backdrop-filter: blur(14px) saturate(140%) !important; box-shadow: 0 6px 24px rgba(0,0,0,.18) !important;
+  padding-left: 28px !important; padding-right: 28px !important;
+}
+html body #view-services .svx .svx-head .svc-cta-row .cta-primary span { color: #fff !important; background: transparent !important; }
+html body #view-services .svx .svx-head .svc-cta-row .cta-primary::before, html body #view-services .svx .svx-head .svc-cta-row .cta-primary::after { display: none !important; }
+@media (hover: hover) {
+  html body #view-services .svx .svx-head .svc-cta-row .cta-primary:hover { background: rgba(255,255,255,.28) !important; color: #fff !important; border-color: #fff !important; }
+}
+html body #view-services .svx .svx-head .svc-cta-row .cta-primary:active, html body #view-services .svx .svx-head .svc-cta-row .cta-primary:focus-visible { background: rgba(255,255,255,.28) !important; color: #fff !important; }
