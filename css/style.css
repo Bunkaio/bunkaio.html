@@ -9097,3 +9097,7 @@ html[data-acct="partner"] body[data-view="account"] .bk-back * { color: #f3eee2 
   #view-home .home-paper .testi-text { font-size: 15.5px !important; }
 }
 @media (prefers-reduced-motion: reduce) { #view-home .home-paper .testi-card { transition: none; } #view-home .home-paper .testi-card:hover { transform: none; } }
+
+/* Réassurance, point 02 « Créneaux limités » : lien vers l'agenda (6 nov. 2026, demande de la propriétaire) */
+.reassure-item .reassure-link { display: inline-block; margin-top: 14px; font-size: 13.5px; font-weight: 500; color: #111 !important; text-decoration: none; border-bottom: 1px solid #111; padding-bottom: 2px; transition: color .3s, border-color .3s; }
+.reassure-item .reassure-link:hover, .reassure-item .reassure-link:focus-visible { color: #6e5aa8 !important; border-color: #6e5aa8; }
