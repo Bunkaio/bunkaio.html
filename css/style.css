@@ -9066,5 +9066,5 @@ body[data-view="account"]:has(#view-account.acc-is-partner) .bk-back * { color: 
 
 /* Boutons « fantôme » des rangées d'appel des pages prestation / villes (6 nov. 2026, capture iPhone : bord haut du bouton « Parler de mon projet » absent, traits de la grille visibles à travers) :
    fond papier plein et contour dessiné en ombre interne (un contour de 1 px peut disparaître sous Safari quand le bloc est animé). */
-.view .svcp-cta-row .btn-ghost { background-color: #ecebe8 !important; border: 0 !important; box-shadow: inset 0 0 0 1px #111 !important; margin-top: 0; }
-.view .svcp-cta-row .btn-ghost:hover, .view .svcp-cta-row .btn-ghost:focus-visible, .view .svcp-cta-row .btn-ghost:active { background-color: var(--rose, #e8c6c4) !important; }
+.view.px .svcp-cta-row .btn.btn-ghost, .view.gx .svcp-cta-row .btn.btn-ghost, .view .svcp-cta-row .btn.btn-ghost { background: #ecebe8 !important; border: 0 !important; box-shadow: inset 0 0 0 1px #111 !important; margin-top: 0; }
+.view.px .svcp-cta-row .btn.btn-ghost:hover, .view.gx .svcp-cta-row .btn.btn-ghost:hover, .view .svcp-cta-row .btn.btn-ghost:hover, .view .svcp-cta-row .btn.btn-ghost:focus-visible, .view .svcp-cta-row .btn.btn-ghost:active { background: var(--rose, #e8c6c4) !important; }
