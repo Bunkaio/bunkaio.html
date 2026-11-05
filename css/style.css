@@ -8828,3 +8828,7 @@ mark.bk-key { background: linear-gradient(#e8c6c4, #e8c6c4) 0 88% / 100% 62% no-
 .vgl.vgl-in > li > b { letter-spacing: normal; filter: none; }
 .vgl.vgl-in > li > span { opacity: 1; transform: none; }
 @media (prefers-reduced-motion: reduce) { .vgl > li, .vgl > li > b, .vgl > li > span { opacity: 1; transform: none; filter: none; letter-spacing: normal; transition: none; } }
+
+/* Accueil, bloc Aya replié/déplié : le portrait, le nom et le rôle sont déjà dans l'en-tête de l'accordéon — plus de doublon dans le contenu déplié (6 nov. 2026, demande de la propriétaire) */
+.hm-acc .cred-avatar, .hm-acc .cred-avatar-link { display: none !important; }
+.hm-acc .cred-wrap { grid-template-columns: 1fr !important; }
