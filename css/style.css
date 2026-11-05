@@ -9298,3 +9298,7 @@ html body #view-services .svx .svx-head .svc-cta-row .cta-primary::before, html 
   html body #view-services .svx .svx-head .svc-cta-row .cta-primary:hover { background: rgba(255,255,255,.28) !important; color: #fff !important; border-color: #fff !important; }
 }
 html body #view-services .svx .svx-head .svc-cta-row .cta-primary:active, html body #view-services .svx .svx-head .svc-cta-row .cta-primary:focus-visible { background: rgba(255,255,255,.28) !important; color: #fff !important; }
+
+/* Encadré « Découvrir chaque prestation » : bouton arrondi (pilule), couleurs inchangées (6 nov. 2026, demande de la propriétaire). */
+html body .pf-links .discover-cta .cta-primary, html body .pf-links .discover-cta .cta-primary::before, html body .pf-links .discover-cta .cta-primary::after { border-radius: 999px !important; }
+html body .pf-links .discover-cta .cta-primary { padding-left: 30px !important; padding-right: 30px !important; }
