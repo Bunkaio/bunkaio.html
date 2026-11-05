@@ -8832,3 +8832,10 @@ mark.bk-key { background: linear-gradient(#e8c6c4, #e8c6c4) 0 88% / 100% 62% no-
 /* Accueil, bloc Aya replié/déplié : le portrait, le nom et le rôle sont déjà dans l'en-tête de l'accordéon — plus de doublon dans le contenu déplié (6 nov. 2026, demande de la propriétaire) */
 .hm-acc .cred-avatar, .hm-acc .cred-avatar-link { display: none !important; }
 .hm-acc .cred-wrap { grid-template-columns: 1fr !important; }
+
+/* Prix mis en valeur : violet de la charte, graisse 600 (6 nov. 2026, demande de la propriétaire) — index Services et accueil, onglets de formules, lignes de formules, devis ; les prix sur fond sombre restent blancs */
+html body .svx-from, html body .hm-row-p, html body .svx-tab b, html body .fx:not(.lv-top) .fx-price, html body .lk-tier:not(.lv-top) .lk-tier-p, html body .tier-card:not(.lv-top) .tier-price, html body .svx-td:not(.lv-top) .svx-td-price { color: #6e5aa8 !important; font-weight: 600 !important; }
+html body .svx-from i, html body .hm-row-p i { color: #111; }
+html body .svx-tab.on b { color: #d6c9f7 !important; }
+html body .svx-tab.on.lv-high b { color: #4a3a86 !important; }
+html body .svx-item:hover .svx-from, html body .hm-row:hover .hm-row-p { color: #fff !important; }
