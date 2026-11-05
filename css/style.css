@@ -8886,3 +8886,9 @@ html body .footer-cta-row .hero-start { justify-content: center !important; }
 .view.gx .gx-uni-acc .gx-uni { margin-top: 0; }
 .gx-uni-acc:not(.open) .gx-uni-in { visibility: hidden; transition: visibility 0s .45s; }
 @media (prefers-reduced-motion: reduce) { .gx-uni-body, .gx-uni-pm::before, .gx-uni-pm::after { transition: none; } }
+
+/* Surlignage dans les listes de formules (6 nov. 2026, capture iPhone : texte éclaté autour du marqueur) : le marqueur reste un simple fond en ligne (pas de découpe de boîte
+   ni de marge négative) et les lignes qui en portent ne passent plus par le flou animé, source d'erreurs de rendu sur Safari. */
+mark.bk-key { -webkit-box-decoration-break: slice; box-decoration-break: slice; margin: 0; display: inline; position: static; }
+.fxl li:has(mark.bk-key) { filter: none !important; transform: none; }
+.svcp-list li mark.bk-key, .fx-info li mark.bk-key { white-space: normal; }

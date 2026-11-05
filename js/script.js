@@ -3718,7 +3718,7 @@ function fxItem(catId, f){
         ${f.line ? `<p class="fx-line">${f.line}</p>` : ''}
         ${f.hint ? `<p class="fx-hint"><strong>${t({fr:'Notre conseil', en:'Our advice'})} :</strong> ${f.hint}</p>` : ''}
         <ul class="svcp-list">${f.items.map(i => `<li>${escHtml(i)}</li>`).join('')}</ul>
-        <div class="fx-actions">${f.id === 'lanc' ? quizLink(catId, t({fr:'Préparer mon shooting', en:'Prepare my shoot'}), '', 'lanc', 'lancement') + (currentSub === 'branding' ? '' : `<a class="svcp-link" href="${servicePath('branding')}" data-nav="service:branding" data-track="lancement">${t({fr:'Découvrir Lancement', en:'Discover Launch'})}</a>`) : quizLink(catId, t({fr:'Demander un devis', en:'Request a quote'}))}${f.extra || ''}</div>
+        <div class="fx-actions">${f.id === 'lanc' ? quizLink(catId, t({fr:'Préparer mon shooting', en:'Prepare my shoot'}), '', 'lanc', 'lancement') + (currentSub === 'branding' ? '' : `<a class="svcp-link" href="${servicePath('branding')}" data-nav="service:branding" data-track="lancement">${t({fr:'Découvrir Lancement', en:'Discover Launch'})}</a>`) : quizLink(catId, t({fr:'Demander un devis', en:'Request a quote'}), '', f.special ? '' : f.id)}${f.extra || ''}</div>
       </div>
     </div></div>
   </div>`;
@@ -4895,11 +4895,12 @@ const svxNum = n => String(n).padStart(2, '0');
 function svxQuiz(catId){
   const c = CATS.find(x => x.id === catId); if (!c) return;
   if (c.comingSoon) { goToComingSoon(c.id); return; }
-  S.cat = c.id; S.tier = null; S.prof = null;
-  document.getElementById('profQBox').style.display = 'none';
-  renderProfiles();
-  goView('quiz');
-  setTimeout(() => quizStep(2), 500);
+  /* Le devis s'ouvre sur la prestation ET la formule affichée dans le dossier (onglet actif), au choix des options. */
+  const tid = SVX.tier && SVX.tier[c.id] && c.tiers && c.tiers[SVX.tier[c.id]] ? SVX.tier[c.id] : '';
+  if (window.track) track('cta_click', 'services_devis_' + c.id + (tid ? '_' + tid : ''));
+  /* iPhone / iPad : vrai chargement de page (même règle que les autres liens vers les formules). */
+  if (currentView !== 'quiz' && bkIsIOS()) { window.location.href = (LANG === 'en' ? '/en' : '') + '/devis/?cat=' + c.id + (tid ? '&tier=' + tid : ''); return; }
+  goToQuizCategory(c.id, tid || undefined);
 }
 function svxDelays(c){
   const ds = catTiers(c).map(tr => c.tiers[tr.id].delay).filter(Boolean).map(d => parseInt(t(d), 10)).filter(n => !isNaN(n));

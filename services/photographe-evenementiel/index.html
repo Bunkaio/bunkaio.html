@@ -35,7 +35,7 @@
 <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
 <link rel="preload" href="fonts/inter-tight-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <script>/* Image d'attente des vidéos de l'accueil : une vraie photo HD du Portfolio BUNKAIO (et non une capture de la vidéo), posée derrière chaque vidéo via --vid-a / --vid-b ; accueil seulement. */(function(){var p=location.pathname;if(p!=="/"&&p!=="/en/"&&p!=="/index.html")return;var B="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/portfolio/",C=["mode/1","photo-part/1","corporate/1","commercial/1","event/1","mode/2","photo-part/2","corporate/2","commercial/2","event/2"],got=[],k=0,r=document.documentElement;function next(){if(k>=C.length||got.length>=2)return;var u=B+C[k++]+".webp",i=new Image();i.onload=function(){got.push(u);r.style.setProperty(got.length===1?"--vid-a":"--vid-b","url("+u+")");next();};i.onerror=next;i.src=u;}next();})();</script>
-<link rel="stylesheet" href="css/style.min.css?v=124af63d">
+<link rel="stylesheet" href="css/style.min.css?v=587c2a95">
 
 <script type="application/ld+json">
 {
@@ -1391,7 +1391,7 @@
         <p class="fx-line tx-pre" data-tx="1">Une porte d'entrée soignée : même exigence, format resserré.</p>
         <p class="fx-hint"><strong>Notre conseil :</strong> pour les moments essentiels : couverture de 2 h et 20 photos.</p>
         <ul class="svcp-list fxl" data-fxl="1"><li style="--k: 0;">20 photos HD retouchées</li><li style="--k: 1;">Couverture de 2 heures — les moments essentiels</li><li style="--k: 2;">Galerie privée de téléchargement</li></ul>
-        <div class="fx-actions"><a class="cta-primary" href="/devis/?cat=event" data-quiz="event">Demander un devis</a></div>
+        <div class="fx-actions"><a class="cta-primary" href="/devis/?cat=event&amp;tier=deco" data-quiz="event" data-tier="deco">Demander un devis</a></div>
       </div>
     </div></div>
   </div><div class="fx rv" data-fx="sig" style="--rv-d: 0.07s;">
@@ -1407,7 +1407,7 @@
         <p class="fx-line tx-pre" data-tx="1">Le meilleur équilibre entre durée, accompagnement et résultat.</p>
         <p class="fx-hint"><strong>Notre conseil :</strong> pour les moments clés et l'ambiance : couverture jusqu'à 4 h et 40 photos.</p>
         <ul class="svcp-list fxl" data-fxl="1"><li style="--k: 0;">40 photos HD retouchées</li><li style="--k: 1;">Couverture jusqu'à 4 heures — moments clés et ambiance</li><li style="--k: 2;">Galerie privée de téléchargement</li></ul>
-        <div class="fx-actions"><a class="cta-primary" href="/devis/?cat=event" data-quiz="event">Demander un devis</a></div>
+        <div class="fx-actions"><a class="cta-primary" href="/devis/?cat=event&amp;tier=sig" data-quiz="event" data-tier="sig">Demander un devis</a></div>
       </div>
     </div></div>
   </div><div class="fx lv-high rv" data-fx="prem" style="--rv-d: 0.14s;">
@@ -1423,7 +1423,7 @@
         <p class="fx-line tx-pre" data-tx="1">Un projet plus complet, plus travaillé, plus accompagné.</p>
         <p class="fx-hint"><strong>Notre conseil :</strong> pour couvrir tout l'événement : 80 photos et un teaser vidéo de 30 secondes.</p>
         <ul class="svcp-list fxl" data-fxl="1"><li style="--k: 0;">80 photos HD retouchées</li><li style="--k: 1;">Couverture complète de l'événement</li><li style="--k: 2;">1 teaser vidéo (30 secondes)</li><li style="--k: 3;">Galerie privée de téléchargement</li></ul>
-        <div class="fx-actions"><a class="cta-primary" href="/devis/?cat=event" data-quiz="event">Demander un devis</a></div>
+        <div class="fx-actions"><a class="cta-primary" href="/devis/?cat=event&amp;tier=prem" data-quiz="event" data-tier="prem">Demander un devis</a></div>
       </div>
     </div></div>
   </div><div class="fx lv-top rv" data-fx="edit" style="--rv-d: 0.21000000000000002s;">
@@ -1439,7 +1439,7 @@
         <p class="fx-line tx-pre" data-tx="1">Une production sur mesure, de la direction artistique à la livraison.</p>
         <p class="fx-hint"><strong>Notre conseil :</strong> pour valoriser l'événement : 100 photos, un aftermovie de 2 minutes, 2 Reels et une mise en lumière éditoriale.</p>
         <ul class="svcp-list fxl" data-fxl="1"><li style="--k: 0;">100 photos HD retouchées</li><li style="--k: 1;">1 aftermovie (2 minutes)</li><li style="--k: 2;">2 Reels verticaux</li><li style="--k: 3;">Mise en lumière éditoriale de l'événement</li><li style="--k: 4;">Publication sur les supports Bunkaio</li></ul>
-        <div class="fx-actions"><a class="cta-primary" href="/devis/?cat=event" data-quiz="event">Demander un devis</a></div>
+        <div class="fx-actions"><a class="cta-primary" href="/devis/?cat=event&amp;tier=edit" data-quiz="event" data-tier="edit">Demander un devis</a></div>
       </div>
     </div></div>
   </div>
@@ -2306,6 +2306,6 @@
 <script src="config/articles.en.js?v=d5061d9b"></script>
 <script src="config/routes.js?v=09d40cd4"></script>
 <script src="config/media.js?v=c88496e4"></script>
-<script src="js/script.min.js?v=c837ddec"></script>
+<script src="js/script.min.js?v=95fa757e"></script>
 </body>
 </html>
