@@ -8760,3 +8760,6 @@ html body .nav-cta :is(span, *) { color: #111 !important; }
 #missionVideoWrap .mission-text { font-family: 'Inter Tight', sans-serif !important; font-weight: 600 !important; letter-spacing: -.03em !important; line-height: 1.02 !important; font-size: clamp(30px, min(5vw, 7.2svh), 76px) !important; max-width: 16ch !important; color: #fff !important; text-shadow: 0 2px 22px rgba(0,0,0,.55), 0 0 2px rgba(0,0,0,.35) !important; text-wrap: balance; }
 #missionVideoWrap .mission-kicker { font-weight: 600 !important; text-shadow: 0 1px 12px rgba(0,0,0,.55); }
 @media (max-width: 760px) { #missionVideoWrap .mission-text { font-size: clamp(28px, 9.4vw, 44px) !important; letter-spacing: -.025em !important; max-width: 14ch !important; } }
+
+/* Accès client / partenaire du haut de l'accueil : arrondis (pilules) comme « Construire mon projet » (6 nov. 2026, demande de la propriétaire) */
+html body #view-home .hero-access { border-radius: 999px !important; padding-left: 20px !important; padding-right: 22px !important; overflow: hidden; }
