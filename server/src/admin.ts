@@ -355,7 +355,7 @@ export async function buildDashboard(env: Env, stripe: Stripe): Promise<Record<s
  *   le client est supprimé s'il n'a aucune facture ; s'il en a, il est conservé (obligation de
  *   conservation comptable des factures) mais ses réponses au devis sont effacées.
  */
-export async function deleteContact(env: Env, stripe: Stripe, email: string, type?: AccountType, purge = false): Promise<Record<string, unknown>> {
+export async function deleteContact(env: Env, stripe: Stripe, email: string, type?: AccountType, purge = false, customerId = ''): Promise<Record<string, unknown>> {
   const key = norm(email);
   const summary: Record<string, unknown> = { email: key };
   const types: AccountType[] = type ? [type] : ['client', 'partner'];
@@ -384,7 +384,14 @@ export async function deleteContact(env: Env, stripe: Stripe, email: string, typ
   summary.markers = markers;
   await removeLogOf(env, key).catch(() => undefined);
 
-  const customers = (await stripe.customers.list({ email: key, limit: 10 })).data;
+  /* Fiches Stripe du contact : par adresse exacte (minuscules), par recherche insensible à la casse, et par identifiant connu de l'admin
+     (une adresse saisie avec des majuscules, ou une fiche créée sous une autre adresse, n'était pas retrouvée). */
+  const byId = new Map<string, Stripe.Customer>();
+  const add = (c: Stripe.Customer | Stripe.DeletedCustomer) => { if (c && !('deleted' in c && c.deleted)) byId.set(c.id, c as Stripe.Customer); };
+  for (const c of (await stripe.customers.list({ email: key, limit: 100 })).data) add(c);
+  try { for (const c of (await stripe.customers.search({ query: `email:'${key.replace(/'/g, '')}'`, limit: 100 })).data) add(c); } catch { /* recherche indisponible : la liste exacte suffit */ }
+  if (/^cus_[A-Za-z0-9]+$/.test(customerId) && !byId.has(customerId)) { try { add(await stripe.customers.retrieve(customerId)); } catch { /* fiche déjà supprimée */ } }
+  const customers = [...byId.values()];
   let stripeDeleted = 0;
   let stripeKept = 0;
   for (const cu of customers) {
@@ -405,6 +412,7 @@ export async function deleteContact(env: Env, stripe: Stripe, email: string, typ
     }
   }
   summary.stripeDeleted = stripeDeleted;
+  summary.quotesKept = (await listQuotes(env)).filter((q) => q.email === key).length;
   summary.stripeKeptWithInvoices = stripeKept;
   return summary;
 }

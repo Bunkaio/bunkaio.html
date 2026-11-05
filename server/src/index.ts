@@ -653,12 +653,12 @@ async function handleAdminDashboard(request: Request, env: Env, headers: Record<
     return jsonResponse({ ok: !!r, ...(r && r !== 'removed' ? { email: r.email } : {}) }, r ? 200 : 404, headers);
   }
   if (path === '/admin/delete' && request.method === 'POST') {
-    const body = (await request.json().catch(() => ({}))) as { email?: unknown; type?: unknown; purge?: unknown };
+    const body = (await request.json().catch(() => ({}))) as { email?: unknown; type?: unknown; purge?: unknown; customerId?: unknown };
     if (typeof body.email !== 'string' || !body.email.includes('@') || (body.type !== undefined && !isValidAccountType(body.type))) {
       return jsonResponse({ ok: false, error: 'invalid_payload' }, 400, headers);
     }
     try {
-      const summary = await deleteContact(env, createStripeClient(env.STRIPE_SECRET_KEY), body.email, body.type as AccountType | undefined, body.purge === true);
+      const summary = await deleteContact(env, createStripeClient(env.STRIPE_SECRET_KEY), body.email, body.type as AccountType | undefined, body.purge === true, typeof body.customerId === 'string' ? body.customerId : '');
       console.log('[admin] suppression', summary);
       return jsonResponse({ ok: true, summary }, 200, headers);
     } catch (err) {
