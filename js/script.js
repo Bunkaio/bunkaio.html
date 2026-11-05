@@ -257,7 +257,7 @@ const I18N = {
     'home-btn':'Retour à l\'accueil','see-portfolio':'Voir tout le portfolio',
     'pf-cta-title':'Prêt à donner vie à votre projet&nbsp;?','pf-cta-sub':'Chaque projet commence par une proposition personnalisée — simple, rapide, sans engagement.','pf-cta-btn':'Recevoir mon devis personnalisé','footer-cta-headline':'Un projet en tête&nbsp;?',
     'aria-next':'Suivant','aria-prev':'Précédent','aria-back':'Retour','aria-menu':'Menu','aria-home':'Accueil',
-    'ms-all':'Parcourir toutes les prestations','avail-title':'Disponibilités','avail-sub':'Choisissez votre séance : les jours et horaires libres s\'affichent en un coup d\'œil, dans la couleur de la prestation. Le créneau choisi vous est réservé 48 h, le temps de valider votre devis.','q-cal-label':'Votre date','q-cal-sub':'Facultatif : choisissez un créneau libre, il vous sera réservé 48 h à l\'envoi de votre demande.','svc-reserve':'Je réserve ma séance','studio-reserve':'Je réserve ma séance en ligne','svc-discover':'Découvrir chaque prestation','ft-discover':'Découvrir chaque prestation','scroll-hint':'Scroll','services-title':'Prestations & tarifs photo','services-sub':'Photographe professionnel à Montpellier et Toulouse : des images haut de gamme, en HD, pour mettre en valeur votre projet. Nos prestations et leurs tarifs, par univers. Déplacement partout en France sur devis.',
+    'ms-all':'Parcourir toutes les prestations','avail-title':'Disponibilités','qm-estimate':'J\'estime mon projet','qm-avail':'Je vérifie les disponibilités','qc-k':'Devis & réservation','qc-t':'Par où souhaitez-vous commencer ?','qc-estimate-d':'Quelques questions pour obtenir une proposition chiffrée sous 48 h, sans engagement.','qc-avail-d':'Le calendrier 2026–2027 : repérez en un coup d\'œil les créneaux libres de votre séance.','avail-sub':'Choisissez votre séance : les jours et horaires libres s\'affichent en un coup d\'œil, dans la couleur de la prestation. Le créneau choisi vous est réservé 48 h, le temps de valider votre devis.','q-cal-label':'Votre date','q-cal-sub':'Facultatif : choisissez un créneau libre, il vous sera réservé 48 h à l\'envoi de votre demande.','svc-reserve':'Je réserve ma séance','studio-reserve':'Je réserve ma séance en ligne','svc-discover':'Découvrir chaque prestation','ft-discover':'Découvrir chaque prestation','scroll-hint':'Scroll','services-title':'Prestations & tarifs photo','services-sub':'Photographe professionnel à Montpellier et Toulouse : des images haut de gamme, en HD, pour mettre en valeur votre projet. Nos prestations et leurs tarifs, par univers. Déplacement partout en France sur devis.',
     'svc-all':'Tous','svc-cta':'Construire ce projet','svc-sub-label':'Abonnement mensuel',
     'svc-trust1-title':'Réponse sous 48h','svc-trust1-text':'Chaque demande est étudiée puis traitée personnellement — jamais de réponse automatique.',
     'svc-trust2-title':'Un parcours accompagné','svc-trust2-text':'De la demande à la livraison, 8 étapes claires — dont la création de votre moodboard pour partager votre vision — <span class="svc-trust-link" onclick="goToProcess()">voir le déroulé complet</span>.',
@@ -631,7 +631,7 @@ const I18N = {
     'home-btn':'Back to home','see-portfolio':'View the full portfolio',
     'pf-cta-title':'Ready to bring your project to life?','pf-cta-sub':'Every project starts with a personalised proposal — simple, quick, no commitment.','pf-cta-btn':'Get my personalised quote','footer-cta-headline':'Got a project in mind?',
     'aria-next':'Next','aria-prev':'Previous','aria-back':'Back','aria-menu':'Menu','aria-home':'Home',
-    'ms-all':'Browse all services','avail-title':'Availability','avail-sub':'Choose your session: free days and times appear at a glance, in the colour of the service. The slot you pick is held for 48 hours while you confirm your quote.','q-cal-label':'Your date','q-cal-sub':'Optional: pick a free slot, it will be held for 48 hours once you send your request.','svc-reserve':'Book my session','studio-reserve':'Book my session online','svc-discover':'Explore each service','ft-discover':'Explore each service','scroll-hint':'Scroll','services-title':'Photography services & rates','services-sub':'Professional photographer in Montpellier and Toulouse: premium, high-definition images that showcase your project. Our services and rates, by universe. Travel anywhere in France on quote.',
+    'ms-all':'Browse all services','avail-title':'Availability','qm-estimate':'Estimate my project','qm-avail':'Check availability','qc-k':'Quote & booking','qc-t':'Where would you like to start?','qc-estimate-d':'A few questions to get a priced proposal within 48 hours, with no commitment.','qc-avail-d':'The 2026–2027 calendar: spot the free slots for your session at a glance.','avail-sub':'Choose your session: free days and times appear at a glance, in the colour of the service. The slot you pick is held for 48 hours while you confirm your quote.','q-cal-label':'Your date','q-cal-sub':'Optional: pick a free slot, it will be held for 48 hours once you send your request.','svc-reserve':'Book my session','studio-reserve':'Book my session online','svc-discover':'Explore each service','ft-discover':'Explore each service','scroll-hint':'Scroll','services-title':'Photography services & rates','services-sub':'Professional photographer in Montpellier and Toulouse: premium, high-definition images that showcase your project. Our services and rates, by universe. Travel anywhere in France on quote.',
     'svc-all':'All','svc-cta':'Build this project','svc-sub-label':'Monthly plan',
     'svc-trust1-title':'Reply within 48h','svc-trust1-text':'Every request is reviewed and handled personally — never an automated reply.',
     'svc-trust2-title':'A guided journey','svc-trust2-text':'From request to delivery, 8 clear steps — including building your moodboard to share your vision — <span class="svc-trust-link" onclick="goToProcess()">see the full process</span>.',
@@ -2189,6 +2189,7 @@ function goView(v, subTab, opts){
     if (v === 'advice') renderAdvicePage();
     if (v === 'discover') renderDiscoverPage();
     if (v === 'avail') setTimeout(() => renderAvailPage(), 0);
+    if (v === 'quiz') { const qv = document.getElementById('view-quiz'); if (qv) qv.classList.toggle('q-choosing', !(window.__quizDirect || (opts.initial && /[?&]cat=/.test(window.__bootQs || '')))); window.__quizDirect = false; }
     if (v === 'legal') { renderFaqAccordion(); renderPrivacyAccordion(); renderCgvAccordion(); renderCookiesAccordion(); renderImageAccordion(); setLegalTab(subTab === 'privacy' || subTab === 'cgv' || subTab === 'cookies' || subTab === 'image' ? subTab : 'faq', true); }
     if (v === 'about') initAboutStats();
     if (v === 'home') hmInit();
@@ -2393,6 +2394,7 @@ function scrollToContactForm(){
 }
 function goToQuizCategory(catId, tierId){
   if (isComingSoon(catId)) { goToComingSoon(catId); return; }
+  window.__quizDirect = true;
   goView('quiz');
   /* Remonter tout de suite en haut, sans animation : sinon, depuis le bas d'une page longue, l'écran reste sur une zone vide (page blanche) le temps du défilement. */
   try { window.scrollTo(0, 0); document.documentElement.scrollTop = 0; document.body.scrollTop = 0; } catch (e) {}
@@ -9929,4 +9931,16 @@ function sendSlotHold(){
   if (!S.slot) return;
   const body = { date: S.slot.date, start: S.slot.start, end: S.slot.end, cat: S.slot.cat, tier: S.slot.tier, label: bkcCatName(S.slot.cat) + (S.slot.tier ? ' · ' + ((bkcTiers(S.slot.cat).find(x => x.id === S.slot.tier) || {}).name || S.slot.tier) : ''), name: S.name, email: S.email, phone: S.phone || undefined, lang: LANG };
   fetch(ACCOUNTS_API_BASE + '/availability/hold', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body), keepalive: true }).then(() => bkcLoad(true)).catch(() => {});
+}
+
+
+/* Page Devis en deux sections (5 nov. 2026, demande de la propriétaire) : « J'estime mon projet » (formulaire) ou « Je vérifie les disponibilités » (agenda 2026–2027). */
+function quizChoose(mode){
+  if (window.track) track('cta_click', 'devis_choix_' + mode);
+  const top = () => { try { window.scrollTo(0, 0); document.documentElement.scrollTop = 0; document.body.scrollTop = 0; } catch (e) {} };
+  if (mode === 'avail') { _availPre = null; goView('avail'); top(); return; }
+  const q = document.getElementById('view-quiz');
+  if (currentView !== 'quiz') { window.__quizDirect = true; goView('quiz'); }
+  if (q) q.classList.remove('q-choosing');
+  top();
 }

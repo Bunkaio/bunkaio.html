@@ -35,7 +35,7 @@
 <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
 <link rel="preload" href="fonts/inter-tight-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <script>/* Image d'attente des vidéos de l'accueil : une vraie photo HD du Portfolio BUNKAIO (et non une capture de la vidéo), posée derrière chaque vidéo via --vid-a / --vid-b ; accueil seulement. */(function(){var p=location.pathname;if(p!=="/"&&p!=="/en/"&&p!=="/index.html")return;var B="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/portfolio/",C=["mode/1","photo-part/1","corporate/1","commercial/1","event/1","mode/2","photo-part/2","corporate/2","commercial/2","event/2"],got=[],k=0,r=document.documentElement;function next(){if(k>=C.length||got.length>=2)return;var u=B+C[k++]+".webp",i=new Image();i.onload=function(){got.push(u);r.style.setProperty(got.length===1?"--vid-a":"--vid-b","url("+u+")");next();};i.onerror=next;i.src=u;}next();})();</script>
-<link rel="stylesheet" href="css/style.min.css?v=92efd051">
+<link rel="stylesheet" href="css/style.min.css?v=38a77740">
 
 <script type="application/ld+json">
 {
@@ -698,6 +698,30 @@
   <h2 class="sr-only" data-pageh1 data-lang="quiz-h1">Online photo quote</h2>
   <div class="quiz-wrap">
 
+    <div class="q-mode" role="tablist" aria-label="Devis ou disponibilités">
+      <button type="button" class="q-mode-b on" role="tab" aria-selected="true" onclick="quizChoose('estimate')"><span data-lang="qm-estimate">Estimate my project</span></button>
+      <button type="button" class="q-mode-b" role="tab" aria-selected="false" onclick="quizChoose('avail')"><span data-lang="qm-avail">Check availability</span></button>
+    </div>
+
+    <section class="q-choice" id="qChoice" aria-labelledby="qChoiceT">
+      <p class="q-choice-k" data-lang="qc-k">Quote & booking</p>
+      <h2 class="q-choice-t" id="qChoiceT" data-lang="qc-t">Where would you like to start?</h2>
+      <div class="q-choice-grid">
+        <button type="button" class="q-choice-card" onclick="quizChoose('estimate')">
+          <span class="q-choice-n">01</span>
+          <b data-lang="qm-estimate">Estimate my project</b>
+          <small data-lang="qc-estimate-d">A few questions to get a priced proposal within 48 hours, with no commitment.</small>
+          <i class="q-choice-go" aria-hidden="true">⊹</i>
+        </button>
+        <button type="button" class="q-choice-card" onclick="quizChoose('avail')">
+          <span class="q-choice-n">02</span>
+          <b data-lang="qm-avail">Check availability</b>
+          <small data-lang="qc-avail-d">The 2026–2027 calendar: spot the free slots for your session at a glance.</small>
+          <i class="q-choice-go" aria-hidden="true">⊹</i>
+        </button>
+      </div>
+    </section>
+
     <div class="qstep active" id="qs-1">
       <div class="qstep-meta stagger" style="animation-delay:0.05s" data-lang="step-cat">01 — Category</div>
       <h2 class="qstep-title stagger" style="animation-delay:0.12s" data-lang="q-cat">What is your field?</h2>
@@ -1315,6 +1339,10 @@
 </div>
 <div class="view" id="view-avail">
   <div class="services-page service-page avail-page">
+    <div class="q-mode" role="tablist" aria-label="Devis ou disponibilités">
+      <button type="button" class="q-mode-b" role="tab" aria-selected="false" onclick="quizChoose('estimate')"><span data-lang="qm-estimate">Estimate my project</span></button>
+      <button type="button" class="q-mode-b on" role="tab" aria-selected="true" onclick="quizChoose('avail')"><span data-lang="qm-avail">Check availability</span></button>
+    </div>
     <h2 data-pageh1 class="page-title" data-lang="avail-title">Availability</h2>
     <p class="page-sub" data-lang="avail-sub">Choose your session: free days and times appear at a glance, in the colour of the service. The slot you pick is held for 48 hours while you confirm your quote.</p>
     <div id="availCal" class="bkc-host"></div>
@@ -2278,6 +2306,6 @@
 <script src="config/articles.en.js?v=d5061d9b"></script>
 <script src="config/routes.js?v=09d40cd4"></script>
 <script src="config/media.js?v=c88496e4"></script>
-<script src="js/script.min.js?v=b8b834a3"></script>
+<script src="js/script.min.js?v=b99e5401"></script>
 </body>
 </html>
