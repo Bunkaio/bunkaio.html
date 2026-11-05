@@ -8424,3 +8424,11 @@ body[data-view="home"] #pageHeroWrap, .hero-video-wrap[data-view="home"] { backg
 #view-home .hero > .hero-start:not(#bkv) { background: var(--rose, #e8c6c4) !important; color: #111 !important; border: 1px solid var(--rose, #e8c6c4) !important; box-shadow: none !important; -webkit-backdrop-filter: none; backdrop-filter: none; }
 #view-home .hero > .hero-start:not(#bkv) span { color: #111 !important; }
 #view-home .hero > .hero-start:not(#bkv):is(:hover, :focus-visible, :active) { background: #f1d9d7 !important; color: #111 !important; box-shadow: 0 0 22px 2px rgba(232,198,196,.55) !important; }
+
+/* Devis : cartes (prestation, profil, formule, options) à encadrement fin et discret au lieu du noir (5 nov. 2026) */
+.view.px-quiz :is(.prof-card, .tier-card, .opt-card, [class*="-card"]) { border: 1px solid rgba(17,17,17,.14) !important; }
+.view.px-quiz .quiz-wrap .qstep.active :is(.prof-card, .tier-card, .opt-card, [class*="-card"]):hover { border: 1px solid rgba(17,17,17,.26) !important; }
+.view.px-quiz .quiz-wrap .qstep.active :is(.prof-card, .tier-card, .opt-card, [class*="-card"]).selected, .view.px-quiz :is(.prof-card, .tier-card, .opt-card, [class*="-card"]).selected { border: 1px solid rgba(17,17,17,.26) !important; }
+/* Carte « Studio Continu » : texte lisible sur fond papier (il restait blanc) */
+.view.px-quiz .tier-card.sub-card, .view.px-quiz .tier-card.sub-card :is(.tier-name, .tier-price, .tier-detail, small, b, span) { color: #111 !important; }
+.view.px-quiz .tier-card.sub-card .tier-detail, .view.px-quiz .tier-card.sub-card .tier-price small { color: rgba(17,17,17,.65) !important; }
