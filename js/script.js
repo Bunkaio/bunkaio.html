@@ -2269,7 +2269,7 @@ function quizStep(n){
   document.querySelectorAll('.qstep').forEach(s => s.classList.remove('active'));
   document.getElementById('qs-' + n).classList.add('active');
   setProgress(n / 6 * 100);
-  try { if (n === 4) renderQuizCal(); if (n === 5) quizSlotNote(); } catch (e) {}
+  try { if (n === 4) renderQuizCal(); if (n === 5) quizSlotNote(); quizPresetBar(); } catch (e) {}
   /* Scroll instantané (pas 'smooth') : l'apparition en fondu du contenu
      de l'étape démarre au même instant que le changement de classe
      .active — avec un scroll animé, si l'utilisateur était loin en bas
@@ -9651,10 +9651,10 @@ initNavScrollState();
   if (v === 'home') { applySeoMeta('home'); return; }
   goView(v === 'account' ? 'login' : v, r ? (r.cat || r.slug || r.city || r.sub || null) : null, { initial: true });
   /* Lien direct vers une formule (/devis/?cat=mode&tier=sig) : filet de sécurité si le clic n'a pas pu ouvrir le devis en place. */
-  if (v === 'quiz') { try { const q = new URLSearchParams(_qs0), c = q.get('cat'); if (c && CATS.some(x => x.id === c)) setTimeout(() => { try { const d = q.get('d'), st = q.get('s'), en = q.get('e'), tr = q.get('tier') || undefined;
+  if (v === 'quiz') { try { const q = new URLSearchParams(_qs0), c = q.get('cat'); if (c && CATS.some(x => x.id === c)) { const qv = document.getElementById('view-quiz'); if (qv) qv.classList.add('q-booting'); } if (c && CATS.some(x => x.id === c)) setTimeout(() => { try { const d = q.get('d'), st = q.get('s'), en = q.get('e'), tr = q.get('tier') || undefined;
       const any = q.get('any') === '1';
       if (d && /^\d{4}-\d{2}-\d{2}$/.test(d) && (any || (/^\d{2}:\d{2}$/.test(st || '') && /^\d{2}:\d{2}$/.test(en || '')))) { goToQuizCategory(c); S.slot = any ? { date: d, start: '', end: '', cat: c, tier: tr || null, anyTime: true } : { date: d, start: st, end: en, cat: c, tier: tr || null }; S.presetTier = tr || null; }
-      else goToQuizCategory(c, tr); } catch (e) {} }, 400); } catch (e) {} }
+      else goToQuizCategory(c, tr); quizPresetBar(); } catch (e) {} const qv2 = document.getElementById('view-quiz'); if (qv2) requestAnimationFrame(() => qv2.classList.remove('q-booting')); }, 60); } catch (e) {} }
 })();
 
 restoreSession();
@@ -9983,6 +9983,20 @@ function quizFlexToggle(on){
   if (on) { try { renderQuizCal(); } catch (e) {} const sel = document.getElementById('qDelay'); if (sel && !sel.value) { sel.value = 'flexible'; try { checkQuizForm(); } catch (e) {} } }
   quizSlotNote();
 }
+/* Rappel élégant de la séance choisie dans l'agenda, en haut de chaque étape du devis (prestation, formule, créneau). */
+function quizPresetBar(){
+  const b = document.getElementById('quizPreset'); if (!b) return;
+  const sl = S.slot;
+  if (!sl || !sl.cat) { b.hidden = true; b.innerHTML = ''; return; }
+  const tn = sl.tier ? ((bkcTiers(sl.cat).find(x => x.id === sl.tier) || {}).name || '') : '';
+  b.style.setProperty('--c', BKC_COLORS[sl.cat] || '#111');
+  b.innerHTML = `<span class="qp-k">${t({fr:'Votre séance', en:'Your session'})}</span>
+    <b class="qp-t">${escHtml(bkcCatName(sl.cat))}${tn ? ' <i>·</i> ' + escHtml(tn) : ''}</b>
+    <span class="qp-d">${escHtml(bkcSlotText(sl, LANG))}</span>
+    <button type="button" class="qp-m" onclick="quizPresetEdit()">${t({fr:'Modifier', en:'Change'})}</button>`;
+  b.hidden = false;
+}
+function quizPresetEdit(){ const sl = S.slot; _availPre = sl ? { cat: sl.cat, tier: sl.tier || null } : null; goView('avail'); try { window.scrollTo(0,0); document.documentElement.scrollTop = 0; document.body.scrollTop = 0; } catch (e) {} }
 function quizSlotNote(){
   const n = document.getElementById('quizSlotNote'); if (!n) return;
   const cb0 = document.getElementById('quizFlexCb'); if (cb0) cb0.checked = !!S.flex && !S.slot;
