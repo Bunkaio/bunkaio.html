@@ -2307,6 +2307,7 @@ function updateQuizPayReassurance(){
 function goToTiers(){
   renderTiers();
   quizStep(3);
+  if (S.presetTier) { const pt = S.presetTier; S.presetTier = null; try { const card = document.querySelector('#tierList .tier-card[data-tier="' + pt + '"]'); if (card) pickTier(pt, card); } catch (e) {} }
 }
 
 /* Brief court de la gamme Corporate & Personal Branding (étape 5) : tout est facultatif, pour qualifier sans freiner l'envoi.
@@ -9618,7 +9619,9 @@ initNavScrollState();
   if (v === 'home') { applySeoMeta('home'); return; }
   goView(v === 'account' ? 'login' : v, r ? (r.cat || r.slug || r.city || r.sub || null) : null, { initial: true });
   /* Lien direct vers une formule (/devis/?cat=mode&tier=sig) : filet de sécurité si le clic n'a pas pu ouvrir le devis en place. */
-  if (v === 'quiz') { try { const q = new URLSearchParams(_qs0), c = q.get('cat'); if (c && CATS.some(x => x.id === c)) setTimeout(() => { try { goToQuizCategory(c, q.get('tier') || undefined); } catch (e) {} }, 400); } catch (e) {} }
+  if (v === 'quiz') { try { const q = new URLSearchParams(_qs0), c = q.get('cat'); if (c && CATS.some(x => x.id === c)) setTimeout(() => { try { const d = q.get('d'), st = q.get('s'), en = q.get('e'), tr = q.get('tier') || undefined;
+      if (d && /^\d{4}-\d{2}-\d{2}$/.test(d) && /^\d{2}:\d{2}$/.test(st || '') && /^\d{2}:\d{2}$/.test(en || '')) { goToQuizCategory(c); S.slot = { date: d, start: st, end: en, cat: c, tier: tr || null }; S.presetTier = tr || null; }
+      else goToQuizCategory(c, tr); } catch (e) {} }, 400); } catch (e) {} }
 })();
 
 restoreSession();
@@ -9877,14 +9880,9 @@ function bkcContinue(el){
   const slot = st.slot;
   const top0 = () => { try { window.scrollTo(0, 0); document.documentElement.scrollTop = 0; document.body.scrollTop = 0; } catch (e) {} };
   const go = () => {
-    /* Le créneau retenu est reporté dans le devis : on saute le choix de la formule (déjà fait) et on arrive à l'étape « Votre prestation », créneau présélectionné. */
-    try {
-      top0();
-      goToQuizCategory(slot.cat, slot.tier);
-      S.slot = slot;
-      renderRecap(); renderOptions(); quizStep(4);
-    } catch (e) { try { goToQuizCategory(slot.cat, slot.tier); S.slot = slot; } catch (e2) { location.href = '/devis/?cat=' + slot.cat + (slot.tier ? '&tier=' + slot.tier : ''); } }
-    top0(); requestAnimationFrame(top0); setTimeout(top0, 120);
+    /* Navigation complète vers le devis (comme une arrivée directe : fiable sur iPhone, pas de page blanche) ; le parcours complet est suivi, seule la prestation et le créneau sont présélectionnés. */
+    top0();
+    location.href = (LANG === 'en' ? '/en' : '') + '/devis/?cat=' + encodeURIComponent(slot.cat) + (slot.tier ? '&tier=' + encodeURIComponent(slot.tier) : '') + '&d=' + slot.date + '&s=' + slot.start + '&e=' + slot.end;
   };
   /* Le créneau doit encore être libre au moment de continuer (quelqu'un a pu le prendre entre-temps). */
   bkcLoad(true).then(() => {
