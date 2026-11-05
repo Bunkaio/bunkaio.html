@@ -8865,3 +8865,8 @@ html body :is(.btn-row, .svcp-cta-row, .svc-cta-row, .pp-cta-row, .cs-actions, .
 html body :is(.svcp-cta-row, .svc-cta-row, .pp-cta-row, .cs-actions, .discover-actions, .fx-actions, .svx-actions, .mb-wizard-actions) > :is(a, button) { margin-left: auto; margin-right: auto; }
 html body .login-switch, html body .login-panel .btn-row { text-align: center; }
 html body .footer-cta-row .hero-start { justify-content: center !important; }
+
+/* Transition carrousel → « L'exigence BUNKAIO » (6 nov. 2026) : le fondu suit le défilement sans retard (la variable pilote le conteneur, plus de transition sur l'opacité de chaque photo). */
+.mission-tilebgs { opacity: var(--mt-bg-op, .5); will-change: opacity; }
+.mt-bg.on, .home-claim-bg-x { opacity: 1; }
+.mission-video-content, .mission-video-overlay { will-change: opacity; }
