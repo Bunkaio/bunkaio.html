@@ -2790,7 +2790,7 @@ function renderTiersBase(){
     const threeX = Math.round(pp(td.price) / 3).toLocaleString('fr-FR');
     const payLine = LANG === 'fr' ? `Soit 3 × ${threeX}€ sans frais` : `That's 3 × €${threeX} interest-free`;
     const d = document.createElement('div');
-    d.className = 'tier-card stagger';
+    d.className = 'tier-card stagger' + (svxLevel(cat, tier.id).cls !== 'mid' ? ' lv-' + svxLevel(cat, tier.id).cls : '');
     d.style.animationDelay = (0.24 + slot++ * 0.1) + 's';
     d.innerHTML = `
       ${td.promo ? `<div class="tier-promo">${t(td.promo)}</div>` : ''}${tier.badge ? `<div class="tier-badge">${t(tier.badge)}</div>` : ''}
@@ -3659,7 +3659,8 @@ function renderDiscoverPage(){
 function fxItem(catId, f){
   const en = LANG === 'en';
   const open = f.open ? ' open' : '';
-  return `<div class="fx${f.special ? ' fx-special' : ''}${open}" data-fx="${f.id}">
+  const fc = CATS.find(x => x.id === catId), fl = fc && !f.special && fc.tiers && fc.tiers[f.id] ? svxLevel(fc, f.id).cls : 'mid';
+  return `<div class="fx${f.special ? ' fx-special' : ''}${fl !== 'mid' ? ' lv-' + fl : ''}${open}" data-fx="${f.id}">
     <button type="button" class="fx-head" aria-expanded="${!!f.open}">
       ${formulaPhotoHTML(catId, f.id, 'fx-thumb')}
       <span class="fx-title"><b>${f.name}</b>${f.badge && f.badge !== f.name ? `<em>${f.badge}</em>` : ''}<small>${f.delay}</small></span>
@@ -5395,7 +5396,7 @@ function lkFiche(head, spec){
     <div class="lk-fiche-panel">
       ${desc ? `<p class="lk-fiche-desc">${escHtml(desc)}</p>` : '<span></span>'}
       <div class="lk-fiche-side">
-        ${tiers.length ? `<div class="lk-tiers" id="lkTiers">${tiers.map((tr, i) => quizLink(cid, `<span class="lk-tier-n">${pfxNum(i + 1)}</span><span class="lk-tier-t">${escHtml(t(tr.name))}</span><span class="lk-tier-p">${eur(c.tiers[tr.id].price)}</span>`, 'lk-tier' + ((brand ? tr.id === 'lanc' : i === 0) ? ' on' : ''), tr.id, tr.id === 'lanc' ? 'lancement' : '')).join('')}</div>` : ''}
+        ${tiers.length ? `<div class="lk-tiers" id="lkTiers">${tiers.map((tr, i) => quizLink(cid, `<span class="lk-tier-n">${pfxNum(i + 1)}</span><span class="lk-tier-t">${escHtml(t(tr.name))}</span><span class="lk-tier-p">${eur(c.tiers[tr.id].price)}</span>`, 'lk-tier' + (svxLevel(c, tr.id).cls !== 'mid' ? ' lv-' + svxLevel(c, tr.id).cls : '') + ((brand ? tr.id === 'lanc' : i === 0) ? ' on' : ''), tr.id, tr.id === 'lanc' ? 'lancement' : '')).join('')}</div>` : ''}
         <p class="lk-note">${t({fr:'Prix nets, TVA non applicable. Paiement en 3 fois sans frais avec Klarna ou Scalapay, sous réserve d\'éligibilité.', en:'Net prices, VAT not applicable. Pay in 3 interest-free instalments with Klarna or Scalapay, subject to eligibility.'})}</p>
       </div>
     </div>`;  /* Bobine des réalisations de la prestation (photos du Portfolio de la même catégorie, 3 minimum). */

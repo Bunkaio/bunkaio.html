@@ -35,7 +35,7 @@
 <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
 <link rel="preload" href="fonts/inter-tight-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <script>/* Image d'attente des vidéos de l'accueil : une vraie photo HD du Portfolio BUNKAIO (et non une capture de la vidéo), posée derrière chaque vidéo via --vid-a / --vid-b ; accueil seulement. */(function(){var p=location.pathname;if(p!=="/"&&p!=="/en/"&&p!=="/index.html")return;var B="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/portfolio/",C=["mode/1","photo-part/1","corporate/1","commercial/1","event/1","mode/2","photo-part/2","corporate/2","commercial/2","event/2"],got=[],k=0,r=document.documentElement;function next(){if(k>=C.length||got.length>=2)return;var u=B+C[k++]+".webp",i=new Image();i.onload=function(){got.push(u);r.style.setProperty(got.length===1?"--vid-a":"--vid-b","url("+u+")");next();};i.onerror=next;i.src=u;}next();})();</script>
-<link rel="stylesheet" href="css/style.min.css?v=1305b270">
+<link rel="stylesheet" href="css/style.min.css?v=1cb8f7c6">
 
 <script type="application/ld+json">
 {
@@ -1413,7 +1413,7 @@
         <div class="fx-actions"><a class="cta-primary" href="/devis/?cat=corporate" data-quiz="corporate">Demander un devis</a></div>
       </div>
     </div></div>
-  </div><div class="fx rv" data-fx="prem" style="--rv-d: 0.14s;">
+  </div><div class="fx lv-high rv" data-fx="prem" style="--rv-d: 0.14s;">
     <button type="button" class="fx-head" aria-expanded="false">
       <img class="formula-photo fx-thumb" src="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/formulas/corporate-prem.webp" alt="" loading="lazy" decoding="async" data-fb="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/services/corporate.webp" onerror="var f=this.dataset.fb;if(f){this.dataset.fb='';this.src=f}else{this.remove()}">
       <span class="fx-title"><b>Premium</b><em>Plus complète</em><small>7 jours ouvrés</small></span>
@@ -1429,7 +1429,7 @@
         <div class="fx-actions"><a class="cta-primary" href="/devis/?cat=corporate" data-quiz="corporate">Demander un devis</a></div>
       </div>
     </div></div>
-  </div><div class="fx rv" data-fx="edit" style="--rv-d: 0.21000000000000002s;">
+  </div><div class="fx lv-top rv" data-fx="edit" style="--rv-d: 0.21000000000000002s;">
     <button type="button" class="fx-head" aria-expanded="false">
       <img class="formula-photo fx-thumb" src="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/formulas/corporate-edit.webp" alt="" loading="lazy" decoding="async" data-fb="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/services/corporate.webp" onerror="var f=this.dataset.fb;if(f){this.dataset.fb='';this.src=f}else{this.remove()}">
       <span class="fx-title"><b>Éditorial Bunkaio</b><em>Production complète</em><small>10 jours ouvrés</small></span>
@@ -2305,6 +2305,6 @@
 <script src="config/articles.en.js?v=d5061d9b"></script>
 <script src="config/routes.js?v=09d40cd4"></script>
 <script src="config/media.js?v=c88496e4"></script>
-<script src="js/script.min.js?v=a505bc36"></script>
+<script src="js/script.min.js?v=d5e59caf"></script>
 </body>
 </html>

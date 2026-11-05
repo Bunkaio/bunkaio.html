@@ -8681,3 +8681,37 @@ html.pfi-lock .bk-back,body.menu-open .bk-back{display:none}
 @media (max-width:760px){.svcp-leadban .lk-cap-box{left:16px;right:16px;max-width:none;bottom:24px}.svcp-leadban .lk-cap-p{font-size:13.5px}}
 #view-service .svcp-leadban .lk-cap-box .svcp-lead, #view-service .svcp-leadban .lk-cap-box .svcp-lead * { color: rgba(255,255,255,.95) !important; }
 #view-service .svcp-leadban .lk-cap-box .svcp-lead strong, #view-service .svcp-leadban .lk-cap-box .svcp-lead a { color: #fff !important; }
+
+/* Premium et Éditorial mis en valeur partout (devis, pages prestation, fiche) — 6 nov. 2026, demande de la propriétaire : Premium rose + filet, Éditorial encre/violet avec ⊹, comme sur la page Services */
+/* Devis : cartes de formule */
+#view-quiz .tier-card.lv-high { background: linear-gradient(180deg, rgba(232,198,196,.5), rgba(232,198,196,.18)) !important; border-color: #e8c6c4 !important; box-shadow: inset 4px 0 0 #e8c6c4 !important; }
+#view-quiz .tier-card.lv-high.selected, #view-quiz .qstep.active .tier-card.lv-high.selected { background: #e8c6c4 !important; border-color: #111 !important; box-shadow: inset 4px 0 0 #111 !important; }
+#view-quiz .tier-card.lv-top, #view-quiz .tier-card.lv-top * { color: #fff !important; }
+#view-quiz .tier-card.lv-top { background: linear-gradient(135deg, #111 0%, #2a2540 100%) !important; border: 1px solid #111 !important; box-shadow: inset 4px 0 0 #d6c9f7 !important; }
+#view-quiz .tier-card.lv-top .tier-name::after { content: ' ⊹'; color: #d6c9f7 !important; }
+#view-quiz .tier-card.lv-top :is(.tier-detail, .tier-pay-line, .tier-line, .tier-badge) { color: rgba(255,255,255,.72) !important; }
+#view-quiz .tier-card.lv-top .tier-badge { background: rgba(214,201,247,.18) !important; color: #d6c9f7 !important; }
+#view-quiz .qstep.active .tier-card.lv-top:hover, #view-quiz .qstep.active .tier-card.lv-top.selected { background: linear-gradient(135deg, #1c1a2c 0%, #3a3260 100%) !important; border: 1px solid #d6c9f7 !important; box-shadow: inset 4px 0 0 #d6c9f7, 0 8px 26px rgba(110,90,168,.35) !important; }
+#view-quiz .qstep.active .tier-card.lv-top:hover *, #view-quiz .qstep.active .tier-card.lv-top.selected * { color: #fff !important; }
+#view-quiz .qstep.active .tier-card.lv-top:hover .tier-name::after, #view-quiz .qstep.active .tier-card.lv-top.selected .tier-name::after { color: #d6c9f7 !important; }
+#view-quiz .tier-card.lv-top .tier-chev { filter: invert(1); }
+/* Pages prestation : lignes de formules */
+#view-service .fx.lv-high { background: linear-gradient(90deg, rgba(232,198,196,.42), rgba(232,198,196,0) 75%) !important; box-shadow: inset 4px 0 0 #e8c6c4; }
+#view-service .fx.lv-high .fx-title b { font-weight: 700; }
+#view-service .fx.lv-top { background: linear-gradient(135deg, #111 0%, #262040 100%) !important; box-shadow: inset 4px 0 0 #d6c9f7; }
+#view-service .fx.lv-top, #view-service .fx.lv-top * { color: #fff !important; }
+#view-service .fx.lv-top .fx-title b::after { content: ' ⊹'; color: #d6c9f7 !important; }
+#view-service .fx.lv-top :is(.fx-title small, .fx-title em, .fx-head::before, .svcp-list li::before) { color: rgba(255,255,255,.62) !important; }
+#view-service .fx.lv-top .fx-head { padding-left: 14px !important; padding-right: 14px !important; }
+#view-service .fx.lv-high .fx-head { padding-left: 14px !important; padding-right: 14px !important; }
+#view-service .fx.lv-top .fx-body { padding-left: 14px; padding-right: 14px; }
+#view-service .fx.lv-top :is(.cta-primary, .btn, a[data-quiz]) { background: #d6c9f7 !important; color: #111 !important; border-color: #d6c9f7 !important; }
+#view-service .fx.lv-top :is(.cta-primary, .btn, a[data-quiz]) * { color: #111 !important; }
+#view-service .fx.lv-top .fx-chev::before, #view-service .fx.lv-top .fx-chev::after { background: #fff !important; }
+/* Fiche d'ouverture : liste des formules */
+.lk-tier.lv-high { background: rgba(232,198,196,.5); box-shadow: inset 3px 0 0 #e8c6c4; }
+.lk-tier.lv-high .lk-tier-t { font-weight: 700; }
+.lk-tier.lv-top { background: linear-gradient(135deg, #111, #2a2540); color: #fff; box-shadow: inset 3px 0 0 #d6c9f7; }
+.lk-tier.lv-top .lk-tier-n { color: #d6c9f7; }
+.lk-tier.lv-top .lk-tier-t::after { content: ' ⊹'; color: #d6c9f7; }
+.lk-tier.lv-top:hover { background: #3a3260; }
