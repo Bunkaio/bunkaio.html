@@ -9784,8 +9784,8 @@ function warmServicesVideo(){
 
 /* Filet de sécurité des apparitions (5 nov. 2026) : si, pour une raison propre à l'appareil, un observateur ne signale pas un élément visible (photos, planches, textes), il est révélé après 1,2 s à l'écran ; rien ne reste masqué. */
 (function(){
-  const SEL = '.csp-pre:not(.csp-in), .fl-pre:not(.fl-in), .tl-pre:not(.tl-in), .tx-pre:not(.tx-in), .fxl:not(.fxl-in), #view-portfolio .rv:not(.in)';
-  const FIX = { 'csp-pre': 'csp-in', 'rv': 'in', 'fl-pre': 'fl-in', 'tl-pre': 'tl-in', 'tx-pre': 'tx-in', 'fxl': 'fxl-in' };
+  const SEL = '.csp-pre:not(.csp-in), .fl-pre:not(.fl-in), .tl-pre:not(.tl-in), .tx-pre:not(.tx-in), .fxl:not(.fxl-in), .vgl:not(.vgl-in), #view-portfolio .rv:not(.in)';
+  const FIX = { 'csp-pre': 'csp-in', 'rv': 'in', 'fl-pre': 'fl-in', 'tl-pre': 'tl-in', 'tx-pre': 'tx-in', 'fxl': 'fxl-in', 'vgl': 'vgl-in' };
   setInterval(() => {
     if (document.visibilityState !== 'visible') return;
     const vh = window.innerHeight || 800;
@@ -10130,4 +10130,16 @@ function bkHighlightAll(){
   const main = document.getElementById('main') || document.body; let t = null;
   new MutationObserver(() => { clearTimeout(t); t = setTimeout(() => { try { bkHighlightAll(); } catch (e) {} }, 220); }).observe(main, { childList: true, subtree: true, characterData: false });
   setTimeout(() => { try { bkHighlightAll(); } catch (e) {} }, 900);
+})();
+
+
+/* « Ce que BUNKAIO apporte » et listes de valeurs (6 nov. 2026, demande de la propriétaire) : les lignes se succèdent — chaque titre monte et se resserre, puis son texte apparaît juste après, avant la ligne suivante ; rejoué à chaque ouverture de l'accordéon. */
+(function(){
+  if (typeof IntersectionObserver === 'undefined' || (typeof REDUCED_MOTION !== 'undefined' && REDUCED_MOTION)) return;
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) e.target.classList.add('vgl-in'); else e.target.classList.remove('vgl-in'); }), { threshold: .2 });
+  let raf = 0;
+  const scan = () => { raf = 0; document.querySelectorAll('.value-grid:not([data-vgl])').forEach(ul => { ul.dataset.vgl = '1'; ul.classList.add('vgl'); ul.querySelectorAll(':scope > li').forEach((li, k) => li.style.setProperty('--k', Math.min(k, 12))); io.observe(ul); }); };
+  const mo = new MutationObserver(() => { if (!raf) raf = requestAnimationFrame(scan); });
+  const start = () => { mo.observe(document.body, { childList: true, subtree: true }); scan(); };
+  if (document.body) start(); else document.addEventListener('DOMContentLoaded', start);
 })();
