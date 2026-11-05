@@ -8616,3 +8616,8 @@ body[data-view="home"] #pageHeroWrap, .hero-video-wrap[data-view="home"] { backg
 .q-flex b{font-weight:600;font-size:15px;color:#111}
 .q-flex small{font-size:13px;line-height:1.5;color:rgba(17,17,17,.62)}
 .q-cal-box.is-flex #quizCal{opacity:.45}
+
+/* Calendrier : choisir la journée sans fixer d'heure (5 nov. 2026) */
+.bkc-anytime{display:flex;flex-direction:column;gap:3px;width:100%;box-sizing:border-box;margin-top:10px;padding:13px 14px;text-align:left;background:transparent;border:1px dashed rgba(17,17,17,.4);border-radius:0;color:#111;cursor:pointer;transition:background .2s,border-color .2s}
+.bkc-anytime b{font-weight:600;font-size:14px}.bkc-anytime small{font-size:12.5px;line-height:1.45;color:rgba(17,17,17,.62)}
+.bkc-anytime:hover,.bkc-anytime.on{background:rgba(232,198,196,.4);border:1px solid #111}

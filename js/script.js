@@ -9621,7 +9621,8 @@ initNavScrollState();
   goView(v === 'account' ? 'login' : v, r ? (r.cat || r.slug || r.city || r.sub || null) : null, { initial: true });
   /* Lien direct vers une formule (/devis/?cat=mode&tier=sig) : filet de sécurité si le clic n'a pas pu ouvrir le devis en place. */
   if (v === 'quiz') { try { const q = new URLSearchParams(_qs0), c = q.get('cat'); if (c && CATS.some(x => x.id === c)) setTimeout(() => { try { const d = q.get('d'), st = q.get('s'), en = q.get('e'), tr = q.get('tier') || undefined;
-      if (d && /^\d{4}-\d{2}-\d{2}$/.test(d) && /^\d{2}:\d{2}$/.test(st || '') && /^\d{2}:\d{2}$/.test(en || '')) { goToQuizCategory(c); S.slot = { date: d, start: st, end: en, cat: c, tier: tr || null }; S.presetTier = tr || null; }
+      const any = q.get('any') === '1';
+      if (d && /^\d{4}-\d{2}-\d{2}$/.test(d) && (any || (/^\d{2}:\d{2}$/.test(st || '') && /^\d{2}:\d{2}$/.test(en || '')))) { goToQuizCategory(c); S.slot = any ? { date: d, start: '', end: '', cat: c, tier: tr || null, anyTime: true } : { date: d, start: st, end: en, cat: c, tier: tr || null }; S.presetTier = tr || null; }
       else goToQuizCategory(c, tr); } catch (e) {} }, 400); } catch (e) {} }
 })();
 
@@ -9847,11 +9848,11 @@ function renderAvailCal(host, opts){
   if (st.cat && st.sel) {
     const sl = bkcSlots(st.sel, st.cat, dur), dl = new Date(st.sel + 'T12:00:00').toLocaleDateString(LANG === 'en' ? 'en-GB' : 'fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
     side = `<p class="bkc-side-k">${escHtml(bkcCatName(st.cat))} · ${bkcHuman(dur)}</p><h3 class="bkc-side-t">${escHtml(dl)}</h3>` +
-      (sl.length ? `<div class="bkc-slots">${sl.map(s => { const on = st.slot && st.slot.date === st.sel && st.slot.start === bkcHm(s); return `<button type="button" class="bkc-slot${on ? ' on' : ''}" style="--c:${BKC_COLORS[st.cat]}" onclick="bkcSlot(this,${s})">${dur >= 540 ? t({fr:'Journée', en:'Full day'}) + ' · ' : ''}${bkcHm(s)} – ${bkcHm(s + dur)}</button>`; }).join('')}</div>` : `<p class="bkc-hint">${t({fr:'Plus de créneau ce jour-là.', en:'No slot left that day.'})}</p>`);
+      (sl.length ? `<div class="bkc-slots">${sl.map(s => { const on = st.slot && st.slot.date === st.sel && st.slot.start === bkcHm(s); return `<button type="button" class="bkc-slot${on ? ' on' : ''}" style="--c:${BKC_COLORS[st.cat]}" onclick="bkcSlot(this,${s})">${dur >= 540 ? t({fr:'Journée', en:'Full day'}) + ' · ' : ''}${bkcHm(s)} – ${bkcHm(s + dur)}</button>`; }).join('')}</div><button type="button" class="bkc-anytime${st.slot && st.slot.anyTime && st.slot.date === st.sel ? ' on' : ''}" onclick="bkcAnyTime(this)"><b>${t({fr:'Je ne fixe pas d\'heure', en:'I won\'t set a time'})}</b><small>${t({fr:'Retenir cette journée, l\'heure sera définie ensemble.', en:'Hold this day; the time will be set together.'})}</small></button>` : `<p class="bkc-hint">${t({fr:'Plus de créneau ce jour-là.', en:'No slot left that day.'})}</p>`);
   } else side = `<p class="bkc-side-k">${t({fr:'Votre créneau', en:'Your slot'})}</p><p class="bkc-hint">${st.cat ? t({fr:'Touchez un jour coloré pour voir ses horaires libres.', en:'Tap a coloured day to see its free times.'}) : t({fr:'Choisissez d\'abord une séance ci-dessus.', en:'First choose a session above.'})}</p>`;
   if (st.slot) {
     const sd = new Date(st.slot.date + 'T12:00:00').toLocaleDateString(LANG === 'en' ? 'en-GB' : 'fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
-    side += `<div class="bkc-pick" style="--c:${BKC_COLORS[st.slot.cat] || '#111'}"><p><b>${t({fr:'Créneau retenu', en:'Selected slot'})}</b> ${escHtml(sd)}, ${st.slot.start} – ${st.slot.end}</p><p class="bkc-note">${t({fr:'Il vous est réservé ' + bkcRules().holdHours + ' h à l\'envoi de votre demande de devis, le temps de le valider.', en:'It is held for you for ' + bkcRules().holdHours + ' hours once you send your quote request, while you confirm it.'})}</p>` +
+    side += `<div class="bkc-pick" style="--c:${BKC_COLORS[st.slot.cat] || '#111'}"><p><b>${t({fr:'Créneau retenu', en:'Selected slot'})}</b> ${escHtml(sd)}${st.slot.anyTime ? ', ' + t({fr:'heure à définir ensemble', en:'time to be set together'}) : ', ' + st.slot.start + ' – ' + st.slot.end}</p><p class="bkc-note">${t({fr:'Il vous est réservé ' + bkcRules().holdHours + ' h à l\'envoi de votre demande de devis, le temps de le valider.', en:'It is held for you for ' + bkcRules().holdHours + ' hours once you send your quote request, while you confirm it.'})}</p>` +
       (embed ? `<button type="button" class="bkc-clear" onclick="bkcClear(this)">${t({fr:'Retirer ce créneau', en:'Remove this slot'})}</button>` : `<button type="button" class="bkc-go" onclick="bkcContinue(this)">${t({fr:'Continuer ma demande de devis', en:'Continue my quote request'})} →</button>`) + `</div>`;
   }
   const legend = `<div class="bkc-legend">${cats.map(c => `<span><i style="--c:${BKC_COLORS[c]}"></i>${escHtml(bkcCatName(c))}</span>`).join('')}<span class="bkc-lg-no"><i></i>${t({fr:'Complet / fermé', en:'Full / closed'})}</span></div>`;
@@ -9875,6 +9876,13 @@ function bkcSlot(el, s){
   if (h._opts && h._opts.onPick) h._opts.onPick(st.slot);
   if (window.track) track('cta_click', 'calendrier_creneau_' + st.cat);
 }
+function bkcAnyTime(el){
+  const h = bkcHost(el), st = bkcState(h);
+  st.slot = { date: st.sel, start: '', end: '', cat: st.cat, tier: st.tier, anyTime: true };
+  renderAvailCal(h, h._opts);
+  if (h._opts && h._opts.onPick) h._opts.onPick(st.slot);
+  if (window.track) track('cta_click', 'calendrier_jour_sans_heure_' + st.cat);
+}
 function bkcClear(el){ const h = bkcHost(el), st = bkcState(h); st.slot = null; renderAvailCal(h, h._opts); if (h._opts && h._opts.onPick) h._opts.onPick(null); }
 function bkcContinue(el){
   const host = bkcHost(el), st = bkcState(host); if (!st.slot) return;
@@ -9883,11 +9891,11 @@ function bkcContinue(el){
   const go = () => {
     /* Navigation complète vers le devis (comme une arrivée directe : fiable sur iPhone, pas de page blanche) ; le parcours complet est suivi, seule la prestation et le créneau sont présélectionnés. */
     top0();
-    location.href = (LANG === 'en' ? '/en' : '') + '/devis/?cat=' + encodeURIComponent(slot.cat) + (slot.tier ? '&tier=' + encodeURIComponent(slot.tier) : '') + '&d=' + slot.date + '&s=' + slot.start + '&e=' + slot.end;
+    location.href = (LANG === 'en' ? '/en' : '') + '/devis/?cat=' + encodeURIComponent(slot.cat) + (slot.tier ? '&tier=' + encodeURIComponent(slot.tier) : '') + '&d=' + slot.date + (slot.anyTime ? '&any=1' : '&s=' + slot.start + '&e=' + slot.end);
   };
   /* Le créneau doit encore être libre au moment de continuer (quelqu'un a pu le prendre entre-temps). */
   bkcLoad(true).then(() => {
-    const free = bkcSlots(slot.date, slot.cat, bkcDur(slot.cat, slot.tier)).includes(bkcMin(slot.start));
+    const free = slot.anyTime ? bkcSlots(slot.date, slot.cat, bkcDur(slot.cat, slot.tier)).length > 0 : bkcSlots(slot.date, slot.cat, bkcDur(slot.cat, slot.tier)).includes(bkcMin(slot.start));
     if (!free) {
       st.slot = null; st.sel = slot.date; renderAvailCal(host, host._opts);
       try { alert(t({fr:'Ce créneau vient d\'être pris. Choisissez-en un autre, les horaires libres sont à jour.', en:'This slot has just been taken. Please pick another one; the free times are up to date.'})); } catch (e) {}
@@ -9899,6 +9907,7 @@ function bkcContinue(el){
 function bkcSlotText(slot, lang){
   if (!slot) return '';
   const d = new Date(slot.date + 'T12:00:00').toLocaleDateString(lang === 'en' ? 'en-GB' : 'fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  if (slot.anyTime) return d + (lang === 'en' ? ' (time to be set together)' : ' (heure à définir ensemble)');
   return d + ', ' + slot.start + ' – ' + slot.end;
 }
 /* Page /disponibilites/ : préselection depuis l'adresse (?cat=…&tier=…) ou un lien « Vérifier les disponibilités ». */
@@ -9956,7 +9965,7 @@ function quizSlotNote(){
 /** Pré-réservation à l'envoi du devis (option de 48 h dans l'agenda admin). */
 function sendSlotHold(){
   if (!S.slot) return;
-  const body = { date: S.slot.date, start: S.slot.start, end: S.slot.end, cat: S.slot.cat, tier: S.slot.tier, label: bkcCatName(S.slot.cat) + (S.slot.tier ? ' · ' + ((bkcTiers(S.slot.cat).find(x => x.id === S.slot.tier) || {}).name || S.slot.tier) : ''), name: S.name, email: S.email, phone: S.phone || undefined, lang: LANG };
+  const body = { date: S.slot.date, start: S.slot.start || '09:00', end: S.slot.end || '18:00', anyTime: !!S.slot.anyTime, cat: S.slot.cat, tier: S.slot.tier, label: bkcCatName(S.slot.cat) + (S.slot.tier ? ' · ' + ((bkcTiers(S.slot.cat).find(x => x.id === S.slot.tier) || {}).name || S.slot.tier) : ''), name: S.name, email: S.email, phone: S.phone || undefined, lang: LANG };
   fetch(ACCOUNTS_API_BASE + '/availability/hold', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body), keepalive: true }).then(() => bkcLoad(true)).catch(() => {});
 }
 

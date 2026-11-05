@@ -18,7 +18,7 @@ export interface CalRules {
 export interface CalConfig { icalUrls: string[]; blocks: CalBlock[]; rules: CalRules }
 export interface CalHold {
   id: string; date: string; start: string; end: string; cat: string; tier?: string; label?: string;
-  name: string; email: string; phone?: string; lang?: string;
+  name: string; email: string; phone?: string; lang?: string; anyTime?: boolean;
   createdAt: string; expiresAt: string; status: 'option' | 'confirmed' | 'released';
 }
 /** Une journée : plages occupées en minutes depuis minuit, `taken` = une séance y est déjà posée (règle « 1 séance par jour »), `full` = journée fermée. */
@@ -240,7 +240,7 @@ export async function computeBusy(env: Env, from: string, to: string): Promise<{
 }
 
 /** Vérifie qu'un créneau respecte les règles et ne chevauche rien (même logique que le site). */
-export function slotAllowed(dayInfo: CalDay | undefined, date: string, start: string, end: string, cat: string, rules: CalRules, now = new Date()): string | null {
+export function slotAllowed(dayInfo: CalDay | undefined, date: string, start: string, end: string, cat: string, rules: CalRules, now = new Date(), anyTime = false): string | null {
   const s = toMin(start), e = toMin(end);
   if (e <= s) return 'creneau_invalide';
   const wd = new Date(date + 'T12:00:00Z').getUTCDay();
@@ -252,13 +252,15 @@ export function slotAllowed(dayInfo: CalDay | undefined, date: string, start: st
   if (!dayInfo) return null;
   if (dayInfo.full) return 'jour_complet';
   if (rules.onePerDay && dayInfo.taken) return 'jour_complet';
+  if (anyTime) return null; // journée retenue sans heure : l'heure se fixe ensemble
   const buf = rules.bufferMin;
   if (dayInfo.busy.some(([a, b]) => s < b + buf && e + buf > a)) return 'creneau_pris';
   return null;
 }
 
 export async function createHold(env: Env, input: Record<string, unknown>): Promise<{ ok: true; hold: CalHold } | { ok: false; error: string }> {
-  const date = str(input.date, 10), start = str(input.start, 5), end = str(input.end, 5), cat = str(input.cat, 20);
+  const date = str(input.date, 10), cat = str(input.cat, 20), anyTime = input.anyTime === true;
+  let start = str(input.start, 5), end = str(input.end, 5);
   const email = str(input.email, 200).toLowerCase(), name = str(input.name, 120);
   if (!DATE_RE.test(date) || !TIME_RE.test(start) || !TIME_RE.test(end) || !CATS.includes(cat)) return { ok: false, error: 'invalid_payload' };
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !name) return { ok: false, error: 'invalid_contact' };
@@ -268,13 +270,14 @@ export async function createHold(env: Env, input: Record<string, unknown>): Prom
   for (const h of holds) if (h.email === email && h.status === 'option') h.status = 'released';
   await putHolds(env, holds);
   const { days, rules } = await computeBusy(env, date, date);
-  const why = slotAllowed(days[date], date, start, end, cat, rules);
+  if (anyTime) { start = rules.open; end = cat === 'event' ? rules.eventClose : rules.close; }
+  const why = slotAllowed(days[date], date, start, end, cat, rules, new Date(), anyTime);
   if (why) return { ok: false, error: why };
   const now = new Date();
   const hold: CalHold = {
     id: crypto.randomUUID().slice(0, 12), date, start, end, cat, tier: str(input.tier, 20) || undefined, label: str(input.label, 120) || undefined,
     name, email, phone: str(input.phone, 40) || undefined, lang: input.lang === 'en' ? 'en' : 'fr',
-    createdAt: now.toISOString(), expiresAt: new Date(now.getTime() + rules.holdHours * 3600000).toISOString(), status: 'option',
+    createdAt: now.toISOString(), expiresAt: new Date(now.getTime() + rules.holdHours * 3600000).toISOString(), status: 'option', ...(anyTime ? { anyTime: true } : {}),
   };
   holds.push(hold);
   await putHolds(env, holds);
