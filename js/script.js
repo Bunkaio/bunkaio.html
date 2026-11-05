@@ -10211,10 +10211,31 @@ function bkHighlightAll(){
   const sig = currentView + '|' + (currentSub || '') + '|' + LANG; if (root._hlSig !== sig) { root._hlSig = sig; root._hl = null; root.querySelectorAll('[data-hl]').forEach(e => e.removeAttribute('data-hl')); root.querySelectorAll('mark.bk-key').forEach(m => m.replaceWith(document.createTextNode(m.textContent))); root.normalize(); }
   root.querySelectorAll('p, li, dd, .svcp-text, .lk-fiche-desc').forEach(el => { if (el.getAttribute('data-hl') !== LANG && !el.querySelector('p, li')) { if (el.getAttribute('data-hl')) { /* changement de langue : le contenu a été re-rendu, rien à défaire */ } bkHighlightBlock(el); } });
 }
+/* Listes de valeurs (« Ce que BUNKAIO apporte », points forts) : chaque ligne a son titre surligné, pour une présentation homogène
+   (sinon seuls les titres contenant une expression clé l'étaient, d'où des lignes avec et des lignes sans). */
+function bkHighlightTitles(){
+  const root = document.querySelector('.view.active'); if (!root || root.closest(BK_HL_SKIP)) return;
+  root.querySelectorAll('.value-panel .value-grid > li > b:not([data-hlt])').forEach(b => {
+    if (b.closest('#view-legal, #view-account, #view-login, #view-quiz, .mission-video-wrap, .hero')) return;
+    b.setAttribute('data-hlt', '1');
+    b.querySelectorAll('mark.bk-key').forEach(m => m.replaceWith(document.createTextNode(m.textContent)));
+    b.normalize();
+    if (!b.textContent.trim()) return;
+    const mk = document.createElement('mark'); mk.className = 'bk-key';
+    while (b.firstChild) mk.appendChild(b.firstChild);
+    b.appendChild(mk);
+    const li = b.parentElement;
+    if (REDUCED_MOTION || !('IntersectionObserver' in window)) return;
+    li.classList.add('hl-pre');
+    window._bkHlIo = window._bkHlIo || new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.remove('hl-pre'); window._bkHlIo.unobserve(e.target); } }), { threshold: .5 });
+    window._bkHlIo.observe(li);
+    setTimeout(() => li.classList.remove('hl-pre'), 6000);
+  });
+}
 (function initBkHighlight(){
   const main = document.getElementById('main') || document.body; let t = null;
-  new MutationObserver(() => { clearTimeout(t); t = setTimeout(() => { try { bkHighlightAll(); } catch (e) {} }, 220); }).observe(main, { childList: true, subtree: true, characterData: false });
-  setTimeout(() => { try { bkHighlightAll(); } catch (e) {} }, 900);
+  new MutationObserver(() => { clearTimeout(t); t = setTimeout(() => { try { bkHighlightAll(); bkHighlightTitles(); } catch (e) {} }, 220); }).observe(main, { childList: true, subtree: true, characterData: false });
+  setTimeout(() => { try { bkHighlightAll(); bkHighlightTitles(); } catch (e) {} }, 900);
 })();
 
 
