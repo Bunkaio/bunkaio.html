@@ -8803,7 +8803,7 @@ html body footer .footer-cta-row { border-top: 0 !important; padding-top: clamp(
   #missionVideoWrap .mission-video-content { padding-top: 64px !important; padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 64px) !important; }
   #missionVideoWrap .ms-prev .ms-im { display: none !important; }
   #missionVideoWrap .ms-prev ul li:nth-child(n+3) { display: none !important; }
-  #missionVideoWrap .ms-prev .ms-tx { padding: 14px 16px !important; }
+  #missionVideoWrap .ms-prev .ms-tx { padding: 14px 16px !important; margin-top: 0 !important; }
   #missionVideoWrap .ms-prev h3 { font-size: clamp(18px, 6vw, 24px) !important; }
 }
 
@@ -8850,3 +8850,8 @@ html body .svx-item:hover .svx-from, html body .hm-row:hover .hm-row-p { color: 
 .svcp-subscription .svcp-list { margin: 0 0 18px; padding-left: 0; list-style: none; }
 .svcp-subscription .svcp-list li { padding: 9px 0; border-bottom: 1px solid rgba(17,17,17,.18); font-size: 14.5px; line-height: 1.5; text-align: left; }
 .svcp-subscription .svcp-list li::before, .svcp-subscription .svcp-list li::after { content: none !important; display: none !important; }
+
+/* Séquence « Le studio », carte de prestation sans photo (Lumen) : le texte était remonté de 68 px comme s'il y avait une photo au-dessus, et le titre sortait de la carte ; sans photo, pas de bloc image ni de décalage (6 nov. 2026, bug d'affichage signalé) */
+.ms-im:not([style*="url"]) { display: none !important; }
+.ms-im:not([style*="url"]) + .ms-tx { margin-top: 0 !important; padding-top: 18px !important; }
+@media (max-width: 760px) { .ms-prev:not(:has(.ms-im[style*="url"])) { grid-template-columns: 1fr !important; } .ms-prev .ms-tx h3 { word-break: normal; hyphens: manual; } }
