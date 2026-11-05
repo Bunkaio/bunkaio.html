@@ -3778,6 +3778,20 @@ function valueStripHTML(catId, tiers){
 }
 
 /* Compte client > Abonnements > « Découvrir Studio Continu » : page Mode, directement sur le détail de l'abonnement (la hauteur de la page change pendant le chargement des photos : on recale la position). */
+/* « Candidater » (bandeau « Rejoindre le réseau de partenaires ») : onglet Candidater de Collaboration, directement sur le formulaire. */
+function goToApplyForm(){
+  goView('partners', 'apply');
+  const t0 = Date.now(); let touched = false; const stop = () => { touched = true; };
+  ['wheel', 'touchstart', 'keydown'].forEach(ev => addEventListener(ev, stop, { once: true, passive: true }));
+  const fix = () => {
+    if (touched || Date.now() - t0 > 3500 || currentView !== 'partners') return;
+    const el = document.getElementById('applyForm');
+    if (el && el.getClientRects().length) { const navH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) || 74; const y = Math.max(0, el.getBoundingClientRect().top + bkScrollY() - navH - 24); if (Math.abs(y - bkScrollY()) > 3) bkSetScroll(y); }
+    setTimeout(fix, 200);
+  };
+  setTimeout(fix, 350);
+  if (window.track) track('cta_click', 'collab_candidater_formulaire');
+}
 function goToStudioContinu(){
   goView('service', 'mode');
   const t0 = Date.now(); let touched = false; const stop = () => { touched = true; };
@@ -8991,7 +9005,7 @@ function renderPartnersPitch(){
       <h2 class="pp-title">${t({fr:'Votre savoir-faire mérite mieux qu\'une simple prestation.', en:'Your craft deserves more than a simple service.'})}</h2>
       <p class="pp-lead">${t({fr:'Rejoignez le cercle restreint des professionnels que Bunkaio met en lumière. Des images haut de gamme en HD, un tarif partenaire permanent, des projets collaboratifs et un réseau d\'exception.', en:'Join the select circle of professionals Bunkaio puts in the spotlight. Premium HD imagery, a permanent partner rate, collaborative projects and an exceptional network.'})}</p>
       <div class="pp-cta-row">
-        <button class="partner-cta-btn" onclick="goView('partners','apply')">${t({fr:'Candidater', en:'Apply'})}</button>
+        <button class="partner-cta-btn" onclick="goToApplyForm()">${t({fr:'Candidater', en:'Apply'})}</button>
         <a class="pp-ghost" href="#partnersAccordion" onclick="event.preventDefault();openPartnersAccordion(0)">${t({fr:'Découvrir les avantages', en:'See the benefits'})}</a>
       </div>
       <div class="pp-stats">
