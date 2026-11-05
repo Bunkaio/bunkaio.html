@@ -8480,3 +8480,8 @@ body[data-view="home"] #pageHeroWrap, .hero-video-wrap[data-view="home"] { backg
 /* Lien « Parcourir toutes les prestations » sous le cadre des prestations de la séquence « Le studio » (5 nov. 2026) */
 .mission-services .ms-all { display: block; width: fit-content; margin: 18px auto 0; color: #fff !important; font-size: 14px; font-weight: 500; letter-spacing: .02em; text-decoration: none; border-bottom: 1px solid rgba(255,255,255,.85); padding: 0 0 3px; text-align: center; transition: color .3s, border-color .3s; }
 .mission-services .ms-all:hover, .mission-services .ms-all:focus-visible { color: #e8c6c4 !important; border-color: #e8c6c4; }
+
+/* Photos plein écran des pages prestation : « Construire mon projet » et « Voir les formules » alignés sur la même ligne médiane (5 nov. 2026) */
+.lk-cap-links { align-items: center !important; }
+.lk-cap-links .lk-cap-l { align-self: center !important; margin: 0 !important; line-height: 1.2; }
+.lk-cap-links > a, .lk-cap-links > button { line-height: 1.2; }
