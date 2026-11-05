@@ -248,7 +248,7 @@ const I18N = {
     'origin-label':'Comment nous avez-vous connus ? — facultatif','origin-opt-select':'Sélectionnez…','origin-opt-instagram':'Instagram','origin-opt-reco':'Recommandé par une personne (client, ami, collaborateur)','origin-opt-partner':'Recommandé par une marque, un lieu ou une agence','origin-opt-google':'Recherche Google','origin-opt-collab':'Un projet ou une publication de BUNKAIO','origin-opt-other':'Autre',
     'city-label':'Ville de la prestation *','city-ph':'Ex. : Nîmes, Toulouse, Sète…','city-hint':'Le montant du déplacement est estimé automatiquement et ajouté à votre devis.','delay-label':'Délai souhaité *','delay-opt-select':'Sélectionnez…','delay-opt-urgent':'Urgent (moins de 2 semaines)','delay-opt-1m':'Dans le mois','delay-opt-2-3m':'2 à 3 mois','delay-opt-flex':'Flexible / pas de contrainte',
     'brief-activity-label':'Votre activité — facultatif','brief-activity-ph':'Ex. : coach, cabinet, boutique, atelier, restaurant…','brief-link-label':'Site, Instagram ou LinkedIn — facultatif','brief-since-label':'Votre activité existe depuis','brief-since-0':'En cours de création','brief-since-1':'Moins d\'un an','brief-since-2':'1 à 3 ans','brief-since-3':'Plus de 3 ans','brief-people-label':'Personnes à photographier','brief-people-1':'1 personne','brief-people-2':'2 à 5','brief-people-3':'6 à 15','brief-people-4':'16 et plus','brief-uses-label':'Où utiliserez-vous les images ? — facultatif','ph-project-brand':'Votre objectif : lancement, nouveau site, LinkedIn, repositionnement… et le lieu que vous imaginez.',
-    'back':'← Retour','continue':'Suivant →','next':'Suivant →','submit':'Recevoir ma proposition personnalisée',
+    'back':'Retour','continue':'Suivant','next':'Suivant','submit':'Recevoir ma proposition personnalisée',
     'quiz-back':'Retour','quiz-home':'Accueil',
     'success-label':'Demande reçue','success-title':'Votre demande a bien été envoyée',
     'success-text1':'Merci pour votre confiance. Votre demande de devis est entre nos mains : elle sera étudiée et vous recevrez une réponse sous <strong>48 heures</strong>.',
@@ -304,7 +304,7 @@ const I18N = {
     'cred-mini2':'Photographe professionnelle diplômée de l\'ETPA — BTS Photographie 2018',
     'cred-mini3':'Matériel professionnel haut de gamme',
     'cred-mini4':'8+ ans d\'expérience · 200+ projets réalisés',
-    'cred-faq-link':'Des questions ? Consultez notre FAQ →',
+    'cred-faq-link':'Des questions ? Consultez notre FAQ',
     'testi-share-btn':'Partager mon expérience',
     'share-title':'Partager mon expérience',
     'about-title':'Aya Nascimento, photographe portraitiste professionnelle',
@@ -331,7 +331,7 @@ const I18N = {
     'about-h-method':'Comment ça se passe',
     'about-step1':'Devis personnalisé sous 48 h','about-step2':'Shooting à la date convenue','about-step3':'Retouche et post-production','about-step4':'Livraison en HD dans une galerie privée, depuis votre espace client',
     'about-cta-portfolio':'Voir le portfolio','about-cta-contact':'Contacter BUNKAIO',
-    'ft-about':'À propos','ft-privacy':'Confidentialité et mentions légales','legal-title-privacy':'Politique de confidentialité et mentions légales','acc-h1':'Mon espace','ft-advice':'Conseils photo','ft-review':'Laisser un avis Google','cred-about-link':'Qui est derrière BUNKAIO ? →',
+    'ft-about':'À propos','ft-privacy':'Confidentialité et mentions légales','legal-title-privacy':'Politique de confidentialité et mentions légales','acc-h1':'Mon espace','ft-advice':'Conseils photo','ft-review':'Laisser un avis Google','cred-about-link':'Qui est derrière BUNKAIO ?',
     'hours-label':'Horaires','hours-value':'Du lundi au samedi, de 9h à 18h','zone-label':'Zone d\'intervention','zone-value':'Basé en Occitanie — déplacement gratuit à Montpellier et Toulouse (jusqu\'à 30 km)',
     'share-sub':'Vous avez travaillé avec BUNKAIO ? Votre avis Google aide d\'autres clients à nous trouver et à nous faire confiance.',
     'share-info-label':'Comment ça marche',
@@ -575,11 +575,11 @@ const I18N = {
     'cp-c-k':'01 · Collaboration',
     'cp-c-t':'Un projet ponctuel',
     'cp-c-text':'Une marque, un lieu, un média ou un·e autre créateur·rice propose à BUNKAIO un projet précis : un shooting, un contenu, un événement. La proposition est étudiée au cas par cas, le projet est réalisé, et la collaboration s\'arrête là. Pas de candidature au programme, pas de place limitée, pas d\'engagement dans la durée.',
-    'cp-c-link':'Proposer une collaboration →',
+    'cp-c-link':'Proposer une collaboration',
     'cp-p-k':'02 · Partenariat',
     'cp-p-t':'Un programme dans la durée',
     'cp-p-text':'Le programme Partenaires Fondateurs s\'adresse aux professionnels qui veulent avancer avec BUNKAIO sur le long terme. L\'entrée se fait sur candidature et les places sont limitées : 5 par univers, 25 au total. Le partenaire sélectionné bénéficie d\'un tarif partenaire permanent (−20 %), d\'une mise en lumière éditoriale, d\'un espace partenaire et d\'un accès prioritaire aux disponibilités.',
-    'cp-p-link':'Candidater au programme →',
+    'cp-p-link':'Candidater au programme',
     'cp-note':'Les places affichées en haut de page concernent uniquement le programme Partenaires Fondateurs. Les marques du défilé « Ils ont collaboré avec BUNKAIO » sont des collaborations : des projets réalisés ensemble.',
     'gx-uni-cap':'Places de partenariat disponibles, par univers',
     'process-payment-info':'<strong>Modalités de paiement :</strong> 30 % à la commande à la signature du devis, solde à la livraison des livrables. Chaque versement est réglable par carte bancaire en une fois, ou en 3 fois sans frais avec Klarna ou Scalapay (sous réserve d\'éligibilité).',
@@ -622,7 +622,7 @@ const I18N = {
     'origin-label':'How did you hear about us? — optional','origin-opt-select':'Select…','origin-opt-instagram':'Instagram','origin-opt-reco':'Recommended by a person (client, friend, collaborator)','origin-opt-partner':'Recommended by a brand, a venue or an agency','origin-opt-google':'Google search','origin-opt-collab':'A BUNKAIO project or post','origin-opt-other':'Other',
     'city-label':'Session city *','city-ph':'E.g. Nîmes, Toulouse, Sète…','city-hint':'Travel is estimated automatically and added to your quote.','delay-label':'Desired timeline *','delay-opt-select':'Select…','delay-opt-urgent':'Urgent (under 2 weeks)','delay-opt-1m':'Within a month','delay-opt-2-3m':'2 to 3 months','delay-opt-flex':'Flexible / no constraint',
     'brief-activity-label':'Your business — optional','brief-activity-ph':'E.g. coach, practice, boutique, workshop, restaurant…','brief-link-label':'Website, Instagram or LinkedIn — optional','brief-since-label':'Your business has existed for','brief-since-0':'Being set up','brief-since-1':'Less than a year','brief-since-2':'1 to 3 years','brief-since-3':'More than 3 years','brief-people-label':'People to photograph','brief-people-1':'1 person','brief-people-2':'2 to 5','brief-people-3':'6 to 15','brief-people-4':'16 or more','brief-uses-label':'Where will you use the images? — optional','ph-project-brand':'Your goal: launch, new website, LinkedIn, repositioning… and the location you have in mind.',
-    'back':'← Back','continue':'Next →','next':'Next →','submit':'Receive my personalised proposal',
+    'back':'Back','continue':'Next','next':'Next','submit':'Receive my personalised proposal',
     'quiz-back':'Back','quiz-home':'Home',
     'success-label':'Request received','success-title':'Your request has been sent',
     'success-text1':'Thank you for your trust. Your quote request is in our hands: it will be carefully reviewed and you will receive a reply within <strong>48 hours</strong>.',
@@ -678,7 +678,7 @@ const I18N = {
     'cred-mini2':'Professional photographer, ETPA graduate — BTS Photography 2018',
     'cred-mini3':'Professional-grade equipment',
     'cred-mini4':'8+ years of experience · 200+ projects completed',
-    'cred-faq-link':'Any questions? Check our FAQ →',
+    'cred-faq-link':'Any questions? Check our FAQ',
     'testi-share-btn':'Share my experience',
     'share-title':'Share my experience',
     'about-title':'Aya Nascimento, professional portrait photographer',
@@ -705,7 +705,7 @@ const I18N = {
     'about-h-method':'How it works',
     'about-step1':'Personalised quote within 48 hours','about-step2':'Shoot on the agreed date','about-step3':'Retouching and post-production','about-step4':'HD delivery in a private gallery, from your client area',
     'about-cta-portfolio':'See the portfolio','about-cta-contact':'Contact BUNKAIO',
-    'ft-about':'About','ft-privacy':'Privacy and legal notice','legal-title-privacy':'Privacy policy and legal notice','acc-h1':'My space','ft-advice':'Photo advice','ft-review':'Leave a Google review','cred-about-link':'Who is behind BUNKAIO? →',
+    'ft-about':'About','ft-privacy':'Privacy and legal notice','legal-title-privacy':'Privacy policy and legal notice','acc-h1':'My space','ft-advice':'Photo advice','ft-review':'Leave a Google review','cred-about-link':'Who is behind BUNKAIO?',
     'hours-label':'Opening hours','hours-value':'Monday to Saturday, 9am to 6pm','zone-label':'Service area','zone-value':'Based in Occitanie — free travel in Montpellier and Toulouse (up to 30 km)',
     'share-sub':'Have you worked with BUNKAIO? Your Google review helps other clients find us and trust us.',
     'share-info-label':'How it works',
@@ -949,11 +949,11 @@ const I18N = {
     'cp-c-k':'01 · Collaboration',
     'cp-c-t':'A one-off project',
     'cp-c-text':'A brand, a venue, a media outlet or another creator offers BUNKAIO a specific project: a shoot, a piece of content, an event. The proposal is reviewed case by case, the project is carried out, and the collaboration ends there. No application to the programme, no limited places, no long-term commitment.',
-    'cp-c-link':'Propose a collaboration →',
+    'cp-c-link':'Propose a collaboration',
     'cp-p-k':'02 · Partnership',
     'cp-p-t':'A long-term programme',
     'cp-p-text':'The Founding Partners programme is for professionals who want to grow with BUNKAIO over the long term. Entry is by application and places are limited: 5 per universe, 25 in total. Selected partners enjoy a permanent partner rate (−20%), an editorial spotlight, a partner area and priority access to availability.',
-    'cp-p-link':'Apply to the programme →',
+    'cp-p-link':'Apply to the programme',
     'cp-note':'The places shown at the top of the page concern the Founding Partners programme only. The brands in the "They collaborated with BUNKAIO" ribbon are collaborations: projects carried out together.',
     'gx-uni-cap':'Partnership places available, by universe',
     'process-payment-info':'<strong>Payment terms:</strong> 30% deposit upon signing the quote, balance due on delivery of your deliverables. Each payment can be made by credit card in one go, or in 3 interest-free instalments with Klarna or Scalapay (subject to eligibility).',
@@ -2477,7 +2477,7 @@ function missionPreviewHTML(c){
       <h3><a href="/contact/#lumen" onclick="event.preventDefault();goToComingSoon('${c.id}')">${t(c.name)}</a></h3>
       <div class="ms-from">${t({fr:'Prototype en cours de finalisation', en:'Prototype being finalised'})}</div>
       <ul><li>${t({fr:'Photobooth IA pour mariages et événements', en:'AI photobooth for weddings and events'})}</li><li>${t({fr:'Parlez-nous de votre événement : nous vous répondons', en:'Tell us about your event: we will get back to you'})}</li></ul>
-      <div class="ms-actions"><a class="ms-cta" href="/contact/#lumen" onclick="event.preventDefault();goToComingSoon('${c.id}')">${t({fr:'Nous contacter', en:'Contact us'})} →</a></div>
+      <div class="ms-actions"><a class="ms-cta" href="/contact/#lumen" onclick="event.preventDefault();goToComingSoon('${c.id}')">${t({fr:'Nous contacter', en:'Contact us'})}</a></div>
     </div>`;
   }
   const to = t({fr:'à', en:'to'}), wd = t({fr:'jours ouvrés', en:'working days'});
@@ -2493,7 +2493,7 @@ function missionPreviewHTML(c){
       <h3><a href="${servicePath(c.id)}" onclick="return navLink(event,'service','${c.id}')">${t(c.name)}</a></h3>
       <div class="ms-from">${t({fr:'dès', en:'from'})} <b>${f.from.toLocaleString('fr-FR')} €</b></div>
       <ul>${pts.slice(0, 4).map(p => `<li>${p}</li>`).join('')}</ul>
-      <div class="ms-actions"><a class="ms-cta" href="${servicePath(c.id)}" onclick="event.preventDefault();goToQuizCategory('${c.id}')">${c.comingSoon ? t({fr:'Me prévenir de l\'ouverture', en:'Notify me when it opens'}) : ctaLabel(c.id)} →</a><a class="ms-link" href="${servicePath(c.id)}" onclick="return navLink(event,'service','${c.id}')">${t({fr:'Voir la prestation', en:'See the service'})}</a></div>
+      <div class="ms-actions"><a class="ms-cta" href="${servicePath(c.id)}" onclick="event.preventDefault();goToQuizCategory('${c.id}')">${c.comingSoon ? t({fr:'Me prévenir de l\'ouverture', en:'Notify me when it opens'}) : ctaLabel(c.id)}</a><a class="ms-link" href="${servicePath(c.id)}" onclick="return navLink(event,'service','${c.id}')">${t({fr:'Voir la prestation', en:'See the service'})}</a></div>
     </div>`;
 }
 function missionSelect(i, fromAuto){
@@ -3683,7 +3683,7 @@ function fxItem(catId, f){
         ${f.line ? `<p class="fx-line">${f.line}</p>` : ''}
         ${f.hint ? `<p class="fx-hint"><strong>${t({fr:'Notre conseil', en:'Our advice'})} :</strong> ${f.hint}</p>` : ''}
         <ul class="svcp-list">${f.items.map(i => `<li>${escHtml(i)}</li>`).join('')}</ul>
-        <div class="fx-actions">${f.id === 'lanc' ? quizLink(catId, t({fr:'Préparer mon shooting', en:'Prepare my shoot'}), '', 'lanc', 'lancement') + (currentSub === 'branding' ? '' : `<a class="svcp-link" href="${servicePath('branding')}" data-nav="service:branding" data-track="lancement">${t({fr:'Découvrir Lancement →', en:'Discover Launch →'})}</a>`) : quizLink(catId, t({fr:'Demander un devis', en:'Request a quote'}))}${f.extra || ''}</div>
+        <div class="fx-actions">${f.id === 'lanc' ? quizLink(catId, t({fr:'Préparer mon shooting', en:'Prepare my shoot'}), '', 'lanc', 'lancement') + (currentSub === 'branding' ? '' : `<a class="svcp-link" href="${servicePath('branding')}" data-nav="service:branding" data-track="lancement">${t({fr:'Découvrir Lancement', en:'Discover Launch'})}</a>`) : quizLink(catId, t({fr:'Demander un devis', en:'Request a quote'}))}${f.extra || ''}</div>
       </div>
     </div></div>
   </div>`;
@@ -3859,7 +3859,7 @@ function renderServicePage(catId){
       <p class="vat-note travel-note">🚗 ${TRAVEL_TXT[LANG].note}</p>
       <div class="fx-list">
         ${tiers.map((tt, ti) => fxItem(catId, { hint: chooseHints[ti] || '', id: tt.id, name: t(tt.name), badge: tt.badge ? t(tt.badge) : '', line: tt.line ? t(tt.line) : '', price: priceLine(tt), delay: t(tt.delay), items: (en ? tt.items.en : tt.items.fr), open: !!tt.badge && /(recommand|choisi|popular)/i.test(t(tt.badge)) })).join('')}
-        ${POLAS[catId] ? fxItem(catId, { id: POLAS[catId].id, name: t(POLAS[catId].name), badge: t(POLAS[catId].label), price: price(specialTotal(POLAS[catId])), delay: t(POLAS[catId].delay) + ' · ' + t(POLAS[catId].studioNote), items: t(POLAS[catId].items), special: true, hint: specialHint, extra: POLAS[catId].id === 'polas' ? `<a class="svcp-link" href="/conseils/polas-mannequin-digitals-agence/" onclick="return navLink(event,'article','polas-mannequin-digitals-agence')">${t({fr:'Comprendre les Polas →', en:'What are Polas? →'})}</a>` : '' }) : ''}
+        ${POLAS[catId] ? fxItem(catId, { id: POLAS[catId].id, name: t(POLAS[catId].name), badge: t(POLAS[catId].label), price: price(specialTotal(POLAS[catId])), delay: t(POLAS[catId].delay) + ' · ' + t(POLAS[catId].studioNote), items: t(POLAS[catId].items), special: true, hint: specialHint, extra: POLAS[catId].id === 'polas' ? `<a class="svcp-link" href="/conseils/polas-mannequin-digitals-agence/" onclick="return navLink(event,'article','polas-mannequin-digitals-agence')">${t({fr:'Comprendre les Polas', en:'What are Polas?'})}</a>` : '' }) : ''}
       </div>
       ${sub ? `<p class="svcp-note">${t({fr:'Besoin régulier ? ', en:'Regular need? '})}<strong>${t(sub.name)}</strong> — ${sub.price.toLocaleString(en ? 'en-GB' : 'fr-FR')} € ${t({fr:'/ mois', en:'/ month'})}.</p>` : ''}
     </section>
@@ -3879,7 +3879,7 @@ function renderServicePage(catId){
       <div>
         <h2>${t({fr:'La photographe', en:'The photographer'})}</h2>
         <p class="svcp-text">${t({fr:'Aya Nascimento, photographe portraitiste professionnelle diplômée de l\'ETPA (BTS Photographie, 2018) : plus de 8 ans d\'expérience et plus de 200 projets réalisés.', en:'Aya Nascimento, professional portrait photographer, ETPA graduate (BTS Photography, 2018): more than 8 years of experience and more than 200 projects completed.'})}</p>
-        <a class="svcp-link" href="/a-propos/" onclick="return navLink(event,'about')">${t({fr:'En savoir plus sur Aya →', en:'More about Aya →'})}</a>
+        <a class="svcp-link" href="/a-propos/" onclick="return navLink(event,'about')">${t({fr:'En savoir plus sur Aya', en:'More about Aya'})}</a>
       </div>
     </section>
 
@@ -4497,7 +4497,7 @@ function adviceCard(a0, withImg){
     <span class="advice-card-meta">${a.minutes} ${t({fr:'min de lecture', en:'min read'})}</span>
     <span class="advice-card-title">${a.h1}</span>
     <span class="advice-card-text">${a.excerpt}</span>
-    <span class="advice-card-more">${t({fr:'Lire le guide →', en:'Read the guide →'})}</span>
+    <span class="advice-card-more">${t({fr:'Lire le guide', en:'Read the guide'})}</span>
   </a>`;
 }
 /* Photo paysage en tête du panneau « Conseils photo » de l'accueil, sur toute la largeur du panneau.
@@ -4527,7 +4527,7 @@ function renderAdviceTeaser(){
           <h2 class="advice-teaser-title" data-tw data-tw-delay="100">${t({fr:'Bien préparer votre séance ou votre shooting', en:'Prepare your session or shoot'})}</h2>
           <p class="advice-hook">${hook}</p>
         </div>
-        <a class="svcp-link" href="/conseils/" data-nav="advice">${t({fr:'Tous les conseils →', en:'All advice →'})}</a>
+        <a class="svcp-link" href="/conseils/" data-nav="advice">${t({fr:'Tous les conseils', en:'All advice'})}</a>
       </div>
       <div class="advice-grid">${picks.map(a => adviceCard(a)).join('')}</div>
     </section>`;
@@ -4863,7 +4863,7 @@ function svxPanel(c){
 }
 function svxPanelCore(c){
   if (c.lumen || c.comingSoon) return `<div class="svx-panel-in"><div class="svx-pitch">${c.pitch ? `<p>${t(c.pitch)}</p>` : ''}<p class="svx-soon">${t({fr:'Prototype en cours de finalisation — tarifs sur demande.', en:'Prototype being finalised — rates on request.'})}</p></div>
-      <div class="svx-actions"><button type="button" class="svx-cta" onclick="svxQuiz('${c.id}')">${t({fr:'Nous contacter', en:'Contact us'})} <i>→</i></button></div></div>`;
+      <div class="svx-actions"><button type="button" class="svx-cta" onclick="svxQuiz('${c.id}')">${t({fr:'Nous contacter', en:'Contact us'})}</button></div></div>`;
   const tiers = catTiers(c);
   const cur = SVX.tier[c.id] && c.tiers[SVX.tier[c.id]] ? SVX.tier[c.id] : (c.tiers.sig ? 'sig' : tiers[0].id);
   SVX.tier[c.id] = cur;
@@ -4880,7 +4880,7 @@ function svxPanelCore(c){
         <div class="svx-td-wrap">${svxTierDetail(c, cur)}</div>
         ${polas}${sub}
         <div class="svx-actions">
-          <button type="button" class="svx-cta" onclick="svxQuiz('${c.id}')">${I18N[LANG]['svc-cta']} <i>→</i></button>
+          <button type="button" class="svx-cta" onclick="svxQuiz('${c.id}')">${I18N[LANG]['svc-cta']}</button>
           <span class="svx-note">${t({fr:'Devis personnalisé sous 48 h ouvrées', en:'Personalised quote within 48 working hours'})}</span>
         </div>
       </div>
@@ -5241,7 +5241,7 @@ function renderHomeIndex(){
       <span class="hm-row-c">${escHtml(t(c.tag))}</span>
       <span class="hm-row-p">${from}<i>⊹</i></span></a>`;
   }).join('');
-  const cta = document.getElementById('hmSvcCta'); if (cta) cta.innerHTML = availLink('', '', '<span>' + t({fr:'Vérifier les disponibilités', en:'Check availability'}) + '</span><i aria-hidden="true">→</i>', 'hm-avail-btn', 'accueil_dispo');
+  const cta = document.getElementById('hmSvcCta'); if (cta) cta.innerHTML = availLink('', '', '<span>' + t({fr:'Vérifier les disponibilités', en:'Check availability'}) + '</span>', 'hm-avail-btn', 'accueil_dispo');
   if (mq) { const one = list.map(c => `<a href="${servicePath(c.id)}" onclick="return navLink(event,'service','${c.id}')" tabindex="-1">${escHtml(t(c.name))}</a><i>⊹</i>`).join(''); mq.innerHTML = one + one; }
   if (!('IntersectionObserver' in window) || REDUCED_MOTION) { box.querySelectorAll('.hm-row').forEach(r => r.classList.add('in')); return; }
   const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .2 });
@@ -5837,7 +5837,7 @@ function renderPfTabs(){
 function discoverPanel(text){
   return `<section class="read-panel svcp-panel pf-links"><h2>${t({fr:'Découvrir chaque prestation', en:'Explore each service'})}</h2>
     <p class="svcp-text">${text}</p>
-    <div class="discover-cta"><a class="cta-primary" href="/decouvrir-chaque-prestation/" data-nav="discover"><span>${t({fr:'Découvrir chaque prestation →', en:'Explore each service →'})}</span></a></div>
+    <div class="discover-cta"><a class="cta-primary" href="/decouvrir-chaque-prestation/" data-nav="discover"><span>${t({fr:'Découvrir chaque prestation', en:'Explore each service'})}</span></a></div>
     <div class="svcp-others-row">${CATS.filter(c => seoRouteFor('service', c.id)).map(c => `<a class="svcp-chip" href="${servicePath(c.id)}" data-nav="service:${c.id}">${navName(c)}</a>` + (c.id === 'corporate' ? `<a class="svcp-chip" href="${servicePath('branding')}" data-nav="service:branding">${t({fr:'Personal Branding — entrepreneurs', en:'Personal Branding — entrepreneurs'})}</a>` : '')).join('')}</div></section>`;
 }
 function renderPortfolioLinks(){
@@ -6301,7 +6301,7 @@ function aboutAcc(root){
     const lab = li.querySelector('.ab-acc-l'), a = lab ? null : li.querySelector('a'), key = li.dataset.k || (lab ? lab.dataset.lang : a && a.getAttribute('data-lang')); li.dataset.k = key;
     const href = servicePath(c.id);
     const from = c.lumen ? '' : `<span class="ab-acc-from">${t({fr:'dès ', en:'from '})}${catFacts(c).from.toLocaleString(LANG === 'en' ? 'en-GB' : 'fr-FR')} €</span>`;
-    mk(li, i, I18N[LANG][key] || '', key, `<p>${t(c.pitch)}</p><p class="ab-acc-meta">${from}<a href="${href}" onclick="return navLink(event,'service','${c.id}')">${t({fr:'Découvrir la prestation →', en:'Discover the service →'})}</a></p>`);
+    mk(li, i, I18N[LANG][key] || '', key, `<p>${t(c.pitch)}</p><p class="ab-acc-meta">${from}<a href="${href}" onclick="return navLink(event,'service','${c.id}')">${t({fr:'Découvrir la prestation', en:'Discover the service'})}</a></p>`);
   });
   const steps = card.querySelectorAll(':scope > div:nth-child(2) .about-steps > li');
   steps.forEach((li, i) => {
@@ -9920,7 +9920,7 @@ function renderAvailCal(host, opts){
   if (st.slot) {
     const sd = new Date(st.slot.date + 'T12:00:00').toLocaleDateString(LANG === 'en' ? 'en-GB' : 'fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
     side += `<div class="bkc-pick" style="--c:${BKC_COLORS[st.slot.cat] || '#111'}"><p><b>${t({fr:'Créneau retenu', en:'Selected slot'})}</b> ${escHtml(sd)}${st.slot.anyTime ? ', ' + t({fr:'heure à définir ensemble', en:'time to be set together'}) : ', ' + st.slot.start + ' – ' + st.slot.end}</p><p class="bkc-note">${t({fr:'Il vous est réservé ' + bkcRules().holdHours + ' h à l\'envoi de votre demande de devis, le temps de le valider.', en:'It is held for you for ' + bkcRules().holdHours + ' hours once you send your quote request, while you confirm it.'})}</p>` +
-      (embed ? `<button type="button" class="bkc-clear" onclick="bkcClear(this)">${t({fr:'Retirer ce créneau', en:'Remove this slot'})}</button>` : `<button type="button" class="bkc-go" onclick="bkcContinue(this)">${t({fr:'Continuer ma demande de devis', en:'Continue my quote request'})} →</button>`) + `</div>`;
+      (embed ? `<button type="button" class="bkc-clear" onclick="bkcClear(this)">${t({fr:'Retirer ce créneau', en:'Remove this slot'})}</button>` : `<button type="button" class="bkc-go" onclick="bkcContinue(this)">${t({fr:'Continuer ma demande de devis', en:'Continue my quote request'})}</button>`) + `</div>`;
   }
   const legend = `<div class="bkc-legend">${cats.map(c => `<span><i style="--c:${BKC_COLORS[c]}"></i>${escHtml(bkcCatName(c))}</span>`).join('')}<span class="bkc-lg-no"><i></i>${t({fr:'Complet / fermé', en:'Full / closed'})}</span></div>`;
   const warn = BKC.err ? `<p class="bkc-warn">${t({fr:'Calendrier momentanément indisponible : les créneaux affichés sont indicatifs, ils seront confirmés avec votre devis.', en:'Calendar temporarily unavailable: the slots shown are indicative and will be confirmed with your quote.'})}</p>` : '';

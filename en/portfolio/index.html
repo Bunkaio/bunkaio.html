@@ -35,7 +35,7 @@
 <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
 <link rel="preload" href="fonts/inter-tight-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <script>/* Image d'attente des vidéos de l'accueil : une vraie photo HD du Portfolio BUNKAIO (et non une capture de la vidéo), posée derrière chaque vidéo via --vid-a / --vid-b ; accueil seulement. */(function(){var p=location.pathname;if(p!=="/"&&p!=="/en/"&&p!=="/index.html")return;var B="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/portfolio/",C=["mode/1","photo-part/1","corporate/1","commercial/1","event/1","mode/2","photo-part/2","corporate/2","commercial/2","event/2"],got=[],k=0,r=document.documentElement;function next(){if(k>=C.length||got.length>=2)return;var u=B+C[k++]+".webp",i=new Image();i.onload=function(){got.push(u);r.style.setProperty(got.length===1?"--vid-a":"--vid-b","url("+u+")");next();};i.onerror=next;i.src=u;}next();})();</script>
-<link rel="stylesheet" href="css/style.min.css?v=2769b292">
+<link rel="stylesheet" href="css/style.min.css?v=99356f66">
 
 <script type="application/ld+json">
 {
@@ -531,7 +531,7 @@
       <span class="cred-mini-text" data-lang="cred-mini4">8+ years of experience · 200+ projects completed</span>
     </div>
     </div>
-    <div class="cred-links"><a class="cred-faq-link" href="/en/a-propos/" onclick="return navLink(event,'about')" data-lang="cred-about-link">Who is behind BUNKAIO? →</a><a class="cred-faq-link" href="/en/faq/" onclick="return navLink(event,'legal')" data-lang="cred-faq-link">Any questions? Check our FAQ →</a></div>
+    <div class="cred-links"><a class="cred-faq-link" href="/en/a-propos/" onclick="return navLink(event,'about')" data-lang="cred-about-link">Who is behind BUNKAIO?</a><a class="cred-faq-link" href="/en/faq/" onclick="return navLink(event,'legal')" data-lang="cred-faq-link">Any questions? Check our FAQ</a></div>
     </div>
     </div>
   </div>
@@ -691,9 +691,9 @@
       <div class="prof-grid" id="profGrid"></div>
       <div class="prof-q-box" id="profQBox" style="display:none"></div>
       <div class="btn-row stagger" style="animation-delay:0.55s">
-        <button class="btn btn-ghost" onclick="quizStep(1)"><span data-lang="back">← Back</span></button>
+        <button class="btn btn-ghost" onclick="quizStep(1)"><span data-lang="back">Back</span></button>
         <button class="btn btn-ghost" onclick="goView('home')"><span data-lang="quiz-home">Home</span></button>
-        <button class="btn btn-solid qnext" data-step="2" onclick="quizNext()" disabled><span data-lang="next">Next →</span></button>
+        <button class="btn btn-solid qnext" data-step="2" onclick="quizNext()" disabled><span data-lang="next">Next</span></button>
       </div>
     </div>
 
@@ -715,9 +715,9 @@
       </div>
       <div class="tier-list" id="tierList"></div>
       <div class="btn-row stagger" style="animation-delay:0.55s">
-        <button class="btn btn-ghost" onclick="quizStep(2)"><span data-lang="back">← Back</span></button>
+        <button class="btn btn-ghost" onclick="quizStep(2)"><span data-lang="back">Back</span></button>
         <button class="btn btn-ghost" onclick="goView('home')"><span data-lang="quiz-home">Home</span></button>
-        <button class="btn btn-solid qnext" data-step="3" onclick="quizNext()" disabled><span data-lang="next">Next →</span></button>
+        <button class="btn btn-solid qnext" data-step="3" onclick="quizNext()" disabled><span data-lang="next">Next</span></button>
       </div>
     </div>
 
@@ -736,9 +736,9 @@
         <div id="quizCal"></div>
       </div>
       <div class="btn-row stagger" style="animation-delay:0.6s">
-        <button class="btn btn-ghost" onclick="quizStep(3)"><span data-lang="back">← Back</span></button>
+        <button class="btn btn-ghost" onclick="quizStep(3)"><span data-lang="back">Back</span></button>
         <button class="btn btn-ghost" onclick="goView('home')"><span data-lang="quiz-home">Home</span></button>
-        <button class="btn btn-solid" onclick="goToCoords()"><span data-lang="continue">Next →</span></button>
+        <button class="btn btn-solid" onclick="goToCoords()"><span data-lang="continue">Next</span></button>
       </div>
     </div>
 
@@ -832,7 +832,7 @@
         <p class="quiz-reassurance-pay" id="quizReassurancePay"><strong>Côté règlement :</strong> 3 fois sans frais avec Klarna ou Scalapay (sous réserve d'éligibilité), ou carte bancaire en une fois ; acompte 30 % + solde, sans aucun frais supplémentaire.</p>
       </div>
       <div class="btn-row stagger" style="animation-delay:0.58s">
-        <button class="btn btn-ghost" onclick="quizStep(4)"><span data-lang="back">← Back</span></button>
+        <button class="btn btn-ghost" onclick="quizStep(4)"><span data-lang="back">Back</span></button>
         <button class="btn btn-ghost" onclick="goView('home')"><span data-lang="quiz-home">Home</span></button>
         <button class="btn btn-solid" id="qSubmit" onclick="submitQuiz(event)" disabled><span data-lang="submit">Receive my personalised proposal</span></button>
       </div>
@@ -987,7 +987,7 @@
         <div class="pf-cta-sub" data-lang="pf-cta-sub">Every project starts with a personalised proposal — simple, quick, no commitment.</div>
       </div>
       <div class="pf-cta-right">
-        <a class="pf-cta-btn" href="/en/devis/" data-nav="quiz"><span data-lang="pf-cta-btn">Get my personalised quote</span> <span class="pf-cta-arrow">→</span></a>
+        <a class="pf-cta-btn" href="/en/devis/" data-nav="quiz"><span data-lang="pf-cta-btn">Get my personalised quote</span></a>
       </div>
     </div>
   </div>
@@ -1089,7 +1089,7 @@
           <div class="dpc-price">390 €</div>
           <div class="dpc-price-note">Prix fixe</div>
         </div>
-        <button class="dpc-btn" onclick="goView('quiz')">Demander un devis →</button>
+        <button class="dpc-btn" onclick="goView('quiz')">Demander un devis</button>
       </div>
 
       <div class="drone-price-card drone-price-card--featured rv">
@@ -1109,7 +1109,7 @@
           <div class="dpc-price">690 €</div>
           <div class="dpc-price-note">Prix fixe</div>
         </div>
-        <button class="dpc-btn" onclick="goView('quiz')">Demander un devis →</button>
+        <button class="dpc-btn" onclick="goView('quiz')">Demander un devis</button>
       </div>
 
       <div class="drone-price-card rv">
@@ -1128,7 +1128,7 @@
           <div class="dpc-price">1 190 €</div>
           <div class="dpc-price-note">Prix fixe</div>
         </div>
-        <button class="dpc-btn" onclick="goView('quiz')">Demander un devis →</button>
+        <button class="dpc-btn" onclick="goView('quiz')">Demander un devis</button>
       </div>
 
     </div>
@@ -1144,7 +1144,7 @@
         <div class="pf-cta-sub" data-lang="pf-cta-sub">Every project starts with a personalised proposal — simple, quick, no commitment.</div>
       </div>
       <div class="pf-cta-right">
-        <button class="pf-cta-btn"><span data-lang="pf-cta-btn">Get my personalised quote</span> <span class="pf-cta-arrow">→</span></button>
+        <button class="pf-cta-btn"><span data-lang="pf-cta-btn">Get my personalised quote</span></button>
       </div>
     </div>
   </div>
@@ -1179,7 +1179,7 @@
     <div class="pfx-preview" id="pfPreview" aria-hidden="true"><img alt=""></div>
     <div id="pfLinks"><!--snap--><section class="read-panel svcp-panel pf-links rv in" style="--rv-d: 0s;"><h2>Explore each service</h2>
     <p class="svcp-text">Like what you see? Find out who each service is designed for, what it includes, from what price and in what time: portrait, corporate, fashion, products, events and the Lumen photobooth.</p>
-    <div class="discover-cta"><a class="cta-primary" href="/en/decouvrir-chaque-prestation/" data-nav="discover"><span>Explore each service →</span></a></div>
+    <div class="discover-cta"><a class="cta-primary" href="/en/decouvrir-chaque-prestation/" data-nav="discover"><span>Explore each service</span></a></div>
     <div class="svcp-others-row"><a class="svcp-chip rv in" href="/en/services/seance-photo-particuliers/" data-nav="service:photo-part" style="--rv-d: 0s;">Portrait &amp; lifestyle — individuals</a><a class="svcp-chip rv" href="/en/services/portrait-professionnel-corporate/" data-nav="service:corporate" style="--rv-d: 0.07s;">Corporate — companies &amp; teams</a><a class="svcp-chip rv" href="/en/services/personal-branding-entrepreneurs/" data-nav="service:branding" style="--rv-d: 0.14s;">Personal Branding — entrepreneurs</a><a class="svcp-chip rv" href="/en/services/photographe-mode-mannequins/" data-nav="service:mode" style="--rv-d: 0.21000000000000002s;">Fashion, agencies &amp; models</a><a class="svcp-chip rv" href="/en/services/photo-produits-packshots/" data-nav="service:commercial" style="--rv-d: 0.28s;">Commercial &amp; products</a><a class="svcp-chip rv" href="/en/services/photographe-evenementiel/" data-nav="service:event" style="--rv-d: 0.35000000000000003s;">Events</a></div></section><!--/snap--></div>
     <div class="pf-cta-band" onclick="goView('quiz')">
       <div class="pf-cta-left">
@@ -1188,7 +1188,7 @@
         <div class="pf-cta-sub" data-lang="pf-cta-sub">Every project starts with a personalised proposal — simple, quick, no commitment.</div>
       </div>
       <div class="pf-cta-right">
-        <button class="pf-cta-btn"><span data-lang="pf-cta-btn">Get my personalised quote</span> <span class="pf-cta-arrow">→</span></button>
+        <button class="pf-cta-btn"><span data-lang="pf-cta-btn">Get my personalised quote</span></button>
       </div>
     </div>
   </div>
@@ -1450,13 +1450,13 @@
           <p class="cp-k" data-lang="cp-c-k">01 · Collaboration</p>
           <p class="cp-t" data-lang="cp-c-t">A one-off project</p>
           <p class="cp-text" data-lang="cp-c-text">A brand, a venue, a media outlet or another creator offers BUNKAIO a specific project: a shoot, a piece of content, an event. The proposal is reviewed case by case, the project is carried out, and the collaboration ends there. No application to the programme, no limited places, no long-term commitment.</p>
-          <a class="cp-link" href="/en/collaboration/" onclick="setPartnersTab('collab');document.querySelector('#view-partners .svc-tabs').scrollIntoView({behavior:'smooth'});return false" data-lang="cp-c-link">Propose a collaboration →</a>
+          <a class="cp-link" href="/en/collaboration/" onclick="setPartnersTab('collab');document.querySelector('#view-partners .svc-tabs').scrollIntoView({behavior:'smooth'});return false" data-lang="cp-c-link">Propose a collaboration</a>
         </div>
         <div class="cp-col">
           <p class="cp-k" data-lang="cp-p-k">02 · Partnership</p>
           <p class="cp-t" data-lang="cp-p-t">A long-term programme</p>
           <p class="cp-text" data-lang="cp-p-text">The Founding Partners programme is for professionals who want to grow with BUNKAIO over the long term. Entry is by application and places are limited: 5 per universe, 25 in total. Selected partners enjoy a permanent partner rate (−20%), an editorial spotlight, a partner area and priority access to availability.</p>
-          <a class="cp-link" href="/en/collaboration/" onclick="setPartnersTab('apply');document.querySelector('#view-partners .svc-tabs').scrollIntoView({behavior:'smooth'});return false" data-lang="cp-p-link">Apply to the programme →</a>
+          <a class="cp-link" href="/en/collaboration/" onclick="setPartnersTab('apply');document.querySelector('#view-partners .svc-tabs').scrollIntoView({behavior:'smooth'});return false" data-lang="cp-p-link">Apply to the programme</a>
         </div>
       </div>
       <p class="cp-note" data-lang="cp-note">The places shown at the top of the page concern the Founding Partners programme only. The brands in the "They collaborated with BUNKAIO" ribbon are collaborations: projects carried out together.</p>
@@ -2075,6 +2075,6 @@
 <script src="config/articles.en.js?v=d5061d9b"></script>
 <script src="config/routes.js?v=09d40cd4"></script>
 <script src="config/media.js?v=c88496e4"></script>
-<script src="js/script.min.js?v=a7d14949"></script>
+<script src="js/script.min.js?v=eef50a49"></script>
 </body>
 </html>

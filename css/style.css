@@ -8806,3 +8806,10 @@ html body footer .footer-cta-row { border-top: 0 !important; padding-top: clamp(
   #missionVideoWrap .ms-prev .ms-tx { padding: 14px 16px !important; }
   #missionVideoWrap .ms-prev h3 { font-size: clamp(18px, 6vw, 24px) !important; }
 }
+
+/* Boutons et liens d'appel : plus aucune flèche (6 nov. 2026, demande de la propriétaire) */
+html body .view.gx .btn-solid::after, html body .view.gx .hero-start::after, html body .view.gx .partner-cta-btn::after, html body footer .footer-cta-row .hero-start::after, html body #view-home .hero > .hero-start::after, html body .nav-cta::after, html body .view .svcp-others-row .svcp-chip::after { content: none !important; display: none !important; }
+html body .svx-cta i, html body .hm-avail-btn i, html body .ms-cta i, html body .pf-cta-arrow, html body .cta-primary i, html body .partner-cta-btn i { display: none !important; }
+html body .hm-svc-cta .hm-avail-btn { gap: 0 !important; }
+html body .cta-primary::after, html body .hero-start::after, html body .home-claim-cta::after, html body .btn::after, html body .btn-solid::after, html body .btn-ghost::after, html body .partner-cta-btn::after, html body .pf-cta-btn::after { content: none !important; display: none !important; }
+html body .svcp-back span[aria-hidden] { display: none; }
