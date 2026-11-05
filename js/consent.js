@@ -181,11 +181,11 @@
     panel = el('div', 'bkc-overlay');
     const box = el('div', 'bkc-panel'); box.setAttribute('role', 'dialog'); box.setAttribute('aria-modal', 'true'); box.setAttribute('aria-label', T('panelTitle'));
     let h = '<h2>' + esc(T('panelTitle')) + '</h2><p class="bkc-lead">' + esc(T('panelIntro')) + '</p>';
-    h += '<section class="bkc-cat"><div class="bkc-cat-h"><h3>' + esc(T('necessary')) + '</h3>' + sw('bkcNec', true, true, T('on')) + '</div><p>' + esc(T('necessaryText')) + '</p></section>';
-    h += '<section class="bkc-cat"><div class="bkc-cat-h"><h3>' + esc(T('audience')) + '</h3>' + sw('bkcAud', audienceOn(), false, '') + '</div><p>' + esc(T('audienceText')) + '</p></section>';
+    h += '<section class="bkc-cc"><div class="bkc-cc-h"><h3>' + esc(T('necessary')) + '</h3>' + sw('bkcNec', true, true, T('on')) + '</div><p>' + esc(T('necessaryText')) + '</p></section>';
+    h += '<section class="bkc-cc"><div class="bkc-cc-h"><h3>' + esc(T('audience')) + '</h3>' + sw('bkcAud', audienceOn(), false, '') + '</div><p>' + esc(T('audienceText')) + '</p></section>';
     CATS.forEach((c) => {
       const list = vendors.filter((v) => v.category === c);
-      h += '<section class="bkc-cat"><div class="bkc-cat-h"><h3>' + esc(T(c)) + '</h3>' + (list.length ? sw('bkc-' + c, has(c), false, '') : '') + '</div>';
+      h += '<section class="bkc-cc"><div class="bkc-cc-h"><h3>' + esc(T(c)) + '</h3>' + (list.length ? sw('bkc-' + c, has(c), false, '') : '') + '</div>';
       if (!list.length) h += '<p>' + esc(T('none')) + '</p>';
       else h += '<ul class="bkc-v">' + list.map((v) => '<li><b>' + esc(vName(v)) + '</b><span>' + esc(T('provider')) + ' : ' + esc(vProv(v)) + '</span><span>' + esc(T('purpose')) + ' : ' + esc(vPurp(v)) + '</span><span>' + esc(T('duration')) + ' : ' + esc(vDur(v)) + '</span></li>').join('') + '</ul>';
       h += '</section>';
