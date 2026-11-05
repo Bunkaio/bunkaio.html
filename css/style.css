@@ -8605,3 +8605,14 @@ body[data-view="home"] #pageHeroWrap, .hero-video-wrap[data-view="home"] { backg
 
 /* Devis, écran de choix : note « les deux parcours se rejoignent » (5 nov. 2026) */
 .q-choice-note{margin:clamp(22px,4vw,36px) auto 0;max-width:640px;text-align:center;font-size:14px;line-height:1.6;color:rgba(17,17,17,.68);text-wrap:balance}
+
+/* Devis, étape 04 : case « flexible sur la date » (5 nov. 2026) */
+.q-flex{display:flex;gap:14px;align-items:flex-start;box-sizing:border-box;margin:0 0 16px;padding:16px 18px;border:1px solid rgba(17,17,17,.18);background:transparent;cursor:pointer;transition:border-color .2s,background .2s}
+.q-flex:hover,.q-flex:has(input:checked){border-color:rgba(17,17,17,.5);background:rgba(232,198,196,.28)}
+.q-flex input{appearance:none;-webkit-appearance:none;flex:none;width:22px;height:22px;margin:1px 0 0;border:1.5px solid #111;border-radius:0;background:#fff;display:grid;place-items:center;cursor:pointer}
+.q-flex input:checked{background:#111}
+.q-flex input:checked::after{content:'';width:10px;height:5px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg) translate(1px,-1px)}
+.q-flex span{display:flex;flex-direction:column;gap:4px;text-align:left}
+.q-flex b{font-weight:600;font-size:15px;color:#111}
+.q-flex small{font-size:13px;line-height:1.5;color:rgba(17,17,17,.62)}
+.q-cal-box.is-flex #quizCal{opacity:.45}

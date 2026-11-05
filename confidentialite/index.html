@@ -32,7 +32,7 @@
 <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
 <link rel="preload" href="fonts/inter-tight-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <script>/* Image d'attente des vidéos de l'accueil : une vraie photo HD du Portfolio BUNKAIO (et non une capture de la vidéo), posée derrière chaque vidéo via --vid-a / --vid-b ; accueil seulement. */(function(){var p=location.pathname;if(p!=="/"&&p!=="/en/"&&p!=="/index.html")return;var B="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/portfolio/",C=["mode/1","photo-part/1","corporate/1","commercial/1","event/1","mode/2","photo-part/2","corporate/2","commercial/2","event/2"],got=[],k=0,r=document.documentElement;function next(){if(k>=C.length||got.length>=2)return;var u=B+C[k++]+".webp",i=new Image();i.onload=function(){got.push(u);r.style.setProperty(got.length===1?"--vid-a":"--vid-b","url("+u+")");next();};i.onerror=next;i.src=u;}next();})();</script>
-<link rel="stylesheet" href="css/style.min.css?v=dc704651">
+<link rel="stylesheet" href="css/style.min.css?v=937458e6">
 
 <script type="application/ld+json">
 {
@@ -721,6 +721,7 @@
       <div class="q-cal-box" id="quizCalBox" hidden>
         <div class="opt-section-label" data-lang="q-cal-label">Votre date</div>
         <p class="q-cal-sub" data-lang="q-cal-sub">Facultatif : choisissez un créneau libre, il vous sera réservé 48 h à l'envoi de votre demande.</p>
+        <label class="q-flex" id="quizFlex"><input type="checkbox" id="quizFlexCb" onchange="quizFlexToggle(this.checked)"><span><b data-lang="q-flex">Je suis flexible sur la date</b><small data-lang="q-flex-d">Je ne souhaite pas bloquer de créneau pour l'instant : la date sera fixée ensemble après le devis.</small></span></label>
         <div id="quizCal"></div>
       </div>
       <div class="btn-row stagger" style="animation-delay:0.6s">
@@ -2167,6 +2168,6 @@
 <script src="config/articles.en.js?v=d5061d9b"></script>
 <script src="config/routes.js?v=09d40cd4"></script>
 <script src="config/media.js?v=c88496e4"></script>
-<script src="js/script.min.js?v=043be21b"></script>
+<script src="js/script.min.js?v=a8492429"></script>
 </body>
 </html>
