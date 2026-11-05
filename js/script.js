@@ -3742,6 +3742,20 @@ function valueStripHTML(catId, tiers){
   return `<section class="read-panel svcp-panel value-panel"><h2>${t({fr:'Ce que BUNKAIO apporte à votre projet', en:'What BUNKAIO brings to your project'})}</h2><ul class="value-grid">${items.filter(x => x[1]).map(x => `<li><b>${x[0]}</b><span>${x[1]}</span></li>`).join('')}</ul></section>`;
 }
 
+/* Compte client > Abonnements > « Découvrir Studio Continu » : page Mode, directement sur le détail de l'abonnement (la hauteur de la page change pendant le chargement des photos : on recale la position). */
+function goToStudioContinu(){
+  goView('service', 'mode');
+  const t0 = Date.now(); let touched = false; const stop = () => { touched = true; };
+  ['wheel', 'touchstart', 'keydown'].forEach(ev => addEventListener(ev, stop, { once: true, passive: true }));
+  const fix = () => {
+    if (touched || Date.now() - t0 > 3500 || currentView !== 'service') return;
+    const el = document.getElementById('studio-continu');
+    if (el) { const navH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) || 74; const y = el.getBoundingClientRect().top + bkScrollY() - navH - 20; if (Math.abs(y - bkScrollY()) > 6) bkSetScroll(y); }
+    setTimeout(fix, 200);
+  };
+  setTimeout(fix, 350);
+  if (window.track) track('cta_click', 'compte_decouvrir_studio_continu');
+}
 function renderServicePage(catId){
   if (catId === 'branding') { renderBrandingPage(); return; }
   const el = document.getElementById('servicePageContent');
@@ -3863,6 +3877,13 @@ function renderServicePage(catId){
       </div>
       ${sub ? `<p class="svcp-note">${t({fr:'Besoin régulier ? ', en:'Regular need? '})}<strong>${t(sub.name)}</strong> — ${sub.price.toLocaleString(en ? 'en-GB' : 'fr-FR')} € ${t({fr:'/ mois', en:'/ month'})}.</p>` : ''}
     </section>
+    ${sub ? `<section class="read-panel svcp-panel svcp-subscription" id="studio-continu">
+      <h2>${t(sub.name)}</h2>
+      <p class="svcp-text">${t({fr:'L\'abonnement mensuel pour les ' + t(sub.audience) + ' qui veulent des images régulières et une image cohérente toute l\'année. Engagement minimum de 6 mois, sans frais cachés.', en:'The monthly plan for ' + t(sub.audience) + ' who want regular images and a consistent look all year. Minimum commitment of 6 months, no hidden fees.'})}</p>
+      <div class="svcp-sub-price"><b>${sub.price.toLocaleString(en ? 'en-GB' : 'fr-FR')} €</b> <span>${t({fr:'par mois · engagement 6 mois · prix nets', en:'per month · 6-month commitment · net prices'})}</span></div>
+      <ul class="svcp-list">${t(sub.items).map(i => `<li>${escHtml(i)}</li>`).join('')}</ul>
+      <div class="svcp-cta-row">${quizLink(catId, ctaLabel(catId))}</div>
+    </section>` : ''}
 
     <div class="svcp-ban" id="svcB1"></div>
     ${valueStripHTML(catId, tiers)}
@@ -7287,7 +7308,7 @@ function renderAccSubs(){
         <div class="acc-subs-empty-title">${I18N[LANG]['acc-subs-empty-title']}</div>
         <p class="acc-subs-empty-text">${I18N[LANG]['acc-subs-empty-text']}</p>
         <div class="btn-row" style="justify-content:center">
-          <button class="btn btn-solid cta-primary" onclick="goView('quiz')"><span>${I18N[LANG]['acc-subs-discover-btn']}</span></button>
+          <button class="btn btn-solid cta-primary" onclick="goToStudioContinu()"><span>${I18N[LANG]['acc-subs-discover-btn']}</span></button>
         </div>
       </div>`;
     return;
