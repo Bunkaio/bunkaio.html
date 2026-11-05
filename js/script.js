@@ -1027,7 +1027,7 @@ function toggleLang(){
   rememberSpaceLang();
   /* L'adresse suit la langue (/en/… ↔ version française) pour que chaque langue garde son URL partageable. */
   const r = seoRouteFor(currentView, currentSub);
-  if (r) history.replaceState({ v: currentView }, '', routePath(r, LANG) + location.hash);
+  if (r) history.replaceState({ v: currentView, i: (history.state && history.state.i) || 0 }, '', routePath(r, LANG) + location.hash);
 }
 
 function syncNavHeight(){
@@ -2125,6 +2125,22 @@ function navLink(e, v, subTab){
   goView(v, subTab);
   return false;
 }
+/* Retour fluide : on revient d'abord à la page précédente du site (historique), sinon à la page « parente » logique. */
+var NAV_I = 0;
+const BK_PARENT = { service: 'services', discover: 'services', article: 'advice', city: 'home', avail: 'quiz', share: 'home', about: 'home', legal: 'faq' };
+function bkBackSync(){
+  const b = document.getElementById('bkBack'); if (!b) return;
+  b.hidden = (currentView === 'home' || currentView === 'quiz');
+}
+function bkBack(){
+  if (window.track) track('cta_click', 'retour_' + currentView);
+  if (PFI && PFI.open) { closePfImmersive(); return; }
+  if (document.body.classList.contains('menu-open')) { closeMobileMenu(); return; }
+  if (history.state && history.state.i > 0) { history.back(); return; }
+  const p = BK_PARENT[currentView];
+  const tgt = p && p !== currentView ? p : 'home';
+  goView(tgt === 'faq' ? 'legal' : tgt);
+}
 window.addEventListener('popstate', () => {
   /* Geste retour pendant le portfolio plein écran : on ferme la couche, la page reste où elle était. */
   if (PFI.open) { closePfImmersive(); return; }
@@ -2142,7 +2158,7 @@ function goView(v, subTab, opts){
   currentSub = (v === 'service' || v === 'article' || v === 'legal' || v === 'city') ? (subTab || null) : null;
   const route = seoRouteFor(v, subTab);
   if (route && !opts.fromPop && !opts.initial && location.pathname.replace(/index\.html$/, '') !== routePath(route, LANG)) {
-    history.pushState({ v }, '', routePath(route, LANG));
+    history.pushState({ v, i: ++NAV_I }, '', routePath(route, LANG));
   }
   applySeoMeta(v, subTab);
   if (!opts.initial && window.track) track('pageview');
@@ -2158,6 +2174,7 @@ function goView(v, subTab, opts){
     if (v !== 'quiz') setProgress(0);
     const quizNav = document.getElementById('quizNavRow');
     if (quizNav) quizNav.style.display = (v === 'quiz') ? '' : 'none';
+    bkBackSync();
     setPageBg(v);
     initHeroCarousel(v);
     /* Bannière "Un projet en tête ?" du footer : masquée sur l'accueil
@@ -5690,7 +5707,7 @@ function openPfImmersive(catId){
     <div class="pfi-view" aria-hidden="true"><div class="pfi-view-top"><span class="pfi-view-n"></span><button class="pfi-close" type="button" aria-label="${t({fr:'Fermer la photo', en:'Close photo'})}">×</button></div><div class="pfi-view-img"><img alt=""></div><div class="pfi-strip"></div></div>`;
   document.body.appendChild(el); PFI.el = el;
   document.documentElement.classList.add('pfi-lock');
-  history.pushState({ v: currentView, pfi: 1 }, '', location.pathname + location.search);
+  history.pushState({ v: currentView, pfi: 1, i: ++NAV_I }, '', location.pathname + location.search);
   if (window.track) track('cta_click', 'portfolio_plein_ecran');
   const $ = s => el.querySelector(s);
   $('.pfi-top .pfi-close').onclick = () => history.back();
@@ -8993,7 +9010,7 @@ function setLegalTab(tab, fromRoute){
   if (!fromRoute) {
     currentSub = tab === 'faq' ? null : tab;
     const route = seoRouteFor('legal', currentSub);
-    if (route && location.pathname !== route.path) history.pushState({ v: 'legal' }, '', route.path);
+    if (route && location.pathname !== route.path) history.pushState({ v: 'legal', i: ++NAV_I }, '', route.path);
     applySeoMeta('legal', currentSub);
     if (window.track) track('pageview');
   }
@@ -9615,7 +9632,8 @@ initNavScrollState();
   const v = r ? r.view : 'home';
   const _qs0 = location.search; window.__bootQs = _qs0;
   document.body.dataset.view = v;
-  history.replaceState({ v }, '', location.pathname + location.hash);
+  history.replaceState({ v, i: 0 }, '', location.pathname + location.hash);
+  NAV_I = 0;
   if (window.track) track('pageview');
   if (v === 'home') { applySeoMeta('home'); return; }
   goView(v === 'account' ? 'login' : v, r ? (r.cat || r.slug || r.city || r.sub || null) : null, { initial: true });

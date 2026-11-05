@@ -8624,3 +8624,13 @@ body[data-view="home"] #pageHeroWrap, .hero-video-wrap[data-view="home"] { backg
 
 /* Plus de carré rose derrière les photos (6 nov. 2026, demande de la propriétaire) : la galerie des séries affiche l'image entière ; le fond d'attente rose-gris apparaissait autour de la photo. Fond transparent, sans animation. */
 .lk-gal-main, .lk-gal-main.swap, .lk-gal-t { background: transparent !important; animation: none !important; }
+
+/* Bouton Retour fluide sur chaque page (6 nov. 2026, demande de la propriétaire) : rond fin en bas à gauche, jamais sur le texte, accessible au pouce ; absent sur l'accueil et le devis (qui ont leurs propres boutons) */
+.bk-back{position:fixed;left:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:55;display:inline-flex;align-items:center;gap:8px;box-sizing:border-box;height:40px;padding:0 16px 0 12px;border:1px solid rgba(17,17,17,.28);border-radius:999px;background:rgba(236,235,232,.82);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:#111;font:600 12px/1 'Inter Tight',sans-serif;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;opacity:.9;transition:opacity .25s,background .25s,transform .25s}
+.bk-back[hidden]{display:none}
+.bk-back svg{width:16px;height:16px;flex:none;transition:transform .25s}
+.bk-back:hover,.bk-back:focus-visible{opacity:1;background:#e8c6c4;transform:translateY(-1px)}
+.bk-back:hover svg{transform:translateX(-3px)}
+@media (max-width:760px){.bk-back{width:44px;height:44px;padding:0;justify-content:center;left:14px}.bk-back span{display:none}}
+html.pfi-lock .bk-back,body.menu-open .bk-back{display:none}
+@media print{.bk-back{display:none}}
