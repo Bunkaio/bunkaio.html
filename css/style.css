@@ -8857,3 +8857,11 @@ html body .svx-item:hover .svx-from, html body .svx-item.is-open .svx-from { col
 .ms-im:not([style*="url"]) { display: none !important; }
 .ms-im:not([style*="url"]) + .ms-tx { margin-top: 0 !important; padding-top: 18px !important; }
 @media (max-width: 760px) { .ms-prev:not(:has(.ms-im[style*="url"])) { grid-template-columns: 1fr !important; } .ms-prev .ms-tx h3 { word-break: normal; hyphens: manual; } }
+
+/* CTA centrés, texte centré (6 nov. 2026, demande de la propriétaire) : tous les boutons et liens d'appel centrent leur texte ; les rangées de boutons se centrent dans leur bloc (les légendes posées sur photo, le menu et les lignes de tableau gardent leur mise en page) */
+html body :is(.btn, .btn-solid, .btn-ghost, .cta-primary, .hero-start, .partner-cta-btn, .pf-cta-btn, .svx-cta, .ms-cta, .cs-btn, .quiz-nav-btn, .hm-avail-btn, .ms-all, .mb-ref-add, .lk-cap-cta, .about-hero-cta, .about-mid-cta, .home-claim-cta):not(.nav-cta):not(.hero-access) { text-align: center !important; justify-content: center !important; align-items: center !important; }
+html body :is(.btn, .btn-solid, .btn-ghost, .cta-primary, .svx-cta, .ms-cta, .cs-btn):not(.nav-cta) > span { text-align: center; }
+html body :is(.btn-row, .svcp-cta-row, .svc-cta-row, .pp-cta-row, .cs-actions, .ms-actions, .discover-actions, .fx-actions, .svx-actions, .mb-wizard-actions) { justify-content: center !important; text-align: center; }
+html body :is(.svcp-cta-row, .svc-cta-row, .pp-cta-row, .cs-actions, .discover-actions, .fx-actions, .svx-actions, .mb-wizard-actions) > :is(a, button) { margin-left: auto; margin-right: auto; }
+html body .login-switch, html body .login-panel .btn-row { text-align: center; }
+html body .footer-cta-row .hero-start { justify-content: center !important; }
