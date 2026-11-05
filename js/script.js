@@ -3609,7 +3609,7 @@ function renderDiscoverPage(){
   const phs = f => f.pMax ? (f.pMin === f.pMax ? f.pMin : f.pMin + ' ' + to + ' ' + f.pMax) + ' ' + t({fr:'photos retouchées', en:'retouched photos'}) : '';
   const rows = cats.map((c, k) => {
     const f = facts[c.id], cp = DISCOVER_COPY[c.id] || { for:{fr:'', en:''}, why:{fr:'', en:''} };
-    const isOpen = _discoverFocus ? c.id === _discoverFocus : k === 0;
+    const isOpen = !!_discoverFocus && c.id === _discoverFocus;   /* replié par défaut ; ouvert seulement si on arrive depuis une prestation précise */
     return `<li class="cs-acc-item${isOpen ? ' open' : ''}" data-cat="${c.id}">
       <button type="button" class="cs-acc-head" aria-expanded="${isOpen}">
         <b class="disc-num">${String(k + 1).padStart(2, '0')}</b>
@@ -3907,7 +3907,7 @@ function renderServicePage(catId){
       <p class="vat-note">${I18N[LANG]['vat-note']}</p>
       <p class="vat-note travel-note">🚗 ${TRAVEL_TXT[LANG].note}</p>
       <div class="fx-list">
-        ${tiers.map((tt, ti) => fxItem(catId, { hint: chooseHints[ti] || '', id: tt.id, name: t(tt.name), badge: tt.badge ? t(tt.badge) : '', line: tt.line ? t(tt.line) : '', price: priceLine(tt), delay: t(tt.delay), items: (en ? tt.items.en : tt.items.fr), open: !!tt.badge && /(recommand|choisi|popular)/i.test(t(tt.badge)) })).join('')}
+        ${tiers.map((tt, ti) => fxItem(catId, { hint: chooseHints[ti] || '', id: tt.id, name: t(tt.name), badge: tt.badge ? t(tt.badge) : '', line: tt.line ? t(tt.line) : '', price: priceLine(tt), delay: t(tt.delay), items: (en ? tt.items.en : tt.items.fr), open: false })).join('')}
         ${POLAS[catId] ? fxItem(catId, { id: POLAS[catId].id, name: t(POLAS[catId].name), badge: t(POLAS[catId].label), price: price(specialTotal(POLAS[catId])), delay: t(POLAS[catId].delay) + ' · ' + t(POLAS[catId].studioNote), items: t(POLAS[catId].items), special: true, hint: specialHint, extra: POLAS[catId].id === 'polas' ? `<a class="svcp-link" href="/conseils/polas-mannequin-digitals-agence/" onclick="return navLink(event,'article','polas-mannequin-digitals-agence')">${t({fr:'Comprendre les Polas', en:'What are Polas?'})}</a>` : '' }) : ''}
       </div>
       ${sub ? `<p class="svcp-note">${t({fr:'Besoin régulier ? ', en:'Regular need? '})}<strong>${t(sub.name)}</strong> — ${sub.price.toLocaleString(en ? 'en-GB' : 'fr-FR')} € ${t({fr:'/ mois', en:'/ month'})}.</p>` : ''}
@@ -3984,7 +3984,7 @@ function svcpEnhance(el, opt){
     el.querySelectorAll('.svcp-entrepreneurs, .value-panel, .svcp-two > div, .svcp-advice, .svcp-others, .pb-decor').forEach((box, i) => {
       const h2 = box.querySelector(':scope > h2'); if (!h2 || box.classList.contains('svcp-acc')) return;
       const id = 'svcpAcc' + i;
-      const open = i === 0;
+      const open = false;
       box.classList.add('svcp-acc'); if (open) box.classList.add('open');
       const rest = []; let n = h2.nextSibling; while (n) { rest.push(n); n = n.nextSibling; }
       const body = document.createElement('div'); body.className = 'svcp-acc-body'; body.id = id;
@@ -4094,7 +4094,7 @@ function renderBrandingPage(){
     [{fr:'Des droits clairs', en:'Clear rights'}, {fr:'Droits d\'utilisation commerciale sans limite de durée, précisés sur votre devis.', en:'Commercial usage rights with no time limit, set out in your quote.'}]
   ];
   const ladder = catTiers(c).filter(tr => tr.id !== 'deco').map(tr => `<li><b>${t(tr.name)} · ${price(c.tiers[tr.id].price)}</b><span>${t(tierLine(c, tr))}</span></li>`).join('');
-  const lancFx = fxItem('corporate', { id: 'lanc', name: t(lancTier.name), badge: t(lancTier.badge), line: t(L.line), price: price(L.price), delay: t(L.delay), items: en ? L.items.en : L.items.fr, open: true,
+  const lancFx = fxItem('corporate', { id: 'lanc', name: t(lancTier.name), badge: t(lancTier.badge), line: t(L.line), price: price(L.price), delay: t(L.delay), items: en ? L.items.en : L.items.fr, open: false,
     hint: t({fr:'vous lancez, repositionnez ou professionnalisez votre activité et voulez des images qui vous ressemblent, utilisables partout.', en:'you are launching, repositioning or professionalising your business and want images that look like you, usable everywhere.'}),
     extra: '' });
   const faq = [
@@ -4185,8 +4185,8 @@ function renderBrandingPage(){
       <h2>${t({fr:'Tout comprendre en 7 points', en:'Everything in 7 points'})}</h2>
       <p class="svcp-text">${t({fr:'Ouvrez le point qui vous intéresse.', en:'Open the point that interests you.'})}</p>
       <ul class="cs-acc disc-acc pb-acc" id="pbAcc">
-        ${acc.map((a, k) => `<li class="cs-acc-item${k === 0 ? ' open' : ''}">
-          <button type="button" class="cs-acc-head" aria-expanded="${k === 0}">
+        ${acc.map((a, k) => `<li class="cs-acc-item">
+          <button type="button" class="cs-acc-head" aria-expanded="false">
             <b class="disc-num">${String(k + 1).padStart(2, '0')}</b>
             <span class="pb-ico">${artIllus(a.icon, false)}</span>
             <span class="disc-name">${t(a.title)}<small class="pb-teaser">${t(a.teaser)}</small></span>
@@ -4700,8 +4700,8 @@ function renderArticlePage(slug){
       <div class="art-toolbar"><span>${a.sections.length} ${t({fr:'rubriques', en:'sections'})}</span><button type="button" class="art-all" data-acc-all="#artAcc" data-label-open="${t({fr:'Tout déplier', en:'Expand all'})}" data-label-close="${t({fr:'Tout replier', en:'Collapse all'})}">${t({fr:'Tout déplier', en:'Expand all'})}</button></div>
       <div class="cs-acc art-acc acc-multi" id="artAcc">${(() => { const used = new Set(); return a.sections.map((sec, k) => {
         const ic = artIconFor(sec.h, String(sec.html).replace(/<[^>]+>/g, ' ').slice(0, 200), a.cat, used);
-        return `<section class="cs-acc-item art-item${k === 0 || openAll ? ' open' : ''}" id="art-s${k + 1}">
-          <h2 class="art-h2"><button type="button" class="cs-acc-head art-head" aria-expanded="${k === 0 || openAll}"><span class="art-n">${String(k + 1).padStart(2, '0')}</span>${artIllus(ic, false)}<span class="art-t">${sec.h}</span><i class="cs-acc-chev" aria-hidden="true"></i></button></h2>
+        return `<section class="cs-acc-item art-item${openAll ? ' open' : ''}" id="art-s${k + 1}">
+          <h2 class="art-h2"><button type="button" class="cs-acc-head art-head" aria-expanded="${openAll}"><span class="art-n">${String(k + 1).padStart(2, '0')}</span>${artIllus(ic, false)}<span class="art-t">${sec.h}</span><i class="cs-acc-chev" aria-hidden="true"></i></button></h2>
           <div class="cs-acc-panel"><div class="art-body"><div class="art-text">${sec.html}</div></div></div>
         </section>`;
       }).join(''); })()}</div>
@@ -7121,7 +7121,7 @@ function renderClientSpotlights(){
           <h2 class="cs-title" data-tw data-tw-delay="150">${t({fr:'Votre projet, centralisé', en:'Your project, centralised'})}</h2>
           ${el.id === 'csSlotServices' ? '<div class="lk-banner cs-bleed" id="csBanner" hidden></div>' : ''}
           <p class="cs-lead" data-tw data-tw-delay="900">${t({fr:'Votre projet ne repose pas sur une succession d\'emails et de fichiers dispersés. Tout est centralisé dans votre espace client BUNKAIO, dès votre devis confirmé.', en:'Your project does not rest on a string of emails and scattered files. Everything is centralised in your BUNKAIO client area, as soon as your quote is confirmed.'})}</p>
-          ${compact ? '' : `<ul class="cs-points cs-acc">${points.map((x, k) => `<li class="cs-acc-item${k === 0 ? ' open' : ''}"><button type="button" class="cs-acc-head" aria-expanded="${k === 0}">${check}<span>${x.head}</span><i class="cs-acc-chev" aria-hidden="true"></i></button><div class="cs-acc-panel"><p>${x.body}</p></div></li>`).join('')}</ul>`}
+          ${compact ? '' : `<ul class="cs-points cs-acc">${points.map((x, k) => `<li class="cs-acc-item"><button type="button" class="cs-acc-head" aria-expanded="false">${check}<span>${x.head}</span><i class="cs-acc-chev" aria-hidden="true"></i></button><div class="cs-acc-panel"><p>${x.body}</p></div></li>`).join('')}</ul>`}
           <div class="cs-actions">${act}${compact || open ? '' : `<button type="button" class="cta-primary" onclick="goView('quiz')">${t({fr:'Construire mon projet', en:'Build my project'})}</button>`}</div>
         </div>
         ${noVisual ? '' : `
@@ -9155,7 +9155,7 @@ function renderAccordionInto(elId, sections, opts){
   const el = document.getElementById(elId);
   if (!el) return;
   if (opts && opts.exclusive) el.dataset.exclusive = '1';
-  const openFirst = !(opts && opts.closed);
+  const openFirst = !!(opts && opts.open);   /* replié par défaut sur tout le site */
   el.innerHTML = sections.map((s, i) => `
     <div class="accordion-item">
       <button class="accordion-trigger" aria-expanded="${i === 0 && openFirst ? 'true' : 'false'}" onclick="toggleAccordion(this)">
