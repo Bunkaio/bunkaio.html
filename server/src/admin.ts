@@ -330,6 +330,15 @@ export async function buildDashboard(env: Env, stripe: Stripe): Promise<Record<s
     c.invoices.sort((a, b) => b.created.localeCompare(a.created));
     c.stage = computeStage(c, today);
   }
+  /* Contacts supprimés depuis l'admin (marqueur `gone:<email>`) : tout ce qui reste d'eux (fiche Stripe gardée pour ses factures, devis signés conservés, données
+     arrivées par un autre chemin) n'est plus listé tant qu'aucune NOUVELLE activité ne les fait réapparaître. */
+  let visible = list;
+  try {
+    const gone = new Map<string, string>();
+    for (const k of (await env.ACCOUNTS_KV.list({ prefix: 'gone:', limit: 1000 })).keys) { const v = await env.ACCOUNTS_KV.get(k.name); if (v) gone.set(k.name.slice(5), v); }
+    if (gone.size) visible = list.filter((c) => { const t = gone.get(c.email); return !t || c.lastActivity.slice(0, 10) > t.slice(0, 10); });
+  } catch { /* sans masquage */ }
+  list.length = 0; list.push(...visible);
   list.sort((a, b) => b.lastActivity.localeCompare(a.lastActivity));
 
   return {
@@ -367,6 +376,7 @@ export async function deleteContact(env: Env, stripe: Stripe, email: string, typ
   summary.accounts = accounts;
   if (type) return summary;
 
+  await env.ACCOUNTS_KV.put(`gone:${key}`, new Date().toISOString(), { expirationTtl: 60 * 60 * 24 * 365 * 3 });
   summary.messages = await deleteMessagesOf(env, key);
   // Les devis envoyés ou signés sont des documents contractuels : seuls les brouillons sont supprimés.
   let quotesDeleted = 0;

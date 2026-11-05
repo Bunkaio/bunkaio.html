@@ -3034,6 +3034,7 @@ async function deleteContactUI(type, purge) {
     const s = data.summary || {};
     toast(type ? 'Espace supprimé' : `Contact supprimé${s.stripeDeleted ? ' · ' + s.stripeDeleted + ' fiche(s) Stripe supprimée(s)' : ''}${s.stripeKeptWithInvoices ? ' · fiche Stripe conservée pour les factures' : ''}${s.quotesKept ? ' · ' + s.quotesKept + ' devis conservé(s) (preuve)' : ''}`);
     closeDrawer(); await loadDashboard();
+    if (!type && contactByEmail(c.email)) alert('Ce contact apparaît encore après la suppression. Cause probable : le serveur (Worker) n\'est pas à jour — redéployez-le (cd server && npx wrangler deploy), puis recommencez « Supprimer partout ».');
   } catch (e) {}
 }
 
