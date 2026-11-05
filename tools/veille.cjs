@@ -104,6 +104,7 @@ function serve() {
     await page.route(/^https?:\/\/(?!localhost)/, (r) => r.abort());
     await page.goto(base + '/devis/', { waitUntil: 'domcontentloaded' });
     await page.waitForTimeout(900);
+    await page.evaluate(() => { if (typeof quizChoose === 'function' && document.querySelector('#view-quiz.q-choosing')) quizChoose('estimate'); }); await page.waitForTimeout(500);
     await page.locator('.cat-item').first().click();
     await page.waitForTimeout(1000);
     await page.locator('.prof-card').first().click();

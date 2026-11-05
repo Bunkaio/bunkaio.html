@@ -2523,8 +2523,27 @@ function renderMissionServices(){
   if (bgs && !bgs.children.length) bgs.innerHTML = CATS.map(c => { const u = IMG.servicePhotos && IMG.servicePhotos[c.id]; return `<div class="mt-bg" data-cat="${c.id}"${u ? ` style="background-image:url('${u}')"` : ''}></div>`; }).join('');
   missionSelect(msIndex);
 }
+/* Fond de la séquence « Le studio » : à chaque prestation affichée, une photo HD du Portfolio de cette catégorie
+   (la suivante de la série à chaque passage) ; photo de la prestation en repli (Lumen, catégorie sans photo). */
+const _msBgIdx = {};
 function missionShowBg(catId){
-  document.querySelectorAll('#missionTileBgs .mt-bg').forEach(b => b.classList.toggle('on', b.dataset.cat === catId));
+  const all = [...document.querySelectorAll('#missionTileBgs .mt-bg')];
+  const tgt = all.find(b => b.dataset.cat === catId);
+  const apply = () => all.forEach(b => b.classList.toggle('on', b === tgt));
+  if (!tgt || catId === 'lumen' || typeof loadPortfolioPhotos !== 'function') { apply(); return; }
+  const seq = (_msBgIdx.seq = (_msBgIdx.seq || 0) + 1);
+  loadPortfolioPhotos(catId, 24).then(list => {
+    if (_msBgIdx.seq !== seq) return; /* une autre prestation a été choisie entre-temps */
+    if (!list || !list.length) { apply(); return; }
+    const k = _msBgIdx[catId] = (_msBgIdx[catId] === undefined ? Math.floor(Math.random() * list.length) : _msBgIdx[catId] + 1) % list.length;
+    const url = list[k], im = new Image();
+    let done = false;
+    const go = () => { if (done || _msBgIdx.seq !== seq) return; done = true; tgt.style.backgroundImage = "url('" + url + "')"; apply(); };
+    im.onload = go; im.onerror = () => { done = true; apply(); };
+    im.src = url;
+    setTimeout(go, 1200);
+  });
+  setTimeout(() => { if (_msBgIdx.seq === seq && !tgt.classList.contains('on') && !tgt.dataset.pf) apply(); }, 1500);
 }
 function initMissionServicesAutoplay(){
   const box = document.getElementById('missionServices');
