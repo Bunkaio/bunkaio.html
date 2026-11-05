@@ -8927,7 +8927,13 @@ function toggleAccordion(btn, pin){
      une page courte et dynamique. */
   const group = btn.closest('.accordion-item')?.parentElement;
   if (!open && group && group.dataset.exclusive) {
-    group.querySelectorAll('.accordion-trigger[aria-expanded="true"]').forEach(t => setAccordionOpen(t, t.nextElementSibling, false));
+    /* Les items refermés se ferment d'un coup (sans animation) et le défilement est compensé aussitôt : une fermeture animée au-dessus du bouton cliqué faisait glisser la page sous le doigt. */
+    const closing = [...group.querySelectorAll('.accordion-trigger[aria-expanded="true"]')];
+    closing.forEach(t => { const b = t.nextElementSibling; b.style.transition = 'none'; setAccordionOpen(t, b, false); b.style.maxHeight = '0px'; });
+    void group.offsetHeight;
+    const d0 = btn.getBoundingClientRect().top - top0;
+    if (Math.abs(d0) > 0.5) window.scrollBy({ top: d0, behavior: 'instant' });
+    requestAnimationFrame(() => closing.forEach(t => { const b = t.nextElementSibling; b.style.transition = ''; b.style.maxHeight = ''; }));
   }
   setAccordionOpen(btn, body, !open);
   if (pin === false) return;
