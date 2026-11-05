@@ -8602,3 +8602,6 @@ body[data-view="home"] #pageHeroWrap, .hero-video-wrap[data-view="home"] { backg
 .hm-svc-cta .hm-avail-btn i{font-style:normal;transition:transform .25s}
 .hm-svc-cta .hm-avail-btn:hover,.hm-svc-cta .hm-avail-btn:focus-visible,.hm-svc-cta .hm-avail-btn:active{background:#e8c6c4;color:#111;border-color:#111}
 .hm-svc-cta .hm-avail-btn:hover i{transform:translateX(4px)}
+
+/* Devis, écran de choix : note « les deux parcours se rejoignent » (5 nov. 2026) */
+.q-choice-note{margin:clamp(22px,4vw,36px) auto 0;max-width:640px;text-align:center;font-size:14px;line-height:1.6;color:rgba(17,17,17,.68);text-wrap:balance}
