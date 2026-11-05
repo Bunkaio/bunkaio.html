@@ -8467,3 +8467,8 @@ html body :is(.hero-start, .cta-primary, .partner-cta-btn, .btn-solid, button, a
 html body :is(.hero-start, .cta-primary, .partner-cta-btn, .btn-solid, button, a):is([data-lang="start"], :has(> [data-lang="start"])):not(#bkv):not(.nav-cta):not(.mobile-cta):is(:hover, :focus-visible, :active) {
   background: rgba(232,198,196,.88) !important; color: #111 !important; border-color: rgba(255,255,255,.85) !important; box-shadow: 0 0 0 1px rgba(17,17,17,.1), 0 8px 28px rgba(232,198,196,.55), inset 0 1px 0 rgba(255,255,255,.5) !important; }
 html body :is(.hero-start, .cta-primary, .partner-cta-btn, .btn-solid, button, a):is([data-lang="start"], :has(> [data-lang="start"])):not(#bkv):not(.nav-cta):not(.mobile-cta)::after { content: none !important; display: none !important; }
+
+/* Moodboard : textes des choix (direction, ambiance, palette…) en encre, plus de bleu par défaut des boutons (5 nov. 2026) */
+.mb-wizard :is(.mb-direction-card, .mb-palette-card, .mb-chip, .mb-direction-name, .mb-direction-desc, .mb-palette-name) { color: #111 !important; font-family: inherit; }
+.mb-wizard .mb-direction-card.active, .mb-wizard .mb-direction-card.active :is(.mb-direction-name, .mb-direction-desc), .mb-wizard .mb-chip.active, .mb-wizard .mb-palette-card.active { color: #fff !important; }
+.mb-wizard .mb-direction-desc { opacity: .7; }

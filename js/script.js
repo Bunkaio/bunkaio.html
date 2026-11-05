@@ -7857,15 +7857,22 @@ function backToMbList(){ mbView = 'list'; mbActiveId = null; renderAccMoodboards
    à chaque sauvegarde — création, édition, ou simple ajout de
    commentaire passent tous par cette même fonction. */
 function saveMoodboards(list, onSuccess, onError){
+  /* Les valeurs null sont retirées (le serveur n'accepte que des champs absents ou typés) ; en cas d'échec, un message explicite est affiché au lieu d'un bouton qui ne réagit pas. */
+  let clean = list; try { clean = JSON.parse(JSON.stringify(list, (k, v) => v === null ? undefined : v)); } catch (e) {}
+  const fail = (why) => {
+    try { alert(t({fr:'Le moodboard n\'a pas pu être enregistré' + (why ? ' (' + why + ')' : '') + '. Vérifiez votre connexion puis réessayez ; si le problème continue, reconnectez-vous à votre espace.', en:'The moodboard could not be saved' + (why ? ' (' + why + ')' : '') + '. Check your connection and try again; if it keeps failing, sign in to your space again.'})); } catch (e) {}
+    if (onError) onError();
+  };
+  if (!USER_CODE) { fail('session expirée'); return; }
   fetch(ACCOUNTS_API_BASE + '/account-update', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ type: USER.type, email: USER.email, code: USER_CODE, moodboards: list })
-  }).then(r => r.json()).then(data => {
-    if (!data.ok || !data.account) { if (onError) onError(); return; }
+    body: JSON.stringify({ type: USER.type, email: USER.email, code: USER_CODE, moodboards: clean })
+  }).then(r => r.json().catch(() => ({ ok: false, error: 'HTTP ' + r.status }))).then(data => {
+    if (!data.ok || !data.account) { fail(data && data.error ? data.error : ''); return; }
     USER = data.account;
     if (onSuccess) onSuccess();
-  }).catch(() => { if (onError) onError(); });
+  }).catch(() => fail('réseau'));
 }
 
 function renderMbList(el){

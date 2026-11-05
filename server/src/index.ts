@@ -173,6 +173,10 @@ function isValidAuthLoginPayload(body: unknown): body is AuthLoginPayload {
  */
 function isValidMoodboardArray(value: unknown): boolean {
   if (!Array.isArray(value)) return false;
+  /* Un champ facultatif absent ou null est accepté ; seul un type erroné est refusé. */
+  const opt = (v: unknown, ok: (x: unknown) => boolean) => v === undefined || v === null || ok(v);
+  const str = (x: unknown) => typeof x === 'string';
+  const arr = (x: unknown) => Array.isArray(x);
   return value.every((m) => {
     if (typeof m !== 'object' || m === null) return false;
     const mb = m as Record<string, unknown>;
@@ -182,17 +186,10 @@ function isValidMoodboardArray(value: unknown): boolean {
       typeof mb.statut === 'string' &&
       typeof mb.creeLe === 'string' &&
       typeof mb.majLe === 'string' &&
-      (mb.commandeRef === undefined || typeof mb.commandeRef === 'string') &&
-      (mb.typeProjet === undefined || typeof mb.typeProjet === 'string') &&
-      (mb.direction === undefined || typeof mb.direction === 'string') &&
-      (mb.ambiance === undefined || Array.isArray(mb.ambiance)) &&
-      (mb.palette === undefined || typeof mb.palette === 'string') &&
-      (mb.pinterestUrl === undefined || typeof mb.pinterestUrl === 'string') &&
-      (mb.references === undefined || Array.isArray(mb.references)) &&
-      (mb.produits === undefined || Array.isArray(mb.produits)) &&
-      (mb.collaborateurs === undefined || Array.isArray(mb.collaborateurs)) &&
-      (mb.notes === undefined || typeof mb.notes === 'string') &&
-      (mb.commentaires === undefined || Array.isArray(mb.commentaires))
+      opt(mb.commandeRef, str) && opt(mb.typeProjet, str) && opt(mb.direction, str) &&
+      opt(mb.ambiance, arr) && opt(mb.palette, str) && opt(mb.pinterestUrl, str) &&
+      opt(mb.references, arr) && opt(mb.produits, arr) && opt(mb.collaborateurs, arr) &&
+      opt(mb.notes, str) && opt(mb.commentaires, arr)
     );
   });
 }
