@@ -5322,7 +5322,10 @@ function lkFiche(head, spec){
   if (!box) { box = document.createElement('div'); box.className = 'lk-fiche'; head.appendChild(box); }
   head.classList.add('lk-svc');
   const route = seoRouteFor('service', sub) || {};
-  const desc = (LANG === 'en' && route.descriptionEn) || route.description || '';
+  /* Texte visible : pas de nom de ville, le déplacement partout en France sur devis (la description SEO de la page garde ses villes). */
+  const desc = ((LANG === 'en' && route.descriptionEn) || route.description || '')
+    .replace(/\s*Montpellier,\s*(Toulouse|Hérault|Herault)\.?/, LANG === 'en' ? ' Travel anywhere in France on quote, with travel costs calculated automatically in the online quote.' : ' Déplacement partout en France sur devis, frais de déplacement calculés automatiquement dans le devis en ligne.')
+    .replace(/, in Montpellier, Toulouse\./, ' — travel anywhere in France on quote, with travel costs calculated automatically in the online quote.');
   const lancP = c.tiers.lanc ? c.tiers.lanc.price : 0;
   const tiers = c.lumen ? [] : catTiers(c).filter(tr => brand ? c.tiers[tr.id].price >= lancP : true);
   const eur = n => n.toLocaleString('fr-FR') + ' €';
