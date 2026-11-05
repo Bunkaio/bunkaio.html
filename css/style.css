@@ -8456,3 +8456,5 @@ html body .view.gx #applyTypePicker button { border-color: rgba(17,17,17,.18) !i
 .pfx-sec i { font-style: normal; font-size: 12px; font-weight: 500; letter-spacing: .04em; color: rgba(17,17,17,.55); }
 .pfx-tiles .pfx-sec-t { grid-column: 1 / -1; }
 .pfx-sec.pfx-sec-ch { margin: 56px 0 0; }
+/* Contact : ligne des horaires sous la zone d'intervention (5 nov. 2026) */
+.view.gx .ct-hours { margin-top: 2px !important; }
