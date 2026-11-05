@@ -8787,3 +8787,6 @@ html body footer .footer-cta-headline::after { content: ''; position: absolute; 
 @keyframes ftSweep { 0%, 12% { background-position: 100% 0; } 55%, 100% { background-position: 0 0; } }
 @keyframes ftLine { 0% { transform: scaleX(0); transform-origin: left; } 40% { transform: scaleX(1); transform-origin: left; } 60% { transform: scaleX(1); transform-origin: right; } 100% { transform: scaleX(0); transform-origin: right; } }
 @media (prefers-reduced-motion: reduce) { html body footer .footer-cta-headline { animation: none; background: none; -webkit-text-fill-color: #fff; color: #fff !important; } html body footer .footer-cta-headline::after { animation: none; transform: scaleX(1); } }
+
+/* Pied de page : plus de grosse barre blanche au-dessus de « Un projet en tête ? » (6 nov. 2026, demande de la propriétaire) */
+html body footer .footer-cta-row { border-top: 0 !important; padding-top: clamp(40px, 7vw, 72px) !important; }
