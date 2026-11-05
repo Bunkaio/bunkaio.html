@@ -1345,7 +1345,7 @@ const SUBS = {
 const SUB_PROFILES = ['modele', 'mannequin'];
 const subAvailable = cat => !!SUBS[cat] && (!SUB_PROFILES.length || cat !== 'mode' || SUB_PROFILES.includes(S.prof));
 
-/* Formule spécialisée "Polas" — uniquement Mode & créateurs. Polas : 160 €, studio inclus.
+/* Formule spécialisée "Polas" — uniquement Mode & créateurs. Polas : 90 €, studio inclus.
    Polas (digitals) = photos brutes et sans retouche, destinées exclusivement aux agences pour évaluer
    la morphologie, la posture et le potentiel brut du mannequin — aucune mise en scène. */
 const POLAS = {
@@ -1371,13 +1371,13 @@ const POLAS = {
     studioNote:{fr:'Studio inclus', en:'Studio included'},
     short:{fr:'Digitals bruts · studio inclus', en:'Raw digitals · studio included'},
     sub:{fr:'un format Polas pour mannequins, ainsi que quatre formules, de la découverte à l\'expérience éditoriale complète.', en:'a Polas format for models, plus four packages, from the starter offer to the complete editorial experience.'},
-    optNote:{fr:'<strong>Bon à savoir :</strong> le format Polas est une expérience clé en main à 160 € — studio inclus, sans option additionnelle.', en:'<strong>Good to know:</strong> the Polas format is a turnkey €160 experience — studio included, no additional options.'},
-    price: 160,
+    optNote:{fr:'<strong>Bon à savoir :</strong> le format Polas est une expérience clé en main à 90 € — studio inclus, sans option additionnelle.', en:'<strong>Good to know:</strong> the Polas format is a turnkey €90 experience — studio included, no additional options.'},
+    price: 90,
     name:{fr:'Polas', en:'Polas'},
     delay:{fr:'Livraison HD sous 24h', en:'HD delivery within 24h'},
     items:{
-      fr:['Séance studio de 30 min sur fond blanc, lumière neutre','10 photos brutes, sans retouche ni mise en scène','Visage, profils, trois-quarts et plans corps entier','Fichiers HD prêts à transmettre à votre agence'],
-      en:['30-minute studio session on a plain white background, neutral lighting','10 raw shots, no retouching or styling','Face, profiles, three-quarter and full-body shots','HD files ready to send to your agency'] }
+      fr:['Séance studio de 20 min sur fond blanc, lumière neutre','6 photos brutes, sans retouche ni mise en scène','Visage, profils, trois-quarts et plans corps entier','Fichiers HD prêts à transmettre à votre agence'],
+      en:['20-minute studio session on a plain white background, neutral lighting','6 raw shots, no retouching or styling','Face, profiles, three-quarter and full-body shots','HD files ready to send to your agency'] }
   }
 };
 
@@ -1396,7 +1396,7 @@ function formulaPhotoHTML(cat, tierId, cls){
 }
 /* Supplément « studio » des formules Découverte (photo particuliers et corporate). */
 const STUDIO_FEE = 60;
-/* Le studio n'est jamais inclus : option à STUDIO_FEE € sur ces gammes (exception : Polas, 160 € studio inclus ; ni événementiel ni abonnement). */
+/* Le studio n'est jamais inclus : option à STUDIO_FEE € sur ces gammes (exception : Polas, 90 € studio inclus ; ni événementiel ni abonnement). */
 function studioApplies(cat){ return ['photo-part','corporate','mode','commercial'].includes(cat); }
 const specialTotal = sp => sp.price + sp.studio;
 const isSpecialTier = () => !!(S.tier && POLAS[S.cat] && S.tier === POLAS[S.cat].id);
@@ -3854,7 +3854,7 @@ function renderServicePage(catId){
     ...(catId === 'photo-part' ? [{ q: t({fr:'Proposez-vous un book grossesse ?', en:'Do you offer a maternity book?'}),
       a: `<p>${t({fr:'Oui : le book grossesse est une formule dédiée, à ' + price(POLAS[catId].price) + '. Séance de 1h30 en extérieur ou en studio (option à 60 €), 10 photos HD retouchées avec une retouche naturelle, une direction de pose douce et bienveillante, et la possibilité de venir en couple. Le moment idéal : entre la 28e et la 36e semaine de grossesse.', en:'Yes: the maternity book is a dedicated package at ' + price(POLAS[catId].price) + '. A 1.5-hour session outdoors or in the studio (studio is a €60 option), 10 retouched HD photos with natural retouching, gentle posing guidance, and the option to join as a couple. The ideal moment: between weeks 28 and 36 of pregnancy.'})}</p>` }] : []),
     ...(POLAS[catId] && POLAS[catId].id === 'polas' ? [{ q: t({fr:'Qu\'est-ce que la formule Polas ?', en:'What is the Polas package?'}),
-      a: `<p>${t({fr:'Des photos brutes, sans retouche, destinées aux agences de mannequins : séance en studio de 30 minutes sur fond blanc, 10 photos brutes (visage, profils, trois-quarts et plans en pied), fichiers HD livrés sous 24 h. Tarif : ', en:'Raw, unretouched photos made for model agencies: 30-minute studio session on a white background, 10 raw photos (face, profiles, three-quarter and full-body shots), HD files delivered within 24 hours. Rate: '})}${price(POLAS[catId].price)}${t({fr:', studio inclus.', en:', studio included.'})}</p><p><a href="/conseils/polas-mannequin-digitals-agence/" data-nav="article:polas-mannequin-digitals-agence">${t({fr:'Polas et digitals de mannequin : à quoi servent-elles ?', en:'Polas and model digitals: what are they for?'})}</a></p>` }] : []),
+      a: `<p>${t({fr:'Des photos brutes, sans retouche, destinées aux agences de mannequins : séance en studio de 20 minutes sur fond blanc, 6 photos brutes (visage, profils, trois-quarts et plans en pied), fichiers HD livrés sous 24 h. Tarif : ', en:'Raw, unretouched photos made for model agencies: 20-minute studio session on a white background, 6 raw photos (face, profiles, three-quarter and full-body shots), HD files delivered within 24 hours. Rate: '})}${price(POLAS[catId].price)}${t({fr:', studio inclus.', en:', studio included.'})}</p><p><a href="/conseils/polas-mannequin-digitals-agence/" data-nav="article:polas-mannequin-digitals-agence">${t({fr:'Polas et digitals de mannequin : à quoi servent-elles ?', en:'Polas and model digitals: what are they for?'})}</a></p>` }] : []),
     ...(catId === 'photo-part' ? [{ q: t({fr:'Peut-on faire une séance en couple ou en groupe ?', en:'Can we book a couple or group session?'}),
       a: `<p>${t({fr:'Oui : la séance se fait en solo, en couple ou en groupe, en extérieur ou en studio. Choisissez la formule selon la durée et le nombre de photos souhaités ; pour vous aider à préparer vos tenues, lisez ', en:'Yes: sessions are available solo, as a couple or in a group, outdoors or in the studio. Pick the package according to the session length and number of photos you want; to prepare your outfits, read '})}<a href="/conseils/que-porter-seance-photo/" data-nav="article:que-porter-seance-photo">${t({fr:'Que porter pour une séance photo ?', en:'What to wear for a photo session?'})}</a>.</p>` }] : []),
     ...(catId === 'photo-part' ? [{ q: t({fr:'Réalisez-vous des portraits professionnels ?', en:'Do you shoot professional portraits?'}),
@@ -3883,7 +3883,7 @@ function renderServicePage(catId){
   const chooseHints = (copyBlock && copyBlock.choose && copyBlock.choose.length === allTierIds.length) ? tiers.map(tt => t(copyBlock.choose[allTierIds.indexOf(tt.id)])) : [];
   const specialHint = POLAS[catId] ? (POLAS[catId].id === 'grossesse'
     ? t({fr:'vous attendez un heureux événement ? Une séance douce de 1h30, en studio ou en extérieur, pour garder des images soignées de cette période (idéalement entre la 28e et la 36e semaine).', en:'expecting a baby? A gentle 1.5-hour session, in the studio or outdoors, to keep beautiful images of this time (ideally between weeks 28 and 36).'})
-    : t({fr:'vous devez présenter votre profil à une agence ? 10 photos brutes, sans retouche ni mise en scène, pour juger la morphologie et le potentiel, livrées en HD sous 24 h (studio inclus).', en:'need to present your profile to an agency? 10 raw photos with no retouching or styling, to assess build and potential, delivered in HD within 24 h (studio included).'})) : '';
+    : t({fr:'vous devez présenter votre profil à une agence ? 6 photos brutes, sans retouche ni mise en scène, pour juger la morphologie et le potentiel, livrées en HD sous 24 h (studio inclus).', en:'need to present your profile to an agency? 6 raw photos with no retouching or styling, to assess build and potential, delivered in HD within 24 h (studio included).'})) : '';
   const chooseHtml = '';
   const practical = t({
     fr: 'Nous intervenons à <strong>Montpellier et Toulouse</strong>. Les droits d\'utilisation commerciale des visuels vous sont cédés sans limite de durée. Toutes les réponses sont dans la <a href="/faq/" data-nav="faq">FAQ</a>, et pour une question précise, <a href="/contact/" data-nav="contact">contactez-nous</a>.',
@@ -9927,7 +9927,7 @@ const BKC_CATS = ['photo-part', 'corporate', 'mode', 'commercial', 'event'];
 const BKC_DUR = {
   'photo-part': { deco: 60, sig: 120, prem: 240, edit: 540, grossesse: 90 },
   corporate: { deco: 60, lanc: 90, sig: 120, prem: 240, edit: 540 },
-  mode: { deco: 120, sig: 240, prem: 360, edit: 540, polas: 30, sub: 240 },
+  mode: { deco: 120, sig: 240, prem: 360, edit: 540, polas: 20, sub: 240 },
   commercial: { deco: 120, sig: 240, prem: 360, edit: 540 },
   event: { deco: 120, sig: 240, prem: 360, edit: 480 }
 };
