@@ -4,6 +4,7 @@ import { AR_OPTIONS, cleanConfig as cleanAutoReplyConfig, defaultConfig, getConf
 import type { ARFacts } from './autoreply';
 import { goClicks, handleGo, listGoLinks, saveGoLink } from './golinks';
 import { getSeries, saveSeries } from './series';
+import { getHiddenMedia, setMediaHidden } from './mediahidden';
 import { computeBusy, createHold, addManualHold, getCalConfig, getHolds, saveCalConfig, setHoldStatus, testIcal } from './availability';
 import type Stripe from 'stripe';
 import { adminAccountView, getAccount, listAccounts, putAccount, sanitizeAccount, upsertAccountFromAdmin, verifyLogin, LoginThrottled } from './accounts';
@@ -1691,6 +1692,10 @@ async function handleMediaServe(request: Request, env: Env, mediaPath: string): 
   if (!mediaPath || !isValidMediaPath(mediaPath)) {
     return new Response('Not found', { status: 404 });
   }
+  /* Image masquée depuis l'admin (icône œil) : non servie au public ; l'admin la voit avec ?show=1. */
+  if (!new URL(request.url).searchParams.has('show') && (await getHiddenMedia(env)).has(mediaPath)) {
+    return new Response('Not found', { status: 404, headers: { 'Cache-Control': 'no-store', 'Access-Control-Allow-Origin': '*' } });
+  }
   /* Requêtes Range : indispensables pour que les vidéos démarrent sans télécharger tout le fichier (et pour iOS/Safari). */
   const wantsRange = request.headers.has('Range');
   const object = await env.MEDIA_BUCKET.get(mediaPath, wantsRange ? { range: request.headers } : undefined);
@@ -1737,10 +1742,21 @@ async function handleListMedia(request: Request, env: Env, headers: Record<strin
   const keys = listed.objects.map((obj) => obj.key);
   /* `objects` : taille (octets) et date d'envoi de chaque fichier, pour repérer les images trop lourdes dans l'admin. */
   const objects = listed.objects.map((obj) => ({ key: obj.key, size: obj.size, uploaded: obj.uploaded }));
-  return jsonResponse({ ok: true, keys, objects }, 200, headers);
+  return jsonResponse({ ok: true, keys, objects, hidden: [...(await getHiddenMedia(env))].filter((p) => p.startsWith(prefix)) }, 200, headers);
 }
 
 /* Suppression d'un média (admin/media.html). POST { path } — protégé par ADMIN_TOKEN, chemin validé comme à l'upload. */
+/* Visibilité d'une image (admin/media.html, icône œil) : GET = liste des chemins masqués, POST { path, hidden }. */
+async function handleMediaHidden(request: Request, env: Env, headers: Record<string, string>): Promise<Response> {
+  if ((request.headers.get('Authorization') ?? '') !== `Bearer ${env.ADMIN_TOKEN}`) return jsonResponse({ ok: false, error: 'unauthorized' }, 401, headers);
+  if (request.method === 'GET') return jsonResponse({ ok: true, hidden: [...(await getHiddenMedia(env))] }, 200, headers);
+  if (request.method !== 'POST') return jsonResponse({ ok: false, error: 'method_not_allowed' }, 405, headers);
+  const body = (await request.json().catch(() => ({}))) as { path?: unknown; hidden?: unknown };
+  const path = typeof body.path === 'string' ? body.path : '';
+  if (!isValidMediaPath(path)) return jsonResponse({ ok: false, error: 'invalid_path' }, 400, headers);
+  return jsonResponse({ ok: true, path, hidden: body.hidden === true, list: await setMediaHidden(env, path, body.hidden === true) }, 200, headers);
+}
+
 async function handleDeleteMedia(request: Request, env: Env, headers: Record<string, string>): Promise<Response> {
   if (request.method !== 'POST') {
     return jsonResponse({ ok: false, error: 'method_not_allowed' }, 405, headers);
@@ -1823,6 +1839,9 @@ export default {
     }
     if (url.pathname === LIST_MEDIA_ROUTE) {
       return handleListMedia(request, env, headers);
+    }
+    if (url.pathname === '/admin/media-hidden') {
+      return handleMediaHidden(request, env, headers);
     }
     if (url.pathname === DELETE_MEDIA_ROUTE) {
       return handleDeleteMedia(request, env, headers);

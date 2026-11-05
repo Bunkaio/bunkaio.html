@@ -63,6 +63,17 @@
     gap: 12px;
   }
 
+  /* ── Visibilité (icône œil) ── */
+  .eye-btn { position: absolute; top: 6px; right: 6px; z-index: 5; width: 28px; height: 28px; border-radius: 50%; border: 0; background: rgba(255,255,255,.92); box-shadow: 0 1px 6px rgba(0,0,0,.25); display: flex; align-items: center; justify-content: center; cursor: pointer; color: #111; padding: 0; transition: transform .15s, background .15s; }
+  .eye-btn:hover { transform: scale(1.1); }
+  .eye-btn svg { width: 16px; height: 16px; }
+  .eye-btn .off { display: none; }
+  .is-hidden .eye-btn { background: #111; color: #fff; }
+  .is-hidden .eye-btn .on { display: none; } .is-hidden .eye-btn .off { display: block; }
+  .is-hidden img { opacity: .3; filter: grayscale(1); }
+  .is-hidden .slot-thumb::after, .is-hidden .pf-thumb::before { content: 'Masquée sur le site'; position: absolute; left: 6px; bottom: 6px; z-index: 4; padding: 3px 7px; border-radius: 10px; background: #111; color: #fff; font-size: 10px; font-weight: 600; letter-spacing: .02em; pointer-events: none; }
+  .is-hidden { outline: 2px dashed #888; outline-offset: -2px; }
+
   /* ── Slot card ── */
   .slot-card {
     border: 1.5px solid var(--line);
@@ -602,10 +613,50 @@ document.getElementById('token').addEventListener('change', (e) => {
   localStorage.setItem('bunkaio_admin_token', e.target.value.trim());
   refreshAllPortfolios();
   serLoad();
+  loadHidden();
 });
 
 function getToken() {
   return document.getElementById('token').value.trim();
+}
+
+// ── Visibilité des images (icône œil) : une image masquée n'est plus servie au public, mais reste ici (aperçu avec ?show=1) ──
+const HIDDEN = new Set();
+const EYE_SVG = '<svg class="on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg><svg class="off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.9 17.9A10.9 10.9 0 0 1 12 19C5 19 1 12 1 12a18.5 18.5 0 0 1 5.1-5.9M9.9 4.2A10.7 10.7 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.2 3.2M14.1 14.1a3 3 0 1 1-4.2-4.2"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+function eyeApply(btn) {
+  const hid = HIDDEN.has(btn.dataset.path);
+  const host = btn.closest('.slot-card, .pf-img-card'); if (host) host.classList.toggle('is-hidden', hid);
+  btn.title = hid ? 'Image masquée sur le site — cliquer pour la réafficher' : 'Image visible sur le site — cliquer pour la masquer';
+  btn.setAttribute('aria-label', btn.title); btn.setAttribute('aria-pressed', String(hid));
+}
+function eyeRefreshAll() { document.querySelectorAll('.eye-btn[data-path]').forEach(eyeApply); }
+async function loadHidden() {
+  const t = getToken(); if (!t) return;
+  try {
+    const r = await fetch(WORKER_BASE + '/admin/media-hidden', { headers: { Authorization: 'Bearer ' + t } });
+    if (!r.ok) return; const d = await r.json();
+    HIDDEN.clear(); (d.hidden || []).forEach((p) => HIDDEN.add(p)); eyeRefreshAll();
+  } catch {}
+}
+/* Ajoute l'œil dans `container` (position: relative). `img` : l'œil n'apparaît que quand une image existe. */
+function attachEye(container, path, img) {
+  const btn = document.createElement('button');
+  btn.type = 'button'; btn.className = 'eye-btn'; btn.dataset.path = path; btn.innerHTML = EYE_SVG;
+  if (img) { btn.style.display = 'none'; const show = () => { btn.style.display = 'flex'; }; if (img.complete && img.naturalWidth) show(); img.addEventListener('load', show); }
+  btn.addEventListener('click', async (e) => {
+    e.preventDefault(); e.stopPropagation();
+    if (!getToken()) { alert('Entre ton token admin d\'abord.'); return; }
+    const hide = !HIDDEN.has(path); btn.disabled = true;
+    try {
+      const r = await fetch(WORKER_BASE + '/admin/media-hidden', { method: 'POST', headers: { Authorization: 'Bearer ' + getToken(), 'Content-Type': 'application/json' }, body: JSON.stringify({ path, hidden: hide }) });
+      if (r.status === 404) { alert(WORKER_OUTDATED); return; }
+      const d = await r.json();
+      if (!r.ok || !d.ok) { alert(d.error === 'unauthorized' ? 'Token incorrect' : 'Action impossible : ' + (d.error || r.status)); return; }
+      if (hide) HIDDEN.add(path); else HIDDEN.delete(path); eyeRefreshAll();
+    } catch { alert('Erreur réseau'); } finally { btn.disabled = false; }
+  });
+  container.appendChild(btn); eyeApply(btn);
+  return btn;
 }
 
 // ── Slug helper ──────────────────────────────────────────────────────────────
@@ -686,7 +737,7 @@ async function uploadFile(file, path, card) {
     const data = await res.json();
 
     if (res.ok && data.ok) {
-      const freshSrc = MEDIA_BASE + '/' + path + '?t=' + Date.now();
+      const freshSrc = MEDIA_BASE + '/' + path + '?show=1&t=' + Date.now();
       if (imgEl) {
         imgEl.src = freshSrc;
         imgEl.style.display = '';
@@ -781,7 +832,7 @@ async function uploadVideoFile(file, path, thumb) {
     const data = await res.json();
 
     if (res.ok && data.ok) {
-      const freshSrc = MEDIA_BASE + '/' + path + '?t=' + Date.now();
+      const freshSrc = MEDIA_BASE + '/' + path + '?show=1&t=' + Date.now();
       if (videoEl) {
         videoEl.src = freshSrc;
         videoEl.style.display = '';
@@ -806,7 +857,7 @@ function makeSlotCard(slot) {
   const card = document.createElement('div');
   card.className = 'slot-card';
 
-  const imgSrc = MEDIA_BASE + '/' + slot.path;
+  const imgSrc = MEDIA_BASE + '/' + slot.path + '?show=1';
 
   card.innerHTML = `
     <div class="slot-thumb">
@@ -830,6 +881,7 @@ function makeSlotCard(slot) {
     </div>
   `;
 
+  attachEye(card.querySelector('.slot-thumb'), slot.path, card.querySelector('.slot-thumb img'));
   const input = document.createElement('input');
   input.type = 'file'; input.accept = 'image/*'; input.style.display = 'none';
   input.addEventListener('change', (e) => { if (e.target.files[0]) uploadFile(e.target.files[0], slot.path, card); });
@@ -865,7 +917,7 @@ function makePfImgCard(key, size, onChange) {
   const heavy = size && size > PF_HEAVY;
   card.innerHTML = `
     <label class="pf-thumb" title="Cliquer pour remplacer cette photo">
-      <img src="${MEDIA_BASE}/${key}?t=${Date.now()}" alt="${name}" loading="lazy" draggable="false">
+      <img src="${MEDIA_BASE}/${key}?show=1&t=${Date.now()}" alt="${name}" loading="lazy" draggable="false">
       <input type="file" accept="image/*" style="display:none">
     </label>
     <div class="pf-img-foot">
@@ -873,6 +925,7 @@ function makePfImgCard(key, size, onChange) {
       <button type="button" class="pf-del" title="Supprimer cette photo" aria-label="Supprimer ${name}">×</button>
     </div>
   `;
+  attachEye(card, key, card.querySelector('img'));
   // Remplacer
   card.querySelector('input').addEventListener('change', async (e) => {
     const f = e.target.files[0];
@@ -885,7 +938,7 @@ function makePfImgCard(key, size, onChange) {
       const res = await fetch(WORKER_BASE + '/upload-image', { method: 'POST', headers: { 'Authorization': 'Bearer ' + getToken() }, body: fd });
       const data = await res.json();
       if (res.ok && data.ok) {
-        card.querySelector('img').src = MEDIA_BASE + '/' + key + '?t=' + Date.now();
+        card.querySelector('img').src = MEDIA_BASE + '/' + key + '?show=1&t=' + Date.now();
         label.textContent = name + ' · ' + kb(w.size);
         label.classList.toggle('heavy', w.size > PF_HEAVY);
       } else { label.textContent = 'Erreur ' + (data.error || ''); }
@@ -1041,7 +1094,7 @@ function makePfCategory(cat) {
       /* 1) tout lire en mémoire (aucune écriture tant que tout n'est pas lu), 2) réécrire sous les nouveaux numéros */
       const blobs = [];
       for (const m of plan) {
-        const r = await fetch(MEDIA_BASE + '/' + m.from + '?t=' + Date.now(), { cache: 'no-store' });
+        const r = await fetch(MEDIA_BASE + '/' + m.from + '?show=1&t=' + Date.now(), { cache: 'no-store' });
         if (!r.ok) throw new Error('lecture ' + m.from);
         blobs.push(await r.blob());
       }
@@ -1276,6 +1329,7 @@ function buildUI() {
 
 buildUI();
 refreshAllPortfolios();
+loadHidden();
 serLoad();
 </script>
 <script src="media-editor.js"></script>
