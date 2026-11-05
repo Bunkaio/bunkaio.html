@@ -435,7 +435,7 @@ const I18N = {
     'access-client':'Accès client','access-partner':'Accès partenaire','nav-connect':'Connexion','nav-account-client':'Espace client','nav-account-partner':'Espace partenaire',
     'login-title-client':'Espace client','login-title-partner':'Espace partenaire',
     'login-title':'Espace client',
-    'login-sub':'Connectez-vous avec votre email et le code d\'accès qui vous a été transmis par BUNKAIO.',
+    'login-tag-client':'Accès personnel','login-tag-partner':'Partenaires Fondateurs','login-sub-partner':'Retrouvez votre tarif partenaire, vos collaborations, votre réseau et vos commandes avec votre email et votre code d\'accès.','login-sub':'Connectez-vous avec votre email et le code d\'accès qui vous a été transmis par BUNKAIO.',
     'tab-client':'Client','tab-partner':'Partenaire',
     'login-code':'Code d\'accès *','login-btn':'Se connecter',
     'login-error':'Identifiants introuvables. Vérifiez votre email et votre code d\'accès, ou créez un compte ci-dessous.',
@@ -809,7 +809,7 @@ const I18N = {
     'access-client':'Client area','access-partner':'Partner area','nav-connect':'Sign in','nav-account-client':'Client area','nav-account-partner':'Partner area',
     'login-title-client':'Client area','login-title-partner':'Partner area',
     'login-title':'Client area',
-    'login-sub':'Sign in with your email and the access code provided to you by BUNKAIO.',
+    'login-tag-client':'Personal access','login-tag-partner':'Founding Partners','login-sub-partner':'Find your partner rate, collaborations, network and orders with your email and access code.','login-sub':'Sign in with your email and the access code provided to you by BUNKAIO.',
     'tab-client':'Client','tab-partner':'Partner',
     'login-code':'Access code *','login-btn':'Sign in',
     'login-error':'Account not found. Please check your email and access code, or create an account below.',
@@ -6734,6 +6734,12 @@ function setLoginType(type){
   document.getElementById('loginTitle').textContent =
     I18N[LANG][type === 'client' ? 'login-title-client' : 'login-title-partner'];
   document.getElementById('loginError').style.display = 'none';
+  /* Deux habillages : client (papier, rose) et partenaire (encre, champagne). */
+  const lv = document.getElementById('view-login'); if (lv) lv.dataset.lt = type;
+  const tag = document.getElementById('loginTag'), sub = document.getElementById('loginSub');
+  const tk = type === 'client' ? 'login-tag-client' : 'login-tag-partner', sk = type === 'client' ? 'login-sub' : 'login-sub-partner';
+  if (tag) { tag.dataset.lang = tk; tag.textContent = I18N[LANG][tk]; }
+  if (sub) { sub.dataset.lang = sk; sub.textContent = I18N[LANG][sk]; }
 }
 
 function toggleLoginMode(register){
