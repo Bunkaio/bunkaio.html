@@ -4823,13 +4823,19 @@ function svxDelays(c){
   const a = Math.min(...ds), b = Math.max(...ds);
   return (a === b ? a : a + '–' + b) + ' ' + t({fr:'j. ouvrés', en:'working days'});
 }
+/* Niveau d'une formule dans sa gamme : « top » = la plus haute (Éditorial), « high » = la précédente (Premium) quand il y a au moins 4 formules ; les autres montent en douceur (lv 0…n-1). */
+function svxLevel(c, tid){
+  const ids = catTiers(c).map(x => x.id), n = ids.length, i = Math.max(0, ids.indexOf(tid));
+  return { i, n, cls: n >= 3 && i === n - 1 ? 'top' : n >= 4 && i === n - 2 ? 'high' : 'mid' };
+}
+function svxPips(c, tid){ const L = svxLevel(c, tid); return `<em class="svx-pips" aria-hidden="true">${Array.from({ length: L.n }, (_, k) => `<u${k <= L.i ? ' class="f"' : ''}></u>`).join('')}</em>`; }
 function svxTierDetail(c, tid){
   const tr = TIERS.find(x => x.id === tid), d = c.tiers[tid];
   if (!tr || !d) return '';
   const items = d.items ? t(d.items) : [];
-  return `<div class="svx-td" data-tier="${tid}">
+  return `<div class="svx-td lv-${svxLevel(c, tid).cls}" data-tier="${tid}">
       <div class="svx-td-top">
-        <div><div class="svx-td-name">${tid === 'lanc' ? `<a href="${servicePath('branding')}" data-nav="service:branding" data-track="lancement">${t(tr.name)}</a>` : t(tr.name)}</div>
+        <div>${svxPips(c, tid)}<div class="svx-td-name">${tid === 'lanc' ? `<a href="${servicePath('branding')}" data-nav="service:branding" data-track="lancement">${t(tr.name)}</a>` : t(tr.name)}</div>
         <div class="svx-td-badge">${t(tr.badge)}</div></div>
         <div class="svx-td-price"><span class="svx-amt" data-v="${d.price}" data-no-usd>${d.price.toLocaleString('fr-FR')}</span><span class="svx-eur">€</span></div>
       </div>
@@ -4856,7 +4862,7 @@ function svxPanelCore(c){
         <a class="svx-more" href="${servicePath(c.id)}" onclick="return navLink(event,'service','${c.id}')">${t({fr:'Détails et tarifs', en:'Details and rates'})} — ${navName(c)} <i>↗︎</i></a>
       </div>
       <div class="svx-tiers">
-        <div class="svx-tabs" role="tablist" aria-label="${escHtml(t({fr:'Formules', en:'Packages'}))}">${tiers.map(tr => `<button type="button" role="tab" class="svx-tab${tr.id === cur ? ' on' : ''}" aria-selected="${tr.id === cur}" onclick="svxPickTier('${c.id}','${tr.id}')"><span>${t(tr.name)}</span><b>${c.tiers[tr.id].price.toLocaleString('fr-FR')}€</b></button>`).join('')}</div>
+        <div class="svx-tabs" role="tablist" aria-label="${escHtml(t({fr:'Formules', en:'Packages'}))}">${tiers.map(tr => `<button type="button" role="tab" class="svx-tab lv-${svxLevel(c, tr.id).cls}${tr.id === cur ? ' on' : ''}" aria-selected="${tr.id === cur}" onclick="svxPickTier('${c.id}','${tr.id}')">${svxPips(c, tr.id)}<span>${t(tr.name)}</span><b>${c.tiers[tr.id].price.toLocaleString('fr-FR')}€</b></button>`).join('')}</div>
         <div class="svx-td-wrap">${svxTierDetail(c, cur)}</div>
         ${polas}${sub}
         <div class="svx-actions">
