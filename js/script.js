@@ -4826,7 +4826,8 @@ const NAV_ALIASES = { faq: 'legal', conseils: 'advice' };
 /* Lien vers le devis : un vrai <a href="/devis/"> (crawlable, ancre explicite) qui présélectionne l'univers. */
 /* Libellé d'appel à l'action selon la prestation : toujours orienté vers une proposition personnalisée. */
 function ctaLabel(catId){
-  if (catId === 'event' || catId === 'lumen') return t({fr:'Parler de mon événement', en:'Talk about my event'});
+  if (catId === 'event') return t({fr:'Estimer mon projet', en:'Estimate my project'});   /* demande de la propriétaire, 6 nov. 2026 */
+  if (catId === 'lumen') return t({fr:'Parler de mon événement', en:'Talk about my event'});
   if (catId === 'mode' || catId === 'commercial') return t({fr:'Recevoir une proposition', en:'Receive a proposal'});
   return t({fr:'Demander un devis', en:'Request a quote'});
 }
