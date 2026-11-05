@@ -10039,8 +10039,9 @@ const bkcHm = m => bkcPad(Math.floor(m / 60)) + ':' + bkcPad(m % 60);
 const bkcHuman = m => { const h = Math.floor(m / 60), r = m % 60; return h ? h + ' h' + (r ? ' ' + bkcPad(r) : '') : r + ' min'; };
 function bkcLoad(force){
   if (BKC.p && !force) return BKC.p;
+  BKC.t = Date.now();
   const from = bkcIso(new Date());
-  BKC.p = fetch(ACCOUNTS_API_BASE + '/availability?from=' + from + '&to=' + BKC_END).then(r => r.ok ? r.json() : null)
+  BKC.p = fetch(ACCOUNTS_API_BASE + '/availability?from=' + from + '&to=' + BKC_END, force ? { cache: 'no-store' } : undefined).then(r => r.ok ? r.json() : null)
     .then(d => { BKC.data = d && d.ok ? d : { days: {}, rules: null }; BKC.err = !(d && d.ok); return BKC.data; })
     .catch(() => { BKC.data = { days: {}, rules: null }; BKC.err = true; return BKC.data; });
   return BKC.p;
@@ -10088,6 +10089,8 @@ function renderAvailCal(host, opts){
   host._opts = opts;
   if (!st.y) { const n = new Date(); st.y = n.getFullYear(); st.m = n.getMonth(); }
   if (!BKC.data) { host.innerHTML = `<div class="bkc bkc-loading"><p>${t({fr:'Chargement du calendrier…', en:'Loading the calendar…'})}</p></div>`; bkcLoad().then(() => renderAvailCal(host, host._opts)); return; }
+  /* Données de plus d'une minute : rechargées en arrière-plan puis calendrier redessiné (les créneaux pris entre-temps se grisent seuls). */
+  if (Date.now() - (BKC.t || 0) > 60000) { bkcLoad(true).then(() => { if (host.isConnected && host._opts) renderAvailCal(host, host._opts); }); }
   const embed = !!opts.embed, cats = BKC_CATS.filter(c => CATS.some(x => x.id === c));
   if (st.cat && !st.tier) { const tl = bkcTiers(st.cat); st.tier = tl.length ? tl[0].id : null; }
   const dur = st.cat ? bkcDur(st.cat, st.tier) : 0;
@@ -10379,3 +10382,16 @@ window.addEventListener('resize', () => { const pv = document.getElementById('mi
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && document.body.classList.contains('menu-open')) { closeMobileMenu(); const bg = document.getElementById('navBurger'); if (bg) bg.focus(); }
 });
+
+/* Agenda : au retour sur l'onglet (ou toutes les 2 minutes s'il reste affiché), disponibilités relues et calendriers visibles redessinés. */
+(function(){
+  const refresh = () => {
+    if (document.hidden || typeof BKC === 'undefined' || !BKC.data) return;
+    const hosts = [...new Set([...document.querySelectorAll('.view.active .bkc')].map(b => b.parentElement))].filter(h => h && h._bkc && h._opts && h.offsetParent);
+    if (!hosts.length) return;
+    bkcLoad(true).then(() => hosts.forEach(h => { if (h.isConnected) renderAvailCal(h, h._opts); }));
+  };
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && Date.now() - (BKC.t || 0) > 60000) refresh(); });
+  setInterval(refresh, 120000);
+})();
+

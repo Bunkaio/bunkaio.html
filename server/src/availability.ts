@@ -266,13 +266,17 @@ export async function createHold(env: Env, input: Record<string, unknown>): Prom
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !name) return { ok: false, error: 'invalid_contact' };
   if (date > '2027-12-31') return { ok: false, error: 'hors_calendrier' };
   const holds = await getHolds(env);
-  // Une seule option active par adresse : la nouvelle remplace l'ancienne.
-  for (const h of holds) if (h.email === email && h.status === 'option') h.status = 'released';
-  await putHolds(env, holds);
+  // Une seule option active par adresse : la nouvelle remplace l'ancienne — mais seulement si le nouveau créneau est accepté
+  // (avant : l'ancienne option était libérée même quand le nouveau créneau était refusé, le prospect perdait les deux).
+  const mine = holds.filter((h) => h.email === email && h.status === 'option' && holdActive(h));
+  if (mine.length) { for (const h of mine) h.status = 'released'; await putHolds(env, holds); }
   const { days, rules } = await computeBusy(env, date, date);
   if (anyTime) { start = rules.open; end = cat === 'event' ? rules.eventClose : rules.close; }
   const why = slotAllowed(days[date], date, start, end, cat, rules, new Date(), anyTime);
-  if (why) return { ok: false, error: why };
+  if (why) {
+    if (mine.length) { for (const h of mine) h.status = 'option'; await putHolds(env, holds); }
+    return { ok: false, error: why };
+  }
   const now = new Date();
   const hold: CalHold = {
     id: crypto.randomUUID().slice(0, 12), date, start, end, cat, tier: str(input.tier, 20) || undefined, label: str(input.label, 120) || undefined,
@@ -300,6 +304,55 @@ export async function addManualHold(env: Env, input: Record<string, unknown>): P
   };
   const holds = await getHolds(env); holds.push(hold); await putHolds(env, holds);
   return { ok: true, hold };
+}
+
+/**
+ * Confirmation automatique : quand un client signe son devis ou paie son acompte, son option (pré-réservation 48 h) devient
+ * un créneau confirmé — il ne se libère plus à l'expiration, sans action de la propriétaire. Une option déjà expirée est
+ * reprise seulement si le créneau est encore libre (personne d'autre ne l'a pris entre-temps).
+ */
+export async function confirmHoldsFor(env: Env, email: string): Promise<number> {
+  const addr = email.trim().toLowerCase();
+  if (!addr) return 0;
+  const holds = await getHolds(env);
+  const today = isoDay(new Date());
+  const mine = holds.filter((h) => h.email === addr && h.status === 'option' && h.date >= today);
+  if (!mine.length) return 0;
+  let n = 0;
+  const others = holds.filter((h) => !mine.includes(h) && holdActive(h));
+  for (const h of mine) {
+    if (!holdActive(h)) {
+      const s = toMin(h.start), e = toMin(h.end);
+      const clash = others.some((o) => o.date === h.date && (h.anyTime || o.anyTime || (s < toMin(o.end) && e > toMin(o.start))));
+      if (clash) continue;
+      const cfg = await getCalConfig(env);
+      const blocked = cfg.blocks.some((b) => h.date >= b.from && h.date <= b.to && (!b.start || !b.end || (s < toMin(b.end) && e > toMin(b.start))));
+      if (blocked) continue;
+    }
+    h.status = 'confirmed'; n++;
+  }
+  if (n) await putHolds(env, holds);
+  return n;
+}
+
+/** Devis signé portant une date de séance : la date est bloquée automatiquement dans l'agenda (créneau confirmé),
+    sauf si ce client y a déjà un créneau ce jour-là. Sans heure : journée retenue, heure à définir. Durée : 3 h par défaut. */
+export async function holdFromQuote(env: Env, q: { email: string; name: string; prestation?: string; date?: string; heure?: string }): Promise<boolean> {
+  const date = q.date ?? '', email = q.email.trim().toLowerCase();
+  if (!DATE_RE.test(date) || date < isoDay(new Date()) || date > '2027-12-31') return false;
+  const holds = await getHolds(env);
+  if (holds.some((h) => h.email === email && h.date === date && holdActive(h))) return false;
+  const p = (q.prestation ?? '').toLowerCase();
+  const cat = /mariage|événement|evenement|event|soirée|soiree|conférence|conference|séminaire|seminaire/.test(p) ? 'event'
+    : /mode|lookbook|polas|mannequin|book/.test(p) && !/grossesse/.test(p) ? 'mode'
+    : /produit|packshot|commercial|marque|e-commerce/.test(p) ? 'commercial'
+    : /corporate|entreprise|équipe|equipe|branding|lancement|linkedin|professionnel/.test(p) ? 'corporate' : 'photo-part';
+  const heure = TIME_RE.test(q.heure ?? '') ? q.heure! : '';
+  const s = heure ? toMin(heure) : 0;
+  const r = await addManualHold(env, heure
+    ? { date, start: heure, end: `${pad(Math.min(23, Math.floor((s + 180) / 60)))}:${pad(s + 180 >= 24 * 60 ? 59 : (s + 180) % 60)}`, cat, name: q.name, email, label: q.prestation }
+    : { date, anyTime: true, cat, name: q.name, email, label: q.prestation });
+  return r.ok;
 }
 
 export async function setHoldStatus(env: Env, id: string, status: 'option' | 'confirmed' | 'released', hours?: number): Promise<CalHold | null> {

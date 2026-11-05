@@ -5,7 +5,7 @@ import type { ARFacts } from './autoreply';
 import { goClicks, handleGo, listGoLinks, saveGoLink } from './golinks';
 import { getSeries, saveSeries } from './series';
 import { getHiddenMedia, setMediaHidden } from './mediahidden';
-import { computeBusy, createHold, addManualHold, getCalConfig, getHolds, saveCalConfig, setHoldStatus, testIcal } from './availability';
+import { computeBusy, confirmHoldsFor, holdFromQuote, createHold, addManualHold, getCalConfig, getHolds, saveCalConfig, setHoldStatus, testIcal } from './availability';
 import type Stripe from 'stripe';
 import { adminAccountView, getAccount, listAccounts, putAccount, sanitizeAccount, upsertAccountFromAdmin, verifyLogin, LoginThrottled } from './accounts';
 import { handleCollect, handleStats, purgeOldAnalytics } from './analytics';
@@ -1072,6 +1072,7 @@ async function handleAdminQuote(request: Request, env: Env, headers: Record<stri
     q.signature = { name: q.client.contact || q.client.nom, at, ip: '', ua: '', portfolio: manualUse ? manualUse.site === 'oui' : body.portfolio === true, retractationWaiver: body.retractationWaiver === true, hash: q.contentHash, ...(manualUse ? { imageUse: manualUse, legalVersion: q.legal?.version, snapshotHash: q.legal?.snapshotHash, persons: body.persons === 'self' || body.persons === 'self_others' || body.persons === 'others' ? body.persons : undefined, minors: body.minors === true } : {}) };
     q.consent = computeConsent(q);
     await putQuote(env, q);
+    if (!q.test && q.email) { await confirmHoldsFor(env, q.email).catch((err) => console.error('[agenda] confirmation auto', err)); await holdFromQuote(env, { email: q.email, name: q.client?.contact || q.client?.nom || '', prestation: q.prestation, date: q.seance?.date, heure: q.seance?.heure }).catch((err) => console.error('[agenda] séance du devis', err)); }
     if (manualUse) await appendConsent(env, q.id, IMAGE_USES.map((u) => ({ type: 'choix' as const, who: 'client', usage: u, choice: manualUse[u], note: 'Saisie manuelle par BUNKAIO (' + q.signedVia + ')' })));
     try { await ensureSignedPdf(env, q); } catch (err) { console.error('[devis] pdf non créé', err); }
     if (body.createDeposit === true && !q.abonnement) {
@@ -1163,6 +1164,7 @@ async function handlePublicQuote(request: Request, env: Env, headers: Record<str
     if (sigPng) { q.signature.mention = 'Bon pour accord'; q.signature.sigImage = true; }
     q.consent = computeConsent(q);
     await putQuote(env, q);
+    if (!q.test && q.email) { await confirmHoldsFor(env, q.email).catch((err) => console.error('[agenda] confirmation auto', err)); await holdFromQuote(env, { email: q.email, name: q.client?.contact || q.client?.nom || '', prestation: q.prestation, date: q.seance?.date, heure: q.seance?.heure }).catch((err) => console.error('[agenda] séance du devis', err)); }
     if (imageUse) await appendConsent(env, q.id, IMAGE_USES.map((u) => ({ type: 'choix' as const, who: 'client', usage: u, choice: imageUse[u], ip })));
     let pdfBase64: string | undefined;
     try { const pdf = await ensureSignedPdf(env, q); if (pdf) pdfBase64 = bytesToBase64(pdf.bytes); } catch (err) { console.error('[devis] pdf non créé', err); }
@@ -1455,6 +1457,7 @@ async function handleStripeWebhook(request: Request, env: Env, headers: Record<s
   console.log('[stripe-webhook] facture payée', { invoiceId: invoice.id, kind, amountEur, customerEmail, customerLang });
   if (kind === 'acompte' && customerEmail) {
     await markDepositPaid(env, customerEmail, customerName, customerLang).catch((err) => console.error('[stripe-webhook] marqueur acompte', err));
+    await confirmHoldsFor(env, customerEmail).catch((err) => console.error('[agenda] confirmation auto (acompte)', err));
   }
 
   let lightroomMissing = false;
