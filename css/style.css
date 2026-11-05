@@ -8779,4 +8779,11 @@ html body #view-home .hero-access { border-radius: 999px !important; padding-lef
   .svx-tabs-wrap.at-end .svx-tabs-arrow { opacity: 0; animation: none; }
 }
 @keyframes svxNudge { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(5px); } }
-}
+
+/* Bannière « Un projet en tête ? » (pied de page, toutes les pages) : texte plus petit et éditorial, balayage lumineux et filet qui se trace en boucle (6 nov. 2026, demande de la propriétaire) */
+html body footer .footer-cta-headline { position: relative; display: inline-block; font-size: clamp(22px, 3.6vw, 46px) !important; font-weight: 500 !important; letter-spacing: -.035em !important; line-height: 1.02 !important; text-transform: uppercase; max-width: 16ch !important; text-align: left; padding-bottom: 12px;
+  background: linear-gradient(100deg, #fff 0%, #fff 38%, #e8c6c4 48%, #d6c9f7 54%, #fff 64%, #fff 100%) 0 0 / 260% 100% no-repeat; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent !important; animation: ftSweep 6s ease-in-out infinite; }
+html body footer .footer-cta-headline::after { content: ''; position: absolute; left: 0; bottom: 0; height: 1px; width: 100%; background: rgba(255,255,255,.75); transform: scaleX(0); transform-origin: left; animation: ftLine 6s ease-in-out infinite; }
+@keyframes ftSweep { 0%, 12% { background-position: 100% 0; } 55%, 100% { background-position: 0 0; } }
+@keyframes ftLine { 0% { transform: scaleX(0); transform-origin: left; } 40% { transform: scaleX(1); transform-origin: left; } 60% { transform: scaleX(1); transform-origin: right; } 100% { transform: scaleX(0); transform-origin: right; } }
+@media (prefers-reduced-motion: reduce) { html body footer .footer-cta-headline { animation: none; background: none; -webkit-text-fill-color: #fff; color: #fff !important; } html body footer .footer-cta-headline::after { animation: none; transform: scaleX(1); } }
