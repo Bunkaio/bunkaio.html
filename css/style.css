@@ -8870,3 +8870,19 @@ html body .footer-cta-row .hero-start { justify-content: center !important; }
 .mission-tilebgs { opacity: var(--mt-bg-op, .5); will-change: opacity; }
 .mt-bg.on, .home-claim-bg-x { opacity: 1; }
 .mission-video-content, .mission-video-overlay { will-change: opacity; }
+
+/* Collaboration : tableau des places par univers en accordéon (6 nov. 2026) */
+.gx-uni-acc { margin: 22px 0 0; border-top: 1px solid #111; }
+.gx-uni-head { all: unset; box-sizing: border-box; display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 0; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.gx-uni-head .gx-uni-cap { margin: 0; font-size: 12px; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; color: #111; text-align: left; }
+.gx-uni-head:focus-visible { outline: 2px solid #6e5aa8; outline-offset: 2px; }
+.gx-uni-pm { position: relative; width: 16px; height: 16px; flex: 0 0 16px; }
+.gx-uni-pm::before, .gx-uni-pm::after { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1.5px; background: #111; transition: transform .3s; }
+.gx-uni-pm::after { transform: rotate(90deg); }
+.gx-uni-acc.open .gx-uni-pm::after { transform: rotate(0); }
+.gx-uni-body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .45s cubic-bezier(.2,.7,.2,1); }
+.gx-uni-acc.open .gx-uni-body { grid-template-rows: 1fr; }
+.gx-uni-in { overflow: hidden; min-height: 0; }
+.view.gx .gx-uni-acc .gx-uni { margin-top: 0; }
+.gx-uni-acc:not(.open) .gx-uni-in { visibility: hidden; transition: visibility 0s .45s; }
+@media (prefers-reduced-motion: reduce) { .gx-uni-body, .gx-uni-pm::before, .gx-uni-pm::after { transition: none; } }

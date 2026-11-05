@@ -6550,6 +6550,13 @@ function partnersBanner(){
   };
   tryNext(0);
 }
+/* Tableau « Places de partenariat disponibles, par univers » (Collaboration) : accordéon, replié par défaut. */
+function gxUniToggle(){
+  const acc = document.getElementById('gxUniAcc'), h = document.getElementById('gxUniHead'); if (!acc || !h) return;
+  const on = !acc.classList.contains('open'); acc.classList.toggle('open', on); h.setAttribute('aria-expanded', String(on));
+  const inn = acc.querySelector('.gx-uni-in'); if (inn) inn.inert = !on;
+  if (window.track) track('cta_click', 'collab_places_accordeon');
+}
 function gxSpots(){
   const tot = GX_UNI.reduce((s, [id]) => s + gxLeft(id), 0);
   gxRoll(document.getElementById('gxSpots'), String(tot));
