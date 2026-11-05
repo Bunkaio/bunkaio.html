@@ -9873,11 +9873,29 @@ function bkcSlot(el, s){
 }
 function bkcClear(el){ const h = bkcHost(el), st = bkcState(h); st.slot = null; renderAvailCal(h, h._opts); if (h._opts && h._opts.onPick) h._opts.onPick(null); }
 function bkcContinue(el){
-  const st = bkcState(bkcHost(el)); if (!st.slot) return;
+  const host = bkcHost(el), st = bkcState(host); if (!st.slot) return;
   const slot = st.slot;
-  goToQuizCategory(slot.cat, slot.tier);
-  S.slot = slot;
-  setTimeout(() => { try { renderQuizCal(); } catch (e) {} }, 60);
+  const top0 = () => { try { window.scrollTo(0, 0); document.documentElement.scrollTop = 0; document.body.scrollTop = 0; } catch (e) {} };
+  const go = () => {
+    /* Le créneau retenu est reporté dans le devis : on saute le choix de la formule (déjà fait) et on arrive à l'étape « Votre prestation », créneau présélectionné. */
+    try {
+      top0();
+      goToQuizCategory(slot.cat, slot.tier);
+      S.slot = slot;
+      renderRecap(); renderOptions(); quizStep(4);
+    } catch (e) { try { goToQuizCategory(slot.cat, slot.tier); S.slot = slot; } catch (e2) { location.href = '/devis/?cat=' + slot.cat + (slot.tier ? '&tier=' + slot.tier : ''); } }
+    top0(); requestAnimationFrame(top0); setTimeout(top0, 120);
+  };
+  /* Le créneau doit encore être libre au moment de continuer (quelqu'un a pu le prendre entre-temps). */
+  bkcLoad(true).then(() => {
+    const free = bkcSlots(slot.date, slot.cat, bkcDur(slot.cat, slot.tier)).includes(bkcMin(slot.start));
+    if (!free) {
+      st.slot = null; st.sel = slot.date; renderAvailCal(host, host._opts);
+      try { alert(t({fr:'Ce créneau vient d\'être pris. Choisissez-en un autre, les horaires libres sont à jour.', en:'This slot has just been taken. Please pick another one; the free times are up to date.'})); } catch (e) {}
+      return;
+    }
+    go();
+  }).catch(go);
 }
 function bkcSlotText(slot, lang){
   if (!slot) return '';
