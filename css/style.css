@@ -8472,3 +8472,7 @@ html body :is(.hero-start, .cta-primary, .partner-cta-btn, .btn-solid, button, a
 .mb-wizard :is(.mb-direction-card, .mb-palette-card, .mb-chip, .mb-direction-name, .mb-direction-desc, .mb-palette-name) { color: #111 !important; font-family: inherit; }
 .mb-wizard .mb-direction-card.active, .mb-wizard .mb-direction-card.active :is(.mb-direction-name, .mb-direction-desc), .mb-wizard .mb-chip.active, .mb-wizard .mb-palette-card.active { color: #fff !important; }
 .mb-wizard .mb-direction-desc { opacity: .7; }
+
+/* Images d'attente des vidéos de l'accueil (5 nov. 2026, demande de la propriétaire) : une vraie photo HD du Portfolio (variables --vid-a / --vid-b posées par le script du <head>) au lieu d'une capture de la vidéo ; en attendant, un dégradé rose-gris doux. Remplace les anciennes images images/posters/*. */
+body[data-view="home"] #pageHeroWrap, .hero-video-wrap[data-view="home"] { background: #cfc6c2 linear-gradient(120deg, #d9d1cd, #c4b8b4) !important; background-image: var(--vid-a, linear-gradient(120deg, #d9d1cd, #c4b8b4)) !important; background-size: cover !important; background-position: center 30% !important; background-repeat: no-repeat !important; }
+#homeClaimVideoBg, .mission-video-bg { background: #cfc6c2 !important; background-image: var(--vid-b, var(--vid-a, linear-gradient(120deg, #d9d1cd, #c4b8b4))) !important; background-size: cover !important; background-position: center 30% !important; background-repeat: no-repeat !important; }
