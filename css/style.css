@@ -9272,3 +9272,16 @@ footer, #view-home .home-paper > *:not(.reassure-section), #view-service .svcp-p
 /* Anti-robot Turnstile : cadre affiché seulement si Cloudflare doit poser une question (sinon vide et invisible). */
 .bk-ts { position: fixed; left: 50%; bottom: calc(16px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 2147483000; }
 .bk-ts:empty { display: none; }
+
+/* Avis clients : « Partager mon expérience » en pilule noire, texte blanc (6 nov. 2026, demande de la propriétaire). Tous les états fixés. */
+#view-home .home-paper .testi-share-row .hero-start.cta-onlight,
+#view-home .home-paper .testi-share-row .hero-start.cta-onlight:focus-visible {
+  background: #111 !important; color: #fff !important; border: 1px solid #111 !important; border-radius: 999px !important;
+  box-shadow: none !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+}
+#view-home .home-paper .testi-share-row .hero-start.cta-onlight span { color: #fff !important; }
+#view-home .home-paper .testi-share-row .hero-start.cta-onlight::before, #view-home .home-paper .testi-share-row .hero-start.cta-onlight::after { display: none !important; }
+@media (hover: hover) {
+  #view-home .home-paper .testi-share-row .hero-start.cta-onlight:hover { background: #2a2a2e !important; color: #fff !important; border-color: #2a2a2e !important; }
+}
+#view-home .home-paper .testi-share-row .hero-start.cta-onlight:active { background: #2a2a2e !important; color: #fff !important; }
