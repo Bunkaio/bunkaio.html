@@ -9073,3 +9073,27 @@ html[data-acct="partner"] body[data-view="account"] .bk-back * { color: #f3eee2 
 .ft-social { width: auto !important; min-width: 34px; padding: 0 14px 0 10px; gap: 8px; border-radius: 999px !important; }
 .ft-social .ft-handle { font-size: 12px; font-weight: 500; letter-spacing: .02em; white-space: nowrap; }
 .ct-follow-studio { margin-top: 10px; }
+
+/* ═══ Avis clients, présentation éditoriale (6 nov. 2026, demande de la propriétaire : section plus esthétique ; textes et titre inchangés) ═══
+   Carte encadrée finement avec filet rose en tête, grand guillemet violet, catégorie en petites capitales soulignées, texte aligné à gauche (plus de justification aux gros
+   espaces), signature en bas (monogramme + nom + rôle) ; toutes les cartes à la même hauteur. Mise en page par grille, sans animation coûteuse. */
+#view-home .home-paper .testi-carousel { gap: 18px; padding: 6px 2px 14px; align-items: stretch; }
+#view-home .home-paper .testi-card {
+  display: grid !important; grid-template-columns: 44px minmax(0, 1fr); grid-template-rows: auto auto 1fr auto auto auto; column-gap: 14px; align-content: stretch;
+  width: 388px; padding: 30px 30px 28px !important; background: rgba(255,255,255,.5) !important;
+  border: 1px solid rgba(17,17,17,.14) !important; border-left: 1px solid rgba(17,17,17,.14) !important; box-shadow: inset 0 3px 0 var(--rose) !important;
+  transition: transform .35s ease, border-color .35s ease;
+}
+#view-home .home-paper .testi-card::before { content: '\201C'; grid-column: 1 / -1; grid-row: 1; font: 700 76px/.62 'Inter Tight', Georgia, serif; color: #6e5aa8; height: 34px; margin-bottom: 14px; }
+#view-home .home-paper .testi-card:hover { transform: translateY(-4px); border-color: rgba(17,17,17,.4) !important; }
+#view-home .home-paper .testi-tag { grid-column: 1 / -1; grid-row: 2; justify-self: start; background: none !important; padding: 0 0 4px !important; margin: 0 0 14px !important; border-radius: 0 !important; border-bottom: 2px solid var(--rose); font-size: 10.5px; letter-spacing: .14em; color: #111 !important; }
+#view-home .home-paper .testi-text { grid-column: 1 / -1; grid-row: 3; font-size: 16px !important; line-height: 1.6 !important; letter-spacing: -.01em; margin: 0 0 22px !important; text-align: left !important; hyphens: manual !important; text-wrap: pretty; }
+#view-home .home-paper .testi-sep { grid-column: 1 / -1; grid-row: 4; width: 100%; height: 1px; background: rgba(17,17,17,.14); margin: 0 0 16px !important; }
+#view-home .home-paper .testi-avatar { grid-column: 1; grid-row: 5 / span 2; width: 44px; height: 44px; align-self: center; border-radius: 50% !important; margin: 0 !important; font-size: 15px; background: #111 !important; color: var(--rose) !important; }
+#view-home .home-paper .testi-name { grid-column: 2; grid-row: 5; align-self: end; margin: 0 !important; font-size: 13.5px; letter-spacing: .01em; }
+#view-home .home-paper .testi-role { grid-column: 2; grid-row: 6; align-self: start; font-size: 10.5px; letter-spacing: .1em; line-height: 1.5; margin-top: 3px; }
+@media (max-width: 760px) {
+  #view-home .home-paper .testi-card { width: 86%; padding: 26px 22px 24px !important; }
+  #view-home .home-paper .testi-text { font-size: 15.5px !important; }
+}
+@media (prefers-reduced-motion: reduce) { #view-home .home-paper .testi-card { transition: none; } #view-home .home-paper .testi-card:hover { transform: none; } }
