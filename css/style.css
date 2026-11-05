@@ -8561,3 +8561,5 @@ body[data-view="home"] #pageHeroWrap, .hero-video-wrap[data-view="home"] { backg
 .q-slot-note b { margin-right: 6px; }
 .q-slot-note button { margin-left: 8px; border: 0; background: none; text-decoration: underline; cursor: pointer; font: inherit; color: inherit; }
 .avail-page { padding-bottom: 60px; }
+/* Calendrier sur écran tactile : pas de backdrop-filter (cause connue d'affichage vide sur iPhone Safari) */
+@media (hover: none) { .bkc-side { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; background: #f4f3f1 !important; } }

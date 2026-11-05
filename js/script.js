@@ -9900,7 +9900,9 @@ document.addEventListener('click', (e) => {
   const a = e.target.closest ? e.target.closest('a[data-avail]') : null;
   if (!a || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button === 1) return;
   e.preventDefault();
-  try { _availPre = a.dataset.avail ? { cat: a.dataset.avail, tier: a.dataset.tier || null } : null; closeMobileMenu(); goView('avail'); window.scrollTo({ top: 0, behavior: 'instant' }); }
+  /* Remonte tout en haut (fenêtre ET html/body, qui sont les conteneurs de défilement sur iPhone) : sinon, depuis le bas d'une longue page, l'écran restait sur une zone vide. */
+  const top0 = () => { try { window.scrollTo(0, 0); document.documentElement.scrollTop = 0; document.body.scrollTop = 0; } catch (e2) {} };
+  try { _availPre = a.dataset.avail ? { cat: a.dataset.avail, tier: a.dataset.tier || null } : null; closeMobileMenu(); top0(); goView('avail'); top0(); requestAnimationFrame(top0); setTimeout(top0, 120); }
   catch (err) { location.href = a.getAttribute('href'); }
 });
 /* Devis, étape 04 : le calendrier de la prestation choisie, créneau facultatif. */
