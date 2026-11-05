@@ -10063,3 +10063,58 @@ function quizChoose(mode){
   if (q) q.classList.remove('q-choosing');
   top();
 }
+
+/* ═══ Surlignage des mots clés (6 nov. 2026, demande de la propriétaire : même marqueur rose que « Les prochaines étapes », dans toutes les zones de texte) ═══
+   Les paragraphes et listes des pages sont analysés à l'affichage (et après chaque nouveau rendu) : les expressions importantes sont entourées
+   d'un <mark class="bk-key"> dont le marqueur rose se trace quand le bloc entre à l'écran. Rien n'est masqué si l'animation ne démarre pas.
+   Exclus : titres, liens, boutons, formulaires, textes sur fond sombre ou sur photo, pied de page, pages juridiques. */
+const BK_KEYS = {
+  fr: ['48 h ouvrées', '48h ouvrées', '48 heures ouvrées', '48 h', '48h', 'direction artistique', 'galerie privée', 'interlocuteur unique', 'photos HD', 'retouchées', 'retouche professionnelle', 'sans frais', 'sur devis', 'prix nets', 'devis personnalisé', 'devis détaillé', 'moodboard', 'espace client', 'droits d\'utilisation', 'sans limite de durée', 'partout en France', 'Klarna', 'Scalapay', 'post-production premium', 'stylisme', 'Reels', 'Bon pour accord', 'acompte'],
+  en: ['48 working hours', '48 h', '48h', 'art direction', 'private gallery', 'single point of contact', 'HD photos', 'retouched', 'professional retouching', 'interest-free', 'on quote', 'net prices', 'personalised quote', 'detailed quote', 'moodboard', 'client area', 'usage rights', 'no time limit', 'anywhere in France', 'Klarna', 'Scalapay', 'premium post-production', 'styling', 'Reels', 'Bon pour accord', 'deposit']
+};
+const BK_HL_SKIP = 'a, button, h1, h2, h3, h4, h5, h6, label, mark, nav, footer, form, input, textarea, select, option, table, code, script, style, svg, [data-nohl], [data-tw], .bk-scramble, .lk-full, .mission-video-wrap, .hero, .pf-cta-band, .svx-td.lv-top, .fx.lv-top, .tier-card.lv-top, .lk-cap-box, .ms-prev, .bkc, .q-preset, .cs-acc-head, #view-legal, #view-account, #view-login, #view-quiz .qstep-title, .nav-cta, .btn, [class*="cta"], [class*="btn"], [class*="kicker"], [class*="kick"], .page-title, .ct-title, .home-paper .hm-mega, .pt-key, .bk-key';
+let _bkHlRe = null, _bkHlLang = '';
+function bkHlRegex(){
+  if (_bkHlRe && _bkHlLang === LANG) return _bkHlRe;
+  const list = (BK_KEYS[LANG] || BK_KEYS.fr).slice().sort((a, b) => b.length - a.length).map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+  _bkHlLang = LANG; _bkHlRe = new RegExp('(^|[^\\p{L}\\p{N}])(' + list.join('|') + ')(?![\\p{L}\\p{N}])', 'giu');
+  return _bkHlRe;
+}
+function bkHighlightBlock(el){
+  el.setAttribute('data-hl', LANG);
+  if (el.closest(BK_HL_SKIP)) return;
+  const view = el.closest('.view'); if (!view) return; const pg = view._hl || (view._hl = { n: 0, keys: {} });
+  const re = bkHlRegex(), seen = new Set(); let count = 0;
+  const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, { acceptNode: n => (n.nodeValue.trim().length > 3 && !n.parentElement.closest(BK_HL_SKIP + ', [data-hl-done]')) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT });
+  const nodes = []; while (walker.nextNode()) nodes.push(walker.currentNode);
+  nodes.forEach(node => {
+    if (count >= 2 || pg.n >= 14) return;
+    const txt = node.nodeValue; re.lastIndex = 0; let m, last = 0, frag = null;
+    while ((m = re.exec(txt)) && count < 2 && pg.n < 14) {
+      const key = m[2].toLowerCase(); if (seen.has(key) || (pg.keys[key] || 0) >= 2) continue; seen.add(key); pg.keys[key] = (pg.keys[key] || 0) + 1; pg.n++;
+      const start = m.index + m[1].length;
+      if (!frag) frag = document.createDocumentFragment();
+      if (start > last) frag.appendChild(document.createTextNode(txt.slice(last, start)));
+      const mk = document.createElement('mark'); mk.className = 'bk-key'; mk.textContent = m[2]; frag.appendChild(mk);
+      last = start + m[2].length; count++;
+    }
+    if (frag) { if (last < txt.length) frag.appendChild(document.createTextNode(txt.slice(last))); node.parentNode.replaceChild(frag, node); }
+  });
+  if (count) {
+    if (REDUCED_MOTION || !('IntersectionObserver' in window)) return;
+    el.classList.add('hl-pre');
+    window._bkHlIo = window._bkHlIo || new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.remove('hl-pre'); window._bkHlIo.unobserve(e.target); } }), { threshold: .5 });
+    window._bkHlIo.observe(el);
+    setTimeout(() => el.classList.remove('hl-pre'), 6000);   /* filet : le marqueur finit toujours par s'afficher */
+  }
+}
+function bkHighlightAll(){
+  const root = document.querySelector('.view.active'); if (!root) return;
+  const sig = currentView + '|' + (currentSub || '') + '|' + LANG; if (root._hlSig !== sig) { root._hlSig = sig; root._hl = null; root.querySelectorAll('[data-hl]').forEach(e => e.removeAttribute('data-hl')); root.querySelectorAll('mark.bk-key').forEach(m => m.replaceWith(document.createTextNode(m.textContent))); root.normalize(); }
+  root.querySelectorAll('p, li, dd, .svcp-text, .lk-fiche-desc').forEach(el => { if (el.getAttribute('data-hl') !== LANG && !el.querySelector('p, li')) { if (el.getAttribute('data-hl')) { /* changement de langue : le contenu a été re-rendu, rien à défaire */ } bkHighlightBlock(el); } });
+}
+(function initBkHighlight(){
+  const main = document.getElementById('main') || document.body; let t = null;
+  new MutationObserver(() => { clearTimeout(t); t = setTimeout(() => { try { bkHighlightAll(); } catch (e) {} }, 220); }).observe(main, { childList: true, subtree: true, characterData: false });
+  setTimeout(() => { try { bkHighlightAll(); } catch (e) {} }, 900);
+})();

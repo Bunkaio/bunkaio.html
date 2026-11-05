@@ -8813,3 +8813,9 @@ html body .svx-cta i, html body .hm-avail-btn i, html body .ms-cta i, html body 
 html body .hm-svc-cta .hm-avail-btn { gap: 0 !important; }
 html body .cta-primary::after, html body .hero-start::after, html body .home-claim-cta::after, html body .btn::after, html body .btn-solid::after, html body .btn-ghost::after, html body .partner-cta-btn::after, html body .pf-cta-btn::after { content: none !important; display: none !important; }
 html body .svcp-back span[aria-hidden] { display: none; }
+
+/* Surlignage des mots clés dans les textes du site (6 nov. 2026) : même marqueur rose que « Les prochaines étapes » */
+mark.bk-key { background: linear-gradient(#e8c6c4, #e8c6c4) 0 88% / 100% 62% no-repeat; color: inherit; padding: 0 .12em; margin: 0 -.12em; font-weight: inherit; -webkit-box-decoration-break: clone; box-decoration-break: clone; transition: background-size .9s cubic-bezier(.7,0,.2,1) .2s; }
+.hl-pre mark.bk-key { background-size: 0% 62%; }
+@media (prefers-reduced-motion: reduce) { mark.bk-key { transition: none; background-size: 100% 62% !important; } }
+@media print { mark.bk-key { background: none; } }
