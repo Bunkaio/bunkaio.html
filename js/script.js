@@ -2174,7 +2174,7 @@ function goView(v, subTab, opts){
     if (v !== 'quiz') setProgress(0);
     const quizNav = document.getElementById('quizNavRow');
     if (quizNav) quizNav.style.display = (v === 'quiz') ? '' : 'none';
-    bkBackSync();
+    bkBackSync(); bkScrollGuard();
     setPageBg(v);
     initHeroCarousel(v);
     /* Bannière "Un projet en tête ?" du footer : masquée sur l'accueil
@@ -2410,6 +2410,12 @@ function scrollToContactForm(){
   [[500, 'smooth'], [1200, 'instant'], [2200, 'instant'], [3600, 'instant']].forEach(([ms, b]) => setTimeout(() => go(b), ms));
   setTimeout(() => evs.forEach(ev => window.removeEventListener(ev, stop)), 4000);
 }
+/* Défilement sûr (iPhone : html et body sont les conteneurs ; une valeur hors limites laissait l'écran blanc). */
+function bkScrollY(){ return window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0; }
+function bkMaxScroll(){ return Math.max(0, Math.max(document.documentElement.scrollHeight, document.body.scrollHeight) - window.innerHeight); }
+function bkSetScroll(y){ y = Math.max(0, Math.min(bkMaxScroll(), Math.round(y || 0))); try { window.scrollTo(0, y); document.documentElement.scrollTop = y; document.body.scrollTop = y; } catch (e) {} }
+/* Garde-fou « page blanche » : après chaque changement de vue, si le défilement dépasse le contenu (page plus courte que la précédente), on le ramène dans les limites. */
+function bkScrollGuard(){ [60, 350, 900, 1800].forEach(ms => setTimeout(() => { const y = bkScrollY(); if (y > bkMaxScroll() || (currentView !== 'home' && y > 0 && y > bkMaxScroll() - 2)) bkSetScroll(bkMaxScroll()); const v = document.getElementById('view-' + currentView); if (v && v.getBoundingClientRect().height < 40) { v.style.display = 'none'; void v.offsetHeight; v.style.display = ''; } }, ms)); }
 function goToQuizCategory(catId, tierId){
   if (isComingSoon(catId)) { goToComingSoon(catId); return; }
   window.__quizDirect = true;
@@ -2426,7 +2432,7 @@ function goToQuizCategory(catId, tierId){
     S.prof = (CAT_PROFILES[catId] || [])[0] || null; S.tier = tierId;
     renderProfiles(); renderTiers(); renderRecap(); renderOptions(); quizStep(3);
     const card = document.querySelector('#tierList .tier-card[data-tier="' + tierId + '"]');
-    if (card) { card.classList.add('selected', 'open'); card.style.scrollMarginTop = ((parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) || 74) + 28) + 'px'; const go = () => { try { card.scrollIntoView({ block: 'start', behavior: 'auto' }); } catch (e) {} }; requestAnimationFrame(go); setTimeout(go, 950); }
+    if (card) { card.classList.add('selected', 'open'); card.style.scrollMarginTop = ((parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) || 74) + 28) + 'px'; const go = () => { try { const off = (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) || 74) + 28; bkSetScroll(card.getBoundingClientRect().top + bkScrollY() - off); } catch (e) {} }; requestAnimationFrame(go); setTimeout(go, 950); }
     return;
   }
   quizStep(2);
@@ -4725,6 +4731,7 @@ function ctaLabel(catId){
   if (catId === 'mode' || catId === 'commercial') return t({fr:'Recevoir une proposition', en:'Receive a proposal'});
   return t({fr:'Demander un devis', en:'Request a quote'});
 }
+function bkIsIOS(){ try { return /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); } catch (e) { return false; } }
 function quizLink(catId, label, cls, tierId, trackId){ if (catId && isComingSoon(catId)) label = t({fr:'Nous contacter', en:'Contact us'}); return `<a class="${cls || 'cta-primary'}" href="/devis/${catId ? '?cat=' + catId + (tierId ? '&tier=' + tierId : '') : ''}" data-quiz="${catId || ''}"${tierId ? ` data-tier="${tierId}"` : ''}${trackId ? ` data-track="${trackId}"` : ''}>${label}</a>`; }
 document.addEventListener('click', (e) => {
   const a = e.target.closest ? e.target.closest('a[data-quiz]') : null;
@@ -4733,6 +4740,8 @@ document.addEventListener('click', (e) => {
   e.preventDefault();
   closeMobileMenu();
   const cat = a.dataset.quiz;
+  /* iPhone / iPad (Safari) : le changement de page « en place » depuis le bas d'une longue page laissait parfois un écran blanc. On ouvre alors le devis par un vrai chargement de page (comme un lien classique), toujours fiable ; formule et prestation sont présélectionnées par l'adresse. */
+  if (cat && !isComingSoon(cat) && currentView !== 'quiz' && bkIsIOS() && a.getAttribute('href')) { window.location.href = a.getAttribute('href'); return; }
   /* Filet de sécurité : si l'ouverture du devis échoue pour une raison quelconque, on suit le lien normal (/devis/ ou /en/devis/) plutôt que de laisser un bouton sans effet. */
   try {
     if (cat && isComingSoon(cat)) goToComingSoon(cat); else if (cat) goToQuizCategory(cat, a.dataset.tier); else goView('quiz');
