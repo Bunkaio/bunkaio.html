@@ -8716,26 +8716,18 @@ html.pfi-lock .bk-back,body.menu-open .bk-back{display:none}
 .lk-tier.lv-top .lk-tier-t::after { content: ' ⊹'; color: #d6c9f7; }
 .lk-tier.lv-top:hover { background: #3a3260; }
 
-/* Connexion : deux univers distincts (6 nov. 2026, demande de la propriétaire) — client : papier ouvert, rose ; partenaire : carte encre, champagne */
+/* Connexion : deux univers (6 nov. 2026) */
 .login-tag{display:inline-block;margin:0 0 14px;padding:6px 10px;font:600 10.5px/1 'Inter Tight',sans-serif;letter-spacing:.16em;text-transform:uppercase;border:1px solid #111;color:#111}
 #view-login[data-lt="client"] .login-tag{background:#e8c6c4;border-color:#e8c6c4}
 #view-login[data-lt="client"] .login-panel{border-top:4px solid #e8c6c4}
-#view-login[data-lt="partner"] .login-panel{background:linear-gradient(165deg,#111 0%,#1d1a14 100%) !important;border:1px solid #111 !important;border-top:4px solid #dfcfa6 !important;box-shadow:0 24px 60px rgba(17,17,17,.22);padding:clamp(24px,5vw,44px) !important;color:#fff}
-#view-login[data-lt="partner"] .login-tag{color:#dfcfa6;border-color:#dfcfa6;background:transparent}
-#view-login[data-lt="partner"] .login-panel :is(.page-title,h2,label,.login-switch,.login-switch span){color:#fff !important}
-#view-login[data-lt="partner"] .login-panel .page-sub{color:rgba(255,255,255,.72) !important}
-#view-login[data-lt="partner"] .login-panel input{color:#fff !important;border-bottom-color:rgba(223,207,166,.55) !important;background:transparent !important}
-#view-login[data-lt="partner"] .login-panel input::placeholder{color:rgba(255,255,255,.38)}
-#view-login[data-lt="partner"] .login-panel input:focus{border-bottom-color:#dfcfa6 !important}
-#view-login[data-lt="partner"] .login-tabs{border-color:#dfcfa6 !important}
-#view-login[data-lt="partner"] .login-tab{color:#fff !important}
-#view-login[data-lt="partner"] .login-tab.active{background:#dfcfa6 !important;color:#111 !important}
-#view-login[data-lt="partner"] .btn-solid{background:#dfcfa6 !important;color:#111 !important;border-color:#dfcfa6 !important}
-#view-login[data-lt="partner"] .btn-solid *{color:#111 !important}
-#view-login[data-lt="partner"] .btn-solid:hover{background:#fff !important}
-#view-login[data-lt="partner"] .login-switch button{color:#dfcfa6 !important}
-#view-login[data-lt="partner"] .login-info,#view-login[data-lt="partner"] .login-error{color:rgba(255,255,255,.85) !important}
-#view-login[data-lt="partner"] .login-panel :is(.bk-kick, [class*="kick"], .page-title > span:first-child) { color: #dfcfa6 !important; }
+/* Même fond, même échelle, même mise en page : seuls les accents changent (client rose, partenaire champagne) */
+#view-login[data-lt="partner"] .login-panel{border-top:4px solid #dfcfa6}
+#view-login[data-lt="partner"] .login-tag{background:#dfcfa6;border-color:#dfcfa6;color:#111}
+#view-login[data-lt="partner"] .login-tab.active{background:#111 !important;color:#dfcfa6 !important}
+#view-login[data-lt="client"] .login-tab.active{background:#111 !important;color:#e8c6c4 !important}
+#view-login[data-lt="partner"] .login-panel input:focus{border-bottom-color:#b79c5d !important}
+#view-login[data-lt="partner"] .btn-solid:hover{background:#dfcfa6 !important;color:#111 !important}
+#view-login[data-lt="partner"] .login-switch button{text-decoration-color:#dfcfa6}
 
 /* Devis arrivé depuis l'agenda : pas de flash de l'étape 1, rappel de la séance choisie en haut de chaque étape (6 nov. 2026, demande de la propriétaire) */
 #view-quiz.q-booting .qstep, #view-quiz.q-booting .q-choice { opacity: 0 !important; }
