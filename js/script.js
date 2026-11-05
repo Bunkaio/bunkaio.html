@@ -279,7 +279,7 @@ const I18N = {
     'drone-explore':'Explorez nos productions',
     'portfolio-title':'PORTFOLIO','portfolio-sub':'Une sélection de projets réalisés par le studio, classés par univers.',
     'loc-line':'Basé en Occitanie, déplacement partout en France sur devis','hours-line':'Du lundi au samedi, de 9h à 18h','contact-title':'Contacter votre photographe','contact-sub':'Une question, un projet, une collaboration\u00a0? Écrivez-nous — nous répondons sous 24h.',
-    'company-label':'Entreprise','follow-label':'Suivez-nous','follow-studio':'Instagram — @studiobunkaio · compte studio','contact-btn':'Nous contacter',
+    'company-label':'Entreprise','fh-apply-k':'Formulaire · Partenariat','fh-apply-t':'Devenir partenaire','fh-collab-k':'Formulaire · Collaboration','fh-collab-t':'Demander une collaboration','follow-label':'Suivez-nous','follow-studio':'Instagram — @studiobunkaio · compte studio','contact-btn':'Nous contacter',
     'ct-success-title':'Message envoyé','ct-success-text':'Merci pour votre message. Nous reviendrons vers vous sous 24 heures.',
     'partners-title':'Partenariat et collaboration',
     'legal-title':'FAQ : questions fréquentes',
@@ -653,7 +653,7 @@ const I18N = {
     'drone-explore':'Explore our work',
     'portfolio-title':'PORTFOLIO','portfolio-sub':'A selection of projects produced by the studio, organised by universe.',
     'loc-line':'Based in Occitanie, travelling across France on quote','hours-line':'Monday to Saturday, 9am to 6pm','contact-title':'Contact your photographer','contact-sub':'A question, a project, a collaboration? Write to us — we reply within 24 hours.',
-    'company-label':'Company','follow-label':'Follow us','follow-studio':'Instagram — @studiobunkaio · studio account','contact-btn':'Get in touch',
+    'company-label':'Company','fh-apply-k':'Form · Partnership','fh-apply-t':'Become a partner','fh-collab-k':'Form · Collaboration','fh-collab-t':'Request a collaboration','follow-label':'Follow us','follow-studio':'Instagram — @studiobunkaio · studio account','contact-btn':'Get in touch',
     'ct-success-title':'Message sent','ct-success-text':'Thank you for your message. We will get back to you within 24 hours.',
     'partners-title':'Partnership & collaboration',
     'legal-title':'FAQ: frequently asked questions',
@@ -3793,7 +3793,7 @@ function goToApplyForm(){
   ['wheel', 'touchstart', 'keydown'].forEach(ev => addEventListener(ev, stop, { once: true, passive: true }));
   const fix = () => {
     if (touched || Date.now() - t0 > 3500 || currentView !== 'partners') return;
-    const el = document.getElementById('applyForm');
+    const el = document.getElementById('applyFormHead') || document.getElementById('applyForm');
     if (el && el.getClientRects().length) { const navH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) || 74; const y = Math.max(0, el.getBoundingClientRect().top + bkScrollY() - navH - 24); if (Math.abs(y - bkScrollY()) > 3) bkSetScroll(y); }
     setTimeout(fix, 200);
   };
