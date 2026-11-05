@@ -8804,6 +8804,7 @@ const MISSION_CST = [
   { x: 16, y: 76, s: 'r', t: {fr:'Droits clairs', en:'Clear rights'}, d: {fr:'Usages précisés sur votre devis', en:'Uses set out in your quote'} }
 ];
 function buildMissionCst(){
+  { const _b = document.getElementById('missionCst'); if (_b) _b._c = null; }   /* éléments mémorisés par setMissionCst : à relire après chaque reconstruction */
   const wrap = document.getElementById('missionVideoWrap');
   if (!wrap) return;
   let box = document.getElementById('missionCst');
@@ -8822,7 +8823,7 @@ function setMissionCst(p, fadeOut, cut){
   const box = document.getElementById('missionCst');
   if (!box) return;
   /* Éléments mémorisés une fois (pas de requêtes DOM à chaque image du défilement) et écritures seulement si la valeur change. */
-  const C = box._c || (box._c = { pts: [...box.querySelectorAll('.mc-pt')], es: [...box.querySelectorAll('.mc-lines .mc-e')], ss: [...box.querySelectorAll('.mc-s')], last: {} });
+  const C = box._c || (box._c = { pts: [...box.querySelectorAll('.mc-pt')], es: [...box.querySelectorAll('.mc-lines')].map(svg => [...svg.querySelectorAll('.mc-e')]), ss: [...box.querySelectorAll('.mc-s')], last: {} });
   const L = C.last;
   const n = MISSION_CST.length, step = 1 / (n + 0.6);
   const f = fadeOut === undefined ? 1 : fadeOut;
@@ -8833,7 +8834,7 @@ function setMissionCst(p, fadeOut, cut){
   const out = (1 - f).toFixed(3); if (L.out !== out) { L.out = out; box.style.setProperty('--mc-out', out); }
   const pp = p.toFixed(3); if (L.p !== pp) { L.p = pp; box.style.setProperty('--mc-p', pp); }
   C.pts.forEach((el, i) => { const on = p >= step * (i + 0.3); if (el._on !== on) { el._on = on; el.classList.toggle('on', on); } });
-  C.es.forEach((el, i) => { const a = step * (i + 0.6), k = Math.max(0, Math.min(1, (p - a) / step)), v = (1 - k).toFixed(3); if (el._v !== v) { el._v = v; el.style.strokeDashoffset = v; } });
+  C.es.forEach(list => list.forEach((el, i) => { const a = step * (i + 0.6), k = Math.max(0, Math.min(1, (p - a) / step)), v = (1 - k).toFixed(3); if (el._v !== v) { el._v = v; el.style.strokeDashoffset = v; } }));   /* l'indice repart de 0 dans chaque SVG (ordinateur / mobile), comme avant */
   C.ss.forEach((el, i) => { const on = p >= step * (i + 0.3); if (el._on !== on) { el._on = on; el.classList.toggle('on', on); } });
   const done = p >= 0.999; if (L.done !== done) { L.done = done; box.classList.toggle('done', done); }
 }
