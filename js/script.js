@@ -7719,11 +7719,13 @@ function usdSweep(root){
       const end = m.index + m[0].length;
       /* déjà converti : le texte suivant est notre propre mention */
       const after = txt.slice(end);
-      const next = end === txt.length ? node.nextSibling : null;
+      /* « €/km », « €/h », « €/mo » : on garde l'unité collée au prix */
+      const unit = (after.match(/^\s?\/\s?[a-z]+/i) || [''])[0];
+      /* Déjà converti : le prix (unité comprise) termine le nœud et il est suivi de notre mention. Avant, l'unité était oubliée dans ce test :
+         « From €83/mo » recevait un « ≈ $91/mo » de plus à chaque passage (audit avant lancement : texte qui débordait de l'écran en anglais). */
+      const next = end + unit.length === txt.length ? node.nextSibling : null;
       if (next && next.nodeType === 1 && next.classList.contains('usd-eq')) continue;
       const usd = usdFromEurText(m[0]); if (!usd) continue;
-      /* « €/km », « €/h » : on garde l'unité collée au prix */
-      const unit = (after.match(/^\s?\/\s?[a-z]+/i) || [''])[0];
       frag.appendChild(document.createTextNode(txt.slice(last, end + unit.length)));
       const sp = document.createElement('span'); sp.className = 'usd-eq'; sp.textContent = ' ' + usd + (unit ? unit.replace(/\s/g, '') : '');
       frag.appendChild(sp); last = end + unit.length; changed = true;
@@ -10287,3 +10289,8 @@ function bkMarkStart(){ document.querySelectorAll('[data-lang="start"]').forEach
 })();
 
 window.addEventListener('resize', () => { const pv = document.getElementById('missionPreview'); if (pv && pv.dataset.eq) { delete pv.dataset.eq; pv.style.minHeight = ''; } });
+
+/* Menu mobile : la touche Échap le referme (audit avant lancement, 6 nov. 2026 — accessibilité clavier ; les autres couches gèrent déjà Échap). */
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && document.body.classList.contains('menu-open')) { closeMobileMenu(); const bg = document.getElementById('navBurger'); if (bg) bg.focus(); }
+});

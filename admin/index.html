@@ -3152,7 +3152,7 @@ function coordsHtml(c, a) {
   if (a) rows.push(['Type de client', f.profil === 'professionnel' ? 'Professionnel' : f.profil === 'particulier' ? 'Particulier' : '—'], ['Raison sociale / nom', a.nom], ['Forme juridique', FORMES[f.forme]], ['Contact', f.contact], ['Adresse', [f.rue, [f.codePostal, f.ville].filter(Boolean).join(' '), f.pays].filter(Boolean).join(', ') || a.adresse], ['SIRET', f.siret], ['TVA intracom.', f.tvaIntra], ['Espace', a.infosCompletes ? '✓ validé' : '⚠ coordonnées incomplètes']);
   return `<dl class="kv">${rows.filter(r => r[1]).map(([k, v]) => `<dt>${k}</dt><dd>${esc(v)}</dd>`).join('')}</dl>`;
 }
-function genCode() { const a = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; const r = new Uint8Array(4); crypto.getRandomValues(r); return 'BKO-' + Array.from(r, x => a[x % a.length]).join(''); }
+function genCode() { const a = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; const r = new Uint8Array(6);   /* 6 caractères (≈ 1 milliard de combinaisons) au lieu de 4 : audit avant lancement */ crypto.getRandomValues(r); return 'BKO-' + Array.from(r, x => a[x % a.length]).join(''); }
 function fv(id) { const el = $(id); return el ? el.value.trim() : ''; }
 function drSpace(c) {
   const a = drawer.isNew ? null : currentAcc(c);
@@ -3166,7 +3166,7 @@ function drSpace(c) {
       <div class="fg"><label>Email (identifiant)</label><input id="aEmail" type="email" value="${esc(a ? a.email : drawer.email)}" ${a ? 'disabled' : ''}></div>
     </div>
     <div class="frow">
-      <div class="fg"><label>Code d'accès ${a ? '(laisser vide pour garder l\'actuel)' : ''}</label><input id="aCode" value="${a ? '' : genCode()}" placeholder="BKO-XXXX"></div>
+      <div class="fg"><label>Code d'accès ${a ? '(laisser vide pour garder l\'actuel)' : ''}</label><input id="aCode" value="${a ? '' : genCode()}" placeholder="BKO-XXXXXX"></div>
       <div class="fg"><label>Langue des emails</label><select id="aLang"><option value="fr" ${(a ? a.lang : drawer.newLang) !== 'en' ? 'selected' : ''}>Français</option><option value="en" ${(a ? a.lang : drawer.newLang) === 'en' ? 'selected' : ''}>English</option></select></div>
     </div>
     <label class="check"><input type="checkbox" id="aSendAccess" ${a ? '' : 'checked'}> Envoyer le mail « Vos accès » (email + code saisi ci-dessus)</label>

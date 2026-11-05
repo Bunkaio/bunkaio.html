@@ -77,19 +77,30 @@ export function adminAccountView(record: AccountRecord): AdminAccountRecord {
 export class LoginThrottled extends Error {}
 const LOGIN_MAX_FAILS = 8;
 const LOGIN_WINDOW_S = 900;
+/* Plafond par adresse, toutes IP confondues (audit avant lancement, 6 nov. 2026) : sans lui, un attaquant qui change d'IP
+   pouvait essayer les codes d'une adresse sans limite. 40 échecs par heure : large pour un client qui se trompe, bloquant pour un robot. */
+const LOGIN_MAX_FAILS_ADDR = 40;
+const LOGIN_WINDOW_ADDR_S = 3600;
 
 /**
  * Vérifie l'email + le code d'accès. Anti force brute : au-delà de LOGIN_MAX_FAILS échecs en 15 minutes
- * (même adresse, même IP), la connexion est refusée (LoginThrottled), que le compte existe ou non.
+ * (même adresse, même IP) ou de LOGIN_MAX_FAILS_ADDR échecs en une heure pour la même adresse (toutes IP),
+ * la connexion est refusée (LoginThrottled), que le compte existe ou non.
  */
 export async function verifyLogin(env: Env, type: AccountType, email: string, code: string, ip = ''): Promise<AccountRecord | null> {
-  const key = `lf:${type}:${email.trim().toLowerCase()}:${ip}`;
-  const fails = Number((await env.ACCOUNTS_KV.get(key)) ?? '0');
-  if (fails >= LOGIN_MAX_FAILS) throw new LoginThrottled();
+  const addr = email.trim().toLowerCase();
+  const key = `lf:${type}:${addr}:${ip}`;
+  const keyAddr = `lfa:${type}:${addr}`;
+  const [rawFails, rawAddr] = await Promise.all([env.ACCOUNTS_KV.get(key), env.ACCOUNTS_KV.get(keyAddr)]);
+  const fails = Number(rawFails ?? '0'), failsAddr = Number(rawAddr ?? '0');
+  if (fails >= LOGIN_MAX_FAILS || failsAddr >= LOGIN_MAX_FAILS_ADDR) throw new LoginThrottled();
   const record = await getAccount(env, type, email);
   const ok = !!record && (await hashCode(code)) === record.codeHash;
   if (!ok) {
-    await env.ACCOUNTS_KV.put(key, String(fails + 1), { expirationTtl: LOGIN_WINDOW_S });
+    await Promise.all([
+      env.ACCOUNTS_KV.put(key, String(fails + 1), { expirationTtl: LOGIN_WINDOW_S }),
+      env.ACCOUNTS_KV.put(keyAddr, String(failsAddr + 1), { expirationTtl: LOGIN_WINDOW_ADDR_S }),
+    ]);
     return null;
   }
   if (fails > 0) await env.ACCOUNTS_KV.delete(key);
