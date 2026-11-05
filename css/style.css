@@ -8908,3 +8908,10 @@ mark.bk-key { -webkit-box-decoration-break: slice; box-decoration-break: slice; 
   #missionVideoWrap .mission-kicker { margin-bottom: 8px !important; }
   #missionVideoWrap .mission-services { margin-top: 12px !important; }
 }
+
+/* Transition carrousel → « L'exigence BUNKAIO » (6 nov. 2026, saccades sur iPhone) : ces opacités sont pilotées image par image par le défilement ; une transition CSS de 0,35 s par-dessus
+   retardait chaque valeur et redémarrait à chaque image. Plus de transition, et pendant le fondu le flou d'arrière-plan des cartes est coupé (très coûteux sur Safari iOS). */
+.mission-video-content, .mission-video-overlay, .mission-cst, .mission-tilebgs { transition: none !important; }
+.mc-e { transition: none !important; }
+#missionVideoWrap.is-fading .ms-prev, #missionVideoWrap.is-fading .ms-pill, #missionVideoWrap.is-fading .hero-start, #missionVideoWrap.is-fading .home-claim-cta { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+.mission-video-content, .mission-cst { transform: translateZ(0); }

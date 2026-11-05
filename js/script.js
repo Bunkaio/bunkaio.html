@@ -8812,19 +8812,21 @@ function buildMissionCst(){
 function setMissionCst(p, fadeOut, cut){
   const box = document.getElementById('missionCst');
   if (!box) return;
+  /* Éléments mémorisés une fois (pas de requêtes DOM à chaque image du défilement) et écritures seulement si la valeur change. */
+  const C = box._c || (box._c = { pts: [...box.querySelectorAll('.mc-pt')], es: [...box.querySelectorAll('.mc-lines .mc-e')], ss: [...box.querySelectorAll('.mc-s')], last: {} });
+  const L = C.last;
   const n = MISSION_CST.length, step = 1 / (n + 0.6);
   const f = fadeOut === undefined ? 1 : fadeOut;
-  box.style.opacity = String(Math.min(1, p * 6) * f);
-  box.style.setProperty('--mc-cut', (cut === undefined ? 99999 : Math.round(cut)) + 'px');
-  box.style.setProperty('--mc-out', (1 - f).toFixed(3));
-  box.style.setProperty('--mc-p', p.toFixed(3));
-  box.querySelectorAll('.mc-pt').forEach((el, i) => el.classList.toggle('on', p >= step * (i + 0.3)));
-  box.querySelectorAll('.mc-lines').forEach(svg => svg.querySelectorAll('.mc-e').forEach((el, i) => {
-    const a = step * (i + 0.6), k = Math.max(0, Math.min(1, (p - a) / step));
-    el.style.strokeDashoffset = String(1 - k);
-  }));
-  box.querySelectorAll('.mc-s').forEach((el, i) => el.classList.toggle('on', p >= step * (i + 0.3)));
-  box.classList.toggle('done', p >= 0.999);
+  const op = (Math.min(1, p * 6) * f).toFixed(3);
+  if (L.op !== op) { L.op = op; box.style.opacity = op; }
+  const cutPx = (cut === undefined ? 99999 : Math.round(cut)) + 'px';
+  if (L.cut !== cutPx) { L.cut = cutPx; box.style.setProperty('--mc-cut', cutPx); }
+  const out = (1 - f).toFixed(3); if (L.out !== out) { L.out = out; box.style.setProperty('--mc-out', out); }
+  const pp = p.toFixed(3); if (L.p !== pp) { L.p = pp; box.style.setProperty('--mc-p', pp); }
+  C.pts.forEach((el, i) => { const on = p >= step * (i + 0.3); if (el._on !== on) { el._on = on; el.classList.toggle('on', on); } });
+  C.es.forEach((el, i) => { const a = step * (i + 0.6), k = Math.max(0, Math.min(1, (p - a) / step)), v = (1 - k).toFixed(3); if (el._v !== v) { el._v = v; el.style.strokeDashoffset = v; } });
+  C.ss.forEach((el, i) => { const on = p >= step * (i + 0.3); if (el._on !== on) { el._on = on; el.classList.toggle('on', on); } });
+  const done = p >= 0.999; if (L.done !== done) { L.done = done; box.classList.toggle('done', done); }
 }
 function initHomeClaimVideo(){
   const box = document.getElementById('homeClaimVideoBg');
@@ -8876,21 +8878,20 @@ function initHomeClaimVideo(){
     tick = false;
     if (!triggerVisible) return;
     const vh = window.innerHeight || 800;
-    const b = trigger.getBoundingClientRect().bottom / vh;
-    const op0 = Math.max(0, Math.min(1, (b - 3.4) / 0.6)), op = op0 * op0 * (3 - 2 * op0);   /* fondu progressif (courbe douce) sur ~0,6 écran, qui chevauche l'apparition de la constellation */   /* déclencheur de 360vh : carrousel visible ~0,65 écran, puis fondu sur ~0,35 écran */
-    if (content) { content.style.opacity = String(op); content.style.pointerEvents = op < 0.25 ? 'none' : ''; }
-    if (overlay) overlay.style.opacity = String(Math.max(0.3 + 0.7 * op, b < 3.75 ? 0.62 : 0));
+    const bottomPx = trigger.getBoundingClientRect().bottom, b = bottomPx / vh;   /* une seule lecture de mise en page par image */
+    const op0 = Math.max(0, Math.min(1, (b - 3.4) / 0.6)), op = op0 * op0 * (3 - 2 * op0);   /* fondu progressif (courbe douce) sur ~0,6 écran, qui chevauche l'apparition de la constellation */
+    const opS = op.toFixed(3);
+    if (content && content._o !== opS) { content._o = opS; content.style.opacity = opS; content.style.pointerEvents = op < 0.25 ? 'none' : ''; }
+    const fading = op < 0.999; if (wrap._fd !== fading) { wrap._fd = fading; wrap.classList.toggle('is-fading', fading); }   /* pendant le fondu : pas de flou d'arrière-plan à recalculer à chaque image (saccades sur iPhone) */
     /* Texte effacé : la photo de la prestation choisie reste fixe et devient plus visible, par-dessus la vidéo. */
     msHold = op < 0.6;
-    wrap.style.setProperty('--mt-bg-op', String(0.5 + 0.35 * (1 - op)));
-    /* Espace vide après le texte : la constellation « L'exigence BUNKAIO » se construit au fil du défilement et
-       est complète quand la section suivante (réassurance) entre à l'écran (bas du déclencheur ≈ bas de l'écran). */
-    const cp = Math.max(0, Math.min(1, (3.75 - b) / 2.15));   /* construction dès l'effacement du carrousel, étalée sur ~2 écrans, courte pause avant la sortie */
-    /* Sortie : la constellation se dissout par le bas, juste au-dessus du bord de la section blanche qui monte, puis s'efface
-       entièrement avant de la toucher (b = position du haut de la section blanche, en hauteurs d'écran). */
+    const bgo = (0.5 + 0.35 * (1 - op)).toFixed(2); if (wrap._bgo !== bgo) { wrap._bgo = bgo; wrap.style.setProperty('--mt-bg-op', bgo); }
+    /* Constellation « L'exigence BUNKAIO » : se construit au fil du défilement, complète quand la section suivante entre à l'écran. */
+    const cp = Math.max(0, Math.min(1, (3.75 - b) / 2.15));
+    /* Sortie : la constellation se dissout par le bas, juste au-dessus du bord de la section blanche qui monte. */
     const fadeOut = Math.max(0, Math.min(1, (b - 0.72) / 0.42));
-    setMissionCst(cp, fadeOut, trigger.getBoundingClientRect().bottom);
-    if (overlay && cp > 0) overlay.style.opacity = String(Math.max(0.3 + 0.7 * op, 0.62, 0.3 + 0.7 * Math.sqrt(cp)));
+    setMissionCst(cp, fadeOut, bottomPx);
+    if (overlay) { const ov = (cp > 0 ? Math.max(0.3 + 0.7 * op, 0.62, 0.3 + 0.7 * Math.sqrt(cp)) : Math.max(0.3 + 0.7 * op, b < 3.75 ? 0.62 : 0)).toFixed(3); if (overlay._o !== ov) { overlay._o = ov; overlay.style.opacity = ov; } }
   };
   addEventListener('scroll', () => { if (!tick) { tick = true; requestAnimationFrame(fadeContent); } }, { passive: true });
   addEventListener('resize', fadeContent);
