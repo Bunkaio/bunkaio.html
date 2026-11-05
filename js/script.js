@@ -257,7 +257,7 @@ const I18N = {
     'home-btn':'Retour à l\'accueil','see-portfolio':'Voir tout le portfolio',
     'pf-cta-title':'Prêt à donner vie à votre projet&nbsp;?','pf-cta-sub':'Chaque projet commence par une proposition personnalisée — simple, rapide, sans engagement.','pf-cta-btn':'Recevoir mon devis personnalisé','footer-cta-headline':'Un projet en tête&nbsp;?',
     'aria-next':'Suivant','aria-prev':'Précédent','aria-back':'Retour','aria-menu':'Menu','aria-home':'Accueil',
-    'svc-reserve':'Je réserve ma séance','studio-reserve':'Je réserve ma séance en ligne','svc-discover':'Découvrir chaque prestation','ft-discover':'Découvrir chaque prestation','scroll-hint':'Scroll','services-title':'Prestations & tarifs photo','services-sub':'Photographe professionnel à Montpellier et Toulouse : des images haut de gamme, en HD, pour mettre en valeur votre projet. Nos prestations et leurs tarifs, par univers. Déplacement partout en France sur devis.',
+    'ms-all':'Parcourir toutes les prestations','svc-reserve':'Je réserve ma séance','studio-reserve':'Je réserve ma séance en ligne','svc-discover':'Découvrir chaque prestation','ft-discover':'Découvrir chaque prestation','scroll-hint':'Scroll','services-title':'Prestations & tarifs photo','services-sub':'Photographe professionnel à Montpellier et Toulouse : des images haut de gamme, en HD, pour mettre en valeur votre projet. Nos prestations et leurs tarifs, par univers. Déplacement partout en France sur devis.',
     'svc-all':'Tous','svc-cta':'Construire ce projet','svc-sub-label':'Abonnement mensuel',
     'svc-trust1-title':'Réponse sous 48h','svc-trust1-text':'Chaque demande est étudiée puis traitée personnellement — jamais de réponse automatique.',
     'svc-trust2-title':'Un parcours accompagné','svc-trust2-text':'De la demande à la livraison, 8 étapes claires — dont la création de votre moodboard pour partager votre vision — <span class="svc-trust-link" onclick="goToProcess()">voir le déroulé complet</span>.',
@@ -631,7 +631,7 @@ const I18N = {
     'home-btn':'Back to home','see-portfolio':'View the full portfolio',
     'pf-cta-title':'Ready to bring your project to life?','pf-cta-sub':'Every project starts with a personalised proposal — simple, quick, no commitment.','pf-cta-btn':'Get my personalised quote','footer-cta-headline':'Got a project in mind?',
     'aria-next':'Next','aria-prev':'Previous','aria-back':'Back','aria-menu':'Menu','aria-home':'Home',
-    'svc-reserve':'Book my session','studio-reserve':'Book my session online','svc-discover':'Explore each service','ft-discover':'Explore each service','scroll-hint':'Scroll','services-title':'Photography services & rates','services-sub':'Professional photographer in Montpellier and Toulouse: premium, high-definition images that showcase your project. Our services and rates, by universe. Travel anywhere in France on quote.',
+    'ms-all':'Browse all services','svc-reserve':'Book my session','studio-reserve':'Book my session online','svc-discover':'Explore each service','ft-discover':'Explore each service','scroll-hint':'Scroll','services-title':'Photography services & rates','services-sub':'Professional photographer in Montpellier and Toulouse: premium, high-definition images that showcase your project. Our services and rates, by universe. Travel anywhere in France on quote.',
     'svc-all':'All','svc-cta':'Build this project','svc-sub-label':'Monthly plan',
     'svc-trust1-title':'Reply within 48h','svc-trust1-text':'Every request is reviewed and handled personally — never an automated reply.',
     'svc-trust2-title':'A guided journey','svc-trust2-text':'From request to delivery, 8 clear steps — including building your moodboard to share your vision — <span class="svc-trust-link" onclick="goToProcess()">see the full process</span>.',
@@ -2414,6 +2414,9 @@ function goToQuizCategory(catId, tierId){
    c'est le tableau de tarifs de ce domaine qui s'affiche directement. */
 /* Depuis le carrousel d'accueil : page « Découvrir chaque prestation », rubrique de la catégorie choisie ouverte et centrée. */
 let _discoverFocus = null;
+/* Lien « Parcourir toutes les prestations » (séquence « Le studio ») : page Découvrir, directement sur « Quelle prestation pour quel besoin ? ». */
+let _discoverNeeds = false;
+function goToDiscoverNeeds(e){ if (e) e.preventDefault(); _discoverNeeds = true; _discoverFocus = null; goView('discover'); return false; }
 function goToDiscover(catId){ _discoverFocus = catId || null; goView('discover'); }
 document.addEventListener('click', (e) => {
   const a = e.target.closest ? e.target.closest('[data-discover]') : null;
@@ -3612,6 +3615,11 @@ function renderDiscoverPage(){
       body: '<p>' + t({fr:'BUNKAIO est basé en Occitanie et se déplace partout en France. ' + TRAVEL_TXT.fr.full, en:'BUNKAIO is based in Occitanie and travels anywhere in France. ' + TRAVEL_TXT.en.full}) + '</p>' }
   ], { exclusive: true });
   initReassureLoop();
+  if (_discoverNeeds) {
+    _discoverNeeds = false;
+    const box = el.querySelector('.disc-live-box');
+    if (box) { box.style.scrollMarginTop = ((parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) || 74) + 28) + 'px'; setTimeout(() => box.scrollIntoView({ block: 'start', behavior: REDUCED_MOTION ? 'auto' : 'smooth' }), 700); }
+  }
   if (_discoverFocus) {
     const target = el.querySelector('.cs-acc-item[data-cat="' + _discoverFocus + '"]');
     _discoverFocus = null;
