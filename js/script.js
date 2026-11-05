@@ -4692,7 +4692,7 @@ function ctaLabel(catId){
   if (catId === 'mode' || catId === 'commercial') return t({fr:'Recevoir une proposition', en:'Receive a proposal'});
   return t({fr:'Demander un devis', en:'Request a quote'});
 }
-function quizLink(catId, label, cls, tierId, trackId){ if (catId && isComingSoon(catId)) label = t({fr:'Nous contacter', en:'Contact us'}); return `<a class="${cls || 'cta-primary'}" href="/devis/" data-quiz="${catId || ''}"${tierId ? ` data-tier="${tierId}"` : ''}${trackId ? ` data-track="${trackId}"` : ''}>${label}</a>`; }
+function quizLink(catId, label, cls, tierId, trackId){ if (catId && isComingSoon(catId)) label = t({fr:'Nous contacter', en:'Contact us'}); return `<a class="${cls || 'cta-primary'}" href="/devis/${catId ? '?cat=' + catId + (tierId ? '&tier=' + tierId : '') : ''}" data-quiz="${catId || ''}"${tierId ? ` data-tier="${tierId}"` : ''}${trackId ? ` data-track="${trackId}"` : ''}>${label}</a>`; }
 document.addEventListener('click', (e) => {
   const a = e.target.closest ? e.target.closest('a[data-quiz]') : null;
   if (!a) return;
@@ -4703,7 +4703,11 @@ document.addEventListener('click', (e) => {
   /* Filet de sécurité : si l'ouverture du devis échoue pour une raison quelconque, on suit le lien normal (/devis/ ou /en/devis/) plutôt que de laisser un bouton sans effet. */
   try {
     if (cat && isComingSoon(cat)) goToComingSoon(cat); else if (cat) goToQuizCategory(cat, a.dataset.tier); else goView('quiz');
-  } catch (err) { window.location.href = a.getAttribute('href') || '/devis/'; }
+  } catch (err) {
+    /* Si le devis est déjà affiché (seule la présélection a échoué), on reste dessus au lieu de recharger la page. */
+    if (typeof currentView !== 'undefined' && currentView === 'quiz') { try { quizStep(2); } catch (e2) {} }
+    else window.location.href = a.getAttribute('href') || '/devis/';
+  }
 });
 document.addEventListener('click', (e) => {
   const a = e.target.closest ? e.target.closest('a[data-nav]') : null;
@@ -5891,12 +5895,18 @@ function pfxLoadSeries(){
 function pfxPlan(){
   const srv = Array.isArray(window._pfSeries) ? window._pfSeries.filter(s => s && s.cat && !s.hidden) : [];
   const series = srv.length ? srv : (typeof PF_SERIES !== 'undefined' && Array.isArray(PF_SERIES)) ? PF_SERIES.filter(s => s && s.cat) : [];
-  if (series.length) return series.map(s => ({ id: s.id || pfxSlug(t(s.title || {})), title: s.title ? (t(s.title) || s.title.fr || s.title.en || '') : '', client: s.client || '', year: s.year || '', cat: s.cat, nums: Array.isArray(s.photos) && s.photos.length ? s.photos : null, text: s.text ? (t(s.text) || s.text.fr || s.text.en || '') : '' }));
+  if (series.length) { const plan = series.map(s => ({ id: s.id || pfxSlug(t(s.title || {})), title: s.title ? (t(s.title) || s.title.fr || s.title.en || '') : '', client: s.client || '', year: s.year || '', cat: s.cat, nums: Array.isArray(s.photos) && s.photos.length ? s.photos : null, text: s.text ? (t(s.text) || s.text.fr || s.text.en || '') : '' }))
+    /* Le Portfolio ne se réduit pas aux séries : les photos de chaque univers qui ne sont dans aucune série suivent, un chapitre par univers. */
+    const used = new Set();
+    plan.forEach(c => (c.nums || []).forEach(n => { const m = String(n).match(/^(?:([a-z-]+):)?(\d+)$/); if (m) used.add(MEDIA_BASE + '/portfolio/' + (m[1] || c.cat) + '/' + m[2] + '.webp'); }));
+    const hasAll = new Set(plan.filter(c => !c.nums).map(c => c.cat));
+    PF_CATS.forEach(c => { if (!hasAll.has(c.id)) plan.push({ id: 'univers-' + c.id, title: t(c.label), client: '', year: '', cat: c.id, nums: null, text: '', rest: true, used }); });
+    return plan; }
   return PF_CATS.map(c => ({ id: c.id, title: t(c.label), client: '', year: '', cat: c.id, nums: null, text: '' }));
 }
 /* Photos d'une série : numéros de l'univers de la série, ou « univers:numéro » pour une photo d'un autre univers (choix libre dans l'admin). */
 function pfxSeriesPhotos(c){
-  if (!c.nums) return loadPortfolioPhotos(c.cat, 24);
+  if (!c.nums) return loadPortfolioPhotos(c.cat, 24).then(list => c.rest ? list.filter(u => !c.used.has(u)) : list);
   const refs = c.nums.map(n => { const m = String(n).match(/^(?:([a-z-]+):)?(\d+)$/); return m ? { cat: m[1] || c.cat, n: m[2] } : null; }).filter(Boolean);
   const cats = [...new Set(refs.map(r => r.cat))];
   return Promise.all(cats.map(k => loadPortfolioPhotos(k, 24).then(list => [k, list])))
@@ -9557,11 +9567,14 @@ initNavScrollState();
 (function initRoute(){
   const r = seoRouteForPath(location.pathname);
   const v = r ? r.view : 'home';
+  const _qs0 = location.search;
   document.body.dataset.view = v;
   history.replaceState({ v }, '', location.pathname + location.hash);
   if (window.track) track('pageview');
   if (v === 'home') { applySeoMeta('home'); return; }
   goView(v === 'account' ? 'login' : v, r ? (r.cat || r.slug || r.city || r.sub || null) : null, { initial: true });
+  /* Lien direct vers une formule (/devis/?cat=mode&tier=sig) : filet de sécurité si le clic n'a pas pu ouvrir le devis en place. */
+  if (v === 'quiz') { try { const q = new URLSearchParams(_qs0), c = q.get('cat'); if (c && CATS.some(x => x.id === c)) setTimeout(() => { try { goToQuizCategory(c, q.get('tier') || undefined); } catch (e) {} }, 400); } catch (e) {} }
 })();
 
 restoreSession();
