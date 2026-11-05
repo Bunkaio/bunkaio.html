@@ -8437,3 +8437,7 @@ body[data-view="home"] #pageHeroWrap, .hero-video-wrap[data-view="home"] { backg
 html body :is(.advice-card, .testi-card, .payment-flex-strip, .pp-benefit, .pp-example, .cs-board, .cs-float-track, .collab-type-card, .ses-card, .acc-help-card, .acc-info-card, .pb-compare-us, .disc-from, .svcp-chip) { border-color: rgba(17,17,17,.18) !important; }
 html body :is(.advice-card, .testi-card, .collab-type-card, .pp-benefit, .pp-example):hover { border-color: rgba(17,17,17,.32) !important; }
 html body .view.gx #applyTypePicker button { border-color: rgba(17,17,17,.18) !important; }
+
+/* CTA du haut de l'accueil : rose dépoli (verre), encadrement fin et léger, arrondi (5 nov. 2026, demande de la propriétaire) */
+#view-home .hero > .hero-start:not(#bkv) { background: rgba(232,198,196,.55) !important; -webkit-backdrop-filter: blur(14px) saturate(1.2) !important; backdrop-filter: blur(14px) saturate(1.2) !important; border: 1px solid rgba(255,255,255,.45) !important; border-radius: 999px !important; box-shadow: 0 6px 24px rgba(0,0,0,.08), inset 0 1px 0 rgba(255,255,255,.35) !important; overflow: hidden; }
+#view-home .hero > .hero-start:not(#bkv):is(:hover, :focus-visible, :active) { background: rgba(232,198,196,.78) !important; border-color: rgba(255,255,255,.7) !important; box-shadow: 0 8px 30px rgba(232,198,196,.45), inset 0 1px 0 rgba(255,255,255,.5) !important; }
