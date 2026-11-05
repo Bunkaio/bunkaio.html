@@ -8667,3 +8667,17 @@ html.pfi-lock .bk-back,body.menu-open .bk-back{display:none}
 .svx-td.lv-top .svx-td-price{color:#fff}
 @media (max-width:760px){.svx-td.lv-high{padding:14px 14px 2px}.svx-td.lv-top{padding:16px 16px 10px}}
 .svx-td-items li, .svx-td-line { text-align: left; hyphens: manual; }
+
+/* Pages prestation : texte de présentation en bannière photo plein écran, très éditoriale et minimaliste (6 nov. 2026, demande de la propriétaire) */
+.svcp-leadban{margin-top:28px;margin-bottom:8px}
+.svcp-leadban .lk-full-ph img{object-position:50% 22%}
+.svcp-leadban::after{height:70%;background:linear-gradient(to top,rgba(0,0,0,.62),rgba(0,0,0,0))}
+.svcp-leadban .lk-cap-box{max-width:min(520px,86vw);gap:14px;bottom:clamp(26px,6vh,64px)}
+.svcp-leadban .lk-cap-p,.svcp-leadban .svcp-lead{margin:0;font-size:clamp(13.5px,1.05vw,15px);line-height:1.62;font-weight:400;font-style:normal;color:rgba(255,255,255,.94);text-align:left;hyphens:manual;text-shadow:0 1px 14px rgba(0,0,0,.35)}
+.svcp-leadban .lk-cap-p a,.svcp-leadban .svcp-lead a{color:#fff;text-decoration:underline;text-underline-offset:3px}
+.svcp-leadban .lk-cap-p strong{font-weight:600;color:#fff}
+.svcp-leadban .lk-cap-k{letter-spacing:.16em}
+.svcp-leadban.is-broken{display:none}
+@media (max-width:760px){.svcp-leadban .lk-cap-box{left:16px;right:16px;max-width:none;bottom:24px}.svcp-leadban .lk-cap-p{font-size:13.5px}}
+#view-service .svcp-leadban .lk-cap-box .svcp-lead, #view-service .svcp-leadban .lk-cap-box .svcp-lead * { color: rgba(255,255,255,.95) !important; }
+#view-service .svcp-leadban .lk-cap-box .svcp-lead strong, #view-service .svcp-leadban .lk-cap-box .svcp-lead a { color: #fff !important; }
