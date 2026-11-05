@@ -9893,8 +9893,8 @@ function renderAvailCal(host, opts){
   const months = []; for (let i = 0; i < 15; i++) { const d = new Date(today.getFullYear(), today.getMonth() + i, 1); if (bkcIso(d) > BKC_END) break; months.push(d); }
   const monthRatio = d => { const n = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate(); let ok = 0, tot = 0; for (let i = 1; i <= n; i++) { const dd = new Date(d.getFullYear(), d.getMonth(), i); if (dd < today) continue; tot++; const iso = bkcIso(dd); if (st.cat ? avail(iso, st.cat) : cats.some(c => avail(iso, c))) ok++; } return tot ? ok / tot : 0; };
   const yearStrip = `<div class="bkc-year" role="tablist">${months.map(d => { const on = d.getFullYear() === st.y && d.getMonth() === st.m; const r = monthRatio(d); return `<button type="button" class="bkc-ym${on ? ' on' : ''}" onclick="bkcGo(this,${d.getFullYear()},${d.getMonth()})"><span>${d.toLocaleDateString(LANG === 'en' ? 'en-GB' : 'fr-FR', { month: 'short' }).replace('.', '')}</span><em>${String(d.getFullYear()).slice(2)}</em><i style="--r:${r.toFixed(2)};--c:${st.cat ? BKC_COLORS[st.cat] : '#111'}"></i></button>`; }).join('')}</div>`;
-  const chips = embed ? `<p class="bkc-embed-info"><span>${t({fr:'Prestation', en:'Service'})} <b>${escHtml(bkcCatName(st.cat))}</b>${st.tier ? ' · ' + t({fr:'formule', en:'package'}) + ' <b>' + escHtml((bkcTiers(st.cat).find(x => x.id === st.tier) || {}).name || '') + '</b>' : ''}</span><button type="button" onclick="quizStep(1)">${t({fr:'Changer de prestation', en:'Change service'})}</button><button type="button" onclick="quizStep(3)">${t({fr:'Changer de formule', en:'Change package'})}</button></p>` : `<div class="bkc-cats">${[`<button type="button" class="bkc-cat${!st.cat ? ' on' : ''}" onclick="bkcCat(this,'')"><i class="bkc-all"></i>${t({fr:'Toutes les séances', en:'All sessions'})}</button>`].concat(cats.map(c => `<button type="button" class="bkc-cat${st.cat === c ? ' on' : ''}" style="--c:${BKC_COLORS[c]}" onclick="bkcCat(this,'${c}')"><i></i>${escHtml(bkcCatName(c))}</button>`)).join('')}</div>`;
-  const tiers = embed ? '' : st.cat ? `<div class="bkc-tiers">${bkcTiers(st.cat).map(x => `<button type="button" class="bkc-tier${st.tier === x.id ? ' on' : ''}" style="--c:${BKC_COLORS[st.cat]}" onclick="bkcTier(this,'${x.id}')">${escHtml(x.name)}<small>${bkcHuman(bkcDur(st.cat, x.id))}</small></button>`).join('')}</div>` : `<p class="bkc-hint">${t({fr:'Choisissez une séance pour voir ses horaires libres. Chaque point de couleur indique une prestation réservable ce jour-là.', en:'Choose a session to see its free times. Each coloured dot shows a service that can be booked that day.'})}</p>`;
+  const chips = (embed ? `<div class="bkc-cats bkc-cats-embed" role="tablist" aria-label="${escHtml(t({fr:'Prestation', en:'Service'}))}">${cats.map(c => `<button type="button" class="bkc-cat${st.cat === c ? ' on' : ''}" style="--c:${BKC_COLORS[c]}" onclick="bkcCat(this,'${c}')"><i></i>${escHtml(bkcCatName(c))}</button>`).join('')}</div>` : `<div class="bkc-cats">${[`<button type="button" class="bkc-cat${!st.cat ? ' on' : ''}" onclick="bkcCat(this,'')"><i class="bkc-all"></i>${t({fr:'Toutes les séances', en:'All sessions'})}</button>`].concat(cats.map(c => `<button type="button" class="bkc-cat${st.cat === c ? ' on' : ''}" style="--c:${BKC_COLORS[c]}" onclick="bkcCat(this,'${c}')"><i></i>${escHtml(bkcCatName(c))}</button>`)).join('')}</div>`);
+  const tiers = st.cat ? `<div class="bkc-tiers">${bkcTiers(st.cat).map(x => `<button type="button" class="bkc-tier${st.tier === x.id ? ' on' : ''}" style="--c:${BKC_COLORS[st.cat]}" onclick="bkcTier(this,'${x.id}')">${escHtml(x.name)}<small>${bkcHuman(bkcDur(st.cat, x.id))}</small></button>`).join('')}</div>` : `<p class="bkc-hint">${t({fr:'Choisissez une séance pour voir ses horaires libres. Chaque point de couleur indique une prestation réservable ce jour-là.', en:'Choose a session to see its free times. Each coloured dot shows a service that can be booked that day.'})}</p>`;
   let cells = '';
   for (let i = 0; i < startPad; i++) cells += '<span class="bkc-d bkc-pad"></span>';
   for (let i = 1; i <= nDays; i++) {
@@ -9932,8 +9932,8 @@ const bkcHost = el => el.closest('.bkc-host, #quizCal');
 function bkcRe(el){ const h = bkcHost(el); renderAvailCal(h, h._opts); return h; }
 function bkcGo(el, y, m){ const st = bkcState(bkcHost(el)); st.y = y; st.m = m; bkcRe(el); }
 function bkcStep(el, n){ const st = bkcState(bkcHost(el)); const d = new Date(st.y, st.m + n, 1); st.y = d.getFullYear(); st.m = d.getMonth(); bkcRe(el); }
-function bkcCat(el, c){ const st = bkcState(bkcHost(el)); st.cat = c || null; st.tier = null; st.sel = null; bkcRe(el); }
-function bkcTier(el, id){ const st = bkcState(bkcHost(el)); st.tier = id; st.sel = null; if (st.slot) st.slot = null; const h = bkcRe(el); if (h._opts && h._opts.onPick) h._opts.onPick(null); }
+function bkcCat(el, c){ const st = bkcState(bkcHost(el)); st.cat = c || null; st.tier = null; st.sel = null; if (st.slot && st.slot.cat !== st.cat) st.slot = null; const h = bkcRe(el); if (h._opts && h._opts.onCat) h._opts.onCat(st.cat, st.tier); }
+function bkcTier(el, id){ const st = bkcState(bkcHost(el)); st.tier = id; st.sel = null; if (st.slot) st.slot = null; const h = bkcRe(el); if (h._opts && h._opts.onCat) h._opts.onCat(st.cat, st.tier); if (h._opts && h._opts.onPick) h._opts.onPick(null); }
 function bkcDay(el, iso){ const st = bkcState(bkcHost(el)); st.sel = iso; const h = bkcRe(el); const side = h.querySelector('.bkc-side'); if (side && window.innerWidth < 900) side.scrollIntoView({ block: 'nearest', behavior: REDUCED_MOTION ? 'auto' : 'smooth' }); }
 function bkcPickCatDay(el, iso){ const st = bkcState(bkcHost(el)); const ok = BKC_CATS.filter(c => bkcSlots(iso, c, bkcDur(c)).length); st.cat = ok[0] || null; st.tier = null; st.sel = iso; bkcRe(el); }
 function bkcSlot(el, s){
@@ -10003,6 +10003,19 @@ document.addEventListener('click', (e) => {
   catch (err) { location.href = a.getAttribute('href'); }
 });
 /* Devis, étape 04 : le calendrier de la prestation choisie, créneau facultatif. */
+/* Le client change de prestation ou de formule directement dans le calendrier du devis : le devis suit (profil, formules, récapitulatif, options) sans quitter l'étape. */
+function quizCalChange(cat, tier){
+  if (!cat) return;
+  const catChanged = S.cat !== cat;
+  S.cat = cat; S.tier = tier || null; S.slot = null;
+  if (catChanged) {
+    const ids = cat === 'photo-part' ? PHOTO_PART_PROFILES.map(p => p.id) : (CAT_PROFILES[cat] || PROFILES.map(p => p.id));
+    if (!ids.includes(S.prof)) S.prof = ids[0] || null;
+    try { renderProfiles(); } catch (e) {}
+  }
+  try { renderTiers(); const card = document.querySelector('#tierList .tier-card[data-tier="' + S.tier + '"]'); if (card) pickTier(S.tier, card); else { renderRecap(); renderOptions(); updateQuizNext(); } quizBgPhoto(); } catch (e) {}
+  try { quizPresetBar(); quizSlotNote(); } catch (e) {}
+}
 function renderQuizCal(){
   const box = document.getElementById('quizCalBox'), host = document.getElementById('quizCal');
   if (!box || !host) return;
@@ -10010,7 +10023,7 @@ function renderQuizCal(){
   box.hidden = !ok; if (!ok) { if (S.slot) { S.slot = null; quizPresetBar(); } return; }
   { const cb = document.getElementById('quizFlexCb'); if (cb) cb.checked = !!S.flex && !S.slot; box.classList.toggle('is-flex', !!S.flex && !S.slot); }
   if (S.slot && (S.slot.cat !== S.cat || S.slot.tier !== S.tier)) S.slot = null;
-  renderAvailCal(host, { embed: true, cat: S.cat, tier: S.tier, slot: S.slot || null, onPick: slot => { S.slot = slot; if (S.flex) quizFlexToggle(false); quizSlotNote(); } });
+  renderAvailCal(host, { embed: true, cat: S.cat, tier: S.tier, slot: S.slot || null, onCat: quizCalChange, onPick: slot => { S.slot = slot; if (S.flex) quizFlexToggle(false); quizSlotNote(); } });
   if (S.slot) { const st = bkcState(host); const d = new Date(S.slot.date + 'T12:00:00'); st.y = d.getFullYear(); st.m = d.getMonth(); st.sel = S.slot.date; renderAvailCal(host, host._opts); }
   quizSlotNote();
 }
