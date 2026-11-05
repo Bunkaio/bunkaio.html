@@ -8432,3 +8432,8 @@ body[data-view="home"] #pageHeroWrap, .hero-video-wrap[data-view="home"] { backg
 /* Carte « Studio Continu » : texte lisible sur fond papier (il restait blanc) */
 .view.px-quiz .tier-card.sub-card, .view.px-quiz .tier-card.sub-card :is(.tier-name, .tier-price, .tier-detail, small, b, span) { color: #111 !important; }
 .view.px-quiz .tier-card.sub-card .tier-detail, .view.px-quiz .tier-card.sub-card .tier-price small { color: rgba(17,17,17,.65) !important; }
+
+/* Cartes des autres pages : encadrement fin et discret (encre à ~18 %) au lieu du noir (5 nov. 2026, demande de la propriétaire) */
+html body :is(.advice-card, .testi-card, .payment-flex-strip, .pp-benefit, .pp-example, .cs-board, .cs-float-track, .collab-type-card, .ses-card, .acc-help-card, .acc-info-card, .pb-compare-us, .disc-from, .svcp-chip) { border-color: rgba(17,17,17,.18) !important; }
+html body :is(.advice-card, .testi-card, .collab-type-card, .pp-benefit, .pp-example):hover { border-color: rgba(17,17,17,.32) !important; }
+html body .view.gx #applyTypePicker button { border-color: rgba(17,17,17,.18) !important; }
