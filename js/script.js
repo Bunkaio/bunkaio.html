@@ -4876,7 +4876,7 @@ function svxPanelCore(c){
         <a class="svx-more" href="${servicePath(c.id)}" onclick="return navLink(event,'service','${c.id}')">${t({fr:'Détails et tarifs', en:'Details and rates'})} — ${navName(c)} <i>↗︎</i></a>
       </div>
       <div class="svx-tiers">
-        <div class="svx-tabs" role="tablist" aria-label="${escHtml(t({fr:'Formules', en:'Packages'}))}">${tiers.map(tr => `<button type="button" role="tab" class="svx-tab lv-${svxLevel(c, tr.id).cls}${tr.id === cur ? ' on' : ''}" aria-selected="${tr.id === cur}" onclick="svxPickTier('${c.id}','${tr.id}')">${svxPips(c, tr.id)}<span>${t(tr.name)}</span><b>${c.tiers[tr.id].price.toLocaleString('fr-FR')}€</b></button>`).join('')}</div>
+        <div class="svx-tabs-wrap"><div class="svx-tabs" onscroll="svxTabsHint(this)" role="tablist" aria-label="${escHtml(t({fr:'Formules', en:'Packages'}))}">${tiers.map(tr => `<button type="button" role="tab" class="svx-tab lv-${svxLevel(c, tr.id).cls}${tr.id === cur ? ' on' : ''}" aria-selected="${tr.id === cur}" onclick="svxPickTier('${c.id}','${tr.id}')">${svxPips(c, tr.id)}<span>${t(tr.name)}</span><b>${c.tiers[tr.id].price.toLocaleString('fr-FR')}€</b></button>`).join('')}</div><i class="svx-tabs-arrow" aria-hidden="true">›</i></div>
         <div class="svx-td-wrap">${svxTierDetail(c, cur)}</div>
         ${polas}${sub}
         <div class="svx-actions">
@@ -4910,6 +4910,7 @@ function renderServices(){
       </article>`;
     }).join('');
   svxBind(grid);
+  grid.querySelectorAll('.svx-tabs').forEach(svxTabsHint);
   bkScrambleWatch(grid); pfxStrips();
   if (SVX.open) { const it = grid.querySelector(`.svx-item[data-cat="${SVX.open}"]`); if (it) svxReel(it); }
   svxStage(SVX.open);
@@ -4923,11 +4924,13 @@ function svxToggle(id){
     it.classList.toggle('is-open', on);
     it.querySelector('.svx-row').setAttribute('aria-expanded', String(on));
     it.querySelector('.svx-row').dataset.cursor = on ? t({fr:'Fermer', en:'Close'}) : t({fr:'Ouvrir', en:'Open'});
-    if (on) { svxCount(it); svxReel(it); }
+    if (on) { svxCount(it); svxReel(it); setTimeout(() => it.querySelectorAll('.svx-tabs').forEach(svxTabsHint), 60); }
   });
   svxStage(SVX.open);
   if (SVX.open && window.track) track('cta_click', 'services_dossier_' + SVX.open);
 }
+/* Flèche « glissez » : visible tant qu'il reste des formules à droite. */
+function svxTabsHint(el){ const w = el.parentElement; if (!w) return; w.classList.toggle('at-end', el.scrollWidth <= el.clientWidth + 2 || el.scrollLeft + el.clientWidth >= el.scrollWidth - 6); }
 function svxPickTier(catId, tid){
   const c = CATS.find(x => x.id === catId), it = document.querySelector(`.svx-item[data-cat="${catId}"]`);
   if (!c || !it) return;

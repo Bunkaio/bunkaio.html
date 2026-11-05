@@ -8768,13 +8768,15 @@ html body #view-home .hero-access { border-radius: 999px !important; padding-lef
 .qstep.active .stagger { opacity: 1; transform: none; animation: stagIn .8s var(--ease-luxe) backwards; }
 @keyframes stagIn { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
 
-/* Services, onglets de formules sur mobile : toutes les formules visibles (Éditorial était coupée hors de l'écran) — grille 2 colonnes, la dernière pleine largeur si le nombre est impair (6 nov. 2026, demande de la propriétaire) */
+/* Services, onglets de formules sur mobile : rangée qui se fait défiler à la main + flèche qui invite à glisser (6 nov. 2026, demande de la propriétaire) */
+.svx-tabs-wrap { position: relative; }
+.svx-tabs-arrow { display: none; }
 @media (max-width: 760px) {
-  .svx-tabs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); overflow: visible; }
-  .svx-tab { min-width: 0; border-right: 0; border-bottom: 1px solid #111; }
-  .svx-tab:nth-child(odd) { border-right: 1px solid #111; }
-  .svx-tab:nth-last-child(-n+2):nth-child(odd), .svx-tab:last-child { border-bottom: 0; }
-  .svx-tab:last-child:nth-child(odd) { grid-column: 1 / -1; border-right: 0; }
-  .svx-tab:nth-last-child(2):nth-child(odd) { border-bottom: 1px solid #111; }
-  .svx-tab:nth-last-child(2):nth-child(odd):nth-child(even) { border-bottom: 0; }
+  .svx-tabs { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; scroll-snap-type: x proximity; }
+  .svx-tabs::-webkit-scrollbar { display: none; }
+  .svx-tab { flex: 0 0 auto; min-width: 118px; scroll-snap-align: start; }
+  .svx-tabs-arrow { display: flex; align-items: center; justify-content: flex-end; position: absolute; right: 0; top: 0; bottom: 0; width: 54px; padding-right: 10px; box-sizing: border-box; pointer-events: none; font-style: normal; font-size: 24px; line-height: 1; color: #111; background: linear-gradient(90deg, rgba(236,235,232,0), rgba(236,235,232,.95) 65%); animation: svxNudge 1.4s ease-in-out infinite; transition: opacity .25s; }
+  .svx-tabs-wrap.at-end .svx-tabs-arrow { opacity: 0; animation: none; }
+}
+@keyframes svxNudge { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(5px); } }
 }
