@@ -8419,3 +8419,8 @@ body[data-view="home"] #pageHeroWrap, .hero-video-wrap[data-view="home"] { backg
 /* CTA du haut de l'accueil : violet de la charte (#6e5aa8, halo #d6c9f7), écriture blanche */
 #view-home .hero > .hero-start:not(#bkv) { background: rgba(110,90,168,.88) !important; border: 1px solid #d6c9f7 !important; box-shadow: 0 0 20px 2px rgba(214,201,247,.4), inset 0 0 14px rgba(214,201,247,.16) !important; }
 #view-home .hero > .hero-start:not(#bkv):is(:hover, :focus-visible, :active) { background: #6e5aa8 !important; box-shadow: 0 0 28px 4px rgba(214,201,247,.6), inset 0 0 14px rgba(214,201,247,.22) !important; }
+
+/* CTA du haut de l'accueil : même rose que « Recevoir une proposition » (5 nov. 2026, demande de la propriétaire) */
+#view-home .hero > .hero-start:not(#bkv) { background: var(--rose, #e8c6c4) !important; color: #111 !important; border: 1px solid var(--rose, #e8c6c4) !important; box-shadow: none !important; -webkit-backdrop-filter: none; backdrop-filter: none; }
+#view-home .hero > .hero-start:not(#bkv) span { color: #111 !important; }
+#view-home .hero > .hero-start:not(#bkv):is(:hover, :focus-visible, :active) { background: #f1d9d7 !important; color: #111 !important; box-shadow: 0 0 22px 2px rgba(232,198,196,.55) !important; }
