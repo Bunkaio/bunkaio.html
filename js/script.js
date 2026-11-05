@@ -5201,6 +5201,7 @@ function renderHomeIndex(){
       <span class="hm-row-c">${escHtml(t(c.tag))}</span>
       <span class="hm-row-p">${from}<i>⊹</i></span></a>`;
   }).join('');
+  const cta = document.getElementById('hmSvcCta'); if (cta) cta.innerHTML = availLink('', '', '<span>' + t({fr:'Vérifier les disponibilités', en:'Check availability'}) + '</span><i aria-hidden="true">→</i>', 'hm-avail-btn', 'accueil_dispo');
   if (mq) { const one = list.map(c => `<a href="${servicePath(c.id)}" onclick="return navLink(event,'service','${c.id}')" tabindex="-1">${escHtml(t(c.name))}</a><i>⊹</i>`).join(''); mq.innerHTML = one + one; }
   if (!('IntersectionObserver' in window) || REDUCED_MOTION) { box.querySelectorAll('.hm-row').forEach(r => r.classList.add('in')); return; }
   const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .2 });

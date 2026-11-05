@@ -32,7 +32,7 @@
 <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
 <link rel="preload" href="fonts/inter-tight-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <script>/* Image d'attente des vidéos de l'accueil : une vraie photo HD du Portfolio BUNKAIO (et non une capture de la vidéo), posée derrière chaque vidéo via --vid-a / --vid-b ; accueil seulement. */(function(){var p=location.pathname;if(p!=="/"&&p!=="/en/"&&p!=="/index.html")return;var B="https://bunkaio-quiz-stripe.bunkaio.workers.dev/media/portfolio/",C=["mode/1","photo-part/1","corporate/1","commercial/1","event/1","mode/2","photo-part/2","corporate/2","commercial/2","event/2"],got=[],k=0,r=document.documentElement;function next(){if(k>=C.length||got.length>=2)return;var u=B+C[k++]+".webp",i=new Image();i.onload=function(){got.push(u);r.style.setProperty(got.length===1?"--vid-a":"--vid-b","url("+u+")");next();};i.onerror=next;i.src=u;}next();})();</script>
-<link rel="stylesheet" href="css/style.min.css?v=38a77740">
+<link rel="stylesheet" href="css/style.min.css?v=a4cafe05">
 
 <script type="application/ld+json">
 {
@@ -489,6 +489,7 @@
     <div class="hm-marquee" aria-hidden="true"><div class="hm-marquee-in" id="hmMarquee"></div></div>
     <div class="hm-sec-head"><p class="gx-kick" id="hmSvcK">Index,</p><h2 class="hm-sec-t" id="hmSvcT"><span class="bk-echo bk-scramble" data-lang="services">Services</span></h2><a class="hm-sec-link" href="/services/" onclick="return navLink(event,'services')" id="hmSvcAll">Toutes les prestations ↗︎</a></div>
     <div class="hm-index" id="hmIndex"></div>
+    <div class="hm-svc-cta" id="hmSvcCta"></div>
     <div class="hm-preview" id="hmPreview" aria-hidden="true"><img alt=""><span></span></div>
   </section>
   <div class="gx-reel hm-reel"></div>
@@ -2056,6 +2057,6 @@
 <script src="config/articles.en.js?v=d5061d9b"></script>
 <script src="config/routes.js?v=09d40cd4"></script>
 <script src="config/media.js?v=c88496e4"></script>
-<script src="js/script.min.js?v=81c679e8"></script>
+<script src="js/script.min.js?v=2bb34348"></script>
 </body>
 </html>

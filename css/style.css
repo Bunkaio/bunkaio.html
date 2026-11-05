@@ -8595,3 +8595,10 @@ body[data-view="home"] #pageHeroWrap, .hero-video-wrap[data-view="home"] { backg
   .q-mode-b { flex: 1 1 0; padding: 10px 8px; font-size: 12px; }
 }
 @media (prefers-reduced-motion: reduce) { #view-quiz.q-choosing .q-choice { animation: none; } .q-choice-card, .q-choice-go { transition: none; } }
+
+/* Accueil : CTA noir « Vérifier les disponibilités » sous l'index des prestations (5 nov. 2026) */
+.hm-svc-cta{display:flex;justify-content:center;padding:clamp(28px,5vw,56px) 22px clamp(20px,4vw,40px)}
+.hm-svc-cta .hm-avail-btn{display:inline-flex;align-items:center;gap:12px;box-sizing:border-box;max-width:100%;padding:17px 28px;background:#111;color:#fff;border:1px solid #111;border-radius:0;font:600 13px/1 'Inter Tight',sans-serif;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;box-shadow:none;transition:background .25s,color .25s}
+.hm-svc-cta .hm-avail-btn i{font-style:normal;transition:transform .25s}
+.hm-svc-cta .hm-avail-btn:hover,.hm-svc-cta .hm-avail-btn:focus-visible,.hm-svc-cta .hm-avail-btn:active{background:#e8c6c4;color:#111;border-color:#111}
+.hm-svc-cta .hm-avail-btn:hover i{transform:translateX(4px)}
