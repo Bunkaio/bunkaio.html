@@ -8790,3 +8790,19 @@ html body footer .footer-cta-headline::after { content: ''; position: absolute; 
 
 /* Pied de page : plus de grosse barre blanche au-dessus de « Un projet en tête ? » (6 nov. 2026, demande de la propriétaire) */
 html body footer .footer-cta-row { border-top: 0 !important; padding-top: clamp(40px, 7vw, 72px) !important; }
+
+/* Séquence « Le studio », lien « Parcourir toutes les prestations » : toujours visible et facile à toucher sur tous les formats de téléphone (6 nov. 2026, demande de la propriétaire) — zone de toucher 44 px, au-dessus du reste, texte du slogan réduit selon la hauteur d'écran, marge basse qui évite la barre du navigateur / le geste d'accueil */
+#missionVideoWrap .ms-all { position: relative; z-index: 6; display: flex !important; align-items: center; justify-content: center; min-height: 44px; padding: 10px 14px 6px !important; margin: 8px auto 0 !important; touch-action: manipulation; -webkit-tap-highlight-color: transparent; border-bottom: 0 !important; text-decoration: underline; text-decoration-color: rgba(255,255,255,.85); text-underline-offset: 6px; }
+#missionVideoWrap .mission-video-content { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 84px) !important; padding-top: 70px !important; }
+@media (max-width: 760px) and (max-height: 760px) {
+  #missionVideoWrap .mission-text { font-size: clamp(22px, min(8.4vw, 5.6svh), 36px) !important; line-height: 1 !important; }
+  #missionVideoWrap .mission-kicker { margin-bottom: 12px !important; }
+  #missionVideoWrap .mission-services { margin-top: 12px !important; }
+}
+@media (max-width: 760px) and (max-height: 700px) {
+  #missionVideoWrap .mission-video-content { padding-top: 64px !important; padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 64px) !important; }
+  #missionVideoWrap .ms-prev .ms-im { display: none !important; }
+  #missionVideoWrap .ms-prev ul li:nth-child(n+3) { display: none !important; }
+  #missionVideoWrap .ms-prev .ms-tx { padding: 14px 16px !important; }
+  #missionVideoWrap .ms-prev h3 { font-size: clamp(18px, 6vw, 24px) !important; }
+}
