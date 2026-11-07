@@ -1,6 +1,8 @@
 # État Git / GitHub (audit en lecture seule du 7 nov. 2026)
 
-Méthode : `git ls-remote` + clone public de `https://github.com/Bunkaio/bunkaio.html` (aucun accès API GitHub authentifié dans la session de reprise : le compte GitHub n'est pas encore relié au nouveau compte Claude). **Aucune fusion, suppression, réécriture ni push.**
+Méthode : première version par `git ls-remote` + clone public ; **vérifiée le 7 nov. 2026 avec l'API GitHub authentifiée** (`gh`, compte `Bunkaio`, droits ADMIN). Les chiffres ci-dessous sont ceux de l'API. **Aucune fusion, suppression ni réécriture.**
+
+Vérification API du 7 nov. 2026 : 4 branches distantes, **1 seule PR (la #1), 1 seul ticket ouvert (cette PR)**, aucune autre PR (ouverte, fermée ou fusionnée), aucun tag, aucun ruleset, aucune protection de branche. GitHub Pages : source `main`, statut `built`.
 
 ## Branches
 | Branche | Dernier commit | En avance sur `main` | En retard | Verdict |
@@ -13,7 +15,7 @@ Méthode : `git ls-remote` + clone public de `https://github.com/Bunkaio/bunkaio
 ## Pull Request #1
 - « À propos mis en valeur : lien dans le menu et mini bannière sur l'accueil », ouverte le 12 oct. 2026 par la session Claude, base `main`.
 - Contenu : lien « À propos » encadré dans le menu (desktop + mobile) après Portfolio, état actif correct (aujourd'hui « À propos » allume « Contact »), mini-bannière sur l'accueil (photo d'Aya, 8+ ans, 200+ projets, ETPA BTS 2018, basée à Montpellier), clés `abb-*` FR/EN, menu hamburger sous 1260 px.
-- État : la référence `refs/pull/1/merge` n'a plus été recalculée depuis le 12 oct. → la PR est **en conflit** ; elle est très probablement encore **ouverte** (état exact à confirmer sur GitHub).
+- État **confirmé par l'API (7 nov. 2026)** : **OPEN**, non brouillon, `mergeable = CONFLICTING`, `mergeStateStatus = DIRTY`, 74 fichiers (+1505 / −224), 1 commit (`750e482`), créée par `Bunkaio`, **0 commentaire, 0 revue, 0 vérification CI**, dernière mise à jour le 12 oct. 2026. Branche : 1 commit en avance, 282 en retard sur `main`.
 - Simulation de fusion (`git merge-tree`, sans rien écrire) : **74 fichiers en conflit** (toutes les pages pré-rendues, `css/style.css`, `js/script.js`, `.min`, `tools/lastmod.json`).
 - Aucun élément de la PR n'existe dans `main` (`nav-about`, `about-banner`, `abb-*` absents). La mini-bannière est partiellement remplacée par le bloc Aya replié de l'accueil (`#hmAccAya`, lien vers /a-propos/) ; le menu n'a toujours pas « À propos ».
 - La PR date d'avant la refonte DA de novembre (menu numéroté 01–07, Inter Tight…) : son CSS ne correspond plus.
@@ -33,4 +35,5 @@ Pas de tags, pas de releases, pas de workflow CI dans le dépôt ; GitHub Pages 
 ## Règles Git pour la suite
 - Jamais de push direct sur `main` sans validation explicite d'Aya ; travailler sur une branche `claude/<sujet>` + PR.
 - Avant toute PR : `git fetch` + rebase sur `main` (le site bouge vite) ; relancer `tools/build-routes.cjs` après rebase (les fichiers générés conflictuent sinon).
-- Nettoyage des branches fusionnées : proposé, en attente d'accord.
+- Nettoyage des branches fusionnées (`audit/prelaunch`, `claude/coding-session-zq4ki8`) : proposé, en attente d'accord. Rien n'a été supprimé.
+- Le `main` local d'un poste peut être très en retard (constaté le 7 nov. : 555 commits) : toujours `git fetch` puis `git merge --ff-only origin/main` avant de créer une branche.
