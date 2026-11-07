@@ -1,0 +1,24 @@
+# GitHub Pages (Jekyll) : fichiers du dépôt qui ne doivent PAS être publiés sur bunkaio.com.
+# Le dépôt contient aussi la documentation interne, le code du Worker et les outils de build :
+# rien de tout cela n'est utilisé par le site public.
+# `exclude` remplace la liste par défaut de Jekyll : on la reprend donc intégralement.
+exclude:
+  # liste par défaut de Jekyll
+  - .sass-cache/
+  - .jekyll-cache/
+  - gemfiles/
+  - Gemfile
+  - Gemfile.lock
+  - node_modules/
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/
+  # interne BUNKAIO (ne pas publier)
+  - CLAUDE.md
+  - README.md
+  - docs/
+  - server/
+  - tools/
+  - .github/
+# À NE PAS exclure : ops/ (lu par admin/index.html), admin/, config/, js/, css/, images/, videos/, fonts/.
