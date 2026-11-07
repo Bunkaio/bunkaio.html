@@ -2,6 +2,12 @@
 
 Le code est la source de vérité. Ce fichier ne sert qu'à reprendre vite.
 
+## Reprise (nov. 2026) — lire d'abord
+- Contexte complet, structuré et daté : `docs/project-context/` (overview, architecture, features, design-system, business-rules, decisions, known-issues, git-history, workflows, roadmap). Légende : [CONFIRMÉ] / [HISTORIQUE] / [À VÉRIFIER].
+- Le site n'est plus un `index.html` unique : SPA pré-rendue (`js/script.js`, `css/style.css`, `config/`) + Worker Cloudflare (`server/`). Ne jamais réécrire un fichier entier ; modifications ciblées, puis `node --check`, `tools/build-routes.cjs`, `tools/veille.cjs`, captures desktop/mobile/EN.
+- Travailler sur une branche `claude/<sujet>` + PR ; aucun push sur `main` ni redéploiement du Worker sans accord explicite de la propriétaire. Aucune routine automatique qui pousse sur `main`.
+- Après toute décision durable : mettre à jour ce fichier ET `docs/project-context/decisions.md`.
+
 ## Stack
 - Site statique (GitHub Pages) : SPA en JavaScript sans framework, `js/script.js` (source) → `js/script.min.js` (généré). Traductions `I18N.fr/en`, helper `t({fr,en})`.
 - Config : `config/routes.js` (SEO), `config/articles(.en).js`, `config/media.js`, `config/entity.json`, `config/analytics.js`.
